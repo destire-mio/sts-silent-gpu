@@ -1,0 +1,16 @@
+{
+  "deck": [
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    }
+  ],
+  "relics": [],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 70,
+  "max_hp": 70,
+  "encounter": "Cultist"
+}
