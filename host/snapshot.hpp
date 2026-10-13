@@ -131,6 +131,8 @@ struct SnapshotGraph {
             if (field == "exhaust") return py::bool_(card.exhaust);
             if (field == "isEthereal") return py::bool_(card.ethereal);
             if (field == "isInnate") return py::bool_(card.innate);
+            if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
+            if (field == "upgradedCost") return py::bool_(card.upgraded_cost);
             if (field == "retain") return py::bool_(card.retain);
             if (field == "selfRetain") return py::bool_(card.self_retain);
             if (field == "freeToPlayOnce") return py::bool_(card.free_to_play_once);
@@ -156,8 +158,8 @@ struct SnapshotGraph {
             if (field == "price") return py::int_(0);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
-                field == "isMagicNumberModified" || field == "isMultiDamage" ||
-                field == "isSelected" || field == "isUsed" || field == "upgradedCost") return py::bool_(false);
+                field == "isMagicNumberModified" ||
+                field == "isSelected" || field == "isUsed") return py::bool_(false);
             return {};
         });
     }
@@ -284,7 +286,8 @@ struct SnapshotGraph {
             if (field == "chosenClass") return py::str("THE_SILENT");
             if (field == "discardPile") return group(0, "DISCARD_PILE", &game.discard);
             if (field == "drawPile") return group(1, "DRAW_PILE", &game.draw);
-            if (field == "endTurnQueued" || field == "isEndingTurn") return py::bool_(false);
+            if (field == "endTurnQueued") return py::bool_(game.player.end_turn_queued);
+            if (field == "isEndingTurn") return py::bool_(false);
             if (field == "energy") return object({4, 0, 0}, "core.EnergyManager", [&](const std::string& name) -> py::object {
                 if (name == "EnergyManager.energy") return py::int_(game.player.energy_per_turn);
                 if (name == "EnergyManager.energyMaster") return py::int_(game.player.energy_master);

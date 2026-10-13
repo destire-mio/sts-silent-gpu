@@ -33,12 +33,13 @@ struct Card {
     bool purge_on_use : 1;
     bool shuffle_back_into_draw_pile : 1;
     bool return_to_hand : 1;
+    bool upgraded_cost : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
-          shuffle_back_into_draw_pile(false), return_to_hand(false) {}
+          shuffle_back_into_draw_pile(false), return_to_hand(false), upgraded_cost(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
@@ -106,6 +107,7 @@ struct Player {
     int card_in_use = -1;
     int cards_played_this_turn = 0;
     bool bloodied = false;
+    bool end_turn_queued = false;
 };
 enum class ActionKind : uint8_t { Play, EndTurn, Choose, PotionUse, PotionDiscard, Proceed, Skip };
 struct Action {
@@ -246,6 +248,7 @@ struct Game {
     bool selection_can_pick_zero = false;
     int put_on_deck_num = 0;
     uint32_t next_power_instance = 1;
+    uint32_t next_card_uuid = 1;
     int obtained_cards[static_cast<int>(CardId::Count)]{};
     bool selection_for_upgrade = false;
     bool selected_cards_retrieved = false;

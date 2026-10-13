@@ -12,7 +12,7 @@ SPIRE_FN inline void insert_random_card(Game& g, Pile& pile, int card) {
 SPIRE_FN inline int copy_card(Game& g, int source, bool same_uuid) {
     const int index = g.cards.size;
     Card card = card_makeStatEquivalentCopy(g, source);
-    card.uuid = same_uuid ? g.cards[source].uuid : index + 1;
+    card.uuid = same_uuid ? g.cards[source].uuid : g.next_card_uuid++;
     g.cards.push_back(card);
     return index;
 }
@@ -27,7 +27,7 @@ SPIRE_FN inline void remove_queued_card(Game& g, int card) {
 }
 SPIRE_FN inline int create_card(Game& g, Card card) {
     const int index = g.cards.size;
-    card.uuid = index + 1;
+    card.uuid = g.next_card_uuid++;
     g.cards.push_back(card);
     return index;
 }
@@ -687,6 +687,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     build_encounter(g, setup.encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
+    g.next_card_uuid = g.run.master_deck.size + 1;
     for (int i = 0; i < g.run.master_deck.size; ++i) {
         g.run.master_deck[i].uuid = i + 1;
         g.cards.push_back(g.run.master_deck[i]);
