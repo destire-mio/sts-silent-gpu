@@ -1,0 +1,54 @@
+{
+  "deck": [
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Doubt",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Block Potion",
+    "Regen Potion"
+  ],
+  "hp": 300,
+  "max_hp": 300,
+  "encounter": "Shell Parasite"
+}

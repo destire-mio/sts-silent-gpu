@@ -24,3 +24,5 @@ SPIRE_UNIT(SphericGuardian, "Spheric Guardian", "core/encounters/spheric_guardia
 SPIRE_UNIT(GremlinNob, "Gremlin Nob", "core/encounters/gremlin_nob.hpp", GremlinNob)
 SPIRE_UNIT(ColosseumNobs, "Colosseum Nobs", "core/encounters/colosseum_nobs.hpp", ColosseumNobs)
 SPIRE_UNIT(Slavers, "Slavers", "core/encounters/slavers.hpp", Slavers)
+SPIRE_UNIT(ShellParasite, "Shell Parasite", "core/encounters/shell_parasite.hpp", ShellParasite)
+SPIRE_UNIT(ShelledParasiteAndFungi, "Shelled Parasite and Fungi", "core/encounters/shelled_parasite_and_fungi.hpp", ShelledParasiteAndFungi)
