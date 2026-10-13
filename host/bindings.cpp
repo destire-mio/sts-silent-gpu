@@ -73,7 +73,7 @@ CombatSetup parse_setup(const Game& game, const py::dict& value) {
     }
     if (value.contains("potions")) {
         const py::list potions = value["potions"].cast<py::list>();
-        SPIRE_ASSERT(potions.size() <= 2);
+        SPIRE_ASSERT(potions.size() <= potion_capacity);
         for (py::ssize_t i = 0; i < potions.size(); ++i) {
             if (!potions[i].is_none())
                 setup.potions[i] = parse_id<PotionId>(potions[i].cast<std::string>(), potion_names);

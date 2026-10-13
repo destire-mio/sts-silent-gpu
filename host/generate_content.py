@@ -69,6 +69,11 @@ def relic(name, suffix="", result="void", body="", const=False):
     prefix = "const Game& g, int relic" if const else "Game& g, int relic"
     hook("relics", name, prefix + (", " + suffix if suffix else ""), result, body)
 
+hook("relics", "initialize", "Relic& value", selector="value.id")
+relic("setCounter", "int amount", body="g.run.relics[relic].counter = amount;")
+relic("update")
+relic("onCurseObtain", result="bool", body="return false;")
+
 
 for name in ("onGainGold", "onLoseGold", "onSpendGold", "onEquip", "onUnequip", "atPreBattle",
              "atBattleStart", "atBattleStartPreDraw", "atTurnStart", "atTurnStartPostDraw",
@@ -196,6 +201,12 @@ def generate(root, output):
             if match:
                 states[kind][unit] = (typename, match[1].strip())
     ids = ['#pragma once', '#include "core/fixed.hpp"', '#include "core/types.hpp"', 'namespace spire {']
+    ids.append('struct RelicStatics {')
+    for _, _, path, typename in catalogs['relics']:
+        match = re.search(r'SPIRE_STATIC_STATE\(\s*' + typename + r'\s*,(.*?)\)', (root / path).read_text(), re.S)
+        if match:
+            ids.append(f'    struct {{ {match[1].strip()} }} {typename};')
+    ids.append('};')
     for kind, (enum, _, _, _) in KINDS.items():
         ids.append(f'enum class {enum} : uint16_t {{ ' + ', '.join(row[0] for row in catalogs[kind]) + ', Count };')
     declarations = ['#pragma once', 'namespace spire {']
@@ -249,7 +260,8 @@ def generate(root, output):
             content.append(f'SPIRE_FN inline void {prefix}_initialize_state({entity}& value) {{ switch ({discriminator}) {{')
             for unit, _, _, typename in entries:
                 assign = f'value.state.{typename} = {{}};' if unit in states[kind] else ''
-                content.append(f'case {enum}::{unit}: {assign} return;')
+                initialize = f'units::{kind}::{typename}::initialize(value);' if kind == 'relics' else ''
+                content.append(f'case {enum}::{unit}: {assign} {initialize} return;')
             content.append('default: SPIRE_ASSERT(false); } }')
         if kind in ("cards", "powers", "relics", "monsters", "actions"):
             content.append(f'template<class Visitor> SPIRE_FN inline void {prefix}_visit_state(const {entity}& value, Visitor& visitor) {{ (void)visitor; switch ({discriminator}) {{')

@@ -30,4 +30,10 @@ struct IntentFlash : ActionHooks {
     }
     SPIRE_FN static void execute(Game&, const Effect&) {}
 };
+struct RelicAboveCreature : ActionHooks {
+    SPIRE_STATE(RelicAboveCreature, int relic; bool used;)
+    SPIRE_SNAPSHOT("RelicAboveCreatureAction.relic", relic, effect.state.RelicAboveCreature.relic)
+    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
+    static SPIRE_FN void execute(Game&, Effect& e) { e.state.RelicAboveCreature.used = true; }
+};
 }

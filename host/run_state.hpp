@@ -22,12 +22,11 @@ struct FreshRunState {
     std::vector<std::string> eventList, shrineList, specialOneTimeEventList;
     std::vector<std::string> commonRelicPool, uncommonRelicPool, rareRelicPool;
     std::vector<std::string> shopRelicPool, bossRelicPool, relicsToRemoveOnStart;
-    std::vector<std::string> rewardTypes, rewardCards;
+    std::vector<std::string> rewardTypes;
     std::string rewardPotion;
     int rewardGold = 0;
     int stolenGold = 0;
     int blizzardPotionMod = 0;
-    int cardBlizzRandomizer = 5;
 };
 
 inline void initialize_monster_lists(Random& rng, FreshRunState& run) {
@@ -392,22 +391,14 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;
     if (game.smoked) return;
-    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
-    const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
-    std::array<int, 3> rarities{};
-    for (int i = 0; i < 3; ++i) {
-        const int roll = game.rng.card.random(99) + run.cardBlizzRandomizer;
-        const int rarity = roll < 3 ? 2 : roll < 40 ? 1 : 0;
-        rarities[i] = rarity;
-        if (rarity == 2) run.cardBlizzRandomizer = 5;
-        if (rarity == 0) run.cardBlizzRandomizer = std::max(-40, run.cardBlizzRandomizer - 1);
-        std::string card;
-        do { card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)].id; }
-        while (std::find(run.rewardCards.begin(), run.rewardCards.end(), card) != run.rewardCards.end());
-        run.rewardCards.push_back(card);
+    add_room_card_reward(game);
+    for (int i = 0; i < game.run.relics.size; ++i) {
+        if (relic_data(game.run.relics[i].id).extra_normal_combat_card_reward) {
+            add_room_card_reward(game);
+            break;
+        }
     }
-    for (const int rarity : rarities) if (rarity != 2) game.rng.card.randomBoolean(0.0f);
-    run.rewardTypes.push_back("CARD");
+    for (int i = 0; i < game.room_rewards.size; ++i) run.rewardTypes.push_back("CARD");
 }
 
 inline void initialize_fresh_run(Game& game, FreshRunState& run) {

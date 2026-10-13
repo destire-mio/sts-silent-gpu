@@ -15,8 +15,15 @@ struct Weak : PowerHooks {
         e.amount = 1;
         add_bottom(g, e);
     }
-    static SPIRE_FN float atDamageGive(const Game&, const Power&, int, float value, DamageType type, int = -1) {
-        return type == DamageType::Normal ? value * 0.75f : value;
+    static SPIRE_FN float atDamageGive(const Game& g, const Power&, int owner, float value, DamageType type, int = -1) {
+        if (type != DamageType::Normal) return value;
+        if (owner != player_target) {
+            for (int i = 0; i < g.run.relics.size; ++i) {
+                const float multiplier = relic_data(g.run.relics[i].id).monster_weak_multiplier;
+                if (multiplier != 0.0f) return value * multiplier;
+            }
+        }
+        return value * 0.75f;
     }
 };
 }

@@ -5,6 +5,7 @@
 #define SPIRE_STATE(type, ...)
 #define SPIRE_SNAPSHOT(...)
 #define SPIRE_STATIC(...)
+#define SPIRE_STATIC_STATE(type, ...)
 
 #if defined(__CUDACC__)
 #define SPIRE_FN __host__ __device__
