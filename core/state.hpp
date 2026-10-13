@@ -106,6 +106,8 @@ struct Player {
     int card_in_use = -1;
     int cards_played_this_turn = 0;
     bool bloodied = false;
+    bool escaping = false;
+    float escape_timer = 0.0f;
 };
 enum class ActionKind : uint8_t { Play, EndTurn, Choose, PotionUse, PotionDiscard, Proceed, Skip };
 struct Action {
@@ -256,6 +258,7 @@ struct Game {
     bool battle_over = false;
     bool cannot_lose = false;
     bool mugged = false;
+    bool smoked = false;
     int bomb_id_offset = 0;
 };
 static_assert(sizeof(Game) <= 48 * 1024, "Game exceeds the 48 KiB device memory budget; see docs/porting.md");

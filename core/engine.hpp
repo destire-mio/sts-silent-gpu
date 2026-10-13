@@ -510,6 +510,18 @@ SPIRE_FN inline void complete_player_turn_effect(Game& g) {
 }
 SPIRE_FN inline void run_until_decision(Game& g) {
     g.manager.phase = Phase::ExecutingActions;
+    if (g.player.escaping) {
+        // AbstractPlayer.updateEscapeAnimation advances rule-read drawX at the oracle's fixed tick.
+        while (g.player.escape_timer > 0.0f) {
+            g.player.escape_timer -= 1.0f / 60.0f;
+            const float speed = g.player.creature.flip_horizontal ? -400.0f : 500.0f;
+            g.player.creature.draw_x += (1.0f / 60.0f) * speed * (1280.0f / 1920.0f);
+        }
+        g.battle_over = true;
+        g.player.creature.flip_horizontal = false;
+        g.player.escaping = false;
+        g.player.escape_timer = 0.0f;
+    }
     while (g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward && g.screen != Screen::Death) {
         bool dead = !g.monster_order.empty();
         for (int i = 0; i < g.monster_order.size; ++i) {
@@ -688,6 +700,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.battle_over = false;
     g.cannot_lose = false;
     g.mugged = false;
+    g.smoked = false;
     g.discard_remaining = 0;
     g.selection_any_number = g.selection_can_pick_zero = false;
     g.end_turn_enabled = true;

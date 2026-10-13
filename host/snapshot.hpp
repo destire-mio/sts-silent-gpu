@@ -226,7 +226,7 @@ struct SnapshotGraph {
         if (key == "AbstractCreature.currentHealth") return py::int_(c.hp);
         if (key == "AbstractCreature.drawX") {
             if (owner != player_target && c.escaped) return py::none();
-            return java_float(owner == player_target ? 320.0f : c.draw_x);
+            return java_float(c.draw_x);
         }
         if (key == "AbstractCreature.flipHorizontal") return py::bool_(c.flip_horizontal);
         if (key == "AbstractCreature.gold") return py::int_(owner == player_target ? game.run.gold : c.gold);
@@ -235,7 +235,7 @@ struct SnapshotGraph {
         if (key == "AbstractCreature.isBloodied") return py::bool_(owner == player_target && game.player.bloodied);
         if (key == "AbstractCreature.isDead") return py::bool_(c.dead);
         if (key == "AbstractCreature.isDying") return py::bool_(c.dying);
-        if (key == "AbstractCreature.isEscaping") return py::bool_(c.escaped);
+        if (key == "AbstractCreature.isEscaping") return py::bool_(owner == player_target ? game.player.escaping : c.escaped);
         if (key == "AbstractCreature.isPlayer") return py::bool_(owner == player_target);
         if (key == "AbstractCreature.lastDamageTaken") return py::int_(c.last_damage_taken);
         if (key == "AbstractCreature.maxHealth") return py::int_(c.max_hp);
@@ -348,7 +348,10 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "nextMove") return py::int_(monster.move);
-            if (field == "type") return py::str("NORMAL");
+            if (field == "type") {
+                const char* types[] = {"NORMAL", "ELITE", "BOSS"};
+                return py::str(types[static_cast<int>(monster_data(monster.id).type)]);
+            }
             if (field == "move") return object({8, index, 0}, "monsters.EnemyMoveInfo", [&](const std::string& name) -> py::object {
                 if (name == "EnemyMoveInfo.baseDamage") return py::int_(monster.pending_base_damage);
                 if (name == "EnemyMoveInfo.intent") return py::str(intent_names[static_cast<int>(monster.pending_intent)]);
@@ -409,11 +412,12 @@ struct SnapshotGraph {
     py::object reward_screen(const FreshRunState& fresh) {
         return object({24, 0, 0}, "screens.CombatRewardScreen", [&](const std::string& key) -> py::object {
             if (key == "CombatRewardScreen.mug") return py::bool_(game.mugged);
-            if (key == "CombatRewardScreen.smoke") return py::bool_(false);
-            if (key == "CombatRewardScreen.hasTakenAll") return py::bool_(fresh.rewardTypes.empty());
+            if (key == "CombatRewardScreen.smoke") return py::bool_(game.smoked);
+            if (key == "CombatRewardScreen.hasTakenAll") return py::bool_(!game.smoked && fresh.rewardTypes.empty());
             if (key == "CombatRewardScreen.rewards") {
                 py::list result;
-                for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i) result.append(reward(fresh, i));
+                if (!game.smoked)
+                    for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i) result.append(reward(fresh, i));
                 return result;
             }
             return {};
@@ -426,7 +430,8 @@ struct SnapshotGraph {
             if (field == "baseRareCardChance" || field == "rareCardChance") return py::int_(3);
             if (field == "baseUncommonCardChance" || field == "uncommonCardChance") return py::int_(37);
             if (field == "cannotLose") return py::bool_(game.cannot_lose);
-            if (field == "combatEvent" || field == "eliteTrigger" || field == "skipMonsterTurn" || field == "smoked") return py::bool_(false);
+            if (field == "combatEvent" || field == "eliteTrigger" || field == "skipMonsterTurn") return py::bool_(false);
+            if (field == "smoked") return py::bool_(game.smoked);
             if (field == "event") return py::none();
             if (field == "endBattleTimer" && !game.battle_over) return py::float_(0.0);
             if (field == "isBattleOver") return py::bool_(game.battle_over);
@@ -626,7 +631,7 @@ struct SnapshotGraph {
         py::dict result("type"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"),
             "up"_a=(selecting || card_reward || game.screen == Screen::Death || rewards), "previous"_a=py::none(),
             "choice"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"));
-        if (rewards) { result["options"] = py::cast(fresh.rewardTypes); result["state"] = reward_screen(fresh); }
+        if (rewards) { result["options"] = game.smoked ? py::object(py::list()) : py::cast(fresh.rewardTypes); result["state"] = reward_screen(fresh); }
         else if (card_reward) {
             py::list options;
             for (int i = 0; i < game.reward_cards.size; ++i)
