@@ -21,3 +21,4 @@ SPIRE_UNIT(MeatOnTheBone, "Meat on the Bone", "core/relics/meat_on_the_bone.hpp"
 SPIRE_UNIT(MedicalKit, "Medical Kit", "core/relics/medical_kit.hpp", MedicalKit)
 SPIRE_UNIT(MembershipCard, "Membership Card", "core/relics/membership_card.hpp", MembershipCard)
 SPIRE_UNIT(MercuryHourglass, "Mercury Hourglass", "core/relics/mercury_hourglass.hpp", MercuryHourglass)
+SPIRE_UNIT(MoltenEgg2, "Molten Egg 2", "core/relics/molten_egg2.hpp", MoltenEgg2)
