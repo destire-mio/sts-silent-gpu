@@ -7,6 +7,7 @@ struct Slimed : CardHooks {
         return {CardType::Status, CardTarget::Self, 1, -1, -1, -1, 0, 0, 0, true, false};
     }
     static SPIRE_FN void use(Game&, int, int) {}
+    static SPIRE_FN Card makeCopy(const Game&, int) { return make_card(CardId::Slimed); }
     static SPIRE_FN void upgrade(Card&) {}
 };
 }

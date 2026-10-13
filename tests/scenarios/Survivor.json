@@ -3,14 +3,36 @@
     {
       "id": "Survivor",
       "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
     }
   ],
-  "relics": [],
+  "relics": [
+    "Ring of the Snake"
+  ],
   "potions": [
     null,
     null
   ],
-  "hp": 70,
-  "max_hp": 70,
+  "hp": 59,
+  "max_hp": 66,
   "encounter": "Cultist"
 }

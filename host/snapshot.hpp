@@ -68,6 +68,10 @@ struct SnapshotGraph {
         return inventory["units"].cast<py::dict>()[kind].cast<py::list>()[id].cast<py::dict>();
     }
 
+    py::object reference(int kind, int group, int index) const {
+        return py::dict("ref"_a=identities.at({kind, group, index}));
+    }
+
     std::string class_name(const char* kind, int id) const {
         return metadata(kind, id)["class"].cast<std::string>();
     }
@@ -284,7 +288,8 @@ struct SnapshotGraph {
             if (field == "chosenClass") return py::str("THE_SILENT");
             if (field == "discardPile") return group(0, "DISCARD_PILE", &game.discard);
             if (field == "drawPile") return group(1, "DRAW_PILE", &game.draw);
-            if (field == "endTurnQueued" || field == "isEndingTurn") return py::bool_(false);
+            if (field == "endTurnQueued") return py::bool_(game.player.end_turn_queued);
+            if (field == "isEndingTurn") return py::bool_(false);
             if (field == "energy") return object({4, 0, 0}, "core.EnergyManager", [&](const std::string& name) -> py::object {
                 if (name == "EnergyManager.energy") return py::int_(game.player.energy_per_turn);
                 if (name == "EnergyManager.energyMaster") return py::int_(game.player.energy_master);

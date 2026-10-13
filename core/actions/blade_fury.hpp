@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "../cards/shiv.hpp"
 
 namespace spire::units::actions {
 struct BladeFuryAction : ActionHooks {
@@ -10,6 +11,13 @@ struct BladeFuryAction : ActionHooks {
         e.source = e.target = no_target;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
+        Card shiv = cards::Shiv::make(g);
+        if (e.state.BladeFuryAction.upgrade) cards::Shiv::upgrade(shiv);
+        Effect copies{};
+        copies.kind = EffectKind::MakeTempCardInHand;
+        copies.card = create_card(g, shiv);
+        copies.amount = g.hand.size;
+        add_top(g, copies);
         Effect discard{};
         discard.kind = EffectKind::Discard;
         discard.source = discard.target = player_target;
