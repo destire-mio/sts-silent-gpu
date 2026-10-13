@@ -134,6 +134,7 @@ struct SnapshotGraph {
             if (field == "upgradedDamage") return py::bool_(card.upgrades > 0 && definition.upgrade_damage != 0);
             if (field == "upgradedBlock") return py::bool_(card.upgrades > 0 && definition.upgrade_block != 0);
             if (field == "upgradedMagicNumber") return py::bool_(card.upgrades > 0 && definition.upgrade_magic != 0);
+            if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
             if (field == "exhaust") return py::bool_(card.exhaust);
             if (field == "isEthereal") return py::bool_(card.ethereal);
             if (field == "isInnate") return py::bool_(card.innate);
@@ -160,7 +161,6 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "price") return py::int_(0);
-            if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
                 field == "isMagicNumberModified" ||

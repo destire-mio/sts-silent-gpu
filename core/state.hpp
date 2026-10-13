@@ -33,12 +33,13 @@ struct Card {
     bool purge_on_use : 1;
     bool shuffle_back_into_draw_pile : 1;
     bool return_to_hand : 1;
+    bool pending_clear : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
-          shuffle_back_into_draw_pile(false), return_to_hand(false) {}
+          shuffle_back_into_draw_pile(false), return_to_hand(false), pending_clear(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
@@ -229,7 +230,6 @@ struct Game {
     Pool<Effect, action_capacity> action_objects{};
     Pool<Power, power_object_capacity> power_objects{};
     bool player_turn_effect_pending = false;
-    bool card_soul_pending = false;
     Pile drawn_cards{};
     Pile reward_cards{};
     int discovery_card = -1;

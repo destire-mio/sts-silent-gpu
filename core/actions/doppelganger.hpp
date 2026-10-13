@@ -13,7 +13,8 @@ struct Doppelganger : ActionHooks {
         e.source = no_target;
         e.target = no_target;
         e.state.Doppelganger.upgraded = upgraded;
-        e.state.Doppelganger.free_to_play_once = free;
+        // DoppelgangerAction constructor leaves freeToPlayOnce at false.
+        (void)free;
         e.state.Doppelganger.energy_on_use = energy_on_use;
         return e;
     }

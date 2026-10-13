@@ -75,10 +75,9 @@ SPIRE_FN inline void on_draw_or_discard(Game& g) {
 }
 SPIRE_FN inline void move_to_discard(Game& g, int card) {
     remove_queued_card(g, card);
-    card_resetAttributes(g, card);
+    g.cards[card].pending_clear = true;
     card_onMoveToDiscard(g, card);
     g.discard.push_back(card);
-    g.card_soul_pending = true;
     on_draw_or_discard(g);
 }
 SPIRE_FN inline Pile& get_pile(Game& g, PileId pile) {
@@ -359,7 +358,21 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     }
     if (m.pending_base_damage >= 0) m.intent_damage = calculate_intent_damage(g, owner, m.pending_base_damage);
 }
+SPIRE_FN inline void settle_card_moves(Game& g) {
+    // Soul.update clears the moving card and refreshes the hand when its move completes.
+    bool moved = false;
+    for (int i = 0; i < g.cards.size; ++i) {
+        if (!g.cards[i].pending_clear) continue;
+        card_clearPowers(g, i);
+        g.cards[i].pending_clear = false;
+        moved = true;
+    }
+    if (moved && g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward)
+        for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
+}
 SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
+    // DrawCardAction.update waits for SoulGroup.isActive to become false.
+    settle_card_moves(g);
     if (!effect.flag) { g.drawn_cards.clear(); effect.flag = true; }
     bool blocked = false;
     for (int i = 0; i < g.player.creature.powers.size; ++i)
@@ -466,6 +479,7 @@ SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atStartOfTurnPostDraw(g, powers.at(g.power_objects, i), player_target);
 }
 SPIRE_FN inline void begin_player_turn(Game& g) {
+    settle_card_moves(g);
     // AbstractMonster.updateDeathAnimation clears powers before the next player-turn callbacks.
     for (int i = 0; i < g.monster_order.size; ++i) {
         Creature& creature = g.monsters[g.monster_order[i]].creature;
@@ -629,12 +643,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             break;
         }
     }
-    if (g.card_soul_pending && g.screen != Screen::Discard && g.screen != Screen::Grid &&
-        g.screen != Screen::CardReward) {
-        // Soul.update refreshes the hand after discard movement settles, including on death.
-        g.card_soul_pending = false;
-        for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
-    }
+    settle_card_moves(g);
     for (int i = 0; i < g.monster_order.size; ++i) {
         Creature& creature = g.monsters[g.monster_order[i]].creature;
         if (creature.dead) {
@@ -689,7 +698,6 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.power_objects.clear();
     g.next_power_instance = 1;
     g.player_turn_effect_pending = false;
-    g.card_soul_pending = false;
     g.selection_for_upgrade = false;
     g.drawn_cards.clear();
     g.selection_any_number = false;
@@ -746,6 +754,11 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     enable.kind = EffectKind::EnableEndTurnButton;
     add_bottom(g, enable);
     relics_at_battle_start(g);
+    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStart(g, i);
+    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStartPostDraw(g, i);
+    for (int i = 0; i < g.draw.size; ++i) card_atTurnStart(g, g.draw[i]);
+    Powers& powers = g.player.creature.powers;
+    for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
     run_until_decision(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     refresh_powers(g);
