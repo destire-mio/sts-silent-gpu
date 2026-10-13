@@ -5,8 +5,8 @@ namespace spire::units::actions {
 struct Damage : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {true}; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
+        if (e.target == no_target) return;
         if (e.damage_type != DamageType::Thorns) {
-            if (e.target == no_target) return;
             const Creature& target = get_creature(g, e.target);
             if (target.dying || target.half_dead || (e.target != player_target && target.escaped)) return;
             if (e.source != no_target) {

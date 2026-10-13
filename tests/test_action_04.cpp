@@ -197,7 +197,7 @@ static void test_empty_targets_and_failed_autoplay() {
     run_until_decision(autoplay);
     require(autoplay.limbo.empty() && autoplay.discard.size == 1 && autoplay.discard[0] == status &&
             autoplay.manager.played_cards.size == 0 && autoplay.player.energy == 3 &&
-            !autoplay.cards[status].in_autoplay && !autoplay.cards[status].dont_trigger_on_use,
+            !autoplay.cards[status].in_autoplay && !autoplay.cards[status].dont_trigger_on_use_card,
             "failed autoplay cleans up its card without recording or charging a play");
 }
 
