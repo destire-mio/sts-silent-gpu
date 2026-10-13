@@ -3,6 +3,9 @@
 #include "spire_generated/declarations.hpp"
 
 namespace spire {
+SPIRE_FN inline PotionId potion_from_pool(Random&);
+SPIRE_FN inline void add_gold_reward(Game&, int);
+SPIRE_FN inline void add_potion_reward(Game&, PotionId);
 SPIRE_FN inline bool keeps_block(const Game&, int);
 SPIRE_FN inline int relic_block_loss(const Game&);
 SPIRE_FN inline float rear_damage_multiplier(const Game&, int);

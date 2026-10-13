@@ -1,0 +1,26 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "War Paint"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 45,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

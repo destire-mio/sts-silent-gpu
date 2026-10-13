@@ -78,7 +78,7 @@ for name in ("onGainGold", "onLoseGold", "onSpendGold", "onEquip", "onUnequip", 
              "atBattleStart", "atBattleStartPreDraw", "atTurnStart", "atTurnStartPostDraw",
              "onPlayerEndTurn", "onBloodied", "onNotBloodied", "onManualDiscard", "onVictory",
              "onMeditate", "onEnergyRecharge", "onRest", "onRitual", "onEnterRestRoom", "onRefreshHand",
-             "onShuffle", "onSmith", "onDrawOrDiscard", "onMasterDeckChange", "onUsePotion", "beforeEnergyPrep"):
+             "onShuffle", "onSmith", "onDrawOrDiscard", "onMasterDeckChange", "onUsePotion", "disableUntilTurnEnds", "beforeEnergyPrep"):
     relic(name)
 relic("update")
 relic("setCounter", "int counter", body="g.run.relics[relic].counter = counter;")
@@ -114,7 +114,7 @@ for name in ("onChestOpen", "onChestOpenAfter"):
     relic(name, "bool boss_chest")
 for name in ("onEnterRoom", "justEnteredRoom"):
     relic(name, "int room")
-relic("addCampfireOption", "int options")
+relic("addCampfireOption", "CampfireOptions& options")
 
 
 def card(name, suffix="", result="void", body="", const=False):
@@ -143,7 +143,7 @@ card("applyPowersToBlock", body="apply_card_block(g, card);")
 card("calculateCardDamage", "int target", body="calculate_card_damage(g, card, target);")
 card("resetAttributes", body="reset_attributes(g.cards[card]);")
 card("clearPowers", body="card_resetAttributes(g, card);")
-card("canUpgrade", result="bool", body="const CardType type = card_data(g.cards[card].id).type; return type != CardType::Curse && type != CardType::Status && g.cards[card].upgrades == 0;", const=True)
+card("canUpgrade", result="bool", body="const Card& value = get_card(g, card); const CardType type = card_data(value.id).type; return type != CardType::Curse && type != CardType::Status && value.upgrades == 0;", const=True)
 card("hasEnoughEnergy", result="bool", body="return card_has_enough_energy_base(g, card);", const=True)
 card("freeToPlay", result="bool", body="return card_free_to_play_base(g, card);", const=True)
 card("cardPlayable", "int target", "bool", "return !(g.cards[card].target == CardTarget::Enemy && target >= 0 && g.monsters[target].creature.dying) && !monsters_basically_dead(g);", True)

@@ -224,7 +224,11 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.rewardGold = game.rng.treasure.random(10, 20);
         run.rewardTypes.push_back("GOLD");
     }
-    const int chance = escaped ? 0 : 40 + run.blizzardPotionMod;
+    int chance = escaped ? 0 : 40 + run.blizzardPotionMod;
+    for (int i = 0; i < game.run.relics.size; ++i) {
+        const int chance_override = relic_data(game.run.relics[i].id).potion_reward_chance;
+        if (chance_override >= 0) chance = chance_override;
+    }
     if (game.rng.potion.random(0, 99) < chance) {
         const int roll = game.rng.potion.random(0, 99);
         const int rarity = roll < 65 ? 0 : roll < 90 ? 1 : 2;

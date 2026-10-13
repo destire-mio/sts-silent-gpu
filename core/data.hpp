@@ -60,6 +60,7 @@ struct RelicData {
     int score = 0;
     const char* empty_orb_class = nullptr;
     bool prevents_revival = false;
+    int potion_reward_chance = -1;
 };
 struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; bool revives_player = false; bool limited_exclusion = false; };
 struct ActionData { bool survives_combat_end = false; const char* type = nullptr; bool multi_step = false; };

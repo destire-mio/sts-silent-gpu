@@ -48,6 +48,8 @@ struct Card {
           bottle_flame(false), bottle_lightning(false), bottle_tornado(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
+struct CampfireChoice { CampfireOption kind; bool usable; };
+using CampfireOptions = List<CampfireChoice, 8>;
 struct Relic {
     RelicId id;
     bool grayscale = false;
@@ -254,7 +256,11 @@ struct Run {
     PotionId potions[potion_capacity]{};
     PotionState potion_state[potion_capacity]{};
 };
+enum class RewardKind : uint8_t { Card, Gold, Potion, Relic };
 struct RoomReward {
+    RewardKind kind = RewardKind::Card;
+    int amount = 0;
+    PotionId potion = PotionId::Empty;
     List<uint8_t, reward_card_capacity> cards{};
     RelicId relic = RelicId::Count;
     int relic_link = -1;
@@ -286,8 +292,6 @@ struct Game {
     Pile pending_obtains{};
     Pile reward_cards{};
     List<PotionId, 5> acquisition_potions{};
-    List<RelicKey, 3> acquisition_relics{};
-    CardId confirmation_card = CardId::Strike_G;
     List<RoomReward, room_reward_capacity> room_rewards{};
     int next_reward_identity = 1;
     int acquisition_reward = -1;
@@ -319,6 +323,8 @@ struct Game {
     bool end_turn_enabled = true;
     bool selection_up_to = false;
     bool reward_skippable = false;
+    bool reward_proceed_visible = false;
+    bool reward_relic_warning_seen = false;
     bool battle_over = false;
     bool room_in_combat = false;
     RoomKind room_kind = RoomKind::Monster;

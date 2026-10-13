@@ -132,8 +132,29 @@ SPIRE_FN inline void add_room_card_reward(Game& g) {
     }
     if (!reward.cards.empty()) g.room_rewards.push_back(reward);
 }
+SPIRE_FN inline void add_gold_reward(Game& g, int amount) {
+    for (int i = 0; i < g.room_rewards.size; ++i) {
+        if (g.room_rewards[i].kind != RewardKind::Gold) continue;
+        g.room_rewards[i].amount += amount;
+        return;
+    }
+    RoomReward reward{};
+    reward.kind = RewardKind::Gold;
+    reward.amount = amount;
+    reward.identity = g.next_reward_identity++;
+    g.room_rewards.push_back(reward);
+}
+SPIRE_FN inline void add_potion_reward(Game& g, PotionId potion) {
+    RoomReward reward{};
+    reward.kind = RewardKind::Potion;
+    reward.potion = potion;
+    reward.identity = g.next_reward_identity++;
+    g.room_rewards.push_back(reward);
+}
 SPIRE_FN inline void open_room_card_rewards(Game& g) {
     add_room_card_reward(g);
+    g.reward_proceed_visible = false;
+    g.reward_skippable = true;
     g.screen = Screen::CombatReward;
 }
 SPIRE_FN inline void remove_room_relic_reward(Game& g) {
@@ -245,28 +266,12 @@ SPIRE_FN inline RelicKey random_relic_key(Game& g, int tier, bool from_end) {
 SPIRE_FN inline void add_relic_reward(Game& g, RelicTier tier) {
     RoomReward reward{};
     reward.identity = g.next_reward_identity++;
+    reward.kind = RewardKind::Relic;
     reward.relic = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier))));
     g.room_rewards.push_back(reward);
 }
 SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
-    if (g.screen == Screen::MasterConfirm) {
-        policy.nextInt(1);
-        Card card = make_card(g.confirmation_card);
-        card.uuid = g.next_card_uuid++;
-        obtain_card(g, card);
-        g.screen = Screen::None;
-        for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
-    }
-    while (g.screen == Screen::RelicRewards) {
-        const int choice = policy.nextInt(g.acquisition_relics.size + 1);
-        if (choice == g.acquisition_relics.size) g.screen = Screen::None;
-        else {
-            const RelicKey key = g.acquisition_relics.erase(choice);
-            equip_relic(g, relic_id(relic_key_name(key)));
-            for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
-        }
-    }
     while (g.screen == Screen::PotionRewards) {
         ActionSet actions{};
         for (int i = 0; i < g.run.potion_slots; ++i) {

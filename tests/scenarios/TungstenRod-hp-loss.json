@@ -1,0 +1,50 @@
+{
+  "deck": [
+    {
+      "id": "Pain",
+      "upgrades": 0
+    },
+    {
+      "id": "Regret",
+      "upgrades": 0
+    },
+    {
+      "id": "Burn",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "TungstenRod"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 45,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

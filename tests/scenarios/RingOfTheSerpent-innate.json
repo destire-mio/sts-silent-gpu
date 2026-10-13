@@ -1,0 +1,62 @@
+{
+  "deck": [
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Serpent"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 45,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

@@ -1,0 +1,63 @@
+{
+  "deck": [
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Velvet Choker",
+    "Unceasing Top"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 45,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

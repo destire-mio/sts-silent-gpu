@@ -8,8 +8,10 @@ struct CallingBell : RelicHooks {
     static SPIRE_FN void initializeState(Relic& relic) { relic.state.CallingBell.cardsReceived = true; }
     static SPIRE_FN void onEquip(Game& g, int relic) {
         g.run.relics[relic].state.CallingBell.cardsReceived = false;
-        g.confirmation_card = CardId::CurseOfTheBell;
-        g.screen = Screen::MasterConfirm;
+        g.grid_cards.clear();
+        g.grid_cards.push_back(create_card(g, make_card(CardId::CurseOfTheBell)));
+        g.selection_confirmation = true;
+        g.screen = Screen::Grid;
     }
     static SPIRE_FN RelicKey screenlessRelic(Game& g, int tier) {
         RelicKey key;
@@ -21,9 +23,16 @@ struct CallingBell : RelicHooks {
         if (!g.run.relics[relic].state.CallingBell.cardsReceived && g.screen == Screen::None) {
             add_room_card_reward(g);
             g.room_rewards.clear();
-            g.acquisition_relics.clear();
-            for (int tier = 0; tier < 3; ++tier) g.acquisition_relics.push_back(screenlessRelic(g, tier));
-            g.screen = Screen::RelicRewards;
+            for (int tier = 0; tier < 3; ++tier) {
+                RoomReward reward{};
+                reward.kind = RewardKind::Relic;
+                reward.relic = relic_id(relic_key_name(screenlessRelic(g, tier)));
+                reward.identity = g.next_reward_identity++;
+                g.room_rewards.push_back(reward);
+            }
+            g.reward_proceed_visible = true;
+            g.reward_skippable = false;
+            g.screen = Screen::CombatReward;
             g.run.relics[relic].state.CallingBell.cardsReceived = true;
         }
     }
