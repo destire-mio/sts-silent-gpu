@@ -74,7 +74,7 @@ RULE_CALLERS = {
     "changeUncommonCardRewardChance": ("core/lifecycle.hpp", "relic_changeUncommonCardRewardChance("),
     "canSpawn": ("core/lifecycle.hpp", "relic_can_spawn_id("),
     "deathReact": ("core/monsters/bandit_bear.hpp", "monster_deathReact("),
-    "boss room flag": ("core/engine.hpp", "enter_boss_treasure("),
+    "boss room flag": ("core/engine.hpp", "g.room_kind = room;"),
     "shop_multiplier": ("core/shop.hpp", ".shop_multiplier"),
     "purge_cost": ("core/shop.hpp", ".purge_cost"),
     "rest_heal_bonus": ("core/campfire.hpp", ".rest_heal_bonus"),
