@@ -27,3 +27,4 @@ SPIRE_UNIT(JackOfAllTrades, "Jack Of All Trades", "core/cards/jack_of_all_trades
 SPIRE_UNIT(Madness, "Madness", "core/cards/madness.hpp", Madness)
 SPIRE_UNIT(Magnetism, "Magnetism", "core/cards/magnetism.hpp", Magnetism)
 SPIRE_UNIT(MasterOfStrategy, "Master of Strategy", "core/cards/master_of_strategy.hpp", MasterOfStrategy)
+SPIRE_UNIT(Mayhem, "Mayhem", "core/cards/mayhem.hpp", Mayhem)
