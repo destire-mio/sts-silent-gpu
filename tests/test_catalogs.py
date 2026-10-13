@@ -13,6 +13,9 @@ UNITS = {
         return {CardType::Skill, CardTarget::Self, 0, -1, -1, -1, 0, 0, 0, false, false};
     }
     static SPIRE_FN void use(Game& g, int, int) { g.run.gold += 1; }
+    static SPIRE_FN void triggerOnGainEnergy(Game& g, int, int amount, bool card_gain) {
+        g.run.gold = g.run.gold * 10 + (card_gain ? amount : 1);
+    }
 """),
     "powers": ("PowerHooks", """
     SPIRE_STATE(CatalogProbe, int counter; bool active;)
@@ -22,10 +25,14 @@ UNITS = {
         p.state.CatalogProbe.active = true;
         g.run.gold += 2 * p.state.CatalogProbe.counter;
     }
+    static SPIRE_FN void onEnergyRecharge(Game& g, Power&, int) { g.run.gold = g.run.gold * 10 + 3; }
+    static SPIRE_FN void onDamageAllEnemies(Game&, Power&, int, int* amounts) { amounts[0] += 2; }
 """),
     "relics": ("RelicHooks", """
     static SPIRE_FN constexpr RelicData data() { return {}; }
     static SPIRE_FN void atBattleStart(Game& g, int) { g.run.gold += 4; }
+    static SPIRE_FN void onEnergyRecharge(Game& g, int) { g.run.gold = g.run.gold * 10 + 2; }
+    static SPIRE_FN void onShuffle(Game& g, int) { g.run.gold += 100; }
 """),
     "potions": ("PotionHooks", """
     static SPIRE_FN constexpr PotionData data() { return {8}; }
@@ -40,6 +47,9 @@ UNITS = {
         set_monster_move(g, owner, 1, Intent::Defend);
     }
     static SPIRE_FN void takeTurn(Game& g, int) { g.run.gold += 16; }
+    static SPIRE_FN void changeState(Game& g, int owner, const char* state) {
+        if (state[0] == 'T') g.monsters[owner].creature.block += 7;
+    }
 """),
     "encounters": ("", """
     static SPIRE_FN void build(Game& g) {
@@ -95,6 +105,35 @@ int main() {
     if (host::parse_id<MonsterId>("CatalogProbe", host::monster_names) != MonsterId::CatalogProbe) return 12;
     if (host::parse_id<EncounterId>("CatalogProbe", host::encounter_names) != EncounterId::CatalogProbe) return 13;
     if (host::parse_id<EffectKind>("CatalogProbe", host::effect_names) != EffectKind::CatalogProbe) return 14;
+    using namespace spire::units::actions;
+    g.manager.actions.clear();
+    g.run.gold = 0;
+    g.hand.push_back(0);
+    Effect energy = GainEnergy::make(2);
+    execute_effect(g, energy);
+    if (g.run.gold != 2 || g.player.energy != 2 || g.manager.energy_gained_this_combat != 2) return 17;
+    apply_power(g, player_target, player_target, PowerId::CatalogProbe, 1);
+    g.run.gold = 0;
+    g.manager.turn_has_ended = true;
+    energy = GainEnergyAndEnableControls::make(2);
+    execute_effect(g, energy);
+    if (g.run.gold != 123 || g.player.energy != 4 || g.manager.turn_has_ended) return 18;
+    Effect shuffle{};
+    shuffle.kind = EffectKind::Shuffle;
+    g.run.gold = 0;
+    add_bottom(g, shuffle);
+    if (g.run.gold != 100) return 19;
+    shuffle = g.manager.actions.pop_front();
+    execute_effect(g, shuffle);
+    if (g.run.gold != 100) return 20;
+    g.multi_damage[0][0] = 1;
+    g.cards[0].multi_damage_count = 1;
+    Effect all = DamageAllEnemies::from_card(g, 0);
+    execute_effect(g, all);
+    if (g.monsters[0].creature.hp != 2 || g.multi_damage[0][0] != 3) return 21;
+    Effect change = ChangeState::make(0, "TEST");
+    execute_effect(g, change);
+    if (g.monsters[0].creature.block != 7 || !change.state.ChangeState.called) return 22;
     std::puts("all seven catalog extensions dispatched");
 }
 """

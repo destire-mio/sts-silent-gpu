@@ -3,10 +3,26 @@
 
 namespace spire::units::actions {
 struct AddCardDiscard : ActionHooks {
+    SPIRE_FN static Effect make(int card, int amount) {
+        Effect e{};
+        e.kind = EffectKind::AddCardDiscard;
+        action_initialize_state(e);
+        e.source = e.target = no_target;
+        e.card = card;
+        e.amount = amount;
+        return e;
+    }
+    SPIRE_FN static Effect make(int card, bool same_uuid) {
+        Effect e = make(card, 1);
+        e.flag = same_uuid;
+        return e;
+    }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
+        // MakeTempCardInDiscardAction.update has no creation branch for six or more cards.
+        if (e.amount >= 6) return;
         for (int i = 0; i < e.amount; ++i) {
             const int card = g.cards.size;
-            g.cards.push_back(stat_equivalent_copy(g, e.card));
+            g.cards.push_back(e.flag ? card_makeSameInstanceOf(g, e.card) : card_makeStatEquivalentCopy(g, e.card));
             g.cards[card].uuid = e.flag ? g.cards[e.card].uuid : card + 1;
             g.discard.push_back(card);
         }

@@ -29,6 +29,14 @@ inline py::float_ java_float(float value) {
 
 struct UnitStateSnapshot {
     py::dict fields;
+    template<class T, size_t N> void operator()(const char* name, const T (&value)[N]) {
+        if constexpr (std::is_same_v<T, char>) fields[py::str(name)] = py::str(value);
+        else {
+            py::list items;
+            for (const T& item : value) items.append(py::cast(item));
+            fields[py::str(name)] = items;
+        }
+    }
     template<class T> void operator()(const char* name, const T& value) {
         std::string field;
         bool upper = false;
@@ -465,23 +473,28 @@ struct SnapshotGraph {
         return object({15, queue, index}, name, [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
             if (key == "AbstractGameAction.actionType") {
-                if (effect.kind == EffectKind::Damage) return py::str("DAMAGE");
+                if (effect.kind == EffectKind::Damage || effect.kind == EffectKind::DamageAllEnemies || effect.kind == EffectKind::LoseHP) return py::str("DAMAGE");
                 if (effect.kind == EffectKind::Block) return py::str("BLOCK");
                 if (effect.kind == EffectKind::Draw) return py::str("DRAW");
-                if (effect.kind == EffectKind::Discard) return py::str("DISCARD");
+                if (effect.kind == EffectKind::Discard || effect.kind == EffectKind::DiscardSpecificCard) return py::str("DISCARD");
+                if (effect.kind == EffectKind::Exhaust || effect.kind == EffectKind::ExhaustCard) return py::str("EXHAUST");
+                if (effect.kind == EffectKind::Heal) return py::str("HEAL");
+                if (effect.kind == EffectKind::Escape) return py::str("TEXT");
+                if (effect.kind == EffectKind::IntentFlash) return py::str("WAIT");
+                if (effect.kind == EffectKind::ChangeState) return py::str("SPECIAL");
                 if (effect.kind == EffectKind::UseCard) return py::str(effect.flag ? "EXHAUST" : "USE");
                 if (effect.kind == EffectKind::ApplyPower) return py::str("POWER");
                 if (effect.kind == EffectKind::ReducePower) return py::str("REDUCE_POWER");
                 if (effect.kind == EffectKind::RemovePower) return py::str("DEBUFF");
                 if (effect.kind == EffectKind::Shuffle) return py::str("SHUFFLE");
-                if (effect.kind == EffectKind::AddCardDiscard) return py::str("CARD_MANIPULATION");
+                if (effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::BetterDiscardPileToHand) return py::str("CARD_MANIPULATION");
                 return py::none();
             }
             if (key == "AbstractGameAction.amount") {
                 if (effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::RemovePower) return py::int_(0);
                 return py::int_(effect.kind == EffectKind::UseCard ? 1 : effect.amount);
             }
-            if (key == "AbstractGameAction.damageType") return py::none();
+            if (key == "AbstractGameAction.damageType") return effect.kind == EffectKind::DamageAllEnemies ? py::object(py::str(damage_type_names[static_cast<int>(effect.damage_type)])) : py::object(py::none());
             if (key == "AbstractGameAction.isDone") return py::bool_(effect.done);
             if (key == "AbstractGameAction.source") {
                 if (effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
@@ -533,8 +546,20 @@ struct SnapshotGraph {
             if (key == "DrawCardAction.clearDrawHistory") return py::bool_(!effect.flag);
             if (key == "DrawCardAction.followUpAction") return py::none();
             if (key == "DiscardAction.endTurn") return py::bool_(effect.flag);
-            if (key == "DiscardAction.isRandom") return py::bool_(false);
-            if (key == "DiscardAction.p" || key == "HandCheckAction.player") return player();
+            if (key == "DiscardAction.isRandom") return py::bool_(effect.state.Discard.isRandom);
+            if (key == "DiscardAction.p" || key == "ExhaustAction.p" || key == "BetterDiscardPileToHandAction.player" || key == "HandCheckAction.player") return player();
+            if (key == "IntentFlashAction.m") return monster(effect.extra);
+            if (key == "ChangeStateAction.m") return monster(effect.state.ChangeState.m);
+            if (key == "ExhaustSpecificCardAction.targetCard" || key == "DiscardSpecificCardAction.targetCard") return card(effect.card);
+            if (key == "ExhaustSpecificCardAction.group") return pile_group(effect.state.ExhaustCard.group);
+            if (key == "DiscardSpecificCardAction.group") return effect.state.DiscardSpecificCard.defaultGroup ? py::object(py::none()) : pile_group(effect.state.DiscardSpecificCard.group);
+            if (key == "DamageAllEnemiesAction.damage") {
+                if (effect.state.DamageAllEnemies.utilizeBaseDamage && effect.state.DamageAllEnemies.firstFrame) return py::none();
+                py::list result;
+                for (int i = 0; i < effect.state.DamageAllEnemies.damageCount; ++i)
+                    result.append(effect.card >= 0 ? game.multi_damage[effect.card][i] : effect.state.DamageAllEnemies.damage[i]);
+                return result;
+            }
             if (key == "RollMoveAction.monster") return monster(effect.target);
             if (key == "UseCardAction.exhaustCard") return py::bool_(effect.flag);
             if (key == "UseCardAction.reboundCard" || key == "UseCardAction.returnToHand") return py::bool_(false);
@@ -543,6 +568,18 @@ struct SnapshotGraph {
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
+    }
+
+    py::object pile_group(PileId pile) {
+        switch (pile) {
+        case PileId::Hand: return group(3, "HAND", &game.hand);
+        case PileId::Draw: return group(1, "DRAW_PILE", &game.draw);
+        case PileId::Discard: return group(0, "DISCARD_PILE", &game.discard);
+        case PileId::Exhaust: return group(2, "EXHAUST_PILE", &game.exhaust);
+        case PileId::Limbo: return group(4, "UNSPECIFIED", &game.limbo);
+        }
+        SPIRE_ASSERT(false);
+        __builtin_unreachable();
     }
 
     py::object effects(const Queue<Effect, action_capacity>& queue, int identity) {
@@ -617,27 +654,48 @@ struct SnapshotGraph {
     }
 
     py::dict screen(const FreshRunState& fresh) {
-        const bool selecting = game.screen == Screen::Discard;
+        const bool selecting = game.screen == Screen::Discard || game.screen == Screen::Grid;
+        const bool grid = game.screen == Screen::Grid;
         const bool rewards = game.screen == Screen::Victory;
-        py::dict result("type"_a=(selecting ? "HAND_SELECT" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"),
+        py::dict result("type"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"),
             "up"_a=(selecting || game.screen == Screen::Death || rewards), "previous"_a=py::none(),
-            "choice"_a=(selecting ? "HAND_SELECT" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"));
+            "choice"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"));
         if (rewards) { result["options"] = py::cast(fresh.rewardTypes); result["state"] = reward_screen(fresh); }
         else if (!selecting) { result["options"] = py::list(); result["state"] = py::none(); }
         else {
             py::list options;
-            if (game.selected_cards.size < game.selection_amount)
-                for (int i = 0; i < game.hand.size; ++i)
-                    options.append(card_names[static_cast<int>(game.cards[game.hand[i]].id)]);
+            const Pile& choices = grid ? game.discard : game.hand;
+            if (grid || game.selected_cards.size < game.selection_amount)
+                for (int i = 0; i < choices.size; ++i)
+                    options.append(card_names[static_cast<int>(game.cards[choices[i]].id)]);
             result["options"] = options;
-            result["state"] = object({17, 0, 0}, "screens.select.HandCardSelectScreen", [&](const std::string& key) -> py::object {
+            result["state"] = object({17, grid ? 1 : 0, 0}, grid ? "screens.select.GridCardSelectScreen" : "screens.select.HandCardSelectScreen", [&](const std::string& key) -> py::object {
                 const std::string field = key.substr(key.find('.') + 1);
+                if (grid) {
+                    if (field == "targetGroup") return group(0, "DISCARD_PILE", &game.discard);
+                    if (field == "selectedCards") {
+                        py::list selected;
+                        for (int i = 0; i < game.selected_cards.size; ++i) selected.append(card(game.selected_cards[i]));
+                        return selected;
+                    }
+                    if (field == "numCards") return py::int_(game.selection_amount);
+                    if (field == "cardSelectAmount") return py::int_(game.selected_cards.size);
+                    if (field == "prevDeckSize") return py::int_(game.discard.size);
+                    if (field == "hoveredCard") return py::none();
+                    if (field == "anyNumber") return py::bool_(game.selection_any_number);
+                    if (field == "canCancel") return py::bool_(true);
+                    if (field == "forUpgrade" || field == "forTransform" || field == "forPurge" || field == "confirmScreenUp" ||
+                        field == "isJustForConfirming" || field == "cancelWasOn" || field == "forClarity") return py::bool_(false);
+                    return {};
+                }
                 if (field == "numCardsToSelect") return py::int_(game.selection_amount);
                 if (field == "selectedCards") return group(6, "UNSPECIFIED", &game.selected_cards);
                 if (field == "hand") return group(3, "HAND", &game.hand);
                 if (field == "wereCardsRetrieved") return py::bool_(game.selected_cards_retrieved);
                 if (field == "numSelected") return py::int_(0);
-                if (field == "anyNumber" || field == "canPickZero" || field == "forTransform" ||
+                if (field == "anyNumber") return py::bool_(game.selection_any_number);
+                if (field == "canPickZero") return py::bool_(game.selection_can_pick_zero);
+                if (field == "forTransform" ||
                     field == "forUpgrade" || field == "upTo") return py::bool_(false);
                 return {};
             });
@@ -651,7 +709,7 @@ struct SnapshotGraph {
         py::dict result("event_chances"_a=py::dict("ELITE_CHANCE"_a=0.0, "MONSTER_CHANCE"_a=0.1, "SHOP_CHANCE"_a=0.03, "TREASURE_CHANCE"_a=0.02),
             "potion"_a=py::dict("blizzardPotionMod"_a=fresh.blizzardPotionMod), "shop"_a=py::dict("purgeCost"_a=75, "actualPurgeCost"_a=75),
             "drawn_cards"_a=cards(game.drawn_cards), "scraped_cards"_a=py::list(), "obtained_cards"_a=py::dict());
-        result["actions.common.ExhaustAction"] = py::dict("numExhausted"_a=0);
+        result["actions.common.ExhaustAction"] = py::dict("numExhausted"_a=game.exhaust_action_num);
         result["actions.common.DiscardAction"] = py::dict("numDiscarded"_a=game.discard_action_num);
         result["actions.common.PutOnBottomOfDeckAction"] = py::dict("numPlaced"_a=0);
         result["actions.common.PutOnDeckAction"] = py::dict("numPlaced"_a=0);

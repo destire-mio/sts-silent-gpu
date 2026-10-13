@@ -5,10 +5,25 @@ namespace spire::units::actions {
 struct Damage : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {true}; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!alive(get_creature(g, e.target)) ||
-            (e.damage_type != DamageType::Thorns && e.source != no_target && !alive(get_creature(g, e.source)))) return;
-        if (e.extra != 0 && g.run.gold > 0) e.extra = min(e.extra, g.run.gold);
+        if (e.damage_type != DamageType::Thorns) {
+            if (e.target == no_target) return;
+            const Creature& target = get_creature(g, e.target);
+            if (target.dying || target.half_dead || (e.target != player_target && target.escaped)) return;
+            if (e.source != no_target) {
+                const Creature& source = get_creature(g, e.source);
+                if (source.dying || source.half_dead) return;
+            }
+        }
+        Creature& target = get_creature(g, e.target);
+        int& gold = e.target == player_target ? g.run.gold : target.gold;
+        if (e.extra != 0 && gold != 0) {
+            e.extra = min(e.extra, gold);
+            gold -= e.extra;
+            if (e.source == player_target) gain_gold(g, e.extra);
+            else get_creature(g, e.source).gold += e.extra;
+        }
         damage(g, e);
+        if (monsters_basically_dead(g)) clear_post_combat_actions(g);
     }
 };
 }

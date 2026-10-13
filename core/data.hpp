@@ -18,6 +18,7 @@ struct PowerData {
     bool prevents_attacks = false;
     bool free_attacks = false;
     bool turn_based = false;
+    bool stacks_separately = false;
 };
 struct RelicData { int counter = -1; int price = 300; bool can_play_status = false; bool can_play_curse = false; };
 struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; };

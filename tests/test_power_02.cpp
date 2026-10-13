@@ -228,8 +228,9 @@ static void test_nightmare_and_sentinels() {
     apply_prepared_power(g, player_target, player_target, first, 3);
     apply_prepared_power(g, player_target, player_target, second, 2);
     const Power& stored = g.player.creature.powers[find_power(g.player.creature, PowerId::Nightmare)];
-    require(stored.amount == 5 && stored.state.Nightmare.card == copy && g.cards[copy].base_block == 13,
-            "Nightmare stacking retains the first power's independent card object");
+    require(stored.amount == 3 && stored.state.Nightmare.card == copy && g.cards[copy].base_block == 13 &&
+            g.player.creature.powers[find_power(g.player.creature, PowerId::Nightmare) + 1].amount == 2,
+            "Nightmare applications retain separate powers and independent card objects");
     apply_power(g, player_target, 0, PowerId::Minion, 7);
     apply_power(g, player_target, 0, PowerId::PainfulStabs, 7);
     require(power_amount(g.monsters[0].creature, PowerId::Minion) == -1 &&
