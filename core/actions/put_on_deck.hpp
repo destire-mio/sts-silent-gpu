@@ -8,20 +8,12 @@ struct PutOnDeck : ActionHooks {
     SPIRE_SNAPSHOT("PutOnDeckAction.isRandom", scalar, effect.flag)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(PutOnDeck, bool selecting;)
-    SPIRE_FN static void move_to_deck(Game& g, int card) {
-        remove_queued_card(g, card);
-        for (int i = 0; i < g.hand.size; ++i)
-            if (g.hand[i] == card) { g.hand.erase(i); break; }
-        g.draw.push_back(card);
-        card_clearPowers(g, card);
-        for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
-    }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         if (!e.state.PutOnDeck.selecting) {
             e.amount = min(e.amount, g.hand.size);
             if (e.flag) {
                 for (int i = 0; i < e.amount; ++i)
-                    move_to_deck(g, g.hand[g.rng.card_random.random(g.hand.size - 1)]);
+                    hand_to_deck(g, g.hand[g.rng.card_random.random(g.hand.size - 1)]);
             } else {
                 if (g.hand.size > e.amount) {
                     g.put_on_deck_num = e.amount;
@@ -31,12 +23,12 @@ struct PutOnDeck : ActionHooks {
                 }
                 // PutOnDeckAction.update compares i with the shrinking hand size.
                 for (int i = 0; i < g.hand.size; ++i)
-                    move_to_deck(g, g.hand[g.rng.card_random.random(g.hand.size - 1)]);
+                    hand_to_deck(g, g.hand[g.rng.card_random.random(g.hand.size - 1)]);
             }
         }
         if (!g.selected_cards_retrieved) {
             for (int i = 0; i < g.selected_cards.size; ++i)
-                move_to_deck(g, g.selected_cards[i]);
+                hand_to_deck(g, g.selected_cards[i]);
             refresh_hand(g);
             g.selected_cards_retrieved = true;
         }

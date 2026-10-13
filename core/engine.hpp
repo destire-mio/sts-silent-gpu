@@ -80,19 +80,10 @@ SPIRE_FN inline void obtain_potion(Game& g, PotionId id, const PotionState& stat
     }
 }
 SPIRE_FN inline void move_to_bottom_of_deck(Game& g, int card) {
-    for (int i = 0; i < g.manager.card_queue.size; ++i) {
-        if (g.manager.card_queue[i].card != card) continue;
-        const int count = g.manager.card_queue.size;
-        for (int j = 0; j < count; ++j) {
-            const CardQueueItem item = g.manager.card_queue.pop_front();
-            if (j != i) g.manager.card_queue.push_back(item);
-        }
-        break;
-    }
-    for (int i = 0; i < g.hand.size; ++i)
-        if (g.hand[i] == card) { g.hand.erase(i); break; }
+    remove_queued_card(g, card);
+    remove_from_pile(g.hand, card);
     g.draw.insert(0, card);
-    card_clearPowers(g, card);
+    g.cards[card].pending_clear = true;
 }
 SPIRE_FN inline void add_created_card_to_hand(Game& g, int card) {
     g.hand.push_back(card);
@@ -202,7 +193,7 @@ SPIRE_FN inline void hand_to_deck(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.hand, card);
     g.draw.push_back(card);
-    card_clearPowers(g, card);
+    g.cards[card].pending_clear = true;
 }
 SPIRE_FN inline void add_card_queue_item(Game& g, const CardQueueItem& item, bool immediate) {
     // GameActionManager.addCardQueueItem inserts after the currently queued card.
