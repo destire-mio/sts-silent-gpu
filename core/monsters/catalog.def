@@ -20,3 +20,4 @@ SPIRE_UNIT(GremlinWizard, "GremlinWizard", "core/monsters/gremlin_wizard.hpp", G
 SPIRE_UNIT(Exploder, "Exploder", "core/monsters/exploder.hpp", Exploder)
 SPIRE_UNIT(Repulsor, "Repulsor", "core/monsters/repulsor.hpp", Repulsor)
 SPIRE_UNIT(Spiker, "Spiker", "core/monsters/spiker.hpp", Spiker)
+SPIRE_UNIT(OrbWalker, "Orb Walker", "core/monsters/orb_walker.hpp", OrbWalker)
