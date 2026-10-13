@@ -121,21 +121,24 @@ struct Effect {
     int info_base = 0;
     int16_t card = -1;
     PowerId power = PowerId::Strength;
-    int power_offset = -1;
     int extra = 0;
     DamageType damage_type = DamageType::Normal;
     bool flag = false;
     EffectState state{};
+    uint32_t power_instance = 0;
+    bool end_turn_draw = false;
     Power prepared_power{};
     PotionState prepared_potion_state{};
 };
 using DamageInfo = Effect;
 struct CardQueueItem {
     int card = -1;
-    int target = -1;
+    int target = no_target;
     int energy_on_use = 0;
     bool ignore_energy_total = false;
     bool autoplay_card = false;
+    bool random_target = false;
+    bool is_end_turn_auto_play = false;
 };
 struct PlayedCards {
     uint16_t values[1024]{};
@@ -200,6 +203,9 @@ struct Game {
     List<Card, card_capacity> cards{};
     int multi_damage[card_capacity][monster_capacity]{};
     Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
+    List<Effect, action_capacity> action_objects{};
+    List<Power, action_capacity> detached_powers{};
+    bool player_turn_effect_pending = false;
     Pile drawn_cards{};
     Pile reward_cards{};
     int discovery_card = -1;

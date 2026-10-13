@@ -63,6 +63,51 @@ SPIRE_FN inline bool monsters_basically_dead(const Game& g) {
     }
     return true;
 }
+SPIRE_FN inline const char* power_java_id(PowerId id) {
+    switch (id) {
+#define SPIRE_UNIT(unit, name, path, type) case PowerId::unit: return name;
+#include "powers/catalog.def"
+#undef SPIRE_UNIT
+    default: SPIRE_ASSERT(false);
+    }
+    __builtin_unreachable();
+}
+SPIRE_FN inline PowerId power_id(const char* name) {
+#define SPIRE_UNIT(unit, id, path, type) if (same_id(name, id)) return PowerId::unit;
+#include "powers/catalog.def"
+#undef SPIRE_UNIT
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline bool has_relic(const Game& g, const char* name) {
+    for (int i = 0; i < g.run.relics.size; ++i) {
+        switch (g.run.relics[i].id) {
+#define SPIRE_UNIT(unit, id, path, type) case RelicId::unit: if (same_id(name, id)) return true; break;
+#include "relics/catalog.def"
+#undef SPIRE_UNIT
+        default: SPIRE_ASSERT(false);
+        }
+    }
+    return false;
+}
+SPIRE_FN inline int random_living_monster(Game& g) {
+    if (monsters_basically_dead(g)) return no_target;
+    List<int, monster_capacity> candidates{};
+    for (int i = 0; i < g.monster_order.size; ++i) {
+        const int owner = g.monster_order[i];
+        const Creature& monster = g.monsters[owner].creature;
+        if (!monster.half_dead && !monster.dying && !monster.escaped) candidates.push_back(owner);
+    }
+    if (candidates.empty()) return no_target;
+    return candidates[g.rng.card_random.random(0, candidates.size - 1)];
+}
+SPIRE_FN inline int hold_action(Game& g, const Effect& effect) {
+    Effect prepared = effect;
+    action_prepare(g, prepared);
+    const int index = g.action_objects.size;
+    g.action_objects.push_back(prepared);
+    return index;
+}
 SPIRE_FN inline void add_bottom(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
@@ -170,30 +215,35 @@ SPIRE_FN inline void gain_block(Game& g, int target, int amount) {
     c.block = min(999, c.block + floor_int(value));
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
-SPIRE_FN inline void remove_power_at(Game& g, int target, int index) {
-    Creature& c = get_creature(g, target);
-    power_onRemove(g, c.powers[index], target);
-    const Power removed = c.powers[index];
-    for (int q = 0; q < 2; ++q) {
-        Queue<Effect, action_capacity>& queue = q == 0 ? g.manager.actions : g.manager.pre_turn_actions;
-        for (int i = 0; i < queue.size; ++i) {
-            Effect& e = queue[i];
-            if (e.kind == EffectKind::RemovePower && e.flag && e.target == target &&
-                e.prepared_power.instance == removed.instance) e.prepared_power = removed;
-        }
-    }
-    Effect& current = g.manager.current_action;
-    if (g.manager.has_current_action && current.kind == EffectKind::RemovePower && current.flag &&
-        current.target == target && current.prepared_power.instance == removed.instance)
-        current.prepared_power = removed;
-    c.powers.erase(index);
-    refresh_powers(g);
+SPIRE_FN inline Power& power_instance(Game& g, int owner, uint32_t instance) {
+    Powers& powers = get_creature(g, owner).powers;
+    for (int i = 0; i < powers.size; ++i) if (powers[i].instance == instance) return powers[i];
+    for (int i = 0; i < g.detached_powers.size; ++i)
+        if (g.detached_powers[i].instance == instance) return g.detached_powers[i];
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
 }
-SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, int offset) {
+SPIRE_FN inline const Power& power_instance(const Game& g, int owner, uint32_t instance) {
+    const Powers& powers = get_creature(g, owner).powers;
+    for (int i = 0; i < powers.size; ++i) if (powers[i].instance == instance) return powers[i];
+    for (int i = 0; i < g.detached_powers.size; ++i)
+        if (g.detached_powers[i].instance == instance) return g.detached_powers[i];
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t instance) {
     Creature& c = get_creature(g, target);
     if (c.dying || c.half_dead || (target != player_target && c.escaped)) return;
-    const int index = find_power(c, id, offset);
-    if (index >= 0) remove_power_at(g, target, index);
+    int index = find_power(c, id);
+    if (instance != 0) {
+        index = -1;
+        for (int i = 0; i < c.powers.size; ++i) if (c.powers[i].instance == instance) { index = i; break; }
+    }
+    if (index >= 0) {
+        power_onRemove(g, c.powers[index], target);
+        g.detached_powers.push_back(c.powers.erase(index));
+        refresh_powers(g);
+    }
 }
 SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power incoming, int amount) {
     if (target == no_target) return;
@@ -220,7 +270,7 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
         refresh_powers(g);
     }
     if (!stacked) {
-        incoming.instance = g.next_power_instance++;
+        if (incoming.instance == 0) incoming.instance = g.next_power_instance++;
         int index = c.powers.size;
         while (index > 0 && power_data(c.powers[index - 1].id).priority > power_data(id).priority) --index;
         c.powers.insert(index, incoming);
@@ -234,11 +284,12 @@ SPIRE_FN inline void apply_power(Game& g, int source, int target, PowerId id, in
     incoming.amount = amount;
     incoming.just_applied = just_applied;
     power_constructPower(g, incoming, target, source, extra, card);
+    incoming.instance = g.next_power_instance++;
     apply_prepared_power(g, source, target, incoming, amount);
 }
-SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, int offset, int source) {
+SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, int source) {
     Creature& c = get_creature(g, target);
-    const int index = find_power(c, id, offset);
+    const int index = find_power(c, id);
     if (index < 0) return;
     if (amount >= c.powers[index].amount) {
         Effect e{};
@@ -246,7 +297,7 @@ SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, i
         e.source = source;
         e.target = target;
         e.power = id;
-        e.power_offset = c.powers[index].id_offset;
+        e.power_instance = c.powers[index].instance;
         add_top(g, e);
     } else {
         power_reducePower(g, c.powers[index], target, amount);

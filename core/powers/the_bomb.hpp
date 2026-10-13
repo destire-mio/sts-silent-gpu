@@ -18,7 +18,7 @@ struct TheBomb : PowerHooks {
             e.source = owner;
             e.target = owner;
             e.power = PowerId::TheBomb;
-            e.power_offset = p.id_offset;
+            e.power_instance = p.instance;
             e.amount = 1;
             add_bottom(g, e);
         }

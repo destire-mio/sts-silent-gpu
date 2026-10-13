@@ -245,7 +245,7 @@ static void moves_and_removal() {
     add_bottom(g, remove);
     apply_power(g, player_target, player_target, PowerId::Strength, 4);
     remove_power(g, player_target, PowerId::Strength);
-    require(g.manager.actions[0].prepared_power.amount == 6,
+    require(power_instance(g, player_target, g.manager.actions[0].power_instance).amount == 6,
             "queued power references retain the object's final amount after removal");
     g.manager.actions.clear();
     apply_power(g, player_target, player_target, PowerId::Strength, 3);

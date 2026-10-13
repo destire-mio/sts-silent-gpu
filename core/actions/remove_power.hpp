@@ -9,19 +9,10 @@ struct RemovePower : ActionHooks {
         action_initialize_state(e);
         e.target = target;
         e.source = source;
-        e.flag = true;
-        e.prepared_power = power;
+        e.power = power.id;
+        e.power_instance = power.instance;
         return e;
     }
-    SPIRE_FN static void execute(Game& g, const Effect& e) {
-        if (!e.flag) { remove_power(g, e.target, e.power, e.power_offset); return; }
-        Creature& c = get_creature(g, e.target);
-        if (c.dying || c.half_dead || (e.target != player_target && c.escaped)) return;
-        for (int i = 0; i < c.powers.size; ++i) {
-            if (c.powers[i].instance != e.prepared_power.instance) continue;
-            remove_power_at(g, e.target, i);
-            return;
-        }
-    }
+    SPIRE_FN static void execute(Game& g, const Effect& e) { remove_power(g, e.target, e.power, e.power_instance); }
 };
 }

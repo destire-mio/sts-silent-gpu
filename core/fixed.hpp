@@ -52,6 +52,20 @@ struct Queue {
         values[head] = value;
         ++size;
     }
+    SPIRE_FN void insert(int index, const T& value) {
+        SPIRE_ASSERT(index >= 0 && index <= size && size < Capacity);
+        for (int i = size; i > index; --i)
+            values[(head + i) % Capacity] = values[(head + i - 1) % Capacity];
+        values[(head + index) % Capacity] = value;
+        ++size;
+    }
+    SPIRE_FN T erase(int index) {
+        SPIRE_ASSERT(index >= 0 && index < size);
+        T value = (*this)[index];
+        for (int i = index; i + 1 < size; ++i) (*this)[i] = (*this)[i + 1];
+        --size;
+        return value;
+    }
     SPIRE_FN T pop_front() {
         SPIRE_ASSERT(size > 0);
         T value = values[head];

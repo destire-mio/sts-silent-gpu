@@ -24,6 +24,7 @@ struct ApplyPower : ActionHooks {
             power.just_applied = e.flag;
             power_constructPower(g, power, e.target, e.source, e.extra, e.card);
         }
+        if (power.instance == 0) power.instance = g.next_power_instance++;
         if (monsters_basically_dead(g)) e.done = true;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {

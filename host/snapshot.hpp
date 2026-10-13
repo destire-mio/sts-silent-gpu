@@ -120,6 +120,8 @@ struct SnapshotGraph {
             if (field == "costForTurn") return py::int_(card.cost_for_turn);
             if (field == "misc") return py::int_(card.misc);
             if (field == "energyOnUse") return py::int_(card.energy_on_use);
+            if (field == "dontTriggerOnUseCard") return py::bool_(card.dont_trigger_on_use_card);
+            if (field == "isInAutoplay") return py::bool_(card.in_autoplay);
             if (field == "ignoreEnergyOnUse") return py::bool_(card.ignore_energy_on_use);
             if (field == "timesUpgraded") return py::int_(card.upgrades);
             if (field == "upgraded") return py::bool_(card.upgrades > 0);
@@ -187,13 +189,13 @@ struct SnapshotGraph {
         });
     }
 
-    py::object creature(int owner) { return owner == player_target ? player() : monster(owner); }
+    py::object creature(int owner) { return owner == no_target ? py::object(py::none()) : owner == player_target ? player() : monster(owner); }
 
     py::object power_value(const Power& power, int owner, std::array<int, 3> identity) {
         const PowerData data = power_data(power.id);
         UnitStateSnapshot state;
         power_visit_state(power, state);
-        if (power.id_offset >= 0) identity = {25, owner, power.id_offset};
+        if (power.instance != 0) identity = {6, static_cast<int>(power.instance), 0};
         return object(identity, class_name("powers", static_cast<int>(power.id)), [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "ID") {
@@ -492,6 +494,12 @@ struct SnapshotGraph {
                 default: break;
                 }
                 if (effect.kind == EffectKind::Damage || effect.kind == EffectKind::DamageAllEnemies || effect.kind == EffectKind::LoseHP) return py::str("DAMAGE");
+                if (effect.kind == EffectKind::Damage || effect.kind == EffectKind::DamageRandomEnemy || effect.kind == EffectKind::DamagePerAttackPlayed) return py::str("DAMAGE");
+                if (effect.kind == EffectKind::LoseBlock) return py::str("BLOCK");
+                if (effect.kind == EffectKind::Setup || effect.kind == EffectKind::SkillFromDeckToHand || effect.kind == EffectKind::ChooseOneColorless || effect.kind == EffectKind::DrawPileToHand) return py::str("CARD_MANIPULATION");
+                if (effect.kind == EffectKind::ShowCard || effect.kind == EffectKind::ShowCardAndPoof || effect.kind == EffectKind::SpawnMonster || effect.kind == EffectKind::Doppelganger) return py::str("SPECIAL");
+                if (effect.kind == EffectKind::BouncingFlask || effect.kind == EffectKind::DoublePoison) return py::str("DEBUFF");
+                if (effect.kind == EffectKind::Expertise) return py::str("WAIT");
                 if (effect.kind == EffectKind::Block) return py::str("BLOCK");
                 if (effect.kind == EffectKind::Draw) return py::str("DRAW");
                 if (effect.kind == EffectKind::Discard || effect.kind == EffectKind::DiscardSpecificCard) return py::str("DISCARD");
@@ -510,6 +518,7 @@ struct SnapshotGraph {
             }
             if (key == "AbstractGameAction.amount") {
                 if (effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::RemovePower) return py::int_(0);
+                if (effect.kind == EffectKind::DamageRandomEnemy) return py::int_(0);
                 return py::int_(effect.kind == EffectKind::UseCard ? 1 : effect.amount);
             }
             if (key == "AbstractGameAction.damageType") return effect.kind == EffectKind::DamageAllEnemies ? py::object(py::str(damage_type_names[static_cast<int>(effect.damage_type)])) : py::object(py::none());
@@ -526,7 +535,7 @@ struct SnapshotGraph {
                 default: break;
                 }
                 if (effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
-                    effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard) return py::none();
+                    effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::DamageRandomEnemy) return py::none();
                 return effect.source == no_target ? py::object(py::none()) : creature(effect.source);
             }
             if (key == "AbstractGameAction.target") {
@@ -584,7 +593,7 @@ struct SnapshotGraph {
             if (key == "DamageAction.goldAmount") return py::int_(effect.extra);
             if (key == "DamageAction.muteSfx") return py::bool_(false);
             if (key == "DamageAction.skipWait") return py::bool_(effect.flag);
-            if (key == "DamageAction.info" || key == "BaneAction.info" || key == "GreedAction.info" || key == "RitualDaggerAction.info") {
+            if (key == "DamageAction.info" || key == "DamageRandomEnemyAction.info" || key == "DamagePerAttackPlayedAction.info" || key == "BaneAction.info" || key == "GreedAction.info" || key == "RitualDaggerAction.info") {
                 if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
                     const Monster& owner = game.monsters[effect.source];
                     for (int i = 0; i < owner.damage_count; ++i)
@@ -599,24 +608,13 @@ struct SnapshotGraph {
                     return {};
                 });
             }
+            if (key == "ApplyPowerToRandomEnemyAction.powerToApply") return power_value(effect.prepared_power, effect.target, {20, queue, index});
             if (key == "ApplyPowerAction.powerToApply") return power_value(effect.prepared_power, effect.target, {20, queue, index});
-            if (key == "ReducePowerAction.powerID" || (key == "RemoveSpecificPowerAction.powerToRemove" && !effect.flag))
-                return effect.power_offset >= 0 ? py::object(py::none()) : py::object(py::str(power_names[static_cast<int>(effect.power)]));
-            if (key == "ReducePowerAction.powerInstance" || (key == "RemoveSpecificPowerAction.powerInstance" && !effect.flag)) {
-                if (effect.power_offset < 0) return py::none();
-                const int index = find_power(get_creature(game, effect.target), effect.power, effect.power_offset);
-                SPIRE_ASSERT(index >= 0);
-                return power(effect.target, index);
+            if (key == "ReducePowerAction.powerID" || key == "RemoveSpecificPowerAction.powerToRemove") return effect.power_instance == 0 ? py::object(py::str(power_names[static_cast<int>(effect.power)])) : py::object(py::none());
+            if (key == "ReducePowerAction.powerInstance" || key == "RemoveSpecificPowerAction.powerInstance") {
+                if (effect.power_instance == 0) return py::none();
+                return power_value(power_instance(game, effect.target, effect.power_instance), effect.target, {6, static_cast<int>(effect.power_instance), 0});
             }
-            if (key == "RemoveSpecificPowerAction.powerInstance") {
-                if (!effect.flag) return py::none();
-                const Powers& powers = get_creature(game, effect.target).powers;
-                for (int i = 0; i < powers.size; ++i)
-                    if (powers[i].instance == effect.prepared_power.instance) return power(effect.target, i);
-                return power_value(effect.prepared_power, effect.target, {27, effect.target, static_cast<int>(effect.prepared_power.instance)});
-            }
-            if (key == "RemoveSpecificPowerAction.powerToRemove")
-                return effect.flag ? py::object(py::none()) : py::object(py::str(power_names[static_cast<int>(effect.power)]));
             if (key == "SetMoveAction.isMultiplier") return py::bool_(effect.state.SetMove.is_multiplier);
             if (key == "SetMoveAction.monster") return monster(effect.target);
             if (key == "SetMoveAction.theMultiplier") return py::int_(effect.state.SetMove.the_multiplier);
@@ -627,7 +625,14 @@ struct SnapshotGraph {
             if (key == "MakeTempCardInDiscardAction.numCards") return py::int_(effect.amount);
             if (key == "MakeTempCardInDiscardAction.sameUUID") return py::bool_(effect.flag);
             if (key == "DrawCardAction.clearDrawHistory") return py::bool_(!effect.flag);
-            if (key == "DrawCardAction.followUpAction") return py::none();
+            if (key == "DrawCardAction.followUpAction") {
+                const int ref = effect.state.Draw.follow_up_action - 1;
+                return ref < 0 ? py::object(py::none()) : this->effect(game.action_objects[ref], 3, ref);
+            }
+            if (key == "SpawnMonsterAction.m") return monster(effect.state.SpawnMonster.m);
+            if (key == "DrawPileToHandAction.typeToCheck") return py::str(card_type_names[static_cast<int>(effect.state.DrawPileToHand.type_to_check)]);
+            if (key == "SetupAction.p" || key == "SkillFromDeckToHandAction.p" || key == "DrawPileToHandAction.p" || key == "DoppelgangerAction.p") return player();
+            if (key == "NewQueueCardAction.card" || key == "ShowCardAction.card" || key == "ShowCardAndPoofAction.card" || key == "UnlimboAction.card") return card(effect.card);
             if (key == "DiscardAction.endTurn") return py::bool_(effect.flag);
             if (key == "DiscardAction.isRandom") return py::bool_(effect.state.Discard.isRandom);
             if (key == "DiscardAction.p" || key == "ExhaustAction.p" || key == "BetterDiscardPileToHandAction.player" || key == "HandCheckAction.player") return player();
@@ -704,7 +709,8 @@ struct SnapshotGraph {
                         if (field == "energyOnUse") return py::int_(item.energy_on_use);
                         if (field == "autoplayCard") return py::bool_(item.autoplay_card);
                         if (field == "ignoreEnergyTotal") return py::bool_(item.ignore_energy_total);
-                        if (field == "isEndTurnAutoPlay" || field == "randomTarget") return py::bool_(false);
+                        if (field == "isEndTurnAutoPlay") return py::bool_(item.is_end_turn_auto_play);
+                        if (field == "randomTarget") return py::bool_(item.random_target);
                         return {};
                     }));
                 }
