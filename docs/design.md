@@ -212,7 +212,7 @@ Combat input with no selection screen additionally requires `WAITING_ON_USER`, e
 pre-turn and card queues, and no queued end turn. A GRID notification timeout is used only
 outside combat; closing a combat selection never bypasses action settlement.
 Card, relic and ascension unlock queries are fixed to unlocked, and Act 4 availability is true.
-The publisher adapter uses the game's no-op GOG implementation with Steam's platform tag;
+The publisher adapter uses the game's no-op GOG implementation;
 it never initializes Steam, and metrics upload is disabled.
 Only rendering/device state and persistent profile/score/unlock metrics are outside the snapshot.
 Gameplay-affecting unseeded calls are isolated as specified in `inventory/unseeded.md`. The

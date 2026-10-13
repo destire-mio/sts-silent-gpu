@@ -3,6 +3,7 @@ package oracle;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.desktop.DesktopLauncher;
 import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
 import com.megacrit.cardcrawl.integrations.DistributorFactory;
 import com.megacrit.cardcrawl.integrations.PublisherIntegration;
@@ -15,11 +16,19 @@ public final class Patches {
     @SpirePatch(clz=DistributorFactory.class, method="getEnabledDistributor")
     public static class OfflinePublisher {
         @SpirePrefixPatch public static SpireReturn<PublisherIntegration> before() {
-            return SpireReturn.Return(new GogIntegration() {
-                @Override public DistributorFactory.Distributor getType() {
-                    return DistributorFactory.Distributor.STEAM;
+            return SpireReturn.Return(new GogIntegration());
+        }
+    }
+
+    @SpirePatch(clz=CardCrawlGame.class, method="create")
+    public static class NoSteamOverlay {
+        @SpireInstrumentPatch public static ExprEditor instrument() {
+            return new ExprEditor() {
+                public void edit(NewExpr expression) throws CannotCompileException {
+                    if (expression.getClassName().equals("com.codedisaster.steamworks.SteamUtils"))
+                        expression.replace("{ $_ = null; }");
                 }
-            });
+            };
         }
     }
 
