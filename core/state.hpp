@@ -263,6 +263,7 @@ struct Game {
     bool reward_skippable = false;
     bool battle_over = false;
     bool room_in_combat = false;
+    bool room_is_boss = false;
     uint16_t room_event_class = 0;
     bool cannot_lose = false;
     bool mugged = false;
