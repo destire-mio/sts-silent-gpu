@@ -1,0 +1,50 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 0
+    },
+    {
+      "id": "Skewer",
+      "upgrades": 0
+    },
+    {
+      "id": "Doubt",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ginger"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "2 Louse"
+}

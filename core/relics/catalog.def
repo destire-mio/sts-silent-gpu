@@ -21,3 +21,4 @@ SPIRE_UNIT(FrozenEgg2, "Frozen Egg 2", "core/relics/frozen_egg_2.hpp", FrozenEgg
 SPIRE_UNIT(FrozenEye, "Frozen Eye", "core/relics/frozen_eye.hpp", FrozenEye)
 SPIRE_UNIT(FusionHammer, "Fusion Hammer", "core/relics/fusion_hammer.hpp", FusionHammer)
 SPIRE_UNIT(GamblingChip, "Gambling Chip", "core/relics/gambling_chip.hpp", GamblingChip)
+SPIRE_UNIT(Ginger, "Ginger", "core/relics/ginger.hpp", Ginger)
