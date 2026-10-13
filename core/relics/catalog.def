@@ -20,3 +20,4 @@ SPIRE_UNIT(StoneCalendar, "StoneCalendar", "core/relics/stone_calendar.hpp", Sto
 SPIRE_UNIT(StrangeSpoon, "Strange Spoon", "core/relics/strange_spoon.hpp", StrangeSpoon)
 SPIRE_UNIT(Strawberry, "Strawberry", "core/relics/strawberry.hpp", Strawberry)
 SPIRE_UNIT(StrikeDummy, "StrikeDummy", "core/relics/strike_dummy.hpp", StrikeDummy)
+SPIRE_UNIT(Sundial, "Sundial", "core/relics/sundial.hpp", Sundial)
