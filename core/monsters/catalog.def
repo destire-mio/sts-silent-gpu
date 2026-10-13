@@ -18,3 +18,4 @@ SPIRE_UNIT(GremlinFat, "GremlinFat", "core/monsters/gremlin_fat.hpp", GremlinFat
 SPIRE_UNIT(GremlinTsundere, "GremlinTsundere", "core/monsters/gremlin_tsundere.hpp", GremlinTsundere)
 SPIRE_UNIT(GremlinWizard, "GremlinWizard", "core/monsters/gremlin_wizard.hpp", GremlinWizard)
 SPIRE_UNIT(Chosen, "Chosen", "core/monsters/chosen.hpp", Chosen)
+SPIRE_UNIT(SnakePlant, "SnakePlant", "core/monsters/snake_plant.hpp", SnakePlant)
