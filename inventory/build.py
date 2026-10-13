@@ -320,14 +320,14 @@ def main():
         add(j, 'relic', facts={'tier': tier, 'pool': 'green' if name == 'addGreen' else 'shared', 'hooks': j.overrides()})
 
     potion_helper = get('helpers.PotionHelper')
-    potion_ids = set()
+    potion_ids = []
     for m in potion_helper.named('getPotions'):
         for i, n, a in potion_helper.calls(m['start'], m['end']):
             if n != 'add' or not a or not isinstance(value(a[0]), str):
                 continue
             cond = potion_helper.conditions(i)
             if not cond or any(c.get('case') == 'THE_SILENT' for c in cond):
-                potion_ids.add(value(a[0]))
+                potion_ids.append(value(a[0]))
     for j in files.values():
         if j.qualified.startswith(PACKAGE + 'potions.') and j.game_id() in potion_ids:
             rarity = re.search(r'(?:AbstractPotion\.)?PotionRarity\.(\w+)', j.text)[1]
@@ -428,6 +428,7 @@ def main():
     for name in sorted(set(rule_classes)):
         j = get(name)
         add(j, 'rule', facts={'rule': name, 'hooks': j.overrides()})
+    units['rule:helpers.PotionHelper']['facts']['silent_pool'] = potion_ids
 
     player = get('characters.AbstractPlayer')
     foreign_methods = {m['name'] for m in player.methods if re.search(r'orb|stance', m['name'], re.I) and not VISUAL.fullmatch(m['name'])}
