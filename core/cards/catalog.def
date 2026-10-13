@@ -21,3 +21,4 @@ SPIRE_UNIT(Outmaneuver, "Outmaneuver", "core/cards/outmaneuver.hpp", Outmaneuver
 SPIRE_UNIT(PhantasmalKiller, "Phantasmal Killer", "core/cards/phantasmal_killer.hpp", PhantasmalKiller)
 SPIRE_UNIT(PiercingWail, "PiercingWail", "core/cards/piercing_wail.hpp", PiercingWail)
 SPIRE_UNIT(PoisonedStab, "Poisoned Stab", "core/cards/poisoned_stab.hpp", PoisonedStab)
+SPIRE_UNIT(Predator, "Predator", "core/cards/predator.hpp", Predator)
