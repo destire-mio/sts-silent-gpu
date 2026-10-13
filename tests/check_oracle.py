@@ -18,6 +18,7 @@ def check(path):
     with gzip.open(path, 'rt') as stream:
         rows = [json.loads(line) for line in stream]
     header, terminal = rows[0], rows[-1]
+    assert header['schema'] == 2
     assert header['character'] == 'THE_SILENT' and header['ascension'] == 20
     assert terminal['terminal'] in ('death', 'combat_end', 'victory')
     assert len(rows) >= 3
@@ -45,6 +46,11 @@ def check(path):
     else:
         assert first['run']['floorNum'] == 0
         assert first['objects'][first['room']['ref']]['class'] == 'neow.NeowRoom'
+    if path.name == 'Strike_G.jsonl.gz':
+        snapshots = [row['snapshot'] for row in rows[1:]]
+        counters = [snapshot['rng']['unseeded'][0] for snapshot in snapshots]
+        for row, before, after in zip(rows[1:-1], counters, counters[1:]):
+            assert after - before == (1 if row['action']['type'] == 'end_turn' else 0)
     return len(rows) - 2
 
 

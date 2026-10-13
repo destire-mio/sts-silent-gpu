@@ -30,11 +30,10 @@ public final class FieldSchema {
                 classes.put(binaryName.replace("com.megacrit.cardcrawl.", ""), object);
             }
         }
-        JsonObject marker = new JsonObject();
-        marker.addProperty("extends", "actions.AbstractGameAction");
-        marker.add("fields", new JsonObject());
-        classes.put("communicationmod.EndOfTurnAction", marker);
+        JsonObject catalog = new JsonObject();
+        for (Map.Entry<String, JsonObject> entry : classes.entrySet()) catalog.add(entry.getKey(), entry.getValue());
+        catalog.add("excluded", new Gson().toJsonTree(Snapshot.EXCLUDED));
         Gson json = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
-        Files.write(Paths.get(args[1]), (json.toJson(classes) + "\n").getBytes(StandardCharsets.UTF_8));
+        Files.write(Paths.get(args[1]), (json.toJson(catalog) + "\n").getBytes(StandardCharsets.UTF_8));
     }
 }

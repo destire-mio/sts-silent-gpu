@@ -6,7 +6,6 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
-import communicationmod.ChoiceScreenUtils;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -43,6 +42,92 @@ final class Snapshot {
         fields("screens.select.BossRelicSelectScreen", "isDone relics blights");
         fields("shop.ShopScreen", "isActive coloredCards colorlessCards relics potions purgeAvailable");
         fields("rewards.RewardItem", "type gold bonusGold relic potion cards isDone ignoreReward relicLink redText");
+    }
+
+    static final Map<String, String> EXCLUDED = new TreeMap<String, String>();
+    static {
+        exclude("cards.CardGroup", "queued", "renderHand scratch list controlling draw order, cleared after rendering.");
+        exclude("potions.AbstractPotion", "size isThrown", "Bottle artwork and drink/throw tooltip wording; use and target rules are separate.");
+        exclude("characters.AbstractPlayer", "damagedThisCombat", "Vanilla increments and resets this unused counter but never reads it.");
+        exclude("relics.AbstractRelic", "discarded", "Acquisition/disposal marker with no vanilla rule reads.");
+        exclude("orbs.Frost", "hFlip1 hFlip2", "Ice-sprite horizontal orientation.");
+        exclude("neow.NeowEvent", "npc", "Neow animation object; rewards and event stage are separate.");
+        exclude("events.beyond.SpireHeart", "npc", "Heart animation object; event stage is separate.");
+        exclude("actions.AbstractGameAction", "duration startDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.animations.ShoutAction", "bubbleDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.animations.TalkAction", "bubbleDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.animations.VFXAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.common.ApplyPoisonOnRandomMonsterAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.common.ApplyPowerAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.common.ExhaustSpecificCardAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.unique.ApplyStasisAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.unique.CalculatedGambleAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.unique.ExhaustAllNonAttackAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.unique.FiendFireAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.utility.ScryAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.watcher.ClarityAction", "startingDuration", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("events.AbstractEvent", "waitTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("events.beyond.SpireHeart", "eventFadeTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("events.city.TheJoust", "joustTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("events.shrines.GremlinMatchGame", "waitTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("events.shrines.GremlinWheelGame", "bounceTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("monsters.beyond.AwakenedOne", "fireTimer", "Schedules flame particles in update; no rule reads this clock.");
+        exclude("monsters.beyond.Nemesis", "fireTimer", "Schedules flame particles in update; no rule reads this clock.");
+        exclude("monsters.city.TheCollector", "fireTimer", "Schedules flame particles in update; no rule reads this clock.");
+        exclude("monsters.city.TorchHead", "fireTimer", "Schedules flame particles in update; no rule reads this clock.");
+        exclude("monsters.exordium.HexaghostOrb", "activateTimer particleTimer", "Schedules orb ignition artwork and particles.");
+        exclude("rooms.AbstractRoom", "endBattleTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("rooms.TreasureRoom", "shinyTimer", "Schedules chest shine particles.");
+        exclude("rooms.TreasureRoomBoss", "shinyTimer", "Schedules chest shine particles.");
+        exclude("screens.select.GridCardSelectScreen", "ritualAnimTimer", "Schedules a disposable transform preview using presentation RNG; confirmation ignores the preview.");
+        exclude("screens.select.HandCardSelectScreen", "waitToCloseTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
+        exclude("actions.AbstractGameAction", "attackEffect", "Attack artwork and sound selection, not damage calculation.");
+        exclude("actions.GameActionManager", "previousAction turnStartCurrentAction", "Historical action references are assigned or cleared but never read by vanilla rules.");
+        exclude("actions.animations.ShoutAction", "msg used", "Speech presentation and its one-shot display flag.");
+        exclude("actions.animations.TalkAction", "msg player used", "Speech presentation and its one-shot display flag.");
+        exclude("actions.animations.VFXAction", "isTopLevelEffect", "Chooses a rendering effect list.");
+        exclude("actions.common.DamageAction", "muteSfx", "Controls damage sound playback.");
+        exclude("actions.common.DarkOrbEvokeAction", "muteSfx", "Controls damage sound playback.");
+        exclude("actions.common.DamageAction", "skipWait", "Controls action pacing after damage.");
+        exclude("actions.common.ApplyPowerToRandomEnemyAction", "effect isFast", "Attack artwork and effect pacing.");
+        exclude("actions.common.AttackDamageRandomEnemyAction", "effect", "Attack artwork.");
+        exclude("actions.common.MakeTempCardInDrawPileAction", "autoPosition x y", "Card flight coordinates; destination pile and insertion choice are separate fields.");
+        exclude("actions.common.ReviveMonsterAction", "healingEffect", "Chooses healing artwork.");
+        exclude("actions.common.SetMoveAction", "theNextName", "Localized intent label; move byte and damage are separate fields.");
+        exclude("actions.unique.IncreaseMaxHpAction", "showEffect", "Controls the maximum-HP popup.");
+        exclude("actions.utility.SFXAction", "adjust key pitchVar", "Sound identifier and pitch.");
+        exclude("actions.utility.ShakeScreenAction", "intensity shakeDur startDur", "Screen-shake presentation.");
+        exclude("cards.AbstractCard", "isUsed isSelected", "UI selection flags with no vanilla rule reads.");
+        exclude("cards.AbstractCard", "isDamageModified isBlockModified isMagicNumberModified upgradedDamage upgradedBlock upgradedMagicNumber upgradedCost isCostModified isCostModifiedForTurn", "Card text color or upgrade display; numeric stats and upgrade count remain recorded.");
+        exclude("characters.AbstractPlayer", "hoveredCard toHoverCard", "Transient input hover targets; each play action supplies its own card and monster.");
+        exclude("events.AbstractImageEvent", "title", "Localized event heading.");
+        exclude("ui.buttons.LargeDialogOptionButton", "msg", "Localized label; action identity is the original button slot.");
+        exclude("ui.buttons.DialogOptionButton", "msg", "Localized label; action identity is the original button slot.");
+        exclude("events.shrines.GremlinMatchGame", "hoveredCard", "Cursor target; pair-resolution callbacks finish before the next choice.");
+        exclude("screens.select.GridCardSelectScreen", "upgradePreviewCard", "Display copy; confirmation uses hoveredCard, not this copy.");
+        exclude("screens.select.HandCardSelectScreen", "upgradePreviewCard waitThenClose", "Display copy and auto-close pacing; auto-close finishes before a decision.");
+        exclude("rewards.RewardItem", "redText", "Reward label tint.");
+        exclude("monsters.exordium.Cultist", "saidPower talky", "Dialogue selection and death-animation pacing only (takeTurn/die).");
+        exclude("monsters.beyond.AwakenedOne", "saidPower wParticles", "Dialogue flag and wing particles only.");
+        exclude("monsters.exordium.AcidSlime_L", "saveY", "Vertical spawn art position; spawn ordering reads X only.");
+        exclude("monsters.exordium.SpikeSlime_L", "saveY", "Vertical spawn art position; spawn ordering reads X only.");
+        exclude("monsters.exordium.Hexaghost", "body orbs", "Body/orb artwork; attack-cycle index orbActiveCount is retained.");
+        exclude("monsters.exordium.HexaghostBody", "m plasma1Angle plasma2Angle plasma3Angle rotationSpeed targetRotationSpeed", "Hexaghost artwork; these objects do not choose damage or moves.");
+        exclude("monsters.exordium.HexaghostOrb", "activated hidden playedSfx x y", "Hexaghost artwork; these objects do not choose damage or moves.");
+        exclude("monsters.exordium.LouseNormal", "isOpen", "Shell animation state; CurlUpPower owns the block rule.");
+        exclude("monsters.exordium.LouseDefensive", "isOpen", "Shell animation state; CurlUpPower owns the block rule.");
+        exclude("ui.campfire.AbstractCampfireOption", "label scale", "Campfire button label and draw scale; usable is retained.");
+        exclude("shop.Merchant", "idleMessages modX modY saidWelcome", "Merchant speech and position; shop inventory is separate.");
+        exclude("neow.NeowReward", "optionLabel", "Localized reward label; reward type is retained.");
+        exclude("neow.NeowReward$NeowRewardDef", "desc", "Localized reward description.");
+        exclude("neow.NeowReward$NeowRewardDrawbackDef", "desc", "Localized drawback description.");
+        exclude("events.beyond.SpireHeart", "damageDealt globalDamageDealt totalDamageDealt winstreak x y", "End-screen statistics and placement, not future game decisions.");
+        exclude("events.city.TheJoust", "clangCount", "Joust sound count; ownerWins is retained.");
+        exclude("events.exordium.DeadAdventurer", "x y", "Corpse artwork position.");
+        exclude("events.shrines.GremlinWheelGame", "bounceIn resultAngle tmpAngle wheelAngle spinVelocity", "Wheel motion; result is selected by miscRng and retained.");
+    }
+    static void exclude(String cls, String names, String reason) {
+        for (String name : names.split(" ")) EXCLUDED.put(cls + "." + name, reason);
     }
 
     static void fields(String type, String names) {
@@ -112,10 +197,8 @@ final class Snapshot {
         screen.addProperty("type", AbstractDungeon.screen.name());
         screen.addProperty("up", AbstractDungeon.isScreenUp);
         screen.addProperty("previous", AbstractDungeon.previousScreen == null ? null : AbstractDungeon.previousScreen.name());
-        screen.addProperty("choice", ChoiceScreenUtils.getCurrentChoiceType().name());
-        screen.add("options", Recorder.JSON.toJsonTree(ChoiceScreenUtils.getCurrentChoiceList()));
-        screen.add("grid", s.pick(AbstractDungeon.gridSelectScreen,
-            com.megacrit.cardcrawl.screens.select.GridCardSelectScreen.class, "ritualAnimTimer"));
+        screen.addProperty("choice", Choices.type());
+        screen.add("options", Recorder.JSON.toJsonTree(Choices.names()));
         switch (AbstractDungeon.screen) {
             case GRID: screen.add("state", s.value(AbstractDungeon.gridSelectScreen)); break;
             case HAND_SELECT: screen.add("state", s.value(AbstractDungeon.handCardSelectScreen)); break;
@@ -202,6 +285,7 @@ final class Snapshot {
 
     static boolean included(Field field) {
         if (Modifier.isStatic(field.getModifiers())) return false;
+        if (EXCLUDED.containsKey(field.getDeclaringClass().getName().replace("com.megacrit.cardcrawl.", "") + "." + field.getName())) return false;
         Set<String> allowed = FIELDS.get(field.getDeclaringClass().getName());
         if (allowed != null) return allowed.contains(field.getName());
         String name = field.getName().toLowerCase(Locale.ROOT);
@@ -247,8 +331,7 @@ final class Snapshot {
             for (Map.Entry<String, Object> entry : sorted.entrySet()) map.add(entry.getKey(), value(entry.getValue()));
             return map;
         }
-        if (!value.getClass().getName().startsWith("com.megacrit.cardcrawl.")
-                && value.getClass() != communicationmod.EndOfTurnAction.class) throw new AssertionError("Unsupported snapshot object " + value.getClass());
+        if (!value.getClass().getName().startsWith("com.megacrit.cardcrawl.")) throw new AssertionError("Unsupported snapshot object " + value.getClass());
         if (!ids.containsKey(value)) {
             int id = objects.size();
             ids.put(value, id);
@@ -265,7 +348,9 @@ final class Snapshot {
             object.add("fields", data);
             for (Map.Entry<String, Field> entry : fields.entrySet()) {
                 entry.getValue().setAccessible(true);
-                data.add(entry.getKey(), value(entry.getValue().get(value)));
+                if (entry.getKey().equals("GridCardSelectScreen.hoveredCard") && !AbstractDungeon.gridSelectScreen.confirmScreenUp)
+                    data.add(entry.getKey(), JsonNull.INSTANCE);
+                else data.add(entry.getKey(), value(entry.getValue().get(value)));
             }
         }
         JsonObject ref = new JsonObject();

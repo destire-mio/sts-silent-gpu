@@ -86,13 +86,20 @@ public final class Platform {
         if (SoulGroup.isActive()) return false;
         AbstractRoom room = AbstractDungeon.getCurrRoom();
         if (room == null || room.phase == null) return false;
+        GameActionManager manager = AbstractDungeon.actionManager;
+        boolean selecting = AbstractDungeon.isScreenUp && (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID
+            || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.HAND_SELECT || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.CARD_REWARD);
+        if (!selecting && !AbstractDungeon.player.isDead && (manager.currentAction != null && !manager.currentAction.isDone
+                || !manager.actions.isEmpty() || !manager.preTurnActions.isEmpty() || !manager.cardQueue.isEmpty())) return false;
         if (room.phase == AbstractRoom.RoomPhase.COMBAT) {
             if (room.monsters == null) return false;
             if (!AbstractDungeon.isScreenUp && !AbstractDungeon.player.isDead) {
-                GameActionManager manager = AbstractDungeon.actionManager;
                 if (manager.phase != GameActionManager.Phase.WAITING_ON_USER
                     || !manager.actions.isEmpty() || !manager.preTurnActions.isEmpty()
-                    || !manager.cardQueue.isEmpty() || AbstractDungeon.player.endTurnQueued) return false;
+                    || !manager.cardQueue.isEmpty() || !manager.monsterQueue.isEmpty()
+                    || manager.currentAction != null || manager.turnHasEnded
+                    || AbstractDungeon.player.endTurnQueued || AbstractDungeon.player.isEndingTurn
+                    || !AbstractDungeon.overlayMenu.endTurnButton.enabled) return false;
             }
             for (AbstractMonster monster : room.monsters.monsters) {
                 if (monster.isDying && !monster.isDead) return false;
@@ -112,7 +119,9 @@ public final class Platform {
             if (!effect.isDone && (name.startsWith("com.megacrit.cardcrawl.vfx.cardManip.")
                     || name.startsWith("com.megacrit.cardcrawl.vfx.campfire.") && !AbstractDungeon.isScreenUp
                     || effect instanceof PlayerTurnEffect || effect instanceof BattleStartEffect
-                    || effect instanceof com.megacrit.cardcrawl.vfx.ObtainKeyEffect)) return true;
+                    || effect instanceof com.megacrit.cardcrawl.vfx.ObtainKeyEffect
+                    || effect instanceof com.megacrit.cardcrawl.vfx.FastCardObtainEffect
+                    || effect instanceof com.megacrit.cardcrawl.vfx.ObtainPotionEffect)) return true;
         }
         return false;
     }

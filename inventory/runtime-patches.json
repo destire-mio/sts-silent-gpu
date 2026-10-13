@@ -1,0 +1,20 @@
+{
+  "actions.common.DiscardAtEndOfTurnAction": "update: pin the one-argument Collections.shuffle to the rule stream; retain vanilla ethereal/discard hook order.",
+  "cards.AbstractCard": "Constructor: pin UUID.randomUUID; snapshot exports UUID equality, not allocator position.",
+  "cards.CardGroup": "getRandomCard overloads: pin unseeded MathUtils indices; seeded shuffles remain vanilla.",
+  "characters.AbstractPlayer": "loseRandomRelics: pin unseeded relic index.",
+  "core.CardCrawlGame": "create: omit SteamUtils overlay initialization in the headless platform.",
+  "core.Settings": "setFinalActAvailability: expose the unlocked final act.",
+  "desktop.DesktopLauncher": "main: enter the headless platform and in-process recorder.",
+  "dungeons.AbstractDungeon": "returnColorlessCard: pin the unseeded pool shuffle.",
+  "helpers.GameTips": "initialize: pin the hint shuffle to the presentation stream.",
+  "helpers.MonsterHelper": "randomXOffset: pin monster X jitter, which can determine spawn insertion order; Y jitter stays presentation.",
+  "helpers.controller.CInputHelper": "initializeIfAble: omit native controller/window initialization.",
+  "helpers.steamInput.SteamInputHelper": "Constructor: omit Steam controller initialization and thread.",
+  "integrations.DistributorFactory": "getEnabledDistributor: select the original no-op GOG publisher adapter.",
+  "monsters.MonsterGroup": "getRandomMonster: pin unseeded target indices; seeded overload remains vanilla.",
+  "random.Random": "Default constructor: pin MathUtils seed/counter draws; explicit-seed constructors remain vanilla.",
+  "relics.Test5": "onEquip: pin the unseeded upgrade shuffle (unused relic, outside the standard Silent pool).",
+  "screens.select.GridCardSelectScreen": "update: give transform-preview calls an explicit presentation-seeded Random, keeping preview refreshes off the rule stream.",
+  "unlock.UnlockTracker": "isCardLocked/isRelicLocked/isAscensionUnlocked: expose unlocked content and A20."
+}

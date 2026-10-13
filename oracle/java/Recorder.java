@@ -9,14 +9,13 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.helpers.PotionHelper;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
-import com.megacrit.cardcrawl.helpers.SeedHelper;
 import com.megacrit.cardcrawl.helpers.TipTracker;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.potions.PotionSlot;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.rooms.MonsterRoom;
-import communicationmod.CommandExecutor;
-import communicationmod.GameStateListener;
+import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -35,12 +34,40 @@ public final class Recorder {
         Platform.listener.render();
     }
 
-    static void settle() {
+    static void settle() throws Exception {
         int ticks = 0;
         do {
             tick();
-            if (++ticks > 36000) throw new AssertionError("No decision: " + AbstractDungeon.screen);
-        } while (!GameStateListener.isWaitingForCommand() || !Platform.effectsSettled());
+            if (++ticks > 36000) throw new AssertionError("No decision: " + AbstractDungeon.screen + " settled=" + Platform.effectsSettled()
+                + " phase=" + AbstractDungeon.getCurrRoom().phase + " choices=" + Choices.names() + " confirm=" + Choices.confirm()
+                + " actions=" + AbstractDungeon.actionManager.actions + " current=" + AbstractDungeon.actionManager.currentAction);
+        } while (!Platform.effectsSettled() || !ready());
+    }
+
+    static boolean ready() throws Exception {
+        if (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) return CardCrawlGame.mode == CardCrawlGame.GameMode.CHAR_SELECT && !CardCrawlGame.mainMenuScreen.isFadingOut;
+        if (AbstractDungeon.isFadingOut || AbstractDungeon.isFadingIn || AbstractDungeon.player == null) return false;
+        if (terminal(false)) return true;
+        if (!AbstractDungeon.isScreenUp && !AbstractDungeon.gridSelectScreen.selectedCards.isEmpty()) return false;
+        if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.HAND_SELECT
+                && Choices.<Boolean>get(AbstractDungeon.handCardSelectScreen, "waitThenClose")) return false;
+        if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.MAP)
+            for (ArrayList<MapRoomNode> row : AbstractDungeon.map) for (MapRoomNode node : row)
+                if (Choices.<Float>get(node, "animWaitTimer") != 0.0f) return false;
+        String choice = Choices.type();
+        if (choice.equals("EVENT")) {
+            if (Choices.options().isEmpty()) return false;
+            if (Choices.imageDialog() && (Choices.<Float>get(AbstractDungeon.getCurrRoom().event.imageEventText, "animateTimer") != 0.0f
+                    || !com.megacrit.cardcrawl.events.GenericEventDialog.waitForInput)) return false;
+            if (!com.megacrit.cardcrawl.events.RoomEventDialog.waitForInput) return false;
+            for (Object option : Choices.options())
+                if (option instanceof com.megacrit.cardcrawl.ui.buttons.LargeDialogOptionButton
+                        && ((com.megacrit.cardcrawl.ui.buttons.LargeDialogOptionButton)option).pressed) return false;
+        }
+        if ((choice.equals("SHOP_ROOM") || choice.equals("CHEST") || choice.equals("COMPLETE")
+                || choice.equals("REST") && AbstractDungeon.getCurrRoom().phase == com.megacrit.cardcrawl.rooms.AbstractRoom.RoomPhase.COMPLETE)
+                && !Choices.confirm()) return false;
+        return !Actions.legal().isEmpty();
     }
 
     static boolean terminal(boolean scenario) {
@@ -49,7 +76,7 @@ public final class Recorder {
             || (scenario && AbstractDungeon.getCurrRoom().isBattleOver);
     }
 
-    static void scenario(JsonObject setup, long seed) {
+    static void scenario(JsonObject setup, long seed) throws Exception {
         AbstractDungeon.player.masterDeck.clear();
         for (JsonElement entry : setup.getAsJsonArray("deck")) {
             JsonObject item = entry.getAsJsonObject();
@@ -62,8 +89,6 @@ public final class Recorder {
         RandomXS128 acquisition = new RandomXS128(seed);
         for (JsonElement item : setup.getAsJsonArray("relics")) {
             RelicLibrary.getRelic(item.getAsString()).makeCopy().instantObtain(AbstractDungeon.player, AbstractDungeon.player.relics.size(), true);
-            GameStateListener.registerCommandExecution();
-            GameStateListener.registerStateChange();
             settle();
             while (AbstractDungeon.isScreenUp) {
                 ArrayList<JsonObject> legal = Actions.legal();
@@ -85,8 +110,6 @@ public final class Recorder {
         node.room = new MonsterRoom();
         AbstractDungeon.nextRoom = node;
         CardCrawlGame.dungeon.nextRoomTransition();
-        GameStateListener.registerStateChange();
-        GameStateListener.registerCommandExecution();
     }
 
     static void record(JsonObject job) throws Exception {
@@ -102,14 +125,23 @@ public final class Recorder {
         com.megacrit.cardcrawl.actions.common.DrawCardAction.drawnCards.clear();
         for (String key : TipTracker.tips.keySet()) TipTracker.tips.put(key, true);
         CardCrawlGame.playerPref.putInteger("THE_SILENT_SPIRITS", 1);
-        CommandExecutor.executeCommand("start silent 20 0" + SeedHelper.getString(seed));
-        GameStateListener.registerCommandExecution();
+        Settings.seed = seed;
+        Settings.seedSet = true;
+        AbstractDungeon.generateSeeds();
+        AbstractDungeon.ascensionLevel = 20;
+        AbstractDungeon.isAscensionMode = true;
+        CardCrawlGame.chosenCharacter = AbstractPlayer.PlayerClass.THE_SILENT;
+        CardCrawlGame.characterManager.setChosenCharacter(CardCrawlGame.chosenCharacter);
+        CardCrawlGame.startOver = true;
+        CardCrawlGame.mainMenuScreen.isFadingOut = true;
+        CardCrawlGame.mainMenuScreen.fadeOutMusic();
+        while (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) tick();
         settle();
         if (isScenario) { scenario(job.getAsJsonObject("scenario"), seed); settle(); }
         RandomXS128 policy = new RandomXS128(seed);
         try (BufferedWriter out = Files.newBufferedWriter(Paths.get(job.get("output").getAsString()), StandardCharsets.UTF_8)) {
             JsonObject header = new JsonObject();
-            header.addProperty("schema", 1);
+            header.addProperty("schema", 2);
             header.addProperty("game_sha256", "dd60a613a6178e08f1a57bcb8d5747e33c21fd49e743b88d76e9d74042803b2a");
             header.addProperty("seed", seed);
             header.addProperty("character", "THE_SILENT");
@@ -140,6 +172,14 @@ public final class Recorder {
     }
 
     public static void run() throws Exception {
+        try (java.util.jar.JarFile jar = new java.util.jar.JarFile("desktop-1.0.jar")) {
+            Enumeration<java.util.jar.JarEntry> entries = jar.entries();
+            while (entries.hasMoreElements()) {
+                String name = entries.nextElement().getName();
+                if (name.startsWith("com/megacrit/cardcrawl/") && name.endsWith(".class"))
+                    Class.forName(name.substring(0, name.length() - 6).replace('/', '.'), false, Recorder.class.getClassLoader());
+            }
+        }
         Platform.initializePlatform();
         MathUtils.random = new RandomXS128(0L);
         Platform.listener = new CardCrawlGame(".prefs/");
@@ -156,7 +196,6 @@ public final class Recorder {
             record(jobs.get(i).getAsJsonObject());
             if (i + 1 < jobs.size()) {
                 CardCrawlGame.startOver();
-                GameStateListener.registerCommandExecution();
                 while (CardCrawlGame.mode != CardCrawlGame.GameMode.CHAR_SELECT) tick();
                 settle();
             }
@@ -168,6 +207,7 @@ public final class Recorder {
         result.addProperty("seconds", seconds);
         result.addProperty("decisions_per_second", decisions / seconds);
         Files.write(Paths.get("result.json"), JSON.toJson(result).getBytes(StandardCharsets.UTF_8));
+        Class.forName("oracle.audit.BytecodeAudit", true, ClassLoader.getSystemClassLoader()).getMethod("write").invoke(null);
         System.exit(0);
     }
 }
