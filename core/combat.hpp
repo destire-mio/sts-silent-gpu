@@ -170,6 +170,7 @@ SPIRE_FN inline int calculate_intent_damage(const Game& g, int monster, int base
     const Powers& target = g.player.creature.powers;
     for (int i = 0; i < source.size; ++i) value = power_atDamageGive(g, source.at(g.power_objects, i), monster, value, DamageType::Normal);
     for (int i = 0; i < target.size; ++i) value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, DamageType::Normal);
+    value = stance_damage_receive(g, value, DamageType::Normal);
     const float multiplier = rear_damage_multiplier(g, monster);
     if (multiplier != 1.0f) value = static_cast<int>(value * multiplier);
     for (int i = 0; i < source.size; ++i) value = power_atDamageFinalGive(g, source.at(g.power_objects, i), monster, value, DamageType::Normal);
@@ -185,10 +186,12 @@ SPIRE_FN inline int calculate_damage(const Game& g, int source, int target, int 
         const Powers& powers = get_creature(g, source).powers;
         for (int i = 0; i < powers.size; ++i) value = power_atDamageGive(g, powers.at(g.power_objects, i), source, value, type, card);
     }
+    if (source == player_target) value = stance_damage_give(g, value, type);
     if (target != no_target) {
         const Powers& powers = get_creature(g, target).powers;
         for (int i = 0; i < powers.size; ++i) value = power_atDamageReceive(g, powers.at(g.power_objects, i), target, value, type, card);
     }
+    if (source >= 0) value = stance_damage_receive(g, value, type);
     if (source != no_target) {
         const Powers& powers = get_creature(g, source).powers;
         for (int i = 0; i < powers.size; ++i) value = power_atDamageFinalGive(g, powers.at(g.power_objects, i), source, value, type, card);
@@ -216,6 +219,7 @@ SPIRE_FN inline void apply_card_block(Game& g, int card) {
     c.block = max(0, floor_int(value));
 }
 SPIRE_FN inline void refresh_powers(Game& g) {
+    for (int i = 0; i < g.orbs.slots.size; ++i) if (g.orbs.slots[i] >= 0) apply_orb_focus(g, g.orbs.slots[i]);
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
     for (int i = 0; i < g.monster_order.size; ++i) monster_applyPowers(g, g.monster_order[i]);
 }

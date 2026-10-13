@@ -333,6 +333,24 @@ struct SnapshotGraph {
         });
     }
 
+    py::object stance_name(Stance stance) {
+        static const char* names[] = {"Neutral", "Wrath", "Calm", "Divinity"};
+        return py::str(names[static_cast<int>(stance)]);
+    }
+    py::object orb(int index, int slot = -1) {
+        if (index < 0 && slot < 0) return py::none();
+        static const char* names[] = {"Lightning", "Frost", "Dark", "Plasma"};
+        const Orb* value = index < 0 ? nullptr : &game.orbs.objects[index];
+        const std::string type = value ? names[static_cast<int>(value->kind)] : "EmptyOrbSlot";
+        return object({46, index < 0 ? 128 + slot : index, 0}, "orbs." + type, [&](const std::string& key) -> py::object {
+            if (key == "AbstractOrb.ID") return value ? py::object(py::str(type)) : index == -2 ? py::object(py::str("Empty")) : py::object(py::none());
+            if (key == "AbstractOrb.basePassiveAmount") return py::int_(value ? orb_base_passive(value->kind) : 0);
+            if (key == "AbstractOrb.baseEvokeAmount") return py::int_(value ? orb_base_evoke(value->kind) : 0);
+            if (key == "AbstractOrb.passiveAmount") return py::int_(value ? value->passive : 0);
+            if (key == "AbstractOrb.evokeAmount") return py::int_(value ? value->evoke : 0);
+            return {};
+        });
+    }
     py::object player() {
         return object({1, 0, 0}, "characters.TheSilent", [&](const std::string& key) -> py::object {
             if (key.compare(0, 17, "AbstractCreature.") == 0) return creature_field(player_target, key);
@@ -340,21 +358,7 @@ struct SnapshotGraph {
             if (field == "blights") return py::list();
             if (field == "orbs") {
                 py::list result;
-                if (game.player.orb_count == 0) return result;
-                const char* type = nullptr;
-                for (int i = 0; i < static_cast<int>(RelicId::Count); ++i) {
-                    const char* candidate = relic_data(static_cast<RelicId>(i)).empty_orb_class;
-                    if (candidate) type = candidate;
-                }
-                SPIRE_ASSERT(type != nullptr);
-                for (int i = 0; i < game.player.orb_count; ++i) {
-                    result.append(object({46, i, 0}, type, [&](const std::string& name) -> py::object {
-                        if (name == "AbstractOrb.ID") return py::none();
-                        if (name == "AbstractOrb.baseEvokeAmount" || name == "AbstractOrb.basePassiveAmount" ||
-                            name == "AbstractOrb.evokeAmount" || name == "AbstractOrb.passiveAmount") return py::int_(0);
-                        return {};
-                    }));
-                }
+                for (int i = 0; i < game.orbs.slots.size; ++i) result.append(orb(game.orbs.slots[i], i));
                 return result;
             }
             if (field == "cardInUse") return card(game.player.card_in_use);
@@ -389,8 +393,8 @@ struct SnapshotGraph {
                 for (int i = 0; i < game.run.relics.size; ++i) result.append(relic(i));
                 return result;
             }
-            if (field == "stance") return object({11, 0, 0}, "stances.NeutralStance", [](const std::string& name) -> py::object {
-                return name == "AbstractStance.ID" ? py::object(py::str("Neutral")) : py::object();
+            if (field == "stance") return object({11, 0, 0}, std::string("stances.") + stance_name(game.player.stance).cast<std::string>() + "Stance", [&](const std::string& name) -> py::object {
+                return name == "AbstractStance.ID" ? stance_name(game.player.stance) : py::object();
             });
             if (field == "startingMaxHP") return py::int_(70);
             return {};
@@ -864,10 +868,20 @@ struct SnapshotGraph {
             if (field == "usingCard") return py::bool_(manager.using_card);
             if (field == "mantraGained") return py::int_(0);
             if (field == "monsterAttacksQueued") return py::bool_(manager.monster_attacks_queued);
-            if (field == "nextCombatActions" || field == "orbsChanneledThisCombat" || field == "orbsChanneledThisTurn") return py::list();
+            if (field == "nextCombatActions") return py::list();
+            if (field == "orbsChanneledThisCombat" || field == "orbsChanneledThisTurn") {
+                py::list result;
+                const int first = field == "orbsChanneledThisTurn" ? game.orbs.turn_start : 0;
+                for (int i = first; i < game.orbs.channeled.size; ++i) result.append(orb(game.orbs.channeled[i]));
+                return result;
+            }
             if (field == "phase") return py::str(manager.phase == Phase::WaitingOnUser ? "WAITING_ON_USER" : "EXECUTING_ACTIONS");
             if (field == "turnHasEnded") return py::bool_(manager.turn_has_ended);
-            if (field == "uniqueStancesThisCombat") return py::dict();
+            if (field == "uniqueStancesThisCombat") {
+                py::dict result;
+                for (int i = 0; i < 4; ++i) if (game.stance_changes[i]) result[stance_name(static_cast<Stance>(i))] = game.stance_changes[i];
+                return result;
+            }
             return {};
         });
     }

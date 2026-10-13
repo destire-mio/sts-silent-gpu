@@ -63,6 +63,7 @@ SPIRE_FN inline int card_damage_value(Game& g, int card_id, int target) {
     const Powers& source = g.player.creature.powers;
     for (int i = 0; i < source.size; ++i)
         value = power_atDamageGive(g, source.at(g.power_objects, i), player_target, value, DamageType::Normal, card_id);
+    value = stance_damage_give(g, value, DamageType::Normal);
     if (target != no_target) {
         const Powers& receive = g.monsters[target].creature.powers;
         for (int i = 0; i < receive.size; ++i)

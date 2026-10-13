@@ -80,3 +80,4 @@ SPIRE_UNIT(NextTurnBlock, "Next Turn Block", "core/powers/next_turn_block.hpp", 
 SPIRE_UNIT(Nightmare, "Night Terror", "core/powers/nightmare.hpp", Nightmare)
 SPIRE_UNIT(NoBlock, "NoBlockPower", "core/powers/no_block.hpp", NoBlock)
 SPIRE_UNIT(PainfulStabs, "Painful Stabs", "core/powers/painful_stabs.hpp", PainfulStabs)
+SPIRE_UNIT(Electro, "Electro", "core/powers/electro.hpp", Electro)

@@ -169,6 +169,17 @@ struct Monster {
     bool cannot_escape = false;
     bool escape_next = false;
 };
+struct Orb {
+    int passive = 0;
+    int evoke = 0;
+    OrbKind kind = OrbKind::Lightning;
+};
+struct OrbState {
+    List<Orb, 128> objects{};
+    List<int16_t, 10> slots{};
+    List<uint8_t, 256> channeled{};
+    uint16_t turn_start = 0;
+};
 struct Player {
     Creature creature{};
     int energy = 0;
@@ -180,7 +191,7 @@ struct Player {
     int max_orbs = 0;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
-    uint8_t orb_count = 0;
+    Stance stance = Stance::Neutral;
     bool bloodied = false;
     bool end_turn_queued = false;
     bool escaping = false;
@@ -364,6 +375,8 @@ struct Game {
     RngStreams rng{};
     UnseededRandom unseeded{0};
     Player player{};
+    OrbState orbs{};
+    int stance_changes[4]{};
     List<Card, card_capacity> cards{};
     List<ForeignRewardCard, 256 - card_capacity> foreign_reward_cards{};
     List<uint8_t, 64> detached_master_cards{};

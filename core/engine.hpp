@@ -7,6 +7,8 @@
 #include "event_room.hpp"
 #include "card_pool.hpp"
 #include "dungeon.hpp"
+#include "orbs.hpp"
+#include "stances.hpp"
 
 namespace spire {
 SPIRE_FN inline bool potion_can_discard_base(const Game& g, int) {
@@ -421,6 +423,8 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
             value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, type, -1);
             if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
+        value = stance_damage_receive(g, value, type);
+        if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         for (int i = 0; i < source.size; ++i) {
             value = power_atDamageFinalGive(g, source.at(g.power_objects, i), owner, value, type, -1);
             if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
@@ -582,6 +586,8 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
         if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_round(g, id);
     }
     g.player.cards_played_this_turn = 0;
+    g.orbs.turn_start = g.orbs.channeled.size;
+    stance_start_turn(g);
     for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStart(g, i);
     for (int i = 0; i < g.hand.size; ++i) card_atTurnStartPreDraw(g, g.hand[i]);
     for (int i = 0; i < g.draw.size; ++i) card_atTurnStart(g, g.draw[i]);
@@ -589,6 +595,7 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     for (int i = 0; i < g.discard.size; ++i) card_atTurnStart(g, g.discard[i]);
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
+    start_turn_orbs(g);
     ++g.turn;
     g.manager.turn_has_ended = false;
     g.manager.total_discarded_this_turn = 0;
@@ -732,6 +739,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.manager.has_current_action = false;
             g.manager.card_queue.clear();
             g.manager.played_cards.clear();
+            g.orbs.channeled.clear(); g.orbs.turn_start = 0;
+            for (auto& count : g.stance_changes) count = 0;
             g.manager.energy_gained_this_combat = 0;
             g.manager.damage_received_this_combat = 0;
             g.manager.damage_received_this_turn = 0;
@@ -824,10 +833,14 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.player.hand_size = g.player.master_hand_size;
     g.player.energy = 0;
     g.player.cards_played_this_turn = 0;
+    g.orbs.turn_start = g.orbs.channeled.size;
     g.player.end_turn_queued = false;
     g.player.card_in_use = -1;
     g.player.max_orbs = g.player.master_max_orbs;
-    g.player.orb_count = static_cast<uint8_t>(g.player.max_orbs);
+    g.orbs = OrbState{};
+    for (int i = 0; i < g.player.max_orbs; ++i) g.orbs.slots.push_back(-1);
+    g.player.stance = Stance::Neutral;
+    for (auto& count : g.stance_changes) count = 0;
     build_encounter(g, encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
@@ -881,11 +894,13 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     enable.kind = EffectKind::EnableEndTurnButton;
     add_bottom(g, enable);
     relics_at_battle_start(g);
+    stance_start_turn(g);
     for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStart(g, i);
     for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStartPostDraw(g, i);
     for (int i = 0; i < g.draw.size; ++i) card_atTurnStart(g, g.draw[i]);
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
+    start_turn_orbs(g);
     run_until_decision(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     refresh_hand(g);
@@ -928,7 +943,7 @@ SPIRE_FN inline void reset(Game& g, uint64_t seed, RunProfile profile = {}) {
     event_enter(g);
 }
 SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
-    g.player.orb_count = 0;
+    g.orbs.slots.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
     g.player.creature.powers.clear();
     g.player.creature.block = 0;

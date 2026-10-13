@@ -307,6 +307,11 @@ def main():
             add(files[q], 'card', facts=data)
         elif data['color'] in ('RED', 'BLUE', 'PURPLE') and data['rarity'] in ('COMMON', 'UNCOMMON', 'RARE'):
             add(files[q], 'card', 'cross_color_last', data)
+    # Scenario support for Prismatic Shard's orb acceptance includes Defect starter cards.
+    for name in ('Zap', 'Dualcast'):
+        j = get('cards.blue.' + name)
+        key = add(j, 'card', 'cross_color_last', card_data(j, defaults))
+        units[key]['scenario_only'] = True
     for j in files.values():
         if j.qualified.startswith(PACKAGE + 'cards.status.'):
             add(j, 'card', facts=card_data(j, defaults))
@@ -704,7 +709,8 @@ def main():
 
     groups = defaultdict(list)
     for key, u in units.items():
-        groups[(u['stage'], u['kind'])].append(key)
+        if not u.get('scenario_only'):
+            groups[(u['stage'], u['kind'])].append(key)
     kind_order = {'rule': 0, 'action': 1, 'power': 2, 'card': 3, 'relic': 4, 'potion': 5, 'monster': 6, 'encounter': 7, 'event': 8, 'ascension': 9}
     batches = []
     for (stage, kind), keys in sorted(groups.items(), key=lambda item: (item[0][0] != 'standard', kind_order[item[0][1]])):
@@ -720,7 +726,7 @@ def main():
             batches.append({'id': stage + ':' + kind + ':' + str(index + 1).zfill(2), 'kind': kind, 'stage': stage, 'units': batch_keys, 'depends_on': []})
     batch_of = {k: b['id'] for b in batches for k in b['units']}
     for b in batches:
-        b['depends_on'] = sorted({batch_of[d] for k in b['units'] for d in units[k]['depends_on'] if batch_of[d] != b['id']})
+        b['depends_on'] = sorted({batch_of[d] for k in b['units'] for d in units[k]['depends_on'] if d in batch_of and batch_of[d] != b['id']})
     batch_index = {b['id']: index for index, b in enumerate(batches)}
     for b in batches:
         b['requires_batches'] = [d for d in b['depends_on'] if batch_index[d] < batch_index[b['id']] and d.split(':')[1] != b['kind']]
