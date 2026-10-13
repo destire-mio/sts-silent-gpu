@@ -170,6 +170,7 @@ struct ActionManager {
     Phase phase = Phase::WaitingOnUser;
     bool turn_has_ended = false;
     bool monster_attacks_queued = true;
+    bool using_card = false;
     int total_discarded_this_turn = 0;
     int damage_received_this_turn = 0;
     int damage_received_this_combat = 0;

@@ -500,7 +500,6 @@ SPIRE_FN inline void complete_player_turn_effect(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atEnergyGain(g, powers.at(g.power_objects, i), player_target);
 }
 SPIRE_FN inline void run_until_decision(Game& g) {
-    g.manager.phase = Phase::ExecutingActions;
     while (g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward && g.screen != Screen::Death) {
         bool dead = !g.monster_order.empty();
         for (int i = 0; i < g.monster_order.size; ++i) {
@@ -516,12 +515,17 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 g.manager.has_current_action = false;
             }
         } else if (!g.manager.actions.empty()) {
+            if (g.manager.phase == Phase::ExecutingActions) g.manager.using_card = false;
+            g.manager.phase = Phase::ExecutingActions;
             g.manager.current_action = g.manager.actions.pop_front();
             g.manager.has_current_action = true;
         } else if (!g.manager.pre_turn_actions.empty()) {
+            if (g.manager.phase == Phase::ExecutingActions) g.manager.using_card = false;
+            g.manager.phase = Phase::ExecutingActions;
             g.manager.current_action = g.manager.pre_turn_actions.pop_front();
             g.manager.has_current_action = true;
         } else if (!g.manager.card_queue.empty()) {
+            g.manager.using_card = g.manager.phase == Phase::WaitingOnUser;
             CardQueueItem queued = g.manager.card_queue[0];
             if (queued.card < 0) {
                 begin_end_turn(g);
@@ -556,7 +560,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 else remove_from_pile(g.limbo, queued.card);
             }
             remove_queued_card(g, queued.card);
-        } else if (g.battle_over) {
+        } else if (g.battle_over && g.manager.monster_attacks_queued) {
             on_victory(g);
             clear_actions(g, g.manager.actions);
             clear_actions(g, g.manager.pre_turn_actions);
@@ -572,6 +576,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.turn = 1;
             g.screen = Screen::Victory;
             g.manager.phase = Phase::WaitingOnUser;
+            g.manager.using_card = false;
             break;
         } else if (!g.manager.monster_attacks_queued) {
             g.manager.monster_attacks_queued = true;
@@ -604,6 +609,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 if (!g.manager.actions.empty()) continue;
             }
             g.manager.phase = Phase::WaitingOnUser;
+            g.manager.using_card = false;
             refresh_hand(g);
             if (!g.manager.actions.empty()) {
                 g.manager.phase = Phase::ExecutingActions;
