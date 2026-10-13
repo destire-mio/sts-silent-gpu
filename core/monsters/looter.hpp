@@ -7,7 +7,11 @@ struct Looter : MonsterHooks {
     SPIRE_STATE(Looter, int32_t stolenGold; int16_t escapeDef; int16_t goldAmt; int16_t lungeDmg; int16_t slashCount; int16_t swipeDmg;)
     SPIRE_FN static constexpr MonsterData data() { return {46, 50, {11, 14}, 6, 20, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        Monster m = make_monster(g, MonsterId::Looter, data(), hp_override);
+        MonsterData stats = data();
+        if (g.run.ascension < 7) { stats.hp_min = 44; stats.hp_max = 48; }
+        if (g.run.ascension < 2) { stats.damage[0] = 10; stats.damage[1] = 12; }
+        if (g.run.ascension < 17) stats.magic = 15;
+        Monster m = make_monster(g, MonsterId::Looter, stats, hp_override);
         m.state.Looter.escapeDef = m.block_amount;
         m.state.Looter.goldAmt = m.magic;
         m.state.Looter.lungeDmg = m.damage[1];
