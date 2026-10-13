@@ -1,2 +1,3 @@
 SPIRE_UNIT(SnakeRing, "Ring of the Snake", "core/relics/snake_ring.hpp", SnakeRing)
 SPIRE_UNIT(Tingsha, "Tingsha", "core/relics/tingsha.hpp", Tingsha)
+SPIRE_UNIT(TinyChest, "Tiny Chest", "core/relics/tiny_chest.hpp", TinyChest)
