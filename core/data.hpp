@@ -39,7 +39,6 @@ struct RelicData {
     bool keep_hand = false;
     bool exhaust_discard = false;
     bool blocks_potions = false;
-    int potion_multiplier = 1;
     int poison_bonus = 0;
     int rest_heal_bonus = 0;
     int bowl_hp = 0;
