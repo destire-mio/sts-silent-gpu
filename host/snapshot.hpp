@@ -719,6 +719,7 @@ struct SnapshotGraph {
         return result;
     }
     template<class T> py::object scalar(const T& value) { return py::cast(value); }
+    py::object scalar(float value) { return java_float(value); }
     py::object scalar(const py::object& value) { return value; }
     py::object scalar(const char* value) { return value ? py::object(py::str(value)) : py::object(py::none()); }
     py::object scalar(std::nullptr_t) { return py::none(); }
@@ -1007,7 +1008,8 @@ struct SnapshotGraph {
             for (int i = 0; i < choices.size; ++i) {
                 const auto& choice = choices[i];
                 if (choice.kind == EventChoiceKind::Option) options.append("option:" + std::to_string(choice.index));
-                else options.append(card_names[static_cast<int>(game.cards[choice.index].id)]);
+                else if (choice.kind == EventChoiceKind::Card) options.append(card_names[static_cast<int>(game.cards[choice.index].id)]);
+                else options.append(event_data(game.event.id).control_name);
             }
             result["options"] = options;
         }

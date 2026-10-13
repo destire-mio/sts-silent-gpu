@@ -135,7 +135,8 @@ base fields. A private subclass screen or enum belongs in the tagged payload.
 button's slot, not its position after disabled buttons are filtered out. The default `choices` hook retains enabled button order, and the driver maps that action
 back to its Java slot. An event with card controls overrides `choices` and emits ordered
 `EventChoice` entries with `EventChoiceKind::Card`; `choose` receives the card index. Keep
-this event-specific enumeration in its unit, as in `GremlinMatchGame`.
+this event-specific enumeration in its unit, as in `GremlinMatchGame`. A named control uses
+`EventChoiceKind::Control` and the unit's `EventData.control_name`, as in `GremlinWheelGame`.
 `room_dialog` and `image_dialog` store disabled bits in slot order; their selected-option
 values survive screen closure. `update` consumes an original delayed card-selection callback.
 Read which Java update method owns that callback before using it; a relic's callback must not
