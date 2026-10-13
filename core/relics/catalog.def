@@ -15,3 +15,4 @@ SPIRE_UNIT(VelvetChoker, "Velvet Choker", "core/relics/velvet_choker.hpp", Velve
 SPIRE_UNIT(Waffle, "Lee's Waffle", "core/relics/waffle.hpp", Waffle)
 SPIRE_UNIT(WarPaint, "War Paint", "core/relics/war_paint.hpp", WarPaint)
 SPIRE_UNIT(WarpedTongs, "WarpedTongs", "core/relics/warped_tongs.hpp", WarpedTongs)
+SPIRE_UNIT(Whetstone, "Whetstone", "core/relics/whetstone.hpp", Whetstone)
