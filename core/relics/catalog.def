@@ -8,3 +8,4 @@ SPIRE_UNIT(CultistMask, "CultistMask", "core/relics/cultist_mask.hpp", CultistMa
 SPIRE_UNIT(CursedKey, "Cursed Key", "core/relics/cursed_key.hpp", CursedKey)
 SPIRE_UNIT(DarkstonePeriapt, "Darkstone Periapt", "core/relics/darkstone_periapt.hpp", DarkstonePeriapt)
 SPIRE_UNIT(DeadBranch, "Dead Branch", "core/relics/dead_branch.hpp", DeadBranch)
+SPIRE_UNIT(DollysMirror, "DollysMirror", "core/relics/dollys_mirror.hpp", DollysMirror)
