@@ -194,7 +194,7 @@ struct SnapshotGraph {
             if (field == "priority") return py::int_(data.priority);
             if (field == "type") return py::str(power_isDebuff(power, owner) ? "DEBUFF" : "BUFF");
             if (field == "canGoNegative") return py::bool_(data.can_negative);
-            if (field == "isTurnBased") return py::bool_(data.turn_based || power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::PenNib || power.id == PowerId::Poison);
+            if (field == "isTurnBased") return py::bool_(data.turn_based || power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::PenNib || power.id == PowerId::Poison || power.id == PowerId::NoBlock);
             if (field == "isPostActionPower") return py::bool_(power.id == PowerId::Angry || power.id == PowerId::Shifting);
             if (key == "ConstrictedPower.source") {
                 const int source = power.state.Constricted.source;
@@ -208,6 +208,7 @@ struct SnapshotGraph {
                 const int source = power.state.Poison.source;
                 return source == no_target ? py::object(py::none()) : creature(source);
             }
+            if (key == "NightmarePower.card") return card(power.state.Nightmare.card);
             if (key == "StasisPower.card") return card(power.state.Stasis.card);
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
