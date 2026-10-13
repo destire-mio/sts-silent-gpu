@@ -14,3 +14,4 @@ SPIRE_UNIT(SmilingMask, "Smiling Mask", "core/relics/smiling_mask.hpp", SmilingM
 SPIRE_UNIT(SneckoEye, "Snecko Eye", "core/relics/snecko_eye.hpp", SneckoEye)
 SPIRE_UNIT(SneckoSkull, "Snake Skull", "core/relics/snecko_skull.hpp", SneckoSkull)
 SPIRE_UNIT(Sozu, "Sozu", "core/relics/sozu.hpp", Sozu)
+SPIRE_UNIT(SpiritPoop, "Spirit Poop", "core/relics/spirit_poop.hpp", SpiritPoop)
