@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Kunai"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

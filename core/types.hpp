@@ -23,9 +23,10 @@ enum class DamageType : uint8_t { Normal, Thorns, HpLoss };
 enum class EnemyType : uint8_t { Normal, Elite, Boss };
 enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None, CardReward, PotionRewards, MasterConfirm, RelicRewards };
 enum class PileId : uint8_t { Hand, Draw, Discard, Exhaust, Limbo, Grid, MasterDeck };
-enum class RoomKind : uint8_t { Monster, Shop, Treasure, Rest };
 enum class RoomPhase : uint8_t { Incomplete, Combat, Complete };
 enum class CampfireOption : uint8_t { Rest, Smith };
 enum class Phase : uint8_t { WaitingOnUser, ExecutingActions };
+enum class RoomKind : uint8_t { Monster, Elite, Boss, Shop, Rest, Treasure, Event };
+enum class RelicTier : uint8_t { Common, Uncommon, Rare, Shop, Boss };
 
 }

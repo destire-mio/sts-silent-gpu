@@ -245,6 +245,7 @@ struct Game {
     Pile drawn_cards{};
     Pile pending_obtains{};
     Pile reward_cards{};
+    Pile combat_reward_cards{};
     List<PotionId, 5> acquisition_potions{};
     List<RelicKey, 3> acquisition_relics{};
     CardId confirmation_card = CardId::Strike_G;

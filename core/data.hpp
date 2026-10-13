@@ -39,6 +39,11 @@ struct RelicData {
     bool blocks_gold = false;
     PowerId blocked_debuff = PowerId::Count;
     float gold_reward_bonus = 0.0f;
+    bool preserves_energy = false;
+    bool revives_player = false;
+    bool triggers_at_battle_end = false;
+    bool prevents_event_combat = false;
+    float shop_multiplier = 1.0f;
 };
 struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; bool revives_player = false; };
 struct ActionData { bool survives_combat_end = false; const char* type = nullptr; bool multi_step = false; };

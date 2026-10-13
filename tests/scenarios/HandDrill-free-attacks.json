@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "HandDrill"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "2 Louse"
+}

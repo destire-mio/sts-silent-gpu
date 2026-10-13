@@ -406,11 +406,6 @@ struct SnapshotGraph {
         });
     }
 
-    py::object reward_card(const FreshRunState& fresh, int index) {
-        (void)fresh;
-        return card(game.reward_cards[index]);
-    }
-
     py::object reward_potion(const FreshRunState& fresh) {
         const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(fresh.rewardPotion)].cast<py::dict>();
         const py::dict fields = data["fields"].cast<py::dict>();
@@ -438,7 +433,7 @@ struct SnapshotGraph {
             if (key == "RewardItem.cards") {
                 if (type != "CARD") return py::none();
                 py::list result;
-                for (int i = 0; i < static_cast<int>(fresh.rewardCards.size()); ++i) result.append(reward_card(fresh, i));
+                for (int i = 0; i < game.combat_reward_cards.size; ++i) result.append(card(game.combat_reward_cards[i]));
                 return result;
             }
             return {};

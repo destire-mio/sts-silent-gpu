@@ -325,6 +325,13 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
                     g.run.potions[slot] = PotionId::Empty;
                     return;
                 }
+                for (int i = 0; i < g.run.relics.size; ++i) {
+                    const RelicData data = relic_data(g.run.relics[i].id);
+                    if (data.revives_player && g.run.relics[i].counter == data.counter) {
+                        relic_onTrigger(g, i);
+                        return;
+                    }
+                }
             }
             target.dead = true;
             target.block = 0;
@@ -511,8 +518,18 @@ SPIRE_FN inline void complete_end_turn(Game& g) {
     add_bottom(g, end);
 }
 SPIRE_FN inline void recharge_energy(Game& g) {
-    g.player.energy = g.player.energy_master;
-    g.manager.energy_gained_this_combat += g.player.energy_master;
+    int preserving_relic = -1;
+    for (int i = 0; i < g.run.relics.size; ++i) {
+        if (relic_data(g.run.relics[i].id).preserves_energy) {
+            preserving_relic = i;
+            break;
+        }
+    }
+    if (preserving_relic >= 0) {
+        if (g.player.energy > 0) queue_relic_above(g, preserving_relic, player_target, true);
+        gain_energy(g, g.player.energy_per_turn);
+    } else g.player.energy = g.player.energy_per_turn;
+    g.manager.energy_gained_this_combat += g.player.energy_per_turn;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onEnergyRecharge(g, i);
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_onEnergyRecharge(g, powers.at(g.power_objects, i), player_target);
@@ -766,7 +783,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.multi_damage.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
-    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
+    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.combat_reward_cards.clear();
     g.grid_source = PileId::Grid;
     g.discovery_card = -1;
     g.action_objects.clear();
@@ -794,6 +811,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.end_turn_enabled = true;
     g.screen = Screen::Combat;
     g.encounter = setup.encounter;
+    for (int i = 0; i < g.run.relics.size; ++i) relic_onEnterRoom(g, i, static_cast<int>(g.room_kind));
+    for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(g.room_kind));
     encounter_initialize_state(g);
     build_encounter(g, setup.encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);

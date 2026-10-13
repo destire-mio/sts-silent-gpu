@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Slimed",
+      "upgrades": 0
+    },
+    {
+      "id": "Dazed",
+      "upgrades": 0
+    },
+    {
+      "id": "Burn",
+      "upgrades": 0
+    },
+    {
+      "id": "Void",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Medical Kit"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
