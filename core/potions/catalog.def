@@ -4,3 +4,4 @@ SPIRE_UNIT(GamblersBrew, "GamblersBrew", "core/potions/gamblers_brew.hpp", Gambl
 SPIRE_UNIT(GhostInAJar, "GhostInAJar", "core/potions/ghost_in_a_jar.hpp", GhostInAJar)
 SPIRE_UNIT(LiquidBronze, "LiquidBronze", "core/potions/liquid_bronze.hpp", LiquidBronze)
 SPIRE_UNIT(LiquidMemories, "LiquidMemories", "core/potions/liquid_memories.hpp", LiquidMemories)
+SPIRE_UNIT(PoisonPotion, "Poison Potion", "core/potions/poison_potion.hpp", PoisonPotion)
