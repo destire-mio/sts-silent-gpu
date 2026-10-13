@@ -5,6 +5,12 @@
 #include "card_pool.hpp"
 
 namespace spire {
+SPIRE_FN inline bool potion_can_discard_base(const Game& g, int) {
+    return g.room_event_class == 0 || !same_text(g.text[g.room_event_class], "events.shrines.WeMeetAgain");
+}
+SPIRE_FN inline bool potion_can_use_base(const Game& g, int slot) {
+    return potion_canDiscard(g, slot) && g.room_in_combat && !monsters_basically_dead(g) && !g.manager.turn_has_ended;
+}
 SPIRE_FN inline void insert_random_card(Game& g, Pile& pile, int card) {
     if (pile.empty()) pile.push_back(card);
     else pile.insert(g.rng.card_random.random(pile.size - 1), card);
@@ -563,6 +569,18 @@ SPIRE_FN inline void complete_player_turn_effect(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atEnergyGain(g, powers.at(g.power_objects, i), player_target);
 }
 SPIRE_FN inline void run_until_decision(Game& g) {
+    if (g.player.escaping) {
+        // AbstractPlayer.updateEscapeAnimation advances rule-read drawX at the oracle's fixed tick.
+        while (g.player.escape_timer > 0.0f) {
+            g.player.escape_timer -= 1.0f / 60.0f;
+            const float speed = g.player.creature.flip_horizontal ? -400.0f : 500.0f;
+            g.player.creature.draw_x += (1.0f / 60.0f) * speed * (1280.0f / 1920.0f);
+        }
+        g.battle_over = true;
+        g.player.creature.flip_horizontal = false;
+        g.player.escaping = false;
+        g.player.escape_timer = 0.0f;
+    }
     while (g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward && g.screen != Screen::Death) {
         bool dead = !g.monster_order.empty();
         for (int i = 0; i < g.monster_order.size; ++i) {
@@ -754,6 +772,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.room_in_combat = true;
     g.cannot_lose = false;
     g.mugged = false;
+    g.smoked = false;
     g.discard_remaining = 0;
     g.selection_any_number = g.selection_can_pick_zero = false;
     g.end_turn_enabled = true;
@@ -854,14 +873,16 @@ SPIRE_FN inline void step(Game& g, Action action) {
     if (g.fault != 0) return;
     bind_fault(g);
     if (action.kind == ActionKind::PotionUse || action.kind == ActionKind::PotionDiscard) {
+        SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable);
+        SPIRE_ASSERT(action.kind != ActionKind::PotionDiscard || potion_canDiscard(g, action.index));
         if (action.kind == ActionKind::PotionUse) {
-            SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable && potion_canUse(g, action.index));
+            SPIRE_ASSERT(potion_canUse(g, action.index));
             const int target = action.target >= 0 ? g.monster_order[action.target] : player_target;
             potion_use(g, action.index, target);
             for (int i = 0; i < g.run.relics.size; ++i) relic_onUsePotion(g, i);
         }
         g.run.potions[action.index] = PotionId::Empty;
-        run_until_decision(g);
+        if (g.screen == Screen::Combat) run_until_decision(g);
         return;
     }
     if (g.screen == Screen::Discard) {

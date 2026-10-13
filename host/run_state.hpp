@@ -391,6 +391,7 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.rewardTypes.push_back("POTION");
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;
+    if (game.smoked) return;
     const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
     const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
     std::array<int, 3> rarities{};
