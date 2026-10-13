@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "HandOfGreed",
+      "upgrades": 0
+    },
+    {
+      "id": "HandOfGreed",
+      "upgrades": 0
+    },
+    {
+      "id": "HandOfGreed",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bloody Idol"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 49,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

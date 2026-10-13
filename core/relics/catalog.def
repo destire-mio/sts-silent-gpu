@@ -9,3 +9,4 @@ SPIRE_UNIT(BagOfPreparation, "Bag of Preparation", "core/relics/bag_of_preparati
 SPIRE_UNIT(BirdFacedUrn, "Bird Faced Urn", "core/relics/bird_faced_urn.hpp", BirdFacedUrn)
 SPIRE_UNIT(BlackStar, "Black Star", "core/relics/black_star.hpp", BlackStar)
 SPIRE_UNIT(BloodVial, "Blood Vial", "core/relics/blood_vial.hpp", BloodVial)
+SPIRE_UNIT(BloodyIdol, "Bloody Idol", "core/relics/bloody_idol.hpp", BloodyIdol)
