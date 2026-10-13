@@ -47,6 +47,8 @@ def content_cases():
         for key, unit in units.items():
             if unit["kind"] == "encounter":
                 owns = setup["encounter"] == unit["game_id"]
+            elif unit["kind"] == "event":
+                owns = False
             else:
                 names = {Path(unit["java_path"]).stem, unit["enum"]}
                 owns = any(name == n or name.startswith(n + "-") for n in names)
@@ -232,6 +234,8 @@ def replay_content(output, units, cases, run_paths=()):
             if row["status"] == "matched":
                 for key in observed:
                     observations[key].append(name)
+                    if units[key]["kind"] == "event" and key not in owners:
+                        owners.append(key)
             print(name, seed, row["status"], row.get("error", ""), flush=True)
             if row["status"] not in ("matched", "blocked"):
                 failed = True
