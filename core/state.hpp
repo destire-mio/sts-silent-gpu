@@ -189,6 +189,7 @@ struct Run {
     int floor = 0;
     int act = 1;
     int ascension = 20;
+    int boss_count = 0;
     int gold = 99;
     bool ruby_key = false;
     bool emerald_key = false;

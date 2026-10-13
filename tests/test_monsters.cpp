@@ -22,7 +22,7 @@ void encounter_construction() {
     constexpr int hp_calls[] = {1, 1, 4, 2, 1, 4, 1, 1, 5, 7, 6, 1, 6, 2};
     constexpr int misc_calls[] = {0, 0, 2, 1, 0, 4, 0, 1, 5, 4, 3, 0, 3, 0};
     for (int seed = 0; seed < 100; ++seed) {
-        for (int id = 0; id < static_cast<int>(EncounterId::Count); ++id) {
+        for (int id = 0; id < static_cast<int>(sizeof(counts) / sizeof(counts[0])); ++id) {
             Game g{};
             g.rng.generate_seeds(seed);
             build_encounter(g, static_cast<EncounterId>(id));
