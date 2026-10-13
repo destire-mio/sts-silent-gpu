@@ -1,0 +1,20 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::relics {
+struct Kunai : RelicHooks {
+    static SPIRE_FN constexpr RelicData data() { return {-1, 250}; }
+    static SPIRE_FN void atTurnStart(Game& g, int relic) { g.run.relics[relic].counter = 0; }
+    static SPIRE_FN void onUseCard(Game& g, int relic, int card, Effect&) {
+        if (card_data(g.cards[card].id).type == CardType::Attack) {
+            int& counter = g.run.relics[relic].counter;
+            if (++counter % 3 == 0) {
+                counter = 0;
+                add_bottom(g, relic_above_creature(player_target, relic));
+                queue_power(g, player_target, player_target, PowerId::Dexterity, 1);
+            }
+        }
+    }
+    static SPIRE_FN void onVictory(Game& g, int relic) { g.run.relics[relic].counter = -1; }
+};
+}
