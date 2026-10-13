@@ -160,6 +160,11 @@ reaches it. Check both comparison scopes, each
 choice and its follow-up screen, and a terminal snapshot. Do not mark the event complete on
 compilation or a unit-only assertion.
 
+`SecretPortal.canSpawn` reads the original run clock at 800 seconds. The action contract
+contains no elapsed-time input, and the engine does not advance `RunState.playtime`.
+Recordings below that threshold cannot establish its timed eligibility. Porting this event
+requires resolving that input boundary; do not substitute a floor count or fixed frame count.
+
 ## Device memory budget
 
 The run-loop acceptance ceiling is **40 KiB per Game**. `state.hpp` enforces a **48 KiB hard ceiling**
