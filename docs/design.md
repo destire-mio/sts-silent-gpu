@@ -75,7 +75,14 @@ type Action =
 type CardSpec = {id: string, upgrades: number};
 type Scenario = {
   deck: CardSpec[], relics: string[], potions: (string | null)[],
-  hp: number, max_hp: number, encounter: string
+  hp: number, max_hp: number, encounter: string,
+  start?: {
+    act: 1 | 2 | 3 | 4, floor: number, node: [x: number, y: number],
+    room: "MonsterRoom" | "MonsterRoomElite" | "MonsterRoomBoss" | "RestRoom" |
+          "ShopRoom" | "TreasureRoom" | "TreasureRoomBoss" | "EventRoom",
+    gold: number, keys: [ruby: boolean, emerald: boolean, sapphire: boolean],
+    emerald: boolean
+  }
 };
 type Header = {
   schema: 2, game_sha256: string, seed: number,
@@ -230,6 +237,17 @@ It enters a plain Act 1 `MonsterRoom` at floor 1 using the original `nextRoomTra
 specified encounter as its next monster-list entry. This defines the scenario context; it does
 not apply burning-elite modifiers or boss-room rewards. Piles, energy, monsters and relic battle
 hooks are initialized by the game.
+
+The recorder's run-level scenarios supply `start`. After fresh Neow initialization, setup assigns
+the requested keys and the floor before room entry, then constructs the requested later dungeon
+through its original constructor (Act 1 retains its existing generated dungeon). The previous
+node becomes an EmptyRoom. Gold is assigned before the deck/relic/potion/HP setup above. Setup
+replaces the requested generated node's room, sets its emerald flag and the chosen-node/path
+state, overrides the corresponding monster/elite entry or boss key for combat rooms, and calls
+the original `nextRoomTransition`. The requested floor is the floor after that transition.
+These recordings continue through rooms and acts until death or victory; combat-only scenarios
+without `start` retain their existing combat-end boundary. The engine does not yet replay
+run-level starts.
 
 The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio
 output. Original update/render callbacks execute. Decisions wait for Soul settlement, monster

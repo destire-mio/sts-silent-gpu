@@ -301,6 +301,22 @@ starts a fresh Silent A20 run, replaces the deck, acquires relics in order throu
 fills potions, assigns HP and enters a floor-1 MonsterRoom. The deck is the input before relic
 acquisition effects. See `tests/scenarios/starter.json` for the starter deck.
 
+For a run-level recording, add a `start` object to the same scenario. All fields in that object
+are required; `node` names the generated map node whose room is replaced for the start:
+
+```json
+"start": {
+  "act": 4, "floor": 52, "node": [3, 0], "room": "RestRoom",
+  "gold": 2000, "keys": [true, true, true], "emerald": false
+}
+```
+
+The recorder uses original dungeon constructors and room-entry callbacks and records through
+death or victory. `encounter` overrides the corresponding list entry or boss key when the
+starting room is a monster, elite or boss room. The existing combat-only format keeps its
+original behavior. `docs/design.md` specifies the setup order. Engine support for replaying
+these run-level starts is pending.
+
 Record the original game with several seeds; at most three JVMs may run at once. The oracle
 must have been built with `python3 oracle/build.py` before recording.
 

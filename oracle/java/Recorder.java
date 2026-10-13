@@ -13,7 +13,10 @@ import com.megacrit.cardcrawl.helpers.TipTracker;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.potions.PotionSlot;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
-import com.megacrit.cardcrawl.rooms.MonsterRoom;
+import com.megacrit.cardcrawl.rooms.*;
+import com.megacrit.cardcrawl.dungeons.TheCity;
+import com.megacrit.cardcrawl.dungeons.TheBeyond;
+import com.megacrit.cardcrawl.dungeons.TheEnding;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import java.io.*;
@@ -86,6 +89,28 @@ public final class Recorder {
     }
 
     static void scenario(JsonObject setup, long seed) throws Exception {
+        JsonObject start = setup.has("start") ? setup.getAsJsonObject("start") : null;
+        if (start != null) {
+            int act = start.get("act").getAsInt();
+            AbstractDungeon.floorNum = start.get("floor").getAsInt() - 1;
+            JsonArray keys = start.getAsJsonArray("keys");
+            Settings.hasRubyKey = keys.get(0).getAsBoolean();
+            Settings.hasEmeraldKey = keys.get(1).getAsBoolean();
+            Settings.hasSapphireKey = keys.get(2).getAsBoolean();
+            ArrayList<String> events = new ArrayList<String>(AbstractDungeon.specialOneTimeEventList);
+            AbstractDungeon.actNum = act - 1;
+            switch (act) {
+                case 1: AbstractDungeon.actNum = 1; break;
+                case 2: CardCrawlGame.dungeon = new TheCity(AbstractDungeon.player, events); break;
+                case 3: CardCrawlGame.dungeon = new TheBeyond(AbstractDungeon.player, events); break;
+                case 4: CardCrawlGame.dungeon = new TheEnding(AbstractDungeon.player, events); break;
+                default: throw new AssertionError("Invalid start act: " + act);
+            }
+            AbstractDungeon.currMapNode = new MapRoomNode(0, -1);
+            AbstractDungeon.currMapNode.room = new EmptyRoom();
+            AbstractDungeon.closeCurrentScreen();
+            AbstractDungeon.player.gold = start.get("gold").getAsInt();
+        }
         AbstractDungeon.player.masterDeck.clear();
         for (JsonElement entry : setup.getAsJsonArray("deck")) {
             JsonObject item = entry.getAsJsonObject();
@@ -114,9 +139,32 @@ public final class Recorder {
         }
         AbstractDungeon.player.maxHealth = setup.get("max_hp").getAsInt();
         AbstractDungeon.player.currentHealth = setup.get("hp").getAsInt();
-        AbstractDungeon.monsterList.set(0, setup.get("encounter").getAsString());
-        MapRoomNode node = new MapRoomNode(0, 0);
-        node.room = new MonsterRoom();
+        MapRoomNode node;
+        if (start == null) {
+            node = new MapRoomNode(0, 0);
+            node.room = new MonsterRoom();
+        } else {
+            JsonArray position = start.getAsJsonArray("node");
+            node = AbstractDungeon.map.get(position.get(1).getAsInt()).get(position.get(0).getAsInt());
+            switch (start.get("room").getAsString()) {
+                case "MonsterRoom": node.room = new MonsterRoom(); break;
+                case "MonsterRoomElite": node.room = new MonsterRoomElite(); break;
+                case "MonsterRoomBoss": node.room = new MonsterRoomBoss(); break;
+                case "RestRoom": node.room = new RestRoom(); break;
+                case "ShopRoom": node.room = new ShopRoom(); break;
+                case "TreasureRoom": node.room = new TreasureRoom(); break;
+                case "TreasureRoomBoss": node.room = new TreasureRoomBoss(); break;
+                case "EventRoom": node.room = new EventRoom(); break;
+                default: throw new AssertionError("Invalid start room: " + start.get("room"));
+            }
+            node.hasEmeraldKey = start.get("emerald").getAsBoolean();
+            AbstractDungeon.firstRoomChosen = true;
+            AbstractDungeon.pathX.add(node.x);
+            AbstractDungeon.pathY.add(node.y);
+        }
+        if (node.room instanceof MonsterRoomElite) AbstractDungeon.eliteMonsterList.set(0, setup.get("encounter").getAsString());
+        else if (node.room instanceof MonsterRoomBoss) AbstractDungeon.bossKey = setup.get("encounter").getAsString();
+        else if (node.room instanceof MonsterRoom) AbstractDungeon.monsterList.set(0, setup.get("encounter").getAsString());
         AbstractDungeon.nextRoom = node;
         CardCrawlGame.dungeon.nextRoomTransition();
     }
@@ -124,6 +172,7 @@ public final class Recorder {
     static void record(JsonObject job) throws Exception {
         long seed = job.get("seed").getAsLong();
         boolean isScenario = !job.get("scenario").isJsonNull();
+        boolean combatScenario = isScenario && !job.getAsJsonObject("scenario").has("start");
         Unseeded.rng = new Unseeded.Stream(seed);
         MathUtils.random = new RandomXS128(seed);
         CardCrawlGame.tips = new com.megacrit.cardcrawl.helpers.GameTips();
@@ -160,7 +209,7 @@ public final class Recorder {
             header.add("scenario", job.get("scenario"));
             out.write(JSON.toJson(header)); out.newLine();
             int count = 0;
-            while (!terminal(isScenario)) {
+            while (!terminal(combatScenario)) {
                 ArrayList<JsonObject> legal = Actions.legal();
                 if (legal.isEmpty()) throw new AssertionError("Empty actions: " + AbstractDungeon.screen);
                 JsonObject action = legal.get(policy.nextInt(legal.size()));
@@ -176,7 +225,7 @@ public final class Recorder {
             }
             JsonObject last = new JsonObject();
             last.add("snapshot", Snapshot.capture());
-            last.addProperty("terminal", AbstractDungeon.player.isDead ? "death" : isScenario ? "combat_end" : "victory");
+            last.addProperty("terminal", AbstractDungeon.player.isDead ? "death" : combatScenario ? "combat_end" : "victory");
             out.write(JSON.toJson(last)); out.newLine();
             System.out.println("ORACLE recorded seed=" + seed + " decisions=" + count);
         }
