@@ -29,3 +29,4 @@ SPIRE_UNIT(ShelledParasiteAndFungi, "Shelled Parasite and Fungi", "core/encounte
 SPIRE_UNIT(TwoThieves, "2 Thieves", "core/encounters/two_thieves.hpp", TwoThieves)
 SPIRE_UNIT(GremlinLeader, "Gremlin Leader", "core/encounters/gremlin_leader.hpp", GremlinLeader)
 SPIRE_UNIT(TheHeart, "The Heart", "core/encounters/the_heart.hpp", TheHeart)
+SPIRE_UNIT(ShieldAndSpear, "Shield and Spear", "core/encounters/shield_and_spear.hpp", ShieldAndSpear)
