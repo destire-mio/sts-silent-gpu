@@ -14,7 +14,7 @@ enum class CardType : uint8_t { Attack, Skill, Power, Status, Curse };
 enum class CardTarget : uint8_t { Enemy, Self, None };
 enum class Intent : uint8_t { None, Attack, AttackBuff, AttackDebuff, AttackDefend, Buff, Debuff, StrongDebuff, Defend, DefendBuff, Escape, Magic, Sleep, Stun, Unknown, Debug };
 enum class DamageType : uint8_t { Normal, Thorns, HpLoss };
-enum class Screen : uint8_t { Combat, Discard, Victory, Death, None };
+enum class Screen : uint8_t { Combat, Discard, Victory, Death, None, HandSelect, CardReward };
 enum class Phase : uint8_t { WaitingOnUser, ExecutingActions };
 
 }

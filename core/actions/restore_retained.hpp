@@ -3,7 +3,13 @@
 
 namespace spire::units::actions {
 struct RestoreRetained : ActionHooks {
-    SPIRE_FN static void execute(Game& g, const Effect&) {
+    SPIRE_FN static void prepare(Game&, Effect& e) {
+        e.source = no_target;
+        e.target = player_target;
+        e.amount = -1;
+    }
+    SPIRE_FN static void execute(Game& g, Effect& e) {
+        e.done = true;
         for (int i = 0; i < g.retained.size;) {
             const int card = g.retained[i];
             if (!g.cards[card].retain && !g.cards[card].self_retain) {
