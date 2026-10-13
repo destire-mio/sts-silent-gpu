@@ -56,9 +56,10 @@ CombatSetup parse_setup(const Game& game, const py::dict& value) {
         setup.deck.clear();
         for (py::handle item : value["deck"].cast<py::list>()) {
             const py::dict card = py::reinterpret_borrow<py::dict>(item);
-            setup.deck.push_back(make_card(parse_id<CardId>(card["id"].cast<std::string>(), card_names),
-                card.contains("upgrades") ? card["upgrades"].cast<int>() : 0,
-                card.contains("misc") ? card["misc"].cast<int>() : 0));
+            Card value = make_card(parse_id<CardId>(card["id"].cast<std::string>(), card_names),
+                card.contains("upgrades") ? card["upgrades"].cast<int>() : 0);
+            if (card.contains("misc")) value.misc = card["misc"].cast<int>();
+            setup.deck.push_back(value);
         }
     }
     if (value.contains("relics")) {

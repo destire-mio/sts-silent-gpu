@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Sadistic Nature",
+      "upgrades": 0
+    },
+    {
+      "id": "Sadistic Nature",
+      "upgrades": 1
+    },
+    {
+      "id": "Trip",
+      "upgrades": 0
+    },
+    {
+      "id": "Trip",
+      "upgrades": 1
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 66,
+  "max_hp": 66,
+  "encounter": "Red Slaver"
+}

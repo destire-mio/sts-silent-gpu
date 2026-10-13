@@ -4,7 +4,7 @@
 namespace spire::units::cards {
 struct CripplingPoison : CardHooks {
     static SPIRE_FN constexpr CardDef data() {
-        return {CardType::Skill, CardTarget::None, 2, -1, -1, 4, 0, 0, 3, true, false};
+        return {CardType::Skill, CardTarget::AllEnemies, 2, -1, -1, 4, 0, 0, 3, true, false};
     }
     static SPIRE_FN void use(Game& g, int card, int) {
         if (!monsters_basically_dead(g)) {

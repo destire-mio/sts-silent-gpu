@@ -1,0 +1,27 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::cards {
+struct MindBlast : CardHooks {
+    static SPIRE_FN constexpr CardDef data() {
+        return {CardType::Attack, CardTarget::Enemy, 2, 0, -1, -1, 0, 0, 0, false, false, true};
+    }
+    static SPIRE_FN void use(Game& g, int card, int target) {
+        queue_card_damage(g, card, target);
+    }
+    static SPIRE_FN void upgrade(Card& card) {
+        if (card.upgrades == 0) {
+            ++card.upgrades;
+            card.cost = card.cost_for_turn = 1;
+            card.upgraded_cost = true;
+        }
+    }
+    static SPIRE_FN void applyPowers(Game& g, int card) {
+        get_card(g, card).base_damage = g.draw.size;
+        apply_card_powers(g, card);
+    }
+    static SPIRE_FN void calculateCardDamage(Game& g, int card, int target) {
+        calculate_card_damage(g, card, target);
+    }
+};
+}

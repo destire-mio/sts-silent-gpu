@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "RitualDagger",
+      "upgrades": 0
+    },
+    {
+      "id": "RitualDagger",
+      "upgrades": 1
+    },
+    {
+      "id": "RitualDagger",
+      "upgrades": 0
+    },
+    {
+      "id": "RitualDagger",
+      "upgrades": 1
+    },
+    {
+      "id": "Trip",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 66,
+  "max_hp": 66,
+  "encounter": "Small Slimes"
+}

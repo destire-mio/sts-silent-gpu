@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "The Bomb",
+      "upgrades": 0
+    },
+    {
+      "id": "The Bomb",
+      "upgrades": 1
+    },
+    {
+      "id": "The Bomb",
+      "upgrades": 0
+    },
+    {
+      "id": "The Bomb",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 66,
+  "max_hp": 66,
+  "encounter": "Jaw Worm"
+}

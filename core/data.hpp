@@ -10,6 +10,7 @@ struct CardDef {
     bool exhaust, ethereal;
     bool innate = false;
     bool multi_damage = false;
+    int misc = 0;
 };
 struct PowerData {
     int priority = 5;

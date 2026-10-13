@@ -45,6 +45,7 @@ SPIRE_FN inline Card stat_equivalent_copy(Game& g, int card_id) {
     Card copy = card_makeCopy(g, card_id);
     for (int i = 0; i < source.upgrades; ++i) card_upgrade(copy);
     copy.misc = source.misc;
+    copy.target = source.target;
     copy.base_damage = source.base_damage;
     copy.base_block = source.base_block;
     copy.base_magic = source.base_magic;
