@@ -415,6 +415,7 @@ SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
         g.screen != Screen::Grid && g.screen != Screen::CardReward) e.done = true;
 }
 SPIRE_FN inline void end_turn_early(Game& g) {
+    g.player.end_turn_queued = true;
     for (int i = 0; i < g.manager.card_queue.size; ++i) {
         const CardQueueItem& item = g.manager.card_queue[i];
         if (!item.autoplay_card) continue;
@@ -433,6 +434,9 @@ SPIRE_FN inline void begin_end_turn(Game& g) {
     orbs.kind = EffectKind::TriggerEndOfTurnOrbs;
     add_bottom(g, orbs);
     for (int i = 0; i < g.hand.size; ++i) card_triggerOnEndOfTurnForPlayingCard(g, g.hand[i]);
+}
+SPIRE_FN inline void finish_end_turn(Game& g) {
+    g.player.end_turn_queued = false;
     at_end_of_turn(g, player_target);
     Effect clear{};
     clear.kind = EffectKind::ClearCardQueue;
@@ -444,12 +448,8 @@ SPIRE_FN inline void begin_end_turn(Game& g) {
     for (int i = 0; i < g.discard.size; ++i) card_resetAttributes(g, g.discard[i]);
     for (int i = 0; i < g.hand.size; ++i) card_resetAttributes(g, g.hand[i]);
     Effect end{};
-    end.kind = EffectKind::EndTurn;
+    end.kind = EffectKind::EndTurnSequence;
     add_bottom(g, end);
-    Effect start{};
-    start.kind = EffectKind::MonsterStart;
-    add_bottom(g, start);
-    g.manager.monster_attacks_queued = false;
 }
 SPIRE_FN inline void recharge_energy(Game& g) {
     g.player.energy = g.player.energy_master;
@@ -500,7 +500,6 @@ SPIRE_FN inline void complete_player_turn_effect(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atEnergyGain(g, powers.at(g.power_objects, i), player_target);
 }
 SPIRE_FN inline void run_until_decision(Game& g) {
-    g.manager.phase = Phase::ExecutingActions;
     while (g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward && g.screen != Screen::Death) {
         bool dead = !g.monster_order.empty();
         for (int i = 0; i < g.monster_order.size; ++i) {
@@ -516,12 +515,17 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 g.manager.has_current_action = false;
             }
         } else if (!g.manager.actions.empty()) {
+            if (g.manager.phase == Phase::ExecutingActions) g.manager.using_card = false;
+            g.manager.phase = Phase::ExecutingActions;
             g.manager.current_action = g.manager.actions.pop_front();
             g.manager.has_current_action = true;
         } else if (!g.manager.pre_turn_actions.empty()) {
+            if (g.manager.phase == Phase::ExecutingActions) g.manager.using_card = false;
+            g.manager.phase = Phase::ExecutingActions;
             g.manager.current_action = g.manager.pre_turn_actions.pop_front();
             g.manager.has_current_action = true;
         } else if (!g.manager.card_queue.empty()) {
+            g.manager.using_card = g.manager.phase == Phase::WaitingOnUser;
             CardQueueItem queued = g.manager.card_queue[0];
             if (queued.card < 0) {
                 begin_end_turn(g);
@@ -556,6 +560,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 else remove_from_pile(g.limbo, queued.card);
             }
             remove_queued_card(g, queued.card);
+        } else if (g.player.end_turn_queued) {
+            finish_end_turn(g);
         } else if (g.battle_over) {
             on_victory(g);
             clear_actions(g, g.manager.actions);
@@ -572,6 +578,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.turn = 1;
             g.screen = Screen::Victory;
             g.manager.phase = Phase::WaitingOnUser;
+            g.manager.using_card = false;
             break;
         } else if (!g.manager.monster_attacks_queued) {
             g.manager.monster_attacks_queued = true;
@@ -604,6 +611,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 if (!g.manager.actions.empty()) continue;
             }
             g.manager.phase = Phase::WaitingOnUser;
+            g.manager.using_card = false;
             refresh_hand(g);
             if (!g.manager.actions.empty()) {
                 g.manager.phase = Phase::ExecutingActions;
@@ -802,6 +810,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
     } else {
         SPIRE_ASSERT(g.screen == Screen::Combat);
         if (action.kind == ActionKind::EndTurn) {
+            g.player.end_turn_queued = true;
             g.manager.card_queue.push_back({-1, -1});
         } else if (action.kind == ActionKind::PotionUse) {
             SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable && potion_canUse(g, action.index));

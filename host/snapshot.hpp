@@ -289,7 +289,8 @@ struct SnapshotGraph {
             if (field == "chosenClass") return py::str("THE_SILENT");
             if (field == "discardPile") return group(0, "DISCARD_PILE", &game.discard);
             if (field == "drawPile") return group(1, "DRAW_PILE", &game.draw);
-            if (field == "endTurnQueued" || field == "isEndingTurn") return py::bool_(false);
+            if (field == "endTurnQueued") return py::bool_(game.player.end_turn_queued);
+            if (field == "isEndingTurn") return py::bool_(false);
             if (field == "energy") return object({4, 0, 0}, "core.EnergyManager", [&](const std::string& name) -> py::object {
                 if (name == "EnergyManager.energy") return py::int_(game.player.energy_per_turn);
                 if (name == "EnergyManager.energyMaster") return py::int_(game.player.energy_master);
@@ -420,6 +421,8 @@ struct SnapshotGraph {
             return {};
         });
     }
+
+    py::object room_reference() { return py::dict("ref"_a=identities.at({12, 0, 0})); }
 
     py::object room(const FreshRunState& fresh) {
         return object({12, 0, 0}, "rooms.MonsterRoom", [&](const std::string& key) -> py::object {
@@ -599,7 +602,7 @@ struct SnapshotGraph {
             if (field == "currentAction") return manager.has_current_action ? effect(game.action_objects[manager.current_action], 3, manager.current_action) : py::object(py::none());
             if (field == "hasControl") return py::bool_(manager.has_current_action);
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
-            if (field == "usingCard") return py::bool_(false);
+            if (field == "usingCard") return py::bool_(manager.using_card);
             if (field == "mantraGained") return py::int_(0);
             if (field == "monsterAttacksQueued") return py::bool_(manager.monster_attacks_queued);
             if (field == "nextCombatActions" || field == "orbsChanneledThisCombat" || field == "orbsChanneledThisTurn") return py::list();
