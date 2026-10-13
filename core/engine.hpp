@@ -166,6 +166,7 @@ SPIRE_FN inline void hand_to_deck(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.hand, card);
     g.draw.push_back(card);
+    card_clearPowers(g, card);
 }
 SPIRE_FN inline void add_card_queue_item(Game& g, const CardQueueItem& item, bool immediate) {
     // GameActionManager.addCardQueueItem inserts after the currently queued card.
@@ -465,6 +466,11 @@ SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atStartOfTurnPostDraw(g, powers.at(g.power_objects, i), player_target);
 }
 SPIRE_FN inline void begin_player_turn(Game& g) {
+    // AbstractMonster.updateDeathAnimation clears powers before the next player-turn callbacks.
+    for (int i = 0; i < g.monster_order.size; ++i) {
+        Creature& creature = g.monsters[g.monster_order[i]].creature;
+        if (creature.dead) creature.powers.clear();
+    }
     for (int i = 0; i < g.monster_order.size; ++i) {
         const int id = g.monster_order[i];
         if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_turn(g, id);
@@ -496,7 +502,6 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     Effect enable{};
     enable.kind = EffectKind::EnableEndTurnButton;
     add_bottom(g, enable);
-    refresh_powers(g);
 }
 SPIRE_FN inline void complete_player_turn_effect(Game& g) {
     g.player_turn_effect_pending = false;
@@ -504,7 +509,6 @@ SPIRE_FN inline void complete_player_turn_effect(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atEnergyGain(g, powers.at(g.power_objects, i), player_target);
 }
 SPIRE_FN inline void run_until_decision(Game& g) {
-    g.manager.phase = Phase::ExecutingActions;
     while (g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward && g.screen != Screen::Death) {
         bool dead = !g.monster_order.empty();
         for (int i = 0; i < g.monster_order.size; ++i) {
@@ -520,12 +524,17 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 g.manager.has_current_action = false;
             }
         } else if (!g.manager.actions.empty()) {
+            if (g.manager.phase == Phase::ExecutingActions) g.manager.using_card = false;
+            g.manager.phase = Phase::ExecutingActions;
             g.manager.current_action = g.manager.actions.pop_front();
             g.manager.has_current_action = true;
         } else if (!g.manager.pre_turn_actions.empty()) {
+            if (g.manager.phase == Phase::ExecutingActions) g.manager.using_card = false;
+            g.manager.phase = Phase::ExecutingActions;
             g.manager.current_action = g.manager.pre_turn_actions.pop_front();
             g.manager.has_current_action = true;
         } else if (!g.manager.card_queue.empty()) {
+            g.manager.using_card = g.manager.phase == Phase::WaitingOnUser;
             CardQueueItem queued = g.manager.card_queue[0];
             if (queued.card < 0) {
                 begin_end_turn(g);
@@ -562,23 +571,6 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             remove_queued_card(g, queued.card);
         } else if (g.player.end_turn_queued) {
             complete_end_turn(g);
-        } else if (g.battle_over) {
-            on_victory(g);
-            clear_actions(g, g.manager.actions);
-            clear_actions(g, g.manager.pre_turn_actions);
-            g.manager.has_current_action = false;
-            g.manager.card_queue.clear();
-            g.manager.played_cards.clear();
-            g.manager.energy_gained_this_combat = 0;
-            g.manager.damage_received_this_combat = 0;
-            g.manager.damage_received_this_turn = 0;
-            g.manager.hp_loss_this_combat = 0;
-            g.manager.turn_has_ended = false;
-            g.manager.total_discarded_this_turn = 0;
-            g.turn = 1;
-            g.screen = Screen::Victory;
-            g.manager.phase = Phase::WaitingOnUser;
-            break;
         } else if (!g.manager.monster_attacks_queued) {
             g.manager.monster_attacks_queued = true;
             for (int i = 0; i < g.monster_order.size; ++i) {
@@ -602,6 +594,24 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 Powers& powers = g.monsters[id].creature.powers;
                 for (int i = 0; i < powers.size; ++i) power_duringTurn(g, powers.at(g.power_objects, i), id);
             }
+        } else if (g.battle_over) {
+            on_victory(g);
+            clear_actions(g, g.manager.actions);
+            clear_actions(g, g.manager.pre_turn_actions);
+            g.manager.has_current_action = false;
+            g.manager.card_queue.clear();
+            g.manager.played_cards.clear();
+            g.manager.energy_gained_this_combat = 0;
+            g.manager.damage_received_this_combat = 0;
+            g.manager.damage_received_this_turn = 0;
+            g.manager.hp_loss_this_combat = 0;
+            g.manager.turn_has_ended = false;
+            g.manager.total_discarded_this_turn = 0;
+            g.turn = 1;
+            g.screen = Screen::Victory;
+            g.manager.phase = Phase::WaitingOnUser;
+            g.manager.using_card = false;
+            break;
         } else if (g.manager.turn_has_ended && !monsters_basically_dead(g)) {
             begin_player_turn(g);
         } else {
@@ -610,6 +620,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 if (!g.manager.actions.empty()) continue;
             }
             g.manager.phase = Phase::WaitingOnUser;
+            g.manager.using_card = false;
             refresh_hand(g);
             if (!g.manager.actions.empty()) {
                 g.manager.phase = Phase::ExecutingActions;
@@ -837,7 +848,6 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 for (int i = 0; i < powers.size; ++i)
                     if (power_data(powers.at(g.power_objects, i).id).rear_attack_power != PowerId::Count)
                         g.player.creature.flip_horizontal = g.monsters[target].creature.draw_x < g.player.creature.draw_x;
-                refresh_powers(g);
             }
             g.manager.card_queue.push_back({card, target, g.player.energy});
         }

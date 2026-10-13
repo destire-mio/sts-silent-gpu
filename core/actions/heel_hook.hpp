@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "gain_energy.hpp"
 
 namespace spire::units::actions {
 struct HeelHookAction : ActionHooks {
@@ -25,10 +26,7 @@ struct HeelHookAction : ActionHooks {
             draw.source = player_target;
             draw.amount = 1;
             add_top(g, draw);
-            Effect energy{};
-            energy.kind = EffectKind::GainEnergy;
-            energy.amount = 1;
-            add_top(g, energy);
+            add_top(g, GainEnergy::make(1));
         }
         Effect hit{};
         hit.kind = EffectKind::Damage;

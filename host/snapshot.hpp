@@ -110,6 +110,8 @@ struct SnapshotGraph {
         const py::dict data = metadata("cards", id);
         const auto definition = card_data(card.id);
         return object({3, master ? 1 : 0, index}, class_name("cards", id), [&](const std::string& key) -> py::object {
+            const py::object mapped = cards_snapshot(*this, card, master, index, key);
+            if (mapped) return mapped;
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "baseBlock") return py::int_(card.base_block);
             if (field == "baseDamage") return py::int_(card.base_damage);
@@ -158,9 +160,10 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "price") return py::int_(0);
+            if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
-                field == "isMagicNumberModified" || field == "isMultiDamage" ||
+                field == "isMagicNumberModified" ||
                 field == "isSelected" || field == "isUsed" || field == "upgradedCost") return py::bool_(false);
             return {};
         });
@@ -599,7 +602,7 @@ struct SnapshotGraph {
             if (field == "currentAction") return manager.has_current_action ? effect(game.action_objects[manager.current_action], 3, manager.current_action) : py::object(py::none());
             if (field == "hasControl") return py::bool_(manager.has_current_action);
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
-            if (field == "usingCard") return py::bool_(false);
+            if (field == "usingCard") return py::bool_(manager.using_card);
             if (field == "mantraGained") return py::int_(0);
             if (field == "monsterAttacksQueued") return py::bool_(manager.monster_attacks_queued);
             if (field == "nextCombatActions" || field == "orbsChanneledThisCombat" || field == "orbsChanneledThisTurn") return py::list();

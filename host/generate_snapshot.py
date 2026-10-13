@@ -55,6 +55,7 @@ def reward_templates(units, schema):
 def unit_snapshot_dispatch(root, units):
     lines = []
     for kind, enum, entity, variable, selector, context in (
+        ("cards", "CardId", "Card", "card", "card.id", "bool master, int index"),
         ("powers", "PowerId", "Power", "power", "power.id", "int owner"),
         ("actions", "EffectKind", "Effect", "effect", "effect.kind", "int queue, int index"),
     ):
