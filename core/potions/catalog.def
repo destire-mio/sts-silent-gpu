@@ -14,3 +14,4 @@ SPIRE_UNIT(SpeedPotion, "SpeedPotion", "core/potions/speed_potion.hpp", SpeedPot
 SPIRE_UNIT(SteroidPotion, "SteroidPotion", "core/potions/steroid_potion.hpp", SteroidPotion)
 SPIRE_UNIT(StrengthPotion, "Strength Potion", "core/potions/strength_potion.hpp", StrengthPotion)
 SPIRE_UNIT(SwiftPotion, "Swift Potion", "core/potions/swift_potion.hpp", SwiftPotion)
+SPIRE_UNIT(WeakenPotion, "Weak Potion", "core/potions/weaken_potion.hpp", WeakenPotion)
