@@ -1,0 +1,42 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    },
+    {
+      "id": "Blur",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Odd Mushroom"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Red Slaver"
+}

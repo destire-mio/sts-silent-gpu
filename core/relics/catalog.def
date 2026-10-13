@@ -6,3 +6,4 @@ SPIRE_UNIT(NinjaScroll, "Ninja Scroll", "core/relics/ninja_scroll.hpp", NinjaScr
 SPIRE_UNIT(NlothsGift, "Nloth's Gift", "core/relics/nloths_gift.hpp", NlothsGift)
 SPIRE_UNIT(NlothsMask, "NlothsMask", "core/relics/nloths_mask.hpp", NlothsMask)
 SPIRE_UNIT(Nunchaku, "Nunchaku", "core/relics/nunchaku.hpp", Nunchaku)
+SPIRE_UNIT(OddMushroom, "Odd Mushroom", "core/relics/odd_mushroom.hpp", OddMushroom)
