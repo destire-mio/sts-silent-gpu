@@ -718,7 +718,7 @@ struct SnapshotGraph {
         case PileId::Exhaust: return group(2, "EXHAUST_PILE", &game.exhaust);
         case PileId::Limbo: return group(4, "UNSPECIFIED", &game.limbo);
         case PileId::Grid: return group(7, "UNSPECIFIED", &game.grid_cards);
-        case PileId::MasterDeck: return game.grid_for_purge ? group(7, "UNSPECIFIED", &game.grid_cards) : group(5, "MASTER_DECK");
+        case PileId::MasterDeck: return game.grid_is_master_deck ? group(5, "MASTER_DECK") : group(7, "UNSPECIFIED", &game.grid_cards);
         }
         SPIRE_ASSERT(false);
         __builtin_unreachable();
@@ -804,6 +804,7 @@ struct SnapshotGraph {
         py::dict result("type"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : game.screen == Screen::Map ? "MAP" : "NONE"),
             "up"_a=(selecting || card_reward || game.screen == Screen::Death || rewards || game.screen == Screen::Map), "previous"_a=py::none(),
             "choice"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : game.screen == Screen::Map ? "MAP" : game.screen == Screen::Event ? "EVENT" : "NONE"));
+        if (game.previous_screen == Screen::CombatReward) result["previous"] = "COMBAT_REWARD";
         if (game.screen == Screen::CombatReward) {
             py::list options; const char* types[] = {"CARD", "GOLD", "POTION", "RELIC"};
             for (int i = 0; i < game.screen_rewards.size; ++i) options.append(types[static_cast<int>(game.reward_objects[game.screen_rewards[i]].kind)]);
@@ -821,9 +822,9 @@ struct SnapshotGraph {
                 if (field == "discovery") return py::bool_(game.room_in_combat);
                 if (field == "skippable") return py::bool_(game.reward_skippable);
                 if (field == "draftCount") return py::int_(0);
-                if (field == "rItem") return game.acquisition_reward < 0 ? py::object(py::none()) : core_reward(game.acquisition_reward);
+                if (field == "rItem") return game.room_in_combat || game.acquisition_reward < 0 ? py::object(py::none()) : core_reward(game.acquisition_reward);
                 if (field == "codexCard") return py::none();
-                if (field == "cardOnly") return py::bool_(!game.room_in_combat && game.acquisition_reward < 0);
+                if (field == "cardOnly") return py::bool_(false);
                 if (field == "chooseOne" || field == "codex" || field == "draft" || field == "hasTakenAll") return py::bool_(false);
                 return {};
             });
@@ -849,7 +850,7 @@ struct SnapshotGraph {
                         return selected;
                     }
                     if (field == "numCards") return py::int_(game.selection_amount);
-                    if (field == "cardSelectAmount") return py::int_(game.selected_cards.size);
+                    if (field == "cardSelectAmount") return py::int_(game.grid_confirm_screen ? game.selection_amount : game.selected_cards.size);
                     if (field == "prevDeckSize") return py::int_(choices.size);
                     if (field == "hoveredCard") return game.grid_confirm_screen ? card_value(game.run.master_deck[game.grid_hovered_card], true, game.grid_hovered_card) : py::object(py::none());
                     if (field == "forUpgrade") return py::bool_(game.grid_for_upgrade);
@@ -883,7 +884,6 @@ struct SnapshotGraph {
             py::list options; List<uint8_t, 8> choices{}; map_choices(game, choices);
             for (int i = 0; i < choices.size; ++i) options.append(choices[i] == 105 ? "boss" : "x=" + std::to_string(choices[i] % 7));
             result["options"] = options;
-            if (game.previous_screen == Screen::CombatReward) result["previous"] = "COMBAT_REWARD";
         }
         py::list buttons;
         for (int i = 0; i < game.room_dialog.size; ++i) buttons.append(object({35, 0, i}, "ui.buttons.LargeDialogOptionButton", [&](const std::string& key) -> py::object {

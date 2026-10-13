@@ -1025,6 +1025,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     } else if (g.screen == Screen::Grid) {
         if (g.selection_confirmation || g.grid_confirm_screen) {
             actions.push_back({ActionKind::Proceed, -1, -1});
+            if (g.grid_confirm_screen) actions.push_back({ActionKind::Skip, -1, -1});
             return;
         }
         for (int i = 0; i < get_pile(g, g.grid_source).size; ++i) actions.push_back({ActionKind::Choose, i, -1});
@@ -1111,6 +1112,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
             const auto& cards = reward.cards;
             for (int i = 0; i < cards.size; ++i) g.reward_cards.push_back(cards[i]);
             g.reward_skippable = true;
+            g.previous_screen = Screen::CombatReward;
             g.screen = Screen::CardReward;
         } else {
             SPIRE_ASSERT(action.kind == ActionKind::Proceed || action.kind == ActionKind::Skip);
@@ -1121,8 +1123,10 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 g.reward_relic_warning_seen = true;
                 return;
             }
-            if (g.event.id != EventId::Count) open_map(g);
-            else g.screen = Screen::None;
+            if (action.kind == ActionKind::Skip) {
+                if (g.previous_screen == g.screen) g.previous_screen = Screen::None;
+                g.screen = g.event.id == EventId::Count ? Screen::None : Screen::Event;
+            } else open_map(g);
         }
         return;
     }
@@ -1138,6 +1142,11 @@ SPIRE_FN inline void step(Game& g, Action action) {
         return;
     }
     if (g.screen == Screen::Grid && g.grid_confirm_screen) {
+        if (action.kind == ActionKind::Skip) {
+            g.grid_confirm_screen = false;
+            g.grid_hovered_card = -1;
+            return;
+        }
         SPIRE_ASSERT(action.kind == ActionKind::Proceed);
         g.selected_cards.push_back(g.grid_hovered_card);
         g.grid_confirm_screen = false;
@@ -1172,7 +1181,9 @@ SPIRE_FN inline void step(Game& g, Action action) {
     } else if (g.screen == Screen::Grid) {
         if (action.kind == ActionKind::Choose) {
             const int card = get_pile(g, g.grid_source)[action.index];
-            if (g.grid_for_upgrade || g.grid_for_transform) { g.grid_hovered_card = card; g.grid_confirm_screen = true; return; }
+            if (g.grid_for_upgrade || g.grid_for_transform || (g.grid_for_purge && g.selection_amount == 1)) {
+                g.grid_hovered_card = card; g.grid_confirm_screen = true; return;
+            }
             if (!remove_from_pile(g.selected_cards, card) && g.selected_cards.size < g.selection_amount)
                 g.selected_cards.push_back(card);
             if (g.selected_cards.size != g.selection_amount ||

@@ -11,6 +11,7 @@ struct DollysMirror : RelicHooks {
         g.grid_cards.clear();
         for (int i = 0; i < g.run.master_deck.size; ++i) g.grid_cards.push_back(i);
         open_master_selection(g, 1, false);
+        g.grid_is_master_deck = true;
     }
     static SPIRE_FN void update(Game& g, int relic) {
         if (!g.run.relics[relic].state.DollysMirror.cardSelected && g.selected_cards.size == 1) {

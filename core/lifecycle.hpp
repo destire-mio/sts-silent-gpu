@@ -67,6 +67,7 @@ SPIRE_FN inline void open_master_selection(Game& g, int amount, bool for_purge) 
     g.selection_amount = amount;
     g.selection_any_number = false;
     g.grid_for_purge = for_purge;
+    g.grid_for_upgrade = g.grid_for_transform = g.grid_is_master_deck = false;
     g.grid_can_cancel = false;
     g.selected_cards.clear();
 }
@@ -160,6 +161,7 @@ SPIRE_FN inline void add_potion_reward(Game& g, PotionId potion) {
     g.room_rewards.push_back(create_reward(g, reward));
 }
 SPIRE_FN inline void open_room_card_rewards(Game& g) {
+    g.room_reward_time = true;
     g.screen_rewards = g.room_rewards;
     const int card = create_card_reward(g);
     if (card >= 0) g.screen_rewards.push_back(card);

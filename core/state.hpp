@@ -367,6 +367,7 @@ struct Game {
     bool grid_for_purge = false;
     bool grid_for_upgrade = false;
     bool grid_for_transform = false;
+    bool grid_is_master_deck = false;
     bool grid_confirm_screen = false;
     int grid_hovered_card = -1;
     bool grid_can_cancel = true;
