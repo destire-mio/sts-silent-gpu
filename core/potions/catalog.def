@@ -12,3 +12,4 @@ SPIRE_UNIT(DuplicationPotion, "DuplicationPotion", "core/potions/duplication_pot
 SPIRE_UNIT(EnergyPotion, "Energy Potion", "core/potions/energy_potion.hpp", EnergyPotion)
 SPIRE_UNIT(EntropicBrew, "EntropicBrew", "core/potions/entropic_brew.hpp", EntropicBrew)
 SPIRE_UNIT(EssenceOfSteel, "EssenceOfSteel", "core/potions/essence_of_steel.hpp", EssenceOfSteel)
+SPIRE_UNIT(ExplosivePotion, "Explosive Potion", "core/potions/explosive_potion.hpp", ExplosivePotion)
