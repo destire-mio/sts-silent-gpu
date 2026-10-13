@@ -13,6 +13,16 @@ SPIRE_FN inline int find_power(const Creature& c, PowerId id) {
     for (int i = 0; i < c.powers.size; ++i) if (c.powers[i].id == id) return i;
     return -1;
 }
+SPIRE_FN inline int find_power(const Creature& c, const char* java_id) {
+    for (int i = 0; i < c.powers.size; ++i)
+        if (power_matches_id(c.powers[i].id, java_id)) return i;
+    return -1;
+}
+SPIRE_FN inline bool has_relic(const Game& g, const char* java_id) {
+    for (int i = 0; i < g.run.relics.size; ++i)
+        if (relic_matches_id(g.run.relics[i].id, java_id)) return true;
+    return false;
+}
 SPIRE_FN inline bool has_power(const Creature& c, PowerId id) { return find_power(c, id) >= 0; }
 SPIRE_FN inline int power_amount(const Creature& c, PowerId id) {
     const int index = find_power(c, id);

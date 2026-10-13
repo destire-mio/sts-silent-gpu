@@ -125,21 +125,10 @@ SPIRE_FN inline void use_card(Game& g, int card_id, int target) {
     finish.kind = EffectKind::UseCard;
     finish.card = card_id;
     finish.target = target;
-    finish.flag = card.exhaust || card.exhaust_on_use_once;
-    Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onUseCard(g, powers[i], player_target, card_id, finish);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onUseCard(g, i, card_id, finish);
-    for (int i = 0; i < g.hand.size; ++i) card_triggerOnCardPlayed(g, g.hand[i], card_id);
-    for (int i = 0; i < g.discard.size; ++i) card_triggerOnCardPlayed(g, g.discard[i], card_id);
-    for (int i = 0; i < g.draw.size; ++i) card_triggerOnCardPlayed(g, g.draw[i], card_id);
-    for (int m = 0; m < g.monster_order.size; ++m) {
-        const int owner = g.monster_order[m];
-        Powers& others = g.monsters[owner].creature.powers;
-        for (int i = 0; i < others.size; ++i) power_onUseCard(g, others[i], owner, card_id, finish);
-    }
     add_bottom(g, finish);
     for (int i = 0; i < g.hand.size; ++i)
         if (g.hand[i] != card_id) card_triggerOnOtherCardPlayed(g, g.hand[i], card_id);
+    Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_onAfterCardPlayed(g, powers[i], player_target, card_id);
     int hand_index = 0;
     while (g.hand[hand_index] != card_id) ++hand_index;

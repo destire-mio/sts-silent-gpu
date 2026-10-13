@@ -28,10 +28,17 @@ struct Card {
     bool innate : 1;
     bool free_to_play_once : 1;
     bool exhaust_on_use_once : 1;
+    bool dont_trigger_on_use_card : 1;
+    bool is_in_autoplay : 1;
+    bool purge_on_use : 1;
+    bool shuffle_back_into_draw_pile : 1;
+    bool return_to_hand : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
-          self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false) {}
+          self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
+          dont_trigger_on_use_card(false), is_in_autoplay(false), purge_on_use(false),
+          shuffle_back_into_draw_pile(false), return_to_hand(false) {}
 };
 using Pile = List<uint16_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
@@ -192,6 +199,8 @@ struct Game {
     int discard_action_num = 0;
     int selection_amount = 0;
     bool selected_cards_retrieved = false;
+    bool selection_any_number = false;
+    bool selection_can_pick_zero = false;
     bool battle_over = false;
     bool mugged = false;
 };

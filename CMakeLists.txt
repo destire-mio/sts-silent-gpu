@@ -27,7 +27,8 @@ set(content_headers
 add_custom_command(OUTPUT ${content_headers}
     COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py"
         --root "${CMAKE_CURRENT_SOURCE_DIR}" --output "${SPIRE_GENERATED_DIR}"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py" ${content_sources}
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/inventory/units.json" ${content_sources}
     VERBATIM)
 add_custom_target(generate_content DEPENDS ${content_headers})
 

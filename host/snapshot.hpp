@@ -121,6 +121,11 @@ struct SnapshotGraph {
             if (field == "selfRetain") return py::bool_(card.self_retain);
             if (field == "freeToPlayOnce") return py::bool_(card.free_to_play_once);
             if (field == "exhaustOnUseOnce") return py::bool_(card.exhaust_on_use_once);
+            if (field == "dontTriggerOnUseCard") return py::bool_(card.dont_trigger_on_use_card);
+            if (field == "isInAutoplay") return py::bool_(card.is_in_autoplay);
+            if (field == "purgeOnUse") return py::bool_(card.purge_on_use);
+            if (field == "returnToHand") return py::bool_(card.return_to_hand);
+            if (field == "shuffleBackIntoDrawPile") return py::bool_(card.shuffle_back_into_draw_pile);
             if (field == "uuid") {
                 const auto inserted = uuids.emplace(card.uuid, static_cast<int>(uuids.size()));
                 return py::int_(inserted.first->second);
@@ -137,11 +142,10 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "price") return py::int_(0);
-            if (field == "dontTriggerOnUseCard" || field == "exhaustOnFire" || field == "inBottleFlame" ||
+            if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
-                field == "isInAutoplay" || field == "isMagicNumberModified" || field == "isMultiDamage" ||
-                field == "isSelected" || field == "isUsed" || field == "purgeOnUse" || field == "returnToHand" ||
-                field == "shuffleBackIntoDrawPile" || field == "upgradedCost") return py::bool_(false);
+                field == "isMagicNumberModified" || field == "isMultiDamage" ||
+                field == "isSelected" || field == "isUsed" || field == "upgradedCost") return py::bool_(false);
             return {};
         });
     }
@@ -440,7 +444,15 @@ struct SnapshotGraph {
         return object({15, queue, index}, name, [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
             if (key == "AbstractGameAction.actionType") {
-                if (effect.kind == EffectKind::Damage) return py::str("DAMAGE");
+                if (effect.kind == EffectKind::Damage || effect.kind == EffectKind::VampireDamageAction) return py::str("DAMAGE");
+                if (effect.kind == EffectKind::FlechetteAction || effect.kind == EffectKind::HeelHookAction) return py::str("BLOCK");
+                if (effect.kind == EffectKind::GamblingChipAction || effect.kind == EffectKind::NightmareAction) return py::str("CARD_MANIPULATION");
+                if (effect.kind == EffectKind::MalaiseAction || effect.kind == EffectKind::SkewerAction ||
+                    effect.kind == EffectKind::SummonGremlinAction || effect.kind == EffectKind::TransmutationAction) return py::str("SPECIAL");
+                if (effect.kind == EffectKind::TriplePoisonAction) return py::str("DEBUFF");
+                if (effect.kind == EffectKind::ConditionalDrawAction || effect.kind == EffectKind::ApplyStasisAction ||
+                    effect.kind == EffectKind::CalculatedGambleAction || effect.kind == EffectKind::EscapePlanAction ||
+                    effect.kind == EffectKind::PlayTopCardAction) return py::str("WAIT");
                 if (effect.kind == EffectKind::Block) return py::str("BLOCK");
                 if (effect.kind == EffectKind::Draw) return py::str("DRAW");
                 if (effect.kind == EffectKind::Discard) return py::str("DISCARD");
@@ -453,25 +465,29 @@ struct SnapshotGraph {
                 return py::none();
             }
             if (key == "AbstractGameAction.amount") {
-                if (effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::RemovePower) return py::int_(0);
+                if (effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::RemovePower ||
+                    effect.kind == EffectKind::FlechetteAction || effect.kind == EffectKind::HeelHookAction ||
+                    effect.kind == EffectKind::EscapePlanAction) return py::int_(0);
                 return py::int_(effect.kind == EffectKind::UseCard ? 1 : effect.amount);
             }
             if (key == "AbstractGameAction.damageType") return py::none();
             if (key == "AbstractGameAction.isDone") return py::bool_(effect.done);
             if (key == "AbstractGameAction.source") {
-                if (effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
+                if (effect.kind == EffectKind::FlechetteAction || effect.kind == EffectKind::HeelHookAction || effect.kind == EffectKind::RemoveDebuffsAction ||
+                    effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
                     effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard) return py::none();
                 return effect.source == no_target ? py::object(py::none()) : creature(effect.source);
             }
             if (key == "AbstractGameAction.target") {
                 if (effect.kind == EffectKind::UseCard) return player();
-                if (effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
+                if (effect.kind == EffectKind::RemoveDebuffsAction || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
                     effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard) return py::none();
                 return effect.target == no_target ? py::object(py::none()) : creature(effect.target);
             }
             if (key == "DamageAction.goldAmount") return py::int_(effect.extra);
-            if (key == "DamageAction.muteSfx" || key == "DamageAction.skipWait") return py::bool_(false);
-            if (key == "DamageAction.info") {
+            if (key == "DamageAction.muteSfx") return py::bool_(false);
+            if (key == "DamageAction.skipWait") return py::bool_(effect.flag);
+            if (key == "DamageAction.info" || key == "FlechetteAction.info" || key == "HeelHookAction.info" || key == "VampireDamageAction.info") {
                 if (effect.source >= 0) {
                     const Monster& owner = game.monsters[effect.source];
                     for (int i = 0; i < owner.damage_count; ++i)
@@ -502,13 +518,31 @@ struct SnapshotGraph {
             if (key == "DrawCardAction.clearDrawHistory") return py::bool_(!effect.flag);
             if (key == "DrawCardAction.followUpAction") return py::none();
             if (key == "DiscardAction.endTurn") return py::bool_(effect.flag);
-            if (key == "DiscardAction.isRandom") return py::bool_(false);
+            if (key == "DiscardAction.isRandom") return py::bool_(effect.extra != 0);
             if (key == "DiscardAction.p" || key == "HandCheckAction.player") return player();
             if (key == "RollMoveAction.monster") return monster(effect.target);
             if (key == "UseCardAction.exhaustCard") return py::bool_(effect.flag);
-            if (key == "UseCardAction.reboundCard" || key == "UseCardAction.returnToHand") return py::bool_(false);
+            if (key == "UseCardAction.reboundCard") return py::bool_(effect.state.UseCard.rebound_card);
+            if (key == "UseCardAction.returnToHand") return py::bool_(effect.state.UseCard.return_to_hand);
             if (key == "UseCardAction.target") return effect.target < 0 ? py::object(py::none()) : monster(effect.target);
             if (key == "UseCardAction.targetCard") return card(effect.card);
+            if (key == "GamblingChipAction.p") return py::none();
+            if (key == "NightmareAction.p") return creature(effect.target);
+            if (key == "RemoveDebuffsAction.c") return creature(effect.target);
+            if (key == "ApplyStasisAction.owner") return creature(effect.state.ApplyStasisAction.owner);
+            if (key == "ApplyStasisAction.card") return card(effect.state.ApplyStasisAction.card);
+            if (key == "SummonGremlinAction.m") return effect.state.SummonGremlinAction.m == no_target ? py::object(py::none()) : monster(effect.state.SummonGremlinAction.m);
+            if (key == "MalaiseAction.p") return creature(effect.state.MalaiseAction.p);
+            if (key == "MalaiseAction.m") return creature(effect.state.MalaiseAction.m);
+            if (key == "SkewerAction.p") return creature(effect.state.SkewerAction.p);
+            if (key == "SkewerAction.m") return creature(effect.state.SkewerAction.m);
+            if (key == "TransmutationAction.p") return creature(effect.state.TransmutationAction.p);
+            if (key == "SkewerAction.damageTypeForTurn") return py::str(damage_type_names[static_cast<int>(effect.state.SkewerAction.damage_type_for_turn)]);
+            if (key == "ConditionalDrawAction.restrictedType") {
+                const char* types[]{"ATTACK", "SKILL", "POWER", "STATUS", "CURSE"};
+                return py::str(types[static_cast<int>(effect.state.ConditionalDrawAction.restricted_type)]);
+            }
+            if (key == "EscapePlanAction.blockGain") return py::int_(effect.amount);
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
@@ -605,7 +639,9 @@ struct SnapshotGraph {
                 if (field == "hand") return group(3, "HAND", &game.hand);
                 if (field == "wereCardsRetrieved") return py::bool_(game.selected_cards_retrieved);
                 if (field == "numSelected") return py::int_(0);
-                if (field == "anyNumber" || field == "canPickZero" || field == "forTransform" ||
+                if (field == "anyNumber") return py::bool_(game.selection_any_number);
+                if (field == "canPickZero") return py::bool_(game.selection_can_pick_zero);
+                if (field == "forTransform" ||
                     field == "forUpgrade" || field == "upTo") return py::bool_(false);
                 return {};
             });

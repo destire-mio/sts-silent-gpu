@@ -1,5 +1,6 @@
 """Compile unit catalogs into device-safe IDs, base hooks and switch dispatch."""
 import argparse
+import json
 import re
 from pathlib import Path
 
@@ -198,6 +199,24 @@ def generate(root, output):
     for entries in catalogs.values():
         content += [f'#include "{path}"' for _, _, path, _ in entries]
     content.append('namespace spire {')
+    inventory = json.loads((root / 'inventory/units.json').read_text())['units']
+    declarations += ['SPIRE_FN inline CardRarity card_rarity(CardId id);',
+                     'SPIRE_FN inline int card_sort_order(CardId id);']
+    card_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'card'}
+    ranks = {game_id: rank for rank, game_id in enumerate(sorted(row[1] for row in catalogs['cards']))}
+    for name, result in [('card_rarity', 'CardRarity'), ('card_sort_order', 'int')]:
+        content.append(f'SPIRE_FN inline {result} {name}(CardId id) {{ switch (id) {{')
+        for unit, game_id, _, _ in catalogs['cards']:
+            value = ('CardRarity::' + card_facts[game_id]['rarity'].title()) if name == 'card_rarity' else str(ranks[game_id])
+            content.append(f'case CardId::{unit}: return {value};')
+        content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    for kind in ('powers', 'relics'):
+        enum, _, prefix, _ = KINDS[kind]
+        declarations.append(f'SPIRE_FN inline bool {prefix}_matches_id({enum} id, const char* java_id);')
+        content.append(f'SPIRE_FN inline bool {prefix}_matches_id({enum} id, const char* java_id) {{ switch (id) {{')
+        for unit, java_id, _, _ in catalogs[kind]:
+            content.append(f'case {enum}::{unit}: return same_text(java_id, "{java_id}");')
+        content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
     for kind, (enum, base, prefix, selector) in KINDS.items():
         entries = catalogs[kind]
         state_type = {"actions": "Effect", "encounters": "Encounter"}.get(kind, prefix.capitalize()) + "State"

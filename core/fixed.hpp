@@ -2,6 +2,10 @@
 #include "platform.hpp"
 
 namespace spire {
+SPIRE_FN inline bool same_text(const char* first, const char* second) {
+    while (*first && *first == *second) { ++first; ++second; }
+    return *first == *second;
+}
 template<class T, int Capacity>
 struct List {
     T values[Capacity]{};

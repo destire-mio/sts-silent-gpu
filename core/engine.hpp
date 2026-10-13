@@ -14,7 +14,17 @@ SPIRE_FN inline void on_draw_or_discard(Game& g) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onDrawOrDiscard(g, i);
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
+SPIRE_FN inline void remove_card_from_queue(Game& g, int card) {
+    const int count = g.manager.card_queue.size;
+    bool removed = false;
+    for (int i = 0; i < count; ++i) {
+        const CardQueueItem item = g.manager.card_queue.pop_front();
+        if (!removed && item.card == card) removed = true;
+        else g.manager.card_queue.push_back(item);
+    }
+}
 SPIRE_FN inline void move_to_discard(Game& g, int card) {
+    remove_card_from_queue(g, card);
     card_resetAttributes(g, card);
     card_onMoveToDiscard(g, card);
     g.discard.push_back(card);
@@ -24,6 +34,9 @@ SPIRE_FN inline void discard_card(Game& g, int hand_index, bool end_turn) {
     const int card = g.hand.erase(hand_index);
     move_to_discard(g, card);
     if (!end_turn) card_triggerOnManualDiscard(g, card);
+    increment_discard(g, end_turn);
+}
+SPIRE_FN inline void increment_discard(Game& g, bool end_turn) {
     ++g.manager.total_discarded_this_turn;
     if (!end_turn && !g.manager.turn_has_ended) {
         for (int i = 0; i < g.hand.size; ++i) card_didDiscard(g, g.hand[i]);
@@ -37,31 +50,11 @@ SPIRE_FN inline void exhaust_card(Game& g, int card) {
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_onExhaust(g, powers[i], player_target, card);
     card_triggerOnExhaust(g, card);
+    remove_card_from_queue(g, card);
     card_resetAttributes(g, card);
     for (int i = 0; i < g.hand.size; ++i) if (g.hand[i] == card) { g.hand.erase(i); break; }
     g.exhaust.push_back(card);
     on_draw_or_discard(g);
-}
-SPIRE_FN inline void finish_card_use(Game& g, const Effect& effect) {
-    Effect use = effect;
-    Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onAfterUseCard(g, powers[i], player_target, use.card, use);
-    for (int m = 0; m < g.monster_order.size; ++m) {
-        const int owner = g.monster_order[m];
-        Powers& other = g.monsters[owner].creature.powers;
-        for (int i = 0; i < other.size; ++i) power_onAfterUseCard(g, other[i], owner, use.card, use);
-    }
-    Card& card = g.cards[use.card];
-    card.free_to_play_once = false;
-    g.player.card_in_use = -1;
-    if (card_def(card.id).type != CardType::Power) {
-        if (use.flag) exhaust_card(g, use.card);
-        else move_to_discard(g, use.card);
-    }
-    card.exhaust_on_use_once = false;
-    Effect check{};
-    check.kind = EffectKind::HandCheck;
-    add_bottom(g, check);
 }
 SPIRE_FN inline void clear_post_combat_actions(Game& g) {
     const int count = g.manager.actions.size;
@@ -244,7 +237,6 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
         tail.amount = count - g.draw.size;
         tail.flag = true;
         add_top(g, tail);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onShuffle(g, i);
         Effect shuffle_effect{};
         shuffle_effect.kind = EffectKind::Shuffle;
         add_top(g, shuffle_effect);
@@ -273,30 +265,6 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
         refresh_hand(g);
     }
     effect.amount = 0;
-}
-SPIRE_FN inline void end_turn_discard(Game& g) {
-    for (int i = 0; i < g.hand.size;) {
-        const Card& card = g.cards[g.hand[i]];
-        if (card.retain || card.self_retain) g.retained.push_back(g.hand.erase(i));
-        else ++i;
-    }
-    Effect restore{};
-    restore.kind = EffectKind::RestoreRetained;
-    add_top(g, restore);
-    const int count = g.hand.size;
-    for (int i = 0; i < count; ++i) {
-        Effect discard{};
-        discard.kind = EffectKind::Discard;
-        discard.amount = count;
-        discard.flag = true;
-        add_top(g, discard);
-    }
-    Pile shuffled = g.hand;
-    shuffle_unseeded(shuffled.values, shuffled.size, g.unseeded);
-    for (int i = 0; i < shuffled.size; ++i) {
-        const int card = shuffled[i];
-        card_triggerOnEndOfPlayerTurn(g, card);
-    }
 }
 SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
     action_execute(g, e);
@@ -468,6 +436,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.retained.clear();
     g.selected_cards.clear();
     g.drawn_cards.clear();
+    g.selection_any_number = false;
+    g.selection_can_pick_zero = false;
     g.monsters.clear();
     g.monster_order.clear();
     g.manager = ActionManager{};
@@ -524,7 +494,8 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     if (g.screen == Screen::Discard) {
         if (g.discard_remaining > 0)
             for (int i = 0; i < g.hand.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
-        else actions.push_back({ActionKind::Proceed, -1, -1});
+        if ((g.selection_any_number && (g.selection_can_pick_zero || !g.selected_cards.empty())) || g.discard_remaining == 0)
+            actions.push_back({ActionKind::Proceed, -1, -1});
         return;
     }
     if (g.screen != Screen::Combat) return;
@@ -558,7 +529,8 @@ SPIRE_FN inline void step(Game& g, Action action) {
             --g.discard_remaining;
             return;
         }
-        SPIRE_ASSERT(action.kind == ActionKind::Proceed && g.discard_remaining == 0);
+        SPIRE_ASSERT(action.kind == ActionKind::Proceed &&
+            (g.discard_remaining == 0 || (g.selection_any_number && (g.selection_can_pick_zero || !g.selected_cards.empty()))));
         g.screen = Screen::Combat;
     } else {
         SPIRE_ASSERT(g.screen == Screen::Combat);

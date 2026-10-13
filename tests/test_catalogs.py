@@ -1,3 +1,4 @@
+import json
 import shutil
 import subprocess
 import sys
@@ -110,6 +111,10 @@ class CatalogExtension(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             shutil.copytree(ROOT / "core", root / "core")
+            (root / "inventory").mkdir()
+            inventory = json.loads((ROOT / "inventory/units.json").read_text())
+            inventory["units"].append({"kind": "card", "game_id": "CatalogProbe", "facts": {"rarity": "SPECIAL"}})
+            (root / "inventory/units.json").write_text(json.dumps(inventory))
             originals = {p: p.read_bytes() for p in (root / "core").rglob("*") if p.is_file()}
             for kind, (base, methods) in UNITS.items():
                 include = "base.hpp" if kind in ("monsters", "encounters") else "../hooks.hpp"
