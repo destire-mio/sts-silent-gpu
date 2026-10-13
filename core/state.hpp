@@ -257,6 +257,8 @@ struct Game {
     bool mugged = false;
     int bomb_id_offset = 0;
 };
+static_assert(sizeof(Game) <= 48 * 1024, "Game exceeds the 48 KiB device memory budget; see docs/porting.md");
+
 SPIRE_FN inline void bind_fault(Game& g) {
 #if defined(__CUDA_ARCH__)
     device_fault_target() = &g.fault;

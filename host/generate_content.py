@@ -229,6 +229,8 @@ def generate(root, output):
             ids.append(f'    static_assert(__is_trivially_constructible(decltype({typename})), "Unit state fields need trivial default construction");')
         ids.append(f'    SPIRE_FN constexpr {state_type}() : empty{{}} {{}}')
         ids.append('};')
+        budget = {"cards": 8, "powers": 8, "relics": 8, "potions": 8, "monsters": 32, "encounters": 16, "actions": 48}[kind]
+        ids.append(f'static_assert(sizeof({state_type}) <= {budget}, "{state_type} exceeds its payload budget; use an arena index for larger state (docs/porting.md)");')
         if kind in ("cards", "powers", "relics", "monsters", "actions"):
             entity = {"actions": "Effect"}.get(kind, prefix.capitalize())
             discriminator = "value.kind" if kind == "actions" else "value.id"

@@ -48,7 +48,15 @@ add_custom_target(check_device_core ALL
     VERBATIM)
 add_dependencies(check_device_core generate_content)
 
+add_custom_target(check_game_layout ALL
+    COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/host/check_layout.py"
+        --compiler "${CMAKE_CXX_COMPILER}" --root "${CMAKE_CURRENT_SOURCE_DIR}"
+        --generated "${SPIRE_GENERATED_DIR}"
+    VERBATIM)
+add_dependencies(check_game_layout generate_content)
+
 add_library(spire_core INTERFACE)
+add_dependencies(spire_core check_game_layout)
 target_include_directories(spire_core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 target_compile_features(spire_core INTERFACE cxx_std_17)
 target_compile_options(spire_core INTERFACE

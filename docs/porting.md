@@ -110,6 +110,24 @@ including ordered histories. The catalog's `excluded` entries are outside the co
 add timers, animation queues or other presentation state to match them. Creature positions used
 for spawn ordering and other rule-read fields remain part of the engine.
 
+## Device memory budget
+
+The integration target is **32 KiB per Game**. `state.hpp` enforces a **48 KiB hard ceiling**
+with `static_assert`, leaving space for the remaining content. Do not raise this ceiling to
+land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
+fields and prints every `Game` member, its element size/capacity, the element types and their
+fields, and every generated unit payload. There is no handwritten member list to keep in sync.
+
+The generator also enforces the largest payload in each category: cards, powers, relics and
+potions 8 bytes each; monsters 32; encounters 16; actions 48. A field added to one union member
+is paid for by every object of that category. Read the build breakdown before adding state.
+For a larger payload, put bounded storage in a shared Game-owned arena and keep an index in the
+unit state; follow the existing action, power, text and multi-damage stores. Choose a capacity
+from the Java lifetime and coexistence of those objects, document where an unbounded Java list
+becomes an execution budget, and test overflow through the fault mechanism below. Keep scalar
+state with its unit, constructor facts in unit data, and derivable observation fields on the host.
+Do not store a host pointer, vector, string, whole card or large per-unit array in a payload.
+
 ## Storage and capacities
 
 `Game` owns its storage and remains relocatable by a byte copy. Keep object identity separate
@@ -153,7 +171,7 @@ held actions, detached powers, text and damage rows can also exhaust their budge
 sequence can therefore fault an environment; count this separately from losses and reset it.
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
-Card damage/block/magic, power amounts, energy and rule counters keep Java's 32-bit range.
+Card damage/block/magic, power amounts and player energy keep Java's 32-bit range.
 Poison's constructor cap, for example, is not its stacking limit. Only bounded indices use
 bytes; signed card references and costs retain 16 bits, and monster moves use Java signed bytes.
 The index-width assertions in `types.hpp` must hold when changing capacities.
