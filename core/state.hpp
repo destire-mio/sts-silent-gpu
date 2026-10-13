@@ -21,6 +21,9 @@ struct Card {
     int16_t cost_for_turn = 0;
     int16_t energy_on_use = 0;
     uint8_t multi_damage_count = 0;
+    bool in_bottle_flame : 1;
+    bool in_bottle_lightning : 1;
+    bool in_bottle_tornado : 1;
     bool upgraded_cost : 1;
     bool ignore_energy_on_use : 1;
     bool exhaust : 1;
@@ -38,12 +41,15 @@ struct Card {
     bool pending_clear : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
-        : upgraded_cost(false), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
+        : in_bottle_flame(false), in_bottle_lightning(false), in_bottle_tornado(false), upgraded_cost(false), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false), pending_clear(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
+enum class CampfireOptionKind : uint8_t { Lift, Toke, Dig };
+struct CampfireOption { CampfireOptionKind kind; bool usable; };
+using CampfireOptions = List<CampfireOption, 8>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
 struct Power {
     uint32_t instance = 0;
@@ -221,6 +227,8 @@ struct CardDamage {
         size = 0;
     }
 };
+enum class RewardKind : uint8_t { Gold, Potion, Card };
+struct RoomReward { RewardKind kind; int amount = 0; PotionId potion = PotionId::Empty; };
 struct Game {
     uint32_t fault = 0;
     TextStore text{};
@@ -236,6 +244,8 @@ struct Game {
     bool player_turn_effect_pending = false;
     Pile drawn_cards{};
     Pile reward_cards{};
+    List<RoomReward, 4> room_rewards{};
+    int card_blizz_randomizer = 5;
     int discovery_card = -1;
     List<Monster, monster_capacity> monsters{};
     List<uint8_t, monster_capacity> monster_order{};
@@ -260,6 +270,7 @@ struct Game {
     bool end_turn_enabled = true;
     bool selection_up_to = false;
     bool reward_skippable = false;
+    bool reward_proceed_visible = false;
     bool battle_over = false;
     bool room_in_combat = false;
     uint16_t room_event_class = 0;

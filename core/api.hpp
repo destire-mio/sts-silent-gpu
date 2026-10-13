@@ -3,6 +3,15 @@
 #include "spire_generated/declarations.hpp"
 
 namespace spire {
+SPIRE_FN inline bool card_can_upgrade(const Card&);
+SPIRE_FN inline void increase_max_hp(Game&, int);
+SPIRE_FN inline PotionId potion_from_pool(Random&);
+SPIRE_FN inline void add_gold_reward(Game&, int);
+SPIRE_FN inline void add_potion_reward(Game&, PotionId);
+SPIRE_FN inline void generate_card_rewards(Game&);
+SPIRE_FN inline void open_combat_reward(Game&);
+SPIRE_FN inline void legal_actions(const Game&, ActionSet&);
+SPIRE_FN inline void step(Game&, Action);
 SPIRE_FN inline bool keeps_block(const Game&, int);
 SPIRE_FN inline float rear_damage_multiplier(const Game&, int);
 SPIRE_FN inline int calculate_intent_damage(const Game&, int, int);

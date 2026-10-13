@@ -289,6 +289,9 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
         for (int i = 0; i < powers.size; ++i) power_onApplyPower(g, powers.at(g.power_objects, i), source, incoming, target, source);
     }
     if (target != player_target && (c.dying || c.half_dead || c.escaped)) return;
+    if (target == player_target)
+        for (int i = 0; i < g.run.relics.size; ++i)
+            if (relic_data(g.run.relics[i].id).prevented_power == id) return;
     if (power_isDebuff(incoming, target)) {
         for (int i = 0; i < c.powers.size; ++i) {
             if (!power_data(c.powers.at(g.power_objects, i).id).blocks_debuffs) continue;

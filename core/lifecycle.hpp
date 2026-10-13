@@ -2,6 +2,14 @@
 #include "cards.hpp"
 
 namespace spire {
+SPIRE_FN inline bool card_can_upgrade(const Card& card) {
+    const CardType type = card_data(card.id).type;
+    return type != CardType::Curse && type != CardType::Status && card.upgrades == 0;
+}
+SPIRE_FN inline void increase_max_hp(Game& g, int amount) {
+    g.player.creature.max_hp += amount;
+    heal_creature(g, player_target, amount);
+}
 SPIRE_FN inline void gain_gold(Game& g, int amount) {
     if (amount <= 0) return;
     g.run.gold += amount;
@@ -38,6 +46,9 @@ SPIRE_FN inline void preview_card_obtain(Game& g, Card& card) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onPreviewObtainCard(g, i, card);
 }
 SPIRE_FN inline void obtain_card(Game& g, Card card) {
+    const CardRarity rarity = card_rarity(card.id);
+    if (rarity != CardRarity::Basic && rarity != CardRarity::Special && rarity != CardRarity::Curse)
+        ++g.obtained_cards[static_cast<int>(card.id)];
     for (int i = 0; i < g.run.relics.size; ++i) relic_onObtainCard(g, i, card);
     g.run.master_deck.push_back(card);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);

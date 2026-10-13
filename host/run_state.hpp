@@ -22,12 +22,11 @@ struct FreshRunState {
     std::vector<std::string> eventList, shrineList, specialOneTimeEventList;
     std::vector<std::string> commonRelicPool, uncommonRelicPool, rareRelicPool;
     std::vector<std::string> shopRelicPool, bossRelicPool, relicsToRemoveOnStart;
-    std::vector<std::string> rewardTypes, rewardCards;
+    std::vector<std::string> rewardTypes;
     std::string rewardPotion;
     int rewardGold = 0;
     int stolenGold = 0;
     int blizzardPotionMod = 0;
-    int cardBlizzRandomizer = 5;
 };
 
 inline void initialize_monster_lists(Random& rng, FreshRunState& run) {
@@ -381,7 +380,11 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.rewardGold = game.rng.treasure.random(10, 20);
         run.rewardTypes.push_back("GOLD");
     }
-    const int chance = escaped ? 0 : 40 + run.blizzardPotionMod;
+    int chance = escaped ? 0 : 40 + run.blizzardPotionMod;
+    for (int i = 0; i < game.run.relics.size; ++i) {
+        const int override = relic_data(game.run.relics[i].id).potion_reward_chance;
+        if (override >= 0) chance = override;
+    }
     if (game.rng.potion.random(0, 99) < chance) {
         const int roll = game.rng.potion.random(0, 99);
         const int rarity = roll < 65 ? 0 : roll < 90 ? 1 : 2;
@@ -392,21 +395,7 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;
     if (game.smoked) return;
-    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
-    const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
-    std::array<int, 3> rarities{};
-    for (int i = 0; i < 3; ++i) {
-        const int roll = game.rng.card.random(99) + run.cardBlizzRandomizer;
-        const int rarity = roll < 3 ? 2 : roll < 40 ? 1 : 0;
-        rarities[i] = rarity;
-        if (rarity == 2) run.cardBlizzRandomizer = 5;
-        if (rarity == 0) run.cardBlizzRandomizer = std::max(-40, run.cardBlizzRandomizer - 1);
-        std::string card;
-        do { card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)].id; }
-        while (std::find(run.rewardCards.begin(), run.rewardCards.end(), card) != run.rewardCards.end());
-        run.rewardCards.push_back(card);
-    }
-    for (const int rarity : rarities) if (rarity != 2) game.rng.card.randomBoolean(0.0f);
+    generate_card_rewards(game);
     run.rewardTypes.push_back("CARD");
 }
 

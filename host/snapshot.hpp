@@ -126,6 +126,9 @@ struct SnapshotGraph {
                 const char* targets[] = {"ENEMY", "SELF", "NONE", "ALL_ENEMY"};
                 return py::str(targets[static_cast<int>(card.target)]);
             }
+            if (field == "inBottleFlame") return py::bool_(card.in_bottle_flame);
+            if (field == "inBottleLightning") return py::bool_(card.in_bottle_lightning);
+            if (field == "inBottleTornado") return py::bool_(card.in_bottle_tornado);
             if (field == "upgradedCost") return py::bool_(card.upgraded_cost);
             if (field == "cost") return py::int_(card.cost);
             if (field == "costForTurn") return py::int_(card.cost_for_turn);
@@ -262,7 +265,13 @@ struct SnapshotGraph {
 
     py::object relic(int index) {
         const Relic& relic = game.run.relics[index];
+        UnitStateSnapshot state;
+        relic_visit_state(relic, state);
         return object({9, index, 0}, class_name("relics", static_cast<int>(relic.id)), [&](const std::string& key) -> py::object {
+            const py::object mapped = relics_snapshot(*this, relic, index, key);
+            if (mapped) return mapped;
+            const std::string field = key.substr(key.find('.') + 1);
+            if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             if (key == "AbstractRelic.relicId") return py::str(relic_names[static_cast<int>(relic.id)]);
             if (key == "AbstractRelic.counter") return py::int_(relic.counter);
             if (key == "AbstractRelic.cost") return py::int_(0);
@@ -377,18 +386,6 @@ struct SnapshotGraph {
         });
     }
 
-    py::object reward_card(const FreshRunState& fresh, int index) {
-        const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(fresh.rewardCards[index])].cast<py::dict>();
-        const py::dict fields = data["fields"].cast<py::dict>();
-        return object({21, index, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractCard.uuid") {
-                const auto inserted = uuids.emplace(0x80000000u + index, static_cast<int>(uuids.size()));
-                return py::int_(inserted.first->second);
-            }
-            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
-        });
-    }
-
     py::object reward_potion(const FreshRunState& fresh) {
         const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(fresh.rewardPotion)].cast<py::dict>();
         const py::dict fields = data["fields"].cast<py::dict>();
@@ -411,7 +408,7 @@ struct SnapshotGraph {
             if (key == "RewardItem.cards") {
                 if (type != "CARD") return py::none();
                 py::list result;
-                for (int i = 0; i < static_cast<int>(fresh.rewardCards.size()); ++i) result.append(reward_card(fresh, i));
+                for (int i = 0; i < game.reward_cards.size; ++i) result.append(card(game.reward_cards[i]));
                 return result;
             }
             return {};
@@ -721,7 +718,7 @@ struct SnapshotGraph {
             "ascensionLevel"_a=game.run.ascension, "isAscensionMode"_a=true,
             "isDungeonBeaten"_a=false, "is_victory"_a=false, "ascensionCheck"_a=true,
             "bossKey"_a=fresh.bossKey, "bossCount"_a=0, "firstRoomChosen"_a=false,
-            "cardBlizzRandomizer"_a=fresh.cardBlizzRandomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
+            "cardBlizzRandomizer"_a=game.card_blizz_randomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
             "shrineChance"_a=0.25, "cardUpgradedChance"_a=0.0, "colorlessRareChance"_a=0.3,
             "shopRoomChance"_a=0.05, "restRoomChance"_a=0.12, "eventRoomChance"_a=0.22,
             "eliteRoomChance"_a=0.08, "treasureRoomChance"_a=0.0,
