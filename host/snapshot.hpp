@@ -209,6 +209,8 @@ struct SnapshotGraph {
         power_visit_state(power, state);
         if (power.instance != 0) identity = {6, static_cast<int>(power.instance), 0};
         return object(identity, class_name("powers", static_cast<int>(power.id)), [&](const std::string& key) -> py::object {
+            const py::object mapped = powers_snapshot(*this, power, owner, key);
+            if (mapped) return mapped;
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "ID") {
                 std::string id = power_names[static_cast<int>(power.id)];
@@ -222,8 +224,6 @@ struct SnapshotGraph {
             if (field == "canGoNegative") return py::bool_(data.can_negative);
             if (field == "isTurnBased") return py::bool_(data.turn_based);
             if (field == "isPostActionPower") return py::bool_(data.post_action);
-            const py::object value = powers_snapshot(*this, power, owner, key);
-            if (value) return value;
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
