@@ -23,3 +23,4 @@ SPIRE_UNIT(EndlessAgony, "Endless Agony", "core/cards/endless_agony.hpp", Endles
 SPIRE_UNIT(Envenom, "Envenom", "core/cards/envenom.hpp", Envenom)
 SPIRE_UNIT(EscapePlan, "Escape Plan", "core/cards/escape_plan.hpp", EscapePlan)
 SPIRE_UNIT(Eviscerate, "Eviscerate", "core/cards/eviscerate.hpp", Eviscerate)
+SPIRE_UNIT(Expertise, "Expertise", "core/cards/expertise.hpp", Expertise)
