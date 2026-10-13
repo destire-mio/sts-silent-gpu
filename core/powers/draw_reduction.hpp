@@ -3,7 +3,7 @@
 
 namespace spire::units::powers {
 struct DrawReduction : PowerHooks {
-    SPIRE_SNAPSHOT("DrawReductionPower.justApplied", scalar, power.just_applied)
+    SPIRE_SNAPSHOT("DrawReductionPower.justApplied", scalar, power.state.DrawReduction.just_applied)
     SPIRE_STATE(DrawReduction, bool just_applied;)
     static SPIRE_FN constexpr PowerData data() { return {5, true, false, true, false, false, false, true}; }
     static SPIRE_FN void initialPower(Game&, Power& p, int) { p.state.DrawReduction.just_applied = true; }
