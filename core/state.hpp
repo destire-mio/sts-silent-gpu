@@ -299,6 +299,7 @@ struct Game {
     uint16_t room_event_class = 0;
     bool cannot_lose = false;
     bool mugged = false;
+    int room_stolen_gold = 0;
     bool smoked = false;
     int bomb_id_offset = 0;
 };

@@ -167,7 +167,6 @@ for name in ("takeTurn", "usePreBattleAction", "useUniversalPreBattleAction", "o
             "onBossVictoryLogic": "if (g.room_event_class == 0) ++g.run.boss_count;",
             "escape": "g.monsters[owner].creature.escaped = true; g.monsters[owner].creature.flip_horizontal = true;", "escapeNext": "g.monsters[owner].escape_next = true;"}.get(name, "")
     hook("monsters", name, "Game& g, int owner", body=body)
-hook("monsters", "stolenGold", "const Game& g, int owner", "int", body="return 0;")
 hook("monsters", "split", "Game& g, int owner", body="SPIRE_ASSERT(false);")
 hook("monsters", "getMove", "Game& g, int owner, int num")
 hook("monsters", "changeState", "Game& g, int owner, const char* state")

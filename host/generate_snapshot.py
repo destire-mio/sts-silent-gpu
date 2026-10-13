@@ -62,6 +62,7 @@ def unit_snapshot_dispatch(root, units):
     for kind, enum, entity, variable, selector, context in (
         ("cards", "CardId", "Card", "card", "card.id", "bool master, int index"),
         ("powers", "PowerId", "Power", "power", "power.id", "int owner"),
+        ("monsters", "MonsterId", "Monster", "monster", "monster.id", "int owner"),
         ("actions", "EffectKind", "Effect", "effect", "effect.kind", "int queue, int index"),
         ("relics", "RelicId", "Relic", "relic", "relic.id", "int index"),
     ):

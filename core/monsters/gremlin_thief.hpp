@@ -6,7 +6,10 @@ struct GremlinThief : MonsterHooks {
     SPIRE_STATE(GremlinThief, int16_t thiefDamage;)
     SPIRE_FN static constexpr MonsterData data() { return {11, 15, {10, 0}, 0, 0}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        Monster m = make_monster(g, MonsterId::GremlinThief, data(), hp_override);
+        MonsterData d = data();
+        if (g.run.ascension < 7) { d.hp_min = 10; d.hp_max = 14; }
+        if (g.run.ascension < 2) d.damage[0] = 9;
+        Monster m = make_monster(g, MonsterId::GremlinThief, d, hp_override);
         m.state.GremlinThief.thiefDamage = m.damage[0];
         return m;
     }
@@ -17,8 +20,20 @@ struct GremlinThief : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
+        if (m.move == 99) {
+            Effect e{}; e.kind = EffectKind::Escape; e.target = index; add_bottom(g, e);
+            queue_monster_move(g, index, 99, Intent::Escape); return;
+        }
         queue_damage(g, index, player_target, m.damage[0]);
-        queue_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+        if (m.escape_next) queue_monster_move(g, index, 99, Intent::Escape);
+        else queue_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+    }
+    SPIRE_FN static void deathReact(Game& g, int owner) {
+        Monster& m = g.monsters[owner];
+        if (m.intent != Intent::Escape && !m.creature.dying) {
+            set_monster_move(g, owner, 99, Intent::Escape);
+            monster_createIntent(g, owner);
+        }
     }
 };
 }

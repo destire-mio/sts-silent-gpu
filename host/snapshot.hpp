@@ -231,6 +231,8 @@ struct SnapshotGraph {
         power_visit_state(power, state);
         if (power.instance != 0) identity = {6, static_cast<int>(power.instance), 0};
         return object(identity, class_name("powers", static_cast<int>(power.id)), [&](const std::string& key) -> py::object {
+            const py::object value = powers_snapshot(*this, power, owner, key);
+            if (value) return value;
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "ID") {
                 std::string id = power_names[static_cast<int>(power.id)];
@@ -244,8 +246,6 @@ struct SnapshotGraph {
             if (field == "canGoNegative") return py::bool_(data.can_negative);
             if (field == "isTurnBased") return py::bool_(data.turn_based);
             if (field == "isPostActionPower") return py::bool_(data.post_action);
-            const py::object value = powers_snapshot(*this, power, owner, key);
-            if (value) return value;
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
@@ -386,6 +386,8 @@ struct SnapshotGraph {
         UnitStateSnapshot state;
         monster_visit_state(monster, state);
         return object({5, index, 0}, class_name("monsters", static_cast<int>(monster.id)), [&](const std::string& key) -> py::object {
+            const py::object explicit_value = monsters_snapshot(*this, monster, index, key);
+            if (explicit_value) return explicit_value;
             if (key.compare(0, 17, "AbstractCreature.") == 0) return creature_field(index, key);
             const std::string field = key.substr(key.find('.') + 1);
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
@@ -454,11 +456,10 @@ struct SnapshotGraph {
         });
     }
 
-    py::object reward(const FreshRunState& fresh, int index) {
-        const std::string& type = fresh.rewardTypes[index];
+    py::object reward(const FreshRunState& fresh, int index, const std::string& type) {
         return object({23, index, 0}, "rewards.RewardItem", [&](const std::string& key) -> py::object {
             if (key == "RewardItem.type") return py::str(type);
-            if (key == "RewardItem.goldAmt") return py::int_(type == "GOLD" ? fresh.rewardGold : type == "STOLEN_GOLD" ? fresh.stolenGold : 0);
+            if (key == "RewardItem.goldAmt") return py::int_(type == "GOLD" ? fresh.rewardGold : type == "STOLEN_GOLD" ? game.room_stolen_gold : 0);
             if (key == "RewardItem.bonusGold") {
                 int bonus = 0;
                 if (type == "GOLD") for (int i = 0; i < game.run.relics.size; ++i)
@@ -493,7 +494,7 @@ struct SnapshotGraph {
             if (key == "CombatRewardScreen.rewards") {
                 py::list result;
                 if (!game.smoked)
-                    for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i) result.append(reward(fresh, i));
+                    for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i) result.append(reward(fresh, i, fresh.rewardTypes[i]));
                 return result;
             }
             return {};
@@ -530,8 +531,9 @@ struct SnapshotGraph {
             if (field == "rewardTime") return py::bool_(game.battle_over);
             if (field == "rewards") {
                 py::list result;
+                if (!game.battle_over && game.room_stolen_gold > 0) result.append(reward(fresh, 0, "STOLEN_GOLD"));
                 for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i)
-                    if (fresh.rewardTypes[i] != "CARD") result.append(reward(fresh, i));
+                    if (fresh.rewardTypes[i] != "CARD") result.append(reward(fresh, i, fresh.rewardTypes[i]));
                 return result;
             }
             return {};
@@ -557,6 +559,11 @@ struct SnapshotGraph {
     py::object damage_type(DamageType type) { return py::str(damage_type_names[static_cast<int>(type)]); }
     py::object card_type(int type) { return type < 0 ? py::object(py::none()) : py::object(py::str(card_type_names[type])); }
     py::object intent(int value) { return py::str(intent_names[value]); }
+    template<class Index> py::object creature_array(const Index* values, int count) {
+        py::list result;
+        for (int i = 0; i < count; ++i) result.append(creature(values[i]));
+        return result;
+    }
     template<class Index> py::object card_array(const Index* values, int count) {
         py::list result;
         for (int i = 0; i < count; ++i) result.append(card(values[i]));

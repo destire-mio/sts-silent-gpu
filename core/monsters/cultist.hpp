@@ -6,8 +6,10 @@ struct Cultist : MonsterHooks {
     SPIRE_STATE(Cultist, int16_t ritualAmount; bool firstMove;)
     SPIRE_FN static constexpr MonsterData data() { return {50, 56, {6, 0}, 0, 5}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        Monster m = make_monster(g, MonsterId::Cultist, data(), hp_override);
-        m.state.Cultist.ritualAmount = 4;
+        MonsterData d = data();
+        if (g.run.ascension < 7) { d.hp_min = 48; d.hp_max = 54; }
+        Monster m = make_monster(g, MonsterId::Cultist, d, hp_override);
+        m.state.Cultist.ritualAmount = g.run.ascension >= 2 ? 4 : 3;
         m.state.Cultist.firstMove = true;
         return m;
     }
@@ -22,7 +24,7 @@ struct Cultist : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 3) {
-            queue_power(g, index, index, PowerId::Ritual, m.state.Cultist.ritualAmount + 1);
+            queue_power(g, index, index, PowerId::Ritual, m.state.Cultist.ritualAmount + (g.run.ascension >= 17 ? 1 : 0));
         } else {
             queue_damage(g, index, player_target, m.damage[0]);
         }

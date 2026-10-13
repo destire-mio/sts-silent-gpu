@@ -6,9 +6,11 @@ struct FungiBeast : MonsterHooks {
     SPIRE_STATE(FungiBeast, int16_t biteDamage; int16_t strAmt;)
     SPIRE_FN static constexpr MonsterData data() { return {24, 28, {6, 0}, 0, 5}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        Monster m = make_monster(g, MonsterId::FungiBeast, data(), hp_override);
+        MonsterData d = data();
+        if (g.run.ascension < 7) d.hp_min = 22;
+        Monster m = make_monster(g, MonsterId::FungiBeast, d, hp_override);
         m.state.FungiBeast.biteDamage = m.damage[0];
-        m.state.FungiBeast.strAmt = 4;
+        m.state.FungiBeast.strAmt = g.run.ascension >= 2 ? 4 : 3;
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
@@ -22,7 +24,7 @@ struct FungiBeast : MonsterHooks {
         if (m.move == 1) {
             queue_damage(g, index, player_target, m.damage[0]);
         }
-        else queue_power(g, index, index, PowerId::Strength, m.state.FungiBeast.strAmt + 1);
+        else queue_power(g, index, index, PowerId::Strength, m.state.FungiBeast.strAmt + (g.run.ascension >= 17 ? 1 : 0));
         queue_monster_roll(g, index);
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int index) {

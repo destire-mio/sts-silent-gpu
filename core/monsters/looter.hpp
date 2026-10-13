@@ -3,7 +3,6 @@
 
 namespace spire::units::monsters {
 struct Looter : MonsterHooks {
-    static SPIRE_FN int stolenGold(const Game& g, int owner) { return g.monsters[owner].state.Looter.stolenGold; }
     SPIRE_STATE(Looter, int32_t stolenGold; int16_t escapeDef; int16_t goldAmt; int16_t lungeDmg; int16_t slashCount; int16_t swipeDmg;)
     SPIRE_FN static constexpr MonsterData data() { return {46, 50, {11, 14}, 6, 20, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
@@ -48,6 +47,10 @@ struct Looter : MonsterHooks {
             add_bottom(g, e);
             queue_monster_move(g, index, 3, Intent::Escape);
         }
+    }
+    SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
+        g.room_stolen_gold += g.monsters[owner].state.Looter.stolenGold;
+        monster_die_base(g, owner, trigger_relics);
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int index) {
         queue_power(g, index, index, PowerId::Thievery, g.monsters[index].state.Looter.goldAmt);

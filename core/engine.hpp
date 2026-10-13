@@ -99,6 +99,18 @@ SPIRE_FN inline void add_created_card_to_hand(Game& g, int card) {
 }
 SPIRE_FN inline void refresh_hand(Game& g) {
     if (monsters_basically_dead(g)) return;
+    const Powers& powers = g.player.creature.powers;
+    for (int p = 0; p < powers.size; ++p) {
+        const PowerId rear = power_data(powers.at(g.power_objects, p).id).rear_attack_power;
+        if (rear == PowerId::Count) continue;
+        for (int i = 0; i < g.monster_order.size; ++i) {
+            const int owner = g.monster_order[i];
+            monster_applyPowers(g, owner);
+            if (rear_damage_multiplier(g, owner) != 1.0f || !has_power(g, g.monsters[owner].creature, rear)) continue;
+            Effect e{}; e.kind = EffectKind::RemovePower; e.target = owner; e.source = no_target; e.power = rear;
+            add_top(g, e);
+        }
+    }
     for (int i = 0; i < g.run.relics.size; ++i) relic_onRefreshHand(g, i);
 }
 SPIRE_FN inline void on_draw_or_discard(Game& g) {
@@ -666,6 +678,11 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 const Creature& c = g.monsters[id].creature;
                 if (alive(c) || c.half_dead) g.manager.monster_queue.push_back(id);
             }
+            if (g.manager.phase == Phase::ExecutingActions && !g.manager.using_card) {
+                g.manager.phase = Phase::WaitingOnUser;
+                refresh_hand(g);
+            }
+            g.manager.using_card = false;
         } else if (!g.manager.monster_queue.empty()) {
             const int id = g.manager.monster_queue.pop_front();
             if (alive(g.monsters[id].creature) || g.monsters[id].creature.half_dead) {
@@ -682,6 +699,12 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 Powers& powers = g.monsters[id].creature.powers;
                 for (int i = 0; i < powers.size; ++i) power_duringTurn(g, powers.at(g.power_objects, i), id);
             }
+            // GameActionManager.update refreshes the hand when getNextAction queued a monster turn but selected no action.
+            if (g.manager.phase == Phase::ExecutingActions && !g.manager.using_card) {
+                g.manager.phase = Phase::WaitingOnUser;
+                refresh_hand(g);
+            }
+            g.manager.using_card = false;
         } else if (g.battle_over) {
             on_victory(g);
             clear_actions(g, g.manager.actions);
@@ -809,6 +832,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.room_phase = RoomPhase::Combat;
     g.cannot_lose = false;
     g.mugged = false;
+    g.room_stolen_gold = 0;
     g.smoked = false;
     g.discard_remaining = 0;
     g.selection_any_number = g.selection_can_pick_zero = false;
