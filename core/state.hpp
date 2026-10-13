@@ -106,6 +106,7 @@ struct Player {
     int card_in_use = -1;
     int cards_played_this_turn = 0;
     bool bloodied = false;
+    bool end_turn_queued = false;
 };
 enum class ActionKind : uint8_t { Play, EndTurn, Choose, PotionUse, PotionDiscard, Proceed, Skip };
 struct Action {
@@ -227,6 +228,7 @@ struct Game {
     Pool<Effect, action_capacity> action_objects{};
     Pool<Power, power_object_capacity> power_objects{};
     bool player_turn_effect_pending = false;
+    bool card_soul_pending = false;
     Pile drawn_cards{};
     Pile reward_cards{};
     int discovery_card = -1;

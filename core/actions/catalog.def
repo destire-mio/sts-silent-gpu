@@ -102,3 +102,4 @@ SPIRE_UNIT(CalculatedGambleAction, "actions.unique.CalculatedGambleAction", "cor
 SPIRE_UNIT(EscapePlanAction, "actions.unique.EscapePlanAction", "core/actions/escape_plan.hpp", EscapePlanAction)
 SPIRE_UNIT(PlayTopCardAction, "actions.common.PlayTopCardAction", "core/actions/play_top_card.hpp", PlayTopCardAction)
 SPIRE_UNIT(HeelHookAction, "actions.unique.HeelHookAction", "core/actions/heel_hook.hpp", HeelHookAction)
+SPIRE_UNIT(RoomEndTurn, "rooms.AbstractRoom$1", "core/actions/end_turn.hpp", RoomEndTurn)

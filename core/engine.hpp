@@ -78,6 +78,7 @@ SPIRE_FN inline void move_to_discard(Game& g, int card) {
     card_resetAttributes(g, card);
     card_onMoveToDiscard(g, card);
     g.discard.push_back(card);
+    g.card_soul_pending = true;
     on_draw_or_discard(g);
 }
 SPIRE_FN inline Pile& get_pile(Game& g, PileId pile) {
@@ -415,6 +416,7 @@ SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
         g.screen != Screen::Grid && g.screen != Screen::CardReward) e.done = true;
 }
 SPIRE_FN inline void end_turn_early(Game& g) {
+    g.player.end_turn_queued = true;
     for (int i = 0; i < g.manager.card_queue.size; ++i) {
         const CardQueueItem& item = g.manager.card_queue[i];
         if (!item.autoplay_card) continue;
@@ -433,6 +435,9 @@ SPIRE_FN inline void begin_end_turn(Game& g) {
     orbs.kind = EffectKind::TriggerEndOfTurnOrbs;
     add_bottom(g, orbs);
     for (int i = 0; i < g.hand.size; ++i) card_triggerOnEndOfTurnForPlayingCard(g, g.hand[i]);
+}
+SPIRE_FN inline void complete_end_turn(Game& g) {
+    g.player.end_turn_queued = false;
     at_end_of_turn(g, player_target);
     Effect clear{};
     clear.kind = EffectKind::ClearCardQueue;
@@ -444,12 +449,8 @@ SPIRE_FN inline void begin_end_turn(Game& g) {
     for (int i = 0; i < g.discard.size; ++i) card_resetAttributes(g, g.discard[i]);
     for (int i = 0; i < g.hand.size; ++i) card_resetAttributes(g, g.hand[i]);
     Effect end{};
-    end.kind = EffectKind::EndTurn;
+    end.kind = EffectKind::RoomEndTurn;
     add_bottom(g, end);
-    Effect start{};
-    start.kind = EffectKind::MonsterStart;
-    add_bottom(g, start);
-    g.manager.monster_attacks_queued = false;
 }
 SPIRE_FN inline void recharge_energy(Game& g) {
     g.player.energy = g.player.energy_master;
@@ -492,6 +493,9 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     add_bottom(g, units::actions::Draw::construct(g.player.hand_size, true, -1, no_target, true));
     after_draw_turn_hooks(g);
+    Effect enable{};
+    enable.kind = EffectKind::EnableEndTurnButton;
+    add_bottom(g, enable);
     refresh_powers(g);
 }
 SPIRE_FN inline void complete_player_turn_effect(Game& g) {
@@ -556,6 +560,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 else remove_from_pile(g.limbo, queued.card);
             }
             remove_queued_card(g, queued.card);
+        } else if (g.player.end_turn_queued) {
+            complete_end_turn(g);
         } else if (g.battle_over) {
             on_victory(g);
             clear_actions(g, g.manager.actions);
@@ -612,6 +618,12 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             break;
         }
     }
+    if (g.card_soul_pending && g.screen != Screen::Discard && g.screen != Screen::Grid &&
+        g.screen != Screen::CardReward) {
+        // Soul.update refreshes the hand after discard movement settles, including on death.
+        g.card_soul_pending = false;
+        for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
+    }
     for (int i = 0; i < g.monster_order.size; ++i) {
         Creature& creature = g.monsters[g.monster_order[i]].creature;
         if (creature.dead) {
@@ -666,6 +678,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.power_objects.clear();
     g.next_power_instance = 1;
     g.player_turn_effect_pending = false;
+    g.card_soul_pending = false;
     g.selection_for_upgrade = false;
     g.drawn_cards.clear();
     g.selection_any_number = false;
@@ -802,6 +815,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
     } else {
         SPIRE_ASSERT(g.screen == Screen::Combat);
         if (action.kind == ActionKind::EndTurn) {
+            g.player.end_turn_queued = true;
             g.manager.card_queue.push_back({-1, -1});
         } else if (action.kind == ActionKind::PotionUse) {
             SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable && potion_canUse(g, action.index));
