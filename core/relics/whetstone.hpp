@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct Whetstone : RelicHooks {
-    static SPIRE_FN constexpr RelicData data() { return {-1, 150}; }
+    static SPIRE_FN constexpr RelicData data() { RelicData d{-1, 150}; d.screenless_excluded = true; return d; }
     static SPIRE_FN void onEquip(Game& g, int) {
         Pile upgradeable{};
         for (int i = 0; i < g.run.master_deck.size; ++i) {

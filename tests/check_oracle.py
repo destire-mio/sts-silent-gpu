@@ -37,10 +37,16 @@ def check(path):
     player = first['objects'][first['player']['ref']]['fields']
     if header['scenario'] is not None:
         scenario = header['scenario']
-        assert first['run']['floorNum'] == 1
+        start = scenario.get('start')
+        assert first['run']['floorNum'] == (start['floor'] if start else 1)
+        assert first['run']['actNum'] == (start['act'] if start else 1)
         room = first['objects'][first['room']['ref']]
-        assert room['class'] == 'rooms.MonsterRoom'
-        assert room['fields']['AbstractRoom.phase'] == 'COMBAT'
+        if start is None:
+            assert room['class'] == 'rooms.MonsterRoom'
+            assert room['fields']['AbstractRoom.phase'] == 'COMBAT'
+        elif start['room'] != 'EventRoom':
+            prefix = 'neow.' if start['room'] == 'NeowRoom' else 'rooms.'
+            assert room['class'] == prefix + start['room']
         # AbstractDungeon.nextRoomTransition runs relic room-entry and battle-start hooks.
         if not scenario['relics']:
             assert player['AbstractCreature.currentHealth'] == scenario['hp'], path

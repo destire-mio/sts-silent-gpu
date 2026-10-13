@@ -132,8 +132,10 @@ is 64 bytes. `game.event.screen`, `has_focus` and `no_cards` hold the included A
 base fields. A private subclass screen or enum belongs in the tagged payload.
 
 `enter` performs constructor and room-entry behavior. `choose` receives the original enabled
-button's slot, not its position after disabled buttons are filtered out. The shared action
-enumerator retains button order, and the driver maps that action back to its Java slot.
+button's slot, not its position after disabled buttons are filtered out. The default `choices` hook retains enabled button order, and the driver maps that action
+back to its Java slot. An event with card controls overrides `choices` and emits ordered
+`EventChoice` entries with `EventChoiceKind::Card`; `choose` receives the card index. Keep
+this event-specific enumeration in its unit, as in `GremlinMatchGame`.
 `room_dialog` and `image_dialog` store disabled bits in slot order; their selected-option
 values survive screen closure. `update` consumes an original delayed card-selection callback.
 Read which Java update method owns that callback before using it; a relic's callback must not
@@ -146,16 +148,20 @@ compilation; it must only read state. Do not implement a choice, consume RNG, or
 in a snapshot expression. GenericEventDialog and RoomEventDialog base objects are emitted by
 the shared serializer. Match the inventory's class and declaring-field names exactly.
 
-Neow is the first event unit. General question-mark room selection, eligibility and event-list
-removal are not yet connected; adding a catalog row currently supplies dispatch and state,
-not an appearance path. When connecting an event, follow the original event/shrine/one-time
-selection call site and record a run that reaches it. Check both comparison scopes, each
+Question-mark room selection and event/shrine/one-time list removal live in `event_room.hpp`.
+Put an appearance condition in the unit's `canSpawn` hook; the selector calls it at the original
+list-filtering site. `EventData.reward_opens_map` describes the original reward-screen departure;
+events that return to their own dialog set it false. Event rewards, purge selections and card
+acquisition use the same shared services as rooms and relics. Unported units retain their
+eligibility metadata and a waiting-rule marker. Port the complete event when a recorded run
+reaches it, following every choice and constructor branch from the Java. Record a run that
+reaches it. Check both comparison scopes, each
 choice and its follow-up screen, and a terminal snapshot. Do not mark the event complete on
 compilation or a unit-only assertion.
 
 ## Device memory budget
 
-The integration target is **32 KiB per Game**. `state.hpp` enforces a **48 KiB hard ceiling**
+The run-loop acceptance ceiling is **40 KiB per Game**. `state.hpp` enforces a **48 KiB hard ceiling**
 with `static_assert`, leaving space for the remaining content. Do not raise this ceiling to
 land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
 fields and prints every `Game` member, its element size/capacity, the element types and their

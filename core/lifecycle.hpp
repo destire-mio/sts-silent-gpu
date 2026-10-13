@@ -3,6 +3,11 @@
 #include "card_pool.hpp"
 
 namespace spire {
+SPIRE_FN inline CardId random_curse(Game& g) {
+    // CardLibrary.getCurse iterates its curse-only HashMap, not curseCardPool.
+    constexpr CardId curses[] = {CardId::Regret, CardId::Injury, CardId::Shame, CardId::Parasite, CardId::Normality, CardId::Doubt, CardId::Writhe, CardId::Pain, CardId::Decay, CardId::Clumsy};
+    return curses[g.rng.card.random(9)];
+}
 SPIRE_FN inline void gain_gold(Game& g, int amount) {
     for (int i = 0; i < g.run.relics.size; ++i)
         if (relic_data(g.run.relics[i].id).blocks_gold) return;
@@ -16,10 +21,6 @@ SPIRE_FN inline void lose_gold(Game& g, int amount) {
     if (amount <= 0) return;
     g.run.gold = max(0, g.run.gold - amount);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onLoseGold(g, i);
-}
-SPIRE_FN inline void spend_gold(Game& g, int amount) {
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onSpendGold(g, i);
-    lose_gold(g, amount);
 }
 SPIRE_FN inline void equip_relic(Game& g, RelicId id) {
     const int index = g.run.relics.size;
@@ -56,6 +57,10 @@ SPIRE_FN inline void increase_max_hp(Game& g, int amount) {
     g.player.creature.max_hp += amount;
     heal_creature(g, player_target, amount);
 }
+SPIRE_FN inline void decrease_max_hp(Game& g, int amount) {
+    g.player.creature.max_hp = max(1, g.player.creature.max_hp - amount);
+    g.player.creature.hp = min(g.player.creature.hp, g.player.creature.max_hp);
+}
 SPIRE_FN inline void queue_card_obtain(Game& g, Card card) {
     g.pending_obtains.push_back(create_card(g, card));
 }
@@ -64,6 +69,7 @@ SPIRE_FN inline void settle_card_obtains(Game& g) {
     g.pending_obtains.clear();
 }
 SPIRE_FN inline void open_master_selection(Game& g, int amount, bool for_purge) {
+    g.grid_previous_deck_size = g.grid_cards.size;
     g.screen = Screen::Grid;
     g.grid_source = PileId::MasterDeck;
     g.selection_amount = amount;
@@ -162,6 +168,17 @@ SPIRE_FN inline int create_card_reward(Game& g) {
 SPIRE_FN inline void add_room_card_reward(Game& g) {
     const int index = create_card_reward(g);
     if (index >= 0) g.room_rewards.push_back(index);
+}
+SPIRE_FN inline CardId random_colorless_card(Game& g, CardRarity rarity, bool seeded) {
+    List<CardId, 64> choices{};
+    for (const auto& entry : colorless_card_pool) {
+        const CardId id = card_id(entry.id);
+        if (card_rarity(id) != rarity) continue;
+        int at = choices.size;
+        while (at > 0 && card_sort_order(choices[at - 1]) > card_sort_order(id)) --at;
+        choices.insert(at, id);
+    }
+    return choices[seeded ? g.rng.card.random(choices.size - 1) : g.unseeded.random(choices.size - 1)];
 }
 SPIRE_FN inline void reward_gold_bonus(const Game& g, RoomReward& reward) {
     reward.bonus_gold = 0;

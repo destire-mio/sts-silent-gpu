@@ -23,6 +23,7 @@ struct PandorasBox : RelicHooks {
             g.grid_cards.insert(0, create_card(g, c));
         }
         g.selection_confirmation = true;
+        g.grid_can_cancel = false;
         g.screen = Screen::Grid;
     }
     static SPIRE_FN const char* random_card(Game& g) {

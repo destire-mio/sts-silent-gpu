@@ -13,11 +13,11 @@ Exactness: same seed + same actions => same snapshot as the original at every de
 ## Engine (`core/`)
 One `Game` struct holds a whole run: run state, combat state and every RNG stream. It is plain
 data with fixed capacities, so a batch is an array of `Game` and a GPU thread owns one element.
-Target size is 32 KiB; compilation rejects `sizeof(Game)` above 48 KiB. Per-unit payload budgets
+The run-loop acceptance ceiling is 40 KiB; compilation rejects `sizeof(Game)` above 48 KiB. Per-unit payload budgets
 and the build-time member breakdown are described in `porting.md`.
 
 Entry points, all deterministic and free of global state:
-- `reset(Game&, seed)`
+- `reset(Game&, seed, RunProfile = {})`
 - `legal_actions(const Game&, ActionSet&)`
 - `step(Game&, Action)`: applies one player decision and runs the game until the next decision or
   the end of the run
@@ -76,10 +76,11 @@ type CardSpec = {id: string, upgrades: number};
 type Scenario = {
   deck: CardSpec[], relics: string[], potions: (string | null)[],
   hp: number, max_hp: number, encounter: string,
+  profile?: {neow_spirits: number, bosses_seen: string[]},
   start?: {
     act: 1 | 2 | 3 | 4, floor: number, node: [x: number, y: number],
     room: "MonsterRoom" | "MonsterRoomElite" | "MonsterRoomBoss" | "RestRoom" |
-          "ShopRoom" | "TreasureRoom" | "TreasureRoomBoss" | "EventRoom",
+          "ShopRoom" | "TreasureRoom" | "TreasureRoomBoss" | "EventRoom" | "NeowRoom",
     gold: number, keys: [ruby: boolean, emerald: boolean, sapphire: boolean],
     emerald: boolean
   }
@@ -246,13 +247,17 @@ replaces the requested generated node's room, sets its emerald flag and the chos
 state, overrides the corresponding monster/elite entry or boss key for combat rooms, and calls
 the original `nextRoomTransition`. The requested floor is the floor after that transition.
 These recordings continue through rooms and acts until death or victory; combat-only scenarios
-without `start` retain their existing combat-end boundary. The engine does not yet replay
-run-level starts.
+without `start` retain their existing combat-end boundary. The engine applies the same setup.
+A `NeowRoom` start replaces the opening room after acquisition and HP setup, without a floor
+transition. Optional `profile` supplies the original Silent spirit count and boss-seen preference
+keys before dungeon construction; its default is one spirit and no seen bosses. This covers
+mini blessings, first-unseen boss selection and the all-seen shuffle without changing the policy.
 
 The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio
 output. Original update/render callbacks execute. Decisions wait for Soul settlement, monster
 death/intent settlement, card-manipulation and `FastCardObtainEffect` callbacks,
-`ObtainPotionEffect`, turn/battle-start callbacks, key acquisition,
+`ObtainPotionEffect`, `GainPennyEffect`, turn/battle-start callbacks, key acquisition,
+relic movement to its slot and the resulting `onEquip`,
 and campfire callbacks unless a selection needs input. No oracle object enters any game queue.
 `AbstractPlayer.playCard`, original screen update/selection methods and original button handlers
 apply inputs. Combat input requires `WAITING_ON_USER`, empty action/pre-turn/card/monster queues,
@@ -310,9 +315,7 @@ shifts. Identity maps are shared between the two scope comparisons at each snaps
 Both scopes are checked at every decision and terminal record even after earlier differences.
 A recorded action is applied only when it is legal in the engine; otherwise the trace reports
 where replay stopped. A scenario passes when both scopes match at every decision and the terminal snapshot/reason
-matches. Run differences never hide a combat result. The committed `full-run-1` fixture is an
-expected failure until Neow, map and room flow are ported; replay reports it separately and
-excludes it from pass totals. An unexpected pass fails the gate until that exception is removed. Each trace prints both scope results and its
+matches. Run differences never hide a combat result. The committed `full-run-1` fixture has the same acceptance requirement as every other trace. Each trace prints both scope results and its
 first difference per scope, including the JSON path and both values. Summary counts report
 passing traces and matching decision records per scope; terminal snapshots affect trace success
 but are not counted as decisions. Matching later decisions are counted after an earlier failure.
@@ -345,6 +348,8 @@ Regenerate the committed fixtures from their recorded headers with
 `python3 tests/record_oracle_fixtures.py --output /tmp/oracle-fixtures`, then check their schema,
 scenario initialization and terminal records with `python3 tests/check_oracle.py`.
 
-`python3 tests/check_oracle_frames.py` compares a full run containing a transform-preview screen
-and four scenarios, including monster escape, against the same recordings with 13 extra original game frames at each
-nonterminal decision. Its test agent changes the recorder only, not any game class.
+`python3 tests/check_oracle_frames.py` compares full runs on seeds 1 through 31, every committed
+scenario and the run-start scenarios against the same recordings with 13 extra original game
+frames before every observation, including terminal snapshots. The comparison is byte for byte.
+Its test agent changes the recorder only, not any game class; it also checks transform-preview
+confirmation and the terminal observation of escaped monsters.

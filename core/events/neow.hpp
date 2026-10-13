@@ -26,7 +26,7 @@ struct Neow : EventHooks {
     static SPIRE_FN void enter(Game& g) {
         auto& s = g.event.state.Neow;
         s.screen = 1;
-        s.boss_count = 1;
+        s.boss_count = g.run.profile.neow_spirits;
         s.hp_bonus = static_cast<int>(g.player.creature.max_hp * 0.1f);
         g.room_phase = RoomPhase::Event;
         g.room_dialog.clear();
@@ -101,9 +101,7 @@ struct Neow : EventHooks {
         s.activated |= 1 << choice;
         const int drawback = s.drawbacks[choice];
         if (drawback == HpLoss) {
-            g.player.creature.max_hp = max(1, g.player.creature.max_hp - s.hp_bonus);
-            g.player.creature.hp = min(g.player.creature.hp, g.player.creature.max_hp);
-            g.player.bloodied = g.player.creature.hp <= g.player.creature.max_hp / 2;
+            decrease_max_hp(g, s.hp_bonus);
         } else if (drawback == NoGold) lose_gold(g, g.run.gold);
         else if (drawback == Damage) {
             Effect info{}; info.source = no_target; info.target = player_target;
@@ -143,7 +141,7 @@ struct Neow : EventHooks {
             g.grid_for_transform = s.choices[choice] == Transform;
             break;
         }
-        if (drawback == Curse) queue_card_obtain(g, make_card(card_id(curse_card_pool[g.rng.card.random(0, 9)].id)));
+        if (drawback == Curse) queue_card_obtain(g, make_card(random_curse(g)));
         settle_card_obtains(g);
     }
     static SPIRE_FN void choose(Game& g, int option) {

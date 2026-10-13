@@ -2,9 +2,34 @@
 #include "lifecycle.hpp"
 
 namespace spire {
+SPIRE_FN inline int create_colorless_reward(Game& g) {
+    RoomReward reward{};
+    int count = 3;
+    for (int i = 0; i < g.run.relics.size; ++i) count = relic_changeNumberOfCardsInReward(g, i, count);
+    for (int i = 0; i < count; ++i) {
+        const CardRarity rarity = g.rng.card.randomBoolean(0.3f) ? CardRarity::Rare : CardRarity::Uncommon;
+        CardId id = random_colorless_card(g, rarity, true);
+        if (rarity == CardRarity::Rare) g.run.card_blizz_randomizer = 5;
+        bool duplicate;
+        do {
+            duplicate = false;
+            for (int j = 0; j < reward.cards.size; ++j) duplicate |= g.cards[reward.cards[j]].id == id;
+            if (duplicate) id = random_colorless_card(g, rarity, true);
+        } while (duplicate);
+        reward.cards.push_back(create_card(g, make_card(id)));
+    }
+    for (int i = 0; i < reward.cards.size; ++i) preview_card_obtain(g, g.cards[reward.cards[i]]);
+    return create_reward(g, reward);
+}
 SPIRE_FN inline RelicTier random_relic_tier(Game& g) {
     const int roll = g.rng.relic.random(0, 99);
     return roll < 50 ? RelicTier::Common : roll < 83 ? RelicTier::Uncommon : RelicTier::Rare;
+}
+SPIRE_FN inline RelicId random_screenless_relic(Game& g, RelicTier tier) {
+    RelicId id;
+    do { id = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier)))); }
+    while (relic_data(id).screenless_excluded);
+    return id;
 }
 
 SPIRE_FN inline void add_key_reward(Game& g, RewardKind kind) {

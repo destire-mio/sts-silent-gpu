@@ -176,8 +176,10 @@ hook("monsters", "die", "Game& g, int owner, bool trigger_relics = true", body="
 hook("monsters", "setMove", "Game& g, int owner, int move, Intent intent, int damage, int hits", body="set_monster_move(g, owner, move, intent, damage, hits);")
 hook("monsters", "construct", "Game& g, MonsterId id, int hp_override", "Monster", selector="id")
 hook("encounters", "build", "Game& g, EncounterId id")
-hook("events", "enter", "Game& g")
-hook("events", "choose", "Game& g, int option")
+hook("events", "canSpawn", "const Game& g, EventId id", "bool", "return true;", selector="id")
+hook("events", "choices", "const Game& g, EventChoices& choices", body="event_dialog_choices(g, choices);")
+hook("events", "enter", "Game& g", body="SPIRE_ASSERT(false);")
+hook("events", "choose", "Game& g, int option", body="SPIRE_ASSERT(false);")
 hook("events", "update", "Game& g")
 hook("actions", "prepare", "Game& g, Effect& e")
 hook("actions", "execute", "Game& g, Effect& e")
@@ -230,6 +232,12 @@ def generate(root, output):
     for unit in events:
         name = unit['java_class'].rsplit('.', 1)[1]
         content.append(f'case EventKey::{name}: return ' + json.dumps(unit['game_id']) + ';')
+    content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    declarations.append('SPIRE_FN inline EventId event_id(EventKey key);')
+    content.append('SPIRE_FN inline EventId event_id(EventKey key) { switch (key) {')
+    for unit in events:
+        name = unit['java_class'].rsplit('.', 1)[1]
+        content.append(f'case EventKey::{name}: return EventId::{name};')
     content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
     declarations += ['SPIRE_FN inline CardRarity card_rarity(CardId id);',
                      'SPIRE_FN inline int card_sort_order(CardId id);']

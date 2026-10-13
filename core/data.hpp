@@ -10,7 +10,7 @@ SPIRE_FN constexpr float victory_switch_timer() {
     while (alpha >= 0.0f) { alpha -= 1.0f / 60.0f; timer -= 1.0f / 60.0f; }
     return timer;
 }
-struct EventData { const char* java_class; bool image; };
+struct EventData { const char* java_class; bool image; bool reward_opens_map = false; };
 struct CardDef {
     CardType type;
     CardTarget target;
@@ -53,6 +53,11 @@ struct RelicData {
     bool revives_player = false;
     bool triggers_at_battle_end = false;
     bool prevents_event_combat = false;
+    int event_chest_interval = 0;
+    bool screenless_excluded = false;
+    bool boss_chest_excluded = false;
+    bool replaces_starter = false;
+    bool crosses_map_paths = false;
     float shop_multiplier = 1.0f;
     bool restocks_shop = false;
     bool excluded_from_restock = false;

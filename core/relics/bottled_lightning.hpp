@@ -5,7 +5,7 @@ namespace spire::units::relics {
 struct BottledLightning : RelicHooks {
     SPIRE_STATE(BottledLightning, bool cardSelected; uint16_t card;)
     SPIRE_SNAPSHOT("BottledLightning.card", master_card_uuid, relic.state.BottledLightning.card)
-    static SPIRE_FN constexpr RelicData data() { return {-1, 250}; }
+    static SPIRE_FN constexpr RelicData data() { RelicData d{-1, 250}; d.screenless_excluded = true; return d; }
     static SPIRE_FN void initializeState(Relic& relic) { relic.state.BottledLightning.cardSelected = true; }
     static SPIRE_FN void onEquip(Game& g, int relic) {
         master_selection_cards(g, CardType::Skill);

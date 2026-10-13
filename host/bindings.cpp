@@ -94,6 +94,7 @@ CombatSetup parse_setup(const Game& game, const py::dict& value) {
         const char* rooms[] = {"MonsterRoom", "MonsterRoomElite", "MonsterRoomBoss", "ShopRoom", "RestRoom", "TreasureRoom", "EventRoom"};
         bool found = false;
         for (int i = 0; i < 7; ++i) if (name == rooms[i]) { setup.room = static_cast<RoomKind>(i); found = true; }
+        if (name == "NeowRoom") { setup.room = RoomKind::Neow; found = true; }
         if (name == "TreasureRoomBoss") { setup.room = RoomKind::BossTreasure; found = true; }
         SPIRE_ASSERT(found);
     }
@@ -111,7 +112,19 @@ struct Environment {
         initialize_fresh_run(fresh);
     }
     void start_combat(std::int64_t seed, const py::dict& scenario) {
-        reset(seed);
+        RunProfile profile{};
+        if (scenario.contains("profile")) {
+            const py::dict value = scenario["profile"].cast<py::dict>();
+            profile.neow_spirits = value["neow_spirits"].cast<int>();
+            const char* keys[] = {"GUARDIAN", "GHOST", "SLIME", "CHAMP", "AUTOMATON", "COLLECTOR", "CROW", "DONUT", "WIZARD"};
+            for (auto item : value["bosses_seen"].cast<py::list>()) {
+                const auto key = py::cast<std::string>(item);
+                int i = 0; while (i < 9 && key != keys[i]) ++i;
+                SPIRE_ASSERT(i < 9); profile.bosses_seen |= 1 << i;
+            }
+        }
+        spire::reset(game, seed, profile);
+        fresh = FreshRunState{}; initialize_fresh_run(fresh);
         const auto setup = parse_setup(game, scenario);
         spire::start_combat(game, setup);
     }

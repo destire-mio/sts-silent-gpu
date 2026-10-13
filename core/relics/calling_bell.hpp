@@ -11,6 +11,7 @@ struct CallingBell : RelicHooks {
         g.grid_cards.clear();
         g.grid_cards.push_back(create_card(g, make_card(CardId::CurseOfTheBell)));
         g.selection_confirmation = true;
+        g.grid_can_cancel = false;
         g.screen = Screen::Grid;
     }
     static SPIRE_FN RelicKey screenlessRelic(Game& g, int tier) {
@@ -32,6 +33,7 @@ struct CallingBell : RelicHooks {
             g.reward_proceed_visible = true;
             g.reward_skippable = false;
             g.screen = Screen::CombatReward;
+            g.room_reward_time = true;
             g.run.relics[relic].state.CallingBell.cardsReceived = true;
         }
     }

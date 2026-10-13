@@ -141,6 +141,13 @@ public final class Recorder {
         }
         AbstractDungeon.player.maxHealth = setup.get("max_hp").getAsInt();
         AbstractDungeon.player.currentHealth = setup.get("hp").getAsInt();
+        if (start != null && start.get("room").getAsString().equals("NeowRoom")) {
+            AbstractDungeon.floorNum = start.get("floor").getAsInt();
+            AbstractDungeon.currMapNode = new MapRoomNode(0, -1);
+            AbstractDungeon.currMapNode.room = new com.megacrit.cardcrawl.neow.NeowRoom(false);
+            AbstractDungeon.firstRoomChosen = false;
+            return;
+        }
         MapRoomNode node;
         if (start == null) {
             node = new MapRoomNode(0, 0);
@@ -186,7 +193,10 @@ public final class Recorder {
         com.megacrit.cardcrawl.neow.NeowEvent.rng = null;
         com.megacrit.cardcrawl.actions.common.DrawCardAction.drawnCards.clear();
         for (String key : TipTracker.tips.keySet()) TipTracker.tips.put(key, true);
-        CardCrawlGame.playerPref.putInteger("THE_SILENT_SPIRITS", 1);
+        JsonObject profile = isScenario && job.getAsJsonObject("scenario").has("profile") ? job.getAsJsonObject("scenario").getAsJsonObject("profile") : null;
+        if (profile != null) for (JsonElement boss : profile.getAsJsonArray("bosses_seen"))
+            com.megacrit.cardcrawl.unlock.UnlockTracker.bossSeenPref.putInteger(boss.getAsString(), 1);
+        CardCrawlGame.playerPref.putInteger("THE_SILENT_SPIRITS", profile == null ? 1 : profile.get("neow_spirits").getAsInt());
         Settings.seed = seed;
         Settings.seedSet = true;
         AbstractDungeon.generateSeeds();

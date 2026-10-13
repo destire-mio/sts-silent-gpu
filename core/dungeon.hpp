@@ -75,12 +75,25 @@ SPIRE_FN inline void populate_strong_encounters(Game& g, const EncounterTable<Si
     }
 }
 
+SPIRE_FN inline void initialize_bosses(Game& g) {
+    const EncounterId bosses[3][3] = {{EncounterId::TheGuardian, EncounterId::Hexaghost, EncounterId::SlimeBoss}, {EncounterId::Champ, EncounterId::BronzeAutomaton, EncounterId::TheCollector}, {EncounterId::AwakenedOne, EncounterId::DonuDeca, EncounterId::TimeEater}};
+    const int act = g.run.act - 1;
+    const unsigned seen = (g.run.profile.bosses_seen >> (act * 3)) & 7;
+    for (int i = 0; i < 3; ++i) if (!(seen & (1 << i))) {
+        g.run.boss_list.push_back(bosses[act][i]);
+        g.run.boss_list.push_back(bosses[act][i]);
+        return;
+    }
+    const int order[3][3] = {{0, 1, 2}, {1, 2, 0}, {0, 2, 1}};
+    for (int i = 0; i < 3; ++i) g.run.boss_list.push_back(bosses[act][order[act][i]]);
+    shuffle(g.run.boss_list.values, g.run.boss_list.size, g.rng.monster);
+}
+
 SPIRE_FN inline void generate_encounters(Game& g) {
     auto& run = g.run;
     run.monster_list.clear();
     run.elite_list.clear();
     run.boss_list.clear();
-    // Exordium/TheCity/TheBeyond.initializeBoss use the recorder's fresh boss-seen profile.
     if (run.act == 1) {
         constexpr EncounterTable<4> weak{{{EncounterId::Cultist, 2}, {EncounterId::JawWorm, 2}, {EncounterId::TwoLouse, 2}, {EncounterId::SmallSlimes, 2}}};
         populate_encounters(g.rng.monster, weak, run.monster_list, 3, false);
@@ -88,8 +101,7 @@ SPIRE_FN inline void generate_encounters(Game& g) {
         populate_strong_encounters(g, strong);
         constexpr EncounterTable<3> elites{{{EncounterId::GremlinNob, 1}, {EncounterId::Lagavulin, 1}, {EncounterId::ThreeSentries, 1}}};
         populate_encounters(g.rng.monster, elites, run.elite_list, 10, true);
-        run.boss_list.push_back(EncounterId::TheGuardian);
-        run.boss_list.push_back(EncounterId::TheGuardian);
+        initialize_bosses(g);
     } else if (run.act == 2) {
         constexpr EncounterTable<5> weak{{{EncounterId::SphericGuardian, 2}, {EncounterId::Chosen, 2}, {EncounterId::ShellParasite, 2}, {EncounterId::Byrds, 2}, {EncounterId::TwoThieves, 2}}};
         populate_encounters(g.rng.monster, weak, run.monster_list, 2, false);
@@ -97,8 +109,7 @@ SPIRE_FN inline void generate_encounters(Game& g) {
         populate_strong_encounters(g, strong);
         constexpr EncounterTable<3> elites{{{EncounterId::GremlinLeader, 1}, {EncounterId::Slavers, 1}, {EncounterId::BookOfStabbing, 1}}};
         populate_encounters(g.rng.monster, elites, run.elite_list, 10, true);
-        run.boss_list.push_back(EncounterId::Champ);
-        run.boss_list.push_back(EncounterId::Champ);
+        initialize_bosses(g);
     } else if (run.act == 3) {
         constexpr EncounterTable<3> weak{{{EncounterId::Darkling, 2}, {EncounterId::OrbWalker, 2}, {EncounterId::ThreeShapes, 2}}};
         populate_encounters(g.rng.monster, weak, run.monster_list, 2, false);
@@ -106,8 +117,7 @@ SPIRE_FN inline void generate_encounters(Game& g) {
         populate_strong_encounters(g, strong);
         constexpr EncounterTable<3> elites{{{EncounterId::GiantHead, 2}, {EncounterId::Nemesis, 2}, {EncounterId::Reptomancer, 2}}};
         populate_encounters(g.rng.monster, elites, run.elite_list, 10, true);
-        run.boss_list.push_back(EncounterId::AwakenedOne);
-        run.boss_list.push_back(EncounterId::AwakenedOne);
+        initialize_bosses(g);
     } else {
         SPIRE_ASSERT(run.act == 4);
         for (int i = 0; i < 3; ++i) {

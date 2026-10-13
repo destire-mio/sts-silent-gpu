@@ -39,28 +39,32 @@ struct Card {
     bool bottle_flame : 1;
     bool bottle_lightning : 1;
     bool bottle_tornado : 1;
+    bool is_flipped : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), upgrades(0), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false), pending_clear(false),
-          bottle_flame(false), bottle_lightning(false), bottle_tornado(false) {}
+          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
 struct CampfireChoice { CampfireOption kind; bool usable; };
 using CampfireOptions = List<CampfireChoice, 8>;
+using EventChoices = List<EventChoice, 16>;
 struct CampfireState {
     CampfireOptions options{};
     CampfireOption selected = CampfireOption::Count;
     bool something_selected = false;
 };
 struct ChestState {
+    List<uint8_t, 3> relics{};
     uint8_t size = 0;
     RelicTier relic = RelicTier::Common;
     bool open = false;
     bool gold = false;
     bool cursed = false;
+    bool chose_relic = false;
 };
 struct StoreItem { uint8_t reward, slot; int16_t price; };
 struct ShopState {
@@ -280,15 +284,24 @@ struct MapNode {
     bool taken : 1;
     SPIRE_FN constexpr MapNode() : room(RoomKind::Empty), emerald(false), taken(false) {}
 };
+struct RunProfile {
+    int neow_spirits = 1;
+    uint16_t bosses_seen = 0;
+};
 struct Run {
     uint64_t seed = 0;
     int floor = 0;
     int act = 1;
     int ascension = 20;
     int boss_count = 0;
+    RunProfile profile{};
+    float playtime = 0.0f;
+    float event_chances[4] = {0.0f, 0.1f, 0.03f, 0.02f};
     int8_t node_x = 0, node_y = -1;
     int8_t next_x = -1, next_y = -1;
     bool first_room_chosen = false;
+    bool node_on_map = false;
+    bool map_dismissable = true;
     List<int8_t, 64> path_x{}, path_y{};
     int gold = 99;
     int card_blizz_randomizer = 5;
@@ -389,6 +402,7 @@ struct Game {
     int exhaust_action_num = 0;
     PileId grid_source = PileId::Grid;
     int selection_amount = 0;
+    int grid_previous_deck_size = 0;
     bool selection_any_number = false;
     bool selection_can_pick_zero = false;
     int put_on_deck_num = 0;
@@ -417,6 +431,7 @@ struct Game {
     RoomKind room_kind = RoomKind::Monster;
     RoomPhase room_phase = RoomPhase::Incomplete;
     bool room_elite_trigger = false;
+    bool room_combat_event = false;
     int room_rare_card_chance = 3;
     int room_uncommon_card_chance = 37;
     uint16_t room_event_class = 0;

@@ -127,7 +127,7 @@ static void test_lifecycle() {
     gain_gold(g, -5);
     require(g.run.gold == 0, "negative gold gain leaves balance unchanged");
     gain_gold(g, 9);
-    spend_gold(g, 2);
+    lose_gold(g, 2);
     require(g.run.gold == 7, "gold services update the run balance");
     equip_relic(g, RelicId::SnakeRing);
     require(g.run.relics.size == 1 && g.run.relics[0].counter == -1, "relic acquisition stores constructor counter");

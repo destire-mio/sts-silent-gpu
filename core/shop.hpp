@@ -7,23 +7,17 @@ SPIRE_FN inline bool shop_restock(const Game& g) {
     return false;
 }
 SPIRE_FN inline CardId shop_card(Game& g, int type, bool seeded, CardRarity colorless = CardRarity::Basic) {
+    if (colorless != CardRarity::Basic) return random_colorless_card(g, colorless, seeded);
     List<CardId, 64> choices{};
-    if (colorless != CardRarity::Basic) {
-        for (const auto& entry : colorless_card_pool) {
-            const CardId id = card_id(entry.id);
-            if (card_rarity(id) == colorless) choices.push_back(id);
-        }
-    } else {
-        const int roll = g.rng.card.random(99) + g.run.card_blizz_randomizer;
-        g.room_rare_card_chance = 9;
-        g.room_uncommon_card_chance = 37;
-        int rarity = roll < 9 ? 2 : roll < 46 ? 1 : 0;
-        if (type == static_cast<int>(CardType::Power) && rarity == 0) rarity = 1;
-        const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
-        const int sizes[] = {sizeof(common_card_pool) / sizeof(*common_card_pool), sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool), sizeof(rare_card_pool) / sizeof(*rare_card_pool)};
-        for (int i = 0; i < sizes[rarity]; ++i)
-            if (static_cast<int>(pools[rarity][i].type) == type) choices.push_back(card_id(pools[rarity][i].id));
-    }
+    const int roll = g.rng.card.random(99) + g.run.card_blizz_randomizer;
+    g.room_rare_card_chance = 9;
+    g.room_uncommon_card_chance = 37;
+    int rarity = roll < 9 ? 2 : roll < 46 ? 1 : 0;
+    if (type == static_cast<int>(CardType::Power) && rarity == 0) rarity = 1;
+    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
+    const int sizes[] = {sizeof(common_card_pool) / sizeof(*common_card_pool), sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool), sizeof(rare_card_pool) / sizeof(*rare_card_pool)};
+    for (int i = 0; i < sizes[rarity]; ++i)
+        if (static_cast<int>(pools[rarity][i].type) == type) choices.push_back(card_id(pools[rarity][i].id));
     for (int i = 1; i < choices.size; ++i) {
         const CardId card = choices[i];
         int j = i;

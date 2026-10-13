@@ -4,6 +4,7 @@
 #include "campfire.hpp"
 #include "treasure.hpp"
 #include "shop.hpp"
+#include "event_room.hpp"
 #include "card_pool.hpp"
 #include "dungeon.hpp"
 
@@ -805,6 +806,7 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.monster_order.clear();
     g.manager = ActionManager{};
     g.manager.player_hp_last_turn = g.player.creature.hp;
+    g.player.bloodied = g.player.creature.hp <= g.player.creature.max_hp / 2;
     g.turn = 1;
     g.battle_over = false;
     g.room_in_combat = true;
@@ -887,12 +889,25 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     refresh_hand(g);
 }
+SPIRE_FN inline void initialize_source_card_pools(Game& g) {
+    const int pool_sizes[] = {
+        static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
+        static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
+        static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool)),
+        static_cast<int>(sizeof(colorless_card_pool) / sizeof(*colorless_card_pool))};
+    // AbstractDungeon.initializeCardPools copies each pool to its source pool with addToBottom.
+    for (int p = 0; p < 4; ++p) {
+        g.run.source_card_pools[p].clear();
+        for (int i = pool_sizes[p] - 1; i >= 0; --i) g.run.source_card_pools[p].push_back(i);
+    }
+}
 constexpr Game initial_game{};
 
-SPIRE_FN inline void reset(Game& g, uint64_t seed) {
+SPIRE_FN inline void reset(Game& g, uint64_t seed, RunProfile profile = {}) {
     bind_fault(g);
     g = initial_game;
     g.run.seed = seed;
+    g.run.profile = profile;
     g.unseeded.reset(seed);
     g.rng.generate_seeds(seed);
     g.rng.reseed_map(seed, 1);
@@ -900,14 +915,7 @@ SPIRE_FN inline void reset(Game& g, uint64_t seed) {
     g.player.creature.hp = 59;
     g.player.energy_per_turn = 0;
     starter_deck(g.run);
-    const int pool_sizes[] = {
-        static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
-        static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
-        static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool)),
-        static_cast<int>(sizeof(colorless_card_pool) / sizeof(*colorless_card_pool))};
-    // AbstractDungeon.initializeCardPools copies each pool to its source pool with addToBottom.
-    for (int p = 0; p < 4; ++p)
-        for (int i = pool_sizes[p] - 1; i >= 0; --i) g.run.source_card_pools[p].push_back(i);
+    initialize_source_card_pools(g);
     initialize_dungeon(g);
     for (int i = 0; i < g.run.master_deck.size; ++i) g.run.master_deck[i].uuid = g.next_card_uuid++;
     g.player.creature.draw_x = 320.0f;
@@ -929,6 +937,12 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.acquisition_reward = -1;
     g.rng.reseed_floor(g.run.seed, g.run.floor);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onEnterRoom(g, i, static_cast<int>(room));
+    g.room_combat_event = false;
+    if (room == RoomKind::Event) {
+        room = roll_event_room(g);
+        g.run.map[g.run.node_y][g.run.node_x].room = room;
+        g.room_combat_event = room == RoomKind::Monster || room == RoomKind::Elite;
+    }
     g.room_kind = room;
     g.room_elite_trigger = room == RoomKind::Elite;
     g.room_in_combat = false;
@@ -940,6 +954,7 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.smoked = g.mugged = g.cannot_lose = false;
     if (g.event.id != EventId::Count) { g.room_dialog.clear(); g.image_dialog.clear(); }
     g.event = Event{};
+    g.room_event_class = 0;
     g.monster_order.clear();
     for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(room));
     g.player.creature.draw_x = room == RoomKind::Elite && g.run.act == 4 ? 640.0f : 320.0f;
@@ -953,7 +968,15 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
         break;
     case RoomKind::Rest: enter_campfire(g); break;
     case RoomKind::Treasure: enter_treasure(g); break;
+    case RoomKind::BossTreasure: enter_boss_chest(g); break;
     case RoomKind::Shop: enter_shop(g); break;
+    case RoomKind::Event: enter_event(g); break;
+    case RoomKind::HeartEvent:
+        g.event.id = EventId::SpireHeart; event_initialize_state(g.event);
+        g.room_event_class = g.text.intern(event_data(g.event.id).java_class);
+        g.screen = Screen::Event; g.room_phase = RoomPhase::Event;
+        event_enter(g);
+        break;
     case RoomKind::Victory:
         g.player.creature.draw_x = 640.0f;
         g.screen = Screen::Victory;
@@ -1000,16 +1023,24 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
         g.run.potion_state[i] = construct_potion(g, setup.potions[i]);
     }
     g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();
+    if (setup.room == RoomKind::Neow) {
+        g.run.floor = setup.floor;
+        g.player.creature.hp = setup.hp; g.player.creature.max_hp = setup.max_hp;
+        g.run.node_x = 0; g.run.node_y = -1;
+        g.room_kind = RoomKind::Neow;
+        g.event.id = EventId::Neow; event_initialize_state(g.event); event_enter(g);
+        return;
+    }
     g.run.floor = setup.floor;
     g.player.energy_per_turn = 0;
     g.rng.reseed_floor(g.run.seed, setup.floor);
     g.player.creature.draw_x = 1280.0f * 0.25f;
     g.player.creature.hp = setup.hp;
     g.player.creature.max_hp = setup.max_hp;
-    g.player.bloodied = setup.hp <= setup.max_hp / 2;
     g.room_kind = RoomKind::Monster;
     g.run.node_x = g.run.next_x = setup.node_x;
     g.run.node_y = g.run.next_y = setup.node_y;
+    g.run.node_on_map = setup.first_room_chosen;
     g.run.first_room_chosen = setup.first_room_chosen;
     if (setup.first_room_chosen) {
         g.run.path_x.push_back(setup.node_x); g.run.path_y.push_back(setup.node_y);
@@ -1020,6 +1051,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
 }
 SPIRE_FN inline void open_map(Game& g) {
     g.previous_screen = g.screen;
+    g.run.map_dismissable = true;
     g.screen = Screen::Map;
     g.room_phase = RoomPhase::Complete;
 }
@@ -1031,6 +1063,7 @@ SPIRE_FN inline void complete_master_selection(Game& g) {
     g.screen = Screen::None;
     for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
     if (g.room_kind == RoomKind::Rest) finish_campfire_selection(g);
+    if (g.room_kind == RoomKind::BossTreasure && g.screen == Screen::None) g.screen = Screen::Room;
     if (g.room_kind == RoomKind::Shop) {
         if (g.grid_for_purge) finish_shop_purge(g);
         g.screen = Screen::Shop;
@@ -1046,15 +1079,25 @@ SPIRE_FN inline void complete_master_selection(Game& g) {
 SPIRE_FN inline void map_choices(const Game& g, List<uint8_t, 8>& choices) {
     choices.clear();
     if (g.run.node_y == 14 || (g.run.act == 4 && g.run.node_y == 2)) { choices.push_back(105); return; }
+    bool winged = false;
+    for (int i = 0; i < g.run.relics.size; ++i)
+        winged |= relic_data(g.run.relics[i].id).crosses_map_paths && g.run.relics[i].counter > 0;
     const int y = g.run.first_room_chosen ? g.run.node_y + 1 : 0;
     for (int x = 0; x < 7; ++x) {
         if (!g.run.map[y][x].edges) continue;
-        if (!g.run.first_room_chosen || (g.run.map[g.run.node_y][g.run.node_x].edges & (1 << x)))
+        if (!g.run.first_room_chosen || (g.run.map[g.run.node_y][g.run.node_x].edges & (1 << x)) || (winged && g.run.map[g.run.node_y][g.run.node_x].edges))
             choices.push_back(y * 7 + x);
     }
 }
 SPIRE_FN inline void enter_map_node(Game& g, int index) {
-    if (g.run.node_y >= 0 && g.run.node_y < 15 && g.run.node_x >= 0) g.run.map[g.run.node_y][g.run.node_x].taken = true;
+    if (index != 105 && g.run.first_room_chosen && !(g.run.map[g.run.node_y][g.run.node_x].edges & (1 << (index % 7))))
+        for (int i = 0; i < g.run.relics.size; ++i) if (relic_data(g.run.relics[i].id).crosses_map_paths) {
+            if (--g.run.relics[i].counter <= 0) relic_setCounter(g, i, -2);
+            break;
+        }
+    // Closing a nondismissable map through DungeonMap's boss button invokes firstRoomLogic.
+    if (index == 105 && !g.run.first_room_chosen && !g.run.map_dismissable && g.room_kind != RoomKind::Monster && g.room_kind != RoomKind::Elite && g.room_kind != RoomKind::Boss) ++g.run.floor;
+    if (g.run.node_on_map) g.run.map[g.run.node_y][g.run.node_x].taken = true;
     const int x = index == 105 ? -1 : index % 7;
     const int y = index == 105 ? 15 : index / 7;
     const RoomKind room = index == 105 ? RoomKind::Boss : g.run.map[y][x].room;
@@ -1063,6 +1106,7 @@ SPIRE_FN inline void enter_map_node(Game& g, int index) {
     g.run.next_x = g.run.node_x = x;
     g.run.next_y = g.run.node_y = y;
     g.run.first_room_chosen = true;
+    g.run.node_on_map = index != 105;
     if (index == 105) {
         const bool has_path = g.run.path_y.size > 1;
         g.run.path_x.push_back(has_path ? g.run.path_x[g.run.path_x.size - 1] : 1);
@@ -1070,6 +1114,48 @@ SPIRE_FN inline void enter_map_node(Game& g, int index) {
     } else { g.run.path_x.push_back(x); g.run.path_y.push_back(y); }
     ++g.run.floor;
     enter_room(g, room);
+}
+SPIRE_FN inline void next_act(Game& g) {
+    ++g.run.act;
+    if (g.rng.card.counter > 0 && g.rng.card.counter < 750)
+        g.rng.card.setCounter(((g.rng.card.counter - 1) / 250 + 1) * 250);
+    g.run.path_x.clear(); g.run.path_y.clear();
+    g.run.event_chances[0] = 0.0f; g.run.event_chances[1] = 0.1f;
+    g.run.event_chances[2] = 0.03f; g.run.event_chances[3] = 0.02f;
+    g.run.potion_blizz_modifier = 0;
+    heal_creature(g, player_target, floor_int((g.player.creature.max_hp - g.player.creature.hp) * 0.75f + 0.5f));
+    ActionManager manager{};
+    manager.total_discarded_this_turn = g.manager.total_discarded_this_turn;
+    manager.damage_received_this_turn = g.manager.damage_received_this_turn;
+    manager.damage_received_this_combat = g.manager.damage_received_this_combat;
+    manager.hp_loss_this_combat = g.manager.hp_loss_this_combat;
+    manager.player_hp_last_turn = g.manager.player_hp_last_turn;
+    manager.energy_gained_this_combat = g.manager.energy_gained_this_combat;
+    g.manager = manager;
+    initialize_source_card_pools(g);
+    initialize_dungeon(g);
+    g.run.first_room_chosen = false;
+    g.run.node_on_map = false;
+    g.run.map_dismissable = false;
+    g.room_phase = RoomPhase::Complete;
+    if (g.run.act == 2) {
+        g.run.node_x = 0; g.run.node_y = -1;
+        g.room_kind = RoomKind::Empty;
+        g.room_in_combat = g.room_reward_time = g.battle_over = false;
+        g.room_elite_trigger = g.room_combat_event = g.smoked = g.mugged = g.cannot_lose = false;
+        g.room_rare_card_chance = 3; g.room_uncommon_card_chance = 37;
+        g.room_rewards.clear(); g.screen_rewards.clear();
+        g.monster_order.clear();
+        g.event = Event{}; g.room_event_class = 0;
+    }
+    g.screen = Screen::Map; g.previous_screen = Screen::None;
+}
+SPIRE_FN inline void enter_boss_treasure(Game& g) {
+    g.run.monster_list.erase(0);
+    g.run.next_x = g.run.node_x = -1;
+    g.run.next_y = g.run.node_y = 15;
+    ++g.run.floor;
+    enter_room(g, RoomKind::BossTreasure);
 }
 SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     actions.clear();
@@ -1103,13 +1189,15 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
             for (int i = 0; i < g.campfire.options.size; ++i)
                 if (g.campfire.options[i].usable) actions.push_back({ActionKind::Choose, option++, -1});
         }
-        if (g.room_kind == RoomKind::Treasure && !g.chest.open) actions.push_back({ActionKind::Choose, 0, -1});
+        if ((g.room_kind == RoomKind::Treasure || g.room_kind == RoomKind::BossTreasure) && !g.chest.open) actions.push_back({ActionKind::Choose, 0, -1});
         if (g.room_kind == RoomKind::Shop) actions.push_back({ActionKind::Choose, 0, -1});
         if (g.room_phase == RoomPhase::Complete) actions.push_back({ActionKind::Proceed, -1, -1});
+    } else if (g.screen == Screen::BossReward) {
+        for (int i = 0; i < g.chest.relics.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
+        actions.push_back({ActionKind::Skip, -1, -1});
     } else if (g.screen == Screen::Event) {
-        const auto& buttons = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
-        int option = 0;
-        for (int i = 0; i < buttons.size; ++i) if (!buttons[i]) actions.push_back({ActionKind::Choose, option++, -1});
+        EventChoices choices{}; event_choices(g, choices);
+        for (int i = 0; i < choices.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
     } else if (g.screen == Screen::Shop) {
         List<uint8_t, 14> choices{}; shop_choices(g, choices);
         for (int i = 0; i < choices.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
@@ -1117,7 +1205,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     } else if (g.screen == Screen::Map) {
         List<uint8_t, 8> choices{}; map_choices(g, choices);
         for (int i = 0; i < choices.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
-        actions.push_back({ActionKind::Skip, -1, -1});
+        if (g.run.map_dismissable) actions.push_back({ActionKind::Skip, -1, -1});
     } else if (g.screen == Screen::Discard) {
         if (g.selected_cards.size < g.selection_amount)
             for (int i = 0; i < g.hand.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
@@ -1172,9 +1260,19 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 g.run.next_y = g.run.node_y = 4;
                 ++g.run.floor;
                 enter_room(g, RoomKind::Victory);
-            } else open_map(g);
+            } else if (g.room_kind == RoomKind::Boss && g.run.act == 3) {
+                const bool double_boss = g.run.boss_list.size == 2;
+                if (double_boss) g.run.boss_key = g.run.boss_list[0];
+                g.run.monster_list.erase(0);
+                g.run.next_x = g.run.node_x = -1;
+                g.run.next_y = g.run.node_y = 15;
+                ++g.run.floor;
+                enter_room(g, double_boss ? RoomKind::Boss : RoomKind::HeartEvent);
+            } else if (g.room_kind == RoomKind::BossTreasure) next_act(g);
+            else open_map(g);
         }
         else if (g.room_kind == RoomKind::Shop) { g.screen = Screen::Shop; }
+        else if (g.room_kind == RoomKind::BossTreasure) open_boss_chest(g);
         else if (g.room_kind == RoomKind::Treasure) {
             SPIRE_ASSERT(action.kind == ActionKind::Choose && action.index == 0);
             open_chest(g);
@@ -1188,18 +1286,22 @@ SPIRE_FN inline void step(Game& g, Action action) {
         }
         return;
     }
+    if (g.screen == Screen::BossReward) {
+        if (action.kind == ActionKind::Skip) { g.chest.open = false; g.screen = Screen::Room; }
+        else { SPIRE_ASSERT(action.kind == ActionKind::Choose); choose_boss_relic(g, action.index); settle_card_obtains(g); }
+        return;
+    }
     if (g.screen == Screen::Event) {
         SPIRE_ASSERT(action.kind == ActionKind::Choose);
-        const auto& buttons = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
-        int option = action.index;
-        for (int i = 0; i < buttons.size; ++i) if (!buttons[i] && option-- == 0) {
-            if (event_data(g.event.id).image) g.image_selected_option = i;
-            else g.room_selected_option = i;
-            event_choose(g, i);
-            update_event(g);
-            return;
+        EventChoices choices{}; event_choices(g, choices);
+        const EventChoice choice = choices[action.index];
+        if (choice.kind == EventChoiceKind::Option) {
+            if (event_data(g.event.id).image) g.image_selected_option = choice.index;
+            else g.room_selected_option = choice.index;
         }
-        SPIRE_ASSERT(false);
+        event_choose(g, choice.index);
+        update_event(g);
+        return;
     }
     if (g.screen == Screen::Shop) {
         if (action.kind == ActionKind::Skip) g.screen = Screen::Room;
@@ -1254,9 +1356,12 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 reward.relic_slot = g.run.relics.size;
                 equip_relic(g, reward.relic.id);
                 }
-                if (reward.relic_link >= 0) for (int i = 0; i < g.screen_rewards.size; ++i) {
-                    auto& linked = g.reward_objects[g.screen_rewards[i]];
-                    if (linked.identity == reward.relic_link) { linked.done = true; linked.ignored = true; }
+                if (reward.relic_link >= 0) {
+                    reward.ignored = true;
+                    for (int i = 0; i < g.screen_rewards.size; ++i) {
+                        auto& linked = g.reward_objects[g.screen_rewards[i]];
+                        if (linked.identity == reward.relic_link) { linked.done = true; linked.ignored = true; }
+                    }
                 }
                 reward.done = true;
                 for (int i = g.screen_rewards.size - 1; i >= 0; --i)
@@ -1284,6 +1389,11 @@ SPIRE_FN inline void step(Game& g, Action action) {
             if (action.kind == ActionKind::Skip) {
                 if (g.previous_screen == g.screen) g.previous_screen = Screen::None;
                 g.screen = g.event.id == EventId::Count ? Screen::None : Screen::Event;
+            } else if (g.room_kind == RoomKind::BossTreasure) next_act(g);
+            else if (g.room_kind == RoomKind::Boss && g.run.act < 3) enter_boss_treasure(g);
+            else if (g.room_kind == RoomKind::Event && !event_data(g.event.id).reward_opens_map) {
+                g.previous_screen = Screen::None;
+                g.screen = Screen::Event;
             } else open_map(g);
         }
         return;
@@ -1325,7 +1435,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
         SPIRE_ASSERT(action.kind == ActionKind::Proceed);
         for (int i = 0; i < g.grid_cards.size; ++i) obtain_card(g, g.cards[g.grid_cards[i]]);
         g.selection_confirmation = false;
-        g.screen = Screen::None;
+        complete_master_selection(g);
         return;
     }
     if (g.screen == Screen::Discard) {

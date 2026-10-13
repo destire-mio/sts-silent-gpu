@@ -36,7 +36,7 @@ int main() {
     require(!relic_canSpawn(g, 2), "Maw Bank cannot spawn in a shop");
     relic_onEnterRoom(g, 2, static_cast<int>(RoomKind::Monster));
     require(g.run.gold == 111, "Maw Bank grants gold before being spent");
-    spend_gold(g, 1);
+    lose_gold(g, 1);
     relic_onEnterRoom(g, 2, static_cast<int>(RoomKind::Monster));
     require(g.run.gold == 110 && g.run.relics[2].counter == -2, "Maw Bank stops after spending");
     reset(g, 101);

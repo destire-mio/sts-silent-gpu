@@ -170,6 +170,7 @@ struct SnapshotGraph {
             if (field == "inBottleLightning") return py::bool_(card.bottle_lightning);
             if (field == "inBottleTornado") return py::bool_(card.bottle_tornado);
             if (field == "price") return py::int_(card.price);
+            if (field == "isFlipped") return py::bool_(card.is_flipped);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
                 field == "isMagicNumberModified" ||
@@ -451,6 +452,8 @@ struct SnapshotGraph {
 
     py::object event() {
         if (game.event.id == EventId::Count) return py::none();
+        UnitStateSnapshot state;
+        event_visit_state(game.event, state);
         return object({30, 0, 0}, event_data(game.event.id).java_class, [&](const std::string& key) -> py::object {
             const py::object mapped = events_snapshot(*this, game.event, 0, key);
             if (mapped) return mapped;
@@ -459,8 +462,21 @@ struct SnapshotGraph {
             if (key == "AbstractEvent.screenNum") return py::int_(game.event.screen);
             if (key == "AbstractEvent.imageEventText" || key == "AbstractEvent.roomEventText") {
                 const bool image = key == "AbstractEvent.imageEventText";
-                return object({31, image ? 0 : 1, 0}, image ? "events.GenericEventDialog" : "events.RoomEventDialog", [&](const std::string& field) -> py::object { if (field == "GenericEventDialog.optionList") return py::list(); return {}; });
+                return object({31, image ? 0 : 1, 0}, image ? "events.GenericEventDialog" : "events.RoomEventDialog", [&](const std::string& field) -> py::object {
+                    if (field == "GenericEventDialog.optionList") {
+                        py::list buttons;
+                        for (int i = 0; i < game.image_dialog.size; ++i) buttons.append(object({35, 1, i}, "ui.buttons.LargeDialogOptionButton", [&](const std::string& name) -> py::object {
+                            if (name == "LargeDialogOptionButton.isDisabled") return py::bool_(game.image_dialog[i]);
+                            if (name == "LargeDialogOptionButton.slot") return py::int_(i);
+                            return {};
+                        }));
+                        return buttons;
+                    }
+                    return {};
+                });
             }
+            const py::str field(key.substr(key.find('.') + 1));
+            if (state.fields.contains(field)) return py::reinterpret_borrow<py::object>(state.fields[field]);
             return {};
         });
     }
@@ -556,7 +572,25 @@ struct SnapshotGraph {
         });
     }
 
+    py::list boss_relics() {
+        py::list result;
+        for (int i = 0; i < game.chest.relics.size; ++i) {
+            const auto& reward = game.reward_objects[game.chest.relics[i]];
+            result.append(reward.relic_slot >= 0 ? relic(reward.relic_slot) : relic_value(reward.relic, -1, false, {36, reward.identity, 0}));
+        }
+        return result;
+    }
     py::object chest() {
+        if (game.room_kind == RoomKind::BossTreasure) return object({39, 0, 0}, "rewards.chests.BossChest", [&](const std::string& key) -> py::object {
+            if (key == "BossChest.relics") return boss_relics();
+            if (key == "BossChest.blights") return py::list();
+            if (key == "AbstractChest.isOpen") return py::bool_(game.chest.open);
+            if (key == "AbstractChest.cursed") return py::bool_(game.chest.cursed);
+            if (key == "AbstractChest.goldReward") return py::bool_(false);
+            if (key == "AbstractChest.relicReward") return py::none();
+            if (key == "AbstractChest.COMMON_CHANCE" || key == "AbstractChest.UNCOMMON_CHANCE" || key == "AbstractChest.RARE_CHANCE" || key == "AbstractChest.GOLD_CHANCE" || key == "AbstractChest.GOLD_AMT") return py::int_(0);
+            return {};
+        });
         const char* classes[] = {"rewards.chests.SmallChest", "rewards.chests.MediumChest", "rewards.chests.LargeChest"};
         return object({39, 0, 0}, classes[game.chest.size], [&](const std::string& key) -> py::object {
             const auto& data = chest_data[game.chest.size];
@@ -594,7 +628,7 @@ struct SnapshotGraph {
     }
 
     py::object room(const FreshRunState& fresh) {
-        const char* classes[] = {"rooms.MonsterRoom", "rooms.MonsterRoomElite", "rooms.MonsterRoomBoss", "rooms.ShopRoom", "rooms.RestRoom", "rooms.TreasureRoom", "rooms.EventRoom", "rooms.EmptyRoom", "neow.NeowRoom", "rooms.TreasureRoomBoss", "rooms.TrueVictoryRoom"};
+        const char* classes[] = {"rooms.MonsterRoom", "rooms.MonsterRoomElite", "rooms.MonsterRoomBoss", "rooms.ShopRoom", "rooms.RestRoom", "rooms.TreasureRoom", "rooms.EventRoom", "rooms.EmptyRoom", "neow.NeowRoom", "rooms.TreasureRoomBoss", "rooms.TrueVictoryRoom", "rooms.VictoryRoom"};
         return object({12, 0, 0}, classes[static_cast<int>(game.room_kind)], [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "baseRareCardChance") return py::int_(game.room_kind == RoomKind::Elite ? 10 : game.room_kind == RoomKind::Shop ? 9 : 3);
@@ -603,11 +637,14 @@ struct SnapshotGraph {
             if (field == "uncommonCardChance") return py::int_(game.room_uncommon_card_chance);
             if (field == "cannotLose") return py::bool_(game.cannot_lose);
             if (field == "eliteTrigger") return py::bool_(game.room_elite_trigger);
-            if (field == "combatEvent" || field == "skipMonsterTurn") return py::bool_(false);
+            if (field == "combatEvent") return py::bool_(game.room_combat_event);
+            if (field == "skipMonsterTurn") return py::bool_(false);
             if (field == "smoked") return py::bool_(game.smoked);
             if (field == "event") return event();
             if (field == "campfireUI") return campfire();
             if (field == "chest") return chest();
+            if (field == "eType") return py::str("HEART");
+            if (field == "choseRelic") return py::bool_(game.chest.chose_relic);
             if (field == "cutscene") return object({43, 0, 0}, "cutscenes.Cutscene", [&](const std::string& name) -> py::object {
                 if (name == "Cutscene.currentScene") return py::int_(0);
                 if (name == "Cutscene.darkenTimer" || name == "Cutscene.fadeTimer") return py::float_(0.0);
@@ -682,6 +719,7 @@ struct SnapshotGraph {
         return result;
     }
     template<class T> py::object scalar(const T& value) { return py::cast(value); }
+    py::object scalar(const py::object& value) { return value; }
     py::object scalar(const char* value) { return value ? py::object(py::str(value)) : py::object(py::none()); }
     py::object scalar(std::nullptr_t) { return py::none(); }
     py::object uuid(uint32_t value) { return py::int_(uuids.emplace(value, static_cast<int>(uuids.size())).first->second); }
@@ -853,7 +891,20 @@ struct SnapshotGraph {
         if (game.previous_screen == Screen::CombatReward) result["previous"] = "COMBAT_REWARD";
         if (game.screen == Screen::Victory) { result["type"] = "VICTORY"; result["choice"] = "VICTORY"; result["up"] = true; }
         if (game.previous_screen == Screen::Shop) result["previous"] = "SHOP";
-        if (game.screen == Screen::Shop) {
+        if (game.screen == Screen::BossReward) {
+            result["type"] = "BOSS_REWARD"; result["choice"] = "BOSS_REWARD"; result["up"] = true;
+            py::list options;
+            for (int i = 0; i < game.chest.relics.size; ++i) options.append(relic_names[static_cast<int>(game.reward_objects[game.chest.relics[i]].relic.id)]);
+            result["options"] = options;
+            result["state"] = object({45, 0, 0}, "screens.select.BossRelicSelectScreen", [&](const std::string& key) -> py::object {
+                if (key == "BossRelicSelectScreen.relics") return boss_relics();
+                if (key == "BossRelicSelectScreen.blights") return py::list();
+                if (key == "BossRelicSelectScreen.isDone" || key == "BossRelicSelectScreen.isVoting") return py::bool_(false);
+                if (key == "BossRelicSelectScreen.mayVote") return py::bool_(true);
+                if (key == "BossRelicSelectScreen.touchRelic" || key == "BossRelicSelectScreen.touchBlight") return py::none();
+                return {};
+            });
+        } else if (game.screen == Screen::Shop) {
             result["type"] = "SHOP"; result["up"] = true; result["choice"] = "SHOP";
             result["state"] = shop();
             py::list options; List<uint8_t, 14> choices{}; shop_choices(game, choices);
@@ -913,7 +964,7 @@ struct SnapshotGraph {
                     }
                     if (field == "numCards") return py::int_(game.selection_amount);
                     if (field == "cardSelectAmount") return py::int_(game.grid_confirm_screen ? game.selection_amount : game.selected_cards.size);
-                    if (field == "prevDeckSize") return py::int_(choices.size);
+                    if (field == "prevDeckSize") return py::int_(game.grid_previous_deck_size);
                     if (field == "hoveredCard") return game.grid_confirm_screen ? card_value(game.run.master_deck[game.grid_hovered_card], true, game.grid_hovered_card) : py::object(py::none());
                     if (field == "forUpgrade") return py::bool_(game.grid_for_upgrade);
                     if (field == "forTransform") return py::bool_(game.grid_for_transform);
@@ -921,7 +972,8 @@ struct SnapshotGraph {
                     if (field == "anyNumber") return py::bool_(game.selection_any_number);
                     if (field == "canCancel") return py::bool_(game.grid_can_cancel);
                     if (field == "forPurge") return py::bool_(game.grid_for_purge);
-                    if (field == "isJustForConfirming" || field == "cancelWasOn" || field == "forClarity") return py::bool_(false);
+                    if (field == "isJustForConfirming") return py::bool_(game.selection_confirmation);
+                    if (field == "cancelWasOn" || field == "forClarity") return py::bool_(false);
                     return {};
                 }
                 if (field == "numCardsToSelect") return py::int_(game.selection_amount);
@@ -938,7 +990,7 @@ struct SnapshotGraph {
             });
         }
         if (game.screen == Screen::Room) {
-            const char* choices[] = {"COMPLETE", "COMPLETE", "COMPLETE", "SHOP_ROOM", "REST", "CHEST", "EVENT", "COMPLETE", "EVENT", "CHEST", "COMPLETE"};
+            const char* choices[] = {"COMPLETE", "COMPLETE", "COMPLETE", "SHOP_ROOM", "REST", "CHEST", "EVENT", "COMPLETE", "EVENT", "CHEST", "COMPLETE", "EVENT"};
             result["choice"] = choices[static_cast<int>(game.room_kind)];
             py::list options;
             if (game.room_kind == RoomKind::Rest && !game.campfire.something_selected) {
@@ -946,13 +998,17 @@ struct SnapshotGraph {
                 for (int i = 0; i < game.campfire.options.size; ++i)
                     if (game.campfire.options[i].usable) options.append(names[static_cast<int>(game.campfire.options[i].kind)]);
             }
-            if (game.room_kind == RoomKind::Treasure && !game.chest.open) options.append("open");
+            if ((game.room_kind == RoomKind::Treasure || game.room_kind == RoomKind::BossTreasure) && !game.chest.open) options.append("open");
             if (game.room_kind == RoomKind::Shop) options.append("shop");
             result["options"] = options;
         }
         if (game.screen == Screen::Event) {
-            py::list options; const auto& buttons = event_data(game.event.id).image ? game.image_dialog : game.room_dialog;
-            for (int i = 0; i < buttons.size; ++i) if (!buttons[i]) options.append("option:" + std::to_string(i));
+            py::list options; EventChoices choices{}; event_choices(game, choices);
+            for (int i = 0; i < choices.size; ++i) {
+                const auto& choice = choices[i];
+                if (choice.kind == EventChoiceKind::Option) options.append("option:" + std::to_string(choice.index));
+                else options.append(card_names[static_cast<int>(game.cards[choice.index].id)]);
+            }
             result["options"] = options;
         }
         if (game.screen == Screen::Map) {
@@ -972,7 +1028,7 @@ struct SnapshotGraph {
     }
 
     py::dict globals(const FreshRunState& fresh) {
-        py::dict result("event_chances"_a=py::dict("ELITE_CHANCE"_a=0.0, "MONSTER_CHANCE"_a=0.1, "SHOP_CHANCE"_a=0.03, "TREASURE_CHANCE"_a=0.02),
+        py::dict result("event_chances"_a=py::dict("ELITE_CHANCE"_a=java_float(game.run.event_chances[0]), "MONSTER_CHANCE"_a=java_float(game.run.event_chances[1]), "SHOP_CHANCE"_a=java_float(game.run.event_chances[2]), "TREASURE_CHANCE"_a=java_float(game.run.event_chances[3])),
             "potion"_a=py::dict("blizzardPotionMod"_a=game.run.potion_blizz_modifier), "shop"_a=py::dict("purgeCost"_a=game.run.purge_cost, "actualPurgeCost"_a=game.run.actual_purge_cost),
             "drawn_cards"_a=cards(game.drawn_cards), "scraped_cards"_a=py::list(), "obtained_cards"_a=py::dict());
         for (auto item : inventory["globals"].cast<py::dict>()) result[item.first] = item.second;
@@ -1034,7 +1090,7 @@ struct SnapshotGraph {
             py::list row;
             for (int x = 0; x < 7; ++x) {
                 const auto& node = game.run.map[y][x];
-                const char* room_names[] = {"MonsterRoom", "MonsterRoomElite", "MonsterRoomBoss", "ShopRoom", "RestRoom", "TreasureRoom", "EventRoom", "", "NeowRoom", "TreasureRoomBoss", "TrueVictoryRoom"};
+                const char* room_names[] = {"MonsterRoom", "MonsterRoomElite", "MonsterRoomBoss", "ShopRoom", "RestRoom", "TreasureRoom", "EventRoom", "", "NeowRoom", "TreasureRoomBoss", "TrueVictoryRoom", "VictoryRoom"};
                 py::list edges;
                 for (int edge = 0; edge < 7; ++edge) if (node.edges & (1 << edge))
                     edges.append(py::cast(std::array<int, 2>{edge, y == 14 ? 16 : y + 1}));

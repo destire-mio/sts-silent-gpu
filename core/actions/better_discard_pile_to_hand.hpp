@@ -45,6 +45,7 @@ struct BetterDiscardPileToHand : ActionHooks {
             g.selection_any_number = e.payload.state.BetterDiscardPileToHand.optional;
             g.selection_can_pick_zero = e.payload.state.BetterDiscardPileToHand.optional;
             e.payload.state.BetterDiscardPileToHand.selecting = true;
+            g.grid_previous_deck_size = get_pile(g, g.grid_source).size;
             g.screen = Screen::Grid;
             return;
         }

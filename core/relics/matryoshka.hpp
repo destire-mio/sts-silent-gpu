@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct Matryoshka : RelicHooks {
-    static SPIRE_FN constexpr RelicData data() { return {2, 250}; }
+    static SPIRE_FN constexpr RelicData data() { RelicData d{2, 250}; d.boss_chest_excluded = true; return d; }
     SPIRE_STATE(Matryoshka, bool usedUp;)
     SPIRE_SNAPSHOT("AbstractRelic.usedUp", scalar, relic.state.Matryoshka.usedUp)
     SPIRE_SNAPSHOT("AbstractRelic.grayscale", scalar, relic.state.Matryoshka.usedUp)

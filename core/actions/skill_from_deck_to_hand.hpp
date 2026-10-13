@@ -40,6 +40,7 @@ struct SkillFromDeckToHand : ActionHooks {
             g.selection_amount = e.amount;
             g.selected_cards.clear();
             e.payload.state.SkillFromDeckToHand.selecting = true;
+            g.grid_previous_deck_size = get_pile(g, g.grid_source).size;
             g.screen = Screen::Grid;
             return;
         }
