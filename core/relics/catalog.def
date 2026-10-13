@@ -23,3 +23,4 @@ SPIRE_UNIT(RingOfTheSerpent, "Ring of the Serpent", "core/relics/ring_of_the_ser
 SPIRE_UNIT(Girya, "Girya", "core/relics/girya.hpp", Girya)
 SPIRE_UNIT(PeacePipe, "Peace Pipe", "core/relics/peace_pipe.hpp", PeacePipe)
 SPIRE_UNIT(Shovel, "Shovel", "core/relics/shovel.hpp", Shovel)
+SPIRE_UNIT(TinyHouse, "Tiny House", "core/relics/tiny_house.hpp", TinyHouse)
