@@ -1,0 +1,7 @@
+SPIRE_UNIT(Strike_G, "Strike_G", "core/cards/strike_g.hpp", StrikeG)
+SPIRE_UNIT(Defend_G, "Defend_G", "core/cards/defend_g.hpp", DefendG)
+SPIRE_UNIT(Neutralize, "Neutralize", "core/cards/neutralize.hpp", Neutralize)
+SPIRE_UNIT(Survivor, "Survivor", "core/cards/survivor.hpp", Survivor)
+SPIRE_UNIT(AscendersBane, "AscendersBane", "core/cards/ascenders_bane.hpp", AscendersBane)
+SPIRE_UNIT(Slimed, "Slimed", "core/cards/slimed.hpp", Slimed)
+SPIRE_UNIT(Dazed, "Dazed", "core/cards/dazed.hpp", Dazed)

@@ -15,13 +15,31 @@ execute_process(
     COMMAND_ERROR_IS_FATAL ANY)
 find_package(pybind11 CONFIG REQUIRED)
 
+set(SPIRE_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/spire_generated")
+file(GLOB_RECURSE content_sources CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/*.def")
+set(content_headers
+    "${SPIRE_GENERATED_DIR}/ids.hpp"
+    "${SPIRE_GENERATED_DIR}/bases.hpp"
+    "${SPIRE_GENERATED_DIR}/declarations.hpp"
+    "${SPIRE_GENERATED_DIR}/content.hpp")
+add_custom_command(OUTPUT ${content_headers}
+    COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py"
+        --root "${CMAKE_CURRENT_SOURCE_DIR}" --output "${SPIRE_GENERATED_DIR}"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py" ${content_sources}
+    VERBATIM)
+add_custom_target(generate_content DEPENDS ${content_headers})
+
 add_custom_target(check_device_core ALL
     COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_device_core.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/core" --compiler "${CMAKE_CXX_COMPILER}"
+        --generated "${SPIRE_GENERATED_DIR}"
     VERBATIM)
+add_dependencies(check_device_core generate_content)
 
 add_library(spire_core INTERFACE)
-target_include_directories(spire_core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(spire_core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 target_compile_features(spire_core INTERFACE cxx_std_17)
 target_compile_options(spire_core INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>

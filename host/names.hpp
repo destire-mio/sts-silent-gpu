@@ -1,21 +1,34 @@
 #pragma once
 #include "core/state.hpp"
-#include "core/card_catalog.hpp"
 #include <stdexcept>
 #include <string>
 
 namespace spire::host {
-#define SPIRE_CARD_NAME(id, java_name, ...) java_name,
-constexpr const char* card_names[] = {SPIRE_CARD_CATALOG(SPIRE_CARD_NAME)};
-#undef SPIRE_CARD_NAME
-constexpr const char* relic_names[] = {"Ring of the Snake"};
-constexpr const char* potion_names[] = {"Empty"};
-constexpr const char* power_names[] = {"Strength", "Dexterity", "Weakened", "Vulnerable", "Frail", "Ritual", "Curl Up", "Angry", "Spore Cloud", "Entangled", "Split", "Thievery", "Artifact", "No Draw"};
-constexpr const char* monster_names[] = {"Cultist", "JawWorm", "FuzzyLouseNormal", "FuzzyLouseDefensive", "AcidSlime_S", "AcidSlime_M", "AcidSlime_L", "SpikeSlime_S", "SpikeSlime_M", "SpikeSlime_L", "FungiBeast", "SlaverBlue", "SlaverRed", "Looter", "GremlinWarrior", "GremlinThief", "GremlinFat", "GremlinTsundere", "GremlinWizard"};
-constexpr const char* encounter_names[] = {"Cultist", "Jaw Worm", "2 Louse", "Small Slimes", "Blue Slaver", "Gremlin Gang", "Looter", "Large Slime", "Lots of Slimes", "Exordium Thugs", "Exordium Wildlife", "Red Slaver", "3 Louse", "2 Fungi Beasts"};
+#define SPIRE_UNIT(id, java_name, header, type) java_name,
+constexpr const char* card_names[] = {
+#include "core/cards/catalog.def"
+};
+constexpr const char* relic_names[] = {
+#include "core/relics/catalog.def"
+};
+constexpr const char* potion_names[] = {
+#include "core/potions/catalog.def"
+};
+constexpr const char* power_names[] = {
+#include "core/powers/catalog.def"
+};
+constexpr const char* monster_names[] = {
+#include "core/monsters/catalog.def"
+};
+constexpr const char* encounter_names[] = {
+#include "core/encounters/catalog.def"
+};
+constexpr const char* effect_names[] = {
+#include "core/actions/catalog.def"
+};
+#undef SPIRE_UNIT
 constexpr const char* intent_names[] = {"NONE", "ATTACK", "ATTACK_BUFF", "ATTACK_DEBUFF", "ATTACK_DEFEND", "BUFF", "DEBUFF", "STRONG_DEBUFF", "DEFEND", "DEFEND_BUFF", "ESCAPE", "MAGIC", "SLEEP", "STUN", "UNKNOWN", "DEBUG"};
 constexpr const char* screen_names[] = {"combat", "discard", "victory", "death", "none"};
-constexpr const char* effect_names[] = {"damage", "block", "apply_power", "reduce_power", "remove_power", "draw", "shuffle", "discard", "use_card", "end_turn_discard", "restore_retained", "end_turn", "monster_start", "roll_move", "set_move", "escape", "add_card_discard", "split", "steal_gold", "block_random_monster", "exhaust_card"};
 constexpr const char* damage_type_names[] = {"NORMAL", "THORNS", "HP_LOSS"};
 
 template<class Id, std::size_t Size>
@@ -31,4 +44,5 @@ static_assert(sizeof(potion_names) / sizeof(*potion_names) == static_cast<int>(P
 static_assert(sizeof(power_names) / sizeof(*power_names) == static_cast<int>(PowerId::Count));
 static_assert(sizeof(monster_names) / sizeof(*monster_names) == static_cast<int>(MonsterId::Count));
 static_assert(sizeof(encounter_names) / sizeof(*encounter_names) == static_cast<int>(EncounterId::Count));
+static_assert(sizeof(effect_names) / sizeof(*effect_names) == static_cast<int>(EffectKind::Count));
 }

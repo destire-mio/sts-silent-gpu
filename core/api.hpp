@@ -1,0 +1,71 @@
+#pragma once
+#include "data.hpp"
+#include "spire_generated/declarations.hpp"
+
+namespace spire {
+SPIRE_FN inline Creature& get_creature(Game&, int);
+SPIRE_FN inline const Creature& get_creature(const Game&, int);
+SPIRE_FN inline bool alive(const Creature&);
+SPIRE_FN inline int find_power(const Creature&, PowerId);
+SPIRE_FN inline bool has_power(const Creature&, PowerId);
+SPIRE_FN inline int power_amount(const Creature&, PowerId);
+SPIRE_FN inline bool monsters_basically_dead(const Game&);
+SPIRE_FN inline void add_bottom(Game&, const Effect&);
+SPIRE_FN inline void add_top(Game&, const Effect&);
+SPIRE_FN inline int calculate_damage(const Game&, int, int, int, DamageType = DamageType::Normal, int card = -1);
+SPIRE_FN inline int calculate_block(const Game&, int, int card = -1);
+SPIRE_FN inline void refresh_powers(Game&);
+SPIRE_FN inline void monster_apply_powers(Game&, int);
+SPIRE_FN inline void queue_damage(Game&, int, int, int, DamageType = DamageType::Normal, int steal = 0);
+SPIRE_FN inline void queue_block(Game&, int, int);
+SPIRE_FN inline void queue_card_damage(Game&, int, int);
+SPIRE_FN inline void queue_power(Game&, int, int, PowerId, int, bool monster_source = false);
+SPIRE_FN inline void gain_block(Game&, int, int);
+SPIRE_FN inline void remove_power(Game&, int, PowerId);
+SPIRE_FN inline void apply_power(Game&, int, int, PowerId, int, bool just_applied = false);
+SPIRE_FN inline void apply_prepared_power(Game&, int, int, Power, int);
+SPIRE_FN inline void reduce_power(Game&, int, PowerId, int);
+SPIRE_FN inline void at_end_of_round(Game&, int);
+SPIRE_FN inline void at_end_of_turn(Game&, int);
+SPIRE_FN inline void reset_attributes(Card&);
+SPIRE_FN inline Card make_card(CardId, int upgrades = 0, int misc = 0);
+SPIRE_FN inline CardDef card_def(CardId);
+SPIRE_FN inline void apply_card_powers(Game&, int);
+SPIRE_FN inline void calculate_card_damage(Game&, int, int);
+SPIRE_FN inline bool can_play(const Game&, const Card&);
+SPIRE_FN inline bool card_has_enough_energy_base(const Game&, int);
+SPIRE_FN inline bool card_free_to_play_base(const Game&, int);
+SPIRE_FN inline bool card_can_use_base(const Game&, int, int);
+SPIRE_FN inline Card stat_equivalent_copy(const Game&, int);
+SPIRE_FN inline void discard_card(Game&, int, bool);
+SPIRE_FN inline void exhaust_card(Game&, int);
+SPIRE_FN inline void move_to_discard(Game&, int);
+SPIRE_FN inline void damage(Game&, const Effect&);
+SPIRE_FN inline void monster_damage_base(Game&, int, const DamageInfo&);
+SPIRE_FN inline void monster_die_base(Game&, int, bool);
+SPIRE_FN inline void heal_creature(Game&, int, int);
+SPIRE_FN inline void set_monster_move(Game&, int, int, Intent, int base_damage = -1, int hits = 1);
+SPIRE_FN inline void create_monster_intent(Game&, int);
+SPIRE_FN inline void finish_card_use(Game&, const Effect&);
+SPIRE_FN inline void draw_cards(Game&, const Effect&);
+SPIRE_FN inline void end_turn_discard(Game&);
+SPIRE_FN inline void block_random_monster(Game&, const Effect&);
+SPIRE_FN inline Monster construct_monster(Game&, MonsterId, int hp_override = 0);
+SPIRE_FN inline void get_monster_move(Game&, int, int);
+SPIRE_FN inline void roll_monster_move(Game&, int);
+SPIRE_FN inline void split_monster(Game&, int);
+SPIRE_FN inline void on_draw_or_discard(Game&);
+SPIRE_FN inline void refresh_hand(Game&);
+SPIRE_FN inline void recharge_energy(Game&);
+SPIRE_FN inline void after_draw_turn_hooks(Game&);
+SPIRE_FN inline void gain_gold(Game&, int);
+SPIRE_FN inline void lose_gold(Game&, int);
+SPIRE_FN inline void spend_gold(Game&, int);
+SPIRE_FN inline void equip_relic(Game&, RelicId);
+SPIRE_FN inline bool unequip_relic(Game&, RelicId);
+SPIRE_FN inline void preview_card_obtain(Game&, Card&);
+SPIRE_FN inline void obtain_card(Game&, Card);
+SPIRE_FN inline void remove_master_card(Game&, int);
+SPIRE_FN inline void on_victory(Game&);
+SPIRE_FN inline void gain_energy(Game&, int);
+}

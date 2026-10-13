@@ -4,7 +4,8 @@ A C++ engine targeting exact Slay the Spire 1 behavior for the Silent (Ascension
 Heart), with one complete `Game` owned by each GPU thread.
 
 The target is the original Java build `[V2.3.4] (12-18-2022)`: the same seed and actions must
-produce the same snapshot at every decision. See [the design](docs/design.md) and [rules](AGENTS.md).
+produce the same snapshot at every decision. See [the design](docs/design.md), [rules](AGENTS.md),
+and [content porting guide](docs/porting.md).
 
 ## Build and checks
 
@@ -62,9 +63,10 @@ state = game.snapshot()
 
 `start_combat` requires an encounter key from `spire.encounters`. Omitted deck and relic fields use
 the Silent A20 starter setup; an explicit empty list stays empty. Card entries use Java IDs and
-support `upgrades` and `misc`. Relics use Java ID strings. Empty potion slots are `None`; nonempty
-potions are unsupported and raise an error. Additional scenario fields are `floor`, `gold` and
-`unseeded_seed`. Defaults are 59 HP, 66 max HP, floor 1, 99 gold and unseeded seed 0.
+support `upgrades` and `misc`. Relics and potions use catalog Java ID strings. Empty potion slots
+are `None`; the current potion catalog contains the empty slot. Unknown IDs raise an error.
+Additional scenario fields are `floor`, `gold` and `unseeded_seed`. Defaults are 59 HP, 66 max HP,
+floor 1, 99 gold and unseeded seed 0.
 Seeds accept Java signed 64-bit integers.
 
 Actions are dictionaries: `{"type": "play", "card": 0, "target": 0}`,
@@ -105,8 +107,9 @@ After configuring the build, run:
 cmake --build /private/tmp/spire-build --target benchmark --parallel 1
 ```
 
-This prints the elapsed time and decisions per second for 100,000 steps, one CPU thread, a seeded
-random legal policy and a cycle through the implemented Act 1 weak/strong encounters. It includes
+This prints `sizeof(Game)` in bytes, elapsed time and decisions per second for 100,000 steps,
+one CPU thread, a seeded random legal policy and a cycle through the implemented Act 1
+weak/strong encounters. It includes
 combat resets. To choose the decision count, run `/private/tmp/spire-build/spire_benchmark 1000000`.
 Results are written to stdout.
 

@@ -5,7 +5,7 @@ namespace spire {
 template<class T, int Capacity>
 struct List {
     T values[Capacity]{};
-    int size = 0;
+    uint16_t size = 0;
     SPIRE_FN T& operator[](int index) { SPIRE_ASSERT(index >= 0 && index < size); return values[index]; }
     SPIRE_FN const T& operator[](int index) const { SPIRE_ASSERT(index >= 0 && index < size); return values[index]; }
     SPIRE_FN void clear() { size = 0; }
@@ -30,8 +30,8 @@ struct List {
 template<class T, int Capacity>
 struct Queue {
     T values[Capacity]{};
-    int head = 0;
-    int size = 0;
+    uint16_t head = 0;
+    uint16_t size = 0;
     SPIRE_FN bool empty() const { return size == 0; }
     SPIRE_FN void clear() { head = 0; size = 0; }
     SPIRE_FN T& operator[](int index) {
@@ -58,6 +58,19 @@ struct Queue {
         head = (head + 1) % Capacity;
         --size;
         return value;
+    }
+};
+template<class T, int Capacity>
+struct RecentHistory {
+    T values[Capacity]{};
+    int size = 0;
+    SPIRE_FN void clear() { size = 0; }
+    SPIRE_FN bool empty() const { return size == 0; }
+    SPIRE_FN int first_index() const { return max(0, size - Capacity); }
+    SPIRE_FN void push_back(T value) { values[size++ % Capacity] = value; }
+    SPIRE_FN const T& operator[](int index) const {
+        SPIRE_ASSERT(index >= first_index() && index < size);
+        return values[index % Capacity];
     }
 };
 }

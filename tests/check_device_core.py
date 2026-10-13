@@ -8,7 +8,8 @@ from pathlib import Path
 
 
 ALLOWED_HEADERS = {"cstdint", "cstddef"}
-EXTENSIONS = {".h", ".hpp", ".cuh", ".cpp", ".cu"}
+EXTENSIONS = {".h", ".hpp", ".cuh", ".cpp", ".cu", ".def"}
+CATALOG_EXTENSIONS = {".def"}
 FORBIDDEN = re.compile(
     r"\b(new|delete|throw|try|catch|virtual|dynamic_cast|typeid|thread_local|mutable)\b"
     r"|\b(?:__builtin_)?(malloc|calloc|realloc|free|alloca|setjmp|longjmp)\s*\("
@@ -21,9 +22,14 @@ def position(location):
     return location.get("expansionLoc", location)
 
 
-def check(root, compiler):
+def check(root, compiler, generated=None):
     root = root.resolve()
-    sources = {path.resolve(): path.read_text() for path in sorted(root.rglob("*")) if path.suffix in EXTENSIONS}
+    roots = [root]
+    if generated is not None:
+        roots.append(generated.resolve())
+    include_dirs = [directory.parent for directory in roots]
+    sources = {path.resolve(): path.read_text() for directory in roots
+               for path in sorted(directory.rglob("*")) if path.suffix in EXTENSIONS}
     errors = []
     for path, source in sources.items():
         for match in re.finditer(r'^\s*#\s*(include|import)\s+([^\n]+)', source, re.M):
@@ -35,8 +41,8 @@ def check(root, compiler):
             if delimiter == "<":
                 permitted = header in ALLOWED_HEADERS
             else:
-                target = (path.parent / header).resolve()
-                permitted = target in sources
+                candidates = [path.parent / header] + [directory / header for directory in include_dirs]
+                permitted = any(candidate.resolve() in sources for candidate in candidates)
             if not permitted:
                 errors.append(f"{path}:{source.count(chr(10), 0, match.start()) + 1}: forbidden header {header}")
         stripped = COMMENTS.sub(lambda m: "\n" * m.group().count("\n"), source)
@@ -46,9 +52,10 @@ def check(root, compiler):
         return errors
     with tempfile.TemporaryDirectory(prefix="spire-device-check-") as temporary:
         unit = Path(temporary) / "core.cpp"
-        unit.write_text("".join(f'#include "{path}"\n' for path in sources))
+        unit.write_text("".join(f'#include "{path}"\n' for path in sources if path.suffix not in CATALOG_EXTENSIONS))
         result = subprocess.run(
-            [compiler, "-std=c++17", "-fno-exceptions", "-fno-rtti", "-pedantic-errors", "-x", "c++", "-fsyntax-only", "-Xclang", "-ast-dump=json", str(unit)],
+            [compiler, "-std=c++17", "-fno-exceptions", "-fno-rtti", "-pedantic-errors", "-x", "c++", "-fsyntax-only", "-Xclang", "-ast-dump=json",
+             *[argument for directory in include_dirs for argument in ("-I", str(directory))], str(unit)],
             capture_output=True, text=True,
         )
     if result.returncode:
@@ -132,8 +139,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("root", type=Path)
     parser.add_argument("--compiler", required=True)
+    parser.add_argument("--generated", type=Path)
     args = parser.parse_args()
-    errors = check(args.root, args.compiler)
+    errors = check(args.root, args.compiler, args.generated)
     for error in errors:
         print(error, file=sys.stderr)
     if errors:

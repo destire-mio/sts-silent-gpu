@@ -3,12 +3,46 @@
 #include "core/card_data.hpp"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <type_traits>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
 
 namespace spire::host {
+template<class T> py::object state_value(const T& value);
+template<class T, std::size_t Size> py::object state_value(const T (&values)[Size]);
+template<class T, int Capacity> py::object state_value(const List<T, Capacity>& values);
+
+template<class T>
+py::object state_value(const T& value) {
+    if constexpr (std::is_enum_v<T>) return py::cast(static_cast<std::underlying_type_t<T>>(value));
+    else return py::cast(value);
+}
+
+template<class T, std::size_t Size>
+py::object state_value(const T (&values)[Size]) {
+    py::list result;
+    for (const auto& value : values) result.append(state_value(value));
+    return result;
+}
+
+template<class T, int Capacity>
+py::object state_value(const List<T, Capacity>& values) {
+    py::list result;
+    for (int i = 0; i < values.size; ++i) result.append(state_value(values[i]));
+    return result;
+}
+
+struct StateSnapshot {
+    py::dict fields;
+    template<class T> void operator()(const char* name, const T& value) {
+        fields[name] = state_value(value);
+    }
+};
+
 py::dict card_snapshot(const Card& card) {
+    StateSnapshot state;
+    card_visit_state(card, state);
     return py::dict(
         "id"_a=card_names[static_cast<int>(card.id)], "upgrades"_a=card.upgrades, "misc"_a=card.misc,
         "cost"_a=card.cost, "cost_for_turn"_a=card.cost_for_turn,
@@ -18,7 +52,7 @@ py::dict card_snapshot(const Card& card) {
         "exhaust"_a=card.exhaust, "ethereal"_a=card.ethereal,
         "retain"_a=card.retain, "self_retain"_a=card.self_retain,
         "innate"_a=card.innate, "free_to_play_once"_a=card.free_to_play_once,
-        "exhaust_on_use_once"_a=card.exhaust_on_use_once);
+        "exhaust_on_use_once"_a=card.exhaust_on_use_once, "state"_a=state.fields);
 }
 
 py::list pile_snapshot(const Game& game, const Pile& pile) {
@@ -38,14 +72,24 @@ py::list indices(const Container& values) {
     return result;
 }
 
+template<class Container>
+py::list recent_indices(const Container& values) {
+    py::list result;
+    for (int i = values.first_index(); i < values.size; ++i) result.append(values[i]);
+    return result;
+}
+
+py::dict power_snapshot(const Power& power) {
+    StateSnapshot state;
+    power_visit_state(power, state);
+    return py::dict("id"_a=power_names[static_cast<int>(power.id)],
+        "amount"_a=power.amount, "just_applied"_a=power.just_applied,
+        "triggered"_a=power.triggered, "skip_first"_a=power.skip_first, "state"_a=state.fields);
+}
+
 py::list powers_snapshot(const Powers& powers) {
     py::list result;
-    for (int i = 0; i < powers.size; ++i) {
-        const Power& power = powers[i];
-        result.append(py::dict("id"_a=power_names[static_cast<int>(power.id)],
-            "amount"_a=power.amount, "just_applied"_a=power.just_applied,
-            "triggered"_a=power.triggered, "skip_first"_a=power.skip_first));
-    }
+    for (int i = 0; i < powers.size; ++i) result.append(power_snapshot(powers[i]));
     return result;
 }
 
@@ -58,6 +102,9 @@ py::dict creature_snapshot(const Creature& creature) {
 
 py::dict monster_snapshot(const Monster& monster, int instance) {
     py::dict result = creature_snapshot(monster.creature);
+    StateSnapshot state;
+    monster_visit_state(monster, state);
+    result["state"] = state.fields;
     result["id"] = monster_names[static_cast<int>(monster.id)];
     result["instance"] = instance;
     result["intent"] = intent_names[static_cast<int>(monster.intent)];
@@ -69,7 +116,8 @@ py::dict monster_snapshot(const Monster& monster, int instance) {
     result["pending_intent"] = intent_names[static_cast<int>(monster.pending_intent)];
     result["pending_base_damage"] = monster.pending_base_damage;
     result["pending_hits"] = monster.pending_hits;
-    result["move_history"] = indices(monster.move_history);
+    result["move_history"] = recent_indices(monster.move_history);
+    result["move_history_count"] = monster.move_history.size;
     result["damage"] = py::cast(std::vector<int>(monster.damage, monster.damage + 3));
     result["block_amount"] = monster.block_amount;
     result["magic"] = monster.magic;
@@ -78,6 +126,7 @@ py::dict monster_snapshot(const Monster& monster, int instance) {
     result["first_move"] = monster.first_move;
     result["used_special"] = monster.used_special;
     result["split_triggered"] = monster.split_triggered;
+    result["escape_next"] = monster.escape_next;
     return result;
 }
 
@@ -115,11 +164,14 @@ py::list legal_snapshot(const Game& game) {
 }
 
 py::dict effect_snapshot(const Effect& effect) {
+    StateSnapshot state;
+    action_visit_state(effect, state);
     return py::dict("type"_a=effect_names[static_cast<int>(effect.kind)],
         "source"_a=effect.source, "target"_a=effect.target, "amount"_a=effect.amount,
         "card"_a=effect.card, "power"_a=power_names[static_cast<int>(effect.power)],
         "damage_type"_a=damage_type_names[static_cast<int>(effect.damage_type)],
-        "extra"_a=effect.extra, "flag"_a=effect.flag);
+        "extra"_a=effect.extra, "flag"_a=effect.flag, "state"_a=state.fields,
+        "prepared_power"_a=power_snapshot(effect.prepared_power));
 }
 
 py::list effect_queue(const Queue<Effect, action_capacity>& queue) {
@@ -135,8 +187,12 @@ py::dict manager_snapshot(const ActionManager& manager) {
     return py::dict("actions"_a=effect_queue(manager.actions),
         "pre_turn_actions"_a=effect_queue(manager.pre_turn_actions), "card_queue"_a=card_queue,
         "monster_queue"_a=indices(manager.monster_queue),
-        "cards_played_this_turn"_a=indices(manager.cards_played_this_turn),
-        "cards_played_this_combat"_a=indices(manager.cards_played_this_combat),
+        "cards_played_this_turn"_a=recent_indices(manager.cards_played_this_turn),
+        "cards_played_this_turn_count"_a=manager.cards_played_this_turn.size,
+        "cards_played_this_turn_type_counts"_a=py::cast(std::vector<std::uint32_t>(manager.cards_played_this_turn.types, manager.cards_played_this_turn.types + 5)),
+        "cards_played_this_combat"_a=recent_indices(manager.cards_played_this_combat),
+        "cards_played_this_combat_count"_a=manager.cards_played_this_combat.size,
+        "cards_played_this_combat_type_counts"_a=py::cast(std::vector<std::uint32_t>(manager.cards_played_this_combat.types, manager.cards_played_this_combat.types + 5)),
         "phase"_a=(manager.phase == Phase::WaitingOnUser ? "WAITING_ON_USER" : "EXECUTING_ACTIONS"),
         "turn_has_ended"_a=manager.turn_has_ended,
         "monster_attacks_queued"_a=manager.monster_attacks_queued,
@@ -155,22 +211,39 @@ py::dict random_snapshot(const Random& random) {
 
 py::dict snapshot(const Game& game) {
     py::list deck;
+    py::list deck_state;
     for (int i = 0; i < game.run.master_deck.size; ++i) {
         const Card& card = game.run.master_deck[i];
         deck.append(py::dict("id"_a=card_names[static_cast<int>(card.id)], "upgrades"_a=card.upgrades, "misc"_a=card.misc));
+        StateSnapshot state;
+        card_visit_state(card, state);
+        deck_state.append(state.fields);
     }
     py::list relics;
-    for (int i = 0; i < game.run.relics.size; ++i)
+    py::list relic_state;
+    for (int i = 0; i < game.run.relics.size; ++i) {
         relics.append(py::dict("id"_a=relic_names[static_cast<int>(game.run.relics[i].id)], "counter"_a=game.run.relics[i].counter));
+        StateSnapshot state;
+        relic_visit_state(game.run.relics[i], state);
+        relic_state.append(state.fields);
+    }
     py::list potions;
-    for (const PotionId potion : game.run.potions)
+    py::list potion_state;
+    for (int i = 0; i < 2; ++i) {
+        const PotionId potion = game.run.potions[i];
         potions.append(potion == PotionId::Empty ? py::none() : py::cast(potion_names[static_cast<int>(potion)]));
+        StateSnapshot state;
+        potion_visit_state(game, i, state);
+        potion_state.append(state.fields);
+    }
     py::dict run("seed"_a=signed_long(game.run.seed), "floor"_a=game.run.floor,
         "act"_a=game.run.act, "ascension"_a=game.run.ascension,
         "hp"_a=game.player.creature.hp, "max_hp"_a=game.player.creature.max_hp,
         "gold"_a=game.run.gold, "keys"_a=py::dict("ruby"_a=game.run.ruby_key,
             "emerald"_a=game.run.emerald_key, "sapphire"_a=game.run.sapphire_key),
-        "master_deck"_a=deck, "relics"_a=relics, "potions"_a=potions);
+        "master_deck"_a=deck, "master_deck_state"_a=deck_state,
+        "relics"_a=relics, "relic_state"_a=relic_state,
+        "potions"_a=potions, "potion_state"_a=potion_state);
     py::dict player = creature_snapshot(game.player.creature);
     player["energy"] = game.player.energy;
     player["energy_master"] = game.player.energy_master;
@@ -178,6 +251,7 @@ py::dict snapshot(const Game& game) {
     player["card_in_use"] = game.player.card_in_use;
     player["cards_played_this_turn"] = game.player.cards_played_this_turn;
     player["damaged_this_combat"] = game.player.damaged_this_combat;
+    player["bloodied"] = game.player.bloodied;
     py::list monsters;
     for (int i = 0; i < game.monster_order.size; ++i) {
         const int index = game.monster_order[i];
@@ -185,7 +259,10 @@ py::dict snapshot(const Game& game) {
     }
     py::list registry;
     for (int i = 0; i < game.cards.size; ++i) registry.append(card_snapshot(game.cards[i]));
+    StateSnapshot encounter_state;
+    encounter_visit_state(game, encounter_state);
     py::dict combat("encounter"_a=encounter_names[static_cast<int>(game.encounter)],
+        "encounter_state"_a=encounter_state.fields,
         "turn"_a=game.turn, "battle_over"_a=game.battle_over, "mugged"_a=game.mugged,
         "discard_remaining"_a=game.discard_remaining, "player"_a=player,
         "hand"_a=pile_snapshot(game, game.hand), "draw"_a=pile_snapshot(game, game.draw),
@@ -229,7 +306,10 @@ CombatSetup parse_setup(const Game& game, const py::dict& value) {
     if (value.contains("relics")) {
         setup.relics.clear();
         for (py::handle item : value["relics"].cast<py::list>()) {
-            setup.relics.push_back({parse_id<RelicId>(py::cast<std::string>(item), relic_names), -1});
+            const RelicId id = parse_id<RelicId>(py::cast<std::string>(item), relic_names);
+            Relic relic{id, relic_data(id).counter};
+            relic_initialize_state(relic);
+            setup.relics.push_back(relic);
         }
     }
     if (value.contains("potions")) {
@@ -237,7 +317,7 @@ CombatSetup parse_setup(const Game& game, const py::dict& value) {
         SPIRE_ASSERT(potions.size() <= 2);
         for (py::ssize_t i = 0; i < potions.size(); ++i) {
             if (!potions[i].is_none())
-                throw std::invalid_argument("Unsupported potion: " + potions[i].cast<std::string>());
+                setup.potions[i] = parse_id<PotionId>(potions[i].cast<std::string>(), potion_names);
         }
     }
     return setup;

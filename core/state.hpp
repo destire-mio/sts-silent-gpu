@@ -1,50 +1,16 @@
 #pragma once
 #include "fixed.hpp"
 #include "random.hpp"
-#include "card_catalog.hpp"
+#include "types.hpp"
+#include "spire_generated/ids.hpp"
 
 namespace spire {
-constexpr int card_capacity = 512;
-constexpr int monster_capacity = 8;
-constexpr int power_capacity = 64;
-constexpr int action_capacity = 1024;
-constexpr int hand_limit = 10;
-constexpr int player_target = -1;
-constexpr int no_target = -2;
-
-#define SPIRE_CARD_ID(id, ...) id,
-enum class CardId : uint16_t { SPIRE_CARD_CATALOG(SPIRE_CARD_ID) Count };
-#undef SPIRE_CARD_ID
-enum class CardType : uint8_t { Attack, Skill, Power, Status, Curse };
-enum class CardTarget : uint8_t { Enemy, Self, None };
-enum class RelicId : uint16_t { SnakeRing, Count };
-enum class PotionId : uint16_t { Empty, Count };
-enum class PowerId : uint16_t {
-    Strength, Dexterity, Weak, Vulnerable, Frail, Ritual, CurlUp, Angry,
-    SporeCloud, Entangled, Split, Thievery, Artifact, NoDraw, Count
-};
-enum class MonsterId : uint16_t {
-    Cultist, JawWorm, LouseNormal, LouseDefensive, AcidSlime_S, AcidSlime_M,
-    AcidSlime_L, SpikeSlime_S, SpikeSlime_M, SpikeSlime_L, FungiBeast,
-    SlaverBlue, SlaverRed, Looter, GremlinWarrior, GremlinThief, GremlinFat,
-    GremlinTsundere, GremlinWizard, Count
-};
-enum class EncounterId : uint16_t {
-    Cultist, JawWorm, TwoLouse, SmallSlimes, BlueSlaver, GremlinGang, Looter,
-    LargeSlime, LotsOfSlimes, ExordiumThugs, ExordiumWildlife, RedSlaver,
-    ThreeLouse, TwoFungiBeasts, Count
-};
-enum class Intent : uint8_t { None, Attack, AttackBuff, AttackDebuff, AttackDefend, Buff, Debuff, StrongDebuff, Defend, DefendBuff, Escape, Magic, Sleep, Stun, Unknown, Debug };
-enum class DamageType : uint8_t { Normal, Thorns, HpLoss };
-enum class Screen : uint8_t { Combat, Discard, Victory, Death, None };
-enum class Phase : uint8_t { WaitingOnUser, ExecutingActions };
-
 struct Card {
     CardId id = CardId::Strike_G;
-    int upgrades = 0;
+    int16_t upgrades = 0;
     int misc = 0;
-    int cost = 0;
-    int cost_for_turn = 0;
+    int16_t cost = 0;
+    int16_t cost_for_turn = 0;
     int base_damage = -1;
     int damage = -1;
     int base_block = -1;
@@ -58,15 +24,19 @@ struct Card {
     bool innate = false;
     bool free_to_play_once = false;
     bool exhaust_on_use_once = false;
+    CardState state{};
 };
-using Pile = List<int, card_capacity>;
-struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; };
+using Pile = List<uint16_t, card_capacity>;
+struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
 struct Power {
-    PowerId id = PowerId::Strength;
-    int amount = 0;
-    bool just_applied = false;
-    bool triggered = false;
-    bool skip_first = true;
+    int amount;
+    PowerId id;
+    bool just_applied : 1;
+    bool triggered : 1;
+    bool skip_first : 1;
+    PowerState state{};
+    SPIRE_FN constexpr Power(PowerId id = PowerId::Strength, int amount = 0)
+        : amount(amount), id(id), just_applied(false), triggered(false), skip_first(true) {}
 };
 using Powers = List<Power, power_capacity>;
 struct Creature {
@@ -84,23 +54,25 @@ struct Monster {
     MonsterId id = MonsterId::Cultist;
     Creature creature{};
     Intent intent = Intent::Debug;
-    int move = -1;
-    int intent_base_damage = -1;
-    int intent_damage = -1;
-    int intent_hits = 0;
-    int pending_move = -1;
+    int8_t move = -1;
+    int16_t intent_base_damage = -1;
+    int16_t intent_damage = -1;
+    int16_t intent_hits = 0;
+    int8_t pending_move = -1;
     Intent pending_intent = Intent::None;
-    int pending_base_damage = -1;
-    int pending_hits = -1;
-    List<int, 1024> move_history{};
-    int damage[3]{};
-    int block_amount = 0;
-    int magic = 0;
+    int16_t pending_base_damage = -1;
+    int16_t pending_hits = -1;
+    RecentHistory<int8_t, 2> move_history{};
+    int16_t damage[3]{};
+    int16_t block_amount = 0;
+    int16_t magic = 0;
     int turn_count = 0;
     int stolen_gold = 0;
     bool first_move = true;
     bool used_special = false;
     bool split_triggered = false;
+    bool escape_next = false;
+    MonsterState state{};
 };
 struct Player {
     Creature creature{};
@@ -110,6 +82,7 @@ struct Player {
     int card_in_use = -1;
     int cards_played_this_turn = 0;
     int damaged_this_combat = 0;
+    bool bloodied = false;
 };
 enum class ActionKind : uint8_t { Play, EndTurn, Choose, PotionUse, PotionDiscard, Proceed, Skip };
 struct Action {
@@ -118,31 +91,49 @@ struct Action {
     int target = -1;
 };
 using ActionSet = List<Action, 128>;
-enum class EffectKind : uint8_t {
-    Damage, Block, ApplyPower, ReducePower, RemovePower, Draw, Shuffle,
-    Discard, UseCard, EndTurnDiscard, RestoreRetained, EndTurn, MonsterStart,
-    RollMove, SetMove, Escape, AddCardDiscard, Split,
-    StealGold, BlockRandomMonster, ExhaustCard
-};
 struct Effect {
     EffectKind kind = EffectKind::Draw;
-    int source = player_target;
-    int target = player_target;
+    int8_t source = player_target;
+    int8_t target = player_target;
     int amount = 0;
-    int card = -1;
+    int16_t card = -1;
     PowerId power = PowerId::Strength;
-    DamageType damage_type = DamageType::Normal;
     int extra = 0;
+    DamageType damage_type = DamageType::Normal;
     bool flag = false;
+    EffectState state{};
+    Power prepared_power{};
 };
+using DamageInfo = Effect;
 struct CardQueueItem { int card = -1; int target = -1; };
+struct CardHistory {
+    uint16_t values[2]{};
+    int size = 0;
+    uint32_t types[5]{};
+    SPIRE_FN bool empty() const { return size == 0; }
+    SPIRE_FN int first_index() const { return max(0, size - 2); }
+    SPIRE_FN uint16_t operator[](int index) const {
+        SPIRE_ASSERT(index >= first_index() && index < size);
+        return values[index % 2];
+    }
+    SPIRE_FN void push_back(uint16_t card) { values[size++ % 2] = card; }
+    SPIRE_FN void record(int card, CardType type) {
+        push_back(static_cast<uint16_t>(card));
+        ++types[static_cast<int>(type)];
+    }
+    SPIRE_FN uint32_t count(CardType type) const { return types[static_cast<int>(type)]; }
+    SPIRE_FN void clear() {
+        size = 0;
+        for (int i = 0; i < 5; ++i) types[i] = 0;
+    }
+};
 struct ActionManager {
     Queue<Effect, action_capacity> actions{};
     Queue<Effect, action_capacity> pre_turn_actions{};
     Queue<CardQueueItem, 32> card_queue{};
     Queue<int, monster_capacity> monster_queue{};
-    List<int, 2048> cards_played_this_turn{};
-    List<int, 8192> cards_played_this_combat{};
+    CardHistory cards_played_this_turn{};
+    CardHistory cards_played_this_combat{};
     Phase phase = Phase::WaitingOnUser;
     bool turn_has_ended = false;
     bool monster_attacks_queued = true;
@@ -165,6 +156,7 @@ struct Run {
     List<Card, card_capacity> master_deck{};
     List<Relic, 64> relics{};
     PotionId potions[2] = {PotionId::Empty, PotionId::Empty};
+    PotionState potion_state[2]{};
 };
 struct Game {
     Run run{};
@@ -179,6 +171,7 @@ struct Game {
     ActionManager manager{};
     Screen screen = Screen::None;
     EncounterId encounter = EncounterId::Cultist;
+    EncounterState encounter_state{};
     int turn = 1;
     int discard_remaining = 0;
     bool battle_over = false;

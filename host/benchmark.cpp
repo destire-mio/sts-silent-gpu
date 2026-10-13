@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
         }
     }
     const double seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - begin).count();
-    std::cout << "steps=" << completed << " games=" << games << " threads=1 seconds="
+    std::cout << "steps=" << completed << " games=" << games << " threads=1 game_bytes=" << sizeof(spire::Game) << " seconds="
               << std::fixed << std::setprecision(6) << seconds
               << " steps_per_second=" << completed / seconds << '\n';
 }

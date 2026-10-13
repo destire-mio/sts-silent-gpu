@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <cstddef>
 
+#define SPIRE_STATE(type, ...)
+
 #if defined(__CUDACC__)
 #define SPIRE_FN __host__ __device__
 #else
