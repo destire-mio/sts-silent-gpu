@@ -52,9 +52,11 @@ static void test_default_cultist() {
     reset(g, 0);
     require(g.player.creature.hp == 59 && g.player.creature.max_hp == 66, "A20 starting HP");
     require(g.run.master_deck.size == 13, "A20 starter deck size");
-    require(g.run.master_deck[10].id == CardId::Survivor && g.run.master_deck[11].id == CardId::Neutralize &&
-            g.run.master_deck[12].id == CardId::AscendersBane, "Silent starter deck order");
-    start_combat(g, default_setup(g));
+    require(g.run.master_deck[0].id == CardId::AscendersBane && g.run.master_deck[11].id == CardId::Survivor &&
+            g.run.master_deck[12].id == CardId::Neutralize, "AbstractDungeon.dungeonTransitionSetup adds AscendersBane to the top");
+    CombatSetup setup = default_setup(g);
+    setup.deck.push_back(setup.deck.erase(0));
+    start_combat(g, setup);
     // CardGroup.initializeDeck/draw use the end of the list. Orders use target-JAR RNG and Collections.shuffle.
     require_pile(g.hand, {4,11,0,1,9,3,5}, "first hand");
     require_pile(g.draw, {10,12,2,7,8,6}, "first draw pile");

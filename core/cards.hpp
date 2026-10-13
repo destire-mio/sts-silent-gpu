@@ -165,7 +165,7 @@ SPIRE_FN inline void starter_deck(Run& run) {
     for (int i = 0; i < 5; ++i) run.master_deck.push_back(make_card(CardId::Defend_G));
     run.master_deck.push_back(make_card(CardId::Survivor));
     run.master_deck.push_back(make_card(CardId::Neutralize));
-    run.master_deck.push_back(make_card(CardId::AscendersBane));
+    run.master_deck.insert(0, make_card(CardId::AscendersBane));
     run.relics.push_back({RelicId::SnakeRing, -1});
 }
 SPIRE_FN inline void relics_at_battle_start(Game& g) {
