@@ -14,3 +14,4 @@ SPIRE_UNIT(GrandFinale, "Grand Finale", "core/cards/grand_finale.hpp", GrandFina
 SPIRE_UNIT(HeelHook, "Heel Hook", "core/cards/heel_hook.hpp", HeelHook)
 SPIRE_UNIT(LegSweep, "Leg Sweep", "core/cards/leg_sweep.hpp", LegSweep)
 SPIRE_UNIT(Malaise, "Malaise", "core/cards/malaise.hpp", Malaise)
+SPIRE_UNIT(MasterfulStab, "Masterful Stab", "core/cards/masterful_stab.hpp", MasterfulStab)
