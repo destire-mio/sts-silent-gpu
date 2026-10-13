@@ -12,3 +12,4 @@ SPIRE_UNIT(ExordiumWildlife, "Exordium Wildlife", "core/encounters/exordium_wild
 SPIRE_UNIT(RedSlaver, "Red Slaver", "core/encounters/red_slaver.hpp", RedSlaver)
 SPIRE_UNIT(ThreeLouse, "3 Louse", "core/encounters/three_louse.hpp", ThreeLouse)
 SPIRE_UNIT(TwoFungiBeasts, "2 Fungi Beasts", "core/encounters/two_fungi_beasts.hpp", TwoFungiBeasts)
+SPIRE_UNIT(ThreeCultists, "3 Cultists", "core/encounters/three_cultists.hpp", ThreeCultists)
