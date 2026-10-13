@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Meat on the Bone"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 12,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
