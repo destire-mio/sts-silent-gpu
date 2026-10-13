@@ -19,6 +19,8 @@ struct ShowCardAndPoof : ActionHooks {
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         remove_from_pile(g.limbo, e.card);
+        // ExhaustCardEffect.update resets its card when the callback settles.
+        card_resetAttributes(g, e.card);
         g.player.card_in_use = -1;
     }
 };
