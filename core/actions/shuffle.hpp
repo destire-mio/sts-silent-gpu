@@ -12,10 +12,10 @@ struct Shuffle : ActionHooks {
         for (int i = 0; i < g.run.relics.size; ++i) relic_onShuffle(g, i);
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        e.state.Shuffle.shuffled = true;
+        e.payload.state.Shuffle.shuffled = true;
         shuffle(g.discard.values, g.discard.size, g.rng.shuffle);
         for (int i = 0; i < g.discard.size; ++i) {
-            ++e.state.Shuffle.count;
+            ++e.payload.state.Shuffle.count;
             g.cards[g.discard[i]].pending_clear = true;
             g.draw.push_back(g.discard[i]);
         }

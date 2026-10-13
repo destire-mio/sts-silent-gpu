@@ -14,7 +14,7 @@ struct ThousandCuts : PowerHooks {
         add_bottom(g, actions::VFX::make(owner));
         int amounts[monster_capacity];
         for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = p.amount;
-        add_bottom(g, actions::DamageAllEnemies::make(owner, amounts, g.monster_order.size, DamageType::Thorns));
+        add_bottom(g, actions::DamageAllEnemies::make(g, owner, amounts, g.monster_order.size, DamageType::Thorns));
     }
 };
 }

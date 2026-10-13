@@ -19,7 +19,7 @@ struct Panache : PowerHooks {
             p.amount = 5;
             int amounts[monster_capacity];
             for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = p.state.Panache.damage;
-            add_bottom(g, actions::DamageAllEnemies::make(player_target, amounts, g.monster_order.size, DamageType::Thorns));
+            add_bottom(g, actions::DamageAllEnemies::make(g, player_target, amounts, g.monster_order.size, DamageType::Thorns));
         }
     }
     static SPIRE_FN void atStartOfTurn(Game&, Power& p, int) { p.amount = 5; }

@@ -4,7 +4,7 @@
 namespace spire::units::actions {
 struct DrawPileToHand : ActionHooks {
     SPIRE_SNAPSHOT("DrawPileToHandAction.p", player)
-    SPIRE_SNAPSHOT("DrawPileToHandAction.typeToCheck", card_type, static_cast<int>(effect.state.DrawPileToHand.type_to_check))
+    SPIRE_SNAPSHOT("DrawPileToHandAction.typeToCheck", card_type, static_cast<int>(effect.payload.state.DrawPileToHand.type_to_check))
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(DrawPileToHand, CardType type_to_check;)
     SPIRE_FN static Effect construct(int amount, CardType type) {
@@ -12,7 +12,7 @@ struct DrawPileToHand : ActionHooks {
         e.kind = EffectKind::DrawPileToHand;
         action_initialize_state(e);
         e.amount = amount;
-        e.state.DrawPileToHand.type_to_check = type;
+        e.payload.state.DrawPileToHand.type_to_check = type;
         return e;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
@@ -20,7 +20,7 @@ struct DrawPileToHand : ActionHooks {
         Pile candidates{};
         for (int i = 0; i < g.draw.size; ++i) {
             const int card = g.draw[i];
-            if (card_def(g.cards[card].id).type != e.state.DrawPileToHand.type_to_check) continue;
+            if (card_def(g.cards[card].id).type != e.payload.state.DrawPileToHand.type_to_check) continue;
             if (candidates.empty()) candidates.push_back(card);
             else candidates.insert(g.rng.card_random.random(candidates.size - 1), card);
         }

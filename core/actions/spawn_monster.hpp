@@ -3,12 +3,12 @@
 
 namespace spire::units::actions {
 struct SpawnMonster : ActionHooks {
-    SPIRE_SNAPSHOT("SpawnMonsterAction.m", monster, effect.state.SpawnMonster.m)
+    SPIRE_SNAPSHOT("SpawnMonsterAction.m", monster, effect.payload.state.SpawnMonster.m)
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(SpawnMonster, int m; bool minion; int target_slot; bool use_smart_positioning; bool used;)
     SPIRE_FN static Effect construct(int monster, bool minion) {
         Effect e = construct(monster, minion, -99);
-        e.state.SpawnMonster.use_smart_positioning = true;
+        e.payload.state.SpawnMonster.use_smart_positioning = true;
         return e;
     }
     SPIRE_FN static Effect construct(int monster, bool minion, int slot) {
@@ -17,13 +17,13 @@ struct SpawnMonster : ActionHooks {
         action_initialize_state(e);
         e.source = no_target;
         e.target = no_target;
-        e.state.SpawnMonster.m = monster;
-        e.state.SpawnMonster.minion = minion;
-        e.state.SpawnMonster.target_slot = slot;
+        e.payload.state.SpawnMonster.m = monster;
+        e.payload.state.SpawnMonster.minion = minion;
+        e.payload.state.SpawnMonster.target_slot = slot;
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        auto& state = e.state.SpawnMonster;
+        auto& state = e.payload.state.SpawnMonster;
         if (state.used) return;
         for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, state.m);
         monster_init(g, state.m);

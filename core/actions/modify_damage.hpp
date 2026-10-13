@@ -5,7 +5,7 @@ namespace spire::units::actions {
 struct ModifyDamage : ActionHooks {
     SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
     SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
-    SPIRE_SNAPSHOT("ModifyDamageAction.uuid", uuid, effect.state.ModifyDamage.uuid)
+    SPIRE_SNAPSHOT("ModifyDamageAction.uuid", uuid, effect.payload.state.ModifyDamage.uuid)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(ModifyDamage, uint32_t uuid;)
     SPIRE_FN static void execute(Game& g, const Effect& e) {
@@ -18,7 +18,7 @@ struct ModifyDamage : ActionHooks {
             for (int i = 0; i < pile.size; ++i) found[pile[i]] = true;
         }
         for (int i = 0; i < g.cards.size; ++i)
-            if (found[i] && g.cards[i].uuid == e.state.ModifyDamage.uuid)
+            if (found[i] && g.cards[i].uuid == e.payload.state.ModifyDamage.uuid)
                 g.cards[i].base_damage = max(0, g.cards[i].base_damage + e.amount);
     }
 };

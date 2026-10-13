@@ -18,7 +18,7 @@ struct AttackFromDeckToHand : ActionHooks {
         } else g.hand.push_back(card);
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.AttackFromDeckToHand.selecting) {
+        if (!e.payload.state.AttackFromDeckToHand.selecting) {
             g.grid_cards.clear();
             for (int i = 0; i < g.draw.size; ++i) {
                 const int card = g.draw[i];
@@ -39,7 +39,7 @@ struct AttackFromDeckToHand : ActionHooks {
             g.selection_any_number = false;
             g.selection_amount = e.amount;
             g.selected_cards.clear();
-            e.state.AttackFromDeckToHand.selecting = true;
+            e.payload.state.AttackFromDeckToHand.selecting = true;
             g.screen = Screen::Grid;
             return;
         }

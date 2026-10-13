@@ -176,6 +176,7 @@ hook("monsters", "construct", "Game& g, MonsterId id, int hp_override", "Monster
 hook("encounters", "build", "Game& g, EncounterId id")
 hook("actions", "prepare", "Game& g, Effect& e")
 hook("actions", "execute", "Game& g, Effect& e")
+hook("actions", "release", "Game& g, Effect& e")
 
 
 def parameters(signature):
@@ -209,7 +210,7 @@ def generate(root, output):
     ids.append('};')
 
     for kind, (enum, _, _, _) in KINDS.items():
-        ids.append(f'enum class {enum} : uint16_t {{ ' + ', '.join(row[0] for row in catalogs[kind]) + ', Count };')
+        ids.append(f'enum class {enum} : {"uint8_t" if len(catalogs[kind]) < 256 else "uint16_t"} {{ ' + ', '.join(row[0] for row in catalogs[kind]) + ', Count };')
     declarations = ['#pragma once', 'namespace spire {']
     bases = ['#pragma once', 'namespace spire {']
     content = ['#pragma once', '#include "core/hooks.hpp"']
@@ -291,7 +292,8 @@ def generate(root, output):
             declarations.append(f'SPIRE_FN inline void {prefix}_initialize_state({entity}& value);')
             content.append(f'SPIRE_FN inline void {prefix}_initialize_state({entity}& value) {{ switch ({discriminator}) {{')
             for unit, _, _, typename in entries:
-                assign = f'value.state.{typename} = {{}};' if unit in states[kind] else ''
+                state_path = 'value.payload.state' if kind == 'actions' else 'value.state'
+                assign = f'{state_path}.{typename} = {{}};' if unit in states[kind] else ''
                 content.append(f'case {enum}::{unit}: {assign} ' + ('relic_initializeState(value); ' if kind == 'relics' else '') + 'return;')
             content.append('default: SPIRE_ASSERT(false); } }')
         if kind in ("cards", "powers", "relics", "monsters", "actions"):
@@ -303,7 +305,8 @@ def generate(root, output):
                         if not field.strip():
                             continue
                         member = re.search(r'(\w+)\s*(?:\[[^]]+\])?\s*$', field.strip())[1]
-                        content.append(f'visitor("{member}", value.state.{typename}.{member});')
+                        state_path = 'value.payload.state' if kind == 'actions' else 'value.state'
+                        content.append(f'visitor("{member}", {state_path}.{typename}.{member});')
                 content.append('return;')
             content.append('default: SPIRE_ASSERT(false); } }')
 

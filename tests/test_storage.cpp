@@ -32,13 +32,24 @@ static void compact_storage() {
         clear_actions(game, game.manager.actions);
     }
     require(game.player.energy == 3 + 8 * action_capacity, "discarded queued actions release slots without executing");
-    for (int i = 0; i < card_capacity; ++i) game.multi_damage[card_capacity - 1 - i].base = i + 1;
+    for (int i = 0; i < card_capacity; ++i) game.multi_damage.base[card_capacity - 1 - i] = i + 1;
+    const int amounts[]{1, 200000, 1, 300000};
+    DamageArray row{};
+    row.assign(game.damage_exceptions, amounts, 4);
+    game.multi_damage.set(0, row);
     apply_power(game, player_target, player_target, PowerId::Strength, 4);
     const int text = game.text.intern("CLOSED");
     Game copy = game;
-    copy.multi_damage[card_capacity - 1].base = 99;
+    copy.multi_damage.base[card_capacity - 1] = 99;
+    DamageArray changed = copy.multi_damage.get(0);
+    const int replacement[]{9, 8, 7, 6};
+    changed.assign(copy.damage_exceptions, replacement, 4);
+    copy.multi_damage.set(0, changed);
+    require(game.multi_damage.get(0).at(game.damage_exceptions, 1) == 200000 &&
+            copy.multi_damage.get(0).at(copy.damage_exceptions, 1) == 8,
+            "relocating and replacing sparse damage preserves 32-bit values and isolates storage");
     apply_power(copy, player_target, player_target, PowerId::Strength, 2);
-    require(game.multi_damage[card_capacity - 1][0] == 1 && power_amount(game, game.player.creature, PowerId::Strength) == 4 &&
+    require(game.multi_damage.get(card_capacity - 1).at(game.damage_exceptions, 0) == 1 && power_amount(game, game.player.creature, PowerId::Strength) == 4 &&
             power_amount(copy, copy.player.creature, PowerId::Strength) == 6 &&
             std::strcmp(copy.text[text], "CLOSED") == 0, "a relocated Game owns independent arena and text storage");
 }

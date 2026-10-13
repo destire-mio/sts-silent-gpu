@@ -12,13 +12,13 @@ struct Card {
     int damage = -1;
     int base_block = -1;
     int block = -1;
-    int base_magic = -1;
-    int magic = -1;
     CardId id = CardId::Strike_G;
-    int16_t upgrades = 0;
+    uint8_t upgrades = 0;
     int16_t cost = 0;
     int16_t cost_for_turn = 0;
     int16_t energy_on_use = 0;
+    int8_t base_magic = -1;
+    int8_t magic = -1;
     CardTarget target = CardTarget::Enemy;
     uint8_t multi_damage_count = 0;
     bool upgraded_cost : 1;
@@ -167,13 +167,19 @@ struct Action {
     int target = -1;
 };
 using ActionSet = List<Action, 128>;
+union EffectPayload {
+    EffectState state;
+    Power power;
+    SPIRE_FN constexpr EffectPayload() : state{} {}
+    SPIRE_FN constexpr EffectPayload(const Power& value) : power(value) {}
+};
 struct Effect {
     int amount = 0;
     int info_base = 0;
     int extra = 0;
     uint32_t power_instance = 0;
-    Power prepared_power{};
-    EffectState state{};
+    EffectPayload payload{};
+    bool power_constructed = false;
     int16_t card = -1;
     PowerId power = PowerId::Strength;
     EffectKind kind = EffectKind::Draw;
@@ -267,10 +273,11 @@ struct RoomReward {
     int identity = 0;
 };
 struct CardDamage {
-    DamageArray values[card_capacity]{};
-    SPIRE_FN DamageArray& operator[](int card) { SPIRE_ASSERT(card >= 0 && card < card_capacity); return values[card]; }
-    SPIRE_FN const DamageArray& operator[](int card) const { SPIRE_ASSERT(card >= 0 && card < card_capacity); return values[card]; }
-    SPIRE_FN void clear() { for (auto& value : values) value = DamageArray{}; }
+    int base[card_capacity]{};
+    uint8_t head[card_capacity]{};
+    SPIRE_FN DamageArray get(int card) const { SPIRE_ASSERT(card >= 0 && card < card_capacity); return {base[card], head[card]}; }
+    SPIRE_FN void set(int card, const DamageArray& damage) { SPIRE_ASSERT(card >= 0 && card < card_capacity); base[card] = damage.base; head[card] = damage.head; }
+    SPIRE_FN void clear() { for (auto& value : head) value = 0; }
 };
 
 struct Game {
@@ -284,6 +291,7 @@ struct Game {
     List<Card, card_capacity> cards{};
     List<uint8_t, 64> detached_master_cards{};
     CardDamage multi_damage{};
+    DamageExceptions damage_exceptions{};
     Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
     Pool<Effect, action_capacity> action_objects{};
     Pool<Power, power_object_capacity> power_objects{};

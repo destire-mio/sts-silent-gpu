@@ -24,15 +24,15 @@ struct ChooseOneColorless : ActionHooks {
         }
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.ChooseOneColorless.opened) {
+        if (!e.payload.state.ChooseOneColorless.opened) {
             generate_card_choices(g);
             g.discovery_card = -1;
             g.reward_skippable = false;
-            e.state.ChooseOneColorless.opened = true;
+            e.payload.state.ChooseOneColorless.opened = true;
             g.screen = Screen::CardReward;
             return;
         }
-        if (!e.state.ChooseOneColorless.retrieve_card) {
+        if (!e.payload.state.ChooseOneColorless.retrieve_card) {
             if (g.discovery_card >= 0) {
                 Card copy = card_makeStatEquivalentCopy(g, g.discovery_card);
                 if (find_power(g, g.player.creature, "MasterRealityPower") >= 0) card_upgrade(copy);
@@ -57,7 +57,7 @@ struct ChooseOneColorless : ActionHooks {
                 }
                 g.discovery_card = -1;
             }
-            e.state.ChooseOneColorless.retrieve_card = true;
+            e.payload.state.ChooseOneColorless.retrieve_card = true;
         }
     }
 };

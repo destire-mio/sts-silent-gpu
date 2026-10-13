@@ -13,7 +13,7 @@ struct StoneCalendar : RelicHooks {
         if (g.run.relics[relic].counter == 7) {
             int amounts[monster_capacity]{};
             for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = 52;
-            add_bottom(g, actions::DamageAllEnemies::make(no_target, amounts, g.monster_order.size, DamageType::Thorns));
+            add_bottom(g, actions::DamageAllEnemies::make(g, no_target, amounts, g.monster_order.size, DamageType::Thorns));
             g.run.relics[relic].state.StoneCalendar.grayscale = true;
         }
     }

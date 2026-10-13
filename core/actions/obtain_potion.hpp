@@ -5,21 +5,21 @@ namespace spire::units::actions {
 struct ObtainPotion : ActionHooks {
     SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
     SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
-    SPIRE_SNAPSHOT("ObtainPotionAction.potion", potion_template, effect.state.ObtainPotion.potion, queue, index)
+    SPIRE_SNAPSHOT("ObtainPotionAction.potion", potion_template, effect.payload.state.ObtainPotion.potion, queue, index)
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(ObtainPotion, PotionId potion;)
     SPIRE_FN static Effect from_potion(PotionId potion, const PotionState& state) {
         Effect e{};
         e.kind = EffectKind::ObtainPotion;
         action_initialize_state(e);
-        e.state.ObtainPotion.potion = potion;
+        e.payload.state.ObtainPotion.potion = potion;
         e.prepared_potion_state = state;
         return e;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         for (int i = 0; i < g.run.relics.size; ++i)
             if (relic_data(g.run.relics[i].id).blocks_potions) return;
-        obtain_potion(g, e.state.ObtainPotion.potion, e.prepared_potion_state);
+        obtain_potion(g, e.payload.state.ObtainPotion.potion, e.prepared_potion_state);
     }
 };
 }

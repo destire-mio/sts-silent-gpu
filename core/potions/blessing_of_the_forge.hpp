@@ -14,7 +14,7 @@ struct BlessingOfTheForge : PotionHooks {
             Effect e{};
             e.kind = EffectKind::Armaments;
             action_initialize_state(e);
-            e.state.Armaments.upgraded = true;
+            e.payload.state.Armaments.upgraded = true;
             add_bottom(g, e);
         }
     }

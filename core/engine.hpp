@@ -233,7 +233,7 @@ SPIRE_FN inline void clear_post_combat_actions(Game& g) {
         const Effect& e = g.action_objects[index];
         if (action_data(e.kind).survives_combat_end)
             g.manager.actions.push_back(index);
-        else if (!e.held) g.action_objects.release(index);
+        else if (!e.held) release_action(g, index);
     }
 }
 SPIRE_FN inline int decrement_block(Game& g, int owner, const DamageInfo& info, int amount) {
@@ -451,15 +451,15 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
     if (blocked || effect.amount <= 0 ||
         g.draw.size + g.discard.size == 0 || g.hand.size == hand_limit) {
         effect.done = true;
-        if (effect.state.Draw.follow_up_action != 0)
-            g.manager.actions.push_front(effect.state.Draw.follow_up_action - 1);
+        if (effect.payload.state.Draw.follow_up_action != 0)
+            g.manager.actions.push_front(effect.payload.state.Draw.follow_up_action - 1);
         return;
     }
-    if (!effect.state.Draw.shuffle_check) {
+    if (!effect.payload.state.Draw.shuffle_check) {
         if (effect.amount + g.hand.size > hand_limit) effect.amount = hand_limit - g.hand.size;
         if (effect.amount > g.draw.size) {
             Effect tail = units::actions::Draw::construct(effect.amount - g.draw.size, false,
-                                                         effect.state.Draw.follow_up_action - 1);
+                                                         effect.payload.state.Draw.follow_up_action - 1);
             add_top(g, tail);
             Effect shuffle_effect{};
             shuffle_effect.kind = EffectKind::Shuffle;
@@ -469,7 +469,7 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
             effect.done = true;
             return;
         }
-        effect.state.Draw.shuffle_check = true;
+        effect.payload.state.Draw.shuffle_check = true;
     }
     --effect.amount;
     if (!g.draw.empty()) {
@@ -485,13 +485,13 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
         refresh_hand(g);
     } else {
         effect.done = true;
-        if (effect.state.Draw.follow_up_action != 0)
-            g.manager.actions.push_front(effect.state.Draw.follow_up_action - 1);
+        if (effect.payload.state.Draw.follow_up_action != 0)
+            g.manager.actions.push_front(effect.payload.state.Draw.follow_up_action - 1);
     }
     if (effect.amount == 0) {
         effect.done = true;
-        if (effect.state.Draw.follow_up_action != 0)
-            g.manager.actions.push_front(effect.state.Draw.follow_up_action - 1);
+        if (effect.payload.state.Draw.follow_up_action != 0)
+            g.manager.actions.push_front(effect.payload.state.Draw.follow_up_action - 1);
     }
 }
 SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
@@ -628,7 +628,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             execute_effect(g, g.action_objects[g.manager.current_action]);
             if (g.screen == Screen::Discard || g.screen == Screen::Grid || g.screen == Screen::CardReward || g.screen == Screen::Death) break;
             if (g.action_objects[g.manager.current_action].done) {
-                if (!g.action_objects[g.manager.current_action].held) g.action_objects.release(g.manager.current_action);
+                if (!g.action_objects[g.manager.current_action].held) release_action(g, g.manager.current_action);
                 g.manager.has_current_action = false;
             }
         } else if (!g.manager.actions.empty()) {
@@ -819,6 +819,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.text.clear();
     g.room_event_class = 0;
     g.multi_damage.clear();
+    g.damage_exceptions.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
     g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.room_rewards.clear();

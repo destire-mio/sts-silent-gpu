@@ -9,7 +9,7 @@ struct PutOnDeck : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(PutOnDeck, bool selecting;)
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.PutOnDeck.selecting) {
+        if (!e.payload.state.PutOnDeck.selecting) {
             e.amount = min(e.amount, g.hand.size);
             if (e.flag) {
                 for (int i = 0; i < e.amount; ++i)
@@ -18,7 +18,7 @@ struct PutOnDeck : ActionHooks {
                 if (g.hand.size > e.amount) {
                     g.put_on_deck_num = e.amount;
                     open_hand_selection(g, e.amount);
-                    e.state.PutOnDeck.selecting = true;
+                    e.payload.state.PutOnDeck.selecting = true;
                     return;
                 }
                 // PutOnDeckAction.update compares i with the shrinking hand size.

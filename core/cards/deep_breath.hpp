@@ -14,7 +14,7 @@ struct DeepBreath : CardHooks {
             Effect group{};
             group.kind = EffectKind::ShuffleGroup;
             action_initialize_state(group);
-            group.state.ShuffleGroup.group = PileId::Draw;
+            group.payload.state.ShuffleGroup.group = PileId::Draw;
             add_bottom(g, group);
         }
         Effect draw{};

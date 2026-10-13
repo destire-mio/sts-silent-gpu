@@ -3,7 +3,7 @@
 
 namespace spire::units::actions {
 struct ApplyPowerToRandomEnemy : ActionHooks {
-    SPIRE_SNAPSHOT("ApplyPowerToRandomEnemyAction.powerToApply", power_value, effect.prepared_power, effect.target, {20, queue, index})
+    SPIRE_SNAPSHOT("ApplyPowerToRandomEnemyAction.powerToApply", power_value, effect.payload.power, effect.target, {20, queue, index})
     SPIRE_FN static Effect construct(int source, const Power& power, int stack_amount = -1) {
         Effect e{};
         e.kind = EffectKind::ApplyPowerToRandomEnemy;
@@ -12,7 +12,7 @@ struct ApplyPowerToRandomEnemy : ActionHooks {
         e.target = no_target;
         e.amount = stack_amount;
         e.power = power.id;
-        e.prepared_power = power;
+        e.payload = EffectPayload(power);
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
@@ -24,8 +24,8 @@ struct ApplyPowerToRandomEnemy : ActionHooks {
         apply.target = e.target;
         apply.power = e.power;
         apply.amount = e.amount;
-        apply.prepared_power = e.prepared_power;
-        apply.state.ApplyPower.constructed = true;
+        apply.payload = e.payload;
+        apply.power_constructed = true;
         add_top(g, apply);
     }
 };

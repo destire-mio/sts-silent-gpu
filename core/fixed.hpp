@@ -129,17 +129,41 @@ struct MoveHistories {
         return moves[node - 1];
     }
 };
+struct DamageExceptions {
+    int values[255]{};
+    uint8_t targets[255]{};
+    uint8_t next[255]{};
+    uint64_t used[4]{};
+    SPIRE_FN uint8_t add(int target, int value, uint8_t tail) {
+        int slot = 0;
+        while (slot < 255 && (used[slot / 64] & (uint64_t{1} << (slot % 64)))) ++slot;
+        SPIRE_ASSERT(slot < 255);
+        used[slot / 64] |= uint64_t{1} << (slot % 64);
+        values[slot] = value;
+        targets[slot] = target;
+        next[slot] = tail;
+        return slot + 1;
+    }
+    SPIRE_FN void release(uint8_t head) {
+        while (head) {
+            const int slot = head - 1;
+            head = next[slot];
+            used[slot / 64] &= ~(uint64_t{1} << (slot % 64));
+        }
+    }
+    SPIRE_FN void clear() { for (auto& word : used) word = 0; }
+};
 struct DamageArray {
     int base;
-    int values[5];
-    uint8_t targets[5];
-    uint8_t size;
-    SPIRE_FN int operator[](int target) const {
-        for (int i = 0; i < size; ++i) if (targets[i] == target) return values[i];
+    uint8_t head;
+    SPIRE_FN int at(const DamageExceptions& storage, int target) const {
+        for (int entry = head; entry; entry = storage.next[entry - 1])
+            if (storage.targets[entry - 1] == target) return storage.values[entry - 1];
         return base;
     }
-    SPIRE_FN void assign(const int* amounts, int count) {
-        size = 0;
+    SPIRE_FN void assign(DamageExceptions& storage, const int* amounts, int count) {
+        storage.release(head);
+        head = 0;
         if (count == 0) return;
         int best = 0;
         for (int i = 0; i < count; ++i) {
@@ -147,11 +171,8 @@ struct DamageArray {
             for (int j = 0; j < count; ++j) repeats += amounts[j] == amounts[i];
             if (repeats > best) { best = repeats; base = amounts[i]; }
         }
-        for (int i = 0; i < count; ++i) if (amounts[i] != base) {
-            SPIRE_ASSERT(size < 5);
-            targets[size] = i;
-            values[size++] = amounts[i];
-        }
+        for (int i = 0; i < count; ++i)
+            if (amounts[i] != base) head = storage.add(i, amounts[i], head);
     }
 };
 

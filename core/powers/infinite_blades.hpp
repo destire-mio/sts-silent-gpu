@@ -12,7 +12,7 @@ struct InfiniteBlades : PowerHooks {
             shivs.card = create_card(g, cards::Shiv::make(g));
             shivs.amount = p.amount;
             action_initialize_state(shivs);
-            shivs.state.MakeTempCardInHand.other_card_not_in_center = true;
+            shivs.payload.state.MakeTempCardInHand.other_card_not_in_center = true;
             add_bottom(g, shivs);
         }
     }

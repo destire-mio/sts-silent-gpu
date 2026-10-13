@@ -10,9 +10,9 @@ struct RetainCards : ActionHooks {
         e.target = player_target;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.RetainCards.selecting) {
+        if (!e.payload.state.RetainCards.selecting) {
             open_hand_selection(g, e.amount, false, true, false, true);
-            e.state.RetainCards.selecting = true;
+            e.payload.state.RetainCards.selecting = true;
             return;
         }
         if (!g.selected_cards_retrieved) {

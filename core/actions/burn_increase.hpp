@@ -14,7 +14,7 @@ struct BurnIncrease : ActionHooks {
             if (card_is(g.cards[g.discard[i]].id, "Burn")) card_upgrade(g.cards[g.discard[i]]);
         for (int i = 0; i < g.draw.size; ++i)
             if (card_is(g.cards[g.draw[i]].id, "Burn")) card_upgrade(g.cards[g.draw[i]]);
-        e.state.BurnIncrease.gotBurned = true;
+        e.payload.state.BurnIncrease.gotBurned = true;
         for (int i = 0; i < 3; ++i) {
             Card burn = make_card(card_id("Burn"));
             card_upgrade(burn);

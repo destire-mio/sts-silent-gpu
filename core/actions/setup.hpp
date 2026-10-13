@@ -18,7 +18,7 @@ struct Setup : ActionHooks {
         e.target = no_target;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.Setup.selecting) {
+        if (!e.payload.state.Setup.selecting) {
             if (g.hand.empty()) return;
             if (g.hand.size == 1) {
                 const int card = g.hand[g.hand.size - 1];
@@ -28,7 +28,7 @@ struct Setup : ActionHooks {
                 return;
             }
             open_hand_selection(g, 1);
-            e.state.Setup.selecting = true;
+            e.payload.state.Setup.selecting = true;
             g.screen = Screen::Discard;
             return;
         }

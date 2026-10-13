@@ -15,7 +15,7 @@ struct SkillFromDeckToHand : ActionHooks {
     }
     SPIRE_FN static void prepare(Game&, Effect& e) { action_initialize_state(e); }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.SkillFromDeckToHand.selecting) {
+        if (!e.payload.state.SkillFromDeckToHand.selecting) {
             g.grid_cards.clear();
             for (int i = 0; i < g.draw.size; ++i) {
                 const int card = g.draw[i];
@@ -39,7 +39,7 @@ struct SkillFromDeckToHand : ActionHooks {
             g.selection_any_number = false;
             g.selection_amount = e.amount;
             g.selected_cards.clear();
-            e.state.SkillFromDeckToHand.selecting = true;
+            e.payload.state.SkillFromDeckToHand.selecting = true;
             g.screen = Screen::Grid;
             return;
         }

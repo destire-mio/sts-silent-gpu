@@ -15,7 +15,7 @@ struct Chrysalis : CardHooks {
             action_initialize_state(e);
             e.card = create_card(g, created);
             e.amount = 1;
-            e.state.MakeTempCardInDrawPile.random_spot = true;
+            e.payload.state.MakeTempCardInDrawPile.random_spot = true;
             add_bottom(g, e);
         }
     }

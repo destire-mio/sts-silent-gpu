@@ -8,14 +8,14 @@ struct GamblingChipAction : ActionHooks {
     SPIRE_STATE(GamblingChipAction, bool notchip; bool selecting;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);
-        e.state.GamblingChipAction.notchip = e.flag;
+        e.payload.state.GamblingChipAction.notchip = e.flag;
         e.target = player_target;
         e.amount = -1;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.GamblingChipAction.selecting) {
+        if (!e.payload.state.GamblingChipAction.selecting) {
             open_hand_selection(g, 99, true, true);
-            e.state.GamblingChipAction.selecting = true;
+            e.payload.state.GamblingChipAction.selecting = true;
             return;
         }
         if (!g.selected_cards_retrieved) {

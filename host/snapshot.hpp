@@ -163,7 +163,7 @@ struct SnapshotGraph {
                 const auto& combat_card = game.cards[index];
                 if (combat_card.multi_damage_count == 0) return py::none();
                 py::list result;
-                for (int i = 0; i < combat_card.multi_damage_count; ++i) result.append(game.multi_damage[index][i]);
+                for (int i = 0; i < combat_card.multi_damage_count; ++i) result.append(game.multi_damage.get(index).at(game.damage_exceptions, i));
                 return result;
             }
             if (field == "inBottleFlame") return py::bool_(card.bottle_flame);
@@ -581,7 +581,7 @@ struct SnapshotGraph {
     py::object damage_array(const DamageArray& values, int count, int card, bool initialized) {
         if (!initialized) return py::none();
         py::list result;
-        for (int i = 0; i < count; ++i) result.append(card >= 0 ? game.multi_damage[card][i] : values[i]);
+        for (int i = 0; i < count; ++i) result.append(card >= 0 ? game.multi_damage.get(card).at(game.damage_exceptions, i) : values.at(game.damage_exceptions, i));
         return result;
     }
     py::object optional_pile_group(PileId pile, bool present) { return present ? pile_group(pile) : py::object(py::none()); }

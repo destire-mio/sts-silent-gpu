@@ -13,9 +13,9 @@ struct Exhaust : ActionHooks {
         action_initialize_state(e);
         e.source = e.target = no_target;
         e.amount = amount;
-        e.state.Exhaust.isRandom = random;
-        e.state.Exhaust.anyNumber = any_number;
-        e.state.Exhaust.canPickZero = can_pick_zero;
+        e.payload.state.Exhaust.isRandom = random;
+        e.payload.state.Exhaust.anyNumber = any_number;
+        e.payload.state.Exhaust.canPickZero = can_pick_zero;
         return e;
     }
     SPIRE_FN static Effect make(int amount, bool can_pick_zero) { return make(amount, false, false, can_pick_zero); }
@@ -28,7 +28,7 @@ struct Exhaust : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (e.state.Exhaust.selecting) {
+        if (e.payload.state.Exhaust.selecting) {
             if (!g.selected_cards_retrieved) {
                 for (int i = 0; i < g.selected_cards.size; ++i) exhaust_card(g, g.selected_cards[i]);
                 g.selected_cards_retrieved = true;
@@ -36,21 +36,21 @@ struct Exhaust : ActionHooks {
             return;
         }
         if (g.hand.empty()) return;
-        if (!e.state.Exhaust.anyNumber && g.hand.size <= e.amount) {
+        if (!e.payload.state.Exhaust.anyNumber && g.hand.size <= e.amount) {
             g.exhaust_action_num = e.amount = g.hand.size;
             const int count = g.hand.size;
             for (int i = 0; i < count; ++i) exhaust_card(g, g.hand[g.hand.size - 1]);
             return;
         }
-        if (e.state.Exhaust.isRandom) {
+        if (e.payload.state.Exhaust.isRandom) {
             for (int i = 0; i < e.amount; ++i) {
                 const int index = g.rng.card_random.random(g.hand.size - 1);
                 exhaust_card(g, g.hand[index]);
             }
         } else {
             g.exhaust_action_num = e.amount;
-            open_hand_selection(g, e.amount, e.state.Exhaust.anyNumber, e.state.Exhaust.canPickZero);
-            e.state.Exhaust.selecting = true;
+            open_hand_selection(g, e.amount, e.payload.state.Exhaust.anyNumber, e.payload.state.Exhaust.canPickZero);
+            e.payload.state.Exhaust.selecting = true;
         }
     }
 };

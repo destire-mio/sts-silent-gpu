@@ -11,7 +11,7 @@ struct NinjaScroll : RelicHooks {
         action_initialize_state(e);
         e.card = create_card(g, make_card(card_id("Shiv")));
         e.amount = 3;
-        e.state.MakeTempCardInHand.other_card_not_in_center = true;
+        e.payload.state.MakeTempCardInHand.other_card_not_in_center = true;
         add_bottom(g, e);
     }
 };

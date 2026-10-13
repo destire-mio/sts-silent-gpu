@@ -71,8 +71,8 @@ SPIRE_FN inline void queue_monster_move(Game& g, int index, int move, Intent int
     e.amount = move;
     e.extra = static_cast<int>(intent);
     e.card = damage;
-    e.state.SetMove.the_multiplier = hits;
-    e.state.SetMove.is_multiplier = hits > 0;
+    e.payload.state.SetMove.the_multiplier = hits;
+    e.payload.state.SetMove.is_multiplier = hits > 0;
     add_bottom(g, e);
 }
 
@@ -99,7 +99,7 @@ SPIRE_FN inline void queue_monster_card(Game& g, CardId card, EffectKind kind, i
     action_initialize_state(e);
     e.card = create_card(g, make_card(card, upgrades));
     e.amount = kind == EffectKind::MakeTempCardInDiscardAndDeck ? 0 : amount;
-    if (kind == EffectKind::MakeTempCardInDrawPile) e.state.MakeTempCardInDrawPile.random_spot = true;
+    if (kind == EffectKind::MakeTempCardInDrawPile) e.payload.state.MakeTempCardInDrawPile.random_spot = true;
     add_bottom(g, e);
 }
 
@@ -117,7 +117,7 @@ SPIRE_FN inline void queue_suicide(Game& g, int index, bool trigger_relics) {
     e.kind = EffectKind::Suicide;
     action_initialize_state(e);
     e.target = index;
-    e.state.Suicide.suppress_relics = !trigger_relics;
+    e.payload.state.Suicide.suppress_relics = !trigger_relics;
     add_bottom(g, e);
 }
 

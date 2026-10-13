@@ -10,10 +10,10 @@ struct Discard : ActionHooks {
     SPIRE_STATE(Discard, bool selecting; bool isRandom;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);
-        e.state.Discard.isRandom = e.extra != 0;
+        e.payload.state.Discard.isRandom = e.extra != 0;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (e.state.Discard.selecting) {
+        if (e.payload.state.Discard.selecting) {
             if (!g.selected_cards_retrieved) {
                 for (int i = 0; i < g.selected_cards.size; ++i) {
                     const int card = g.selected_cards[i];
@@ -30,7 +30,7 @@ struct Discard : ActionHooks {
             e.amount = g.hand.size;
             while (!g.hand.empty()) discard_card(g, g.hand.size - 1, e.flag);
             for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
-        } else if (e.state.Discard.isRandom) {
+        } else if (e.payload.state.Discard.isRandom) {
             for (int i = 0; i < e.amount; ++i) {
                 const int card = g.hand.erase(g.rng.card_random.random(g.hand.size - 1));
                 move_to_discard(g, card);
@@ -44,7 +44,7 @@ struct Discard : ActionHooks {
                 open_hand_selection(g, e.amount, false, false);
             }
             for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
-            e.state.Discard.selecting = true;
+            e.payload.state.Discard.selecting = true;
         }
     }
 };

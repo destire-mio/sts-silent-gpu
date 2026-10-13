@@ -9,7 +9,7 @@ struct PlayTopCardAction : ActionHooks {
     SPIRE_STATE(PlayTopCardAction, bool exhaust_cards;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);
-        e.state.PlayTopCardAction.exhaust_cards = e.flag;
+        e.payload.state.PlayTopCardAction.exhaust_cards = e.flag;
         e.source = player_target;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
@@ -27,7 +27,7 @@ struct PlayTopCardAction : ActionHooks {
         const int card = g.draw.pop_back();
         // PlayTopCardAction.update removes the card's Soul before applying powers.
         g.cards[card].pending_clear = false;
-        g.cards[card].exhaust_on_use_once = e.state.PlayTopCardAction.exhaust_cards;
+        g.cards[card].exhaust_on_use_once = e.payload.state.PlayTopCardAction.exhaust_cards;
         g.limbo.push_back(card);
         card_applyPowers(g, card);
         add_top(g, NewQueueCard::construct(card, e.target, false, true));

@@ -3,9 +3,9 @@
 
 namespace spire::units::actions {
 struct SkewerAction : ActionHooks {
-    SPIRE_SNAPSHOT("SkewerAction.p", creature, effect.state.SkewerAction.p)
-    SPIRE_SNAPSHOT("SkewerAction.m", creature, effect.state.SkewerAction.m)
-    SPIRE_SNAPSHOT("SkewerAction.damageTypeForTurn", damage_type, effect.state.SkewerAction.damage_type_for_turn)
+    SPIRE_SNAPSHOT("SkewerAction.p", creature, effect.payload.state.SkewerAction.p)
+    SPIRE_SNAPSHOT("SkewerAction.m", creature, effect.payload.state.SkewerAction.m)
+    SPIRE_SNAPSHOT("SkewerAction.damageTypeForTurn", damage_type, effect.payload.state.SkewerAction.damage_type_for_turn)
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(SkewerAction, int damage; DamageType damage_type_for_turn; int energy_on_use; int p; int m; bool free_to_play_once;)
     SPIRE_FN static Effect construct(int player, int monster, int damage, DamageType type, bool free, int energy) {
@@ -13,16 +13,16 @@ struct SkewerAction : ActionHooks {
         e.kind = EffectKind::SkewerAction;
         action_initialize_state(e);
         e.source = e.target = no_target;
-        e.state.SkewerAction.p = player;
-        e.state.SkewerAction.m = monster;
-        e.state.SkewerAction.damage = damage;
-        e.state.SkewerAction.damage_type_for_turn = type;
-        e.state.SkewerAction.free_to_play_once = free;
-        e.state.SkewerAction.energy_on_use = energy;
+        e.payload.state.SkewerAction.p = player;
+        e.payload.state.SkewerAction.m = monster;
+        e.payload.state.SkewerAction.damage = damage;
+        e.payload.state.SkewerAction.damage_type_for_turn = type;
+        e.payload.state.SkewerAction.free_to_play_once = free;
+        e.payload.state.SkewerAction.energy_on_use = energy;
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        const auto& state = e.state.SkewerAction;
+        const auto& state = e.payload.state.SkewerAction;
         int effect = state.energy_on_use == -1 ? g.player.energy : state.energy_on_use;
         if (has_relic(g, "Chemical X")) effect += 2;
         if (effect > 0) {

@@ -54,14 +54,14 @@ static void test_power_preparation() {
     Game g = combat();
     apply_power(g, player_target, player_target, PowerId::Strength, -900);
     queue_power(g, player_target, player_target, PowerId::Strength, 2000);
-    require(g.action_objects[g.manager.actions[0]].amount == 2000 && g.action_objects[g.manager.actions[0]].prepared_power.amount == 999,
+    require(g.action_objects[g.manager.actions[0]].amount == 2000 && g.action_objects[g.manager.actions[0]].payload.power.amount == 999,
             "Power construction precedes queue resolution and preserves the raw stack amount");
     Effect no_draw{};
     no_draw.kind = EffectKind::ApplyPower;
     no_draw.power = PowerId::NoDraw;
     no_draw.amount = 7;
     add_top(g, no_draw);
-    require(g.action_objects[g.manager.actions[0]].prepared_power.amount == -1,
+    require(g.action_objects[g.manager.actions[0]].payload.power.amount == -1,
             "direct ApplyPower enqueue runs the same constructor preparation");
     run_until_decision(g);
     require(power_amount(g, g.player.creature, PowerId::Strength) == 999 &&

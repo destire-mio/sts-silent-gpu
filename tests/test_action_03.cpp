@@ -205,7 +205,7 @@ static void card_rewards_and_uuid_growth() {
     Effect e{};
     e.kind = EffectKind::Codex;
     action_prepare(g, e);
-    e.state.Codex.selecting = true;
+    e.payload.state.Codex.selecting = true;
     Random expected = g.rng.card_random;
     const int insertion = expected.random(1);
     execute_effect(g, e);
@@ -214,7 +214,7 @@ static void card_rewards_and_uuid_growth() {
             g.rng.card_random.counter == expected.counter, "Codex copies a card and inserts below the draw-pile top");
     e = units::actions::Discovery::construct(false, 2);
     action_prepare(g, e);
-    e.state.Discovery.selecting = true;
+    e.payload.state.Discovery.selecting = true;
     g.discovery_card = selected;
     expected = g.rng.card_random;
     for (int update = 0; update < 15; ++update) {

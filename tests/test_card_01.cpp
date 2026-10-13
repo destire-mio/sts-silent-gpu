@@ -24,7 +24,7 @@ int main() {
     const int first_hp = g.monsters[first].creature.hp;
     const int second_hp = g.monsters[second].creature.hp;
     calculate_card_damage(g, 0, second);
-    require(g.cards[0].multi_damage_count == 2 && g.multi_damage[0][0] == 12 && g.multi_damage[0][1] == 8,
+    require(g.cards[0].multi_damage_count == 2 && g.multi_damage.get(0).at(g.damage_exceptions, 0) == 12 && g.multi_damage.get(0).at(g.damage_exceptions, 1) == 8,
             "an explicit autoplay target preserves damage calculation for each enemy");
     Effect hit = units::actions::DamageAllEnemies::from_card(g, 0);
     execute_effect(g, hit);

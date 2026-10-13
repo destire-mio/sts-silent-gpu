@@ -3,7 +3,7 @@
 
 namespace spire::units::actions {
 struct Discovery : ActionHooks {
-    SPIRE_SNAPSHOT("DiscoveryAction.cardType", card_type, effect.state.Discovery.cardType)
+    SPIRE_SNAPSHOT("DiscoveryAction.cardType", card_type, effect.payload.state.Discovery.cardType)
     SPIRE_STATE(Discovery, bool retrieveCard; bool returnColorless; int cardType; bool selecting;)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_FN static Effect construct() {
@@ -27,13 +27,13 @@ struct Discovery : ActionHooks {
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);
         e.source = e.target = no_target;
-        e.state.Discovery.returnColorless = e.flag;
-        e.state.Discovery.cardType = e.extra - 1;
+        e.payload.state.Discovery.returnColorless = e.flag;
+        e.payload.state.Discovery.cardType = e.extra - 1;
     }
     SPIRE_FN static void generate(Game& g, const Effect& e, const char* (&choices)[3]) {
         int count = 0;
         while (count != 3) {
-            const char* name = random_card_in_combat(g, e.state.Discovery.cardType, e.state.Discovery.returnColorless);
+            const char* name = random_card_in_combat(g, e.payload.state.Discovery.cardType, e.payload.state.Discovery.returnColorless);
             bool duplicate = false;
             for (int i = 0; i < count; ++i) if (same_id(choices[i], name)) duplicate = true;
             if (!duplicate) choices[count++] = name;
@@ -42,17 +42,17 @@ struct Discovery : ActionHooks {
     SPIRE_FN static void execute(Game& g, Effect& e) {
         const char* choices[3]{};
         generate(g, e, choices);
-        if (!e.state.Discovery.selecting) {
+        if (!e.payload.state.Discovery.selecting) {
             g.reward_cards.clear();
             for (int i = 0; i < 3; ++i)
                 g.reward_cards.push_back(create_card(g, make_card(card_id(choices[i]))));
             g.discovery_card = -1;
-            g.reward_skippable = e.state.Discovery.cardType >= 0;
+            g.reward_skippable = e.payload.state.Discovery.cardType >= 0;
             g.screen = Screen::CardReward;
-            e.state.Discovery.selecting = true;
+            e.payload.state.Discovery.selecting = true;
             return;
         }
-        if (!e.state.Discovery.retrieveCard) {
+        if (!e.payload.state.Discovery.retrieveCard) {
             if (g.discovery_card >= 0) {
                 Card first = card_makeStatEquivalentCopy(g, g.discovery_card);
                 Card second = card_makeStatEquivalentCopy(g, g.discovery_card);
@@ -81,7 +81,7 @@ struct Discovery : ActionHooks {
                 }
                 g.discovery_card = -1;
             }
-            e.state.Discovery.retrieveCard = true;
+            e.payload.state.Discovery.retrieveCard = true;
         }
         // DiscoveryAction.update generates choices on all 16 ticks of ACTION_DUR_FAST at 1/60.
         for (int i = 0; i < 14; ++i) generate(g, e, choices);

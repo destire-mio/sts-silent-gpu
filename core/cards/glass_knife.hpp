@@ -13,7 +13,7 @@ struct GlassKnife : CardHooks {
         modify.kind = EffectKind::ModifyDamage;
         action_initialize_state(modify);
         modify.amount = -2;
-        modify.state.ModifyDamage.uuid = g.cards[card].uuid;
+        modify.payload.state.ModifyDamage.uuid = g.cards[card].uuid;
         add_bottom(g, modify);
     }
     static SPIRE_FN void upgrade(Card& card) {

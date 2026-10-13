@@ -10,7 +10,7 @@ struct CorpseExplosion : PowerHooks {
         if (!monsters_basically_dead(g) && get_creature(g, owner).hp <= 0) {
             int amounts[monster_capacity];
             for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = get_creature(g, owner).max_hp * p.amount;
-            add_bottom(g, actions::DamageAllEnemies::make(no_target, amounts, g.monster_order.size, DamageType::Thorns));
+            add_bottom(g, actions::DamageAllEnemies::make(g, no_target, amounts, g.monster_order.size, DamageType::Thorns));
         }
     }
 };

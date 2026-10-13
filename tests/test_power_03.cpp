@@ -23,8 +23,8 @@ static Game combat(CardId card = CardId::Defend_G) {
 static void test_constructor_state() {
     Game g = combat();
     queue_power(g, 0, player_target, PowerId::Poison, 12000);
-    require(g.action_objects[g.manager.actions[0]].prepared_power.amount == 9999 &&
-            g.action_objects[g.manager.actions[0]].prepared_power.state.Poison.source == 0,
+    require(g.action_objects[g.manager.actions[0]].payload.power.amount == 9999 &&
+            g.action_objects[g.manager.actions[0]].payload.power.state.Poison.source == 0,
             "Poison retains the source and clamps the constructor amount");
     run_until_decision(g);
     apply_power(g, player_target, player_target, PowerId::Poison, 2);

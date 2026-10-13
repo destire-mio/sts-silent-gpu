@@ -127,14 +127,14 @@ int main() {
     shuffle = g.action_objects[g.manager.actions.pop_front()];
     execute_effect(g, shuffle);
     if (g.run.gold != 100) return 20;
-    g.multi_damage[0].base = 1;
+    g.multi_damage.base[0] = 1;
     g.cards[0].multi_damage_count = 1;
     Effect all = DamageAllEnemies::from_card(g, 0);
     execute_effect(g, all);
-    if (g.monsters[0].creature.hp != 2 || g.multi_damage[0][0] != 3) return 21;
+    if (g.monsters[0].creature.hp != 2 || g.multi_damage.get(0).at(g.damage_exceptions, 0) != 3) return 21;
     Effect change = ChangeState::make(g, 0, "TEST");
     execute_effect(g, change);
-    if (g.monsters[0].creature.block != 7 || !change.state.ChangeState.called) return 22;
+    if (g.monsters[0].creature.block != 7 || !change.payload.state.ChangeState.called) return 22;
     std::puts("all seven catalog extensions dispatched");
 }
 """

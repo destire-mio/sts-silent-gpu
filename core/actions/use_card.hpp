@@ -76,7 +76,7 @@ struct UseCard : ActionHooks {
         for (int i = 0; i < g.run.relics.size; ++i) exhaust_discard |= relic_data(g.run.relics[i].id).exhaust_discard;
         if (e.flag && exhaust_discard) spoon = g.rng.card_random.randomBoolean();
         if (!e.flag || spoon) {
-            if (e.state.UseCard.rebound_card) {
+            if (e.payload.state.UseCard.rebound_card) {
                 remove_queued_card(g, e.card);
                 card_resetAttributes(g, e.card);
                 g.draw.push_back(e.card);

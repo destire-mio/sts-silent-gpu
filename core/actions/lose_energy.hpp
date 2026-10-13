@@ -9,10 +9,10 @@ struct LoseEnergy : ActionHooks {
         action_initialize_state(e);
         e.source = e.target = player_target;
         e.amount = 0;
-        e.state.LoseEnergy.energyLoss = amount;
+        e.payload.state.LoseEnergy.energyLoss = amount;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        g.player.energy = max(0, g.player.energy - e.state.LoseEnergy.energyLoss);
+        g.player.energy = max(0, g.player.energy - e.payload.state.LoseEnergy.energyLoss);
     }
 };
 }

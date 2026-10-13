@@ -14,7 +14,7 @@ struct Magnetism : PowerHooks {
             e.kind = EffectKind::MakeTempCardInHand;
             e.card = create_card(g, make_card(card_id(random_card_in_combat(g, -1, true))));
             e.amount = 1;
-            e.state.MakeTempCardInHand.other_card_not_in_center = true;
+            e.payload.state.MakeTempCardInHand.other_card_not_in_center = true;
             add_bottom(g, e);
         }
     }

@@ -200,7 +200,7 @@ static void test_block_and_constructor_time() {
     g.manager.turn_has_ended = true;
     queue_power(g, 0, player_target, PowerId::NoBlock, 3, true);
     e = g.action_objects[g.manager.actions.pop_front()];
-    require(e.prepared_power.just_applied, "monster NoBlock captures an ended turn in its constructor");
+    require(e.payload.power.just_applied, "monster NoBlock captures an ended turn in its constructor");
     apply_power(g, player_target, 0, PowerId::Metallicize, 4);
     at_end_of_turn(g, 0);
     e = g.action_objects[g.manager.actions.pop_front()];

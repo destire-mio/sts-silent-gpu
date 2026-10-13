@@ -11,7 +11,7 @@ struct Codex : ActionHooks {
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         if (monsters_basically_dead(g)) return;
-        if (!e.state.Codex.selecting) {
+        if (!e.payload.state.Codex.selecting) {
             g.reward_cards.clear();
             while (g.reward_cards.size != 3) {
                 const char* name = random_card_in_combat(g, -1, false);
@@ -24,10 +24,10 @@ struct Codex : ActionHooks {
             g.discovery_card = -1;
             g.reward_skippable = true;
             g.screen = Screen::CardReward;
-            e.state.Codex.selecting = true;
+            e.payload.state.Codex.selecting = true;
             return;
         }
-        if (!e.state.Codex.retrieveCard) {
+        if (!e.payload.state.Codex.retrieveCard) {
             if (g.discovery_card >= 0) {
                 Card card = card_makeStatEquivalentCopy(g, g.discovery_card);
                 const CardType type = card_data(card.id).type;
@@ -38,7 +38,7 @@ struct Codex : ActionHooks {
                 else g.draw.insert(g.rng.card_random.random(g.draw.size - 1), index);
                 g.discovery_card = -1;
             }
-            e.state.Codex.retrieveCard = true;
+            e.payload.state.Codex.retrieveCard = true;
         }
     }
 };

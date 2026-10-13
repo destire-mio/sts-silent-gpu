@@ -87,7 +87,7 @@ payload in that category rather than every unit's payload.
 | Potions | `game.run.potion_state[slot].Type` | `potion_initialize_state(game, slot)` |
 | Monsters | `monster.state.Type` | `monster_initialize_state(monster)` |
 | Encounters | `game.encounter_state.Type` | `encounter_initialize_state(game)` |
-| Actions | `effect.state.Type` | `action_initialize_state(effect)` |
+| Actions | `effect.payload.state.Type` | `action_initialize_state(effect)` |
 
 Snapshot mappings for reference fields and Java names live beside the unit's state:
 
@@ -150,6 +150,9 @@ from an object's current position in an ordered list:
   `creature.powers.at(game.power_objects, index)` and pass `game` to power queries. Removing a
   power removes its list entry, retaining the object until combat reset so queued Java object
   references still observe it. These 128 slots include detached powers, not just active powers.
+- Prepared powers and other action state share the tagged `EffectPayload` union; access action
+  state through `effect.payload.state.Type`. A queued ApplyPower owns its prepared Power until
+  execution, preserving constructor-time fields and identity.
 - The 64 action slots are shared by the current action, both queues and held follow-ups.
   Queues hold byte indices. Completed ordinary actions release their slot. Clear queues with
   `clear_actions(game, queue)` to release discarded slots as well. `hold_action` pins
@@ -162,12 +165,14 @@ from an object's current position in an ordered list:
 - Monster move histories share 1,024 nodes, each holding the signed byte move and a previous
   node index. Each monster keeps a head and length; both rule lookbacks and host snapshots
   read the same history. The history budget spans the entire combat.
-- `game.multi_damage[card_index]` stores an exact common value and up to five target exceptions.
+- `game.multi_damage` stores a 32-bit common value per card and an index into the shared
+  255-entry `damage_exceptions` arena. Actions use the same exception arena; completed or
+  discarded actions release their entries through their `release` hook.
   The current encounters have at most five living monsters; dead targets receive the common
   untargeted card damage in `AbstractCard.calculateCardDamage`. Dead monster indices remain in
   the array, and its original length stays in the card or action. `DamageAllEnemiesAction`
-  shares a card's row when Java shares its array. Rows reset at combat start; the representation
-  asserts if a future unit needs more exceptions.
+  shares a card's row when Java shares its array. Rows and the exception arena reset at combat start. The arena is an execution budget;
+  overflow faults instead of truncating arrays.
 - `manager.played_cards` stores each play once, including repeated references to the same card.
   Combat history is `[0, size)`; turn history is `[turn_start, size)`. Compute type counts from
   these references as `DamagePerAttackPlayedAction.update` does, without duplicate counters.
@@ -201,7 +206,10 @@ held actions, detached powers, text and damage rows can also exhaust their budge
 sequence can therefore fault an environment; count this separately from losses and reset it.
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
-Card damage/block/magic, power amounts and player energy keep Java's 32-bit range.
+Card damage/block, power amounts and player energy keep Java's 32-bit range. The 133
+standard cards have at most one upgrade; their upgrade counts use bytes. Their magic numbers
+come from constructor/upgrade constants (at most 60) or Regret's hand count, so magic fields
+use signed bytes. Content with different ranges must widen these fields before porting it.
 Poison's constructor cap, for example, is not its stacking limit. Only bounded indices use
 bytes; signed card references and costs retain 16 bits, and monster moves use Java signed bytes.
 The index-width assertions in `types.hpp` must hold when changing capacities.

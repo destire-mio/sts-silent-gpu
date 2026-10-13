@@ -14,7 +14,7 @@ struct NightmareAction : ActionHooks {
         add_top(g, ApplyPower::make(e.target, e.target, power, 1));
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (!e.state.NightmareAction.selecting) {
+        if (!e.payload.state.NightmareAction.selecting) {
             if (g.hand.empty()) { e.done = true; return; }
             if (g.hand.size == 1) {
                 apply(g, e, g.hand[0]);
@@ -22,7 +22,7 @@ struct NightmareAction : ActionHooks {
                 return;
             }
             open_hand_selection(g, 1, false, false);
-            e.state.NightmareAction.selecting = true;
+            e.payload.state.NightmareAction.selecting = true;
             return;
         }
         if (!g.selected_cards_retrieved) {

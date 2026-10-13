@@ -4,7 +4,7 @@
 namespace spire::units::actions {
 struct RitualDagger : ActionHooks {
     SPIRE_SNAPSHOT("RitualDaggerAction.info", damage_info, effect, queue, index)
-    SPIRE_SNAPSHOT("RitualDaggerAction.uuid", uuid, effect.state.RitualDagger.uuid)
+    SPIRE_SNAPSHOT("RitualDaggerAction.uuid", uuid, effect.payload.state.RitualDagger.uuid)
     SPIRE_STATE(RitualDagger, int increaseAmount; uint32_t uuid;)
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static Effect construct(int target, const DamageInfo& info, int increase, uint32_t uuid) {
@@ -12,8 +12,8 @@ struct RitualDagger : ActionHooks {
         e.kind = EffectKind::RitualDagger;
         action_initialize_state(e);
         e.target = target;
-        e.state.RitualDagger.increaseAmount = increase;
-        e.state.RitualDagger.uuid = uuid;
+        e.payload.state.RitualDagger.increaseAmount = increase;
+        e.payload.state.RitualDagger.uuid = uuid;
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
@@ -23,8 +23,8 @@ struct RitualDagger : ActionHooks {
         if ((target.dying || target.hp <= 0) && !target.half_dead && !has_power(g, target, "Minion")) {
             for (int i = 0; i < g.run.master_deck.size; ++i) {
                 Card& card = g.run.master_deck[i];
-                if (card.uuid != e.state.RitualDagger.uuid) continue;
-                card.misc += e.state.RitualDagger.increaseAmount;
+                if (card.uuid != e.payload.state.RitualDagger.uuid) continue;
+                card.misc += e.payload.state.RitualDagger.increaseAmount;
                 card_applyPowers(g, -i - 2);
                 card.base_damage = card.misc;
             }
@@ -35,8 +35,8 @@ struct RitualDagger : ActionHooks {
                 for (int i = 0; i < piles[p]->size; ++i) included[(*piles[p])[i]] = true;
             for (int i = 0; i < g.cards.size; ++i) {
                 Card& card = g.cards[i];
-                if (!included[i] || card.uuid != e.state.RitualDagger.uuid) continue;
-                card.misc += e.state.RitualDagger.increaseAmount;
+                if (!included[i] || card.uuid != e.payload.state.RitualDagger.uuid) continue;
+                card.misc += e.payload.state.RitualDagger.increaseAmount;
                 card_applyPowers(g, i);
                 card.base_damage = card.misc;
             }

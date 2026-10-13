@@ -47,8 +47,8 @@ static void temp_cards() {
     Effect draw = effect(EffectKind::MakeTempCardInDrawPile);
     draw.card = source;
     draw.amount = 6;
-    draw.state.MakeTempCardInDrawPile.random_spot = true;
-    draw.state.MakeTempCardInDrawPile.to_bottom = true;
+    draw.payload.state.MakeTempCardInDrawPile.random_spot = true;
+    draw.payload.state.MakeTempCardInDrawPile.to_bottom = true;
     const int top = g.draw[0];
     execute_effect(g, draw);
     require(g.draw.size == 7 && g.draw[6] == top && g.rng.card_random.counter == rng,
@@ -56,7 +56,7 @@ static void temp_cards() {
     draw = effect(EffectKind::MakeTempCardInDrawPile);
     draw.card = source;
     draw.amount = 6;
-    draw.state.MakeTempCardInDrawPile.random_spot = true;
+    draw.payload.state.MakeTempCardInDrawPile.random_spot = true;
     execute_effect(g, draw);
     require(g.draw.size == 13 && g.rng.card_random.counter == rng + 6,
             "random draw insertion uses cardRandomRng for every nonempty pile");
@@ -64,7 +64,7 @@ static void temp_cards() {
     Effect hand = effect(EffectKind::MakeTempCardInHand);
     hand.card = source;
     hand.amount = 3;
-    hand.state.MakeTempCardInHand.same_uuid = true;
+    hand.payload.state.MakeTempCardInHand.same_uuid = true;
     execute_effect(g, hand);
     require(g.hand.size == 10 && g.discard.size == 3 && g.cards[g.hand[9]].uuid == g.cards[source].uuid &&
             g.cards[g.discard[2]].uuid == g.cards[source].uuid,
@@ -86,7 +86,7 @@ static void modify_damage() {
     g.cards.push_back(g.cards[a]);
     Effect e = effect(EffectKind::ModifyDamage);
     e.amount = -8;
-    e.state.ModifyDamage.uuid = g.cards[a].uuid;
+    e.payload.state.ModifyDamage.uuid = g.cards[a].uuid;
     execute_effect(g, e);
     require(g.cards[a].base_damage == 0 && g.cards[b].base_damage == 0 && g.cards[c].base_damage == 0,
             "UUID modification reaches hand, draw and limbo and clamps base damage");
@@ -94,7 +94,7 @@ static void modify_damage() {
             "same card ID and inactive UUID copies are untouched; calculated damage is not recomputed");
     e = effect(EffectKind::ModifyDamage);
     e.amount = 2;
-    e.state.ModifyDamage.uuid = g.cards[a].uuid;
+    e.payload.state.ModifyDamage.uuid = g.cards[a].uuid;
     execute_effect(g, e);
     require(g.cards[a].base_damage == 2 && g.cards[b].base_damage == 2,
             "the card-in-use alias is modified once, as in the Java identity set");
@@ -173,7 +173,7 @@ static void armaments() {
     add_bottom(g, e);
     run_until_decision(g);
     require(g.screen == Screen::Discard && g.selection_for_upgrade && g.hand.size == 2 &&
-            g.action_objects[g.manager.current_action].state.Armaments.cannot_upgrade[0] == curse,
+            g.action_objects[g.manager.current_action].payload.state.Armaments.cannot_upgrade[0] == curse,
             "Armaments stores excluded cards on its own suspended action");
     step(g, {ActionKind::Choose, 0});
     step(g, {ActionKind::Proceed});
@@ -181,7 +181,7 @@ static void armaments() {
             g.cards[a].upgrades == 1 && g.cards[b].upgrades == 0 && g.selected_cards.empty(),
             "Armaments returns the chosen card then excluded cards in Java order");
     e = effect(EffectKind::Armaments);
-    e.state.Armaments.upgraded = true;
+    e.payload.state.Armaments.upgraded = true;
     execute_effect(g, e);
     require(g.cards[b].upgrades == 1 && g.cards[curse].upgrades == 0, "Armaments+ upgrades eligible hand cards");
 }
@@ -224,9 +224,9 @@ static void moves_and_removal() {
     set.card = 7;
     set.amount = 2;
     set.extra = static_cast<int>(Intent::Attack);
-    set.state.SetMove.the_multiplier = 1;
-    set.state.SetMove.is_multiplier = true;
-    set.state.SetMove.the_next_name = g.text.intern("test move");
+    set.payload.state.SetMove.the_multiplier = 1;
+    set.payload.state.SetMove.is_multiplier = true;
+    set.payload.state.SetMove.the_next_name = g.text.intern("test move");
     execute_effect(g, set);
     create_monster_intent(g, 0);
     require(g.monsters[0].pending_hits == 1 && g.monsters[0].intent_hits == 1 && g.monsters[0].intent_multi,
@@ -234,8 +234,8 @@ static void moves_and_removal() {
     Effect show = effect(EffectKind::ShowMoveName);
     show.source = 0;
     add_bottom(g, show);
-    require(!g.monsters[0].move_name && g.action_objects[g.manager.actions[0]].state.ShowMoveName.msg &&
-            std::strcmp(g.text[g.action_objects[g.manager.actions[0]].state.ShowMoveName.msg], "test move") == 0,
+    require(!g.monsters[0].move_name && g.action_objects[g.manager.actions[0]].payload.state.ShowMoveName.msg &&
+            std::strcmp(g.text[g.action_objects[g.manager.actions[0]].payload.state.ShowMoveName.msg], "test move") == 0,
             "default ShowMoveName captures and clears the monster name during construction");
     clear_actions(g, g.manager.actions);
     apply_power(g, player_target, player_target, PowerId::Strength, 2);
@@ -272,7 +272,7 @@ static void remaining_actions() {
             !g.cards[a].dont_trigger_on_use_card && g.discard[0] == a,
             "suppressed use skips histories and resets suppression after card movement");
     Effect shuffle = effect(EffectKind::ShuffleGroup);
-    shuffle.state.ShuffleGroup.group = PileId::Draw;
+    shuffle.payload.state.ShuffleGroup.group = PileId::Draw;
     const int rng = g.rng.shuffle.counter;
     execute_effect(g, shuffle);
     require(g.rng.shuffle.counter == rng + 1 && g.discard.size == 1 && g.draw.empty(),

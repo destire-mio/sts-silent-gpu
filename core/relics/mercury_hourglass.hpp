@@ -9,7 +9,7 @@ struct MercuryHourglass : RelicHooks {
         queue_relic_above(g, relic, player_target, false);
         int amounts[monster_capacity]{};
         for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = 3;
-        add_bottom(g, units::actions::DamageAllEnemies::make(no_target, amounts, g.monster_order.size, DamageType::Thorns));
+        add_bottom(g, units::actions::DamageAllEnemies::make(g, no_target, amounts, g.monster_order.size, DamageType::Thorns));
     }
 };
 }

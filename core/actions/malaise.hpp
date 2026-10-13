@@ -3,8 +3,8 @@
 
 namespace spire::units::actions {
 struct MalaiseAction : ActionHooks {
-    SPIRE_SNAPSHOT("MalaiseAction.p", creature, effect.state.MalaiseAction.p)
-    SPIRE_SNAPSHOT("MalaiseAction.m", creature, effect.state.MalaiseAction.m)
+    SPIRE_SNAPSHOT("MalaiseAction.p", creature, effect.payload.state.MalaiseAction.p)
+    SPIRE_SNAPSHOT("MalaiseAction.m", creature, effect.payload.state.MalaiseAction.m)
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(MalaiseAction, int energy_on_use; int p; int m; bool upgraded; bool free_to_play_once;)
     SPIRE_FN static Effect construct(int player, int monster, bool upgraded, bool free, int energy) {
@@ -12,15 +12,15 @@ struct MalaiseAction : ActionHooks {
         e.kind = EffectKind::MalaiseAction;
         action_initialize_state(e);
         e.source = e.target = no_target;
-        e.state.MalaiseAction.p = player;
-        e.state.MalaiseAction.m = monster;
-        e.state.MalaiseAction.upgraded = upgraded;
-        e.state.MalaiseAction.free_to_play_once = free;
-        e.state.MalaiseAction.energy_on_use = energy;
+        e.payload.state.MalaiseAction.p = player;
+        e.payload.state.MalaiseAction.m = monster;
+        e.payload.state.MalaiseAction.upgraded = upgraded;
+        e.payload.state.MalaiseAction.free_to_play_once = free;
+        e.payload.state.MalaiseAction.energy_on_use = energy;
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        const auto& state = e.state.MalaiseAction;
+        const auto& state = e.payload.state.MalaiseAction;
         int effect = state.energy_on_use == -1 ? g.player.energy : state.energy_on_use;
         if (has_relic(g, "Chemical X")) effect += 2;
         if (state.upgraded) ++effect;

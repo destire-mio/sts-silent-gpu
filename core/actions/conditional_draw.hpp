@@ -3,7 +3,7 @@
 
 namespace spire::units::actions {
 struct ConditionalDrawAction : ActionHooks {
-    SPIRE_SNAPSHOT("ConditionalDrawAction.restrictedType", card_type, static_cast<int>(effect.state.ConditionalDrawAction.restricted_type))
+    SPIRE_SNAPSHOT("ConditionalDrawAction.restrictedType", card_type, static_cast<int>(effect.payload.state.ConditionalDrawAction.restricted_type))
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_STATE(ConditionalDrawAction, CardType restricted_type;)
     SPIRE_FN static Effect construct(int amount, CardType restricted) {
@@ -12,12 +12,12 @@ struct ConditionalDrawAction : ActionHooks {
         action_initialize_state(e);
         e.source = e.target = player_target;
         e.amount = amount;
-        e.state.ConditionalDrawAction.restricted_type = restricted;
+        e.payload.state.ConditionalDrawAction.restricted_type = restricted;
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         for (int i = 0; i < g.hand.size; ++i) {
-            if (card_data(g.cards[g.hand[i]].id).type == e.state.ConditionalDrawAction.restricted_type) {
+            if (card_data(g.cards[g.hand[i]].id).type == e.payload.state.ConditionalDrawAction.restricted_type) {
                 e.done = true;
                 return;
             }

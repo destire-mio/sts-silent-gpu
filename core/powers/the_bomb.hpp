@@ -26,7 +26,7 @@ struct TheBomb : PowerHooks {
             if (p.amount == 1) {
                 int amounts[monster_capacity];
             for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = p.state.TheBomb.damage;
-            add_bottom(g, actions::DamageAllEnemies::make(no_target, amounts, g.monster_order.size, DamageType::Thorns));
+            add_bottom(g, actions::DamageAllEnemies::make(g, no_target, amounts, g.monster_order.size, DamageType::Thorns));
             }
         }
     }

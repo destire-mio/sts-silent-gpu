@@ -5,14 +5,14 @@
 
 namespace spire::units::actions {
 struct ApplyStasisAction : ActionHooks {
-    SPIRE_SNAPSHOT("ApplyStasisAction.owner", creature, effect.state.ApplyStasisAction.owner)
-    SPIRE_SNAPSHOT("ApplyStasisAction.card", card, effect.state.ApplyStasisAction.card)
+    SPIRE_SNAPSHOT("ApplyStasisAction.owner", creature, effect.payload.state.ApplyStasisAction.owner)
+    SPIRE_SNAPSHOT("ApplyStasisAction.card", card, effect.payload.state.ApplyStasisAction.card)
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_STATE(ApplyStasisAction, int owner; int card;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);
-        e.state.ApplyStasisAction.owner = e.target;
-        e.state.ApplyStasisAction.card = -1;
+        e.payload.state.ApplyStasisAction.owner = e.target;
+        e.payload.state.ApplyStasisAction.card = -1;
         e.source = e.target = no_target;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
@@ -40,10 +40,10 @@ struct ApplyStasisAction : ActionHooks {
             card = candidates[g.rng.card_random.random(candidates.size - 1)];
         }
         for (int i = 0; i < pile.size; ++i) if (pile[i] == card) { pile.erase(i); break; }
-        e.state.ApplyStasisAction.card = card;
+        e.payload.state.ApplyStasisAction.card = card;
         g.limbo.insert(0, card);
         Power power{PowerId::Stasis, -1};
-        const int owner = e.state.ApplyStasisAction.owner;
+        const int owner = e.payload.state.ApplyStasisAction.owner;
         power_constructPower(g, power, owner, owner, 0, card);
         add_top(g, ApplyPower::make(owner, owner, power, 1));
         add_top(g, ShowCard::construct(card));

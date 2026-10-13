@@ -12,7 +12,7 @@ struct Unlimbo : ActionHooks {
         e.source = no_target;
         e.target = no_target;
         e.card = card;
-        e.state.Unlimbo.exhaust = exhaust;
+        e.payload.state.Unlimbo.exhaust = exhaust;
         return e;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) { remove_from_pile(g.limbo, e.card); }

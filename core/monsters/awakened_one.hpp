@@ -44,7 +44,7 @@ struct AwakenedOne : MonsterHooks {
                 e.source = e.target = no_target;
                 e.card = create_card(g, make_card(card_id("Void")));
                 e.amount = 1;
-                e.state.MakeTempCardInDrawPile.random_spot = true;
+                e.payload.state.MakeTempCardInDrawPile.random_spot = true;
                 add_bottom(g, e);
             }
         } else if (m.move == 2 || m.move == 8) {

@@ -11,12 +11,12 @@ struct IncreaseMaxHp : ActionHooks {
         action_initialize_state(e);
         e.target = target;
         e.source = no_target;
-        e.state.IncreaseMaxHp.increasePercent = percent;
+        e.payload.state.IncreaseMaxHp.increasePercent = percent;
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         Creature& target = get_creature(g, e.target);
-        const int amount = floor_int(static_cast<float>(target.max_hp) * e.state.IncreaseMaxHp.increasePercent + 0.5f);
+        const int amount = floor_int(static_cast<float>(target.max_hp) * e.payload.state.IncreaseMaxHp.increasePercent + 0.5f);
         target.max_hp += amount;
         heal_creature(g, e.target, amount);
     }

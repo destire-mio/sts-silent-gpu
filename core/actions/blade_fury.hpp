@@ -7,12 +7,12 @@ struct BladeFuryAction : ActionHooks {
     SPIRE_STATE(BladeFuryAction, bool upgrade;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);
-        e.state.BladeFuryAction.upgrade = e.flag;
+        e.payload.state.BladeFuryAction.upgrade = e.flag;
         e.source = e.target = no_target;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         Card shiv = cards::Shiv::make(g);
-        if (e.state.BladeFuryAction.upgrade) cards::Shiv::upgrade(shiv);
+        if (e.payload.state.BladeFuryAction.upgrade) cards::Shiv::upgrade(shiv);
         Effect copies{};
         copies.kind = EffectKind::MakeTempCardInHand;
         copies.card = create_card(g, shiv);

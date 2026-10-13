@@ -13,7 +13,7 @@ struct ExplosivePotion : PotionHooks {
     static SPIRE_FN void use(Game& g, int slot, int) {
         int amounts[monster_capacity];
         for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = potency(g, slot);
-        add_bottom(g, actions::DamageAllEnemies::make(no_target, amounts, g.monster_order.size));
+        add_bottom(g, actions::DamageAllEnemies::make(g, no_target, amounts, g.monster_order.size));
     }
 };
 }

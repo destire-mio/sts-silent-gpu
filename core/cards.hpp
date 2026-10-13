@@ -84,8 +84,8 @@ SPIRE_FN inline void apply_card_powers(Game& g, int card_id) {
     c.damage = card_damage_value(g, card_id, no_target);
     if (card_def(c.id).multi_damage) {
         c.multi_damage_count = g.monster_order.size;
-        g.multi_damage[card_id].base = c.damage;
-        g.multi_damage[card_id].size = 0;
+        g.damage_exceptions.release(g.multi_damage.head[card_id]);
+        g.multi_damage.set(card_id, {c.damage, 0});
     }
 }
 SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
@@ -101,7 +101,9 @@ SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
             const Creature& monster = g.monsters[owner].creature;
             amounts[i] = card_damage_value(g, card_id, monster.dying || monster.escaped ? no_target : owner);
         }
-        g.multi_damage[card_id].assign(amounts, g.monster_order.size);
+        DamageArray row = g.multi_damage.get(card_id);
+        row.assign(g.damage_exceptions, amounts, g.monster_order.size);
+        g.multi_damage.set(card_id, row);
         c.damage = amounts[0];
     }
 }
