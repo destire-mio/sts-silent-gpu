@@ -59,8 +59,9 @@ struct RelicData {
     bool hides_intents = false;
     int score = 0;
     const char* empty_orb_class = nullptr;
+    bool prevents_revival = false;
 };
-struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; bool revives_player = false; };
+struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; bool revives_player = false; bool limited_exclusion = false; };
 struct ActionData { bool survives_combat_end = false; const char* type = nullptr; bool multi_step = false; };
 struct MonsterData { int hp_min, hp_max; int damage[8]; int block, magic; uint8_t damage_count = 1; EnemyType type = EnemyType::Normal; DamageType damage_types[8]{}; };
 }

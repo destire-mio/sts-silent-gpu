@@ -94,4 +94,15 @@ int main() {
     require(h.run.potions[0] == PotionId::Empty, "sozu prevents the obtain action");
     obtain_potion(h, PotionId::StrengthPotion, potion);
     require(h.run.potions[0] == PotionId::StrengthPotion, "raw player potion acquisition has no sozu check");
+    reset(h, 101);
+    start_combat(h, s);
+    equip_relic(h, RelicId::PotionBelt);
+    h.run.potions[3] = PotionId::FairyPotion;
+    h.run.potion_state[3] = construct_potion(h, PotionId::FairyPotion);
+    Effect lethal{};
+    lethal.source = 0; lethal.target = player_target; lethal.amount = 1000;
+    player_damage(h, lethal);
+    require(!h.player.creature.dead && h.player.creature.hp == 19 && h.run.potions[3] == PotionId::Empty,
+            "Fairy in a Potion Belt slot revives the player and is consumed");
+
 }

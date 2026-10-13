@@ -3,7 +3,7 @@
 
 namespace spire::units::potions {
 struct FruitJuice : PotionHooks {
-    static SPIRE_FN constexpr PotionData data() { return {5, CardTarget::Self, true}; }
+    static SPIRE_FN constexpr PotionData data() { PotionData d{5, CardTarget::Self, true}; d.limited_exclusion = true; return d; }
     SPIRE_STATE(FruitJuice, int potency;)
     static SPIRE_FN void constructPotion(const Game& g, PotionState& state, PotionId) {
         state.FruitJuice.potency = data().potency * (has_relic(g, "SacredBark") ? 2 : 1);

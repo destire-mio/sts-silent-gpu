@@ -69,7 +69,7 @@ SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
     while (silent_potion_pool[index].rarity != rarity || spam_check) {
         spam_check = limited;
         index = g.rng.potion.random(32);
-        if (same_id(silent_potion_pool[index].id, "Fruit Juice")) continue;
+        if (silent_potion_pool[index].limited_exclusion) continue;
         spam_check = false;
     }
     for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
@@ -329,8 +329,10 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
             for (int i = 0; i < g.run.relics.size; ++i) relic_onBloodied(g, i);
         }
         if (target.hp == 0) {
-            if (!has_relic(g, "Mark of the Bloom")) {
-                for (int slot = 0; slot < 2; ++slot) {
+            bool prevents_revival = false;
+            for (int i = 0; i < g.run.relics.size; ++i) prevents_revival |= relic_data(g.run.relics[i].id).prevents_revival;
+            if (!prevents_revival) {
+                for (int slot = 0; slot < g.run.potion_slots; ++slot) {
                     if (!potion_data(g.run.potions[slot]).revives_player) continue;
                     potion_use(g, slot, player_target);
                     g.run.potions[slot] = PotionId::Empty;

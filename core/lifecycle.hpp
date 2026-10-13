@@ -243,7 +243,10 @@ SPIRE_FN inline RelicKey random_relic_key(Game& g, int tier, bool from_end) {
     }
 }
 SPIRE_FN inline void add_relic_reward(Game& g, RelicTier tier) {
-    g.acquisition_relics.push_back(random_relic_key(g, static_cast<int>(tier)));
+    RoomReward reward{};
+    reward.identity = g.next_reward_identity++;
+    reward.relic = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier))));
+    g.room_rewards.push_back(reward);
 }
 SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);

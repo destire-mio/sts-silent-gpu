@@ -251,13 +251,20 @@ def generate(root, output):
     for unit, _, _, typename in catalogs['relics']:
         content.append(f'case RelicId::{unit}: return units::relics::{typename}::canSpawn(g, -1);')
     content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    content.append('struct RelicLibraryEntry { const char* id; const char* tier; };')
+    for pool in ('shared', 'green'):
+        content.append(f'constexpr RelicLibraryEntry {pool}_relic_library[] = {{')
+        for unit in sorted((u for u in relic_inventory if u['facts']['pool'] == pool), key=lambda u: u['facts']['library_order']):
+            content.append('{' + json.dumps(unit['game_id']) + ', ' + json.dumps(unit['facts']['tier']) + '},')
+        content.append('};')
     potion_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'potion'}
     potion_pool = next(unit['facts']['silent_pool'] for unit in inventory if unit['key'] == 'rule:helpers.PotionHelper')
-    content.append('struct PotionPoolEntry { const char* id; int rarity; };')
+    potion_types = {game_id: typename for _, game_id, _, typename in catalogs['potions']}
+    content.append('struct PotionPoolEntry { const char* id; int rarity; bool limited_exclusion; };')
     content.append('constexpr PotionPoolEntry silent_potion_pool[] = {')
     for game_id in potion_pool:
         rarity = {'COMMON': 0, 'UNCOMMON': 1, 'RARE': 2}[potion_facts[game_id]['rarity']]
-        content.append('{' + json.dumps(game_id) + ', ' + str(rarity) + '},')
+        content.append('{' + json.dumps(game_id) + ', ' + str(rarity) + ', units::potions::' + potion_types[game_id] + '::data().limited_exclusion},')
     content.append('};')
     for kind in ('powers', 'relics', 'potions'):
         enum, _, prefix, _ = KINDS[kind]

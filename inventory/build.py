@@ -317,7 +317,7 @@ def main():
             continue
         j = files[relic_library.resolve(a[0][1])]
         tier = re.search(r'(?:AbstractRelic\.)?RelicTier\.(\w+)', j.text)[1]
-        add(j, 'relic', facts={'tier': tier, 'pool': 'green' if name == 'addGreen' else 'shared', 'hooks': j.overrides()})
+        add(j, 'relic', facts={'tier': tier, 'pool': 'green' if name == 'addGreen' else 'shared', 'library_order': i, 'hooks': j.overrides()})
 
     potion_helper = get('helpers.PotionHelper')
     potion_ids = []
