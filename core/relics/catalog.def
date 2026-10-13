@@ -20,3 +20,4 @@ SPIRE_UNIT(CentennialPuzzle, "Centennial Puzzle", "core/relics/centennial_puzzle
 SPIRE_UNIT(CeramicFish, "CeramicFish", "core/relics/ceramic_fish.hpp", CeramicFish)
 SPIRE_UNIT(Astrolabe, "Astrolabe", "core/relics/astrolabe.hpp", Astrolabe)
 SPIRE_UNIT(BottledFlame, "Bottled Flame", "core/relics/bottled_flame.hpp", BottledFlame)
+SPIRE_UNIT(BottledLightning, "Bottled Lightning", "core/relics/bottled_lightning.hpp", BottledLightning)
