@@ -1,2 +1,3 @@
 SPIRE_UNIT(SnakeRing, "Ring of the Snake", "core/relics/snake_ring.hpp", SnakeRing)
 SPIRE_UNIT(GremlinMask, "GremlinMask", "core/relics/gremlin_mask.hpp", GremlinMask)
+SPIRE_UNIT(HandDrill, "HandDrill", "core/relics/hand_drill.hpp", HandDrill)

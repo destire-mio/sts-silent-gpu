@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "HandDrill"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "2 Louse"
+}
