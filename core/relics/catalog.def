@@ -19,3 +19,4 @@ SPIRE_UNIT(SsserpentHead, "SsserpentHead", "core/relics/ssserpent_head.hpp", Sss
 SPIRE_UNIT(StoneCalendar, "StoneCalendar", "core/relics/stone_calendar.hpp", StoneCalendar)
 SPIRE_UNIT(StrangeSpoon, "Strange Spoon", "core/relics/strange_spoon.hpp", StrangeSpoon)
 SPIRE_UNIT(Strawberry, "Strawberry", "core/relics/strawberry.hpp", Strawberry)
+SPIRE_UNIT(StrikeDummy, "StrikeDummy", "core/relics/strike_dummy.hpp", StrikeDummy)
