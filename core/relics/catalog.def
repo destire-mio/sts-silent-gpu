@@ -5,3 +5,4 @@ SPIRE_UNIT(HappyFlower, "Happy Flower", "core/relics/happy_flower.hpp", HappyFlo
 SPIRE_UNIT(HornCleat, "HornCleat", "core/relics/horn_cleat.hpp", HornCleat)
 SPIRE_UNIT(HoveringKite, "HoveringKite", "core/relics/hovering_kite.hpp", HoveringKite)
 SPIRE_UNIT(IceCream, "Ice Cream", "core/relics/ice_cream.hpp", IceCream)
+SPIRE_UNIT(IncenseBurner, "Incense Burner", "core/relics/incense_burner.hpp", IncenseBurner)
