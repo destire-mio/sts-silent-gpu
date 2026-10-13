@@ -3,6 +3,7 @@
 #include <cstddef>
 
 #define SPIRE_STATE(type, ...)
+#define SPIRE_WAITING_RULE(...)
 #define SPIRE_SNAPSHOT(...)
 #define SPIRE_STATIC(...)
 #define SPIRE_STATIC_STATE(type, ...)

@@ -18,7 +18,8 @@ inventory entry. Do not edit the engine's dispatch, a shared list of IDs, or hos
 
 CMake runs `host/generate_content.py` before compilation. It writes enum IDs, base hooks,
 declarations and switch dispatch into `spire_generated/` inside the build directory. Host names
-read the same catalogs. Generated files are build products; do not edit or commit them.
+read the same catalogs. Card metadata is a shared constexpr table built from each unit's
+`data()`; `card_def` returns a const reference and adds no per-Game storage. Generated files are build products; do not edit or commit them.
 
 ## Unit code
 
@@ -93,7 +94,7 @@ Snapshot mappings for reference fields and Java names live beside the unit's sta
 
 ```cpp
 SPIRE_SNAPSHOT("ConstrictedPower.source", creature, power.state.Constricted.source)
-SPIRE_SNAPSHOT("DrawCardAction.followUpAction", action_reference, effect.state.Draw.follow_up_action - 1)
+SPIRE_SNAPSHOT("DrawCardAction.followUpAction", action_reference, effect.payload.state.Draw.follow_up_action - 1)
 ```
 
 These declarations contain field identifiers and value expressions; they emit no device code.
@@ -102,6 +103,8 @@ reference writers. Scalar state fields with matching Java names use the generate
 Run-owned Java statics use `SPIRE_STATIC_STATE(Type, fields)` beside their unit; the generator
 places them in `Game::unit_statics`. They survive unequipping the unit and remain isolated
 between Game instances.
+`SPIRE_WAITING_RULE("Java caller: missing rule")` records a rule dependency beside its unit;
+`tests/content.py` includes it in generated status without adding a caller.
 An explicit mapping overrides that visitor and inherited base fields. `SPIRE_STATIC("field", game.expression)` maps a unit static; the inventory generator reads observed static initial values from Java. Power flags and action
 categories belong in `data()`. Adding a unit does not change the serializer.
 
@@ -123,7 +126,8 @@ fields and prints every `Game` member, its element size/capacity, the element ty
 fields, and every generated unit payload. There is no handwritten member list to keep in sync.
 
 The generator also enforces the largest payload in each category: cards, powers, relics and
-potions 8 bytes each; monsters 32; encounters 16; actions 48. A field added to one union member
+potions 8 bytes each; monsters 32; encounters 16; actions 48. Current maxima are cards 1,
+powers 4, relics 4, potions 4, monsters 8 and actions 16 bytes. A field added to one union member
 is paid for by every object of that category. Read the build breakdown before adding state.
 For a larger payload, put bounded storage in a shared Game-owned arena and keep an index in the
 unit state; follow the existing action, power, text and multi-damage stores. Choose a capacity
@@ -163,8 +167,12 @@ from an object's current position in an ordered list:
   retain 39 objects; the high-health integration scenario retains 63. This is an execution
   budget, not a Java maximum. Never recycle a dead monster's identity.
 - Monster move histories share 1,024 nodes, each holding the signed byte move and a previous
-  node index. Each monster keeps a head and length; both rule lookbacks and host snapshots
+  10-bit previous-node index. The full 1,024-node arena uses 2,306 bytes. Each monster keeps a head and length; both rule lookbacks and host snapshots
   read the same history. The history budget spans the entire combat.
+- Each monster keeps three base/output damage pairs. Additional pairs use a shared 16-entry
+  arena: GiantHead constructs eight DamageInfo objects, Transient seven, Guardian and
+  WrithingMass four. Summoned daggers use three and TorchHead one; retaining these monsters
+  does not consume extra damage slots. Use `monster_base_damage` / `monster_output_damage`.
 - `game.multi_damage` stores a 32-bit common value per card and an index into the shared
   255-entry `damage_exceptions` arena. Actions use the same exception arena; completed or
   discarded actions release their entries through their `release` hook.
@@ -188,29 +196,35 @@ indices use bytes: the current Silent pools contain 19 common, 33 uncommon, 19 r
 colorless templates. Each source pool reserves 64 entries and preserves Java list order,
 including the remove-and-append behavior of `AbstractDungeon.srcTransformCard`.
 
-Relic acquisition shares a five-potion reward list (`Cauldron.onEquip` creates five), a
-three-relic reward list (`CallingBell.update` creates one of each tier), and the existing
+Relic acquisition shares a five-potion reward list (`Cauldron.onEquip` creates five),
+the 16-entry room-reward list (`CallingBell.update` adds three relic rewards), and the existing
 selection piles. The five ordered relic pools each reserve 64 byte keys; the pinned Silent
 library has fewer than 64 entries in each tier. The keys name inventory content, including
 content awaiting later batches; dispatch requires the corresponding catalog unit. Card-reward
 generation uses a 128-card temporary list, an execution budget for Java
 `AbstractDungeon.getRewardCards`, rather than adding card objects to Game.
 
-The remaining budgets are 8 monster objects, 32 card-queue entries, 64 relics, 256 moves per
-monster and 1,024 played-card references per combat. The master deck starts with 13 cards at
+The remaining budgets are 32 card-queue entries, 64 relics and 1,024 played-card references
+per combat. The master deck starts with 13 cards at
 A20 (`TheSilent.getStartingDeck` plus the ascension curse); its 128 slots leave room for rewards
-and events, and the combat copy has the same capacity plus whatever unused slots remain for
-created cards. **128 cards, 64 actions and 128 powers are execution budgets, not Java limits.**
+and events. The combat arena has 160 slots including copies, templates and created cards.
+**These capacities are execution budgets, not Java limits.**
 Java uses growing lists; card-creation loops and repeated turns have no finite bound. Histories,
 held actions, detached powers, text and damage rows can also exhaust their budgets. A valid Java
 sequence can therefore fault an environment; count this separately from losses and reset it.
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
 Card damage/block, power amounts and player energy keep Java's 32-bit range. The 133
-standard cards have at most one upgrade; their upgrade counts use bytes. Their magic numbers
+standard cards have at most one upgrade; their upgrade counts use one bit. Card UUIDs use
+16 bits: combat setup renumbers the master deck, and subsequent UUID creation consumes the
+160-card arena (including retained acquisition objects). Rules that extend that lifetime must
+preserve this bound or widen the identity. Bottled-card references use the same width.
+Base block derives from card metadata and upgrade count. RitualDagger keeps its Java
+`applyPowers` baseBlock/misc behavior in its own state; stat-equivalent copies preserve this
+state. Do not introduce mutable base block without updating this representation. Magic numbers
 come from constructor/upgrade constants (at most 60) or Regret's hand count, so magic fields
 use signed bytes. Content with different ranges must widen these fields before porting it.
-Poison's constructor cap, for example, is not its stacking limit. Only bounded indices use
+Poison's constructor cap, for example, is not its stacking limit. Catalog IDs and bounded indices use
 bytes; signed card references and costs retain 16 bits, and monster moves use Java signed bytes.
 The index-width assertions in `types.hpp` must hold when changing capacities.
 

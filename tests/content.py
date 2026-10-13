@@ -66,6 +66,7 @@ def waiting_rules(unit):
     if unit["kind"] == "relic" and "canSpawn" in hooks:
         waiting.add("canSpawn outside relic acquisition")
     source = (ROOT / unit["header"]).read_text()
+    waiting.update(re.findall(r'SPIRE_WAITING_RULE\("([^\"]+)"\)', source))
     if "escape_next" in source:
         waiting.add("escapeNext")
         if "deathReact" in hooks:

@@ -3,6 +3,7 @@
 
 namespace spire::units::relics {
 struct WingBoots : RelicHooks {
+    SPIRE_WAITING_RULE("MapRoomNode.update: spend charges to cross unconnected paths")
     static SPIRE_FN constexpr RelicData data() { return {3, 300}; }
     static SPIRE_FN void setCounter(Game& g, int relic, int counter) {
         Relic& boots = g.run.relics[relic];

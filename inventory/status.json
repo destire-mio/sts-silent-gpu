@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "source_sha256": "ff0dea1143b750241ee707351797d663f3297852523fa7d84cb0a5336cf93612",
+  "source_sha256": "b5b29a3b370717d6326445ece40b924d13ff7f98a1002a987f43a4a87608f676",
   "seeds": [
     101,
     102,
@@ -120,6 +120,7 @@
         "SpireShield-lethal",
         "SpireSpear-lethal",
         "Taskmaster",
+        "Turnip",
         "Vulnerable"
       ],
       "waiting_for_rules": [],
@@ -211,6 +212,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -315,6 +317,7 @@
         "GhostInAJar",
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
+        "Girya",
         "GoldenIdol",
         "GoodInstincts",
         "GremlinFat",
@@ -402,6 +405,7 @@
         "PaperCrane",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PhantasmalKiller",
         "PhilosopherStone",
@@ -430,6 +434,7 @@
         "Regret",
         "Reptomancer",
         "Reptomancer-encounter",
+        "RingOfTheSerpent",
         "Ritual",
         "RunicDome",
         "RunicPyramid",
@@ -442,6 +447,7 @@
         "Shame",
         "ShelledParasite-armor-break",
         "Shiv",
+        "Shovel",
         "Shuriken",
         "SingingBowl",
         "SkillPotion",
@@ -503,25 +509,52 @@
         "ThreadAndNeedle",
         "ThreeCultists",
         "ThreeCultists-monster02",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
         "ToolsOfTheTrade",
         "TorchHead",
+        "Torii",
+        "Torii-tungsten",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transmutation",
         "Transmutation-chemical-x",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "Turnip",
+        "TwistedFunnel",
         "TwoOrbWalkers",
+        "UnceasingTop",
+        "UnceasingTop-end-turn",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
         "Violence",
         "VoidCard",
         "Vulnerable",
+        "Waffle",
+        "WarPaint",
+        "WarPaint-no-skills",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-Artifact",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
+        "Whetstone",
+        "Whetstone-no-attacks",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "encounter-3Cultists",
@@ -600,6 +633,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -691,6 +725,7 @@
         "GhostInAJar",
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -742,6 +777,7 @@
         "Pantograph",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PhantasmalKiller",
         "PhilosopherStone",
@@ -768,11 +804,13 @@
         "RegenPotion-SacredBark",
         "Regret",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
         "RunicDome",
         "RunicPyramid",
         "SacredBark",
         "Setup",
         "Shame",
+        "Shovel",
         "SingingBowl",
         "Skewer",
         "Skewer-chemical-x",
@@ -808,14 +846,33 @@
         "SwiftPotion-SacredBark",
         "Tactician",
         "ThreadAndNeedle",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
         "ToolsOfTheTrade",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "starter"
@@ -848,7 +905,8 @@
       "status": "matched",
       "scenarios": [],
       "observed_in": [
-        "InkBottle-selection"
+        "InkBottle-selection",
+        "Toolbox"
       ],
       "waiting_for_rules": [],
       "matched_traces": 0,
@@ -867,6 +925,7 @@
       "scenarios": [],
       "observed_in": [
         "SneakyStrike-discard",
+        "Toolbox",
         "ToolsOfTheTrade"
       ],
       "waiting_for_rules": [],
@@ -939,6 +998,7 @@
         "Shuriken",
         "Strength",
         "ThinkingAhead",
+        "ToyOrnithopter",
         "Transmutation-chemical-x",
         "Violence"
       ],
@@ -951,7 +1011,8 @@
       "scenarios": [],
       "observed_in": [
         "Concentrate",
-        "Eviscerate"
+        "Eviscerate",
+        "ToyOrnithopter"
       ],
       "waiting_for_rules": [],
       "matched_traces": 0,
@@ -969,7 +1030,8 @@
       "status": "matched",
       "scenarios": [],
       "observed_in": [
-        "ShelledParasite"
+        "ShelledParasite",
+        "ToyOrnithopter"
       ],
       "waiting_for_rules": [],
       "matched_traces": 0,
@@ -1080,6 +1142,7 @@
         "JackOfAllTrades",
         "Magnetism",
         "ThinkingAhead",
+        "Toolbox",
         "Transmutation-chemical-x"
       ],
       "waiting_for_rules": [],
@@ -1101,7 +1164,8 @@
       "scenarios": [],
       "observed_in": [
         "Abacus",
-        "InkBottle-selection"
+        "InkBottle-selection",
+        "ToyOrnithopter"
       ],
       "waiting_for_rules": [],
       "matched_traces": 0,
@@ -1167,6 +1231,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -1271,6 +1336,7 @@
         "GhostInAJar",
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
+        "Girya",
         "GoldenIdol",
         "GoodInstincts",
         "GremlinLeader",
@@ -1353,6 +1419,7 @@
         "PaperCrane",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PhantasmalKiller",
         "PhilosopherStone",
@@ -1381,6 +1448,7 @@
         "Regret",
         "Reptomancer",
         "Reptomancer-encounter",
+        "RingOfTheSerpent",
         "Ritual",
         "RunicDome",
         "RunicPyramid",
@@ -1394,6 +1462,7 @@
         "ShelledParasite",
         "ShelledParasite-armor-break",
         "Shiv",
+        "Shovel",
         "Shuriken",
         "SingingBowl",
         "SkillPotion",
@@ -1453,25 +1522,52 @@
         "ThreadAndNeedle",
         "ThreeCultists",
         "ThreeCultists-monster02",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
         "ToolsOfTheTrade",
         "TorchHead",
+        "Torii",
+        "Torii-tungsten",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transmutation",
         "Transmutation-chemical-x",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "Turnip",
+        "TwistedFunnel",
         "TwoOrbWalkers",
+        "UnceasingTop",
+        "UnceasingTop-end-turn",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
         "Violence",
         "VoidCard",
         "Vulnerable",
+        "Waffle",
+        "WarPaint",
+        "WarPaint-no-skills",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-Artifact",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
+        "Whetstone",
+        "Whetstone-no-attacks",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "encounter-3Cultists",
         "starter"
@@ -1500,7 +1596,8 @@
         "GremlinTsundere",
         "GremlinWarrior",
         "MaskedBandits",
-        "TorchHead"
+        "TorchHead",
+        "Turnip"
       ],
       "waiting_for_rules": [],
       "matched_traces": 0,
@@ -2005,9 +2102,11 @@
       "blocked_traces": 0
     },
     "action:actions.utility.ChooseOneColorless": {
-      "status": "unobserved",
+      "status": "matched",
       "scenarios": [],
-      "observed_in": [],
+      "observed_in": [
+        "Toolbox"
+      ],
       "waiting_for_rules": [],
       "matched_traces": 0,
       "blocked_traces": 0
@@ -2151,6 +2250,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -2242,6 +2342,7 @@
         "GhostInAJar",
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -2295,6 +2396,7 @@
         "Pantograph",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PhantasmalKiller",
         "PhilosopherStone",
@@ -2322,6 +2424,7 @@
         "RegenPotion-SacredBark",
         "Regret",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
         "RunicDome",
         "RunicPyramid",
         "SacredBark",
@@ -2329,6 +2432,7 @@
         "SecretWeapon",
         "Setup",
         "Shame",
+        "Shovel",
         "SingingBowl",
         "Skewer",
         "Skewer-chemical-x",
@@ -2366,16 +2470,35 @@
         "Tactician",
         "ThinkingAhead",
         "ThreadAndNeedle",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
         "ToolsOfTheTrade",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transmutation",
         "Transmutation-chemical-x",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "starter"
@@ -2532,6 +2655,7 @@
         "ChemicalX",
         "JackOfAllTrades",
         "Magnetism",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2633,6 +2757,7 @@
         "JackOfAllTrades",
         "LetterOpener",
         "Magnetism",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2730,6 +2855,7 @@
         "JackOfAllTrades",
         "Magnetism",
         "PotionBelt",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2748,6 +2874,7 @@
         "Madness",
         "Magnetism",
         "PotionBelt",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2818,6 +2945,7 @@
         "JackOfAllTrades",
         "Magnetism",
         "MindBlast",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2835,6 +2963,7 @@
         "JackOfAllTrades",
         "Magnetism",
         "Panacea",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2947,6 +3076,7 @@
         "MeatOnTheBone",
         "Panache",
         "SwiftStrike",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2964,6 +3094,7 @@
         "Magnetism",
         "PotionBelt",
         "TheBomb",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -2983,6 +3114,7 @@
         "JackOfAllTrades",
         "Magnetism",
         "ThinkingAhead",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x"
       ],
@@ -3132,8 +3264,8 @@
         "CurseOfTheBell"
       ],
       "observed_in": [
-        "CurseOfTheBell",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "CallingBell",
+        "CurseOfTheBell"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3219,7 +3351,8 @@
       ],
       "observed_in": [
         "CentennialPuzzle",
-        "Pain"
+        "Pain",
+        "TungstenRod-hp-loss"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3247,7 +3380,9 @@
       ],
       "observed_in": [
         "CentennialPuzzle",
-        "Regret"
+        "Regret",
+        "TungstenRod-hp-loss",
+        "UnceasingTop-end-turn"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3260,7 +3395,8 @@
       ],
       "observed_in": [
         "BlueCandle",
-        "Shame"
+        "Shame",
+        "UnceasingTop-end-turn"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3326,9 +3462,30 @@
         "Abacus",
         "Acrobatics",
         "BulletTime",
+        "CallingBell",
+        "Girya",
         "HoveringKite",
+        "PeacePipe",
         "PrayerWheel",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "RingOfTheSerpent",
+        "Shovel",
+        "TinyChest",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "Toolbox",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
+        "TungstenRod",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
+        "Vajra",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3429,7 +3586,8 @@
         "SpikeSlime_M",
         "SpikeSlime_S",
         "Sundial",
-        "TheGuardian"
+        "TheGuardian",
+        "VelvetChoker"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3447,8 +3605,10 @@
         "DeadBranch",
         "Metamorphosis",
         "PandorasBox",
+        "RingOfTheSerpent-innate",
         "Shuriken",
-        "StrangeSpoon"
+        "StrangeSpoon",
+        "WristBlade"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3501,6 +3661,7 @@
         "Byrd",
         "Byrd-grounded",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CeramicFish",
         "Champ",
@@ -3664,6 +3825,7 @@
         "RegenPotion-SacredBark",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RitualDagger",
         "SacredBark",
@@ -3719,10 +3881,18 @@
         "ThreeCultists",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "Toolbox",
+        "ToxicEgg2-acquisition",
         "Transient",
         "Trip",
+        "TwistedFunnel-multiple",
+        "UnceasingTop",
         "Unload",
         "Violence",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
@@ -3730,7 +3900,6 @@
         "WrithingMass",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "encounter-3Cultists",
         "encounter-TheMushroomLair",
         "starter"
@@ -3781,7 +3950,9 @@
         "SphericGuardian-lethal",
         "SpireShield-lethal",
         "SpireSpear-lethal",
-        "StrangeSpoon"
+        "StrangeSpoon",
+        "VelvetChoker",
+        "WristBlade"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -3982,6 +4153,7 @@
         "GamblingChip",
         "GiantHead",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GrandFinale",
@@ -4029,6 +4201,7 @@
         "PandorasBox",
         "Pantograph",
         "PaperCrane",
+        "PeacePipe",
         "Pear",
         "PenNib",
         "PiercingWail",
@@ -4044,6 +4217,7 @@
         "RegalPillow",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "RitualDagger",
         "SadisticNature",
         "Sentry",
@@ -4051,6 +4225,7 @@
         "ShelledParasite-lethal",
         "ShelledParasiteAndFungi",
         "Shiv",
+        "Shovel",
         "Shuriken",
         "SingingBowl",
         "Skewer",
@@ -4096,10 +4271,24 @@
         "ThreeCultists",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "TinyChest",
+        "ToxicEgg2",
         "Transient",
         "Transmutation-chemical-x",
         "Trip",
+        "TungstenRod",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
+        "UnceasingTop",
         "Unload",
+        "Vajra",
+        "Waffle",
+        "WarPaint",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
+        "WristBlade",
         "WrithingMass",
         "encounter-3Cultists",
         "encounter-TheMushroomLair"
@@ -4208,6 +4397,7 @@
         "GamblingChip",
         "GiantHead",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GrandFinale",
@@ -4255,6 +4445,7 @@
         "PandorasBox",
         "Pantograph",
         "PaperCrane",
+        "PeacePipe",
         "Pear",
         "PenNib",
         "PiercingWail",
@@ -4270,6 +4461,7 @@
         "RegalPillow",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "RitualDagger",
         "SadisticNature",
         "Sentry",
@@ -4277,6 +4469,7 @@
         "ShelledParasite-lethal",
         "ShelledParasiteAndFungi",
         "Shiv",
+        "Shovel",
         "Shuriken",
         "SingingBowl",
         "Skewer",
@@ -4320,10 +4513,24 @@
         "ThreeCultists",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "TinyChest",
+        "ToxicEgg2",
         "Transient",
         "Transmutation-chemical-x",
         "Trip",
+        "TungstenRod",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
+        "UnceasingTop",
         "Unload",
+        "Vajra",
+        "Waffle",
+        "WarPaint",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
+        "WristBlade",
         "WrithingMass",
         "encounter-3Cultists",
         "encounter-TheMushroomLair"
@@ -4431,6 +4638,7 @@
         "GamblingChip",
         "GiantHead",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GrandFinale",
@@ -4478,6 +4686,7 @@
         "PandorasBox",
         "Pantograph",
         "PaperCrane",
+        "PeacePipe",
         "Pear",
         "PenNib",
         "PiercingWail",
@@ -4493,6 +4702,7 @@
         "RegalPillow",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "RitualDagger",
         "SadisticNature",
         "Sentry",
@@ -4500,6 +4710,7 @@
         "ShelledParasite-lethal",
         "ShelledParasiteAndFungi",
         "Shiv",
+        "Shovel",
         "Shuriken",
         "SingingBowl",
         "Skewer",
@@ -4543,10 +4754,27 @@
         "ThreeCultists",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
         "Transient",
         "Transmutation-chemical-x",
         "Trip",
+        "TungstenRod",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
+        "UnceasingTop",
         "Unload",
+        "Vajra",
+        "Waffle",
+        "WarPaint",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
+        "WristBlade",
         "WrithingMass",
         "encounter-3Cultists",
         "encounter-TheMushroomLair"
@@ -4705,6 +4933,7 @@
         "GhostInAJar-SacredBark",
         "GiantHead",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GrandFinale",
         "GremlinHorn",
@@ -4749,12 +4978,15 @@
         "OrnamentalFan",
         "Panacea",
         "Panache",
+        "PeacePipe",
         "PenNib",
         "PoisonedStab",
         "PrayerWheel",
         "Predator",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
+        "RingOfTheSerpent-innate",
         "RitualDagger",
         "RunicPyramid",
         "SadisticNature",
@@ -4762,6 +4994,7 @@
         "ShelledParasite-armor-break",
         "ShelledParasite-lethal",
         "ShelledParasiteAndFungi",
+        "Shovel",
         "Skewer",
         "Skewer-chemical-x",
         "SlaverBlue",
@@ -4787,8 +5020,27 @@
         "Thievery",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transient",
         "Trip",
+        "TungstenRod",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
+        "Vajra",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
+        "WristBlade",
         "WrithingMass",
         "encounter-TheMushroomLair"
       ],
@@ -4920,6 +5172,7 @@
         "Reptomancer",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "RitualDagger",
         "RunicPyramid",
         "SadisticNature",
@@ -4957,6 +5210,8 @@
         "TimeEater",
         "Transient",
         "Trip",
+        "TwistedFunnel-multiple",
+        "WristBlade",
         "WrithingMass",
         "encounter-3Cultists",
         "encounter-TheMushroomLair"
@@ -4973,6 +5228,7 @@
       "observed_in": [
         "ArtOfWar",
         "BottledLightning",
+        "CallingBell",
         "Catalyst",
         "Chrysalis",
         "DeadBranch",
@@ -4985,7 +5241,9 @@
         "SneckoSkull",
         "TheSpecimen",
         "TheSpecimen-SneckoSkull",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "ToxicEgg2-acquisition"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -5065,6 +5323,7 @@
         "Byrd-grounded",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -5190,6 +5449,7 @@
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -5291,6 +5551,7 @@
         "PaperCrane",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PhantasmalKiller",
         "PhilosopherStone",
@@ -5323,6 +5584,7 @@
         "Reptomancer-encounter",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
         "Ritual",
         "RitualDagger",
         "RunicDome",
@@ -5341,6 +5603,7 @@
         "ShelledParasite-lethal",
         "ShelledParasiteAndFungi",
         "Shiv",
+        "Shovel",
         "Shuriken",
         "SingingBowl",
         "Skewer",
@@ -5424,27 +5687,51 @@
         "ThreeCultists-monster02",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
         "ToolsOfTheTrade",
         "TorchHead",
+        "Torii",
+        "Torii-tungsten",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transient",
         "Transmutation",
         "Transmutation-chemical-x",
         "Trip",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "Turnip",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
         "TwoOrbWalkers",
         "Unload",
+        "Vajra",
         "Violence",
         "VoidCard",
         "Vulnerable",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-Artifact",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
+        "Whetstone",
+        "Whetstone-no-attacks",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "WrithingMass",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "encounter-3Cultists",
@@ -5472,7 +5759,10 @@
         "MercuryHourglass",
         "OrangePellets",
         "PrayerWheel",
-        "PrismaticShard-rewards"
+        "PrismaticShard-rewards",
+        "TinyHouse-no-upgrades",
+        "UnceasingTop",
+        "UnceasingTop-end-turn"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -5655,7 +5945,10 @@
         "EndlessAgony",
         "Expertise",
         "NilrysCodex",
-        "PrayerWheel"
+        "PrayerWheel",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "ToxicEgg2-acquisition"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -5972,6 +6265,7 @@
         "Predator",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "RitualDagger",
         "RunicPyramid",
         "SadisticNature",
@@ -6006,6 +6300,8 @@
         "TimeEater",
         "Transient",
         "Trip",
+        "TwistedFunnel-multiple",
+        "WristBlade",
         "WrithingMass",
         "encounter-TheMushroomLair"
       ],
@@ -6101,6 +6397,7 @@
         "Burst",
         "BustedCrown",
         "Calipers",
+        "CallingBell",
         "CaptainsWheel",
         "Catalyst",
         "Cauldron",
@@ -6193,6 +6490,7 @@
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
         "Ginger",
+        "Girya",
         "GoldenIdol",
         "GoodInstincts",
         "GremlinHorn",
@@ -6240,6 +6538,7 @@
         "PandorasBox",
         "Pantograph",
         "PaperCrane",
+        "PeacePipe",
         "Pear",
         "PhilosopherStone",
         "PhilosopherStone-split",
@@ -6257,6 +6556,7 @@
         "RegalPillow",
         "RegenPotion",
         "RegenPotion-SacredBark",
+        "RingOfTheSerpent",
         "Ritual",
         "RunicDome",
         "RunicPyramid",
@@ -6265,6 +6565,7 @@
         "SadisticNature",
         "SecretTechnique",
         "SecretWeapon",
+        "Shovel",
         "SingingBowl",
         "SkillPotion",
         "SkillPotion-SacredBark",
@@ -6297,14 +6598,35 @@
         "SwiftPotion-SacredBark",
         "ThinkingAhead",
         "ThreadAndNeedle",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
+        "Torii",
+        "Torii-tungsten",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "Turnip",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
+        "Vajra",
         "Violence",
         "Vulnerable",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-Artifact",
         "WeakenPotion-SacredBark",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
+        "WristBlade",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "starter"
@@ -6405,7 +6727,8 @@
         "NilrysCodex",
         "PiercingWail",
         "PiercingWail-artifact",
-        "PrayerWheel"
+        "PrayerWheel",
+        "TinyHouse-no-upgrades"
       ],
       "waiting_for_rules": [],
       "matched_traces": 6,
@@ -6622,6 +6945,7 @@
         "RegenPotion-SacredBark",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RitualDagger",
         "SacredBark",
@@ -6677,10 +7001,15 @@
         "ThreeCultists",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "Toolbox",
         "Transient",
         "Trip",
+        "TwistedFunnel-multiple",
+        "UnceasingTop",
         "Unload",
         "Violence",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
@@ -6761,7 +7090,13 @@
         "Prepared",
         "Reflex",
         "SkillPotion",
-        "SkillPotion-SacredBark"
+        "SkillPotion-SacredBark",
+        "Tingsha",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "ToughBandages",
+        "ToxicEgg2-acquisition",
+        "VelvetChoker"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -6796,7 +7131,9 @@
         "Discovery",
         "HoveringKite",
         "NilrysCodex",
-        "Reflex"
+        "Reflex",
+        "Tingsha",
+        "ToughBandages"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -6891,7 +7228,11 @@
         "PrismaticShard-rewards",
         "Shuriken",
         "Slice",
-        "Sundial"
+        "Sundial",
+        "UnceasingTop",
+        "UnceasingTop-end-turn",
+        "VelvetChoker",
+        "WristBlade"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -6989,6 +7330,7 @@
         "Byrd",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -7102,6 +7444,7 @@
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -7183,6 +7526,7 @@
         "PaperCrane",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PhantasmalKiller",
         "PhilosopherStone",
@@ -7213,6 +7557,8 @@
         "Reptomancer-encounter",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RunicDome",
         "RunicPyramid",
@@ -7225,6 +7571,7 @@
         "Setup",
         "Shame",
         "Shiv",
+        "Shovel",
         "SingingBowl",
         "Skewer",
         "Skewer-chemical-x",
@@ -7288,27 +7635,52 @@
         "ThreadAndNeedle",
         "ThreeCultists",
         "ThreeShapes",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "Toolbox",
         "ToolsOfTheTrade",
+        "Torii",
+        "Torii-tungsten",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transient",
         "Transmutation",
         "Transmutation-chemical-x",
         "Trip",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "Turnip",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
         "TwoOrbWalkers",
         "Unload",
+        "Vajra",
         "Violence",
         "VoidCard",
         "Vulnerable",
+        "Waffle",
+        "WarPaint",
+        "WarPaint-no-skills",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-Artifact",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "WrithingMass",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "encounter-3Cultists",
@@ -7393,6 +7765,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -7488,6 +7861,7 @@
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -7540,6 +7914,7 @@
         "Pantograph",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PhantasmalKiller",
         "PhilosopherStone",
@@ -7567,11 +7942,13 @@
         "RegenPotion-SacredBark",
         "Regret",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
         "RunicDome",
         "RunicPyramid",
         "SacredBark",
         "Setup",
         "Shame",
+        "Shovel",
         "SingingBowl",
         "Skewer",
         "Skewer-chemical-x",
@@ -7609,15 +7986,33 @@
         "SwiftPotion-SacredBark",
         "Tactician",
         "ThreadAndNeedle",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
         "ToolsOfTheTrade",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
         "Unload",
+        "Vajra",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-Artifact",
         "WeakenPotion-SacredBark",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "starter"
@@ -7900,6 +8295,7 @@
         "RegenPotion-SacredBark",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RitualDagger",
         "RunicPyramid-retain",
@@ -7956,10 +8352,15 @@
         "ThreeCultists",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "Toolbox",
         "Transient",
         "Trip",
+        "TwistedFunnel-multiple",
+        "UnceasingTop",
         "Unload",
         "Violence",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
@@ -8007,7 +8408,9 @@
         "SpireShield-lethal",
         "SpireSpear",
         "SpireSpear-lethal",
+        "TungstenRod-hp-loss",
         "TwoOrbWalkers",
+        "UnceasingTop-end-turn",
         "blocked--rule-boss-room--Pantograph-boss"
       ],
       "waiting_for_rules": [],
@@ -8166,7 +8569,9 @@
         "SpireShield-lethal",
         "SpireSpear-lethal",
         "StormOfSteel",
-        "StrangeSpoon"
+        "StrangeSpoon",
+        "VelvetChoker",
+        "WristBlade"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -8189,11 +8594,12 @@
         "FearPotion",
         "FungiBeast",
         "NoxiousFumes",
-        "SporeCloud"
+        "SporeCloud",
+        "TwistedFunnel-multiple"
       ],
       "observed_in": [],
       "waiting_for_rules": [],
-      "matched_traces": 45,
+      "matched_traces": 48,
       "blocked_traces": 0
     },
     "encounter:2 Louse": {
@@ -8481,6 +8887,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -8567,6 +8974,7 @@
         "GamblersBrew",
         "GamblingChip",
         "GhostInAJar-Cultist-SacredBark",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -8641,6 +9049,7 @@
         "Pantograph",
         "Parasite-remove",
         "Parasite",
+        "PeacePipe",
         "Pear",
         "PenNib",
         "PhantasmalKiller",
@@ -8668,6 +9077,8 @@
         "RegenPotion",
         "Regret",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
+        "RingOfTheSerpent",
         "Ritual",
         "RunicDome",
         "RunicPyramid-retain",
@@ -8676,6 +9087,7 @@
         "Setup",
         "Shame",
         "Shiv",
+        "Shovel",
         "SingingBowl",
         "Skewer-chemical-x",
         "Skewer",
@@ -8718,25 +9130,52 @@
         "Tactician",
         "Terror",
         "ThreadAndNeedle",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse-no-upgrades",
+        "TinyHouse",
+        "Toolbox",
         "ToolsOfTheTrade",
+        "Torii-tungsten",
+        "Torii",
+        "ToughBandages",
+        "ToxicEgg2-acquisition",
+        "ToxicEgg2",
+        "ToyOrnithopter",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "TungstenRod",
+        "TwistedFunnel",
+        "UnceasingTop-end-turn",
+        "UnceasingTop",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
         "VoidCard",
+        "Waffle",
+        "WarPaint-no-skills",
+        "WarPaint",
+        "WarpedTongs",
         "WeakenPotion-SacredBark",
         "WeakenPotion",
         "WellLaidPlans",
+        "Whetstone-no-attacks",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "action04-core",
         "action_01",
         "blocked--card-Zap--PrismaticShard-orbs",
-        "blocked--relic-UnceasingTop--CallingBell",
         "starter"
       ],
       "observed_in": [],
       "waiting_for_rules": [],
-      "matched_traces": 875,
-      "blocked_traces": 4
+      "matched_traces": 975,
+      "blocked_traces": 3
     },
     "encounter:Cultist and Chosen": {
       "status": "matched",
@@ -8799,11 +9238,12 @@
         "GremlinTsundere-lethal",
         "GremlinTsundere",
         "GremlinWarrior",
-        "GremlinWizard"
+        "GremlinWizard",
+        "Turnip"
       ],
       "observed_in": [],
       "waiting_for_rules": [],
-      "matched_traces": 24,
+      "matched_traces": 27,
       "blocked_traces": 0
     },
     "encounter:Gremlin Leader": {
@@ -9905,6 +10345,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -9993,6 +10434,7 @@
         "GamblersBrew",
         "GamblingChip",
         "GhostInAJar-Cultist-SacredBark",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -10067,6 +10509,7 @@
         "Pantograph",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PenNib",
         "PhantasmalKiller",
@@ -10094,6 +10537,8 @@
         "RegenPotion-SacredBark",
         "Regret",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RunicDome",
         "RunicPyramid",
@@ -10102,6 +10547,7 @@
         "Setup",
         "Shame",
         "Shiv",
+        "Shovel",
         "SingingBowl",
         "Skewer",
         "Skewer-chemical-x",
@@ -10146,18 +10592,45 @@
         "ThreadAndNeedle",
         "ThreeCultists",
         "ThreeCultists-monster02",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "Toolbox",
         "ToolsOfTheTrade",
+        "Torii",
+        "Torii-tungsten",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "TwistedFunnel",
+        "UnceasingTop",
+        "UnceasingTop-end-turn",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
         "VoidCard",
+        "Waffle",
+        "WarPaint",
+        "WarPaint-no-skills",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
+        "Whetstone",
+        "Whetstone-no-attacks",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "encounter-3Cultists",
         "starter"
       ],
@@ -10190,6 +10663,7 @@
         "ShelledParasiteAndFungi",
         "SporeCloud",
         "TheMushroomLair",
+        "TwistedFunnel-multiple",
         "encounter-TheMushroomLair"
       ],
       "waiting_for_rules": [],
@@ -10212,7 +10686,8 @@
         "GremlinTsundere",
         "GremlinTsundere-lethal",
         "GremlinWarrior",
-        "GremlinWizard"
+        "GremlinWizard",
+        "Turnip"
       ],
       "waiting_for_rules": [
         "deathReact",
@@ -10250,7 +10725,8 @@
         "GremlinTsundere",
         "GremlinTsundere-lethal",
         "GremlinWarrior",
-        "GremlinWizard"
+        "GremlinWizard",
+        "Turnip"
       ],
       "waiting_for_rules": [
         "deathReact",
@@ -10276,7 +10752,8 @@
         "GremlinTsundere",
         "GremlinTsundere-lethal",
         "GremlinWarrior",
-        "GremlinWizard"
+        "GremlinWizard",
+        "Turnip"
       ],
       "waiting_for_rules": [
         "deathReact",
@@ -10301,7 +10778,8 @@
         "GremlinTsundere",
         "GremlinTsundere-lethal",
         "GremlinWarrior",
-        "GremlinWizard"
+        "GremlinWizard",
+        "Turnip"
       ],
       "waiting_for_rules": [
         "deathReact",
@@ -10326,7 +10804,8 @@
         "GremlinTsundere",
         "GremlinTsundere-lethal",
         "GremlinWarrior",
-        "GremlinWizard"
+        "GremlinWizard",
+        "Turnip"
       ],
       "waiting_for_rules": [
         "deathReact",
@@ -10758,6 +11237,7 @@
         "ThreeShapes",
         "TimeEater",
         "TorchHead",
+        "ToyOrnithopter",
         "Transient",
         "TwoOrbWalkers",
         "WrithingMass"
@@ -10814,6 +11294,7 @@
         "Byrd",
         "Byrd-grounded",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CeramicFish",
         "Champ",
@@ -10976,6 +11457,7 @@
         "RegenPotion-SacredBark",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RitualDagger",
         "SacredBark",
@@ -11031,10 +11513,18 @@
         "ThreeCultists",
         "ThreeShapes",
         "TimeEater",
+        "Tingsha",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "Toolbox",
+        "ToxicEgg2-acquisition",
         "Transient",
         "Trip",
+        "TwistedFunnel-multiple",
+        "UnceasingTop",
         "Unload",
         "Violence",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
@@ -11042,7 +11532,6 @@
         "WrithingMass",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "encounter-3Cultists",
         "encounter-TheMushroomLair",
         "starter"
@@ -11132,7 +11621,8 @@
         "Alchemize",
         "EnergyPotion",
         "EnergyPotion-SacredBark",
-        "PotionBelt"
+        "PotionBelt",
+        "ToyOrnithopter"
       ],
       "waiting_for_rules": [],
       "matched_traces": 6,
@@ -11279,7 +11769,8 @@
       ],
       "observed_in": [
         "FruitJuice",
-        "FruitJuice-SacredBark"
+        "FruitJuice-SacredBark",
+        "WhiteBeast"
       ],
       "waiting_for_rules": [],
       "matched_traces": 6,
@@ -11459,6 +11950,7 @@
         "PrismaticShard-rewards",
         "Repulsor",
         "RiddleWithHoles",
+        "RingOfTheSerpent-innate",
         "RitualDagger",
         "RunicPyramid",
         "SadisticNature",
@@ -11490,8 +11982,11 @@
         "TheSpecimen-SneckoSkull",
         "ThreeShapes",
         "TimeEater",
+        "TinyHouse-no-upgrades",
         "Transient",
         "Trip",
+        "TwistedFunnel-multiple",
+        "WristBlade",
         "WrithingMass",
         "encounter-TheMushroomLair"
       ],
@@ -11809,7 +12304,8 @@
         "GremlinTsundere",
         "GremlinTsundere-lethal",
         "GremlinWarrior",
-        "GremlinWizard"
+        "GremlinWizard",
+        "Turnip"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -11846,6 +12342,7 @@
         "SpireSpear",
         "SpireSpear-lethal",
         "SteroidPotion-Artifact",
+        "Toolbox",
         "Transmutation",
         "Transmutation-chemical-x",
         "WeakenPotion-Artifact"
@@ -12345,7 +12842,9 @@
         "TheSpecimen",
         "TimeEater",
         "TorchHead",
-        "Trip"
+        "Trip",
+        "Turnip",
+        "UnceasingTop-end-turn"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -12414,6 +12913,7 @@
         "AwakenedOne",
         "BanditLeader",
         "BronzeAutomaton",
+        "CallingBell",
         "GhostInAJar",
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
@@ -12436,8 +12936,7 @@
         "SpikeSlime_M",
         "TheCollector",
         "TheGuardian",
-        "WraithForm",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "WraithForm"
       ],
       "waiting_for_rules": [],
       "matched_traces": 0,
@@ -12794,7 +13293,9 @@
         "TheSpecimen",
         "TheSpecimen-SneckoSkull",
         "ThreeShapes",
-        "TimeEater"
+        "TimeEater",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple"
       ],
       "waiting_for_rules": [],
       "matched_traces": 0,
@@ -12925,6 +13426,7 @@
         "BustedCrown",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -13013,6 +13515,7 @@
         "GamblersBrew",
         "GamblingChip",
         "GhostInAJar-Cultist-SacredBark",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -13087,6 +13590,7 @@
         "Pantograph",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PenNib",
         "PhantasmalKiller",
@@ -13114,6 +13618,8 @@
         "RegenPotion-SacredBark",
         "Regret",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RunicDome",
         "RunicPyramid",
@@ -13122,6 +13628,7 @@
         "Setup",
         "Shame",
         "Shiv",
+        "Shovel",
         "SingingBowl",
         "Skewer",
         "Skewer-chemical-x",
@@ -13166,18 +13673,45 @@
         "ThreadAndNeedle",
         "ThreeCultists",
         "ThreeCultists-monster02",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "Toolbox",
         "ToolsOfTheTrade",
+        "Torii",
+        "Torii-tungsten",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "TwistedFunnel",
+        "UnceasingTop",
+        "UnceasingTop-end-turn",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
         "VoidCard",
+        "Waffle",
+        "WarPaint",
+        "WarPaint-no-skills",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
+        "Whetstone",
+        "Whetstone-no-attacks",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "encounter-3Cultists",
         "starter"
       ],
@@ -13268,6 +13802,7 @@
         "ShelledParasiteAndFungi",
         "SporeCloud",
         "TheMushroomLair",
+        "TwistedFunnel-multiple",
         "encounter-TheMushroomLair"
       ],
       "waiting_for_rules": [],
@@ -13348,6 +13883,7 @@
         "Byrd-grounded",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -13472,6 +14008,7 @@
         "GhostInAJar-Cultist-SacredBark",
         "GhostInAJar-SacredBark",
         "Ginger",
+        "Girya",
         "GlassKnife",
         "GoldenIdol",
         "GoodInstincts",
@@ -13580,6 +14117,7 @@
         "PaperCrane",
         "Parasite",
         "Parasite-remove",
+        "PeacePipe",
         "Pear",
         "PenNib",
         "PhantasmalKiller",
@@ -13610,6 +14148,8 @@
         "RegenPotion-SacredBark",
         "Regret",
         "RiddleWithHoles",
+        "RingOfTheSerpent",
+        "RingOfTheSerpent-innate",
         "Ritual",
         "RunicDome",
         "RunicPyramid",
@@ -13621,6 +14161,7 @@
         "Shame",
         "ShelledParasiteAndFungi",
         "Shiv",
+        "Shovel",
         "Shuriken",
         "SingingBowl",
         "Skewer",
@@ -13683,24 +14224,53 @@
         "ThreeCultists",
         "ThreeCultists-monster02",
         "TimeEater",
+        "Tingsha",
+        "TinyChest",
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "Toolbox",
         "ToolsOfTheTrade",
         "TorchHead",
+        "Torii",
+        "Torii-tungsten",
+        "ToughBandages",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transient",
         "Transmutation",
         "Transmutation-chemical-x",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "Turnip",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
         "TwoOrbWalkers",
+        "UnceasingTop",
+        "UnceasingTop-end-turn",
         "Unload",
+        "Vajra",
+        "VelvetChoker",
         "Violence",
         "VoidCard",
+        "Waffle",
+        "WarPaint",
+        "WarPaint-no-skills",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-SacredBark",
         "WellLaidPlans",
+        "Whetstone",
+        "Whetstone-no-attacks",
+        "WhiteBeast",
+        "WingBoots",
         "Wound",
         "WraithForm",
+        "WristBlade",
         "Writhe",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "encounter-3Cultists",
         "encounter-TheMushroomLair",
@@ -13732,6 +14302,7 @@
       "observed_in": [
         "ChemicalX",
         "TheBomb",
+        "Toolbox",
         "Transmutation-chemical-x"
       ],
       "waiting_for_rules": [],
@@ -13891,6 +14462,7 @@
         "Transmutation",
         "Transmutation-chemical-x",
         "Trip",
+        "TwistedFunnel-multiple",
         "Vulnerable",
         "WrithingMass",
         "blocked--rule-boss-room--SlaversCollar-boss",
@@ -13943,6 +14515,7 @@
         "Burst",
         "BustedCrown",
         "Calipers",
+        "CallingBell",
         "CaptainsWheel",
         "Catalyst",
         "Cauldron",
@@ -14044,6 +14617,7 @@
         "GhostInAJar-SacredBark",
         "GiantHead",
         "Ginger",
+        "Girya",
         "GoldenIdol",
         "GoodInstincts",
         "GrandFinale",
@@ -14108,6 +14682,7 @@
         "PandorasBox",
         "Pantograph",
         "PaperCrane",
+        "PeacePipe",
         "Pear",
         "PhilosopherStone",
         "PhilosopherStone-split",
@@ -14128,6 +14703,7 @@
         "RegenPotion-SacredBark",
         "Reptomancer",
         "Reptomancer-encounter",
+        "RingOfTheSerpent",
         "Ritual",
         "RitualDagger",
         "RunicDome",
@@ -14138,6 +14714,7 @@
         "SecretTechnique",
         "SecretWeapon",
         "ShelledParasite-armor-break",
+        "Shovel",
         "SingingBowl",
         "SkillPotion",
         "SkillPotion-SacredBark",
@@ -14190,19 +14767,40 @@
         "ThinkingAhead",
         "ThreadAndNeedle",
         "TimeEater",
+        "TinyChest",
+        "TinyHouse",
+        "Toolbox",
         "TorchHead",
+        "Torii",
+        "Torii-tungsten",
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition",
+        "ToyOrnithopter",
         "Transmutation",
         "Transmutation-chemical-x",
         "Trip",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "Turnip",
+        "TwistedFunnel",
+        "TwistedFunnel-multiple",
+        "Vajra",
         "Violence",
         "Vulnerable",
+        "Waffle",
+        "WarPaint",
+        "WarpedTongs",
         "WeakenPotion",
         "WeakenPotion-Artifact",
         "WeakenPotion-SacredBark",
+        "Whetstone",
+        "WhiteBeast",
+        "WingBoots",
+        "WristBlade",
         "WrithingMass",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "blocked--rule-boss-room--Pantograph-boss",
         "blocked--rule-boss-room--SlaversCollar-boss",
         "starter"
@@ -14492,16 +15090,16 @@
       "blocked_traces": 0
     },
     "relic:relics.CallingBell": {
-      "status": "blocked",
+      "status": "matched",
       "scenarios": [
-        "blocked--relic-UnceasingTop--CallingBell"
+        "CallingBell"
       ],
       "observed_in": [
-        "blocked--relic-UnceasingTop--CallingBell"
+        "CallingBell"
       ],
       "waiting_for_rules": [],
-      "matched_traces": 2,
-      "blocked_traces": 1
+      "matched_traces": 3,
+      "blocked_traces": 0
     },
     "relic:relics.CaptainsWheel": {
       "status": "matched",
@@ -14868,6 +15466,21 @@
       "matched_traces": 3,
       "blocked_traces": 0
     },
+    "relic:relics.Girya": {
+      "status": "matched",
+      "scenarios": [
+        "Girya"
+      ],
+      "observed_in": [
+        "Girya"
+      ],
+      "waiting_for_rules": [
+        "addCampfireOption",
+        "canSpawn outside relic acquisition"
+      ],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
     "relic:relics.GoldenIdol": {
       "status": "matched",
       "scenarios": [
@@ -14972,8 +15585,8 @@
         "IncenseBurner"
       ],
       "observed_in": [
-        "IncenseBurner",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "CallingBell",
+        "IncenseBurner"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -14999,8 +15612,8 @@
         "JuzuBracelet"
       ],
       "observed_in": [
-        "JuzuBracelet",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "CallingBell",
+        "JuzuBracelet"
       ],
       "waiting_for_rules": [
         "canSpawn outside relic acquisition"
@@ -15092,8 +15705,8 @@
         "Matryoshka"
       ],
       "observed_in": [
-        "Matryoshka",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "CallingBell",
+        "Matryoshka"
       ],
       "waiting_for_rules": [
         "canSpawn outside relic acquisition",
@@ -15123,6 +15736,7 @@
         "MealTicket"
       ],
       "observed_in": [
+        "CallingBell",
         "MealTicket"
       ],
       "waiting_for_rules": [
@@ -15455,6 +16069,21 @@
       "matched_traces": 3,
       "blocked_traces": 0
     },
+    "relic:relics.PeacePipe": {
+      "status": "matched",
+      "scenarios": [
+        "PeacePipe"
+      ],
+      "observed_in": [
+        "PeacePipe"
+      ],
+      "waiting_for_rules": [
+        "addCampfireOption",
+        "canSpawn outside relic acquisition"
+      ],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
     "relic:relics.Pear": {
       "status": "matched",
       "scenarios": [
@@ -15527,8 +16156,8 @@
         "PrayerWheel"
       ],
       "observed_in": [
-        "PrayerWheel",
-        "blocked--relic-UnceasingTop--CallingBell"
+        "CallingBell",
+        "PrayerWheel"
       ],
       "waiting_for_rules": [
         "canSpawn outside relic acquisition"
@@ -15606,6 +16235,22 @@
       "matched_traces": 3,
       "blocked_traces": 0
     },
+    "relic:relics.RingOfTheSerpent": {
+      "status": "matched",
+      "scenarios": [
+        "RingOfTheSerpent-innate",
+        "RingOfTheSerpent"
+      ],
+      "observed_in": [
+        "RingOfTheSerpent",
+        "RingOfTheSerpent-innate"
+      ],
+      "waiting_for_rules": [
+        "canSpawn outside relic acquisition"
+      ],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
     "relic:relics.RunicDome": {
       "status": "matched",
       "scenarios": [
@@ -15673,6 +16318,21 @@
         "WeakenPotion-SacredBark"
       ],
       "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.Shovel": {
+      "status": "matched",
+      "scenarios": [
+        "Shovel"
+      ],
+      "observed_in": [
+        "Shovel"
+      ],
+      "waiting_for_rules": [
+        "addCampfireOption",
+        "canSpawn outside relic acquisition"
+      ],
       "matched_traces": 3,
       "blocked_traces": 0
     },
@@ -15818,6 +16478,7 @@
         "Byrd-grounded",
         "CalculatedGamble",
         "Calipers",
+        "CallingBell",
         "Caltrops",
         "CaptainsWheel",
         "Catalyst",
@@ -16144,7 +16805,6 @@
         "WrithingMass",
         "action04-core",
         "action_01",
-        "blocked--relic-UnceasingTop--CallingBell",
         "encounter-3Cultists",
         "encounter-TheMushroomLair",
         "starter"
@@ -16303,6 +16963,289 @@
       ],
       "observed_in": [
         "ThreadAndNeedle"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.Tingsha": {
+      "status": "matched",
+      "scenarios": [
+        "Tingsha"
+      ],
+      "observed_in": [
+        "Tingsha"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.TinyChest": {
+      "status": "matched",
+      "scenarios": [
+        "TinyChest"
+      ],
+      "observed_in": [
+        "TinyChest"
+      ],
+      "waiting_for_rules": [
+        "EventHelper.roll: every fourth event becomes a chest",
+        "canSpawn outside relic acquisition"
+      ],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.TinyHouse": {
+      "status": "matched",
+      "scenarios": [
+        "TinyHouse-no-upgrades",
+        "TinyHouse"
+      ],
+      "observed_in": [
+        "TinyHouse",
+        "TinyHouse-no-upgrades",
+        "ToxicEgg2-acquisition"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
+    "relic:relics.Toolbox": {
+      "status": "matched",
+      "scenarios": [
+        "Toolbox"
+      ],
+      "observed_in": [
+        "Toolbox"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.Torii": {
+      "status": "matched",
+      "scenarios": [
+        "Torii-tungsten",
+        "Torii"
+      ],
+      "observed_in": [
+        "Torii",
+        "Torii-tungsten",
+        "TungstenRod-torii"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
+    "relic:relics.ToughBandages": {
+      "status": "matched",
+      "scenarios": [
+        "ToughBandages"
+      ],
+      "observed_in": [
+        "ToughBandages"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.ToxicEgg2": {
+      "status": "matched",
+      "scenarios": [
+        "ToxicEgg2-acquisition",
+        "ToxicEgg2"
+      ],
+      "observed_in": [
+        "ToxicEgg2",
+        "ToxicEgg2-acquisition"
+      ],
+      "waiting_for_rules": [
+        "canSpawn outside relic acquisition"
+      ],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
+    "relic:relics.ToyOrnithopter": {
+      "status": "matched",
+      "scenarios": [
+        "ToyOrnithopter"
+      ],
+      "observed_in": [
+        "ToyOrnithopter"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.TungstenRod": {
+      "status": "matched",
+      "scenarios": [
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii",
+        "TungstenRod"
+      ],
+      "observed_in": [
+        "Torii-tungsten",
+        "TungstenRod",
+        "TungstenRod-hp-loss",
+        "TungstenRod-torii"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 9,
+      "blocked_traces": 0
+    },
+    "relic:relics.Turnip": {
+      "status": "matched",
+      "scenarios": [
+        "Turnip"
+      ],
+      "observed_in": [
+        "Turnip"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.TwistedFunnel": {
+      "status": "matched",
+      "scenarios": [
+        "TwistedFunnel-multiple",
+        "TwistedFunnel"
+      ],
+      "observed_in": [
+        "TwistedFunnel",
+        "TwistedFunnel-multiple"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
+    "relic:relics.UnceasingTop": {
+      "status": "matched",
+      "scenarios": [
+        "UnceasingTop-end-turn",
+        "UnceasingTop"
+      ],
+      "observed_in": [
+        "CallingBell",
+        "UnceasingTop",
+        "UnceasingTop-end-turn",
+        "VelvetChoker"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
+    "relic:relics.Vajra": {
+      "status": "matched",
+      "scenarios": [
+        "Vajra"
+      ],
+      "observed_in": [
+        "Vajra"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.VelvetChoker": {
+      "status": "matched",
+      "scenarios": [
+        "VelvetChoker"
+      ],
+      "observed_in": [
+        "VelvetChoker"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.Waffle": {
+      "status": "matched",
+      "scenarios": [
+        "Waffle"
+      ],
+      "observed_in": [
+        "Waffle"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.WarPaint": {
+      "status": "matched",
+      "scenarios": [
+        "WarPaint-no-skills",
+        "WarPaint"
+      ],
+      "observed_in": [
+        "WarPaint",
+        "WarPaint-no-skills"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
+    "relic:relics.WarpedTongs": {
+      "status": "matched",
+      "scenarios": [
+        "WarpedTongs"
+      ],
+      "observed_in": [
+        "WarpedTongs"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.Whetstone": {
+      "status": "matched",
+      "scenarios": [
+        "Whetstone-no-attacks",
+        "Whetstone"
+      ],
+      "observed_in": [
+        "Whetstone",
+        "Whetstone-no-attacks"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 6,
+      "blocked_traces": 0
+    },
+    "relic:relics.WhiteBeast": {
+      "status": "matched",
+      "scenarios": [
+        "WhiteBeast"
+      ],
+      "observed_in": [
+        "WhiteBeast"
+      ],
+      "waiting_for_rules": [],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.WingBoots": {
+      "status": "matched",
+      "scenarios": [
+        "WingBoots"
+      ],
+      "observed_in": [
+        "WingBoots"
+      ],
+      "waiting_for_rules": [
+        "MapRoomNode.update: spend charges to cross unconnected paths",
+        "canSpawn outside relic acquisition"
+      ],
+      "matched_traces": 3,
+      "blocked_traces": 0
+    },
+    "relic:relics.WristBlade": {
+      "status": "matched",
+      "scenarios": [
+        "WristBlade"
+      ],
+      "observed_in": [
+        "WristBlade"
       ],
       "waiting_for_rules": [],
       "matched_traces": 3,
@@ -20601,6 +21544,70 @@
           },
           "seed": 103,
           "trace_sha256": "7f7cf616438501b5461eeb5c926bfcd772d550582bc5d4a866f1730e8c9d325d"
+        }
+      ]
+    },
+    "CallingBell": {
+      "units": [
+        "relic:relics.CallingBell",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "df293bd3fd174c2d875768d8a9d9142b6828b0fbbf6402dccfa32c6c84f7eef4",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 11,
+          "scopes": {
+            "combat": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "98179e8e4e71e8df8eb6f569251d755e126e7206041e4e907e8ed0dd8ae12bd8"
+        },
+        {
+          "status": "matched",
+          "decisions": 29,
+          "scopes": {
+            "combat": {
+              "matched": 29,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 29,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "958c6b35ea12863a0d6befebc20fc227248a47e06842389d69d1701c7860c82b"
+        },
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "46a2ac4a5959af6fd9636a215f9f7e0226740174d16c66959371e6724031eb6d"
         }
       ]
     },
@@ -29179,6 +30186,70 @@
         }
       ]
     },
+    "Girya": {
+      "units": [
+        "relic:relics.Girya",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "a96cc9888f957aa3f5ad16dc56f3080e69d6a0ed0fd655f4053d5bff1085c652",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "fbdac4aceab5e7e074d35010611ef6c0cf1a320cb1e3f3632b35bb8908025cc2"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "5deea5bed8f883655a2053be1c2a0c7a387ae4674f6fd9bacb442e4c95c07bed"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "3d9123e205bb61487306eeb6553171ece11f09a98f14c23d07cdb36778840851"
+        }
+      ]
+    },
     "GlassKnife": {
       "units": [
         "card:cards.green.GlassKnife",
@@ -36798,6 +37869,70 @@
         }
       ]
     },
+    "PeacePipe": {
+      "units": [
+        "relic:relics.PeacePipe",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "ecaac68c2c83f0524a5931963404e667892ad9cc90675b69f4fe9ed680178e80",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "e79a0017265be6569766bbfdf25be9a1bd0c650d9ee90898d66d0bed9dd9da9a"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "bbea38ddc4a7d6fecc16a6ea45309710c31e6067caba98e3d91b127ba4f1cea2"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "e4fa6a3e76a91b4a4dd451b566abef3b4eb1abc806077bd178b209aea89ab753"
+        }
+      ]
+    },
     "Pear": {
       "units": [
         "relic:relics.Pear",
@@ -39039,6 +40174,134 @@
         }
       ]
     },
+    "RingOfTheSerpent-innate": {
+      "units": [
+        "relic:relics.RingOfTheSerpent",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "99938ae9d97c7ab5ffcd3763980bc69d0047faae3d3d16660e7694cc5ed540e5",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 8,
+          "scopes": {
+            "combat": {
+              "matched": 8,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 8,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "22ed2b740df138aacae206e835ece83d5e80a1862462f792846d2a5ca1a459eb"
+        },
+        {
+          "status": "matched",
+          "decisions": 9,
+          "scopes": {
+            "combat": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "ca8d1e2872ef49fd1bffabf08ecac2d52f261f7ff864b76e0519d7f8ae3f53db"
+        },
+        {
+          "status": "matched",
+          "decisions": 6,
+          "scopes": {
+            "combat": {
+              "matched": 6,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 6,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "d4af0adbe4e5e41083c1ccf21ea67a06e61fe52cc46c291d33fe5cc060aaaede"
+        }
+      ]
+    },
+    "RingOfTheSerpent": {
+      "units": [
+        "relic:relics.RingOfTheSerpent",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "8d802e5fca45cae7de211f99cef9ed46c3a72a5f39e63ce36c102ecd9ff2028e",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 30,
+          "scopes": {
+            "combat": {
+              "matched": 30,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 30,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "8c73fb8e544564180476738fb1b8c82934f0b50d21c5b652c93d43efd1155137"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "4b25f054dbc61454f6c22e7186a4cad0810c655e93dfe2a55de927cf1d551fcc"
+        },
+        {
+          "status": "matched",
+          "decisions": 28,
+          "scopes": {
+            "combat": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "2e810bcc50a873684c095a08bddb5e979514fb1f15c5cfcf07ddc759f307e77a"
+        }
+      ]
+    },
     "Ritual": {
       "units": [
         "encounter:Cultist",
@@ -40188,6 +41451,70 @@
           },
           "seed": 103,
           "trace_sha256": "d15a8fd5a24b9b6b523a22ed951dd48d11f2d57e19e78a0ad39cae0f1ca04f33"
+        }
+      ]
+    },
+    "Shovel": {
+      "units": [
+        "relic:relics.Shovel",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "a06ff1130644e33e043916d8a137d6ec0a9db7cd088acdc5a52e65fa562e46d3",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "534e6a6d511ac224c25f0cd09db62009baee7e928a6e567a3631fa89aebf5383"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "67658a9406d41b072be33a8027a7818cea574f8dfa8dd0604448de76779b8c64"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "16013c2179554ace68bfc9611105ce5d1e30abdab43c53994b53225a8b55881b"
         }
       ]
     },
@@ -45691,6 +47018,326 @@
         }
       ]
     },
+    "Tingsha": {
+      "units": [
+        "relic:relics.Tingsha",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "138562cc1c85a5a674e3a879f2d6dbd392b4a07433657779172c221744ef9e5a",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 11,
+          "scopes": {
+            "combat": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "5faeef46a483784c047b0cc8b5d620991eec87048cf0a6613811ea2be1fc943d"
+        },
+        {
+          "status": "matched",
+          "decisions": 28,
+          "scopes": {
+            "combat": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "1c49e91404e0d3b08a94a2a16d5e450fdfad206e934bb474fe9978d138098ed8"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "155611fbeac18ba730ecc87dbe810854525260de4c9f6ac0ef5906dbc80ed47a"
+        }
+      ]
+    },
+    "TinyChest": {
+      "units": [
+        "relic:relics.TinyChest",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "2f267f7ce5d6ca0d6e24188ac6e7e8b926108769143a49b9261796d276ab0437",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "351aa78ec03548a0e1d0d19207e1a3028daf062bf1693007d5314ec23fee5a16"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "e1a1d2b8c4065bcd970f12a8ef91db0c48cf16e82ebf1327597b27930f496e0f"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "9add3535c3ff626126cdb69e6360ff5c97aa5abae80082bfa2eb907f46c92308"
+        }
+      ]
+    },
+    "TinyHouse-no-upgrades": {
+      "units": [
+        "relic:relics.TinyHouse",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "9a1aa73b991ebe375b5ffda51f6488ea7f53b001956cfec560a94a085dc00914",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 8,
+          "scopes": {
+            "combat": {
+              "matched": 8,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 8,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "ef2ad5f7163f109ac57d4420c1766ff05dc09ea05b3a57a4472924553e13ea24"
+        },
+        {
+          "status": "matched",
+          "decisions": 9,
+          "scopes": {
+            "combat": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "dcdd051940c250b60e09a53c48161ad142c4cf5a72e888ae2658e71a23438605"
+        },
+        {
+          "status": "matched",
+          "decisions": 11,
+          "scopes": {
+            "combat": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "404154ab4c58fd022d91054cdb95ef72a074393635be44510fab0300f7c2edd5"
+        }
+      ]
+    },
+    "TinyHouse": {
+      "units": [
+        "relic:relics.TinyHouse",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "a8ab851ca3f2a10f9d60e8bc9570e3fda28a094fdfcefdc20b609fe387b500f5",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "535fdc908fa9066a388f604b0b8ea9a9f61690173977d01abf82cc1f6b7bfd55"
+        },
+        {
+          "status": "matched",
+          "decisions": 24,
+          "scopes": {
+            "combat": {
+              "matched": 24,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 24,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "f0630e6b3d9196b8ad1c90deaba2300726e9a1f8a4bdb2674b87799ba02352b1"
+        },
+        {
+          "status": "matched",
+          "decisions": 28,
+          "scopes": {
+            "combat": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "ef7296cfe72541f5bc2efb2a62c15b4761fcd6354f2a9511b1f06c5c041542e5"
+        }
+      ]
+    },
+    "Toolbox": {
+      "units": [
+        "relic:relics.Toolbox",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "610ef84f745b826d83d48f474b835a36064c04435f1f39003fa85c1f4b7e8b72",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 29,
+          "scopes": {
+            "combat": {
+              "matched": 29,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 29,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "bf59c0a1bb9feabb4f1952d1594f67bab60f4aa9b835ac83e9ddd36281290046"
+        },
+        {
+          "status": "matched",
+          "decisions": 27,
+          "scopes": {
+            "combat": {
+              "matched": 27,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 27,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "9526eacfcbece2c20f6b87616cb4edee296766cf1de330838152108316df7576"
+        },
+        {
+          "status": "matched",
+          "decisions": 33,
+          "scopes": {
+            "combat": {
+              "matched": 33,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 33,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "b035b707fda07a4c5e7b05aafb34dfe19f7130d1f4ac7c5803a7bd70c5260214"
+        }
+      ]
+    },
     "ToolsOfTheTrade": {
       "units": [
         "card:cards.green.ToolsOfTheTrade",
@@ -45817,6 +47464,390 @@
           },
           "seed": 103,
           "trace_sha256": "33e186cb18fcfa25dd6a7193275b8a8cf45affaa4fef56d30999301c396718cf"
+        }
+      ]
+    },
+    "Torii-tungsten": {
+      "units": [
+        "relic:relics.Torii",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "047feabceb150e384064e44a697d6dbacdff979723ff9db1f48f29bbbcb32221",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 14,
+          "scopes": {
+            "combat": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "1de8702a270cd45ffbeddc613c5514c3a8d559297089e76a16816897ced8cfff"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "010c1e2bf5f37a68a0eb4514c1f03c3d27627fb8cdc01df0862a16b74cff081a"
+        },
+        {
+          "status": "matched",
+          "decisions": 21,
+          "scopes": {
+            "combat": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "b6c2f364f61d2981164e0f6ecabbc2e1e3eecc5a33c6be579d3b014e65151640"
+        }
+      ]
+    },
+    "Torii": {
+      "units": [
+        "relic:relics.Torii",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "3fa7de5303d0cf8a8ee49d653312de496ded3da66d1151d52c540bf3a4b09609",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 14,
+          "scopes": {
+            "combat": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "9dd3df62b04ba10d84350ed336de2fbe70d51880096807c825f10920cd43d51b"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "90abae4d774adcc054784604ed148b9a8fac70ac1b2f5a0b916dba08399a40a6"
+        },
+        {
+          "status": "matched",
+          "decisions": 21,
+          "scopes": {
+            "combat": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "b4a5067b044833cc17489b72c139aa4d614555034cbf801524a1aa030abf865b"
+        }
+      ]
+    },
+    "ToughBandages": {
+      "units": [
+        "relic:relics.ToughBandages",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "ca9d5d5402793a69acf145b746576f535906f6fe4f116baa7764a518edb3a0f4",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 11,
+          "scopes": {
+            "combat": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "0e778918485ea8dc242b648159991c9199218883c395b9e9d7c66e02e7ff6dbc"
+        },
+        {
+          "status": "matched",
+          "decisions": 43,
+          "scopes": {
+            "combat": {
+              "matched": 43,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 43,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "ea185644ff8a8ff6c94d64e213f76475df5087fd022adba26c6e75fd1f0c8a2a"
+        },
+        {
+          "status": "matched",
+          "decisions": 47,
+          "scopes": {
+            "combat": {
+              "matched": 47,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 47,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "ab4227ded791bdcffb2e529cb73120f0e0432b2bde37cbfc9d9d33bc3e2b2db1"
+        }
+      ]
+    },
+    "ToxicEgg2-acquisition": {
+      "units": [
+        "relic:relics.ToxicEgg2",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "b1dbe9a0104c958e0098d4422916dce548468f602df2af4d6f2334c5243c2bdf",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "00668c34714a8dee8718a01818d92cec5406d5cebcd1205d6592a81fac50797e"
+        },
+        {
+          "status": "matched",
+          "decisions": 24,
+          "scopes": {
+            "combat": {
+              "matched": 24,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 24,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "d54f6ed68ff31a2c8473e2150160fc8d98364ae688edf48135bdc9408b99ba97"
+        },
+        {
+          "status": "matched",
+          "decisions": 28,
+          "scopes": {
+            "combat": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "3186a010bdca81b49730102c78eefe77f33499b63581cd1b893c4c88578d9032"
+        }
+      ]
+    },
+    "ToxicEgg2": {
+      "units": [
+        "relic:relics.ToxicEgg2",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "967c9a8ae5fec4bbfcbdf498beff8bd24d64b4bc03d9d3b857b8759e325f622e",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "80e45969c1758d4091aa6a7cc9e0388a37e8d242ea1e828df08dc1894ca4e3c2"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "268b569ccae308767bd91e0668cf13bf0f01e40b83e66d70b94d43b9b0019278"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "a740af71e21c6bb91cef3a53a961d5cb925e7a558c730ddb6c9a996a76a34401"
+        }
+      ]
+    },
+    "ToyOrnithopter": {
+      "units": [
+        "relic:relics.ToyOrnithopter",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "bdbf95f556d1e215e370d3a3fd9e35430641fd623b7950f93a244c46360d9d78",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 30,
+          "scopes": {
+            "combat": {
+              "matched": 30,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 30,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "e73b5fd3311f368182ae75fb24f7263d21ab772dcae1bcc19aa4554b05399e7f"
+        },
+        {
+          "status": "matched",
+          "decisions": 30,
+          "scopes": {
+            "combat": {
+              "matched": 30,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 30,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "facc9b4163641adf11928c19355985465d478895685661f0129ff809dfee19be"
+        },
+        {
+          "status": "matched",
+          "decisions": 25,
+          "scopes": {
+            "combat": {
+              "matched": 25,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 25,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "fa74396cfbcd415cd97a5acb83b140d232b9402bc04812d75157a001809bc8cc"
         }
       ]
     },
@@ -46076,6 +48107,390 @@
         }
       ]
     },
+    "TungstenRod-hp-loss": {
+      "units": [
+        "relic:relics.TungstenRod",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "802b839f40a42a7c87cb2b2223e07938c46fc48345f03e7c07d2f89c2f1b9f76",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 11,
+          "scopes": {
+            "combat": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "373aab3abf4ed59c50e867a0c6ebbc05fe9ac02663f62439d20e1ae14c897cb9"
+        },
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "45ab2a1ef3014e4d2abc3da51a7b58ebe778d58e15ea0543fb9a77fd810c9e79"
+        },
+        {
+          "status": "matched",
+          "decisions": 18,
+          "scopes": {
+            "combat": {
+              "matched": 18,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 18,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "9839a31cf6a4582afe89c651609f4c70e9e6d30666c802bae14b81fd3d57dcc4"
+        }
+      ]
+    },
+    "TungstenRod-torii": {
+      "units": [
+        "relic:relics.TungstenRod",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "ca0212e39eb83e19684a113b69e57e2c6283c88fa152abc2db3f324abff6bacc",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 14,
+          "scopes": {
+            "combat": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "49c0fa5a847bd1232bda753750c88126ba0eac718083c5a358b1a8c9e6bd76c9"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "46ca639c28b9f5afe460d4a7092beceb6c68abaee0f6021d4a745fd717284152"
+        },
+        {
+          "status": "matched",
+          "decisions": 21,
+          "scopes": {
+            "combat": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "9c8af9cb6c51471dde6bb36d3ba509e038986fe7dfbe6a3f6f73d62963e4a425"
+        }
+      ]
+    },
+    "TungstenRod": {
+      "units": [
+        "relic:relics.TungstenRod",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "bb2b37e7ef08a53660647df843444d7aaf41ce9ed91e03883d41a4cafbb23d75",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "e9194fa0f413f841ab5ab5630c73941e3c6e1be4339dec4b8aba85ed16122395"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "ff9da7bf8829c1b774cd575e34a685e31bc9373ff98dfb12eb79328ac1713128"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "3631c4862a3f1aead9ee7a8faea8e7ce4766749b52f48c6a52a20d3e3d5761d8"
+        }
+      ]
+    },
+    "Turnip": {
+      "units": [
+        "relic:relics.Turnip",
+        "encounter:Gremlin Gang"
+      ],
+      "scenario_sha256": "9ad48adcc3462ff2798ae031daf5f79cb6b16adf1be8f5db13d1578fb2fbfaa3",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 12,
+          "scopes": {
+            "combat": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "c2b3e49546775be18222f29b9ec0d5ebef92efdcf484752b7e19706aeda558ac"
+        },
+        {
+          "status": "matched",
+          "decisions": 11,
+          "scopes": {
+            "combat": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "db3ceb452bce2908fb85119151dca94a2d61654025686b6ce26efd2602c62235"
+        },
+        {
+          "status": "matched",
+          "decisions": 13,
+          "scopes": {
+            "combat": {
+              "matched": 13,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 13,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "f1a9e6bbbe3e4bacc2f14d99205288f30ff673d1d682b14611eb1b9f25e7dc92"
+        }
+      ]
+    },
+    "TwistedFunnel-multiple": {
+      "units": [
+        "relic:relics.TwistedFunnel",
+        "encounter:2 Fungi Beasts"
+      ],
+      "scenario_sha256": "2092a3eb4125d03c4709f038ce16790d1484ba3bac217d5dfb8fdc9c65e7ea36",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 19,
+          "scopes": {
+            "combat": {
+              "matched": 19,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 19,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "9e45f9d6795581526a1c10f0e4ccff3a4ecb7f3dd962361bc5de8d3625a69ee3"
+        },
+        {
+          "status": "matched",
+          "decisions": 16,
+          "scopes": {
+            "combat": {
+              "matched": 16,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 16,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "441c064982ff8e710446cb05fac3a138ffe8ba443605879ed698f16ae298cf41"
+        },
+        {
+          "status": "matched",
+          "decisions": 21,
+          "scopes": {
+            "combat": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 21,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "5294930a01325dabd6d742aea39ebde8d498eea44b877ae70371388bd74b83d2"
+        }
+      ]
+    },
+    "TwistedFunnel": {
+      "units": [
+        "relic:relics.TwistedFunnel",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "16ab222582b08ce8a4b238cedee1f1a683478ea1282096b0bc83277c85dbd39b",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "86599461dadf78318570478908ccef1b3a535e101ae5ba2ccf07c5ef8739c61a"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "dfe37ca9b5b76d0162a534f7b68373f4ec133b1deb9ec89279857c2efabf94fa"
+        },
+        {
+          "status": "matched",
+          "decisions": 28,
+          "scopes": {
+            "combat": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "e43d2a6f67c98dfa75d2fd667715d79ff08c1bb54521b9e5b0e216ca371660d6"
+        }
+      ]
+    },
     "TwoOrbWalkers": {
       "units": [
         "encounter:2 Orb Walkers"
@@ -46136,6 +48551,134 @@
           },
           "seed": 103,
           "trace_sha256": "630d9a650929ae8afe2cac8420de2817c3bebde69702cb28bbbc393cce043dbc"
+        }
+      ]
+    },
+    "UnceasingTop-end-turn": {
+      "units": [
+        "relic:relics.UnceasingTop",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "cf8495390572eb20f12523477f1fb1eb5f6022c56bef114ded04e146d3b6381d",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 9,
+          "scopes": {
+            "combat": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "82cfe52b6d754af8760cec1d29803073e30d3dc274ba5f7d997eb7d7574c759f"
+        },
+        {
+          "status": "matched",
+          "decisions": 14,
+          "scopes": {
+            "combat": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "ec5b6a59dd4f7b5bc9e54012eaaeff4ca79b0d9991aba4a82ad3128cd722e3dd"
+        },
+        {
+          "status": "matched",
+          "decisions": 16,
+          "scopes": {
+            "combat": {
+              "matched": 16,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 16,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "39c07cc0520dfaa66ad79ea231d290111cae9c07fd998c54ddbf2ee75868e306"
+        }
+      ]
+    },
+    "UnceasingTop": {
+      "units": [
+        "relic:relics.UnceasingTop",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "bfa3d983f30d68657ef5bed4bbf5889ef8cca3374ccd652ea5bc2fa00e675b12",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 9,
+          "scopes": {
+            "combat": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 9,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "961480ab7f4d69b7cab051ad9dc109c3b5d91c3ebf2ef5d171488461d2d60479"
+        },
+        {
+          "status": "matched",
+          "decisions": 17,
+          "scopes": {
+            "combat": {
+              "matched": 17,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 17,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "7c4254a9fa32a5c9562af7a6a6a32af54200941555064e8da05791b31a3ecc11"
+        },
+        {
+          "status": "matched",
+          "decisions": 15,
+          "scopes": {
+            "combat": {
+              "matched": 15,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 15,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "5a204f64410844e92d9f84a61eb03c8d7c5f211dcfd595e2aee263da357dcac9"
         }
       ]
     },
@@ -46200,6 +48743,134 @@
           },
           "seed": 103,
           "trace_sha256": "66063d1211f1a9429a5f46c84365d685002c7956afea2e888f4fae869db80962"
+        }
+      ]
+    },
+    "Vajra": {
+      "units": [
+        "relic:relics.Vajra",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "207b8c8cd5dd6fe2912d780e69614685bcb74d6b4c4e7567ce0b75076bedc5fa",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "d56ec3af4b03bc1f61028b74e909424c24d2ef2a758854d266f633ad4ec9b4e6"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "4972400b68884eed9b9b49db5f45182a3a44448700bf93268ccfe70963b7c1cf"
+        },
+        {
+          "status": "matched",
+          "decisions": 28,
+          "scopes": {
+            "combat": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "492228c71798e0285175a5ed85794f090f3381fa0392ca0782440eb95aec14f5"
+        }
+      ]
+    },
+    "VelvetChoker": {
+      "units": [
+        "relic:relics.VelvetChoker",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "506f61bddb01593ccf70a464532568ab60e653ba3b5b8dd6dcb7426317043aa6",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 12,
+          "scopes": {
+            "combat": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "8df080debd2e393b4a93a94e35248815fc11092227004eae13ab367d3da94fa7"
+        },
+        {
+          "status": "matched",
+          "decisions": 39,
+          "scopes": {
+            "combat": {
+              "matched": 39,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 39,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "0e80436162e0481140ae77dfac6f940782083a95089cca0ae26473be7b37725a"
+        },
+        {
+          "status": "matched",
+          "decisions": 17,
+          "scopes": {
+            "combat": {
+              "matched": 17,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 17,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "c0ae56197161816c8a279042ebdd71d956764a391a63b2c327bb2335a6c7b7d4"
         }
       ]
     },
@@ -46392,6 +49063,262 @@
           },
           "seed": 103,
           "trace_sha256": "3a0094ad9c23f23007d415a06bb4c06ceb60e3e4a677f10de106d70343ce6c5c"
+        }
+      ]
+    },
+    "Waffle": {
+      "units": [
+        "relic:relics.Waffle",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "07d43b5bb6db551a2beb5dea9b826d654773beaf6177e7c11f1b999c0626db42",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "472239be8d21b8f0eeea5a8516fad91877b512702d5bea69e4cef3d3ecee66a4"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "81017f210132d6814ef72093b5431d22023bc21d780e5f27a54e20c56669f084"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "a6f920a4db2a8ea8b36511c79bb7ea6b39efce46c9e9ba1cef220b4afc591ad0"
+        }
+      ]
+    },
+    "WarPaint-no-skills": {
+      "units": [
+        "relic:relics.WarPaint",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "55ba93837475363f5fd5a97fbcb1d011ad94046c5048cee2657622d05f0ece3a",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 11,
+          "scopes": {
+            "combat": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 11,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "c1d462ed5c6ae9f13c21f3e27aabe3bdfee843db886d48512249211fe2413ed0"
+        },
+        {
+          "status": "matched",
+          "decisions": 10,
+          "scopes": {
+            "combat": {
+              "matched": 10,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 10,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "caf52d82e437b1bd1ef033de26b6c4a2f364ea7dde74b67a332d7b61d8d522e5"
+        },
+        {
+          "status": "matched",
+          "decisions": 12,
+          "scopes": {
+            "combat": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "981871567a1930568d07859a1185adea0f3216bc4f5e792c5b0bf57b1245943e"
+        }
+      ]
+    },
+    "WarPaint": {
+      "units": [
+        "relic:relics.WarPaint",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "d077c90d8c48ef4bf24983ed02b58f5210999d745db9a3a33388040b793c7203",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "e1910473fd5557992471f53af0795dbef79147b020ca2f7441c017cdf634aa4a"
+        },
+        {
+          "status": "matched",
+          "decisions": 26,
+          "scopes": {
+            "combat": {
+              "matched": 26,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 26,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "e8afea7dc48b9638a37d627e7ee7a046ae3c4f65da77d7e5c643958f5fc9c721"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "1c4fc2571eb74ef65de403fc527170425c2ea555864c3ccac4ffde69c1e5c5d7"
+        }
+      ]
+    },
+    "WarpedTongs": {
+      "units": [
+        "relic:relics.WarpedTongs",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "b95c7af695fcdbe15c4429e965726b5d9b912ad13c0d6de622a7231cabd6cc82",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 18,
+          "scopes": {
+            "combat": {
+              "matched": 18,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 18,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "ba7d53800de12d4ccc4b06dd6e2fe11e45617e78f73cccb78646567f4b75b625"
+        },
+        {
+          "status": "matched",
+          "decisions": 25,
+          "scopes": {
+            "combat": {
+              "matched": 25,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 25,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "49f10bfdaeb78d6083f8315c43285710cf1375be4b4318171977b8a60e5d353a"
+        },
+        {
+          "status": "matched",
+          "decisions": 26,
+          "scopes": {
+            "combat": {
+              "matched": 26,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 26,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "88317f42a6530d1beeec0b6b31e534e61fd1270fa3016f4b2e78d15ea963179f"
         }
       ]
     },
@@ -46651,6 +49578,262 @@
         }
       ]
     },
+    "Whetstone-no-attacks": {
+      "units": [
+        "relic:relics.Whetstone",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "52d4db6f2784f5f1f4309545de3f27c79a47b3977cf8a05a0463f7710c8f65f4",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 14,
+          "scopes": {
+            "combat": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "3c65e96f4eaa5a2ce2946f30f0ce058e5add544a4b3d8dd0d0068f1739ea6770"
+        },
+        {
+          "status": "matched",
+          "decisions": 13,
+          "scopes": {
+            "combat": {
+              "matched": 13,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 13,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "f958ee26f6d8f930d240cdd745345cf3773e882ef6f975051ee0d01f8bbc28a7"
+        },
+        {
+          "status": "matched",
+          "decisions": 18,
+          "scopes": {
+            "combat": {
+              "matched": 18,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 18,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "5287bfd5eeeb94df8cad1c80503e41bfce56c2ec3e89f0c6392a2c5f70fb1e5b"
+        }
+      ]
+    },
+    "Whetstone": {
+      "units": [
+        "relic:relics.Whetstone",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "5e4a0c7815f60dcba0e36e433284a6156f8e76f93f2c0970af8abd14075fd7f9",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "b05b2188f4b957099351111052764bdec34b241f88a41eaab0c977e040756c57"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "a415d69f1bd825d081a2936becc4514c596539e5058eb7fecc344879fb7760bf"
+        },
+        {
+          "status": "matched",
+          "decisions": 28,
+          "scopes": {
+            "combat": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 28,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "d9c10a9a7b4a505ac3b17860f6cb3080370d3c6aad42db332689a35749993485"
+        }
+      ]
+    },
+    "WhiteBeast": {
+      "units": [
+        "relic:relics.WhiteBeast",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "000a4b45825d002a9db09a0ad64c41bbdf73e334f58eb122c2274c305c2c1d38",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "e874c0a4e852150af3bb3033cd2d7d53a83084a8b1fa3d39e9b80594023442a9"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "3032dbc76a26f91f99c6bab3543ce016ff57bd3890d30d7a811a0c6949e095b4"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "e715615a012dc195a79727d3b67862f0905bba5c5e29934f93ea34a27c44c925"
+        }
+      ]
+    },
+    "WingBoots": {
+      "units": [
+        "relic:relics.WingBoots",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "c11e2ad2b5289889db16b78acc743f3643dff89f3b435788add5b3088ba548e1",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 20,
+          "scopes": {
+            "combat": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 20,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "db794a07087bac7f694fbdaf6b603db52f61f6e8fba85c22aaa85f42dc005108"
+        },
+        {
+          "status": "matched",
+          "decisions": 23,
+          "scopes": {
+            "combat": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 23,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "eb529fde610d562a54573a45fa1be518fcbaf6ff281c06f9dd035dca6a867a1d"
+        },
+        {
+          "status": "matched",
+          "decisions": 35,
+          "scopes": {
+            "combat": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 35,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "32cb463d4f539316e9a7bce75a96838af400489807672572ed0f6006ab7096fa"
+        }
+      ]
+    },
     "Wound": {
       "units": [
         "card:cards.status.Wound",
@@ -46777,6 +49960,70 @@
           },
           "seed": 103,
           "trace_sha256": "b58b065990a7f1cb2937e33b362b91e736c7c4945bee07384e048d56673f7c3e"
+        }
+      ]
+    },
+    "WristBlade": {
+      "units": [
+        "relic:relics.WristBlade",
+        "encounter:Cultist"
+      ],
+      "scenario_sha256": "9361ccd42f4453445a7d519687a0ea262aabb96c039666d220492c65e3fcb2c7",
+      "waiting_for": [],
+      "results": [
+        {
+          "status": "matched",
+          "decisions": 12,
+          "scopes": {
+            "combat": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 12,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 101,
+          "trace_sha256": "76facea55433162c93e58cd5a65c0b64a8d58c9a8a3a60427faf4d7a99c94e24"
+        },
+        {
+          "status": "matched",
+          "decisions": 14,
+          "scopes": {
+            "combat": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 14,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 102,
+          "trace_sha256": "0aa5157f6e55ee3bcdbe73313cf979537278fa2ea03a859fdfcc77d752147956"
+        },
+        {
+          "status": "matched",
+          "decisions": 10,
+          "scopes": {
+            "combat": {
+              "matched": 10,
+              "terminal": true,
+              "first_difference": null
+            },
+            "run": {
+              "matched": 10,
+              "terminal": true,
+              "first_difference": null
+            }
+          },
+          "seed": 103,
+          "trace_sha256": "6fef0986b1885c9565e4dd587af724e919b0021fafc0445014e5e04f05eada5b"
         }
       ]
     },
@@ -47082,64 +50329,6 @@
           ],
           "seed": 103,
           "trace_sha256": "e6e366422f641c7551a93bc211c865cad30830a0724c7c8009b112135c19a72b"
-        }
-      ]
-    },
-    "blocked--relic-UnceasingTop--CallingBell": {
-      "units": [
-        "relic:relics.CallingBell",
-        "encounter:Cultist"
-      ],
-      "scenario_sha256": "df293bd3fd174c2d875768d8a9d9142b6828b0fbbf6402dccfa32c6c84f7eef4",
-      "waiting_for": [],
-      "results": [
-        {
-          "status": "blocked",
-          "decisions": 11,
-          "waiting_for": [
-            {
-              "kind": "relic",
-              "id": "Unceasing Top"
-            }
-          ],
-          "seed": 101,
-          "trace_sha256": "98179e8e4e71e8df8eb6f569251d755e126e7206041e4e907e8ed0dd8ae12bd8"
-        },
-        {
-          "status": "matched",
-          "decisions": 29,
-          "scopes": {
-            "combat": {
-              "matched": 29,
-              "terminal": true,
-              "first_difference": null
-            },
-            "run": {
-              "matched": 29,
-              "terminal": true,
-              "first_difference": null
-            }
-          },
-          "seed": 102,
-          "trace_sha256": "958c6b35ea12863a0d6befebc20fc227248a47e06842389d69d1701c7860c82b"
-        },
-        {
-          "status": "matched",
-          "decisions": 20,
-          "scopes": {
-            "combat": {
-              "matched": 20,
-              "terminal": true,
-              "first_difference": null
-            },
-            "run": {
-              "matched": 20,
-              "terminal": true,
-              "first_difference": null
-            }
-          },
-          "seed": 103,
-          "trace_sha256": "46a2ac4a5959af6fd9636a215f9f7e0226740174d16c66959371e6724031eb6d"
         }
       ]
     },
@@ -47471,33 +50660,7 @@
       ]
     }
   },
-  "not_implemented": [
-    "relic:relics.Girya",
-    "relic:relics.PeacePipe",
-    "relic:relics.RingOfTheSerpent",
-    "relic:relics.Shovel",
-    "relic:relics.Tingsha",
-    "relic:relics.TinyChest",
-    "relic:relics.TinyHouse",
-    "relic:relics.Toolbox",
-    "relic:relics.Torii",
-    "relic:relics.ToughBandages",
-    "relic:relics.ToxicEgg2",
-    "relic:relics.ToyOrnithopter",
-    "relic:relics.TungstenRod",
-    "relic:relics.Turnip",
-    "relic:relics.TwistedFunnel",
-    "relic:relics.UnceasingTop",
-    "relic:relics.Vajra",
-    "relic:relics.VelvetChoker",
-    "relic:relics.Waffle",
-    "relic:relics.WarPaint",
-    "relic:relics.WarpedTongs",
-    "relic:relics.Whetstone",
-    "relic:relics.WhiteBeast",
-    "relic:relics.WingBoots",
-    "relic:relics.WristBlade"
-  ],
+  "not_implemented": [],
   "totals": {
     "units": {
       "card": {
@@ -47519,13 +50682,13 @@
         "not_implemented": 0
       },
       "relic": {
-        "matched": 124,
-        "blocked": 1,
+        "matched": 150,
+        "blocked": 0,
         "different": 0,
         "unobserved": 0,
-        "waiting_for_rules": 39,
-        "total": 125,
-        "not_implemented": 25
+        "waiting_for_rules": 46,
+        "total": 150,
+        "not_implemented": 0
       },
       "monster": {
         "matched": 65,
@@ -47555,32 +50718,32 @@
         "not_implemented": 0
       },
       "action": {
-        "matched": 53,
+        "matched": 54,
         "blocked": 0,
         "different": 0,
-        "unobserved": 65,
+        "unobserved": 64,
         "waiting_for_rules": 0,
         "total": 118,
         "not_implemented": 0
       }
     },
     "traces": {
-      "matched": 1457,
-      "blocked": 4,
+      "matched": 1563,
+      "blocked": 3,
       "different": 0,
       "error": 0,
       "fault": 0
     },
     "scopes": {
       "combat": {
-        "matched": 42677,
-        "decisions": 42677
+        "matched": 44955,
+        "decisions": 44955
       },
       "run": {
-        "matched": 42677,
-        "decisions": 42677
+        "matched": 44955,
+        "decisions": 44955
       }
     },
-    "recorded_decisions": 42719
+    "recorded_decisions": 44986
   }
 }
