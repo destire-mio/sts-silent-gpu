@@ -6,3 +6,4 @@ SPIRE_UNIT(AscendersBane, "AscendersBane", "core/cards/ascenders_bane.hpp", Asce
 SPIRE_UNIT(Slimed, "Slimed", "core/cards/slimed.hpp", Slimed)
 SPIRE_UNIT(Dazed, "Dazed", "core/cards/dazed.hpp", Dazed)
 SPIRE_UNIT(Necronomicurse, "Necronomicurse", "core/cards/necronomicurse.hpp", Necronomicurse)
+SPIRE_UNIT(Normality, "Normality", "core/cards/normality.hpp", Normality)
