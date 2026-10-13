@@ -426,6 +426,7 @@ SPIRE_FN inline void end_turn_early(Game& g) {
     add_bottom(g, units::actions::NewQueueCard::construct());
 }
 SPIRE_FN inline void begin_end_turn(Game& g) {
+    g.player.end_turn_queued = true;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onPlayerEndTurn(g, i);
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_atEndOfTurnPreEndTurnCards(g, powers.at(g.power_objects, i), player_target, true);
@@ -433,6 +434,9 @@ SPIRE_FN inline void begin_end_turn(Game& g) {
     orbs.kind = EffectKind::TriggerEndOfTurnOrbs;
     add_bottom(g, orbs);
     for (int i = 0; i < g.hand.size; ++i) card_triggerOnEndOfTurnForPlayingCard(g, g.hand[i]);
+}
+SPIRE_FN inline void finish_end_turn(Game& g) {
+    g.player.end_turn_queued = false;
     at_end_of_turn(g, player_target);
     Effect clear{};
     clear.kind = EffectKind::ClearCardQueue;
@@ -556,7 +560,10 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 else remove_from_pile(g.limbo, queued.card);
             }
             remove_queued_card(g, queued.card);
+        } else if (g.player.end_turn_queued) {
+            finish_end_turn(g);
         } else if (g.battle_over) {
+            g.manager.monster_attacks_queued = true;
             on_victory(g);
             clear_actions(g, g.manager.actions);
             clear_actions(g, g.manager.pre_turn_actions);
@@ -804,6 +811,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
         SPIRE_ASSERT(g.screen == Screen::Combat);
         if (action.kind == ActionKind::EndTurn) {
             g.manager.card_queue.push_back({-1, -1});
+            g.player.end_turn_queued = true;
         } else if (action.kind == ActionKind::PotionUse) {
             SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable && potion_canUse(g, action.index));
             const int target = action.target >= 0 ? g.monster_order[action.target] : player_target;
