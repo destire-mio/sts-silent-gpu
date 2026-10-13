@@ -12,6 +12,7 @@ struct Dexterity : PowerHooks {
             Effect e{};
             e.kind = EffectKind::RemovePower;
             e.target = owner;
+            e.source = owner;
             e.power = PowerId::Dexterity;
             add_top(g, e);
         }
@@ -23,6 +24,7 @@ struct Dexterity : PowerHooks {
             Effect e{};
             e.kind = EffectKind::RemovePower;
             e.target = owner;
+            e.source = owner;
             e.power = PowerId::Dexterity;
             add_top(g, e);
         }

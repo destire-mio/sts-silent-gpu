@@ -44,21 +44,26 @@ SPIRE_FN inline void exhaust_card(Game& g, int card) {
 }
 SPIRE_FN inline void finish_card_use(Game& g, const Effect& effect) {
     Effect use = effect;
-    Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onAfterUseCard(g, powers[i], player_target, use.card, use);
-    for (int m = 0; m < g.monster_order.size; ++m) {
-        const int owner = g.monster_order[m];
-        Powers& other = g.monsters[owner].creature.powers;
-        for (int i = 0; i < other.size; ++i) power_onAfterUseCard(g, other[i], owner, use.card, use);
-    }
     Card& card = g.cards[use.card];
+    Powers& powers = g.player.creature.powers;
+    if (!card.dont_trigger_on_use_card) {
+        for (int i = 0; i < powers.size; ++i) power_onAfterUseCard(g, powers[i], player_target, use.card, use);
+        for (int m = 0; m < g.monster_order.size; ++m) {
+            const int owner = g.monster_order[m];
+            Powers& other = g.monsters[owner].creature.powers;
+            for (int i = 0; i < other.size; ++i) power_onAfterUseCard(g, other[i], owner, use.card, use);
+        }
+    }
     card.free_to_play_once = false;
+    card.in_autoplay = false;
     g.player.card_in_use = -1;
+    if (card.purge_on_use) return;
     if (card_def(card.id).type != CardType::Power) {
         if (use.flag) exhaust_card(g, use.card);
         else move_to_discard(g, use.card);
     }
     card.exhaust_on_use_once = false;
+    card.dont_trigger_on_use_card = false;
     Effect check{};
     check.kind = EffectKind::HandCheck;
     add_bottom(g, check);
@@ -356,7 +361,8 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     g.manager.total_discarded_this_turn = 0;
     g.manager.played_cards.begin_turn();
     g.manager.damage_received_this_turn = 0;
-    g.player.creature.block = 0;
+    if (!has_power(g.player.creature, PowerId::Barricade) && !has_power(g.player.creature, PowerId::Blur))
+        g.player.creature.block = 0;
     recharge_energy(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     Effect draw{};
@@ -385,11 +391,36 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             if (queued.card < 0) {
                 begin_end_turn(g);
             } else {
-                g.cards[queued.card].energy_on_use = queued.energy_on_use;
-                play_card_hooks(g, queued.card, queued.target);
-                ++g.player.cards_played_this_turn;
-                g.manager.played_cards.record(queued.card, card_def(g.cards[queued.card].id).type);
-                use_card(g, queued.card, queued.target);
+                Card& card = g.cards[queued.card];
+                card.in_autoplay = queued.autoplay_card;
+                if (card_canUse(g, queued.card, queued.target) || card.dont_trigger_on_use_card) {
+                    if (card_freeToPlay(g, queued.card)) card.free_to_play_once = true;
+                    card.energy_on_use = queued.energy_on_use;
+                    card.ignore_energy_on_use = card.in_autoplay || queued.ignore_energy_total;
+                    if (!card.dont_trigger_on_use_card) {
+                        play_card_hooks(g, queued.card, queued.target);
+                        ++g.player.cards_played_this_turn;
+                        g.manager.played_cards.record(queued.card, card_def(card.id).type);
+                    }
+                    if (card_data(card.id).target == CardTarget::Enemy &&
+                        (queued.target == no_target || g.monsters[queued.target].creature.dead ||
+                         g.monsters[queued.target].creature.escaped)) {
+                        for (int i = 0; i < g.limbo.size; ++i)
+                            if (g.limbo[i] == queued.card) { g.limbo.erase(i); break; }
+                    } else use_card(g, queued.card, queued.target);
+                } else {
+                    for (int i = 0; i < g.limbo.size; ++i)
+                        if (g.limbo[i] == queued.card) { g.limbo.erase(i); break; }
+                    if (card.in_autoplay) {
+                        card.dont_trigger_on_use_card = true;
+                        Effect finish{};
+                        finish.kind = EffectKind::UseCard;
+                        finish.card = queued.card;
+                        finish.target = no_target;
+                        finish.flag = card.exhaust || card.exhaust_on_use_once;
+                        add_bottom(g, finish);
+                    }
+                }
             }
         } else if (g.battle_over) {
             on_victory(g);
@@ -465,7 +496,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.player.creature.max_hp = setup.max_hp;
     g.player.bloodied = setup.hp <= setup.max_hp / 2;
     g.cards.clear();
-    g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.retained.clear();
+    g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.retained.clear(); g.limbo.clear();
     g.selected_cards.clear();
     g.drawn_cards.clear();
     g.monsters.clear();

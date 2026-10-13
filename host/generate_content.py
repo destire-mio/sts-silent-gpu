@@ -141,8 +141,8 @@ card("freeToPlay", result="bool", body="return card_free_to_play_base(g, card);"
 card("cardPlayable", "int target", "bool", "return !(card_data(g.cards[card].id).target == CardTarget::Enemy && target >= 0 && g.monsters[target].creature.dying) && !monsters_basically_dead(g);", True)
 card("canPlay", "int other_card", "bool", "return true;", True)
 card("canUse", "int target", "bool", "return card_can_use_base(g, card, target);", True)
-for name in ("makeSameInstanceOf", "makeStatEquivalentCopy"):
-    card(name, result="Card", body="return stat_equivalent_copy(g, card);", const=True)
+card("makeStatEquivalentCopy", result="Card", body="return stat_equivalent_copy(g, card);", const=True)
+card("makeSameInstanceOf", result="Card", body="Card copy = card_makeStatEquivalentCopy(g, card); copy.uuid = g.cards[card].uuid; return copy;", const=True)
 card("makeCopy", result="Card", body="return make_card(g.cards[card].id);", const=True)
 
 for name in ("use",):

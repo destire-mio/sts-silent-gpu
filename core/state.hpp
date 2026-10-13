@@ -28,10 +28,14 @@ struct Card {
     bool innate : 1;
     bool free_to_play_once : 1;
     bool exhaust_on_use_once : 1;
+    bool purge_on_use : 1;
+    bool in_autoplay : 1;
+    bool dont_trigger_on_use_card : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
-          self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false) {}
+          self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
+          purge_on_use(false), in_autoplay(false), dont_trigger_on_use_card(false) {}
 };
 using Pile = List<uint16_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
@@ -90,6 +94,7 @@ struct Player {
     int energy_master = 3;
     int energy_per_turn = 3;
     int hand_size = 5;
+    int master_hand_size = 5;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
     bool bloodied = false;
@@ -117,7 +122,13 @@ struct Effect {
     Power prepared_power{};
 };
 using DamageInfo = Effect;
-struct CardQueueItem { int card = -1; int target = -1; int energy_on_use = 0; };
+struct CardQueueItem {
+    int card = -1;
+    int target = -1;
+    int energy_on_use = 0;
+    bool ignore_energy_total = false;
+    bool autoplay_card = false;
+};
 struct PlayedCards {
     uint16_t values[1024]{};
     uint16_t size = 0;
@@ -179,7 +190,7 @@ struct Game {
     Player player{};
     List<Card, card_capacity> cards{};
     int multi_damage[card_capacity][monster_capacity]{};
-    Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{};
+    Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{};
     Pile drawn_cards{};
     List<Monster, monster_capacity> monsters{};
     List<int, monster_capacity> monster_order{};
