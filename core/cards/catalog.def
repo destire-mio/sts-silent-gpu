@@ -13,3 +13,4 @@ SPIRE_UNIT(CripplingPoison, "Crippling Poison", "core/cards/crippling_poison.hpp
 SPIRE_UNIT(DaggerSpray, "Dagger Spray", "core/cards/dagger_spray.hpp", DaggerSpray)
 SPIRE_UNIT(DaggerThrow, "Dagger Throw", "core/cards/dagger_throw.hpp", DaggerThrow)
 SPIRE_UNIT(Dash, "Dash", "core/cards/dash.hpp", Dash)
+SPIRE_UNIT(DeadlyPoison, "Deadly Poison", "core/cards/deadly_poison.hpp", DeadlyPoison)
