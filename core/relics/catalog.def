@@ -14,3 +14,4 @@ SPIRE_UNIT(LetterOpener, "Letter Opener", "core/relics/letter_opener.hpp", Lette
 SPIRE_UNIT(LizardTail, "Lizard Tail", "core/relics/lizard_tail.hpp", LizardTail)
 SPIRE_UNIT(Mango, "Mango", "core/relics/mango.hpp", Mango)
 SPIRE_UNIT(MarkOfTheBloom, "Mark of the Bloom", "core/relics/mark_of_the_bloom.hpp", MarkOfTheBloom)
+SPIRE_UNIT(Matryoshka, "Matryoshka", "core/relics/matryoshka.hpp", Matryoshka)
