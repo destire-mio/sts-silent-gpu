@@ -22,3 +22,4 @@ SPIRE_UNIT(ColosseumSlavers, "Colosseum Slavers", "core/encounters/colosseum_sla
 SPIRE_UNIT(ThreeCultists, "3 Cultists", "core/encounters/three_cultists.hpp", ThreeCultists)
 SPIRE_UNIT(TheMushroomLair, "The Mushroom Lair", "core/encounters/the_mushroom_lair.hpp", TheMushroomLair)
 SPIRE_UNIT(JawWormHorde, "Jaw Worm Horde", "core/encounters/jaw_worm_horde.hpp", JawWormHorde)
+SPIRE_UNIT(BronzeAutomaton, "Automaton", "core/encounters/automaton.hpp", BronzeAutomaton)
