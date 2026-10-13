@@ -80,9 +80,9 @@ SPIRE_FN inline void queue_relic_above(Game& g, int relic, int owner, bool top) 
     if (top) g.manager.actions.push_front(index);
     else g.manager.actions.push_back(index);
 }
-SPIRE_FN inline void add_room_card_reward(Game& g) {
-    RoomReward reward{};
-    reward.identity = g.next_reward_identity++;
+SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_capacity>& choices) {
+    bool any_color = false;
+    for (int i = 0; i < g.run.relics.size; ++i) any_color |= relic_data(g.run.relics[i].id).any_color_rewards;
     int count = 3;
     for (int i = 0; i < g.run.relics.size; ++i) count = relic_changeNumberOfCardsInReward(g, i, count);
     SPIRE_ASSERT(count <= reward_card_capacity);
@@ -101,15 +101,29 @@ SPIRE_FN inline void add_room_card_reward(Game& g) {
         const int rarity = roll < g.room_rare_card_chance ? 2 : roll < g.room_rare_card_chance + g.room_uncommon_card_chance ? 1 : 0;
         if (rarity == 2) g.run.card_blizz_randomizer = 5;
         else if (rarity == 0) g.run.card_blizz_randomizer = max(-40, g.run.card_blizz_randomizer - 1);
-        CardId id;
+        const char* id;
         bool duplicate;
         do {
-            id = card_id(pools[rarity][g.rng.card.random(sizes[rarity] - 1)].id);
+            if (any_color) {
+                List<uint16_t, 512> candidates{};
+                const CardRarity rarities[]{CardRarity::Common, CardRarity::Uncommon, CardRarity::Rare};
+                for (int c = 0; c < static_cast<int>(sizeof(library_reward_cards) / sizeof(*library_reward_cards)); ++c)
+                    if (library_reward_cards[c].rarity == rarities[rarity]) candidates.push_back(c);
+                g.rng.card.randomLong();
+                id = library_reward_cards[candidates[g.rng.card.random(candidates.size - 1)]].id;
+            } else id = pools[rarity][g.rng.card.random(sizes[rarity] - 1)].id;
             duplicate = false;
-            for (int c = 0; c < reward.cards.size; ++c) if (g.cards[reward.cards[c]].id == id) duplicate = true;
+            for (int c = 0; c < choices.size; ++c) if (same_id(choices[c], id)) duplicate = true;
         } while (duplicate);
-        reward.cards.push_back(create_card(g, make_card(id)));
+        choices.push_back(id);
     }
+ }
+SPIRE_FN inline void add_room_card_reward(Game& g) {
+    RoomReward reward{};
+    reward.identity = g.next_reward_identity++;
+    List<const char*, reward_card_capacity> choices{};
+    reward_card_choices(g, choices);
+    for (int i = 0; i < choices.size; ++i) reward.cards.push_back(create_card(g, make_card(card_id(choices[i]))));
     for (int i = 0; i < reward.cards.size; ++i) {
         Card& card = g.cards[reward.cards[i]];
         if (card_rarity(card.id) != CardRarity::Rare && g.rng.card.randomBoolean(g.run.card_upgraded_chance) &&

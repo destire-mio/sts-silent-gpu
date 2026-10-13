@@ -1,0 +1,38 @@
+{
+  "deck": [
+    {
+      "id": "Venomology",
+      "upgrades": 0
+    },
+    {
+      "id": "Venomology",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Sozu"
+  ],
+  "potions": [
+    "EntropicBrew",
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

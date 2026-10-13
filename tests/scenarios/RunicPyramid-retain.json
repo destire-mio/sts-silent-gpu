@@ -1,0 +1,50 @@
+{
+  "deck": [
+    {
+      "id": "Well Laid Plans",
+      "upgrades": 0
+    },
+    {
+      "id": "Well Laid Plans",
+      "upgrades": 0
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 0
+    },
+    {
+      "id": "Burn",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Runic Pyramid"
+  ],
+  "potions": [
+    "LiquidMemories",
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

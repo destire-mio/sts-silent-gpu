@@ -78,7 +78,6 @@ SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
     __builtin_unreachable();
 }
 SPIRE_FN inline void obtain_potion(Game& g, PotionId id, const PotionState& state) {
-    if (has_relic(g, "Sozu")) return;
     for (int i = 0; i < g.run.potion_slots; ++i) {
         if (g.run.potions[i] != PotionId::Empty) continue;
         g.run.potions[i] = id;
@@ -656,7 +655,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 else remove_from_pile(g.limbo, queued.card);
             }
             remove_queued_card(g, queued.card);
-        } else if (g.player.end_turn_queued) {
+        } else if (g.player.end_turn_queued && !monsters_basically_dead(g)) {
+            // AbstractRoom.update skips AbstractPlayer.updateInput after the final monster dies.
             complete_end_turn(g);
         } else if (!g.manager.monster_attacks_queued) {
             g.manager.monster_attacks_queued = true;
@@ -817,6 +817,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onEnterRoom(g, i, static_cast<int>(g.room_kind));
     for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(g.room_kind));
     encounter_initialize_state(g);
+    g.player.hand_size = g.player.master_hand_size;
+    g.player.max_orbs = g.player.master_max_orbs;
     build_encounter(g, setup.encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
@@ -836,6 +838,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     if (innate.size > g.player.hand_size) {
         g.manager.pre_turn_actions.push_front(g.action_objects.add(units::actions::Draw::construct(innate.size - g.player.hand_size)));
     }
+    for (int i = 0; i < g.run.relics.size; ++i) relic_beforeEnergyPrep(g, i);
+    g.player.energy_per_turn = g.player.energy_master;
     for (int i = 0; i < g.monster_order.size; ++i) {
         const int owner = g.monster_order[i];
         monster_pre_battle(g, owner);

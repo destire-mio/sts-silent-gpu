@@ -22,7 +22,7 @@ struct FreshRunState {
     std::vector<std::string> eventList, shrineList, specialOneTimeEventList;
     std::vector<std::string> commonRelicPool, uncommonRelicPool, rareRelicPool;
     std::vector<std::string> shopRelicPool, bossRelicPool, relicsToRemoveOnStart;
-    std::vector<std::string> rewardTypes;
+    std::vector<std::string> rewardTypes, rewardCards;
     std::string rewardPotion;
     int rewardGold = 0;
     int stolenGold = 0;
@@ -391,6 +391,19 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;
     if (game.smoked) return;
+    bool any_color = false;
+    for (int i = 0; i < game.run.relics.size; ++i) any_color |= relic_data(game.run.relics[i].id).any_color_rewards;
+    if (any_color) {
+        List<const char*, reward_card_capacity> choices{};
+        reward_card_choices(game, choices);
+        for (int i = 0; i < choices.size; ++i) run.rewardCards.push_back(choices[i]);
+        for (const auto& id : run.rewardCards) {
+            for (const auto& entry : library_reward_cards)
+                if (id == entry.id && entry.rarity != CardRarity::Rare) game.rng.card.randomBoolean(game.run.card_upgraded_chance);
+        }
+        run.rewardTypes.push_back("CARD");
+        return;
+    }
     add_room_card_reward(game);
     for (int i = 0; i < game.run.relics.size; ++i) {
         if (relic_data(game.run.relics[i].id).extra_normal_combat_card_reward) {

@@ -17,6 +17,8 @@ struct ObtainPotion : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
+        for (int i = 0; i < g.run.relics.size; ++i)
+            if (relic_data(g.run.relics[i].id).blocks_potions) return;
         obtain_potion(g, e.state.ObtainPotion.potion, e.prepared_potion_state);
     }
 };

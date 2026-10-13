@@ -131,6 +131,7 @@ SPIRE_FN inline void add_created_card_to_hand(Game&, int);
 SPIRE_FN inline Card& get_card(Game&, int);
 SPIRE_FN inline const Card& get_card(const Game&, int);
 SPIRE_FN inline void queue_relic_above(Game&, int, int, bool top = false);
+SPIRE_FN inline void reward_card_choices(Game&, List<const char*, reward_card_capacity>&);
 SPIRE_FN inline void add_room_card_reward(Game&);
 SPIRE_FN inline void open_room_card_rewards(Game&);
 SPIRE_FN inline void remove_room_relic_reward(Game&);

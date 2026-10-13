@@ -6,7 +6,45 @@ from pathlib import Path
 
 
 
-def reward_potion_templates(units, schema):
+def reward_templates(units, schema):
+    # AbstractCard field initializers and constructor; per-card writes come from the inventory.
+    card_base = {
+        "baseBlock": -1, "baseDamage": -1, "baseDiscard": -1, "baseDraw": -1,
+        "baseHeal": -1, "baseMagicNumber": -1, "block": -1, "damage": -1,
+        "damageType": "NORMAL", "damageTypeForTurn": "NORMAL", "discard": -1,
+        "draw": -1, "heal": -1, "magicNumber": -1, "energyOnUse": 0,
+        "misc": 0, "multiDamage": None, "price": 0, "timesUpgraded": 0,
+        "dontTriggerOnUseCard": False, "exhaust": False, "exhaustOnFire": False,
+        "exhaustOnUseOnce": False, "freeToPlayOnce": False, "ignoreEnergyOnUse": False,
+        "inBottleFlame": False, "inBottleLightning": False, "inBottleTornado": False,
+        "isEthereal": False, "isFlipped": False, "isInAutoplay": False,
+        "isInnate": False, "isMultiDamage": False, "purgeOnUse": False,
+        "retain": False, "returnToHand": False, "selfRetain": False,
+        "shuffleBackIntoDrawPile": False, "upgraded": False,
+    }
+    cards = {}
+    for unit in units:
+        facts = unit["facts"]
+        if unit["kind"] != "card" or facts["rarity"] not in ("COMMON", "UNCOMMON", "RARE") or facts["type"] in ("CURSE", "STATUS"):
+            continue
+        fields = dict(card_base, cardID=unit["game_id"], cost=facts["cost"], costForTurn=facts["cost"])
+        fields.update({key: facts[key] for key in ("color", "rarity", "target", "type", "tags")})
+        fields.update(facts["flags"])
+        constructor = unit["java_class"].rsplit(".", 1)[1]
+        for change in unit["sizing"]["state_changes"]:
+            field = change["field"].removeprefix("this.")
+            if change.get("method") == constructor and field in schema["cards.AbstractCard"]["fields"]:
+                assert change["operation"] == "=" and not change["conditions"]
+                value = change["value"]
+                if isinstance(value, dict):
+                    member = re.fullmatch(r'this\s*\.\s*(\w+)', value['expression'])
+                    assert member is not None
+                    value = fields[member[1]]
+                assert isinstance(value, (int, bool, str))
+                fields[field] = value
+        assert set(fields) | {"uuid"} == set(schema["cards.AbstractCard"]["fields"])
+        cards[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
+                                  "fields": {"AbstractCard." + key: value for key, value in fields.items()}}
     potions = {}
     for unit in units:
         if unit["kind"] != "potion":
@@ -17,7 +55,7 @@ def reward_potion_templates(units, schema):
         assert set(fields) == set(schema["potions.AbstractPotion"]["fields"])
         potions[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
                                     "fields": {"AbstractPotion." + key: value for key, value in fields.items()}}
-    return {"potions": potions}
+    return {"cards": cards, "potions": potions}
 
 def unit_snapshot_dispatch(root, units):
     lines = []
@@ -74,7 +112,7 @@ def generate(root, output):
             entries.append(entry)
         metadata[directory] = entries
     output.parent.mkdir(parents=True, exist_ok=True)
-    payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_potion_templates(units, schema), "globals": unit_inventory["snapshot_statics"]}, separators=(",", ":"))
+    payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_templates(units, schema), "globals": unit_inventory["snapshot_statics"]}, separators=(",", ":"))
     output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n' + unit_snapshot_dispatch(root, units) + '\n}\n')
 
 

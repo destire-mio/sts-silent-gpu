@@ -321,7 +321,26 @@ struct SnapshotGraph {
         return object({1, 0, 0}, "characters.TheSilent", [&](const std::string& key) -> py::object {
             if (key.compare(0, 17, "AbstractCreature.") == 0) return creature_field(player_target, key);
             const std::string field = key.substr(key.find('.') + 1);
-            if (field == "blights" || field == "orbs") return py::list();
+            if (field == "blights") return py::list();
+            if (field == "orbs") {
+                py::list result;
+                if (game.player.max_orbs == 0) return result;
+                const char* type = nullptr;
+                for (int i = 0; i < static_cast<int>(RelicId::Count); ++i) {
+                    const char* candidate = relic_data(static_cast<RelicId>(i)).empty_orb_class;
+                    if (candidate) type = candidate;
+                }
+                SPIRE_ASSERT(type != nullptr);
+                for (int i = 0; i < game.player.max_orbs; ++i) {
+                    result.append(object({26, i, 0}, type, [&](const std::string& name) -> py::object {
+                        if (name == "AbstractOrb.ID") return py::none();
+                        if (name == "AbstractOrb.baseEvokeAmount" || name == "AbstractOrb.basePassiveAmount" ||
+                            name == "AbstractOrb.evokeAmount" || name == "AbstractOrb.passiveAmount") return py::int_(0);
+                        return {};
+                    }));
+                }
+                return result;
+            }
             if (field == "cardInUse") return card(game.player.card_in_use);
             if (field == "cardsPlayedThisTurn") return py::int_(game.player.cards_played_this_turn);
             if (field == "chosenClass") return py::str("THE_SILENT");
@@ -341,7 +360,8 @@ struct SnapshotGraph {
             if (field == "hoveredCard") return py::none();
             if (field == "limbo") return group(4, "UNSPECIFIED", &game.limbo);
             if (field == "masterDeck") return group(5, "MASTER_DECK");
-            if (field == "masterMaxOrbs" || field == "maxOrbs") return py::int_(0);
+            if (field == "masterMaxOrbs") return py::int_(game.player.master_max_orbs);
+            if (field == "maxOrbs") return py::int_(game.player.max_orbs);
             if (field == "potionSlots") return py::int_(game.run.potion_slots);
             if (field == "potions") {
                 py::list result;
@@ -408,12 +428,30 @@ struct SnapshotGraph {
         });
     }
 
+    py::object reward_card(const FreshRunState& fresh, int index) {
+        const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(fresh.rewardCards[index])].cast<py::dict>();
+        const py::dict fields = data["fields"].cast<py::dict>();
+        return object({21, index, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
+            if (key == "AbstractCard.uuid") {
+                const auto inserted = uuids.emplace(0x80000000u + index, static_cast<int>(uuids.size()));
+                return py::int_(inserted.first->second);
+            }
+            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
+        });
+    }
+
     py::object reward_potion(const FreshRunState& fresh) {
         const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(fresh.rewardPotion)].cast<py::dict>();
         const py::dict fields = data["fields"].cast<py::dict>();
+        Game initialized = game;
+        PotionId id = PotionId::Count;
+        for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
+            if (fresh.rewardPotion == potion_names[i]) id = static_cast<PotionId>(i);
+        SPIRE_ASSERT(id != PotionId::Count);
+        initialized.run.potions[0] = id;
+        initialized.run.potion_state[0] = construct_potion(initialized, initialized.run.potions[0]);
         return object({22, 0, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractPotion.potency" && fields[py::str(key)].is_none())
-                return py::int_(game.run.potion_slots);
+            if (key == "AbstractPotion.potency") return py::int_(potion_potency(initialized, 0));
             return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
         });
     }
@@ -435,6 +473,10 @@ struct SnapshotGraph {
             if (key == "RewardItem.cards") {
                 if (type != "CARD") return py::none();
                 py::list result;
+                if (!fresh.rewardCards.empty()) {
+                    for (int i = 0; i < static_cast<int>(fresh.rewardCards.size()); ++i) result.append(reward_card(fresh, i));
+                    return result;
+                }
                 int reward_index = 0;
                 for (int i = 0; i < index; ++i) if (fresh.rewardTypes[i] == "CARD") ++reward_index;
                 const auto& entries = game.room_rewards[reward_index].cards;

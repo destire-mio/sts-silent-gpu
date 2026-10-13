@@ -110,6 +110,8 @@ struct Player {
     int energy_per_turn = 3;
     int hand_size = 5;
     int master_hand_size = 5;
+    int master_max_orbs = 0;
+    int max_orbs = 0;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
     bool bloodied = false;

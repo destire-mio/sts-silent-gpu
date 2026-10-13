@@ -27,6 +27,13 @@ struct ApplyPower : ActionHooks {
             power_constructPower(g, power, e.target, e.source, e.extra, e.card);
         }
         if (power.instance == 0) power.instance = g.next_power_instance++;
+        if (e.source == player_target && e.target != e.source && power.id == PowerId::Poison) {
+            for (int i = 0; i < g.run.relics.size; ++i) {
+                const int bonus = relic_data(g.run.relics[i].id).poison_bonus;
+                power.amount += bonus;
+                e.amount += bonus;
+            }
+        }
         if (monsters_basically_dead(g)) e.done = true;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
