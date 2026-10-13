@@ -49,7 +49,8 @@ SPIRE_FN inline void enter_event(Game& g) {
     for (int i = 0; i < g.run.special_events.size; ++i) if (g.run.special_events[i] == key) { g.run.special_events.erase(i); break; }
     g.event.id = event_id(key);
     event_initialize_state(g.event);
-    g.room_dialog.clear(); g.image_dialog.clear();
+    g.image_dialog.clear();
+    if (event_data(g.event.id).image) g.room_dialog.clear();
     g.room_event_class = g.text.intern(event_data(g.event.id).java_class);
     g.room_phase = RoomPhase::Event;
     g.screen = Screen::Event;
@@ -58,13 +59,22 @@ SPIRE_FN inline void enter_event(Game& g) {
 
 SPIRE_FN inline void event_dialog_choices(const Game& g, EventChoices& choices) {
     const auto& buttons = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
-    for (int i = 0; i < buttons.size; ++i) if (!buttons[i]) choices.push_back({EventChoiceKind::Option, static_cast<uint8_t>(i)});
+    for (int i = 0; i < buttons.size; ++i) if (!buttons[i].disabled) choices.push_back({EventChoiceKind::Option, static_cast<uint8_t>(i)});
 }
 
 SPIRE_FN inline void event_options(Game& g, int count) {
     auto& options = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
     options.clear();
-    for (int i = 0; i < count; ++i) options.push_back(false);
+    for (int i = 0; i < count; ++i) options.push_back({static_cast<uint8_t>(i), false});
+}
+
+SPIRE_FN inline void event_add_option(Game& g) {
+    auto& options = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
+    options.push_back({static_cast<uint8_t>(options.size), false});
+}
+SPIRE_FN inline void event_remove_option(Game& g, int index) {
+    auto& options = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
+    options.erase(index);
 }
 
 SPIRE_FN inline void event_purge_cards(Game& g) {

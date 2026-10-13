@@ -13,7 +13,7 @@ struct GoldenWing : EventHooks {
             const auto& card = g.run.master_deck[i];
             if (card_data(card.id).type == CardType::Attack && card.base_damage >= 10) s.canAttack = true;
         }
-        event_options(g, 3); g.image_dialog[1] = !s.canAttack;
+        event_options(g, 3); g.image_dialog[1].disabled = !s.canAttack;
     }
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.GoldenWing;

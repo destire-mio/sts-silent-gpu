@@ -271,6 +271,7 @@ struct ActionManager {
     int player_hp_last_turn = 0;
     int energy_gained_this_combat = 0;
 };
+struct DialogOption { uint8_t slot; bool disabled; };
 struct Event {
     EventId id = EventId::Count;
     EventState state{};
@@ -324,6 +325,7 @@ struct Run {
     List<EventKey, 16> special_events{};
     List<Card, master_deck_capacity> master_deck{};
     List<uint8_t, card_pool_capacity> source_card_pools[4]{};
+    List<uint8_t, 35> colorless_pool{};
     List<Relic, 64> relics{};
     List<RelicKey, 64> relic_pools[5]{};
     int potion_slots = 2;
@@ -394,7 +396,7 @@ struct Game {
     CampfireState campfire{};
     ChestState chest{};
     ShopState shop{};
-    List<bool, 8> room_dialog{}, image_dialog{};
+    List<DialogOption, 8> room_dialog{}, image_dialog{};
     int room_selected_option = -1, image_selected_option = -1;
     EncounterId encounter = EncounterId::Cultist;
     EncounterState encounter_state{};

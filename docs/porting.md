@@ -131,9 +131,13 @@ header. The event payload lives at `game.event.state.Type` through `SPIRE_STATE`
 is 64 bytes. `game.event.screen`, `has_focus` and `no_cards` hold the included AbstractEvent
 base fields. A private subclass screen or enum belongs in the tagged payload.
 
-`enter` performs constructor and room-entry behavior. `choose` receives the original enabled
-button's slot, not its position after disabled buttons are filtered out. The default `choices` hook retains enabled button order, and the driver maps that action
-back to its Java slot. An event with card controls overrides `choices` and emits ordered
+`enter` performs constructor and room-entry behavior. `choose` receives the original button-list
+index before disabled buttons are filtered out. `RoomEventDialog.update` stores that index;
+a removed button does not renumber the surviving `LargeDialogOptionButton.slot` values.
+The default `choices` hook retains enabled button order; snapshots retain each button's slot.
+`event_add_option` appends a constructor button and `event_remove_option` removes its list entry.
+An image event clears both dialogs in its Java base constructor; an ordinary event retains the
+static room-dialog list. Run-start scenarios can therefore retain Neow's opening button. An event with card controls overrides `choices` and emits ordered
 `EventChoice` entries with `EventChoiceKind::Card`; `choose` receives the card index. Keep
 this event-specific enumeration in its unit, as in `GremlinMatchGame`. A named control uses
 `EventChoiceKind::Control` and the unit's `EventData.control_name`, as in `GremlinWheelGame`.
@@ -254,6 +258,12 @@ The hand limit of 10 comes from `DrawCardAction.update` and card-generation acti
 indices use bytes: the current Silent pools contain 19 common, 33 uncommon, 19 rare and 35
 colorless templates. Each source pool reserves 64 entries and preserves Java list order,
 including the remove-and-append behavior of `AbstractDungeon.srcTransformCard`.
+
+The mutable colorless-card pool retains its 35 library indices: Java
+`AbstractDungeon.returnColorlessCard(rarity)` shuffles that pool in place, independently of its
+source pool. Knowing Skull retains 16 reward-history entries in its 60-byte event payload.
+The Java event can repeat without a finite bound; 16 is an execution budget constrained by the
+64-byte payload, and the next reward faults before its history entry is written.
 
 Relic acquisition shares a five-potion reward list (`Cauldron.onEquip` creates five),
 the 16-entry room-reward list (`CallingBell.update` adds three relic rewards), and the existing

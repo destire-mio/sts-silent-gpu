@@ -11,7 +11,7 @@ struct LivingWall : EventHooks {
         event_options(g, 3);
         bool upgradable = false;
         for (int i = 0; i < g.run.master_deck.size; ++i) upgradable |= card_canUpgrade(g, -i - 2);
-        g.image_dialog[2] = !upgradable;
+        g.image_dialog[2].disabled = !upgradable;
     }
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.LivingWall;

@@ -430,6 +430,7 @@ struct SnapshotGraph {
                 const char* types[] = {"NORMAL", "ELITE", "BOSS"};
                 return py::str(types[static_cast<int>(monster_data(monster.id).type)]);
             }
+            if (field == "move" && monster.pending_move == -1) return py::none();
             if (field == "move") return object({8, index, 0}, "monsters.EnemyMoveInfo", [&](const std::string& name) -> py::object {
                 if (name == "EnemyMoveInfo.baseDamage") return py::int_(monster.pending_base_damage);
                 if (name == "EnemyMoveInfo.intent") return py::str(intent_names[static_cast<int>(monster.pending_intent)]);
@@ -466,8 +467,8 @@ struct SnapshotGraph {
                     if (field == "GenericEventDialog.optionList") {
                         py::list buttons;
                         for (int i = 0; i < game.image_dialog.size; ++i) buttons.append(object({35, 1, i}, "ui.buttons.LargeDialogOptionButton", [&](const std::string& name) -> py::object {
-                            if (name == "LargeDialogOptionButton.isDisabled") return py::bool_(game.image_dialog[i]);
-                            if (name == "LargeDialogOptionButton.slot") return py::int_(i);
+                            if (name == "LargeDialogOptionButton.isDisabled") return py::bool_(game.image_dialog[i].disabled);
+                            if (name == "LargeDialogOptionButton.slot") return py::int_(game.image_dialog[i].slot);
                             return {};
                         }));
                         return buttons;
@@ -1007,7 +1008,7 @@ struct SnapshotGraph {
             py::list options; EventChoices choices{}; event_choices(game, choices);
             for (int i = 0; i < choices.size; ++i) {
                 const auto& choice = choices[i];
-                if (choice.kind == EventChoiceKind::Option) options.append("option:" + std::to_string(choice.index));
+                if (choice.kind == EventChoiceKind::Option) options.append("option:" + std::to_string((event_data(game.event.id).image ? game.image_dialog : game.room_dialog)[choice.index].slot));
                 else if (choice.kind == EventChoiceKind::Card) options.append(card_names[static_cast<int>(game.cards[choice.index].id)]);
                 else options.append(event_data(game.event.id).control_name);
             }
@@ -1020,8 +1021,8 @@ struct SnapshotGraph {
         }
         py::list buttons;
         for (int i = 0; i < game.room_dialog.size; ++i) buttons.append(object({35, 0, i}, "ui.buttons.LargeDialogOptionButton", [&](const std::string& key) -> py::object {
-            if (key == "LargeDialogOptionButton.isDisabled") return py::bool_(game.room_dialog[i]);
-            if (key == "LargeDialogOptionButton.slot") return py::int_(i);
+            if (key == "LargeDialogOptionButton.isDisabled") return py::bool_(game.room_dialog[i].disabled);
+            if (key == "LargeDialogOptionButton.slot") return py::int_(game.room_dialog[i].slot);
             return {};
         }));
         result["room_dialog"] = py::dict("optionList"_a=buttons, "selectedOption"_a=game.room_selected_option, "waitForInput"_a=true);
@@ -1123,7 +1124,9 @@ struct SnapshotGraph {
             result.append(id); result.append(0); result.append(0);
             return result;
         };
-        for (const CardPoolEntry& card : ids) direct.append(spec(card.id));
+        if (source_index == 3) {
+            for (int i = 0; i < game.run.colorless_pool.size; ++i) direct.append(spec(ids[game.run.colorless_pool[i]].id));
+        } else for (const CardPoolEntry& card : ids) direct.append(spec(card.id));
         if (source_index < 0) {
             for (std::size_t i = Size; i > 0; --i) source.append(spec(ids[i - 1].id));
         } else {
