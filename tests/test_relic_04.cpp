@@ -164,6 +164,29 @@ static void reward_upgrades() {
     require(upgraded, "the reward covers an upgraded nonrare card");
 }
 
+static void acquisition_and_spawn_queries() {
+    Game g = combat(RelicId::OldCoin);
+    require(g.run.gold == 399, "Old Coin grants 300 gold on acquisition");
+    g.player.creature.hp = 33;
+    g.player.creature.max_hp = 66;
+    g.player.bloodied = true;
+    equip_relic(g, RelicId::Pear);
+    require(g.player.creature.max_hp == 76 && g.player.creature.hp == 43 && !g.player.bloodied,
+        "Pear increases maximum health, heals ten, and updates the bloodied threshold");
+    g.run.floor = 48;
+    require(relic_canSpawn(g, 0), "Old Coin can spawn on floor 48");
+    g.room_is_shop = true;
+    require(!relic_canSpawn(g, 0), "Old Coin cannot spawn in a shop");
+    g.room_is_shop = false;
+    g.run.floor = 49;
+    require(!relic_canSpawn(g, 0), "Old Coin cannot spawn after floor 48");
+    equip_relic(g, RelicId::PreservedInsect);
+    g.run.floor = 52;
+    require(relic_canSpawn(g, 2), "Preserved Insect can spawn on floor 52");
+    g.run.floor = 53;
+    require(!relic_canSpawn(g, 2), "Preserved Insect cannot spawn after floor 52");
+}
+
 static void budget_faults() {
     for (int budget = 0; budget < 3; ++budget) {
         const pid_t child = fork();
@@ -197,5 +220,6 @@ int main() {
     energy_and_spawn();
     static_lifetime();
     reward_upgrades();
+    acquisition_and_spawn_queries();
     budget_faults();
 }
