@@ -1,0 +1,15 @@
+{
+  "deck": [],
+  "relics": [
+    "Potion Belt"
+  ],
+  "potions": [
+    null,
+    null,
+    null,
+    "FairyPotion"
+  ],
+  "hp": 1,
+  "max_hp": 70,
+  "encounter": "Cultist"
+}

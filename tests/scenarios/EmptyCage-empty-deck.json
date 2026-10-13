@@ -1,0 +1,13 @@
+{
+  "deck": [],
+  "relics": [
+    "Empty Cage"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

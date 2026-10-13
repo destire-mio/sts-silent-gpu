@@ -25,6 +25,7 @@ public final class Recorder {
     static final Gson JSON = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
     static long decisions;
     static ArrayList<String> initialRelicExclusions;
+    static Map<String, String> initialBossSeen;
 
     static void tick() {
         if (!Platform.running) throw new AssertionError("Game requested exit");
@@ -34,17 +35,24 @@ public final class Recorder {
         Platform.listener.render();
     }
 
-    static void settle() throws Exception {
+    static void settle() throws Exception { settle(false); }
+
+    static void settle(boolean acquisition) throws Exception {
         int ticks = 0;
         do {
             tick();
+            if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.FTUE) {
+                com.megacrit.cardcrawl.ui.buttons.GotItButton button = Choices.get(AbstractDungeon.ftue, "button");
+                button.hb.clicked = true;
+                AbstractDungeon.ftue.update();
+            }
             if (++ticks > 36000) throw new AssertionError("No decision: " + AbstractDungeon.screen + " settled=" + Platform.effectsSettled()
                 + " phase=" + AbstractDungeon.getCurrRoom().phase + " choices=" + Choices.names() + " confirm=" + Choices.confirm()
                 + " actions=" + AbstractDungeon.actionManager.actions + " current=" + AbstractDungeon.actionManager.currentAction);
-        } while (!Platform.effectsSettled() || !ready());
+        } while (!Platform.effectsSettled() || !ready(acquisition));
     }
 
-    static boolean ready() throws Exception {
+    static boolean ready(boolean acquisition) throws Exception {
         if (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) return CardCrawlGame.mode == CardCrawlGame.GameMode.CHAR_SELECT && !CardCrawlGame.mainMenuScreen.isFadingOut;
         if (AbstractDungeon.isFadingOut || AbstractDungeon.isFadingIn || AbstractDungeon.player == null) return false;
         if (terminal(false)) return true;
@@ -54,6 +62,7 @@ public final class Recorder {
         if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.MAP)
             for (ArrayList<MapRoomNode> row : AbstractDungeon.map) for (MapRoomNode node : row)
                 if (Choices.<Float>get(node, "animWaitTimer") != 0.0f) return false;
+        if (acquisition && !AbstractDungeon.isScreenUp) return true;
         String choice = Choices.type();
         if (choice.equals("EVENT")) {
             if (Choices.options().isEmpty()) return false;
@@ -89,12 +98,12 @@ public final class Recorder {
         RandomXS128 acquisition = new RandomXS128(seed);
         for (JsonElement item : setup.getAsJsonArray("relics")) {
             RelicLibrary.getRelic(item.getAsString()).makeCopy().instantObtain(AbstractDungeon.player, AbstractDungeon.player.relics.size(), true);
-            settle();
-            while (AbstractDungeon.isScreenUp) {
+            settle(true);
+            while (AbstractDungeon.isScreenUp && AbstractDungeon.screen != AbstractDungeon.CurrentScreen.MAP) {
                 ArrayList<JsonObject> legal = Actions.legal();
                 if (legal.isEmpty()) throw new AssertionError("Empty acquisition actions: " + AbstractDungeon.screen);
                 Actions.apply(legal.get(acquisition.nextInt(legal.size())));
-                settle();
+                settle(true);
             }
         }
         AbstractDungeon.player.potions.clear();
@@ -119,6 +128,8 @@ public final class Recorder {
         MathUtils.random = new RandomXS128(seed);
         CardCrawlGame.tips = new com.megacrit.cardcrawl.helpers.GameTips();
         Snapshot.resetStatics();
+        com.megacrit.cardcrawl.unlock.UnlockTracker.bossSeenPref.data.clear();
+        com.megacrit.cardcrawl.unlock.UnlockTracker.bossSeenPref.data.putAll(initialBossSeen);
         AbstractDungeon.relicsToRemoveOnStart.clear();
         AbstractDungeon.relicsToRemoveOnStart.addAll(initialRelicExclusions);
         com.megacrit.cardcrawl.neow.NeowEvent.rng = null;
@@ -187,6 +198,7 @@ public final class Recorder {
         com.megacrit.cardcrawl.core.Settings.UPLOAD_DATA = false;
         settle();
         initialRelicExclusions = new ArrayList<String>(AbstractDungeon.relicsToRemoveOnStart);
+        initialBossSeen = new HashMap<String, String>(com.megacrit.cardcrawl.unlock.UnlockTracker.bossSeenPref.data);
         JsonArray jobs;
         try (Reader reader = Files.newBufferedReader(Paths.get(System.getProperty("oracle.jobs")), StandardCharsets.UTF_8)) {
             jobs = new JsonParser().parse(reader).getAsJsonArray();

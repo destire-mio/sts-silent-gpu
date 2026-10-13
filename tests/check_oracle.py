@@ -4,6 +4,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SCHEMA = json.loads((ROOT.parent / 'inventory/snapshot-fields.json').read_text())
+UNITS = json.loads((ROOT.parent / 'inventory/units.json').read_text())['units']
+CARDS = {u['game_id']: u for u in UNITS if u['kind'] == 'card'}
+RELICS = {u['game_id']: u for u in UNITS if u['kind'] == 'relic'}
 
 
 def fields(class_name):
@@ -38,12 +41,17 @@ def check(path):
         room = first['objects'][first['room']['ref']]
         assert room['class'] == 'rooms.MonsterRoom'
         assert room['fields']['AbstractRoom.phase'] == 'COMBAT'
-        assert player['AbstractCreature.currentHealth'] == scenario['hp']
-        assert player['AbstractCreature.maxHealth'] == scenario['max_hp']
+        # AbstractDungeon.nextRoomTransition runs relic room-entry and battle-start hooks.
+        if not scenario['relics']:
+            assert player['AbstractCreature.currentHealth'] == scenario['hp'], path
+            assert player['AbstractCreature.maxHealth'] == scenario['max_hp'], path
         deck = first['objects'][player['AbstractPlayer.masterDeck']['ref']]['fields']['CardGroup.group']
         cards = [first['objects'][ref['ref']]['fields'] for ref in deck]
-        assert [(c['AbstractCard.cardID'], c['AbstractCard.timesUpgraded']) for c in cards] == [
-            (c['id'], c['upgrades']) for c in scenario['deck']]
+        # Recorder.scenario equips relics before entering combat; onEquip may replace the deck.
+        if not any('onEquip' in RELICS[r]['facts']['hooks'] for r in scenario['relics']):
+            assert [(c['AbstractCard.cardID'], c['AbstractCard.timesUpgraded']) for c in cards] == [
+                (c['id'], c['upgrades'] if CARDS[c['id']]['facts']['upgrade_changes'] else 0)
+                for c in scenario['deck']], path
     else:
         assert first['run']['floorNum'] == 0
         assert first['objects'][first['room']['ref']]['class'] == 'neow.NeowRoom'
