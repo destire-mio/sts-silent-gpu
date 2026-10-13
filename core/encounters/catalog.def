@@ -19,3 +19,4 @@ SPIRE_UNIT(ColosseumSlavers, "Colosseum Slavers", "core/encounters/colosseum_sla
 SPIRE_UNIT(Chosen, "Chosen", "core/encounters/chosen.hpp", Chosen)
 SPIRE_UNIT(CultistAndChosen, "Cultist and Chosen", "core/encounters/cultist_and_chosen.hpp", CultistAndChosen)
 SPIRE_UNIT(SnakePlant, "Snake Plant", "core/encounters/snake_plant.hpp", SnakePlant)
+SPIRE_UNIT(Snecko, "Snecko", "core/encounters/snecko.hpp", Snecko)
