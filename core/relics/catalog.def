@@ -2,3 +2,4 @@ SPIRE_UNIT(SnakeRing, "Ring of the Snake", "core/relics/snake_ring.hpp", SnakeRi
 SPIRE_UNIT(ChemicalX, "Chemical X", "core/relics/chemical_x.hpp", ChemicalX)
 SPIRE_UNIT(Circlet, "Circlet", "core/relics/circlet.hpp", Circlet)
 SPIRE_UNIT(ClockworkSouvenir, "ClockworkSouvenir", "core/relics/clockwork_souvenir.hpp", ClockworkSouvenir)
+SPIRE_UNIT(CoffeeDripper, "Coffee Dripper", "core/relics/coffee_dripper.hpp", CoffeeDripper)
