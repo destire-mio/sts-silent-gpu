@@ -289,6 +289,7 @@ struct RunProfile {
     int neow_spirits = 1;
     uint16_t bosses_seen = 0;
     bool seeded = true;
+    bool playtime_at_least_800 = false;
 };
 struct Run {
     uint64_t seed = 0;
@@ -297,7 +298,6 @@ struct Run {
     int ascension = 20;
     int boss_count = 0;
     RunProfile profile{};
-    float playtime = 0.0f;
     float event_chances[4] = {0.0f, 0.1f, 0.03f, 0.02f};
     int8_t node_x = 0, node_y = -1;
     int8_t next_x = -1, next_y = -1;
@@ -398,6 +398,8 @@ struct Game {
     int room_selected_option = -1, image_selected_option = -1;
     EncounterId encounter = EncounterId::Cultist;
     EncounterState encounter_state{};
+    EncounterId prepared_encounter = EncounterId::Count;
+    uint16_t last_combat_metric = 0;
     int turn = 1;
     int discard_remaining = 0;
     int discard_action_num = 0;

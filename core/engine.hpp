@@ -361,6 +361,8 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
             target.dead = true;
             target.block = 0;
             g.screen = Screen::Death;
+            // DeathScreen.<init> calls AbstractRoom.clearEvent inside the damage callback.
+            if (g.event.id != EventId::Count) { g.room_dialog.clear(); g.image_dialog.clear(); }
         }
     }
 }
@@ -775,35 +777,37 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         }
     }
 }
-SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
+SPIRE_FN inline void construct_encounter(Game& g, EncounterId encounter) {
+    const EncounterId previous = g.encounter;
+    g.encounter = encounter;
+    g.prepared_encounter = encounter;
+    encounter_initialize_state(g);
+    g.power_objects.clear(); g.next_power_instance = 1;
+    g.move_histories.size = 0;
+    g.monsters.clear(); g.monster_damage_extra.clear(); g.monster_order.clear();
+    build_encounter(g, encounter);
+    g.encounter = previous;
+}
+SPIRE_FN inline void begin_combat(Game& g) {
     Card retained[64]{};
     for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
     g.cards.clear();
     g.foreign_reward_cards.clear();
     for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
-    g.event = Event{};
     g.previous_screen = Screen::None;
-    g.text.clear();
-    g.room_event_class = 0;
     g.multi_damage.clear();
     g.damage_exceptions.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
-    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();
+    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.screen_rewards.clear();
     g.grid_source = PileId::Grid;
     g.discovery_card = -1;
     g.action_objects.clear();
-    g.power_objects.clear();
-    g.next_power_instance = 1;
     g.player_turn_effect_pending = false;
     g.selection_for_upgrade = false;
     g.drawn_cards.clear();
     g.selection_any_number = false;
     g.selection_can_pick_zero = false;
-    g.move_histories.size = 0;
-    g.monsters.clear();
-    g.monster_damage_extra.clear();
-    g.monster_order.clear();
     g.manager = ActionManager{};
     g.manager.player_hp_last_turn = g.player.creature.hp;
     g.player.bloodied = g.player.creature.hp <= g.player.creature.max_hp / 2;
@@ -819,8 +823,7 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.selection_any_number = g.selection_can_pick_zero = false;
     g.end_turn_enabled = true;
     g.screen = Screen::Combat;
-    g.encounter = encounter;
-    encounter_initialize_state(g);
+    g.encounter = g.prepared_encounter;
     g.player.hand_size = g.player.master_hand_size;
     g.player.energy = 0;
     g.player.cards_played_this_turn = 0;
@@ -828,7 +831,10 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.player.card_in_use = -1;
     g.player.max_orbs = g.player.master_max_orbs;
     g.player.orb_count = static_cast<uint8_t>(g.player.max_orbs);
-    build_encounter(g, encounter);
+    if (g.event.id != EventId::Count) {
+        g.event.has_focus = false;
+        if (!event_data(g.event.id).image) g.room_dialog.clear();
+    }
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
     for (int i = 0; i < g.run.master_deck.size; ++i) {
@@ -889,6 +895,13 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     run_until_decision(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     refresh_hand(g);
+}
+SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
+    g.event = Event{};
+    g.text.clear(); g.room_event_class = 0; g.last_combat_metric = 0;
+    g.room_rewards.clear(); g.reward_objects.clear();
+    construct_encounter(g, encounter);
+    begin_combat(g);
 }
 SPIRE_FN inline void initialize_source_card_pools(Game& g) {
     const int pool_sizes[] = {
@@ -996,7 +1009,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
         initialize_dungeon(g);
     }
     g.run.floor = setup.first_room_chosen ? setup.floor - 1 : 0;
-    if (!setup.first_room_chosen) { g.room_dialog.clear(); g.image_dialog.clear(); }
+    g.room_dialog.clear(); g.image_dialog.clear();
     g.event = Event{};
     g.run.gold = setup.gold;
     if (setup.room == RoomKind::Elite) g.run.elite_list[0] = setup.encounter;

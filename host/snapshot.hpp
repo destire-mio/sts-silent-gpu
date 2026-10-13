@@ -430,6 +430,7 @@ struct SnapshotGraph {
                 const char* types[] = {"NORMAL", "ELITE", "BOSS"};
                 return py::str(types[static_cast<int>(monster_data(monster.id).type)]);
             }
+            if (field == "move" && monster.pending_move == -1) return py::none();
             if (field == "move") return object({8, index, 0}, "monsters.EnemyMoveInfo", [&](const std::string& name) -> py::object {
                 if (name == "EnemyMoveInfo.baseDamage") return py::int_(monster.pending_base_damage);
                 if (name == "EnemyMoveInfo.intent") return py::str(intent_names[static_cast<int>(monster.pending_intent)]);
@@ -1055,7 +1056,7 @@ struct SnapshotGraph {
             "smallChestChance"_a=(game.run.act == 4 ? 0 : 50), "mediumChestChance"_a=(game.run.act == 4 ? 100 : 33), "largeChestChance"_a=(game.run.act == 4 ? 0 : 17),
             "commonRelicChance"_a=(game.run.act == 4 ? 0 : 50), "uncommonRelicChance"_a=(game.run.act == 4 ? 100 : 33), "rareRelicChance"_a=(game.run.act == 4 ? 0 : 17),
             "pathX"_a=py::list(), "pathY"_a=py::list(), "seed"_a=signed_long(game.run.seed),
-            "lastCombatMetricKey"_a=(game.encounter == EncounterId::Count ? py::object(py::none()) : py::object(py::str(encounter_names[static_cast<int>(game.encounter)]))));
+            "lastCombatMetricKey"_a=(game.last_combat_metric ? py::object(py::str(game.text[game.last_combat_metric])) : game.encounter == EncounterId::Count ? py::object(py::none()) : py::object(py::str(encounter_names[static_cast<int>(game.encounter)]))));
         py::list path_x, path_y;
         for (int i = 0; i < game.run.path_x.size; ++i) { path_x.append(game.run.path_x[i]); path_y.append(game.run.path_y[i]); }
         result["pathX"] = path_x; result["pathY"] = path_y;

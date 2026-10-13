@@ -240,6 +240,7 @@ SPIRE_FN inline void remove_room_relic_reward(Game& g) {
 SPIRE_FN inline void remove_master_card(Game& g, int index) {
     Card removed = g.run.master_deck.erase(index);
     bool referenced = false;
+    if (g.event.id != EventId::Count) referenced = event_referencesMasterCard(g, removed.uuid);
     for (int i = 0; i < g.run.relics.size; ++i) referenced |= relic_referencesMasterCard(g, i, removed.uuid);
     if (referenced) {
         g.detached_master_cards.push_back(g.cards.size);

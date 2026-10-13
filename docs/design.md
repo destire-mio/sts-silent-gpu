@@ -77,6 +77,8 @@ type Scenario = {
   deck: CardSpec[], relics: string[], potions: (string | null)[],
   hp: number, max_hp: number, encounter: string,
   profile?: {neow_spirits: number, bosses_seen: string[], seeded: boolean},
+  playtime_at_least_800?: boolean,
+  actions?: Action[],
   start?: {
     act: 1 | 2 | 3 | 4, floor: number, node: [x: number, y: number],
     room: "MonsterRoom" | "MonsterRoomElite" | "MonsterRoomBoss" | "RestRoom" |
@@ -87,7 +89,8 @@ type Scenario = {
 };
 type Header = {
   schema: 2, game_sha256: string, seed: number,
-  character: "THE_SILENT", ascension: 20, scenario: Scenario | null
+  character: "THE_SILENT", ascension: 20, scenario: Scenario | null,
+  playtime_at_least_800: boolean
 };
 type Ref = {ref: number};
 type Value = null | boolean | number | string | Ref | Value[] | {[key: string]: Value};
@@ -241,8 +244,9 @@ hooks are initialized by the game.
 
 The recorder's run-level scenarios supply `start`. After fresh Neow initialization, setup assigns
 the requested keys and the floor before room entry, then constructs the requested later dungeon
-through its original constructor (Act 1 retains its existing generated dungeon). The previous
-node becomes an EmptyRoom. Gold is assigned before the deck/relic/potion/HP setup above. Setup
+through its original constructor (Act 1 retains its existing generated dungeon). The departing
+room is disposed before replacing it with an EmptyRoom, following `setCurrMapNode` and clearing
+the opening event's dialogs. Gold is assigned before the deck/relic/potion/HP setup above. Setup
 replaces the requested generated node's room, sets its emerald flag and the chosen-node/path
 state, overrides the corresponding monster/elite entry or boss key for combat rooms, and calls
 the original `nextRoomTransition`. The requested floor is the floor after that transition.

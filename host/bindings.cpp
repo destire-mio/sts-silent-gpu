@@ -106,13 +106,16 @@ struct Environment {
     Game game;
     FreshRunState fresh;
 
-    void reset(std::int64_t seed) {
-        spire::reset(game, seed);
+    void reset(std::int64_t seed, bool playtime_at_least_800 = false) {
+        RunProfile profile{};
+        profile.playtime_at_least_800 = playtime_at_least_800;
+        spire::reset(game, seed, profile);
         fresh = FreshRunState{};
         initialize_fresh_run(fresh);
     }
     void start_combat(std::int64_t seed, const py::dict& scenario) {
         RunProfile profile{};
+        if (scenario.contains("playtime_at_least_800")) profile.playtime_at_least_800 = scenario["playtime_at_least_800"].cast<bool>();
         if (scenario.contains("profile")) {
             const py::dict value = scenario["profile"].cast<py::dict>();
             profile.neow_spirits = value["neow_spirits"].cast<int>();
@@ -153,14 +156,14 @@ PYBIND11_MODULE(spire, module) {
     using namespace spire::host;
     py::class_<Environment>(module, "Game")
         .def(py::init<>())
-        .def("reset", &Environment::reset, "seed"_a)
+        .def("reset", &Environment::reset, "seed"_a, "playtime_at_least_800"_a=false)
         .def("start_combat", &Environment::start_combat, "seed"_a, "scenario"_a)
         .def("legal_actions", &Environment::legal_actions)
         .def("step", &Environment::step, "action"_a)
         .def("snapshot", &Environment::snapshot)
         .def("schema_gaps", &Environment::schema_gaps)
         .def_property_readonly("fault", [](const Environment& env) { return env.game.fault; });
-    module.def("reset", [](std::int64_t seed) { Environment result; result.reset(seed); return result; }, "seed"_a);
+    module.def("reset", [](std::int64_t seed, bool playtime_at_least_800) { Environment result; result.reset(seed, playtime_at_least_800); return result; }, "seed"_a, "playtime_at_least_800"_a=false);
     module.def("start_combat", [](std::int64_t seed, const py::dict& scenario) {
         Environment result; result.start_combat(seed, scenario); return result;
     }, "seed"_a, "scenario"_a);

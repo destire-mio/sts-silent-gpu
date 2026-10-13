@@ -166,7 +166,7 @@ def replay(path, engine):
         if result.scenario:
             game.start_combat(header["seed"], header["scenario"])
         else:
-            game.reset(header["seed"])
+            game.reset(header["seed"], header.get("playtime_at_least_800", False))
         records = [json.loads(line) for line in stream]
         result.decisions = sum("action" in record for record in records)
         terminal = False
