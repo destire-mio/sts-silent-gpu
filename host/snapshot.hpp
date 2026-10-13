@@ -262,7 +262,12 @@ struct SnapshotGraph {
 
     py::object relic(int index) {
         const Relic& relic = game.run.relics[index];
+        UnitStateSnapshot state;
+        relic_visit_state(relic, state);
         return object({9, index, 0}, class_name("relics", static_cast<int>(relic.id)), [&](const std::string& key) -> py::object {
+            if (auto value = relics_snapshot(*this, relic, index, key); value) return value;
+            const std::string field = key.substr(key.find('.') + 1);
+            if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             if (key == "AbstractRelic.relicId") return py::str(relic_names[static_cast<int>(relic.id)]);
             if (key == "AbstractRelic.counter") return py::int_(relic.counter);
             if (key == "AbstractRelic.cost") return py::int_(0);
@@ -377,18 +382,6 @@ struct SnapshotGraph {
         });
     }
 
-    py::object reward_card(const FreshRunState& fresh, int index) {
-        const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(fresh.rewardCards[index])].cast<py::dict>();
-        const py::dict fields = data["fields"].cast<py::dict>();
-        return object({21, index, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractCard.uuid") {
-                const auto inserted = uuids.emplace(0x80000000u + index, static_cast<int>(uuids.size()));
-                return py::int_(inserted.first->second);
-            }
-            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
-        });
-    }
-
     py::object reward_potion(const FreshRunState& fresh) {
         const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(fresh.rewardPotion)].cast<py::dict>();
         const py::dict fields = data["fields"].cast<py::dict>();
@@ -411,7 +404,7 @@ struct SnapshotGraph {
             if (key == "RewardItem.cards") {
                 if (type != "CARD") return py::none();
                 py::list result;
-                for (int i = 0; i < static_cast<int>(fresh.rewardCards.size()); ++i) result.append(reward_card(fresh, i));
+                for (int i = 0; i < game.combat_reward_cards.size; ++i) result.append(card(game.combat_reward_cards[i]));
                 return result;
             }
             return {};

@@ -407,6 +407,11 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.rewardCards.push_back(card);
     }
     for (const int rarity : rarities) if (rarity != 2) game.rng.card.randomBoolean(0.0f);
+    for (int i = 0; i < static_cast<int>(run.rewardCards.size()); ++i) {
+        Card card = make_card(card_id(run.rewardCards[i].c_str()));
+        preview_card_obtain(game, card);
+        game.combat_reward_cards.push_back(create_card(game, card));
+    }
     run.rewardTypes.push_back("CARD");
 }
 

@@ -95,6 +95,8 @@ SPIRE_FN inline void gain_gold(Game&, int);
 SPIRE_FN inline void lose_gold(Game&, int);
 SPIRE_FN inline void spend_gold(Game&, int);
 SPIRE_FN inline void equip_relic(Game&, RelicId);
+SPIRE_FN inline Effect relic_above_creature(int, int);
+SPIRE_FN void add_relic_reward(Game&, RelicTier);
 SPIRE_FN inline bool unequip_relic(Game&, RelicId);
 SPIRE_FN inline void preview_card_obtain(Game&, Card&);
 SPIRE_FN inline void obtain_card(Game&, Card);

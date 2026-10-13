@@ -101,6 +101,7 @@ for name in ("canSpawn", "checkTrigger"):
     relic(name, result="bool", body="return false;" if name == "checkTrigger" else "return true;", const=True)
 relic("getPrice", result="int", body="return relic_data(g.run.relics[relic].id).price;", const=True)
 relic("onTrigger")
+relic("setCounter", "int value", body="g.run.relics[relic].counter = value;")
 relic("onTrigger", "int target")
 relic("onEvokeOrb", "int orb")
 relic("onChangeStance", "int old_stance, int new_stance")

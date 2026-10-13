@@ -318,6 +318,13 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
                     g.run.potions[slot] = PotionId::Empty;
                     return;
                 }
+                for (int i = 0; i < g.run.relics.size; ++i) {
+                    const RelicData data = relic_data(g.run.relics[i].id);
+                    if (data.revives_player && g.run.relics[i].counter == data.counter) {
+                        relic_onTrigger(g, i);
+                        return;
+                    }
+                }
             }
             target.dead = true;
             target.block = 0;
@@ -504,7 +511,17 @@ SPIRE_FN inline void complete_end_turn(Game& g) {
     add_bottom(g, end);
 }
 SPIRE_FN inline void recharge_energy(Game& g) {
-    g.player.energy = g.player.energy_master;
+    int preserving_relic = -1;
+    for (int i = 0; i < g.run.relics.size; ++i) {
+        if (relic_data(g.run.relics[i].id).preserves_energy) {
+            preserving_relic = i;
+            break;
+        }
+    }
+    if (preserving_relic >= 0) {
+        if (g.player.energy > 0) add_top(g, relic_above_creature(player_target, preserving_relic));
+        gain_energy(g, g.player.energy_per_turn);
+    } else g.player.energy = g.player.energy_per_turn;
     g.manager.energy_gained_this_combat += g.player.energy_master;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onEnergyRecharge(g, i);
     Powers& powers = g.player.creature.powers;
@@ -726,7 +743,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.run.floor = setup.floor;
     g.run.gold = setup.gold;
     g.run.master_deck = setup.deck;
-    g.run.relics = setup.relics;
+    g.run.relics.clear();
+    for (int i = 0; i < setup.relics.size; ++i) equip_relic(g, setup.relics[i].id);
     for (int i = 0; i < 2; ++i) {
         g.run.potions[i] = setup.potions[i];
         potion_initialize_state(g, i);
@@ -744,7 +762,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.multi_damage.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
-    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
+    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.combat_reward_cards.clear();
     g.discovery_card = -1;
     g.action_objects.clear();
     g.power_objects.clear();
@@ -761,6 +779,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.turn = 1;
     g.battle_over = false;
     g.room_in_combat = true;
+    g.room_kind = RoomKind::Monster;
     g.cannot_lose = false;
     g.mugged = false;
     g.smoked = false;
@@ -769,6 +788,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.end_turn_enabled = true;
     g.screen = Screen::Combat;
     g.encounter = setup.encounter;
+    for (int i = 0; i < g.run.relics.size; ++i) relic_onEnterRoom(g, i, static_cast<int>(g.room_kind));
+    for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(g.room_kind));
     encounter_initialize_state(g);
     build_encounter(g, setup.encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);

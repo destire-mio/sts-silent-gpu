@@ -24,5 +24,7 @@ enum class EnemyType : uint8_t { Normal, Elite, Boss };
 enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None, CardReward };
 enum class PileId : uint8_t { Hand, Draw, Discard, Exhaust, Limbo, Grid };
 enum class Phase : uint8_t { WaitingOnUser, ExecutingActions };
+enum class RoomKind : uint8_t { Monster, Elite, Boss, Shop, Rest, Treasure, Event };
+enum class RelicTier : uint8_t { Common, Uncommon, Rare, Shop, Boss };
 
 }

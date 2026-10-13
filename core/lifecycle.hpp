@@ -48,6 +48,8 @@ SPIRE_FN inline void remove_master_card(Game& g, int index) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);
 }
 SPIRE_FN inline void on_victory(Game& g) {
+    for (int i = 0; i < g.run.relics.size; ++i)
+        if (relic_data(g.run.relics[i].id).triggers_at_battle_end) relic_onTrigger(g, i);
     if (!g.player.creature.dying) {
         for (int i = 0; i < g.run.relics.size; ++i) relic_onVictory(g, i);
         Powers& powers = g.player.creature.powers;

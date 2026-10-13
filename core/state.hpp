@@ -236,6 +236,7 @@ struct Game {
     bool player_turn_effect_pending = false;
     Pile drawn_cards{};
     Pile reward_cards{};
+    Pile combat_reward_cards{};
     int discovery_card = -1;
     List<Monster, monster_capacity> monsters{};
     List<uint8_t, monster_capacity> monster_order{};
@@ -262,6 +263,7 @@ struct Game {
     bool reward_skippable = false;
     bool battle_over = false;
     bool room_in_combat = false;
+    RoomKind room_kind = RoomKind::Monster;
     uint16_t room_event_class = 0;
     bool cannot_lose = false;
     bool mugged = false;
