@@ -23,3 +23,4 @@ SPIRE_UNIT(PhilosopherStone, "Philosopher's Stone", "core/relics/philosopher_sto
 SPIRE_UNIT(Pocketwatch, "Pocketwatch", "core/relics/pocketwatch.hpp", Pocketwatch)
 SPIRE_UNIT(PotionBelt, "Potion Belt", "core/relics/potion_belt.hpp", PotionBelt)
 SPIRE_UNIT(PrayerWheel, "Prayer Wheel", "core/relics/prayer_wheel.hpp", PrayerWheel)
+SPIRE_UNIT(PreservedInsect, "PreservedInsect", "core/relics/preserved_insect.hpp", PreservedInsect)
