@@ -183,7 +183,9 @@ final class Choices {
                     for (AbstractCard card : Choices.<CardGroup>get(AbstractDungeon.gridSelectScreen, "targetGroup").group)
                         moving |= card.current_x != card.target_x || card.current_y != card.target_y;
                 } while (moving);
-                click(selected.hb); AbstractDungeon.gridSelectScreen.update();
+                // AbstractDungeon.update runs GRID before OverlayMenu.update; the relic must
+                // consume its selection before ShopScreen.updatePurge sees the reopened shop.
+                click(selected.hb); com.megacrit.cardcrawl.core.CardCrawlGame.dungeon.update();
                 if (AbstractDungeon.isScreenUp && AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID
                         && !AbstractDungeon.gridSelectScreen.confirmScreenUp && AbstractDungeon.gridSelectScreen.selectedCards.contains(selected) == wasSelected)
                     throw new AssertionError("Grid input was not accepted");
