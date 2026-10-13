@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "intent_flash.hpp"
 
 namespace spire::units::actions {
 struct BouncingFlask : ActionHooks {
@@ -22,6 +23,7 @@ struct BouncingFlask : ActionHooks {
             --e.state.BouncingFlask.num_times;
             const int target = random_living_monster(g);
             add_top(g, construct(target, e.state.BouncingFlask.amount, e.state.BouncingFlask.num_times));
+            add_top(g, VFX::make());
         }
         if (get_creature(g, e.target).hp > 0) {
             Effect apply{};
