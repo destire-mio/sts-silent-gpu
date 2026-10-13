@@ -1,0 +1,38 @@
+{
+  "deck": [
+    {
+      "id": "Deadly Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 0
+    },
+    {
+      "id": "Poisoned Stab",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Snake Skull"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "2 Louse"
+}
