@@ -6,3 +6,4 @@ SPIRE_UNIT(BlockPotion, "Block Potion", "core/potions/block_potion.hpp", BlockPo
 SPIRE_UNIT(ColorlessPotion, "ColorlessPotion", "core/potions/colorless_potion.hpp", ColorlessPotion)
 SPIRE_UNIT(CultistPotion, "CultistPotion", "core/potions/cultist_potion.hpp", CultistPotion)
 SPIRE_UNIT(CunningPotion, "CunningPotion", "core/potions/cunning_potion.hpp", CunningPotion)
+SPIRE_UNIT(DexterityPotion, "Dexterity Potion", "core/potions/dexterity_potion.hpp", DexterityPotion)
