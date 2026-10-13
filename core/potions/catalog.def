@@ -5,3 +5,4 @@ SPIRE_UNIT(BlessingOfTheForge, "BlessingOfTheForge", "core/potions/blessing_of_t
 SPIRE_UNIT(BlockPotion, "Block Potion", "core/potions/block_potion.hpp", BlockPotion)
 SPIRE_UNIT(ColorlessPotion, "ColorlessPotion", "core/potions/colorless_potion.hpp", ColorlessPotion)
 SPIRE_UNIT(CultistPotion, "CultistPotion", "core/potions/cultist_potion.hpp", CultistPotion)
+SPIRE_UNIT(CunningPotion, "CunningPotion", "core/potions/cunning_potion.hpp", CunningPotion)
