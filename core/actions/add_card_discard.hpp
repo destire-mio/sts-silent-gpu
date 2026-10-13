@@ -3,6 +3,13 @@
 
 namespace spire::units::actions {
 struct AddCardDiscard : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.amount", scalar, 0)
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("MakeTempCardInDiscardAction.c", card, effect.card)
+    SPIRE_SNAPSHOT("MakeTempCardInDiscardAction.numCards", scalar, effect.amount)
+    SPIRE_SNAPSHOT("MakeTempCardInDiscardAction.sameUUID", scalar, effect.flag)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_FN static Effect make(int card, int amount) {
         Effect e{};
         e.kind = EffectKind::AddCardDiscard;

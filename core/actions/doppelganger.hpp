@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct Doppelganger : ActionHooks {
+    SPIRE_SNAPSHOT("DoppelgangerAction.p", player)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(Doppelganger, bool free_to_play_once; bool upgraded; int energy_on_use;)
     SPIRE_FN static Effect construct(bool upgraded, bool free, int energy_on_use) {
         Effect e{};

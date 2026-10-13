@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct ShuffleGroup : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("ShuffleAction.group", pile_group, effect.state.ShuffleGroup.group)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SHUFFLE"}; }
     SPIRE_STATE(ShuffleGroup, PileId group;)
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         if (e.flag)

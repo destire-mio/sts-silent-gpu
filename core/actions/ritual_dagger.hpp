@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct RitualDagger : ActionHooks {
+    SPIRE_SNAPSHOT("RitualDaggerAction.info", damage_info, effect, queue, index)
+    SPIRE_SNAPSHOT("RitualDaggerAction.uuid", uuid, effect.state.RitualDagger.uuid)
     SPIRE_STATE(RitualDagger, int increaseAmount; uint32_t uuid;)
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static Effect construct(int target, const DamageInfo& info, int increase, uint32_t uuid) {

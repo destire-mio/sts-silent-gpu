@@ -3,7 +3,6 @@
 #include "run_state.hpp"
 #include "core/card_pool.hpp"
 #include "core/card_data.hpp"
-#include "spire_host_generated/snapshot.hpp"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <array>
@@ -12,6 +11,7 @@
 #include <set>
 #include <string>
 #include <type_traits>
+#include "spire_host_generated/snapshot.hpp"
 
 namespace spire::host {
 namespace py = pybind11;
@@ -135,8 +135,6 @@ struct SnapshotGraph {
             if (field == "selfRetain") return py::bool_(card.self_retain);
             if (field == "freeToPlayOnce") return py::bool_(card.free_to_play_once);
             if (field == "exhaustOnUseOnce") return py::bool_(card.exhaust_on_use_once);
-            if (field == "dontTriggerOnUseCard") return py::bool_(card.dont_trigger_on_use_card);
-            if (field == "isInAutoplay") return py::bool_(card.in_autoplay);
             if (field == "purgeOnUse") return py::bool_(card.purge_on_use);
             if (field == "returnToHand") return py::bool_(card.return_to_hand);
             if (field == "shuffleBackIntoDrawPile") return py::bool_(card.shuffle_back_into_draw_pile);
@@ -209,22 +207,10 @@ struct SnapshotGraph {
             if (field == "priority") return py::int_(data.priority);
             if (field == "type") return py::str(power_isDebuff(power, owner) ? "DEBUFF" : "BUFF");
             if (field == "canGoNegative") return py::bool_(data.can_negative);
-            if (field == "isTurnBased") return py::bool_(data.turn_based || power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::PenNib || power.id == PowerId::Poison || power.id == PowerId::NoBlock);
-            if (field == "isPostActionPower") return py::bool_(power.id == PowerId::Angry || power.id == PowerId::Shifting);
-            if (key == "ConstrictedPower.source") {
-                const int source = power.state.Constricted.source;
-                return source == no_target ? py::object(py::none()) : creature(source);
-            }
-            if (field == "justApplied") return py::bool_(power.just_applied);
-            if (field == "triggered") return py::bool_(power.triggered);
-            if (field == "skipFirst") return py::bool_(power.skip_first);
-            if (field == "onPlayer") return py::bool_(owner == player_target);
-            if (key == "PoisonPower.source") {
-                const int source = power.state.Poison.source;
-                return source == no_target ? py::object(py::none()) : creature(source);
-            }
-            if (key == "NightmarePower.card") return card(power.state.Nightmare.card);
-            if (key == "StasisPower.card") return card(power.state.Stasis.card);
+            if (field == "isTurnBased") return py::bool_(data.turn_based);
+            if (field == "isPostActionPower") return py::bool_(data.post_action);
+            const py::object value = powers_snapshot(*this, power, owner, key);
+            if (value) return value;
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
@@ -473,231 +459,71 @@ struct SnapshotGraph {
         });
     }
 
+    template<class T> py::object scalar(const T& value) { return py::cast(value); }
+    py::object scalar(const char* value) { return value ? py::object(py::str(value)) : py::object(py::none()); }
+    py::object scalar(std::nullptr_t) { return py::none(); }
+    py::object uuid(uint32_t value) { return py::int_(uuids.emplace(value, static_cast<int>(uuids.size())).first->second); }
+    py::object damage_type(DamageType type) { return py::str(damage_type_names[static_cast<int>(type)]); }
+    py::object card_type(int type) { return type < 0 ? py::object(py::none()) : py::object(py::str(card_type_names[type])); }
+    py::object intent(int value) { return py::str(intent_names[value]); }
+    template<class Index> py::object card_array(const Index* values, int count) {
+        py::list result;
+        for (int i = 0; i < count; ++i) result.append(card(values[i]));
+        return result;
+    }
+    py::object damage_array(const int* values, int count, int card, bool initialized) {
+        if (!initialized) return py::none();
+        py::list result;
+        for (int i = 0; i < count; ++i) result.append(card >= 0 ? game.multi_damage[card][i] : values[i]);
+        return result;
+    }
+    py::object optional_pile_group(PileId pile, bool present) { return present ? pile_group(pile) : py::object(py::none()); }
+    py::object power_id(PowerId id, uint32_t instance) {
+        return instance == 0 ? py::object(py::str(power_names[static_cast<int>(id)])) : py::object(py::none());
+    }
+    py::object power_reference(int owner, uint32_t instance) {
+        if (instance == 0) return py::none();
+        return power_value(power_instance(game, owner, instance), owner, {6, static_cast<int>(instance), 0});
+    }
+    py::object action_reference(int index) {
+        return index < 0 ? py::object(py::none()) : effect(game.action_objects[index], 3, index);
+    }
+    py::object potion_template(PotionId potion, int queue, int index) {
+        const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(potion_names[static_cast<int>(potion)])].cast<py::dict>();
+        return object({25, queue, index}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
+            return py::reinterpret_borrow<py::object>(data["fields"].cast<py::dict>()[py::str(key)]);
+        });
+    }
+    py::object damage_info(const Effect& effect, int queue, int index) {
+        if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
+            const Monster& owner = game.monsters[effect.source];
+            for (int i = 0; i < owner.damage_count; ++i)
+                if (owner.damage[i] == effect.info_base) return monster_damage(effect.source, i);
+        }
+        return object({16, queue, index}, "cards.DamageInfo", [&](const std::string& name) -> py::object {
+            if (name == "DamageInfo.base") return py::int_(effect.info_base);
+            if (name == "DamageInfo.output") return py::int_(effect.amount);
+            if (name == "DamageInfo.isModified") return py::bool_(false);
+            if (name == "DamageInfo.owner") return creature(effect.source);
+            if (name == "DamageInfo.type") return damage_type(effect.damage_type);
+            return {};
+        });
+    }
     py::object effect(const Effect& effect, int queue, int index) {
         const std::string name = effect_names[static_cast<int>(effect.kind)];
         if (name.compare(0, 8, "actions.") != 0) return {};
         UnitStateSnapshot state;
         action_visit_state(effect, state);
         return object({15, queue, index}, name, [&](const std::string& key) -> py::object {
+            const py::object value = actions_snapshot(*this, effect, queue, index, key);
+            if (value) return value;
             const std::string field = key.substr(key.find('.') + 1);
-            if (key == "AbstractGameAction.actionType") {
-                if (action_data(effect.kind).type) return py::str(action_data(effect.kind).type);
-                switch (effect.kind) {
-                case EffectKind::MakeTempCardInDiscardAndDeck: case EffectKind::MakeTempCardInDrawPile:
-                case EffectKind::MakeTempCardInHand: case EffectKind::ModifyDamage: case EffectKind::PutOnDeck:
-                case EffectKind::UpgradeRandomCard: case EffectKind::Armaments: case EffectKind::AttackFromDeckToHand:
-                    return py::str("CARD_MANIPULATION");
-                case EffectKind::ObtainPotion: return py::str("SPECIAL");
-                case EffectKind::ShowMoveName: return py::str("TEXT");
-                case EffectKind::ShuffleGroup: return py::str("SHUFFLE");
-                case EffectKind::Suicide: return py::str("DAMAGE");
-                case EffectKind::Apotheosis: return py::str("WAIT");
-                default: break;
-                }
-                if (effect.kind == EffectKind::Damage || effect.kind == EffectKind::DamageAllEnemies || effect.kind == EffectKind::LoseHP) return py::str("DAMAGE");
-                if (effect.kind == EffectKind::Damage || effect.kind == EffectKind::DamageRandomEnemy || effect.kind == EffectKind::DamagePerAttackPlayed) return py::str("DAMAGE");
-                if (effect.kind == EffectKind::LoseBlock) return py::str("BLOCK");
-                if (effect.kind == EffectKind::Setup || effect.kind == EffectKind::SkillFromDeckToHand || effect.kind == EffectKind::ChooseOneColorless || effect.kind == EffectKind::DrawPileToHand) return py::str("CARD_MANIPULATION");
-                if (effect.kind == EffectKind::ShowCard || effect.kind == EffectKind::ShowCardAndPoof || effect.kind == EffectKind::SpawnMonster || effect.kind == EffectKind::Doppelganger) return py::str("SPECIAL");
-                if (effect.kind == EffectKind::BouncingFlask || effect.kind == EffectKind::DoublePoison) return py::str("DEBUFF");
-                if (effect.kind == EffectKind::Expertise) return py::str("WAIT");
-                if (effect.kind == EffectKind::Damage || effect.kind == EffectKind::VampireDamageAction) return py::str("DAMAGE");
-                if (effect.kind == EffectKind::FlechetteAction || effect.kind == EffectKind::HeelHookAction) return py::str("BLOCK");
-                if (effect.kind == EffectKind::GamblingChipAction || effect.kind == EffectKind::NightmareAction) return py::str("CARD_MANIPULATION");
-                if (effect.kind == EffectKind::MalaiseAction || effect.kind == EffectKind::SkewerAction ||
-                    effect.kind == EffectKind::SummonGremlinAction || effect.kind == EffectKind::TransmutationAction) return py::str("SPECIAL");
-                if (effect.kind == EffectKind::TriplePoisonAction) return py::str("DEBUFF");
-                if (effect.kind == EffectKind::ConditionalDrawAction || effect.kind == EffectKind::ApplyStasisAction ||
-                    effect.kind == EffectKind::CalculatedGambleAction || effect.kind == EffectKind::EscapePlanAction ||
-                    effect.kind == EffectKind::PlayTopCardAction) return py::str("WAIT");
-                if (effect.kind == EffectKind::Block) return py::str("BLOCK");
-                if (effect.kind == EffectKind::Draw) return py::str("DRAW");
-                if (effect.kind == EffectKind::Discard || effect.kind == EffectKind::DiscardSpecificCard) return py::str("DISCARD");
-                if (effect.kind == EffectKind::Exhaust || effect.kind == EffectKind::ExhaustCard) return py::str("EXHAUST");
-                if (effect.kind == EffectKind::Heal) return py::str("HEAL");
-                if (effect.kind == EffectKind::Escape) return py::str("TEXT");
-                if (effect.kind == EffectKind::IntentFlash) return py::str("WAIT");
-                if (effect.kind == EffectKind::ChangeState) return py::str("SPECIAL");
-                if (effect.kind == EffectKind::UseCard) return py::str(effect.flag ? "EXHAUST" : "USE");
-                if (effect.kind == EffectKind::ApplyPower) return py::str("POWER");
-                if (effect.kind == EffectKind::ReducePower) return py::str("REDUCE_POWER");
-                if (effect.kind == EffectKind::RemovePower) return py::str("DEBUFF");
-                if (effect.kind == EffectKind::Shuffle) return py::str("SHUFFLE");
-                if (effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::BetterDiscardPileToHand) return py::str("CARD_MANIPULATION");
-                return py::none();
-            }
-            if (key == "AbstractGameAction.amount") {
-                if (effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::RemovePower ||
-                    effect.kind == EffectKind::FlechetteAction || effect.kind == EffectKind::HeelHookAction ||
-                    effect.kind == EffectKind::EscapePlanAction) return py::int_(0);
-                if (effect.kind == EffectKind::DamageRandomEnemy) return py::int_(0);
-                return py::int_(effect.kind == EffectKind::UseCard ? 1 : effect.amount);
-            }
-            if (key == "AbstractGameAction.damageType") return effect.kind == EffectKind::DamageAllEnemies ? py::object(py::str(damage_type_names[static_cast<int>(effect.damage_type)])) : py::object(py::none());
+            if (key == "AbstractGameAction.actionType") return scalar(action_data(effect.kind).type);
+            if (key == "AbstractGameAction.amount") return py::int_(effect.amount);
+            if (key == "AbstractGameAction.damageType") return py::none();
             if (key == "AbstractGameAction.isDone") return py::bool_(effect.done);
-            if (key == "AbstractGameAction.source") {
-                switch (effect.kind) {
-                case EffectKind::TriggerEndOfTurnOrbs: case EffectKind::MonsterStart: case EffectKind::MakeTempCardInDiscardAndDeck:
-                case EffectKind::MakeTempCardInDrawPile: case EffectKind::MakeTempCardInHand:
-                case EffectKind::ModifyDamage: case EffectKind::ObtainPotion: case EffectKind::SetDontTrigger:
-                case EffectKind::ShuffleGroup: case EffectKind::Suicide: case EffectKind::UpgradeRandomCard:
-                case EffectKind::AddCardToDeck: case EffectKind::Apotheosis: case EffectKind::ApplyBulletTime:
-                case EffectKind::Armaments: return py::none();
-                case EffectKind::AttackFromDeckToHand: return player();
-                default: break;
-                }
-                if (effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
-                    effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard || effect.kind == EffectKind::DamageRandomEnemy) return py::none();
-                if (effect.kind == EffectKind::FlechetteAction || effect.kind == EffectKind::HeelHookAction || effect.kind == EffectKind::RemoveDebuffsAction ||
-                    effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
-                    effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard) return py::none();
-                return effect.source == no_target ? py::object(py::none()) : creature(effect.source);
-            }
-            if (key == "AbstractGameAction.target") {
-                switch (effect.kind) {
-                case EffectKind::TriggerEndOfTurnOrbs: case EffectKind::MonsterStart: case EffectKind::MakeTempCardInDiscardAndDeck:
-                case EffectKind::MakeTempCardInDrawPile: case EffectKind::MakeTempCardInHand:
-                case EffectKind::ModifyDamage: case EffectKind::ObtainPotion: case EffectKind::SetDontTrigger:
-                case EffectKind::ShuffleGroup: case EffectKind::Suicide: case EffectKind::UpgradeRandomCard:
-                case EffectKind::AddCardToDeck: case EffectKind::Apotheosis: case EffectKind::ApplyBulletTime:
-                case EffectKind::Armaments: return py::none();
-                case EffectKind::AttackFromDeckToHand: return player();
-                default: break;
-                }
-                if (effect.kind == EffectKind::UseCard) return player();
-                if (effect.kind == EffectKind::RemoveDebuffsAction || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove ||
-                    effect.kind == EffectKind::SetMove || effect.kind == EffectKind::AddCardDiscard) return py::none();
-                return effect.target == no_target ? py::object(py::none()) : creature(effect.target);
-            }
-            if (key == "MakeTempCardInDiscardAndDeckAction.cardToMake" ||
-                key == "MakeTempCardInDrawPileAction.cardToMake" || key == "MakeTempCardInHandAction.c" ||
-                key == "SetDontTriggerAction.card" || key == "AddCardToDeckAction.cardToObtain") return card(effect.card);
-            if (key == "MakeTempCardInHandAction.sameUUID") return py::bool_(effect.state.MakeTempCardInHand.same_uuid);
-            if (key == "MakeTempCardInHandAction.isOtherCardInCenter") return py::bool_(!effect.state.MakeTempCardInHand.other_card_not_in_center);
-            if (key == "ModifyDamageAction.uuid") {
-                const auto inserted = uuids.emplace(effect.state.ModifyDamage.uuid, static_cast<int>(uuids.size()));
-                return py::int_(inserted.first->second);
-            }
-            if (key == "PutOnDeckAction.isRandom" || key == "ShuffleAction.triggerRelics" || key == "SetDontTriggerAction.trigger") return py::bool_(effect.flag);
-            if (key == "PutOnDeckAction.p" || key == "UpgradeRandomCardAction.p" || key == "ArmamentsAction.p" || key == "AttackFromDeckToHandAction.p") return player();
-            if (key == "ShowMoveNameAction.msg") return effect.state.ShowMoveName.has_msg ? py::object(py::str(effect.state.ShowMoveName.msg)) : py::object(py::none());
-            if (key == "SuicideAction.m") return monster(effect.target);
-            if (key == "SuicideAction.relicTrigger") return py::bool_(!effect.state.Suicide.suppress_relics);
-            if (key == "ArmamentsAction.cannotUpgrade") {
-                py::list cards;
-                for (int i = 0; i < effect.state.Armaments.cannot_upgrade_count; ++i)
-                    cards.append(card(effect.state.Armaments.cannot_upgrade[i]));
-                return cards;
-            }
-            if (key == "ShuffleAction.group") {
-                switch (effect.state.ShuffleGroup.group) {
-                case PileId::Hand: return group(3, "HAND", &game.hand);
-                case PileId::Draw: return group(1, "DRAW_PILE", &game.draw);
-                case PileId::Discard: return group(0, "DISCARD_PILE", &game.discard);
-                case PileId::Exhaust: return group(2, "EXHAUST_PILE", &game.exhaust);
-                case PileId::Limbo: return group(4, "UNSPECIFIED", &game.limbo);
-                }
-            }
-            if (key == "ObtainPotionAction.potion") {
-                const int id = static_cast<int>(effect.state.ObtainPotion.potion);
-                const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(potion_names[id])].cast<py::dict>();
-                return object({25, queue, index}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-                    return py::reinterpret_borrow<py::object>(data["fields"].cast<py::dict>()[py::str(key)]);
-                });
-            }
-            if (key == "DamageAction.goldAmount") return py::int_(effect.extra);
-            if (key == "DamageAction.muteSfx") return py::bool_(false);
-            if (key == "DamageAction.skipWait") return py::bool_(effect.flag);
-            if (key == "DamageAction.info" || key == "FlechetteAction.info" || key == "HeelHookAction.info" || key == "VampireDamageAction.info" || key == "DamageRandomEnemyAction.info" || key == "DamagePerAttackPlayedAction.info" || key == "BaneAction.info" || key == "GreedAction.info" || key == "RitualDaggerAction.info") {
-                if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
-                    const Monster& owner = game.monsters[effect.source];
-                    for (int i = 0; i < owner.damage_count; ++i)
-                        if (owner.damage[i] == effect.info_base) return monster_damage(effect.source, i);
-                }
-                return object({16, queue, index}, "cards.DamageInfo", [&](const std::string& name) -> py::object {
-                    if (name == "DamageInfo.base") return py::int_(effect.info_base);
-                    if (name == "DamageInfo.output") return py::int_(effect.amount);
-                    if (name == "DamageInfo.isModified") return py::bool_(false);
-                    if (name == "DamageInfo.owner") return effect.source == no_target ? py::object(py::none()) : creature(effect.source);
-                    if (name == "DamageInfo.type") return py::str(damage_type_names[static_cast<int>(effect.damage_type)]);
-                    return {};
-                });
-            }
-            if (key == "ApplyPowerToRandomEnemyAction.powerToApply") return power_value(effect.prepared_power, effect.target, {20, queue, index});
-            if (key == "ApplyPowerAction.powerToApply") return power_value(effect.prepared_power, effect.target, {20, queue, index});
-            if (key == "ReducePowerAction.powerID" || key == "RemoveSpecificPowerAction.powerToRemove") return effect.power_instance == 0 ? py::object(py::str(power_names[static_cast<int>(effect.power)])) : py::object(py::none());
-            if (key == "ReducePowerAction.powerInstance" || key == "RemoveSpecificPowerAction.powerInstance") {
-                if (effect.power_instance == 0) return py::none();
-                return power_value(power_instance(game, effect.target, effect.power_instance), effect.target, {6, static_cast<int>(effect.power_instance), 0});
-            }
-            if (key == "SetMoveAction.isMultiplier") return py::bool_(effect.state.SetMove.is_multiplier);
-            if (key == "SetMoveAction.monster") return monster(effect.target);
-            if (key == "SetMoveAction.theMultiplier") return py::int_(effect.state.SetMove.the_multiplier);
-            if (key == "SetMoveAction.theNextDamage") return py::int_(effect.card);
-            if (key == "SetMoveAction.theNextIntent") return py::str(intent_names[effect.extra]);
-            if (key == "SetMoveAction.theNextMove") return py::int_(effect.amount);
-            if (key == "MakeTempCardInDiscardAction.c") return card(effect.card);
-            if (key == "MakeTempCardInDiscardAction.numCards") return py::int_(effect.amount);
-            if (key == "MakeTempCardInDiscardAction.sameUUID") return py::bool_(effect.flag);
-            if (key == "DrawCardAction.clearDrawHistory") return py::bool_(!effect.flag);
-            if (key == "DrawCardAction.followUpAction") {
-                const int ref = effect.state.Draw.follow_up_action - 1;
-                return ref < 0 ? py::object(py::none()) : this->effect(game.action_objects[ref], 3, ref);
-            }
-            if (key == "SpawnMonsterAction.m") return monster(effect.state.SpawnMonster.m);
-            if (key == "DrawPileToHandAction.typeToCheck") return py::str(card_type_names[static_cast<int>(effect.state.DrawPileToHand.type_to_check)]);
-            if (key == "SetupAction.p" || key == "SkillFromDeckToHandAction.p" || key == "DrawPileToHandAction.p" || key == "DoppelgangerAction.p") return player();
-            if (key == "NewQueueCardAction.card" || key == "ShowCardAction.card" || key == "ShowCardAndPoofAction.card" || key == "UnlimboAction.card") return card(effect.card);
-            if (key == "DiscardAction.endTurn") return py::bool_(effect.flag);
-            if (key == "DiscardAction.isRandom") return py::bool_(effect.state.Discard.isRandom);
-            if (key == "DiscardAction.p" || key == "ExhaustAction.p" || key == "BetterDiscardPileToHandAction.player" || key == "HandCheckAction.player") return player();
-            if (key == "IntentFlashAction.m") return monster(effect.extra);
-            if (key == "ChangeStateAction.m") return monster(effect.state.ChangeState.m);
-            if (key == "ExhaustSpecificCardAction.targetCard" || key == "DiscardSpecificCardAction.targetCard") return card(effect.card);
-            if (key == "ExhaustSpecificCardAction.group") return pile_group(effect.state.ExhaustCard.group);
-            if (key == "DiscardSpecificCardAction.group") return effect.state.DiscardSpecificCard.defaultGroup ? py::object(py::none()) : pile_group(effect.state.DiscardSpecificCard.group);
-            if (key == "DamageAllEnemiesAction.damage") {
-                if (effect.state.DamageAllEnemies.utilizeBaseDamage && effect.state.DamageAllEnemies.firstFrame) return py::none();
-                py::list result;
-                for (int i = 0; i < effect.state.DamageAllEnemies.damageCount; ++i)
-                    result.append(effect.card >= 0 ? game.multi_damage[effect.card][i] : effect.state.DamageAllEnemies.damage[i]);
-                return result;
-            }
-            if (key == "RollMoveAction.monster") return monster(effect.target);
-            if (key == "UseCardAction.exhaustCard") return py::bool_(effect.flag);
-            if (key == "UseCardAction.reboundCard") return py::bool_(effect.state.UseCard.rebound_card);
-            if (key == "UseCardAction.returnToHand") return py::bool_(effect.state.UseCard.return_to_hand);
-            if (key == "UseCardAction.target") return effect.target < 0 ? py::object(py::none()) : monster(effect.target);
-            if (key == "UseCardAction.targetCard") return card(effect.card);
-            if (key == "BaneAction.m") return effect.target == no_target ? py::object(py::none()) : monster(effect.target);
-            if (key == "RestoreRetainedCardsAction.group") return group(25, "UNSPECIFIED", &game.retained);
-            if (key == "EnlightenmentAction.p" || key == "ForethoughtAction.p" || key == "MadnessAction.p" || key == "RandomizeHandCostAction.p") return player();
-            if (key == "DiscoveryAction.cardType") {
-                const int type = effect.state.Discovery.cardType;
-                constexpr const char* types[] = {"ATTACK", "SKILL", "POWER", "STATUS", "CURSE"};
-                return type < 0 ? py::object(py::none()) : py::object(py::str(types[type]));
-            }
-            if (key == "RitualDaggerAction.uuid") {
-                const auto inserted = uuids.emplace(effect.state.RitualDagger.uuid, static_cast<int>(uuids.size()));
-                return py::int_(inserted.first->second);
-            }
-            if (key == "GamblingChipAction.p") return py::none();
-            if (key == "NightmareAction.p") return creature(effect.target);
-            if (key == "RemoveDebuffsAction.c") return creature(effect.target);
-            if (key == "ApplyStasisAction.owner") return creature(effect.state.ApplyStasisAction.owner);
-            if (key == "ApplyStasisAction.card") return card(effect.state.ApplyStasisAction.card);
-            if (key == "SummonGremlinAction.m") return effect.state.SummonGremlinAction.m == no_target ? py::object(py::none()) : monster(effect.state.SummonGremlinAction.m);
-            if (key == "MalaiseAction.p") return creature(effect.state.MalaiseAction.p);
-            if (key == "MalaiseAction.m") return creature(effect.state.MalaiseAction.m);
-            if (key == "SkewerAction.p") return creature(effect.state.SkewerAction.p);
-            if (key == "SkewerAction.m") return creature(effect.state.SkewerAction.m);
-            if (key == "TransmutationAction.p") return creature(effect.state.TransmutationAction.p);
-            if (key == "SkewerAction.damageTypeForTurn") return py::str(damage_type_names[static_cast<int>(effect.state.SkewerAction.damage_type_for_turn)]);
-            if (key == "ConditionalDrawAction.restrictedType") {
-                const char* types[]{"ATTACK", "SKILL", "POWER", "STATUS", "CURSE"};
-                return py::str(types[static_cast<int>(effect.state.ConditionalDrawAction.restricted_type)]);
-            }
-            if (key == "EscapePlanAction.blockGain") return py::int_(effect.amount);
+            if (key == "AbstractGameAction.source") return creature(effect.source);
+            if (key == "AbstractGameAction.target") return creature(effect.target);
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
@@ -710,6 +536,7 @@ struct SnapshotGraph {
         case PileId::Discard: return group(0, "DISCARD_PILE", &game.discard);
         case PileId::Exhaust: return group(2, "EXHAUST_PILE", &game.exhaust);
         case PileId::Limbo: return group(4, "UNSPECIFIED", &game.limbo);
+        case PileId::Grid: return group(21, "UNSPECIFIED", &game.grid_cards);
         }
         SPIRE_ASSERT(false);
         __builtin_unreachable();

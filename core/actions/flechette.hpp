@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct FlechetteAction : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.amount", scalar, 0)
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("FlechetteAction.info", damage_info, effect, queue, index)
+    static SPIRE_FN constexpr ActionData data() { return {false, "BLOCK"}; }
     SPIRE_FN static Effect construct(int target, const DamageInfo& info) {
         Effect e{};
         e.kind = EffectKind::FlechetteAction;

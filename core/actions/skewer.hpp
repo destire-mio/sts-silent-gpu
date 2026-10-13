@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct SkewerAction : ActionHooks {
+    SPIRE_SNAPSHOT("SkewerAction.p", creature, effect.state.SkewerAction.p)
+    SPIRE_SNAPSHOT("SkewerAction.m", creature, effect.state.SkewerAction.m)
+    SPIRE_SNAPSHOT("SkewerAction.damageTypeForTurn", damage_type, effect.state.SkewerAction.damage_type_for_turn)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(SkewerAction, int damage; DamageType damage_type_for_turn; int energy_on_use; int p; int m; bool free_to_play_once;)
     SPIRE_FN static Effect construct(int player, int monster, int damage, DamageType type, bool free, int energy) {
         Effect e{};

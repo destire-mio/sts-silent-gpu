@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct Discard : ActionHooks {
+    SPIRE_SNAPSHOT("DiscardAction.p", player)
+    SPIRE_SNAPSHOT("DiscardAction.endTurn", scalar, effect.flag)
+    static SPIRE_FN constexpr ActionData data() { return {false, "DISCARD"}; }
     SPIRE_STATE(Discard, bool selecting; bool isRandom;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);

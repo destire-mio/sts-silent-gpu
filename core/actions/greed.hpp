@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct Greed : ActionHooks {
+    SPIRE_SNAPSHOT("GreedAction.info", damage_info, effect, queue, index)
     SPIRE_STATE(Greed, int increaseGold;)
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static void prepare(Game&, Effect& e) {

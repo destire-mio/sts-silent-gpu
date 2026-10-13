@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct MalaiseAction : ActionHooks {
+    SPIRE_SNAPSHOT("MalaiseAction.p", creature, effect.state.MalaiseAction.p)
+    SPIRE_SNAPSHOT("MalaiseAction.m", creature, effect.state.MalaiseAction.m)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(MalaiseAction, int energy_on_use; int p; int m; bool upgraded; bool free_to_play_once;)
     SPIRE_FN static Effect construct(int player, int monster, bool upgraded, bool free, int energy) {
         Effect e{};

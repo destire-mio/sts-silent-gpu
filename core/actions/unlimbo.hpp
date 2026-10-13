@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct Unlimbo : ActionHooks {
+    SPIRE_SNAPSHOT("UnlimboAction.card", card, effect.card)
     SPIRE_STATE(Unlimbo, bool exhaust;)
     SPIRE_FN static Effect construct(int card, bool exhaust = false) {
         Effect e{};

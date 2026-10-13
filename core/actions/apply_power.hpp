@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct ApplyPower : ActionHooks {
+    SPIRE_SNAPSHOT("ApplyPowerAction.powerToApply", power_value, effect.prepared_power, effect.target, {20, queue, index})
+    static SPIRE_FN constexpr ActionData data() { return {false, "POWER"}; }
     SPIRE_STATE(ApplyPower, bool constructed;)
     SPIRE_FN static Effect make(int target, int source, const Power& power, int amount) {
         Effect e{};

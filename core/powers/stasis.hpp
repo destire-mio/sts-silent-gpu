@@ -3,6 +3,7 @@
 
 namespace spire::units::powers {
 struct Stasis : PowerHooks {
+    SPIRE_SNAPSHOT("StasisPower.card", card, power.state.Stasis.card)
     SPIRE_STATE(Stasis, int card;)
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void constructPower(Game&, Power& p, int, int, int, int card) {

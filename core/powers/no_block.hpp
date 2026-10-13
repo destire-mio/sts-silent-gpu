@@ -3,7 +3,8 @@
 
 namespace spire::units::powers {
 struct NoBlock : PowerHooks {
-    static SPIRE_FN constexpr PowerData data() { return {5, true}; }
+    SPIRE_SNAPSHOT("NoBlockPower.justApplied", scalar, power.just_applied)
+    static SPIRE_FN constexpr PowerData data() { PowerData data{5, true}; data.turn_based = true; return data; }
     static SPIRE_FN void initFromSource(Game& g, Power& p, int, bool monster_source) {
         p.just_applied = monster_source && g.manager.turn_has_ended;
     }

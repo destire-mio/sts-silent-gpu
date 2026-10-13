@@ -20,6 +20,7 @@ struct PowerData {
     bool free_attacks = false;
     bool turn_based = false;
     bool stacks_separately = false;
+    bool post_action = false;
     float rear_damage_multiplier = 1.0f;
     PowerId rear_attack_power = PowerId::Count;
 };

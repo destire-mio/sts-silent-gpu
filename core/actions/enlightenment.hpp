@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct Enlightenment : ActionHooks {
+    SPIRE_SNAPSHOT("EnlightenmentAction.p", player)
     SPIRE_STATE(Enlightenment, bool forCombat;)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_FN static void prepare(Game&, Effect& e) {

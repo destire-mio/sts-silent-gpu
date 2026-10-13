@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct SkillFromDeckToHand : ActionHooks {
+    SPIRE_SNAPSHOT("SkillFromDeckToHandAction.p", player)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(SkillFromDeckToHand, bool selecting;)
     SPIRE_FN static Effect construct(int amount) {
         Effect e{};

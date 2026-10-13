@@ -64,6 +64,27 @@ def reward_templates(units, schema):
                                     "fields": {"AbstractPotion." + key: value for key, value in fields.items()}}
     return {"cards": cards, "potions": potions}
 
+def unit_snapshot_dispatch(root):
+    lines = []
+    for kind, enum, entity, variable, selector, context in (
+        ("powers", "PowerId", "Power", "power", "power.id", "int owner"),
+        ("actions", "EffectKind", "Effect", "effect", "effect.kind", "int queue, int index"),
+    ):
+        lines.append(f'template<class Graph> auto {kind}_snapshot(Graph& graph, const {entity}& {variable}, {context}, const std::string& key) -> decltype(graph.scalar(0)) {{')
+        lines.append('const Game& game = graph.game; (void)game;')
+        lines.append(f'switch ({selector}) {{')
+        rows = re.findall(r'SPIRE_UNIT\((\w+), "([^\"]+)", "([^\"]+)", (\w+)\)', (root / "core" / kind / "catalog.def").read_text())
+        for unit, _, header, _ in rows:
+            fields = re.findall(r'^\s*SPIRE_SNAPSHOT\("([^\"]+)",\s*(\w+)(?:, (.*))?\)\s*$', (root / header).read_text(), re.M)
+            if not fields:
+                continue
+            lines.append(f'case {enum}::{unit}:')
+            for field, method, args in fields:
+                lines.append(f'if (key == "{field}") return graph.{method}({args});')
+            lines.append('break;')
+        lines.append('default: break; } return {}; }')
+    return '\n'.join(lines)
+
 def generate(root, output):
     schema = json.loads((root / "inventory/snapshot-fields.json").read_text())
     units = json.loads((root / "inventory/units.json").read_text())["units"]
@@ -87,7 +108,7 @@ def generate(root, output):
         metadata[directory] = entries
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_templates(units, schema)}, separators=(",", ":"))
-    output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n}\n')
+    output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n' + unit_snapshot_dispatch(root) + '\n}\n')
 
 
 if __name__ == "__main__":

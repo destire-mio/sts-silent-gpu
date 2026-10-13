@@ -4,6 +4,8 @@
 
 namespace spire::units::actions {
 struct NightmareAction : ActionHooks {
+    SPIRE_SNAPSHOT("NightmareAction.p", creature, effect.target)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(NightmareAction, bool selecting;)
     SPIRE_FN static void prepare(Game&, Effect& e) { action_initialize_state(e); }
     SPIRE_FN static void apply(Game& g, const Effect& e, int card) {

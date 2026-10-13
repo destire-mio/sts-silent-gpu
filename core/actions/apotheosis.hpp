@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct Apotheosis : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_FN static void execute(Game& g, const Effect&) {
         const PileId piles[] = {PileId::Hand, PileId::Draw, PileId::Discard, PileId::Exhaust};
         for (int p = 0; p < 4; ++p) {

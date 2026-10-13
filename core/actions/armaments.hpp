@@ -3,6 +3,11 @@
 
 namespace spire::units::actions {
 struct Armaments : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("ArmamentsAction.p", player)
+    SPIRE_SNAPSHOT("ArmamentsAction.cannotUpgrade", card_array, effect.state.Armaments.cannot_upgrade, effect.state.Armaments.cannot_upgrade_count)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(Armaments, uint16_t cannot_upgrade[card_capacity]; int cannot_upgrade_count; bool upgraded; bool selecting;)
     SPIRE_FN static void return_cards(Game& g, const Effect& e) {
         for (int i = 0; i < e.state.Armaments.cannot_upgrade_count; ++i)

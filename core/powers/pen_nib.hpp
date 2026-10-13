@@ -3,7 +3,7 @@
 
 namespace spire::units::powers {
 struct PenNib : PowerHooks {
-    static SPIRE_FN constexpr PowerData data() { return {6}; }
+    static SPIRE_FN constexpr PowerData data() { PowerData data{6}; data.turn_based = true; return data; }
     static SPIRE_FN void onUseCard(Game& g, Power&, int owner, int card, Effect&) {
         if (card_data(g.cards[card].id).type == CardType::Attack) {
             Effect e{};

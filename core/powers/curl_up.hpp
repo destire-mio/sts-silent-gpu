@@ -4,6 +4,7 @@
 
 namespace spire::units::powers {
 struct CurlUp : PowerHooks {
+    SPIRE_SNAPSHOT("CurlUpPower.triggered", scalar, power.triggered)
     static SPIRE_FN constexpr PowerData data() { return {5, false, false}; }
     static SPIRE_FN int onAttacked(Game& g, Power& p, int owner, const DamageInfo& info, int amount) {
         if (!p.triggered && amount < get_creature(g, owner).hp && amount > 0 &&

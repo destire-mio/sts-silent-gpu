@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct DiscardSpecificCard : ActionHooks {
+    SPIRE_SNAPSHOT("DiscardSpecificCardAction.targetCard", card, effect.card)
+    SPIRE_SNAPSHOT("DiscardSpecificCardAction.group", optional_pile_group, effect.state.DiscardSpecificCard.group, !effect.state.DiscardSpecificCard.defaultGroup)
+    static SPIRE_FN constexpr ActionData data() { return {false, "DISCARD"}; }
     SPIRE_STATE(DiscardSpecificCard, PileId group; bool defaultGroup;)
     SPIRE_FN static Effect make(int card, PileId group) {
         Effect e{};

@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct MakeTempCardInDrawPile : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("MakeTempCardInDrawPileAction.cardToMake", card, effect.card)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(MakeTempCardInDrawPile, bool random_spot; bool to_bottom;)
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         for (int i = 0; i < e.amount; ++i) {

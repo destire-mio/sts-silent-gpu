@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct ShowCard : ActionHooks {
+    SPIRE_SNAPSHOT("ShowCardAction.card", card, effect.card)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_FN static Effect construct(int card) {
         Effect e{};
         e.kind = EffectKind::ShowCard;

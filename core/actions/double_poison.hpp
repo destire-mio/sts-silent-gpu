@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct DoublePoison : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "DEBUFF"}; }
     SPIRE_FN static Effect construct(int target, int source) {
         Effect e{};
         e.kind = EffectKind::DoublePoison;

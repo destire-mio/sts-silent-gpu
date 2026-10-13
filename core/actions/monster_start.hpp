@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct MonsterStart : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
     SPIRE_FN static void execute(Game& g, const Effect&) {
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int monster = g.monster_order[i];

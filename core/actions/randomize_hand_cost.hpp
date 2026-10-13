@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct RandomizeHandCost : ActionHooks {
+    SPIRE_SNAPSHOT("RandomizeHandCostAction.p", player)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_FN static void prepare(Game&, Effect& e) { e.source = e.target = no_target; }
     SPIRE_FN static void execute(Game& g, Effect&) {

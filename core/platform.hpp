@@ -3,6 +3,7 @@
 #include <cstddef>
 
 #define SPIRE_STATE(type, ...)
+#define SPIRE_SNAPSHOT(...)
 
 #if defined(__CUDACC__)
 #define SPIRE_FN __host__ __device__

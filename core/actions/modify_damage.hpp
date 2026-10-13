@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct ModifyDamage : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("ModifyDamageAction.uuid", uuid, effect.state.ModifyDamage.uuid)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(ModifyDamage, uint32_t uuid;)
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         bool found[card_capacity]{};

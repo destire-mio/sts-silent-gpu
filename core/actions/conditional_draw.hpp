@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct ConditionalDrawAction : ActionHooks {
+    SPIRE_SNAPSHOT("ConditionalDrawAction.restrictedType", card_type, static_cast<int>(effect.state.ConditionalDrawAction.restricted_type))
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_STATE(ConditionalDrawAction, CardType restricted_type;)
     SPIRE_FN static Effect construct(int amount, CardType restricted) {
         Effect e{};

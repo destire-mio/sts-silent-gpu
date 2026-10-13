@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct Discovery : ActionHooks {
+    SPIRE_SNAPSHOT("DiscoveryAction.cardType", card_type, effect.state.Discovery.cardType)
     SPIRE_STATE(Discovery, bool retrieveCard; bool returnColorless; int cardType; bool selecting;)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_FN static Effect construct() {

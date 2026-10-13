@@ -3,7 +3,8 @@
 
 namespace spire::units::powers {
 struct Frail : PowerHooks {
-    static SPIRE_FN constexpr PowerData data() { return {10, true, false}; }
+    SPIRE_SNAPSHOT("FrailPower.justApplied", scalar, power.just_applied)
+    static SPIRE_FN constexpr PowerData data() { PowerData data{10, true, false}; data.turn_based = true; return data; }
     static SPIRE_FN void atEndOfRound(Game& g, Power& p, int owner) {
         if (p.just_applied) { p.just_applied = false; return; }
         Effect e{};

@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct UpgradeRandomCard : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("UpgradeRandomCardAction.p", player)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_FN static void execute(Game& g, const Effect&) {
         if (g.hand.empty()) return;
         Pile upgradeable{};

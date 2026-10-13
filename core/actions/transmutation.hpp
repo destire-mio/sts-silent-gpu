@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct TransmutationAction : ActionHooks {
+    SPIRE_SNAPSHOT("TransmutationAction.p", creature, effect.state.TransmutationAction.p)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(TransmutationAction, int energy_on_use; int p; bool upgraded; bool free_to_play_once;)
     SPIRE_FN static Effect construct(int player, bool upgraded, bool free, int energy) {
         Effect e{};

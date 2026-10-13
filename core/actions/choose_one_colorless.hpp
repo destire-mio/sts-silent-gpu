@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct ChooseOneColorless : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(ChooseOneColorless, bool retrieve_card; bool opened;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);

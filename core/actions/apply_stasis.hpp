@@ -5,6 +5,9 @@
 
 namespace spire::units::actions {
 struct ApplyStasisAction : ActionHooks {
+    SPIRE_SNAPSHOT("ApplyStasisAction.owner", creature, effect.state.ApplyStasisAction.owner)
+    SPIRE_SNAPSHOT("ApplyStasisAction.card", card, effect.state.ApplyStasisAction.card)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_STATE(ApplyStasisAction, int owner; int card;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);

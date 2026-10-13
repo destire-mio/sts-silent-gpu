@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct RemoveDebuffsAction : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("RemoveDebuffsAction.c", creature, effect.target)
     SPIRE_FN static void prepare(Game&, Effect& e) { e.source = no_target; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         const Powers& powers = get_creature(g, e.target).powers;

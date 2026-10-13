@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct ShowMoveName : ActionHooks {
+    SPIRE_SNAPSHOT("ShowMoveNameAction.msg", scalar, effect.state.ShowMoveName.has_msg ? effect.state.ShowMoveName.msg : nullptr)
+    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
     SPIRE_STATE(ShowMoveName, char msg[128]; bool has_msg; bool explicit_message;)
     SPIRE_FN static void prepare(Game& g, Effect& e) {
         e.target = e.source;

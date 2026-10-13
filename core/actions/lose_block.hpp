@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct LoseBlock : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "BLOCK"}; }
     SPIRE_FN static Effect construct(int target, int source, int amount) {
         Effect e{};
         e.kind = EffectKind::LoseBlock;

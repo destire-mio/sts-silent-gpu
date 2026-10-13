@@ -3,6 +3,7 @@
 
 namespace spire::units::powers {
 struct DoubleDamage : PowerHooks {
+    SPIRE_SNAPSHOT("DoubleDamagePower.justApplied", scalar, power.just_applied)
     SPIRE_STATE(DoubleDamage, bool just_applied;)
     static SPIRE_FN constexpr PowerData data() { return {6, false, false, true, false, false, false, true}; }
     static SPIRE_FN void initialPower(Game&, Power& p, int) { p.state.DoubleDamage.just_applied = p.just_applied; }

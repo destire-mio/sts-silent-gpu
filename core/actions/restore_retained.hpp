@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct RestoreRetained : ActionHooks {
+    SPIRE_SNAPSHOT("RestoreRetainedCardsAction.group", group, 25, "UNSPECIFIED", &game.retained)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         e.source = no_target;
         e.target = player_target;

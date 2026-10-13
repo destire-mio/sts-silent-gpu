@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct Setup : ActionHooks {
+    SPIRE_SNAPSHOT("SetupAction.p", player)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(Setup, bool selecting;)
     SPIRE_FN static Effect construct() {
         Effect e{};

@@ -5,6 +5,7 @@
 
 namespace spire::units::actions {
 struct PlayTopCardAction : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_STATE(PlayTopCardAction, bool exhaust_cards;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);

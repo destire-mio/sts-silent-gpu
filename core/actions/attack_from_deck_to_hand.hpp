@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct AttackFromDeckToHand : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", player)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", player)
+    SPIRE_SNAPSHOT("AttackFromDeckToHandAction.p", player)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(AttackFromDeckToHand, bool selecting;)
     SPIRE_FN static void move_card(Game& g, int card) {
         for (int i = 0; i < g.draw.size; ++i)

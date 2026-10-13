@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct BouncingFlask : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "DEBUFF"}; }
     SPIRE_STATE(BouncingFlask, int num_times; int amount;)
     SPIRE_FN static Effect construct(int target, int amount, int num_times) {
         Effect e{};

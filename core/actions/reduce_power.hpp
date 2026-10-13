@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct ReducePower : ActionHooks {
+    SPIRE_SNAPSHOT("ReducePowerAction.powerID", power_id, effect.power, effect.power_instance)
+    SPIRE_SNAPSHOT("ReducePowerAction.powerInstance", power_reference, effect.target, effect.power_instance)
+    static SPIRE_FN constexpr ActionData data() { return {false, "REDUCE_POWER"}; }
     SPIRE_FN static Effect construct(int target, int source, PowerId power, int amount) {
         Effect e{};
         e.kind = EffectKind::ReducePower;

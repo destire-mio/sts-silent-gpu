@@ -3,7 +3,8 @@
 
 namespace spire::units::actions {
 struct DamagePerAttackPlayed : ActionHooks {
-    SPIRE_FN static constexpr ActionData data() { return {true}; }
+    SPIRE_SNAPSHOT("DamagePerAttackPlayedAction.info", damage_info, effect, queue, index)
+    SPIRE_FN static constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static Effect construct(int target, const DamageInfo& info) {
         Effect e = info;
         e.kind = EffectKind::DamagePerAttackPlayed;

@@ -3,6 +3,12 @@
 
 namespace spire::units::actions {
 struct MakeTempCardInHand : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("MakeTempCardInHandAction.c", card, effect.card)
+    SPIRE_SNAPSHOT("MakeTempCardInHandAction.sameUUID", scalar, effect.state.MakeTempCardInHand.same_uuid)
+    SPIRE_SNAPSHOT("MakeTempCardInHandAction.isOtherCardInCenter", scalar, !effect.state.MakeTempCardInHand.other_card_not_in_center)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(MakeTempCardInHand, bool same_uuid; bool other_card_not_in_center;)
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         if (e.amount == 0) return;

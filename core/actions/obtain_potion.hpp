@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct ObtainPotion : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("ObtainPotionAction.potion", potion_template, effect.state.ObtainPotion.potion, queue, index)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(ObtainPotion, PotionId potion;)
     SPIRE_FN static Effect from_potion(PotionId potion, const PotionState& state) {
         Effect e{};

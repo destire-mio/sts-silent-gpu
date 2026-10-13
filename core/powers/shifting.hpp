@@ -3,7 +3,7 @@
 
 namespace spire::units::powers {
 struct Shifting : PowerHooks {
-    static SPIRE_FN constexpr PowerData data() { return {}; }
+    static SPIRE_FN constexpr PowerData data() { PowerData data{}; data.post_action = true; return data; }
     static SPIRE_FN void initialPower(Game&, Power& p, int) { p.amount = -1; }
     static SPIRE_FN int onAttacked(Game& g, Power&, int owner, const DamageInfo&, int amount) {
         if (amount > 0) {

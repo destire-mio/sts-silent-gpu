@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct SummonGremlinAction : ActionHooks {
+    SPIRE_SNAPSHOT("SummonGremlinAction.m", creature, effect.state.SummonGremlinAction.m)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(SummonGremlinAction, int m;)
     SPIRE_FN static Effect construct(Game& g, int (&gremlins)[3]) {
         Effect e{};

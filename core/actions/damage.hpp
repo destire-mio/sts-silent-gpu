@@ -3,7 +3,11 @@
 
 namespace spire::units::actions {
 struct Damage : ActionHooks {
-    static SPIRE_FN constexpr ActionData data() { return {true}; }
+    SPIRE_SNAPSHOT("DamageAction.info", damage_info, effect, queue, index)
+    SPIRE_SNAPSHOT("DamageAction.goldAmount", scalar, effect.extra)
+    SPIRE_SNAPSHOT("DamageAction.muteSfx", scalar, false)
+    SPIRE_SNAPSHOT("DamageAction.skipWait", scalar, effect.flag)
+    static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         if (e.target == no_target) return;
         if (e.damage_type != DamageType::Thorns) {

@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct BetterDiscardPileToHand : ActionHooks {
+    SPIRE_SNAPSHOT("BetterDiscardPileToHandAction.player", player)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(BetterDiscardPileToHand, int numberOfCards; int newCost; bool optional; bool setCost; bool selecting;)
     SPIRE_FN static Effect make(int count, bool optional = false) {
         Effect e{};

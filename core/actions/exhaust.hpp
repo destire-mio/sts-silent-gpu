@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct Exhaust : ActionHooks {
+    SPIRE_SNAPSHOT("ExhaustAction.p", player)
+    static SPIRE_FN constexpr ActionData data() { return {false, "EXHAUST"}; }
     SPIRE_STATE(Exhaust, bool isRandom; bool anyNumber; bool canPickZero; bool selecting;)
     SPIRE_FN static Effect make(int amount, bool random, bool any_number, bool can_pick_zero) {
         Effect e{};

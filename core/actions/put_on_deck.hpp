@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct PutOnDeck : ActionHooks {
+    SPIRE_SNAPSHOT("PutOnDeckAction.p", player)
+    SPIRE_SNAPSHOT("PutOnDeckAction.isRandom", scalar, effect.flag)
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(PutOnDeck, bool selecting;)
     SPIRE_FN static void move_to_deck(Game& g, int card) {
         remove_queued_card(g, card);

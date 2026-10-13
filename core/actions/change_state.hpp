@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct ChangeState : ActionHooks {
+    SPIRE_SNAPSHOT("ChangeStateAction.m", monster, effect.state.ChangeState.m)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(ChangeState, bool called; int m; char stateName[32];)
     SPIRE_FN static Effect make(int monster, const char* state) {
         Effect e{};

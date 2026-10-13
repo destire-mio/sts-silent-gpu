@@ -3,7 +3,10 @@
 
 namespace spire::units::actions {
 struct DamageRandomEnemy : ActionHooks {
-    SPIRE_FN static constexpr ActionData data() { return {true}; }
+    SPIRE_SNAPSHOT("AbstractGameAction.amount", scalar, 0)
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("DamageRandomEnemyAction.info", damage_info, effect, queue, index)
+    SPIRE_FN static constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static Effect construct(const DamageInfo& info) {
         Effect e = info;
         e.kind = EffectKind::DamageRandomEnemy;

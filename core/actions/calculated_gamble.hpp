@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct CalculatedGambleAction : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_STATE(CalculatedGambleAction, bool is_upgraded;)
     SPIRE_FN static void prepare(Game&, Effect& e) {
         action_initialize_state(e);

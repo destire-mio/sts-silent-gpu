@@ -3,6 +3,10 @@
 
 namespace spire::units::actions {
 struct RemovePower : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.amount", scalar, 0)
+    SPIRE_SNAPSHOT("RemoveSpecificPowerAction.powerToRemove", power_id, effect.power, effect.power_instance)
+    SPIRE_SNAPSHOT("RemoveSpecificPowerAction.powerInstance", power_reference, effect.target, effect.power_instance)
+    static SPIRE_FN constexpr ActionData data() { return {false, "DEBUFF"}; }
     SPIRE_FN static Effect from_instance(int target, int source, const Power& power) {
         Effect e{};
         e.kind = EffectKind::RemovePower;

@@ -3,8 +3,10 @@
 
 namespace spire::units::actions {
 struct DamageAllEnemies : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.damageType", damage_type, effect.damage_type)
+    SPIRE_SNAPSHOT("DamageAllEnemiesAction.damage", damage_array, effect.state.DamageAllEnemies.damage, effect.state.DamageAllEnemies.damageCount, effect.card, !(effect.state.DamageAllEnemies.utilizeBaseDamage && effect.state.DamageAllEnemies.firstFrame))
     SPIRE_STATE(DamageAllEnemies, int damage[monster_capacity]; int damageCount; int baseDamage; bool firstFrame; bool utilizeBaseDamage;)
-    SPIRE_FN static constexpr ActionData data() { return {true}; }
+    SPIRE_FN static constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static Effect make(int source, const int* amounts, int count, DamageType type = DamageType::Normal) {
         Effect e{};
         e.kind = EffectKind::DamageAllEnemies;

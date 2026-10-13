@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct NewQueueCard : ActionHooks {
+    SPIRE_SNAPSHOT("NewQueueCardAction.card", card, effect.card)
     SPIRE_STATE(NewQueueCard, bool random_target; bool immediate_card; bool autoplay_card;)
     SPIRE_FN static Effect construct(int card = -1, int target = no_target, bool immediate = false, bool autoplay = false) {
         Effect e{};

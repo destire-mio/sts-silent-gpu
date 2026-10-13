@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct Shuffle : ActionHooks {
+    SPIRE_SNAPSHOT("EmptyDeckShuffleAction.triggerRelics", scalar, effect.flag)
+    static SPIRE_FN constexpr ActionData data() { return {false, "SHUFFLE"}; }
     SPIRE_STATE(Shuffle, bool shuffled; int count;)
     SPIRE_FN static void prepare(Game& g, Effect& e) {
         action_initialize_state(e);

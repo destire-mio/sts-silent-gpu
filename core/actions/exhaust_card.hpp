@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct ExhaustCard : ActionHooks {
+    SPIRE_SNAPSHOT("ExhaustSpecificCardAction.targetCard", card, effect.card)
+    SPIRE_SNAPSHOT("ExhaustSpecificCardAction.group", pile_group, effect.state.ExhaustCard.group)
+    static SPIRE_FN constexpr ActionData data() { return {false, "EXHAUST"}; }
     SPIRE_STATE(ExhaustCard, PileId group;)
     SPIRE_FN static Effect make(int card, PileId group) {
         Effect e{};

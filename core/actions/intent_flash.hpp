@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct IntentFlash : ActionHooks {
+    SPIRE_SNAPSHOT("IntentFlashAction.m", monster, effect.extra)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_FN static Effect make(int monster) {
         Effect e{};
         e.kind = EffectKind::IntentFlash;

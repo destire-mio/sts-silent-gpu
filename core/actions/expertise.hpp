@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct Expertise : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_FN static Effect construct(int source, int amount) {
         Effect e{};
         e.kind = EffectKind::Expertise;

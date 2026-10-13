@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct AddCardToDeck : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("AddCardToDeckAction.cardToObtain", card, effect.card)
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         const CardRarity rarity = card_data(g.cards[e.card].id).rarity;
         if (rarity != CardRarity::Basic && rarity != CardRarity::Special && rarity != CardRarity::Curse)

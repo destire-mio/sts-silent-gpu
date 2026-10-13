@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct TriplePoisonAction : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "DEBUFF"}; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         const Creature& target = get_creature(g, e.target);
         const int poison = find_power(target, "Poison");

@@ -3,6 +3,8 @@
 
 namespace spire::units::actions {
 struct Bane : ActionHooks {
+    SPIRE_SNAPSHOT("BaneAction.info", damage_info, effect, queue, index)
+    SPIRE_SNAPSHOT("BaneAction.m", creature, effect.target)
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         e.done = true;

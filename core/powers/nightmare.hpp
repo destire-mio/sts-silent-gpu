@@ -3,6 +3,7 @@
 
 namespace spire::units::powers {
 struct Nightmare : PowerHooks {
+    SPIRE_SNAPSHOT("NightmarePower.card", card, power.state.Nightmare.card)
     SPIRE_STATE(Nightmare, int card;)
     static SPIRE_FN constexpr PowerData data() { PowerData data{}; data.stacks_separately = true; return data; }
     static SPIRE_FN void constructPower(Game& g, Power& p, int, int, int, int copy_me) {

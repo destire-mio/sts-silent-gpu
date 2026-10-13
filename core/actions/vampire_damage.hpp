@@ -3,7 +3,8 @@
 
 namespace spire::units::actions {
 struct VampireDamageAction : ActionHooks {
-    SPIRE_FN static constexpr ActionData data() { return {true}; }
+    SPIRE_SNAPSHOT("VampireDamageAction.info", damage_info, effect, queue, index)
+    SPIRE_FN static constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static Effect construct(int target, const DamageInfo& info) {
         Effect e{};
         e.kind = EffectKind::VampireDamageAction;

@@ -5,6 +5,13 @@
 
 namespace spire::units::actions {
 struct UseCard : ActionHooks {
+    SPIRE_SNAPSHOT("AbstractGameAction.actionType", scalar, effect.flag ? "EXHAUST" : "USE")
+    SPIRE_SNAPSHOT("AbstractGameAction.amount", scalar, 1)
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", player)
+    SPIRE_SNAPSHOT("UseCardAction.targetCard", card, effect.card)
+    SPIRE_SNAPSHOT("UseCardAction.exhaustCard", scalar, effect.flag)
+    SPIRE_SNAPSHOT("UseCardAction.target", creature, effect.target < 0 ? no_target : effect.target)
     SPIRE_STATE(UseCard, bool rebound_card; bool return_to_hand;)
     static SPIRE_FN constexpr ActionData data() { return {true}; }
     SPIRE_FN static Effect construct(Game& g, int card_id, int target) {

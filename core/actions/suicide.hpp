@@ -3,7 +3,11 @@
 
 namespace spire::units::actions {
 struct Suicide : ActionHooks {
-    SPIRE_FN static constexpr ActionData data() { return {true}; }
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
+    SPIRE_SNAPSHOT("SuicideAction.m", monster, effect.target)
+    SPIRE_SNAPSHOT("SuicideAction.relicTrigger", scalar, !effect.state.Suicide.suppress_relics)
+    SPIRE_FN static constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_STATE(Suicide, bool suppress_relics;)
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         Creature& c = g.monsters[e.target].creature;

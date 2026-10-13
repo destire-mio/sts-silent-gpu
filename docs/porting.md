@@ -88,6 +88,19 @@ payload in that category rather than every unit's payload.
 | Encounters | `game.encounter_state.Type` | `encounter_initialize_state(game)` |
 | Actions | `effect.state.Type` | `action_initialize_state(effect)` |
 
+Snapshot mappings for reference fields and Java names live beside the unit's state:
+
+```cpp
+SPIRE_SNAPSHOT("ConstrictedPower.source", creature, power.state.Constricted.source)
+SPIRE_SNAPSHOT("DrawCardAction.followUpAction", action_reference, effect.state.Draw.follow_up_action - 1)
+```
+
+These declarations contain field identifiers and value expressions; they emit no device code.
+The host generator emits dispatch to the graph's scalar, card, creature, power and action
+reference writers. Scalar state fields with matching Java names use the generated state visitor.
+An explicit mapping overrides that visitor and inherited base fields. Power flags and action
+categories belong in `data()`. Adding a unit does not change the serializer.
+
 Set the instance ID before calling its initializer. Existing card, power, relic and monster
 construction paths and combat setup initialize their selected payload. A new action constructor
 must initialize its effect before assigning payload fields and queueing it. Snapshot field names,

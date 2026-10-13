@@ -3,6 +3,7 @@
 
 namespace spire::units::powers {
 struct Intangible : PowerHooks {
+    SPIRE_SNAPSHOT("IntangiblePower.justApplied", scalar, power.just_applied)
     static SPIRE_FN constexpr PowerData data() { return {75}; }
     static SPIRE_FN void initialPower(Game&, Power& p, int) { p.just_applied = true; }
     static SPIRE_FN float atDamageFinalReceive(const Game&, const Power&, int, float value, DamageType, int = -1) {

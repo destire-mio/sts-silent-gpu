@@ -3,7 +3,8 @@
 
 namespace spire::units::powers {
 struct Weak : PowerHooks {
-    static SPIRE_FN constexpr PowerData data() { return {99, true, false}; }
+    SPIRE_SNAPSHOT("WeakPower.justApplied", scalar, power.just_applied)
+    static SPIRE_FN constexpr PowerData data() { PowerData data{99, true, false}; data.turn_based = true; return data; }
     static SPIRE_FN void atEndOfRound(Game& g, Power& p, int owner) {
         if (p.just_applied) { p.just_applied = false; return; }
         Effect e{};

@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct Draw : ActionHooks {
+    SPIRE_SNAPSHOT("DrawCardAction.clearDrawHistory", scalar, !effect.flag)
+    SPIRE_SNAPSHOT("DrawCardAction.followUpAction", action_reference, effect.state.Draw.follow_up_action - 1)
+    static SPIRE_FN constexpr ActionData data() { return {false, "DRAW"}; }
     SPIRE_STATE(Draw, bool shuffle_check; int follow_up_action;)
     SPIRE_FN static Effect construct(int amount, bool clear_history = true, int follow_up = -1, int source = no_target, bool end_turn_draw = false) {
         Effect e{};

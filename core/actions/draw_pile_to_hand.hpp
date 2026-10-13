@@ -3,6 +3,9 @@
 
 namespace spire::units::actions {
 struct DrawPileToHand : ActionHooks {
+    SPIRE_SNAPSHOT("DrawPileToHandAction.p", player)
+    SPIRE_SNAPSHOT("DrawPileToHandAction.typeToCheck", card_type, static_cast<int>(effect.state.DrawPileToHand.type_to_check))
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(DrawPileToHand, CardType type_to_check;)
     SPIRE_FN static Effect construct(int amount, CardType type) {
         Effect e{};
