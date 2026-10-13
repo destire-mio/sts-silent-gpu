@@ -24,3 +24,4 @@ SPIRE_UNIT(TheMushroomLair, "The Mushroom Lair", "core/encounters/the_mushroom_l
 SPIRE_UNIT(JawWormHorde, "Jaw Worm Horde", "core/encounters/jaw_worm_horde.hpp", JawWormHorde)
 SPIRE_UNIT(BronzeAutomaton, "Automaton", "core/encounters/automaton.hpp", BronzeAutomaton)
 SPIRE_UNIT(TheCollector, "Collector", "core/encounters/collector.hpp", TheCollector)
+SPIRE_UNIT(AwakenedOne, "Awakened One", "core/encounters/awakened_one.hpp", AwakenedOne)

@@ -26,3 +26,4 @@ SPIRE_UNIT(BanditLeader, "BanditLeader", "core/monsters/bandit_leader.hpp", Band
 SPIRE_UNIT(BronzeAutomaton, "BronzeAutomaton", "core/monsters/bronze_automaton.hpp", BronzeAutomaton)
 SPIRE_UNIT(TheCollector, "TheCollector", "core/monsters/the_collector.hpp", TheCollector)
 SPIRE_UNIT(Reptomancer, "Reptomancer", "core/monsters/reptomancer.hpp", Reptomancer)
+SPIRE_UNIT(AwakenedOne, "AwakenedOne", "core/monsters/awakened_one.hpp", AwakenedOne)

@@ -1,0 +1,62 @@
+{
+  "deck": [
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Accuracy",
+      "upgrades": 1
+    },
+    {
+      "id": "Accuracy",
+      "upgrades": 1
+    },
+    {
+      "id": "Dash",
+      "upgrades": 1
+    },
+    {
+      "id": "Dash",
+      "upgrades": 1
+    },
+    {
+      "id": "Dash",
+      "upgrades": 1
+    },
+    {
+      "id": "Dash",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "GhostInAJar",
+    "Regen Potion"
+  ],
+  "hp": 1500,
+  "max_hp": 1500,
+  "encounter": "Awakened One"
+}
