@@ -83,7 +83,7 @@ def unit_snapshot_dispatch(root, units):
             lines.append('break;')
         lines.append('default: break; } return {}; }')
     lines.append('template<class Graph> void snapshot_statics(Graph& graph, pybind11::dict& result) { const Game& game = graph.game;')
-    for kind in ('actions', 'powers', 'cards', 'monsters', 'relics', 'potions'):
+    for kind in ('actions', 'powers', 'cards', 'monsters', 'relics', 'potions', 'events'):
         for _, game_id, header, _ in re.findall(r'SPIRE_UNIT\((\w+), "([^"]+)", "([^"]+)", (\w+)\)', (root / 'core' / kind / 'catalog.def').read_text()):
             for name, expression in re.findall(r'^\s*SPIRE_STATIC\("([^"]+)", (.*)\)\s*$', (root / header).read_text(), re.M):
                 cls = game_id if kind == 'actions' else next(u['java_class'].removeprefix('com.megacrit.cardcrawl.') for u in units if u['kind'] == kind[:-1] and u['game_id'] == game_id)
