@@ -157,6 +157,7 @@ for name in ("takeTurn", "usePreBattleAction", "useUniversalPreBattleAction", "o
             "rollMove": "get_monster_move(g, owner, g.rng.ai.random(99));", "init": "monster_rollMove(g, owner);",
             "escape": "g.monsters[owner].creature.escaped = true; g.monsters[owner].creature.flip_horizontal = true;", "escapeNext": "g.monsters[owner].escape_next = true;"}.get(name, "")
     hook("monsters", name, "Game& g, int owner", body=body)
+hook("monsters", "stolenGold", "const Game& g, int owner", "int", body="return 0;")
 hook("monsters", "split", "Game& g, int owner", body="SPIRE_ASSERT(false);")
 hook("monsters", "getMove", "Game& g, int owner, int num")
 hook("monsters", "changeState", "Game& g, int owner, const char* state")

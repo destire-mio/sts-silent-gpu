@@ -3,6 +3,7 @@
 
 namespace spire::units::monsters {
 struct Looter : MonsterHooks {
+    static SPIRE_FN int stolenGold(const Game& g, int owner) { return g.monsters[owner].state.Looter.stolenGold; }
     SPIRE_STATE(Looter, int32_t stolenGold; int16_t escapeDef; int16_t goldAmt; int16_t lungeDmg; int16_t slashCount; int16_t swipeDmg;)
     SPIRE_FN static constexpr MonsterData data() { return {46, 50, {11, 14}, 6, 20, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {

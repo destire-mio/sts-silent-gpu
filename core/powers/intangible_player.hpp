@@ -3,7 +3,7 @@
 
 namespace spire::units::powers {
 struct IntangiblePlayer : PowerHooks {
-    static SPIRE_FN constexpr PowerData data() { return {75}; }
+    static SPIRE_FN constexpr PowerData data() { PowerData data{75}; data.incoming_damage_limit = 1; return data; }
     static SPIRE_FN float atDamageFinalReceive(const Game&, const Power&, int, float value, DamageType, int = -1) {
         return value > 1.0f ? 1.0f : value;
     }

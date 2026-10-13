@@ -238,7 +238,7 @@ def card_data(j, defaults):
                 data['upgrade_changes'].append({'field': field, 'operation': op, 'value': j.evaluate(rhs), **j.at(pos)})
     data['keywords'] = sorted({{'exhaust': 'exhaust', 'isEthereal': 'ethereal', 'isInnate': 'innate', 'retain': 'retain', 'selfRetain': 'retain'}.get(k, k) for k, v in data['flags'].items() if v is True and k in ('exhaust', 'isEthereal', 'isInnate', 'retain', 'selfRetain')} | set(re.findall(r'GameDictionary\.(\w+)\.', j.text)))
     data['keyword_basis'] = 'Java behavior flags and GameDictionary references; localized description keywords are not in this Java tree'
-    data['tags'] = sorted(set(re.findall(r'tags\.add\((?:AbstractCard\.)?CardTags\.(\w+)\)', j.text)))
+    data['tags'] = list(dict.fromkeys(re.findall(r'tags\.add\((?:AbstractCard\.)?CardTags\.(\w+)\)', j.text)))
     return data
 
 
@@ -331,7 +331,16 @@ def main():
     for j in files.values():
         if j.qualified.startswith(PACKAGE + 'potions.') and j.game_id() in potion_ids:
             rarity = re.search(r'(?:AbstractPotion\.)?PotionRarity\.(\w+)', j.text)[1]
-            add(j, 'potion', facts={'rarity': rarity, 'hooks': j.overrides()})
+            potency_method = next(m for m in j.named('getPotency') if m['parameters'] == 'int ascensionLevel')
+            start = j.t.index('return', potency_method['start']) + 1
+            potency = j.evaluate(j.t[start:j.t.index(';', start)])
+            target = False
+            for constructor in j.named(j.name):
+                for _, field, op, rhs in j.assignments(constructor['start'], constructor['end']):
+                    if field == 'this.targetRequired':
+                        assert op == '='
+                        target = j.evaluate(rhs)
+            add(j, 'potion', facts={'rarity': rarity, 'hooks': j.overrides(), 'potency': potency, 'target_required': target})
     assert len([u for u in units.values() if u['kind'] == 'potion']) == len(potion_ids)
 
     acts = ('Exordium', 'TheCity', 'TheBeyond', 'TheEnding')
@@ -715,13 +724,24 @@ def main():
     for b in batches:
         b['requires_batches'] = [d for d in b['depends_on'] if batch_index[d] < batch_index[b['id']] and d.split(':')[1] != b['kind']]
         b['integration_dependencies'] = [d for d in b['depends_on'] if d not in b['requires_batches']]
+    observer = (Path(__file__).resolve().parents[1] / 'oracle/java/Snapshot.java').read_text()
+    statics = re.search(r'String\[\]\[\] STATICS = \{(.*?)\n    \};', observer, re.S)[1]
+    snapshot_statics = {}
+    for cls, names in re.findall(r'\{"([^"]+)", "([^"]+)"\}', statics):
+        source = files[PACKAGE + cls]
+        initial = {}
+        for name in names.split():
+            field = re.search(r'static\s+(int|boolean)\s+' + name + r'\s*(?:=\s*([^;]+))?;', source.text)
+            assert field, (cls, name)
+            initial[name] = value(TOKEN.findall(field[2])) if field[2] else (False if field[1] == 'boolean' else 0)
+        snapshot_statics[cls] = initial
     totals = Counter(u['kind'] for u in units.values())
     digest = hashlib.sha256()
     for q, j in sorted(files.items()):
         digest.update(j.path.encode())
         digest.update(j.text.encode())
     output = Path(__file__).resolve().parent
-    document = {'schema_version': 1, 'target': {'character': 'THE_SILENT', 'ascension': 20, 'acts': [1, 2, 3, 4], 'mode': 'standard', 'unlocks': 'all'}, 'source': {'root': str(root), 'java_tree_sha256': digest.hexdigest()}, 'semantics': {'game_id': 'Java string ID or enum constant; null for rules/actions/ascension without a game string ID', 'depends_on': 'direct source references; dependency_sites give line and method in this row java_path (encounters can include MonsterHelper helper methods)', 'content_dependencies': 'cards/powers/monsters reached through intermediate actions', 'stage': 'cross_color_last content is available only via foreign card generation/rewards and associated mechanics', 'facts': 'data and source expressions, not executable Java; conditional initialization is in constructor_variants', 'keywords': 'source behavior keywords; localization-only keywords require the localization resources', 'completion': 'not stored; computed from oracle replay results', 'external_algorithms': [{'java_class': q, 'referenced_by': sorted({j.path for j in files.values() if j.qualified in owners and q in j.imports.values()}), 'source_available': (root / (q.replace('.', '/') + '.java')).exists()} for q in sorted({q for j in files.values() if j.qualified in owners for q in j.imports.values() if q in ('com.badlogic.gdx.math.RandomXS128', 'java.util.Random', 'java.util.Collections', 'com.badlogic.gdx.math.MathUtils')})]}, 'totals': dict(sorted(totals.items())), 'units': sorted(units.values(), key=lambda u: u['key'])}
+    document = {'schema_version': 1, 'snapshot_statics': snapshot_statics, 'target': {'character': 'THE_SILENT', 'ascension': 20, 'acts': [1, 2, 3, 4], 'mode': 'standard', 'unlocks': 'all'}, 'source': {'root': str(root), 'java_tree_sha256': digest.hexdigest()}, 'semantics': {'game_id': 'Java string ID or enum constant; null for rules/actions/ascension without a game string ID', 'depends_on': 'direct source references; dependency_sites give line and method in this row java_path (encounters can include MonsterHelper helper methods)', 'content_dependencies': 'cards/powers/monsters reached through intermediate actions', 'stage': 'cross_color_last content is available only via foreign card generation/rewards and associated mechanics', 'facts': 'data and source expressions, not executable Java; conditional initialization is in constructor_variants', 'keywords': 'source behavior keywords; localization-only keywords require the localization resources', 'completion': 'not stored; computed from oracle replay results', 'external_algorithms': [{'java_class': q, 'referenced_by': sorted({j.path for j in files.values() if j.qualified in owners and q in j.imports.values()}), 'source_available': (root / (q.replace('.', '/') + '.java')).exists()} for q in sorted({q for j in files.values() if j.qualified in owners for q in j.imports.values() if q in ('com.badlogic.gdx.math.RandomXS128', 'java.util.Random', 'java.util.Collections', 'com.badlogic.gdx.math.MathUtils')})]}, 'totals': dict(sorted(totals.items())), 'units': sorted(units.values(), key=lambda u: u['key'])}
     rows = document.pop('units')
     header = json.dumps(document, indent=2, ensure_ascii=False).removesuffix('\n}')
     encoded_rows = ',\n'.join('    ' + json.dumps(row, separators=(',', ':'), ensure_ascii=False) for row in rows)

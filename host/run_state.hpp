@@ -1,5 +1,5 @@
 #pragma once
-#include "core/state.hpp"
+#include "core/engine.hpp"
 #include "core/card_pool.hpp"
 #include <algorithm>
 #include <array>
@@ -374,8 +374,7 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
     for (int i = 0; i < game.monster_order.size; ++i) {
         const Monster& monster = game.monsters[game.monster_order[i]];
         escaped &= monster.creature.escaped;
-        if (monster.id == MonsterId::Looter && monster.creature.dead)
-            run.stolenGold += monster.state.Looter.stolenGold;
+        if (monster.creature.dead) run.stolenGold += monster_stolenGold(game, game.monster_order[i]);
     }
     if (run.stolenGold > 0) run.rewardTypes.push_back("STOLEN_GOLD");
     if (!escaped) {

@@ -268,6 +268,14 @@ SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t inst
         refresh_powers(g);
     }
 }
+SPIRE_FN inline bool keeps_block(const Game& g, int owner) {
+    const Powers& powers = get_creature(g, owner).powers;
+    for (int i = 0; i < powers.size; ++i) {
+        const PowerData data = power_data(powers[i].id);
+        if (owner == player_target ? data.keep_player_block : data.keep_monster_block) return true;
+    }
+    return false;
+}
 SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power incoming, int amount) {
     if (target == no_target) return;
     const PowerId id = incoming.id;
@@ -280,10 +288,12 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
         for (int i = 0; i < powers.size; ++i) power_onApplyPower(g, powers[i], source, incoming, target, source);
     }
     if (target != player_target && (c.dying || c.half_dead || c.escaped)) return;
-    const int artifact = find_power(c, PowerId::Artifact);
-    if (artifact >= 0 && power_isDebuff(incoming, target)) {
-        power_onSpecificTrigger(g, c.powers[artifact], target);
-        return;
+    if (power_isDebuff(incoming, target)) {
+        for (int i = 0; i < c.powers.size; ++i) {
+            if (!power_data(c.powers[i].id).blocks_debuffs) continue;
+            power_onSpecificTrigger(g, c.powers[i], target);
+            return;
+        }
     }
     bool stacked = false;
     for (int i = 0; i < c.powers.size; ++i) {

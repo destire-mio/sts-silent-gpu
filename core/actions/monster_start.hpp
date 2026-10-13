@@ -10,7 +10,7 @@ struct MonsterStart : ActionHooks {
             const int monster = g.monster_order[i];
             Creature& c = g.monsters[monster].creature;
             if (c.dying || c.escaped) continue;
-            if (!has_power(c, PowerId::Barricade)) c.block = 0;
+            if (!keeps_block(g, monster)) c.block = 0;
             for (int p = 0; p < c.powers.size; ++p) power_atStartOfTurn(g, c.powers[p], monster);
         }
     }

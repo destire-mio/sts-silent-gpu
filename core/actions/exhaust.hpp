@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct Exhaust : ActionHooks {
+    SPIRE_STATIC("numExhausted", game.exhaust_action_num)
     SPIRE_SNAPSHOT("ExhaustAction.p", player)
     static SPIRE_FN constexpr ActionData data() { return {false, "EXHAUST"}; }
     SPIRE_STATE(Exhaust, bool isRandom; bool anyNumber; bool canPickZero; bool selecting;)

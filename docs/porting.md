@@ -98,7 +98,7 @@ SPIRE_SNAPSHOT("DrawCardAction.followUpAction", action_reference, effect.state.D
 These declarations contain field identifiers and value expressions; they emit no device code.
 The host generator emits dispatch to the graph's scalar, card, creature, power and action
 reference writers. Scalar state fields with matching Java names use the generated state visitor.
-An explicit mapping overrides that visitor and inherited base fields. Power flags and action
+An explicit mapping overrides that visitor and inherited base fields. `SPIRE_STATIC("field", game.expression)` maps a unit static; the inventory generator reads observed static initial values from Java. Power flags and action
 categories belong in `data()`. Adding a unit does not change the serializer.
 
 Set the instance ID before calling its initializer. Existing card, power, relic and monster
@@ -176,10 +176,10 @@ PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py /tmp/spire-n
 
 `SPIRE_PYTHON` and build configuration are described in the root README. The build checks source
 and generated headers against the same device restrictions. Native and host tests establish
-only their covered behavior. A combat unit is accepted when its original-game scenario traces have zero combat-scope
-differences through the terminal record, including legal actions, every included player/card/
-monster/action field, selection state and all six combat RNG counters/state words. Full-run
-acceptance requires both scopes.
+only their covered behavior. A combat unit is accepted when its original-game scenario traces have zero differences in both
+scopes through the terminal record, including legal actions, every included player/card/monster/
+action field, selection state and all RNG counters/state words. Full-run acceptance requires
+both scopes as well.
 
 Run all native tests, host tests and the committed combat fixtures with one command:
 

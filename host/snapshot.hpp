@@ -689,20 +689,12 @@ struct SnapshotGraph {
         py::dict result("event_chances"_a=py::dict("ELITE_CHANCE"_a=0.0, "MONSTER_CHANCE"_a=0.1, "SHOP_CHANCE"_a=0.03, "TREASURE_CHANCE"_a=0.02),
             "potion"_a=py::dict("blizzardPotionMod"_a=fresh.blizzardPotionMod), "shop"_a=py::dict("purgeCost"_a=75, "actualPurgeCost"_a=75),
             "drawn_cards"_a=cards(game.drawn_cards), "scraped_cards"_a=py::list(), "obtained_cards"_a=py::dict());
-        result["actions.common.ExhaustAction"] = py::dict("numExhausted"_a=game.exhaust_action_num);
+        for (auto item : inventory["globals"].cast<py::dict>()) result[item.first] = item.second;
+        snapshot_statics(*this, result);
         py::dict obtained;
         for (int i = 0; i < static_cast<int>(CardId::Count); ++i)
             if (game.obtained_cards[i] > 0) obtained[py::str(card_names[i])] = game.obtained_cards[i];
         result["obtained_cards"] = obtained;
-        result["actions.common.DiscardAction"] = py::dict("numDiscarded"_a=game.discard_action_num);
-        result["actions.common.PutOnBottomOfDeckAction"] = py::dict("numPlaced"_a=0);
-        result["actions.common.PutOnDeckAction"] = py::dict("numPlaced"_a=game.put_on_deck_num);
-        result["actions.unique.CodexAction"] = py::dict("numPlaced"_a=0);
-        result["actions.unique.NightmareAction"] = py::dict("numDiscarded"_a=0);
-        result["events.shrines.FaceTrader"] = py::dict("goldReward"_a=0, "damage"_a=0);
-        result["powers.TheBombPower"] = py::dict("bombIdOffset"_a=game.bomb_id_offset);
-        result["relics.CentennialPuzzle"] = py::dict("usedThisCombat"_a=false);
-        result["relics.OrangePellets"] = py::dict("SKILL"_a=false, "POWER"_a=false, "ATTACK"_a=false);
         return result;
     }
 

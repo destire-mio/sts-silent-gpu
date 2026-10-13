@@ -40,31 +40,19 @@ def reward_templates(units, schema):
         assert set(fields) | {"uuid"} == set(schema["cards.AbstractCard"]["fields"])
         cards[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
                                   "fields": {"AbstractCard." + key: value for key, value in fields.items()}}
-    # Potion getPotency(int) methods; EntropicBrew uses the player's potionSlots.
-    potency = {
-        "Ancient Potion": 1, "AttackPotion": 1, "BlessingOfTheForge": 0, "Block Potion": 12,
-        "ColorlessPotion": 1, "CultistPotion": 1, "CunningPotion": 3, "Dexterity Potion": 2,
-        "DistilledChaos": 3, "DuplicationPotion": 1, "Energy Potion": 2, "EntropicBrew": None,
-        "EssenceOfSteel": 4, "Explosive Potion": 10, "FairyPotion": 30, "FearPotion": 3,
-        "Fire Potion": 20, "Fruit Juice": 5, "GamblersBrew": 0, "GhostInAJar": 1,
-        "LiquidBronze": 3, "LiquidMemories": 1, "Poison Potion": 6, "PowerPotion": 1,
-        "Regen Potion": 5, "SkillPotion": 1, "SmokeBomb": 0, "SneckoOil": 5,
-        "SpeedPotion": 5, "SteroidPotion": 5, "Strength Potion": 2, "Swift Potion": 3,
-        "Weak Potion": 3,
-    }
     potions = {}
     for unit in units:
         if unit["kind"] != "potion":
             continue
-        fields = {"ID": unit["game_id"], "canUse": False, "potency": potency[unit["game_id"]],
+        fields = {"ID": unit["game_id"], "canUse": False, "potency": unit["facts"]["potency"] if isinstance(unit["facts"]["potency"], int) else None,
                   "rarity": unit["facts"]["rarity"], "slot": -1,
-                  "targetRequired": unit["game_id"] in {"FearPotion", "Fire Potion", "Poison Potion", "Weak Potion"}}
+                  "targetRequired": unit["facts"]["target_required"]}
         assert set(fields) == set(schema["potions.AbstractPotion"]["fields"])
         potions[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
                                     "fields": {"AbstractPotion." + key: value for key, value in fields.items()}}
     return {"cards": cards, "potions": potions}
 
-def unit_snapshot_dispatch(root):
+def unit_snapshot_dispatch(root, units):
     lines = []
     for kind, enum, entity, variable, selector, context in (
         ("powers", "PowerId", "Power", "power", "power.id", "int owner"),
@@ -83,11 +71,19 @@ def unit_snapshot_dispatch(root):
                 lines.append(f'if (key == "{field}") return graph.{method}({args});')
             lines.append('break;')
         lines.append('default: break; } return {}; }')
+    lines.append('template<class Graph> void snapshot_statics(Graph& graph, pybind11::dict& result) { const Game& game = graph.game;')
+    for kind in ('actions', 'powers', 'cards', 'monsters', 'relics', 'potions'):
+        for _, game_id, header, _ in re.findall(r'SPIRE_UNIT\((\w+), "([^"]+)", "([^"]+)", (\w+)\)', (root / 'core' / kind / 'catalog.def').read_text()):
+            for name, expression in re.findall(r'^\s*SPIRE_STATIC\("([^"]+)", (.*)\)\s*$', (root / header).read_text(), re.M):
+                cls = game_id if kind == 'actions' else next(u['java_class'].removeprefix('com.megacrit.cardcrawl.') for u in units if u['kind'] == kind[:-1] and u['game_id'] == game_id)
+                lines.append(f'result["{cls}"].cast<pybind11::dict>()["{name}"] = graph.scalar({expression});')
+    lines.append('}')
     return '\n'.join(lines)
 
 def generate(root, output):
     schema = json.loads((root / "inventory/snapshot-fields.json").read_text())
-    units = json.loads((root / "inventory/units.json").read_text())["units"]
+    unit_inventory = json.loads((root / "inventory/units.json").read_text())
+    units = unit_inventory["units"]
     metadata = {}
     kinds = {"cards": "card", "powers": "power", "monsters": "monster", "relics": "relic", "potions": "potion"}
     for directory, kind in kinds.items():
@@ -100,15 +96,13 @@ def generate(root, output):
             entry = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."), "id": game_id}
             if kind == "card":
                 entry.update({key: unit["facts"][key] for key in ("color", "rarity", "target", "type", "tags")})
-                if game_id == "Strike_G":
-                    entry["tags"] = ["STRIKE", "STARTER_STRIKE"]
             if kind == "relic":
                 entry["tier"] = unit["facts"]["tier"]
             entries.append(entry)
         metadata[directory] = entries
     output.parent.mkdir(parents=True, exist_ok=True)
-    payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_templates(units, schema)}, separators=(",", ":"))
-    output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n' + unit_snapshot_dispatch(root) + '\n}\n')
+    payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_templates(units, schema), "globals": unit_inventory["snapshot_statics"]}, separators=(",", ":"))
+    output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n' + unit_snapshot_dispatch(root, units) + '\n}\n')
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct Discard : ActionHooks {
+    SPIRE_STATIC("numDiscarded", game.discard_action_num)
     SPIRE_SNAPSHOT("DiscardAction.p", player)
     SPIRE_SNAPSHOT("DiscardAction.endTurn", scalar, effect.flag)
     static SPIRE_FN constexpr ActionData data() { return {false, "DISCARD"}; }

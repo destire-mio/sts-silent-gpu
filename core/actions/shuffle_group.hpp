@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct ShuffleGroup : ActionHooks {
+    SPIRE_SNAPSHOT("ShuffleAction.triggerRelics", scalar, effect.flag)
     SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
     SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
     SPIRE_SNAPSHOT("ShuffleAction.group", pile_group, effect.state.ShuffleGroup.group)

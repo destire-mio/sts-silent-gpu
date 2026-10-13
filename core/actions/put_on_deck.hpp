@@ -3,6 +3,7 @@
 
 namespace spire::units::actions {
 struct PutOnDeck : ActionHooks {
+    SPIRE_STATIC("numPlaced", game.put_on_deck_num)
     SPIRE_SNAPSHOT("PutOnDeckAction.p", player)
     SPIRE_SNAPSHOT("PutOnDeckAction.isRandom", scalar, effect.flag)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }

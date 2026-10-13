@@ -3,6 +3,7 @@
 #include "spire_generated/declarations.hpp"
 
 namespace spire {
+SPIRE_FN inline bool keeps_block(const Game&, int);
 SPIRE_FN inline float rear_damage_multiplier(const Game&, int);
 SPIRE_FN inline int calculate_intent_damage(const Game&, int, int);
 SPIRE_FN inline void end_turn_early(Game&);

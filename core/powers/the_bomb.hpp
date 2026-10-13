@@ -4,6 +4,7 @@
 
 namespace spire::units::powers {
 struct TheBomb : PowerHooks {
+    SPIRE_STATIC("bombIdOffset", game.bomb_id_offset)
     SPIRE_STATE(TheBomb, int damage;)
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void constructPower(Game& g, Power& p, int, int, int damage, int) {

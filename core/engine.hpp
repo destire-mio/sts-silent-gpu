@@ -58,16 +58,10 @@ SPIRE_FN inline void move_to_bottom_of_deck(Game& g, int card) {
     g.draw.insert(0, card);
 }
 SPIRE_FN inline void add_created_card_to_hand(Game& g, int card) {
-    Card& c = g.cards[card];
-    const CardType type = card_data(c.id).type;
-    if (type != CardType::Curse && type != CardType::Status && has_power(g.player.creature, "MasterRealityPower"))
-        card_upgrade(c);
     g.hand.push_back(card);
     card_triggerWhenCopied(g, card);
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
     on_draw_or_discard(g);
-    if (type == CardType::Skill && has_power(g.player.creature, "Corruption") && c.cost_for_turn >= 0)
-        c.cost_for_turn = 0;
 }
 SPIRE_FN inline void refresh_hand(Game& g) {
     if (monsters_basically_dead(g)) return;
@@ -239,7 +233,10 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
     Creature& target = g.player.creature;
     int amount = max(0, info.amount);
     // AbstractPlayer.damage caps uncalculated DamageInfo before block, including HP_LOSS.
-    if (amount > 1 && has_power(target, PowerId::IntangiblePlayer)) amount = 1;
+    for (int i = 0; i < target.powers.size; ++i) {
+        const int cap = power_data(target.powers[i].id).incoming_damage_limit;
+        if (cap > 0) amount = min(amount, cap);
+    }
     amount = decrement_block(g, player_target, info, amount);
     if (info.source == player_target)
         for (int i = 0; i < g.run.relics.size; ++i) amount = relic_onAttackToChangeDamage(g, i, info, amount);
@@ -360,7 +357,10 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
 }
 SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
     if (!effect.flag) { g.drawn_cards.clear(); effect.flag = true; }
-    if (find_power(g.player.creature, "No Draw") >= 0 || effect.amount <= 0 ||
+    bool blocked = false;
+    for (int i = 0; i < g.player.creature.powers.size; ++i)
+        blocked |= power_data(g.player.creature.powers[i].id).blocks_draw;
+    if (blocked || effect.amount <= 0 ||
         g.draw.size + g.discard.size == 0 || g.hand.size == hand_limit) {
         effect.done = true;
         if (effect.state.Draw.follow_up_action != 0)
@@ -409,7 +409,7 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
 SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
     if (e.done) return;
     action_execute(g, e);
-    if (e.kind != EffectKind::Draw && g.screen != Screen::Discard &&
+    if (!action_data(e.kind).multi_step && g.screen != Screen::Discard &&
         g.screen != Screen::Grid && g.screen != Screen::CardReward) e.done = true;
 }
 SPIRE_FN inline void end_turn_early(Game& g) {
@@ -484,7 +484,7 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     g.manager.total_discarded_this_turn = 0;
     g.manager.played_cards.begin_turn();
     g.manager.damage_received_this_turn = 0;
-    if (!has_power(g.player.creature, PowerId::Barricade) && !has_power(g.player.creature, PowerId::Blur))
+    if (!keeps_block(g, player_target))
         g.player.creature.block = 0;
     recharge_energy(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
