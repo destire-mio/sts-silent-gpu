@@ -57,7 +57,7 @@ SPIRE_FN inline bool can_play(const Game&, int);
 SPIRE_FN inline bool card_has_enough_energy_base(const Game&, int);
 SPIRE_FN inline bool card_free_to_play_base(const Game&, int);
 SPIRE_FN inline bool card_can_use_base(const Game&, int, int);
-SPIRE_FN inline Card stat_equivalent_copy(const Game&, int);
+SPIRE_FN inline Card stat_equivalent_copy(Game&, int);
 SPIRE_FN inline void discard_card(Game&, int, bool);
 SPIRE_FN inline void increment_discard(Game&, bool);
 SPIRE_FN inline const Pile& get_pile(const Game&, PileId);
