@@ -18,3 +18,4 @@ SPIRE_UNIT(PandorasBox, "Pandora's Box", "core/relics/pandoras_box.hpp", Pandora
 SPIRE_UNIT(Pantograph, "Pantograph", "core/relics/pantograph.hpp", Pantograph)
 SPIRE_UNIT(PaperCrane, "Paper Crane", "core/relics/paper_crane.hpp", PaperCrane)
 SPIRE_UNIT(Pear, "Pear", "core/relics/pear.hpp", Pear)
+SPIRE_UNIT(PenNib, "Pen Nib", "core/relics/pen_nib.hpp", PenNib)
