@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Skewer",
+      "upgrades": 0
+    },
+    {
+      "id": "Malaise",
+      "upgrades": 0
+    },
+    {
+      "id": "Doppelganger",
+      "upgrades": 0
+    },
+    {
+      "id": "Transmutation",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Chemical X"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
