@@ -23,3 +23,4 @@ SPIRE_UNIT(MembershipCard, "Membership Card", "core/relics/membership_card.hpp",
 SPIRE_UNIT(MercuryHourglass, "Mercury Hourglass", "core/relics/mercury_hourglass.hpp", MercuryHourglass)
 SPIRE_UNIT(MoltenEgg2, "Molten Egg 2", "core/relics/molten_egg2.hpp", MoltenEgg2)
 SPIRE_UNIT(MummifiedHand, "Mummified Hand", "core/relics/mummified_hand.hpp", MummifiedHand)
+SPIRE_UNIT(MutagenicStrength, "MutagenicStrength", "core/relics/mutagenic_strength.hpp", MutagenicStrength)
