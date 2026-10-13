@@ -176,20 +176,33 @@ struct SnapshotGraph {
 
     py::object power_value(const Power& power, int owner, std::array<int, 3> identity) {
         const PowerData data = power_data(power.id);
+        UnitStateSnapshot state;
+        power_visit_state(power, state);
+        if (power.id_offset >= 0) identity = {25, owner, power.id_offset};
         return object(identity, class_name("powers", static_cast<int>(power.id)), [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
-            if (field == "ID") return py::str(power_names[static_cast<int>(power.id)]);
+            if (field == "ID") {
+                std::string id = power_names[static_cast<int>(power.id)];
+                if (power.id_offset >= 0) id += std::to_string(power.id_offset);
+                return py::str(id);
+            }
             if (field == "owner") return creature(owner);
             if (field == "amount") return py::int_(power.amount);
             if (field == "priority") return py::int_(data.priority);
             if (field == "type") return py::str(power_isDebuff(power, owner) ? "DEBUFF" : "BUFF");
             if (field == "canGoNegative") return py::bool_(data.can_negative);
-            if (field == "isTurnBased") return py::bool_(power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::Entangled);
+            if (field == "isTurnBased") return py::bool_(power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::Entangled || power.id == PowerId::PenNib || power.id == PowerId::Poison);
             if (field == "isPostActionPower") return py::bool_(power.id == PowerId::Angry);
             if (field == "justApplied") return py::bool_(power.just_applied);
             if (field == "triggered") return py::bool_(power.triggered);
             if (field == "skipFirst") return py::bool_(power.skip_first);
             if (field == "onPlayer") return py::bool_(owner == player_target);
+            if (key == "PoisonPower.source") {
+                const int source = power.state.Poison.source;
+                return source == no_target ? py::object(py::none()) : creature(source);
+            }
+            if (key == "StasisPower.card") return card(power.state.Stasis.card);
+            if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
     }
@@ -470,7 +483,8 @@ struct SnapshotGraph {
                 return effect.target == no_target ? py::object(py::none()) : creature(effect.target);
             }
             if (key == "DamageAction.goldAmount") return py::int_(effect.extra);
-            if (key == "DamageAction.muteSfx" || key == "DamageAction.skipWait") return py::bool_(false);
+            if (key == "DamageAction.muteSfx") return py::bool_(false);
+            if (key == "DamageAction.skipWait") return py::bool_(effect.flag);
             if (key == "DamageAction.info") {
                 if (effect.source >= 0) {
                     const Monster& owner = game.monsters[effect.source];
@@ -481,15 +495,20 @@ struct SnapshotGraph {
                     if (name == "DamageInfo.base") return py::int_(effect.info_base);
                     if (name == "DamageInfo.output") return py::int_(effect.amount);
                     if (name == "DamageInfo.isModified") return py::bool_(false);
-                    if (name == "DamageInfo.owner") return creature(effect.source);
+                    if (name == "DamageInfo.owner") return effect.source == no_target ? py::object(py::none()) : creature(effect.source);
                     if (name == "DamageInfo.type") return py::str(damage_type_names[static_cast<int>(effect.damage_type)]);
                     return {};
                 });
             }
             if (key == "ApplyPowerAction.powerToApply") return power_value(effect.prepared_power, effect.target, {20, queue, index});
-            if (key == "ReducePowerAction.powerID") return py::str(power_names[static_cast<int>(effect.power)]);
-            if (key == "ReducePowerAction.powerInstance" || key == "RemoveSpecificPowerAction.powerInstance") return py::none();
-            if (key == "RemoveSpecificPowerAction.powerToRemove") return py::str(power_names[static_cast<int>(effect.power)]);
+            if (key == "ReducePowerAction.powerID" || key == "RemoveSpecificPowerAction.powerToRemove")
+                return effect.power_offset >= 0 ? py::object(py::none()) : py::object(py::str(power_names[static_cast<int>(effect.power)]));
+            if (key == "ReducePowerAction.powerInstance" || key == "RemoveSpecificPowerAction.powerInstance") {
+                if (effect.power_offset < 0) return py::none();
+                const int index = find_power(get_creature(game, effect.target), effect.power, effect.power_offset);
+                SPIRE_ASSERT(index >= 0);
+                return power(effect.target, index);
+            }
             if (key == "SetMoveAction.isMultiplier") return py::bool_(false);
             if (key == "SetMoveAction.monster") return monster(effect.target);
             if (key == "SetMoveAction.theMultiplier") return py::int_(0);
@@ -498,7 +517,7 @@ struct SnapshotGraph {
             if (key == "SetMoveAction.theNextMove") return py::int_(effect.amount);
             if (key == "MakeTempCardInDiscardAction.c") return card(effect.card);
             if (key == "MakeTempCardInDiscardAction.numCards") return py::int_(effect.amount);
-            if (key == "MakeTempCardInDiscardAction.sameUUID") return py::bool_(false);
+            if (key == "MakeTempCardInDiscardAction.sameUUID") return py::bool_(effect.flag);
             if (key == "DrawCardAction.clearDrawHistory") return py::bool_(!effect.flag);
             if (key == "DrawCardAction.followUpAction") return py::none();
             if (key == "DiscardAction.endTurn") return py::bool_(effect.flag);
@@ -626,7 +645,7 @@ struct SnapshotGraph {
         result["actions.unique.CodexAction"] = py::dict("numPlaced"_a=0);
         result["actions.unique.NightmareAction"] = py::dict("numDiscarded"_a=0);
         result["events.shrines.FaceTrader"] = py::dict("goldReward"_a=0, "damage"_a=0);
-        result["powers.TheBombPower"] = py::dict("bombIdOffset"_a=0);
+        result["powers.TheBombPower"] = py::dict("bombIdOffset"_a=game.bomb_id_offset);
         result["relics.CentennialPuzzle"] = py::dict("usedThisCombat"_a=false);
         result["relics.OrangePellets"] = py::dict("SKILL"_a=false, "POWER"_a=false, "ATTACK"_a=false);
         return result;
