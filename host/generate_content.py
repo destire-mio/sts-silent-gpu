@@ -234,11 +234,12 @@ def generate(root, output):
     declarations += ['SPIRE_FN inline CardRarity card_rarity(CardId id);',
                      'SPIRE_FN inline int card_sort_order(CardId id);']
     card_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'card'}
-    content.append('struct RewardCardPoolEntry { const char* id; CardRarity rarity; };')
+    content.append('struct RewardCardPoolEntry { const char* id; CardRarity rarity; CardId native; };')
     content.append('constexpr RewardCardPoolEntry library_reward_cards[] = {')
+    native_cards = {row[1]: row[0] for row in catalogs['cards']}
     for game_id, facts in sorted(card_facts.items()):
         if facts['rarity'] in ('COMMON', 'UNCOMMON', 'RARE') and facts['type'] not in ('CURSE', 'STATUS'):
-            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + '},')
+            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards.get(game_id, 'Count') + '},')
     content.append('};')
     ranks = {game_id: rank for rank, game_id in enumerate(sorted(row[1] for row in catalogs['cards']))}
     for name, result in [('card_rarity', 'CardRarity'), ('card_sort_order', 'int')]:

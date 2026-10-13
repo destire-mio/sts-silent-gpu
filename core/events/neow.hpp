@@ -128,7 +128,7 @@ struct Neow : EventHooks {
             for (int i = 0; i < 3; ++i) add_potion_reward(g, random_potion_from_pool(g, g.rng.potion));
             open_room_card_rewards(g);
             g.screen_rewards.erase(g.screen_rewards.size - 1);
-            g.reward_proceed_visible = true; g.reward_skippable = false;
+            g.reward_proceed_visible = true; g.reward_skippable = false; g.combat_reward_skippable = false;
             g.room_reward_time = true;
             break;
         case Remove: case RemoveTwo: case Transform: case TransformTwo: case Upgrade:

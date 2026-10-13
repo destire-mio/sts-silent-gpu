@@ -6,7 +6,7 @@ struct PoisonLoseHp : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         e.done = true;
-        if (g.screen == Screen::Victory || g.screen == Screen::None) return;
+        if (g.screen == Screen::CombatReward || g.screen == Screen::None) return;
         Creature& target = get_creature(g, e.target);
         if (target.hp > 0) {
             DamageInfo info{};

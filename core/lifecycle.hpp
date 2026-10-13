@@ -11,6 +11,8 @@ SPIRE_FN inline void gain_gold(Game& g, int amount) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onGainGold(g, i);
 }
 SPIRE_FN inline void lose_gold(Game& g, int amount) {
+    if (g.room_kind == RoomKind::Shop)
+        for (int i = 0; i < g.run.relics.size; ++i) relic_onSpendGold(g, i);
     if (amount <= 0) return;
     g.run.gold = max(0, g.run.gold - amount);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onLoseGold(g, i);
@@ -72,6 +74,7 @@ SPIRE_FN inline void open_master_selection(Game& g, int amount, bool for_purge) 
     g.selected_cards.clear();
 }
 SPIRE_FN inline void queue_relic_above(Game& g, int relic, int owner, bool top) {
+    if (g.room_phase != RoomPhase::Combat) return;
     Effect e{};
     e.kind = EffectKind::RelicAboveCreature;
     action_initialize_state(e);
@@ -93,13 +96,13 @@ SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_
         static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool))};
     for (int i = 0; i < count; ++i) {
         const int roll = g.rng.card.random(99) + g.run.card_blizz_randomizer;
-        g.room_rare_card_chance = 3;
-        g.room_uncommon_card_chance = 37;
-        for (int r = 0; r < g.run.relics.size; ++r) {
+        g.room_rare_card_chance = g.room_kind == RoomKind::Elite ? 10 : 3;
+        g.room_uncommon_card_chance = g.room_kind == RoomKind::Elite ? 40 : 37;
+        for (int r = 0; r < g.run.relics.size && g.room_kind != RoomKind::Boss; ++r) {
             g.room_rare_card_chance = relic_changeRareCardRewardChance(g, r, g.room_rare_card_chance);
             g.room_uncommon_card_chance = relic_changeUncommonCardRewardChance(g, r, g.room_uncommon_card_chance);
         }
-        const int rarity = roll < g.room_rare_card_chance ? 2 : roll < g.room_rare_card_chance + g.room_uncommon_card_chance ? 1 : 0;
+        const int rarity = g.room_kind == RoomKind::Boss || roll < g.room_rare_card_chance ? 2 : roll < g.room_rare_card_chance + g.room_uncommon_card_chance ? 1 : 0;
         if (rarity == 2) g.run.card_blizz_randomizer = 5;
         else if (rarity == 0) g.run.card_blizz_randomizer = max(-40, g.run.card_blizz_randomizer - 1);
         const char* id;
@@ -120,6 +123,10 @@ SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_
     }
  }
 SPIRE_FN inline int create_reward(Game& g, RoomReward reward) {
+    if (reward.kind == RewardKind::Relic) {
+        reward.relic.counter = relic_data(reward.relic.id).counter;
+        relic_initialize_state(reward.relic);
+    }
     reward.identity = g.next_reward_identity++;
     const int index = g.reward_objects.size;
     g.reward_objects.push_back(reward);
@@ -129,8 +136,22 @@ SPIRE_FN inline int create_card_reward(Game& g) {
     RoomReward reward{};
     List<const char*, reward_card_capacity> choices{};
     reward_card_choices(g, choices);
-    for (int i = 0; i < choices.size; ++i) reward.cards.push_back(create_card(g, make_card(card_id(choices[i]))));
+    for (int i = 0; i < choices.size; ++i) {
+        int library = 0;
+        while (!same_id(library_reward_cards[library].id, choices[i])) ++library;
+        const auto& entry = library_reward_cards[library];
+        if (entry.native != CardId::Count) reward.cards.push_back(create_card(g, make_card(entry.native)));
+        else {
+            reward.cards.push_back(card_capacity + g.foreign_reward_cards.size);
+            g.foreign_reward_cards.push_back({static_cast<uint16_t>(library), static_cast<uint16_t>(g.next_card_uuid++)});
+        }
+    }
     for (int i = 0; i < reward.cards.size; ++i) {
+        if (reward.cards[i] >= card_capacity) {
+            const auto& card = library_reward_cards[g.foreign_reward_cards[reward.cards[i] - card_capacity].library_index];
+            if (card.rarity != CardRarity::Rare) SPIRE_ASSERT(!g.rng.card.randomBoolean(g.run.card_upgraded_chance));
+            continue;
+        }
         Card& card = g.cards[reward.cards[i]];
         if (card_rarity(card.id) != CardRarity::Rare && g.rng.card.randomBoolean(g.run.card_upgraded_chance) &&
             card_canUpgrade(g, reward.cards[i])) card_upgrade(card);
@@ -142,17 +163,28 @@ SPIRE_FN inline void add_room_card_reward(Game& g) {
     const int index = create_card_reward(g);
     if (index >= 0) g.room_rewards.push_back(index);
 }
-SPIRE_FN inline void add_gold_reward(Game& g, int amount) {
+SPIRE_FN inline void reward_gold_bonus(const Game& g, RoomReward& reward) {
+    reward.bonus_gold = 0;
+    if (g.room_kind != RoomKind::Treasure && reward.kind == RewardKind::Gold)
+        for (int i = 0; i < g.run.relics.size; ++i)
+            reward.bonus_gold += floor_int(reward.amount * relic_data(g.run.relics[i].id).gold_reward_bonus + 0.5f);
+}
+SPIRE_FN inline void add_room_gold(Game& g, int amount, RewardKind kind) {
     for (int i = 0; i < g.room_rewards.size; ++i) {
-        if (g.reward_objects[g.room_rewards[i]].kind != RewardKind::Gold) continue;
-        g.reward_objects[g.room_rewards[i]].amount += amount;
+        auto& reward = g.reward_objects[g.room_rewards[i]];
+        if (reward.kind != kind) continue;
+        reward.amount += amount;
+        reward_gold_bonus(g, reward);
         return;
     }
     RoomReward reward{};
-    reward.kind = RewardKind::Gold;
+    reward.kind = kind;
     reward.amount = amount;
+    reward_gold_bonus(g, reward);
     g.room_rewards.push_back(create_reward(g, reward));
 }
+SPIRE_FN inline void add_gold_reward(Game& g, int amount) { add_room_gold(g, amount, RewardKind::Gold); }
+SPIRE_FN inline void add_stolen_gold_reward(Game& g, int amount) { add_room_gold(g, amount, RewardKind::StolenGold); }
 SPIRE_FN inline void add_potion_reward(Game& g, PotionId potion) {
     RoomReward reward{};
     reward.kind = RewardKind::Potion;
@@ -163,16 +195,25 @@ SPIRE_FN inline void add_potion_reward(Game& g, PotionId potion) {
 SPIRE_FN inline void open_room_card_rewards(Game& g) {
     g.room_reward_time = true;
     g.screen_rewards = g.room_rewards;
-    const int card = create_card_reward(g);
-    if (card >= 0) g.screen_rewards.push_back(card);
+    if (g.room_kind != RoomKind::Rest && g.room_kind != RoomKind::Treasure && !g.event.no_cards) {
+        const int card = create_card_reward(g);
+        if (card >= 0) g.screen_rewards.push_back(card);
+        if (g.room_kind == RoomKind::Monster)
+            for (int i = 0; i < g.run.relics.size; ++i) if (relic_data(g.run.relics[i].id).extra_normal_combat_card_reward) {
+                const int extra = create_card_reward(g);
+                if (extra >= 0) g.screen_rewards.push_back(extra);
+                break;
+            }
+    }
     g.reward_proceed_visible = false;
+    g.combat_reward_skippable = true;
     g.reward_skippable = true;
     g.screen = Screen::CombatReward;
 }
 SPIRE_FN inline void remove_room_relic_reward(Game& g) {
     for (int i = 0; i < g.room_rewards.size; ++i) {
         const RoomReward& reward = g.reward_objects[g.room_rewards[i]];
-        if (reward.relic == RelicId::Count) continue;
+        if (reward.relic.id == RelicId::Count) continue;
         const int link = reward.relic_link;
         g.room_rewards.erase(i);
         if (i < g.room_rewards.size && link == g.reward_objects[g.room_rewards[i]].identity) g.room_rewards.erase(i);
@@ -278,7 +319,7 @@ SPIRE_FN inline RelicKey random_relic_key(Game& g, int tier, bool from_end) {
 SPIRE_FN inline void add_relic_reward(Game& g, RelicTier tier) {
     RoomReward reward{};
     reward.kind = RewardKind::Relic;
-    reward.relic = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier))));
+    reward.relic.id = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier))));
     g.room_rewards.push_back(create_reward(g, reward));
 }
 SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {

@@ -13,6 +13,8 @@ static Game combat() {
     Game g{};
     reset(g, 42);
     g.screen = Screen::Combat;
+    g.room_in_combat = true;
+    g.room_phase = RoomPhase::Combat;
     g.player.energy = 3;
     build_encounter(g, EncounterId::Cultist);
     return g;

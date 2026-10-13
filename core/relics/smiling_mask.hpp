@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct SmilingMask : RelicHooks {
-    static SPIRE_FN constexpr RelicData data() { RelicData d{-1, 150}; d.purge_cost = 50; return d; }
+    static SPIRE_FN constexpr RelicData data() { RelicData d{-1, 150}; d.purge_cost = 50; d.excluded_from_restock = true; return d; }
     SPIRE_STATE(SmilingMask, bool pulse;)
     static SPIRE_FN void onEnterRoom(Game& g, int relic, int room) {
         g.run.relics[relic].state.SmilingMask.pulse = static_cast<RoomKind>(room) == RoomKind::Shop;

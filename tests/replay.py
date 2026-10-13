@@ -182,7 +182,8 @@ def replay(path, engine):
                     compare_scope(record["snapshot"], snapshot, scope, f"{prefix}.snapshot", identities)
                     if scope == "combat":
                         if "terminal" in record:
-                            compare(record["terminal"], terminal_reason(snapshot, result.scenario), f"{prefix}.terminal")
+                            combat_scenario = result.scenario and "start" not in header["scenario"]
+                            compare(record["terminal"], terminal_reason(snapshot, combat_scenario), f"{prefix}.terminal")
                         else:
                             compare(record["legal"], legal, f"{prefix}.legal")
                 except Difference as error:

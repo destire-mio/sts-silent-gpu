@@ -169,7 +169,7 @@ struct SnapshotGraph {
             if (field == "inBottleFlame") return py::bool_(card.bottle_flame);
             if (field == "inBottleLightning") return py::bool_(card.bottle_lightning);
             if (field == "inBottleTornado") return py::bool_(card.bottle_tornado);
-            if (field == "price") return py::int_(0);
+            if (field == "price") return py::int_(card.price);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
                 field == "isMagicNumberModified" ||
@@ -191,7 +191,19 @@ struct SnapshotGraph {
     }
 
     py::object card(int index) {
-        return index < 0 ? py::object(py::none()) : card_value(game.cards[index], false, index);
+        if (index < 0) return py::none();
+        if (index < card_capacity) return card_value(game.cards[index], false, index);
+        const auto& card = game.foreign_reward_cards[index - card_capacity];
+        const auto& entry = library_reward_cards[card.library_index];
+        const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(entry.id)].cast<py::dict>();
+        const py::dict fields = data["fields"].cast<py::dict>();
+        return object({21, index, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
+            if (key == "AbstractCard.uuid") {
+                const auto inserted = uuids.emplace(card.uuid, static_cast<int>(uuids.size()));
+                return py::int_(inserted.first->second);
+            }
+            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
+        });
     }
 
     template<class Cards>
@@ -282,11 +294,10 @@ struct SnapshotGraph {
         return {};
     }
 
-    py::object relic(int index) {
-        const Relic& relic = game.run.relics[index];
+    py::object relic_value(const Relic& relic, int index, bool obtained, std::array<int, 3> identity) {
         UnitStateSnapshot state;
         relic_visit_state(relic, state);
-        return object({9, index, 0}, class_name("relics", static_cast<int>(relic.id)), [&](const std::string& key) -> py::object {
+        return object(identity, class_name("relics", static_cast<int>(relic.id)), [&](const std::string& key) -> py::object {
             const py::object mapped = relics_snapshot(*this, relic, index, key);
             if (mapped) return mapped;
             const std::string field = key.substr(key.find('.') + 1);
@@ -296,13 +307,15 @@ struct SnapshotGraph {
             if (key == "AbstractRelic.counter") return py::int_(relic.counter);
             if (key == "AbstractRelic.cost") return py::int_(0);
             if (key == "AbstractRelic.tier") return py::reinterpret_borrow<py::object>(metadata("relics", static_cast<int>(relic.id))["tier"]);
-            if (key == "AbstractRelic.isObtained") return py::bool_(true);
+            if (key == "AbstractRelic.isObtained") return py::bool_(obtained);
             if (key == "AbstractRelic.usedUp") return py::bool_(relic.used_up);
             if (key == "AbstractRelic.grayscale") return py::bool_(relic.grayscale);
             if (key == "AbstractRelic.energyBased" || key == "AbstractRelic.discarded") return py::bool_(false);
             return {};
         });
     }
+
+    py::object relic(int index) { return relic_value(game.run.relics[index], index, true, {9, index, 0}); }
 
     py::object potion(int index) {
         const PotionId id = game.run.potions[index];
@@ -428,79 +441,6 @@ struct SnapshotGraph {
         });
     }
 
-    py::object reward_card(const FreshRunState& fresh, int index) {
-        const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(fresh.rewardCards[index])].cast<py::dict>();
-        const py::dict fields = data["fields"].cast<py::dict>();
-        return object({21, index, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractCard.uuid") {
-                const auto inserted = uuids.emplace(0x80000000u + index, static_cast<int>(uuids.size()));
-                return py::int_(inserted.first->second);
-            }
-            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
-        });
-    }
-
-    py::object reward_potion(const FreshRunState& fresh) {
-        const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(fresh.rewardPotion)].cast<py::dict>();
-        const py::dict fields = data["fields"].cast<py::dict>();
-        Game initialized = game;
-        PotionId id = PotionId::Count;
-        for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
-            if (fresh.rewardPotion == potion_names[i]) id = static_cast<PotionId>(i);
-        SPIRE_ASSERT(id != PotionId::Count);
-        initialized.run.potions[0] = id;
-        initialized.run.potion_state[0] = construct_potion(initialized, initialized.run.potions[0]);
-        return object({22, 0, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractPotion.potency") return py::int_(potion_potency(initialized, 0));
-            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
-        });
-    }
-
-    py::object reward(const FreshRunState& fresh, int index, const std::string& type) {
-        return object({23, index, 0}, "rewards.RewardItem", [&](const std::string& key) -> py::object {
-            if (key == "RewardItem.type") return py::str(type);
-            if (key == "RewardItem.goldAmt") return py::int_(type == "GOLD" ? fresh.rewardGold : type == "STOLEN_GOLD" ? game.room_stolen_gold : 0);
-            if (key == "RewardItem.bonusGold") {
-                int bonus = 0;
-                if (type == "GOLD") for (int i = 0; i < game.run.relics.size; ++i)
-                    bonus += floor_int(fresh.rewardGold * relic_data(game.run.relics[i].id).gold_reward_bonus + 0.5f);
-                return py::int_(bonus);
-            }
-            if (key == "RewardItem.ignoreReward" || key == "RewardItem.isDone") return py::bool_(false);
-            if (key == "RewardItem.relic" || key == "RewardItem.relicLink") return py::none();
-            if (key == "RewardItem.potion") return type == "POTION" ? reward_potion(fresh) : py::object(py::none());
-            if (key == "RewardItem.cards") {
-                if (type != "CARD") return py::none();
-                py::list result;
-                if (!fresh.rewardCards.empty()) {
-                    for (int i = 0; i < static_cast<int>(fresh.rewardCards.size()); ++i) result.append(reward_card(fresh, i));
-                    return result;
-                }
-                int reward_index = 0;
-                for (int i = 0; i < index; ++i) if (fresh.rewardTypes[i] == "CARD") ++reward_index;
-                const auto& entries = game.reward_objects[game.room_rewards[reward_index]].cards;
-                for (int i = 0; i < entries.size; ++i) result.append(card(entries[i]));
-                return result;
-            }
-            return {};
-        });
-    }
-
-    py::object reward_screen(const FreshRunState& fresh) {
-        return object({24, 0, 0}, "screens.CombatRewardScreen", [&](const std::string& key) -> py::object {
-            if (key == "CombatRewardScreen.mug") return py::bool_(game.mugged);
-            if (key == "CombatRewardScreen.smoke") return py::bool_(game.smoked);
-            if (key == "CombatRewardScreen.hasTakenAll") return py::bool_(!game.smoked && fresh.rewardTypes.empty());
-            if (key == "CombatRewardScreen.rewards") {
-                py::list result;
-                if (!game.smoked)
-                    for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i) result.append(reward(fresh, i, fresh.rewardTypes[i]));
-                return result;
-            }
-            return {};
-        });
-    }
-
     template<class Fields>
     py::list event_children(int field, int count, const char* type, Fields&& visit) {
         py::list result;
@@ -544,12 +484,22 @@ struct SnapshotGraph {
     py::object core_reward(int index) {
         const RoomReward& reward = game.reward_objects[index];
         return object({33, reward.identity, 0}, "rewards.RewardItem", [&](const std::string& key) -> py::object {
-            if (key == "RewardItem.type") { const char* types[] = {"CARD", "GOLD", "POTION", "RELIC"}; return py::str(types[static_cast<int>(reward.kind)]); }
+            if (key == "RewardItem.type") { const char* types[] = {"CARD", "GOLD", "POTION", "RELIC", "STOLEN_GOLD", "SAPPHIRE_KEY", "EMERALD_KEY"}; return py::str(types[static_cast<int>(reward.kind)]); }
             if (key == "RewardItem.goldAmt") return py::int_(reward.amount);
-            if (key == "RewardItem.bonusGold") return py::int_(0);
-            if (key == "RewardItem.ignoreReward") return py::bool_(false);
+            if (key == "RewardItem.bonusGold") return py::int_(reward.bonus_gold);
+            if (key == "RewardItem.ignoreReward") return py::bool_(reward.ignored);
             if (key == "RewardItem.isDone") return py::bool_(reward.done);
-            if (key == "RewardItem.relic" || key == "RewardItem.relicLink") return py::none();
+            if (key == "RewardItem.relic") {
+                if (reward.kind != RewardKind::Relic) return py::none();
+                if (reward.relic_slot >= 0) return relic(reward.relic_slot);
+                return relic_value(reward.relic, -1, false, {36, reward.identity, 0});
+            }
+            if (key == "RewardItem.relicLink") {
+                if (reward.relic_link < 0) return py::none();
+                for (int r = 0; r < game.reward_objects.size; ++r)
+                    if (game.reward_objects[r].identity == reward.relic_link) return core_reward(r);
+                SPIRE_ASSERT(false);
+            }
             if (key == "RewardItem.potion") return reward.kind == RewardKind::Potion ? core_reward_potion(index) : py::object(py::none());
             if (key == "RewardItem.cards") {
                 if (reward.kind != RewardKind::Card) return py::none();
@@ -563,7 +513,7 @@ struct SnapshotGraph {
         return object({24, 0, 0}, "screens.CombatRewardScreen", [&](const std::string& key) -> py::object {
             if (key == "CombatRewardScreen.mug") return py::bool_(game.mugged);
             if (key == "CombatRewardScreen.smoke") return py::bool_(game.smoked);
-            if (key == "CombatRewardScreen.hasTakenAll") return py::bool_(game.screen_rewards.empty());
+            if (key == "CombatRewardScreen.hasTakenAll") return py::bool_(!game.smoked && game.screen_rewards.empty());
             if (key == "CombatRewardScreen.rewards") {
                 py::list result; for (int i = 0; i < game.screen_rewards.size; ++i) result.append(core_reward(game.screen_rewards[i])); return result;
             }
@@ -571,18 +521,117 @@ struct SnapshotGraph {
         });
     }
 
+    template<int Capacity> py::list shop_cards(const List<uint8_t, Capacity>& entries) {
+        py::list result;
+        for (int i = 0; i < entries.size; ++i) result.append(card(entries[i]));
+        return result;
+    }
+    py::object shop() {
+        return object({40, 0, 0}, "shop.ShopScreen", [&](const std::string& key) -> py::object {
+            if (key == "ShopScreen.coloredCards") return shop_cards(game.shop.colored);
+            if (key == "ShopScreen.colorlessCards") return shop_cards(game.shop.colorless);
+            if (key == "ShopScreen.isActive") return py::bool_(true);
+            if (key == "ShopScreen.purgeAvailable") return py::bool_(game.shop.purge_available);
+            if (key == "ShopScreen.potions" || key == "ShopScreen.relics") {
+                const bool potion = key == "ShopScreen.potions";
+                const auto& stock = potion ? game.shop.potions : game.shop.relics;
+                py::list result;
+                for (int i = 0; i < stock.size; ++i) {
+                    const StoreItem& item = stock[i];
+                    const RoomReward& reward = game.reward_objects[item.reward];
+                    result.append(object({41, potion ? 1 : 0, item.slot}, potion ? "shop.StorePotion" : "shop.StoreRelic", [&](const std::string& name) -> py::object {
+                        const std::string field = name.substr(name.find('.') + 1);
+                        if (field == "price") return py::int_(item.price);
+                        if (field == "slot") return py::int_(item.slot);
+                        if (field == "isPurchased") return py::bool_(false);
+                        if (field == "shopScreen") return shop();
+                        if (field == "potion") return core_reward_potion(item.reward);
+                        if (field == "relic") return relic_value(reward.relic, -1, false, {36, reward.identity, 0});
+                        return {};
+                    }));
+                }
+                return result;
+            }
+            return {};
+        });
+    }
+
+    py::object chest() {
+        const char* classes[] = {"rewards.chests.SmallChest", "rewards.chests.MediumChest", "rewards.chests.LargeChest"};
+        return object({39, 0, 0}, classes[game.chest.size], [&](const std::string& key) -> py::object {
+            const auto& data = chest_data[game.chest.size];
+            if (key == "AbstractChest.COMMON_CHANCE") return py::int_(data.common);
+            if (key == "AbstractChest.UNCOMMON_CHANCE") return py::int_(data.uncommon);
+            if (key == "AbstractChest.RARE_CHANCE") return py::int_(data.rare);
+            if (key == "AbstractChest.GOLD_CHANCE") return py::int_(data.gold_chance);
+            if (key == "AbstractChest.GOLD_AMT") return py::int_(data.gold_amount);
+            if (key == "AbstractChest.goldReward") return py::bool_(game.chest.gold);
+            if (key == "AbstractChest.isOpen") return py::bool_(game.chest.open);
+            if (key == "AbstractChest.cursed") return py::bool_(game.chest.cursed);
+            if (key == "AbstractChest.relicReward") {
+                const char* rewards[] = {"COMMON_RELIC", "UNCOMMON_RELIC", "RARE_RELIC"};
+                return py::str(rewards[static_cast<int>(game.chest.relic)]);
+            }
+            return {};
+        });
+    }
+
+    py::object campfire() {
+        return object({37, 0, 0}, "rooms.CampfireUI", [&](const std::string& key) -> py::object {
+            if (key == "CampfireUI.somethingSelected") return py::bool_(game.campfire.something_selected);
+            if (key == "CampfireUI.buttons") {
+                py::list result;
+                const char* classes[] = {"ui.campfire.RestOption", "ui.campfire.SmithOption", "ui.campfire.LiftOption", "ui.campfire.TokeOption", "ui.campfire.DigOption", "ui.campfire.RecallOption"};
+                for (int i = 0; i < game.campfire.options.size; ++i)
+                    result.append(object({38, i, 0}, classes[static_cast<int>(game.campfire.options[i].kind)], [&](const std::string& field) -> py::object {
+                        if (field == "AbstractCampfireOption.usable") return py::bool_(game.campfire.options[i].usable);
+                        return {};
+                    }));
+                return result;
+            }
+            return {};
+        });
+    }
+
     py::object room(const FreshRunState& fresh) {
-        return object({12, 0, 0}, game.room_kind == RoomKind::Neow ? "neow.NeowRoom" : "rooms.MonsterRoom", [&](const std::string& key) -> py::object {
+        const char* classes[] = {"rooms.MonsterRoom", "rooms.MonsterRoomElite", "rooms.MonsterRoomBoss", "rooms.ShopRoom", "rooms.RestRoom", "rooms.TreasureRoom", "rooms.EventRoom", "rooms.EmptyRoom", "neow.NeowRoom", "rooms.TreasureRoomBoss", "rooms.TrueVictoryRoom"};
+        return object({12, 0, 0}, classes[static_cast<int>(game.room_kind)], [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
-            if (field == "baseRareCardChance") return py::int_(3);
+            if (field == "baseRareCardChance") return py::int_(game.room_kind == RoomKind::Elite ? 10 : game.room_kind == RoomKind::Shop ? 9 : 3);
             if (field == "rareCardChance") return py::int_(game.room_rare_card_chance);
-            if (field == "baseUncommonCardChance") return py::int_(37);
+            if (field == "baseUncommonCardChance") return py::int_(game.room_kind == RoomKind::Elite ? 40 : 37);
             if (field == "uncommonCardChance") return py::int_(game.room_uncommon_card_chance);
             if (field == "cannotLose") return py::bool_(game.cannot_lose);
             if (field == "eliteTrigger") return py::bool_(game.room_elite_trigger);
             if (field == "combatEvent" || field == "skipMonsterTurn") return py::bool_(false);
             if (field == "smoked") return py::bool_(game.smoked);
             if (field == "event") return event();
+            if (field == "campfireUI") return campfire();
+            if (field == "chest") return chest();
+            if (field == "cutscene") return object({43, 0, 0}, "cutscenes.Cutscene", [&](const std::string& name) -> py::object {
+                if (name == "Cutscene.currentScene") return py::int_(0);
+                if (name == "Cutscene.darkenTimer" || name == "Cutscene.fadeTimer") return py::float_(0.0);
+                if (name == "Cutscene.switchTimer") return java_float(victory_switch_timer());
+                if (name == "Cutscene.isDone") return py::bool_(true);
+                if (name == "Cutscene.panels") {
+                    py::list panels;
+                    for (int i = 0; i < 3; ++i) panels.append(object({44, i, 0}, "cutscenes.CutscenePanel", [&](const std::string& key) -> py::object {
+                        if (key == "CutscenePanel.activated" || key == "CutscenePanel.fadeOut") return py::bool_(true);
+                        if (key == "CutscenePanel.finished") return py::bool_(false);
+                        if (key == "CutscenePanel.sfx") return i == 0 ? py::object(py::str("ATTACK_POISON2")) : py::object(py::none());
+                        return {};
+                    }));
+                    return panels;
+                }
+                return {};
+            });
+            if (field == "shopRarityBonus") return py::int_(6);
+            if (field == "merchant") return object({42, 0, 0}, "shop.Merchant", [&](const std::string& name) -> py::object {
+                if (name == "Merchant.cards1") return shop_cards(game.shop.colored);
+                if (name == "Merchant.cards2") return shop_cards(game.shop.colorless);
+                if (name == "Merchant.shopScreen") return py::int_(1);
+                return {};
+            });
             if (field == "endBattleTimer" && !game.battle_over) return py::float_(0.0);
             if (field == "isBattleOver") return py::bool_(game.battle_over);
             if (field == "monsters" && game.monster_order.empty()) return py::none();
@@ -599,13 +648,10 @@ struct SnapshotGraph {
             }
             if (field == "potions" || field == "relics") return py::list();
             if (field == "rewardAllowed") return py::bool_(true);
-            if (field == "rewardTime") return py::bool_(game.battle_over || game.room_reward_time);
+            if (field == "rewardTime") return py::bool_(game.room_reward_time);
             if (field == "rewards") {
                 py::list result;
-                if (game.event.id != EventId::Count) { for (int i = 0; i < game.room_rewards.size; ++i) result.append(core_reward(game.room_rewards[i])); return result; }
-                if (!game.battle_over && game.room_stolen_gold > 0) result.append(reward(fresh, 0, "STOLEN_GOLD"));
-                for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i)
-                    if (fresh.rewardTypes[i] != "CARD") result.append(reward(fresh, i, fresh.rewardTypes[i]));
+                for (int i = 0; i < game.room_rewards.size; ++i) result.append(core_reward(game.room_rewards[i]));
                 return result;
             }
             return {};
@@ -774,7 +820,7 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "currentAction") return manager.has_current_action ? effect(game.action_objects[manager.current_action], 3, manager.current_action) : py::object(py::none());
-            if (field == "hasControl") return py::bool_(game.run.floor == 0 || manager.has_current_action);
+            if (field == "hasControl") return py::bool_(manager.has_control);
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
             if (field == "usingCard") return py::bool_(manager.using_card);
             if (field == "mantraGained") return py::int_(0);
@@ -800,20 +846,36 @@ struct SnapshotGraph {
         const bool selecting = game.screen == Screen::Discard || game.screen == Screen::Grid;
         const bool grid = game.screen == Screen::Grid;
         const bool card_reward = game.screen == Screen::CardReward;
-        const bool rewards = game.screen == Screen::Victory || game.screen == Screen::CombatReward;
+        const bool rewards = game.screen == Screen::CombatReward;
         py::dict result("type"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : game.screen == Screen::Map ? "MAP" : "NONE"),
             "up"_a=(selecting || card_reward || game.screen == Screen::Death || rewards || game.screen == Screen::Map), "previous"_a=py::none(),
             "choice"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : game.screen == Screen::Map ? "MAP" : game.screen == Screen::Event ? "EVENT" : "NONE"));
         if (game.previous_screen == Screen::CombatReward) result["previous"] = "COMBAT_REWARD";
-        if (game.screen == Screen::CombatReward) {
-            py::list options; const char* types[] = {"CARD", "GOLD", "POTION", "RELIC"};
+        if (game.screen == Screen::Victory) { result["type"] = "VICTORY"; result["choice"] = "VICTORY"; result["up"] = true; }
+        if (game.previous_screen == Screen::Shop) result["previous"] = "SHOP";
+        if (game.screen == Screen::Shop) {
+            result["type"] = "SHOP"; result["up"] = true; result["choice"] = "SHOP";
+            result["state"] = shop();
+            py::list options; List<uint8_t, 14> choices{}; shop_choices(game, choices);
+            for (int i = 0; i < choices.size; ++i) {
+                const int option = choices[i];
+                if (option == 0) options.append("purge");
+                else if (option < 8) options.append(card_names[static_cast<int>(game.cards[option < 6 ? game.shop.colored[option - 1] : game.shop.colorless[option - 6]].id)]);
+                else if (option < 11) options.append(relic_names[static_cast<int>(game.reward_objects[game.shop.relics[option - 8].reward].relic.id)]);
+                else options.append(potion_names[static_cast<int>(game.reward_objects[game.shop.potions[option - 11].reward].potion)]);
+            }
+            result["options"] = options;
+        } else if (game.screen == Screen::CombatReward) {
+            py::list options; const char* types[] = {"CARD", "GOLD", "POTION", "RELIC", "STOLEN_GOLD", "SAPPHIRE_KEY", "EMERALD_KEY"};
             for (int i = 0; i < game.screen_rewards.size; ++i) options.append(types[static_cast<int>(game.reward_objects[game.screen_rewards[i]].kind)]);
             result["options"] = options; result["state"] = core_reward_screen();
-        } else if (rewards) { result["options"] = game.smoked ? py::object(py::list()) : py::cast(fresh.rewardTypes); result["state"] = reward_screen(fresh); }
-        else if (card_reward) {
+        } else if (card_reward) {
             py::list options;
             for (int i = 0; i < game.reward_cards.size; ++i)
-                options.append(card_names[static_cast<int>(game.cards[game.reward_cards[i]].id)]);
+                options.append(game.reward_cards[i] >= card_capacity ? library_reward_cards[game.foreign_reward_cards[game.reward_cards[i] - card_capacity].library_index].id : card_names[static_cast<int>(game.cards[game.reward_cards[i]].id)]);
+            if (!game.room_in_combat)
+                for (int i = 0; i < game.run.relics.size; ++i)
+                    if (relic_data(game.run.relics[i].id).bowl_hp) { options.append("bowl"); break; }
             result["options"] = options;
             result["state"] = object({26, 0, 0}, "screens.CardRewardScreen", [&](const std::string& key) -> py::object {
                 const std::string field = key.substr(key.find('.') + 1);
@@ -875,6 +937,19 @@ struct SnapshotGraph {
                 return {};
             });
         }
+        if (game.screen == Screen::Room) {
+            const char* choices[] = {"COMPLETE", "COMPLETE", "COMPLETE", "SHOP_ROOM", "REST", "CHEST", "EVENT", "COMPLETE", "EVENT", "CHEST", "COMPLETE"};
+            result["choice"] = choices[static_cast<int>(game.room_kind)];
+            py::list options;
+            if (game.room_kind == RoomKind::Rest && !game.campfire.something_selected) {
+                const char* names[] = {"RestOption", "SmithOption", "LiftOption", "TokeOption", "DigOption", "RecallOption"};
+                for (int i = 0; i < game.campfire.options.size; ++i)
+                    if (game.campfire.options[i].usable) options.append(names[static_cast<int>(game.campfire.options[i].kind)]);
+            }
+            if (game.room_kind == RoomKind::Treasure && !game.chest.open) options.append("open");
+            if (game.room_kind == RoomKind::Shop) options.append("shop");
+            result["options"] = options;
+        }
         if (game.screen == Screen::Event) {
             py::list options; const auto& buttons = event_data(game.event.id).image ? game.image_dialog : game.room_dialog;
             for (int i = 0; i < buttons.size; ++i) if (!buttons[i]) options.append("option:" + std::to_string(i));
@@ -898,7 +973,7 @@ struct SnapshotGraph {
 
     py::dict globals(const FreshRunState& fresh) {
         py::dict result("event_chances"_a=py::dict("ELITE_CHANCE"_a=0.0, "MONSTER_CHANCE"_a=0.1, "SHOP_CHANCE"_a=0.03, "TREASURE_CHANCE"_a=0.02),
-            "potion"_a=py::dict("blizzardPotionMod"_a=fresh.blizzardPotionMod), "shop"_a=py::dict("purgeCost"_a=75, "actualPurgeCost"_a=75),
+            "potion"_a=py::dict("blizzardPotionMod"_a=game.run.potion_blizz_modifier), "shop"_a=py::dict("purgeCost"_a=game.run.purge_cost, "actualPurgeCost"_a=game.run.actual_purge_cost),
             "drawn_cards"_a=cards(game.drawn_cards), "scraped_cards"_a=py::list(), "obtained_cards"_a=py::dict());
         for (auto item : inventory["globals"].cast<py::dict>()) result[item.first] = item.second;
         snapshot_statics(*this, result);
@@ -910,16 +985,17 @@ struct SnapshotGraph {
     }
 
     py::dict run(const FreshRunState& fresh) const {
-        py::dict result("id"_a="Exordium", "floorNum"_a=game.run.floor, "actNum"_a=game.run.act,
+        const char* dungeons[] = {"Exordium", "TheCity", "TheBeyond", "TheEnding"};
+        py::dict result("id"_a=dungeons[game.run.act - 1], "floorNum"_a=game.run.floor, "actNum"_a=game.run.act,
             "ascensionLevel"_a=game.run.ascension, "isAscensionMode"_a=true,
-            "isDungeonBeaten"_a=false, "is_victory"_a=false, "ascensionCheck"_a=true,
+            "isDungeonBeaten"_a=false, "is_victory"_a=(game.screen == Screen::Victory), "ascensionCheck"_a=true,
             "bossKey"_a=encounter_names[static_cast<int>(game.run.boss_key)], "bossCount"_a=game.run.boss_count, "firstRoomChosen"_a=game.run.first_room_chosen,
             "cardBlizzRandomizer"_a=game.run.card_blizz_randomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
             "shrineChance"_a=0.25, "cardUpgradedChance"_a=java_float(game.run.card_upgraded_chance), "colorlessRareChance"_a=0.3,
             "shopRoomChance"_a=0.05, "restRoomChance"_a=0.12, "eventRoomChance"_a=0.22,
             "eliteRoomChance"_a=0.08, "treasureRoomChance"_a=0.0,
-            "smallChestChance"_a=50, "mediumChestChance"_a=33, "largeChestChance"_a=17,
-            "commonRelicChance"_a=50, "uncommonRelicChance"_a=33, "rareRelicChance"_a=17,
+            "smallChestChance"_a=(game.run.act == 4 ? 0 : 50), "mediumChestChance"_a=(game.run.act == 4 ? 100 : 33), "largeChestChance"_a=(game.run.act == 4 ? 0 : 17),
+            "commonRelicChance"_a=(game.run.act == 4 ? 0 : 50), "uncommonRelicChance"_a=(game.run.act == 4 ? 100 : 33), "rareRelicChance"_a=(game.run.act == 4 ? 0 : 17),
             "pathX"_a=py::list(), "pathY"_a=py::list(), "seed"_a=signed_long(game.run.seed),
             "lastCombatMetricKey"_a=(game.encounter == EncounterId::Count ? py::object(py::none()) : py::object(py::str(encounter_names[static_cast<int>(game.encounter)]))));
         py::list path_x, path_y;
@@ -1009,7 +1085,7 @@ struct SnapshotGraph {
         result["room"] = room(fresh);
         result["map"] = map(fresh);
         result["node"] = py::cast(std::array<int, 2>{game.run.node_x, game.run.node_y});
-        result["next_node"] = game.run.next_x < 0 ? py::object(py::none()) : py::cast(std::array<int, 2>{game.run.next_x, game.run.next_y});
+        result["next_node"] = game.run.next_y < 0 ? py::object(py::none()) : py::cast(std::array<int, 2>{game.run.next_x, game.run.next_y});
         result["manager"] = manager();
         result["combat"] = combat();
         result["screen"] = screen(fresh);

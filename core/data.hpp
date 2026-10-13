@@ -2,6 +2,14 @@
 #include "state.hpp"
 
 namespace spire {
+// Cutscene.update keeps subtracting until the panels finish, then resets their finished flags.
+SPIRE_FN constexpr float victory_switch_timer() {
+    float timer = 5.0f;
+    while (timer >= 0.0f) timer -= 1.0f / 60.0f;
+    float alpha = 1.0f;
+    while (alpha >= 0.0f) { alpha -= 1.0f / 60.0f; timer -= 1.0f / 60.0f; }
+    return timer;
+}
 struct EventData { const char* java_class; bool image; };
 struct CardDef {
     CardType type;
@@ -46,9 +54,15 @@ struct RelicData {
     bool triggers_at_battle_end = false;
     bool prevents_event_combat = false;
     float shop_multiplier = 1.0f;
+    bool restocks_shop = false;
+    bool excluded_from_restock = false;
+    bool discounts_existing_stock = false;
     float player_vulnerable_multiplier = 0.0f;
     float monster_weak_multiplier = 0.0f;
     bool extra_normal_combat_card_reward = false;
+    bool extra_elite_relic = false;
+    bool adds_campfire_option = false;
+    bool rest_card_reward = false;
     bool keep_hand = false;
     bool exhaust_discard = false;
     bool blocks_potions = false;

@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct PeacePipe : RelicHooks {
-    static SPIRE_FN constexpr RelicData data() { return {-1, 300}; }
+    static SPIRE_FN constexpr RelicData data() { RelicData d{-1, 300}; d.adds_campfire_option = true; return d; }
     static SPIRE_FN bool canSpawn(const Game& g, int) {
         if (g.run.floor >= 48) return false;
         int count = 0;

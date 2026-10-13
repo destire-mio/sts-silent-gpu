@@ -157,6 +157,9 @@ class HostInterface(unittest.TestCase):
                 game = spire.start_combat(seed, {"encounter": encounter})
                 decisions = 0
                 while game.legal_actions():
+                    state = game.snapshot()
+                    if fields(state, state["room"])["AbstractRoom.isBattleOver"]:
+                        break
                     game.step(policy.choice(game.legal_actions()))
                     decisions += 1
                     self.assertLess(decisions, 2000)

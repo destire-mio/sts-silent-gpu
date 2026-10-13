@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
         spire::reset(game, games++);
         setup.encounter = static_cast<spire::EncounterId>((games - 1) % static_cast<int>(spire::EncounterId::Count));
         spire::start_combat(game, setup);
-        while (completed < requested && game.screen != spire::Screen::Victory && game.screen != spire::Screen::Death) {
+        while (completed < requested && game.screen != spire::Screen::CombatReward && game.screen != spire::Screen::Death) {
             spire::ActionSet actions;
             spire::legal_actions(game, actions);
             SPIRE_ASSERT(actions.size > 0);

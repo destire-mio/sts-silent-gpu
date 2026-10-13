@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct MawBank : RelicHooks {
-    static SPIRE_FN constexpr RelicData data() { return {-1, 150}; }
+    static SPIRE_FN constexpr RelicData data() { RelicData d{-1, 150}; d.excluded_from_restock = true; return d; }
     SPIRE_STATE(MawBank, bool usedUp;)
     SPIRE_SNAPSHOT("AbstractRelic.usedUp", scalar, relic.state.MawBank.usedUp)
     SPIRE_SNAPSHOT("AbstractRelic.grayscale", scalar, relic.state.MawBank.usedUp)

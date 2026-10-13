@@ -292,7 +292,7 @@ static void remaining_actions() {
     suicide.target = 0;
     add_bottom(g, suicide);
     run_until_decision(g);
-    require(g.monsters[0].creature.hp == 0 && g.monsters[0].creature.gold == 0 && g.screen == Screen::Victory,
+    require(g.monsters[0].creature.hp == 0 && g.monsters[0].creature.gold == 0 && g.screen == Screen::CombatReward,
             "Suicide clears stolen gold and settles combat death");
 }
 

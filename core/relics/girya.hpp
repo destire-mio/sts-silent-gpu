@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct Girya : RelicHooks {
-    static SPIRE_FN constexpr RelicData data() { return {0, 300}; }
+    static SPIRE_FN constexpr RelicData data() { RelicData d{0, 300}; d.adds_campfire_option = true; return d; }
     static SPIRE_FN void atBattleStart(Game& g, int relic) {
         if (g.run.relics[relic].counter == 0) return;
         Effect strength{};

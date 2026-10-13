@@ -79,6 +79,24 @@ CombatSetup parse_setup(const Game& game, const py::dict& value) {
                 setup.potions[i] = parse_id<PotionId>(potions[i].cast<std::string>(), potion_names);
         }
     }
+    if (value.contains("start")) {
+        const py::dict start = value["start"].cast<py::dict>();
+        setup.act = start["act"].cast<int>();
+        setup.floor = start["floor"].cast<int>();
+        setup.gold = start["gold"].cast<int>();
+        const auto node = start["node"].cast<std::array<int, 2>>();
+        setup.node_x = node[0]; setup.node_y = node[1];
+        const auto keys = start["keys"].cast<std::array<bool, 3>>();
+        for (int i = 0; i < 3; ++i) setup.keys[i] = keys[i];
+        setup.emerald = start["emerald"].cast<bool>();
+        setup.first_room_chosen = true;
+        const std::string name = start["room"].cast<std::string>();
+        const char* rooms[] = {"MonsterRoom", "MonsterRoomElite", "MonsterRoomBoss", "ShopRoom", "RestRoom", "TreasureRoom", "EventRoom"};
+        bool found = false;
+        for (int i = 0; i < 7; ++i) if (name == rooms[i]) { setup.room = static_cast<RoomKind>(i); found = true; }
+        if (name == "TreasureRoomBoss") { setup.room = RoomKind::BossTreasure; found = true; }
+        SPIRE_ASSERT(found);
+    }
     return setup;
 }
 
@@ -107,7 +125,6 @@ struct Environment {
     void step(const py::dict& action) {
         if (game.fault != 0) return;
         spire::step(game, parse_action(action));
-        if (game.screen == Screen::Victory) settle_combat_rewards(game, fresh);
     }
 };
 

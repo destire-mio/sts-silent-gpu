@@ -167,7 +167,7 @@ static void damage_and_room_state() {
     e.kind = EffectKind::CanLose;
     add_bottom(g, e);
     run_until_decision(g);
-    require(g.screen == Screen::Victory && !g.cannot_lose, "CanLose releases room completion after the last death");
+    require(g.screen == Screen::CombatReward && !g.cannot_lose, "CanLose releases room completion after the last death");
     g = combat();
     g.monsters[0].creature.block = 50;
     const int hp = g.monsters[0].creature.hp;

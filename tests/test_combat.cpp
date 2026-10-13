@@ -231,7 +231,7 @@ static void test_damage_hooks() {
     require(!g.player.creature.powers.at(g.power_objects, 0).just_applied, "player-turn Spore Cloud does not skip round decrement");
     require(g.monsters[1].creature.hp == 6, "first Fungi death leaves second Fungi alive");
     play(g, CardId::Strike_G, 1);
-    require(g.screen == Screen::Victory && power_amount(g, g.player.creature, PowerId::Vulnerable) == 2, "last Fungi death suppresses Spore Cloud");
+    require(g.screen == Screen::CombatReward && power_amount(g, g.player.creature, PowerId::Vulnerable) == 2, "last Fungi death suppresses Spore Cloud");
 }
 
 static void test_artifact() {
@@ -254,12 +254,15 @@ static void test_terminal_states() {
     start_combat(g, deck_setup({CardId::Neutralize,CardId::Defend_G,CardId::Strike_G,CardId::Defend_G,CardId::Strike_G}));
     g.monsters[0].creature.hp = 3;
     play(g, CardId::Neutralize, 0);
-    require(g.screen == Screen::Victory && g.battle_over, "lethal attack reaches victory");
+    require(g.screen == Screen::CombatReward && g.battle_over, "lethal attack reaches victory");
     require(g.monsters[0].creature.hp == 0 && !has_power(g, g.monsters[0].creature, PowerId::Weak), "lethal Neutralize cancels pending Weak");
     require_pile(g.discard, {0}, "victory preserves UseCardAction");
     ActionSet actions{};
     legal_actions(g, actions);
-    require(actions.empty(), "combat victory has no combat decisions");
+    require(!actions.empty(), "combat victory exposes rewards");
+    for (int i = 0; i < actions.size; ++i)
+        require(actions[i].kind != ActionKind::Play && actions[i].kind != ActionKind::EndTurn,
+                "combat victory has no combat decisions");
 
     reset(g, 0);
     auto setup = deck_setup({CardId::Defend_G,CardId::Defend_G,CardId::Defend_G,CardId::Defend_G,CardId::Defend_G});
@@ -291,7 +294,7 @@ static void test_played_card_history() {
     step(g, {ActionKind::EndTurn});
     g.monsters[0].creature.hp = 6;
     play(g, CardId::Strike_G, 0);
-    require(g.screen == Screen::Victory && history.size == 0 && history.turn_start == 0,
+    require(g.screen == Screen::CombatReward && history.size == 0 && history.turn_start == 0,
             "victory clears both played histories");
     start_combat(g, setup);
     require(history.size == 0 && history.turn_start == 0, "new combat begins with empty played histories");

@@ -14,6 +14,7 @@ struct Card {
     int16_t cost_for_turn = 0;
     int16_t energy_on_use = 0;
     uint16_t uuid = 0;
+    int16_t price = 0;
     CardId id = CardId::Strike_G;
     int8_t base_magic = -1;
     int8_t magic = -1;
@@ -49,6 +50,26 @@ struct Card {
 using Pile = List<uint8_t, card_capacity>;
 struct CampfireChoice { CampfireOption kind; bool usable; };
 using CampfireOptions = List<CampfireChoice, 8>;
+struct CampfireState {
+    CampfireOptions options{};
+    CampfireOption selected = CampfireOption::Count;
+    bool something_selected = false;
+};
+struct ChestState {
+    uint8_t size = 0;
+    RelicTier relic = RelicTier::Common;
+    bool open = false;
+    bool gold = false;
+    bool cursed = false;
+};
+struct StoreItem { uint8_t reward, slot; int16_t price; };
+struct ShopState {
+    List<uint8_t, 5> colored{};
+    List<uint8_t, 2> colorless{};
+    List<StoreItem, 3> relics{}, potions{};
+    bool purge_available = true;
+};
+struct ForeignRewardCard { uint16_t library_index; uint16_t uuid; };
 struct Relic {
     RelicId id;
     bool grayscale = false;
@@ -228,6 +249,7 @@ struct PlayedCards {
 struct ActionManager {
     int8_t current_action = -1;
     bool has_current_action = false;
+    bool has_control = true;
     bool using_card = false;
     Queue<uint8_t, action_capacity> actions{};
     Queue<uint8_t, action_capacity> pre_turn_actions{};
@@ -270,6 +292,9 @@ struct Run {
     List<int8_t, 64> path_x{}, path_y{};
     int gold = 99;
     int card_blizz_randomizer = 5;
+    int potion_blizz_modifier = 0;
+    int purge_cost = 75;
+    int actual_purge_cost = 75;
     float card_upgraded_chance = 0.0f;
     bool ruby_key = false;
     bool emerald_key = false;
@@ -291,16 +316,19 @@ struct Run {
     PotionState potion_state[potion_capacity]{};
     int potion_identity[potion_capacity]{};
 };
-enum class RewardKind : uint8_t { Card, Gold, Potion, Relic };
+enum class RewardKind : uint8_t { Card, Gold, Potion, Relic, StolenGold, SapphireKey, EmeraldKey };
 struct RoomReward {
     RewardKind kind = RewardKind::Card;
     int amount = 0;
+    int bonus_gold = 0;
     PotionId potion = PotionId::Empty;
     PotionState potion_state{};
     int8_t potion_slot = -1;
     bool done = false;
+    bool ignored = false;
     List<uint8_t, reward_card_capacity> cards{};
-    RelicId relic = RelicId::Count;
+    Relic relic{RelicId::Count};
+    int8_t relic_slot = -1;
     int relic_link = -1;
     int identity = 0;
 };
@@ -322,6 +350,7 @@ struct Game {
     UnseededRandom unseeded{0};
     Player player{};
     List<Card, card_capacity> cards{};
+    List<ForeignRewardCard, 256 - card_capacity> foreign_reward_cards{};
     List<uint8_t, 64> detached_master_cards{};
     CardDamage multi_damage{};
     DamageExceptions damage_exceptions{};
@@ -347,6 +376,9 @@ struct Game {
     Screen screen = Screen::None;
     Screen previous_screen = Screen::None;
     Event event{};
+    CampfireState campfire{};
+    ChestState chest{};
+    ShopState shop{};
     List<bool, 8> room_dialog{}, image_dialog{};
     int room_selected_option = -1, image_selected_option = -1;
     EncounterId encounter = EncounterId::Cultist;
@@ -376,6 +408,7 @@ struct Game {
     bool end_turn_enabled = true;
     bool selection_up_to = false;
     bool reward_skippable = false;
+    bool combat_reward_skippable = false;
     bool reward_proceed_visible = false;
     bool reward_relic_warning_seen = false;
     bool battle_over = false;
@@ -389,7 +422,6 @@ struct Game {
     uint16_t room_event_class = 0;
     bool cannot_lose = false;
     bool mugged = false;
-    int room_stolen_gold = 0;
     bool smoked = false;
     int bomb_id_offset = 0;
 };
@@ -406,6 +438,12 @@ SPIRE_FN inline void bind_fault(Game& g) {
 struct CombatSetup {
     EncounterId encounter = EncounterId::Cultist;
     int floor = 1;
+    int act = 1;
+    int8_t node_x = 0, node_y = 0;
+    RoomKind room = RoomKind::Monster;
+    bool first_room_chosen = false;
+    bool keys[3]{};
+    bool emerald = false;
     int hp = 70;
     int max_hp = 70;
     int gold = 99;

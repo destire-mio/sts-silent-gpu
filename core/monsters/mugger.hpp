@@ -21,7 +21,7 @@ struct Mugger : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int num) { (void)num; set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, g.monsters[owner], 0)); }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
         g.rng.ai.random(2);
-        g.room_stolen_gold += g.monsters[owner].state.Mugger.stolenGold;
+        if (g.monsters[owner].state.Mugger.stolenGold > 0) add_stolen_gold_reward(g, g.monsters[owner].state.Mugger.stolenGold);
         monster_die_base(g, owner, trigger_relics);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

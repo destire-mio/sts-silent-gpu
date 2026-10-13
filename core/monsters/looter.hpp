@@ -53,7 +53,7 @@ struct Looter : MonsterHooks {
         }
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
-        g.room_stolen_gold += g.monsters[owner].state.Looter.stolenGold;
+        if (g.monsters[owner].state.Looter.stolenGold > 0) add_stolen_gold_reward(g, g.monsters[owner].state.Looter.stolenGold);
         monster_die_base(g, owner, trigger_relics);
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int index) {
