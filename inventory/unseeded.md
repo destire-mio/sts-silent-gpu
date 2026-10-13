@@ -23,6 +23,7 @@ bounds, boolean implementation and long-via-double implementation.
 | `cards/CardGroup.java:483`, `getRandomCard(boolean)` | `MathUtils.random` when `useRng` is false | Rule-stream bounded integer draw; the true branch retains `cardRng`. |
 | `cards/CardGroup.java:490`, `getRandomCard(boolean, CardRarity)` | `MathUtils.random` when `useRng` is false | Same filtering and sorting, then rule-stream index. |
 | `cards/CardGroup.java:524`, `getRandomCard(CardType, boolean)` | `MathUtils.random` when `useRng` is false | Same filtering and sorting, then rule-stream index. |
+| `monsters/exordium/Cultist.java:80`, `takeTurn()` | `MathUtils.random(1, 10)` chooses a speech branch and persists `saidPower`; `die()` changes its death timer from this flag | Rule-stream bounded integer draw. Sound choices remain on the presentation stream. |
 | `monsters/MonsterGroup.java:191`, `getRandomMonster(AbstractMonster, boolean)` | Four `MathUtils.random` sites, lines 205, 207, 221, 228 | Preserve all original filtering/early returns, then rule-stream index. |
 | `characters/AbstractPlayer.java:1980`, `loseRandomRelics(int)` | `MathUtils.random`, line 1989 | Rule-stream index; preserve ordered removals and `onUnequip`. |
 | `actions/common/DiscardAtEndOfTurnAction.java:42`, `update()` | `Collections.shuffle(cards)` | `Collections.shuffle(cards, new java.util.Random(rule.nextLong()))`; preserve hook order after shuffling. |
@@ -48,6 +49,7 @@ does not advance.
 | --- | --- |
 | `cards/AbstractCard.java:319`, constructor | Replace `UUID.randomUUID()` with `new UUID(0, ++allocator)`. Keep `makeSameInstanceOf` UUID sharing. Export UUID equality as encounter-order integers, independent of allocator offset between runs. |
 | `com/badlogic/gdx/graphics/Texture.load`, hash used by `com/badlogic/gdx/utils/ObjectSet.push` | Texture receives a sequential identity hash while retaining reference equality. ObjectSet hash collisions otherwise consume presentation randomness according to JVM identity hashes. |
+| `com/badlogic/gdx/utils/{ObjectSet,ObjectMap,IntMap,LongMap,IntIntMap,IntFloatMap,ObjectIntMap,ObjectFloatMap}.push` | Random cache eviction uses a separate device-only XS128 stream. Cold and warm resource caches cannot spend presentation or rule RNG. |
 | `com/badlogic/gdx/math/MathUtils.random` | Separate `RandomXS128(0)` during bootstrap, `RandomXS128(seed)` at run start. Fixed 1/60 updates and retained rendering make presentation calls reproducible; rule sites above no longer draw from it. |
 | `helpers/SeedHelper.getString(0)` / CommunicationMod `executeStartCommand` | Prefix the encoded seed with `0`. Zero otherwise encodes as an empty string and the command generates a seed from `System.nanoTime`; the prefix also avoids trial-seed names. |
 
@@ -65,3 +67,8 @@ recorder never invokes the unseeded character-select start route, daily generati
 The Bomb's static id offset, selection-action statics, Centennial Puzzle and Orange Pellets
 flags reset to fresh-process values between jobs, as do the Neow stream and draw-history lists.
 These resets happen before a run, never during a combat.
+
+Batch initialization also restores the fresh-menu `relicsToRemoveOnStart` list, room/image dialog
+selection, turn/energy counters, `nextRoom` and `lastCombatMetricKey`. `AbstractDungeon.reset`
+leaves some of these at their previous-run values; the cold-menu list is captured before the
+first job rather than guessed or de-duplicated. Every snapshot still records the real values.

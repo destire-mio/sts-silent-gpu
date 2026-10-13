@@ -34,7 +34,7 @@ public final class FieldSchema {
         marker.addProperty("extends", "actions.AbstractGameAction");
         marker.add("fields", new JsonObject());
         classes.put("communicationmod.EndOfTurnAction", marker);
-        Gson json = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        Gson json = new GsonBuilder().serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
         Files.write(Paths.get(args[1]), (json.toJson(classes) + "\n").getBytes(StandardCharsets.UTF_8));
     }
 }

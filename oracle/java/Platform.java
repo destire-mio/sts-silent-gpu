@@ -21,6 +21,7 @@ import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePrefixPatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
 import com.megacrit.cardcrawl.audio.MockMusic;
+import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.cards.SoulGroup;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.desktop.DesktopLauncher;
@@ -45,6 +46,7 @@ public final class Platform {
     static long frame;
     static int nextObject = 1, framebuffer, activeTexture = 33984;
     public static int nextTextureIdentity;
+    public static final java.util.Random deviceRandom = new com.badlogic.gdx.math.RandomXS128(0L);
     static final int[] viewport = {0, 0, 1280, 720};
     static final Map<Integer, Integer> textures = new HashMap<Integer, Integer>();
     static ApplicationListener listener;
@@ -86,9 +88,15 @@ public final class Platform {
         if (room == null || room.phase == null) return false;
         if (room.phase == AbstractRoom.RoomPhase.COMBAT) {
             if (room.monsters == null) return false;
+            if (!AbstractDungeon.isScreenUp && !AbstractDungeon.player.isDead) {
+                GameActionManager manager = AbstractDungeon.actionManager;
+                if (manager.phase != GameActionManager.Phase.WAITING_ON_USER
+                    || !manager.actions.isEmpty() || !manager.preTurnActions.isEmpty()
+                    || !manager.cardQueue.isEmpty() || AbstractDungeon.player.endTurnQueued) return false;
+            }
             for (AbstractMonster monster : room.monsters.monsters) {
                 if (monster.isDying && !monster.isDead) return false;
-                                        if (!monster.isDeadOrEscaped() && monster.intent == AbstractMonster.Intent.DEBUG) return false;
+                if (!monster.isDeadOrEscaped() && monster.intent == AbstractMonster.Intent.DEBUG) return false;
             }
         }
         return !hasPendingCallback(AbstractDungeon.topLevelEffects)

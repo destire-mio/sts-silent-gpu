@@ -25,6 +25,7 @@ import java.util.*;
 public final class Recorder {
     static final Gson JSON = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
     static long decisions;
+    static ArrayList<String> initialRelicExclusions;
 
     static void tick() {
         if (!Platform.running) throw new AssertionError("Game requested exit");
@@ -48,7 +49,7 @@ public final class Recorder {
             || (scenario && AbstractDungeon.getCurrRoom().isBattleOver);
     }
 
-    static void scenario(JsonObject setup) {
+    static void scenario(JsonObject setup, long seed) {
         AbstractDungeon.player.masterDeck.clear();
         for (JsonElement entry : setup.getAsJsonArray("deck")) {
             JsonObject item = entry.getAsJsonObject();
@@ -58,8 +59,19 @@ public final class Recorder {
         }
         for (AbstractRelic relic : AbstractDungeon.player.relics) relic.onUnequip();
         AbstractDungeon.player.relics.clear();
-        for (JsonElement item : setup.getAsJsonArray("relics"))
+        RandomXS128 acquisition = new RandomXS128(seed);
+        for (JsonElement item : setup.getAsJsonArray("relics")) {
             RelicLibrary.getRelic(item.getAsString()).makeCopy().instantObtain(AbstractDungeon.player, AbstractDungeon.player.relics.size(), true);
+            GameStateListener.registerCommandExecution();
+            GameStateListener.registerStateChange();
+            settle();
+            while (AbstractDungeon.isScreenUp) {
+                ArrayList<JsonObject> legal = Actions.legal();
+                if (legal.isEmpty()) throw new AssertionError("Empty acquisition actions: " + AbstractDungeon.screen);
+                Actions.apply(legal.get(acquisition.nextInt(legal.size())));
+                settle();
+            }
+        }
         AbstractDungeon.player.potions.clear();
         for (int i = 0; i < AbstractDungeon.player.potionSlots; i++) AbstractDungeon.player.potions.add(new PotionSlot(i));
         for (int i = 0; i < setup.getAsJsonArray("potions").size(); i++) {
@@ -83,6 +95,8 @@ public final class Recorder {
         Unseeded.rng = new Unseeded.Stream(seed);
         MathUtils.random = new RandomXS128(seed);
         Snapshot.resetStatics();
+        AbstractDungeon.relicsToRemoveOnStart.clear();
+        AbstractDungeon.relicsToRemoveOnStart.addAll(initialRelicExclusions);
         com.megacrit.cardcrawl.neow.NeowEvent.rng = null;
         com.megacrit.cardcrawl.actions.common.DrawCardAction.drawnCards.clear();
         for (String key : TipTracker.tips.keySet()) TipTracker.tips.put(key, true);
@@ -90,7 +104,7 @@ public final class Recorder {
         CommandExecutor.executeCommand("start silent 20 0" + SeedHelper.getString(seed));
         GameStateListener.registerCommandExecution();
         settle();
-        if (isScenario) { scenario(job.getAsJsonObject("scenario")); settle(); }
+        if (isScenario) { scenario(job.getAsJsonObject("scenario"), seed); settle(); }
         RandomXS128 policy = new RandomXS128(seed);
         try (BufferedWriter out = Files.newBufferedWriter(Paths.get(job.get("output").getAsString()), StandardCharsets.UTF_8)) {
             JsonObject header = new JsonObject();
@@ -130,6 +144,7 @@ public final class Recorder {
         Platform.listener = new CardCrawlGame(".prefs/");
         Platform.listener.create();
         settle();
+        initialRelicExclusions = new ArrayList<String>(AbstractDungeon.relicsToRemoveOnStart);
         JsonArray jobs;
         try (Reader reader = Files.newBufferedReader(Paths.get(System.getProperty("oracle.jobs")), StandardCharsets.UTF_8)) {
             jobs = new JsonParser().parse(reader).getAsJsonArray();

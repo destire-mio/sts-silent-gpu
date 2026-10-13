@@ -1,5 +1,6 @@
 {
   "actions.AbstractGameAction": {
+    "extends": null,
     "fields": {
       "actionType": "com.megacrit.cardcrawl.actions.AbstractGameAction$ActionType",
       "amount": "int",
@@ -13,6 +14,7 @@
     }
   },
   "actions.ActionLogEntry": {
+    "extends": null,
     "fields": {
       "type": "com.megacrit.cardcrawl.actions.AbstractGameAction$ActionType"
     }
@@ -22,6 +24,7 @@
     "fields": {}
   },
   "actions.GameActionManager": {
+    "extends": null,
     "fields": {
       "actions": "java.util.ArrayList<com.megacrit.cardcrawl.actions.AbstractGameAction>",
       "cardQueue": "java.util.ArrayList<com.megacrit.cardcrawl.cards.CardQueueItem>",
@@ -46,6 +49,7 @@
     }
   },
   "actions.GameActionManager$1": {
+    "extends": null,
     "fields": {}
   },
   "actions.IntentFlashAction": {
@@ -1724,6 +1728,7 @@
     "fields": {}
   },
   "actions.watcher.UnravelingAction$1": {
+    "extends": null,
     "fields": {}
   },
   "actions.watcher.VengeanceAction": {
@@ -1737,6 +1742,7 @@
     }
   },
   "audio.MainMusic": {
+    "extends": null,
     "fields": {
       "fadeOutStartVolume": "float",
       "fadeTimer": "float",
@@ -1750,20 +1756,24 @@
     }
   },
   "audio.MockMusic": {
+    "extends": null,
     "fields": {}
   },
   "audio.MusicMaster": {
+    "extends": null,
     "fields": {
       "mainTrack": "java.util.ArrayList<com.megacrit.cardcrawl.audio.MainMusic>",
       "tempTrack": "java.util.ArrayList<com.megacrit.cardcrawl.audio.TempMusic>"
     }
   },
   "audio.Sfx": {
+    "extends": null,
     "fields": {
       "url": "java.lang.String"
     }
   },
   "audio.SoundInfo": {
+    "extends": null,
     "fields": {
       "fadeDuration": "float",
       "id": "long",
@@ -1772,12 +1782,14 @@
     }
   },
   "audio.SoundMaster": {
+    "extends": null,
     "fields": {
       "fadeOutList": "java.util.ArrayList<com.megacrit.cardcrawl.audio.SoundInfo>",
       "map": "java.util.HashMap<java.lang.String, com.megacrit.cardcrawl.audio.Sfx>"
     }
   },
   "audio.TempMusic": {
+    "extends": null,
     "fields": {
       "fadeOutStartVolume": "float",
       "fadeTime": "float",
@@ -1792,6 +1804,7 @@
     }
   },
   "blights.AbstractBlight": {
+    "extends": null,
     "fields": {
       "blightID": "java.lang.String",
       "cost": "int",
@@ -1871,6 +1884,7 @@
     "fields": {}
   },
   "cards.AbstractCard": {
+    "extends": null,
     "fields": {
       "baseBlock": "int",
       "baseDamage": "int",
@@ -1934,9 +1948,11 @@
     }
   },
   "cards.AbstractCard$1": {
+    "extends": null,
     "fields": {}
   },
   "cards.CardGroup": {
+    "extends": null,
     "fields": {
       "group": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
       "queued": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
@@ -1944,27 +1960,47 @@
     }
   },
   "cards.CardGroup$1": {
+    "extends": null,
     "fields": {}
   },
   "cards.CardGroup$CardCostComparator": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.cards.CardGroup"
+    }
   },
   "cards.CardGroup$CardLockednessComparator": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.cards.CardGroup"
+    }
   },
   "cards.CardGroup$CardNameComparator": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.cards.CardGroup"
+    }
   },
   "cards.CardGroup$CardRarityComparator": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.cards.CardGroup"
+    }
   },
   "cards.CardGroup$CardTypeComparator": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.cards.CardGroup"
+    }
   },
   "cards.CardGroup$StatusCardsLastComparator": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.cards.CardGroup"
+    }
   },
   "cards.CardModUNUSED": {
+    "extends": null,
     "fields": {
       "amount": "int",
       "applied": "boolean",
@@ -1974,9 +2010,11 @@
     }
   },
   "cards.CardModUNUSED$1": {
+    "extends": null,
     "fields": {}
   },
   "cards.CardQueueItem": {
+    "extends": null,
     "fields": {
       "autoplayCard": "boolean",
       "card": "com.megacrit.cardcrawl.cards.AbstractCard",
@@ -1988,6 +2026,7 @@
     }
   },
   "cards.CardSave": {
+    "extends": null,
     "fields": {
       "id": "java.lang.String",
       "misc": "int",
@@ -1995,6 +2034,7 @@
     }
   },
   "cards.DamageInfo": {
+    "extends": null,
     "fields": {
       "base": "int",
       "isModified": "boolean",
@@ -2004,6 +2044,7 @@
     }
   },
   "cards.DescriptionLine": {
+    "extends": null,
     "fields": {
       "cachedTokenizedText": "java.lang.String[]",
       "cachedTokenizedTextCN": "java.lang.String[]",
@@ -2012,6 +2053,7 @@
     }
   },
   "cards.Soul": {
+    "extends": null,
     "fields": {
       "backUpTimer": "float",
       "card": "com.megacrit.cardcrawl.cards.AbstractCard",
@@ -2034,9 +2076,11 @@
     "fields": {}
   },
   "cards.Soul$2": {
+    "extends": null,
     "fields": {}
   },
   "cards.SoulGroup": {
+    "extends": null,
     "fields": {
       "souls": "java.util.ArrayList<com.megacrit.cardcrawl.cards.Soul>"
     }
@@ -3826,12 +3870,15 @@
     }
   },
   "characters.AbstractPlayer$1": {
+    "extends": null,
     "fields": {}
   },
   "characters.AnimatedNpc": {
+    "extends": null,
     "fields": {}
   },
   "characters.CharacterManager": {
+    "extends": null,
     "fields": {}
   },
   "characters.Defect": {
@@ -3855,6 +3902,7 @@
     "fields": {}
   },
   "core.AbstractCreature": {
+    "extends": null,
     "fields": {
       "currentBlock": "int",
       "currentHealth": "int",
@@ -3874,9 +3922,11 @@
     }
   },
   "core.AbstractCreature$1": {
+    "extends": null,
     "fields": {}
   },
   "core.BuildSettings": {
+    "extends": null,
     "fields": {
       "prop": "java.util.Properties"
     }
@@ -3886,6 +3936,7 @@
     "fields": {}
   },
   "core.CardCrawlGame": {
+    "extends": null,
     "fields": {
       "displayCursor": "boolean",
       "prevDebugKeyDown": "boolean",
@@ -3893,12 +3944,17 @@
     }
   },
   "core.CardCrawlGame$1": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.core.CardCrawlGame"
+    }
   },
   "core.CardCrawlGame$2": {
+    "extends": null,
     "fields": {}
   },
   "core.DisplayConfig": {
+    "extends": null,
     "fields": {
       "fps_limit": "int",
       "height": "int",
@@ -3909,27 +3965,33 @@
     }
   },
   "core.EnergyManager": {
+    "extends": null,
     "fields": {
       "energy": "int",
       "energyMaster": "int"
     }
   },
   "core.ExceptionHandler": {
+    "extends": null,
     "fields": {}
   },
   "core.FontInfo": {
+    "extends": null,
     "fields": {}
   },
   "core.GameCursor": {
+    "extends": null,
     "fields": {
       "rotation": "float",
       "type": "com.megacrit.cardcrawl.core.GameCursor$CursorType"
     }
   },
   "core.GameCursor$1": {
+    "extends": null,
     "fields": {}
   },
   "core.OverlayMenu": {
+    "extends": null,
     "fields": {
       "blackScreenTarget": "float",
       "bottomBgPanel": "com.megacrit.cardcrawl.ui.panels.BottomBgPanel",
@@ -3945,18 +4007,23 @@
     }
   },
   "core.Settings": {
+    "extends": null,
     "fields": {}
   },
   "core.Settings$1": {
+    "extends": null,
     "fields": {}
   },
   "core.SystemStats": {
+    "extends": null,
     "fields": {}
   },
   "core.TestGame": {
+    "extends": null,
     "fields": {}
   },
   "credits.CreditLine": {
+    "extends": null,
     "fields": {
       "text": "java.lang.String",
       "x": "float",
@@ -3964,6 +4031,7 @@
     }
   },
   "credits.CreditsScreen": {
+    "extends": null,
     "fields": {
       "THANKS_MSG": "java.lang.String",
       "closingSkipMenu": "boolean",
@@ -3980,9 +4048,11 @@
     }
   },
   "credits.CreditsScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "cutscenes.Cutscene": {
+    "extends": null,
     "fields": {
       "currentScene": "int",
       "darkenTimer": "float",
@@ -3993,9 +4063,11 @@
     }
   },
   "cutscenes.Cutscene$1": {
+    "extends": null,
     "fields": {}
   },
   "cutscenes.CutscenePanel": {
+    "extends": null,
     "fields": {
       "activated": "boolean",
       "fadeOut": "boolean",
@@ -4004,6 +4076,7 @@
     }
   },
   "cutscenes.NeowEye": {
+    "extends": null,
     "fields": {
       "angle": "float",
       "currentFrame": "int",
@@ -4016,6 +4089,7 @@
     }
   },
   "cutscenes.NeowNarrationScreen": {
+    "extends": null,
     "fields": {
       "clickCount": "int",
       "currentDialog": "int",
@@ -4031,6 +4105,7 @@
     }
   },
   "daily.DailyScreen": {
+    "extends": null,
     "fields": {
       "alphaTarget": "float",
       "body_x": "float",
@@ -4059,15 +4134,19 @@
     }
   },
   "daily.TimeHelper": {
+    "extends": null,
     "fields": {}
   },
   "daily.TimeLookup": {
+    "extends": null,
     "fields": {}
   },
   "daily.TimeLookup$1": {
+    "extends": null,
     "fields": {}
   },
   "daily.mods.AbstractDailyMod": {
+    "extends": null,
     "fields": {
       "classToExclude": "com.megacrit.cardcrawl.characters.AbstractPlayer$PlayerClass",
       "modID": "java.lang.String",
@@ -4211,9 +4290,11 @@
     "fields": {}
   },
   "desktop.DesktopLauncher": {
+    "extends": null,
     "fields": {}
   },
   "desktop.MyTexturePacker": {
+    "extends": null,
     "fields": {}
   },
   "desktop.STSDisplayModeCallback": {
@@ -4221,12 +4302,15 @@
     "fields": {}
   },
   "desktop.TestLauncher": {
+    "extends": null,
     "fields": {}
   },
   "dungeons.AbstractDungeon": {
+    "extends": null,
     "fields": {}
   },
   "dungeons.AbstractDungeon$1": {
+    "extends": null,
     "fields": {}
   },
   "dungeons.Exordium": {
@@ -4246,6 +4330,7 @@
     "fields": {}
   },
   "events.AbstractEvent": {
+    "extends": null,
     "fields": {
       "hasFocus": "boolean",
       "imageEventText": "com.megacrit.cardcrawl.events.GenericEventDialog",
@@ -4262,11 +4347,13 @@
     }
   },
   "events.GenericEventDialog": {
+    "extends": null,
     "fields": {
       "optionList": "java.util.ArrayList<com.megacrit.cardcrawl.ui.buttons.LargeDialogOptionButton>"
     }
   },
   "events.RoomEventDialog": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.Falling": {
@@ -4282,6 +4369,7 @@
     }
   },
   "events.beyond.Falling$1": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.MindBloom": {
@@ -4291,6 +4379,7 @@
     }
   },
   "events.beyond.MindBloom$1": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.MoaiHead": {
@@ -4307,6 +4396,7 @@
     }
   },
   "events.beyond.MysteriousSphere$1": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.SecretPortal": {
@@ -4316,6 +4406,7 @@
     }
   },
   "events.beyond.SecretPortal$1": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.SensoryStone": {
@@ -4326,6 +4417,7 @@
     }
   },
   "events.beyond.SensoryStone$1": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.SpireHeart": {
@@ -4343,6 +4435,7 @@
     }
   },
   "events.beyond.SpireHeart$1": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.TombRedMask": {
@@ -4352,6 +4445,7 @@
     }
   },
   "events.beyond.TombRedMask$1": {
+    "extends": null,
     "fields": {}
   },
   "events.beyond.WindingHalls": {
@@ -4377,6 +4471,7 @@
     }
   },
   "events.city.BackToBasics$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.Beggar": {
@@ -4386,6 +4481,7 @@
     }
   },
   "events.city.Beggar$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.Colosseum": {
@@ -4395,6 +4491,7 @@
     }
   },
   "events.city.Colosseum$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.CursedTome": {
@@ -4406,6 +4503,7 @@
     }
   },
   "events.city.CursedTome$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.DrugDealer": {
@@ -4445,6 +4543,7 @@
     }
   },
   "events.city.KnowingSkull$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.MaskedBandits": {
@@ -4454,6 +4553,7 @@
     }
   },
   "events.city.MaskedBandits$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.Nest": {
@@ -4474,6 +4574,7 @@
     }
   },
   "events.city.TheJoust$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.TheLibrary": {
@@ -4492,6 +4593,7 @@
     }
   },
   "events.city.TheMausoleum$1": {
+    "extends": null,
     "fields": {}
   },
   "events.city.Vampires": {
@@ -4511,6 +4613,7 @@
     }
   },
   "events.exordium.BigFish$1": {
+    "extends": null,
     "fields": {}
   },
   "events.exordium.Cleric": {
@@ -4535,6 +4638,7 @@
     }
   },
   "events.exordium.DeadAdventurer$1": {
+    "extends": null,
     "fields": {}
   },
   "events.exordium.GoldenIdolEvent": {
@@ -4557,6 +4661,7 @@
     }
   },
   "events.exordium.GoldenWing$1": {
+    "extends": null,
     "fields": {}
   },
   "events.exordium.GoopPuddle": {
@@ -4569,6 +4674,7 @@
     }
   },
   "events.exordium.GoopPuddle$1": {
+    "extends": null,
     "fields": {}
   },
   "events.exordium.LivingWall": {
@@ -4580,6 +4686,7 @@
     }
   },
   "events.exordium.LivingWall$1": {
+    "extends": null,
     "fields": {}
   },
   "events.exordium.Mushrooms": {
@@ -4605,6 +4712,7 @@
     }
   },
   "events.exordium.ShiningLight$1": {
+    "extends": null,
     "fields": {}
   },
   "events.exordium.Sssserpent": {
@@ -4616,6 +4724,7 @@
     }
   },
   "events.exordium.Sssserpent$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.AccursedBlacksmith": {
@@ -4634,6 +4743,7 @@
     }
   },
   "events.shrines.Bonfire$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.Designer": {
@@ -4650,6 +4760,7 @@
     }
   },
   "events.shrines.Designer$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.Duplicator": {
@@ -4665,6 +4776,7 @@
     }
   },
   "events.shrines.FaceTrader$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.FountainOfCurseRemoval": {
@@ -4681,6 +4793,7 @@
     }
   },
   "events.shrines.GoldShrine$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.GremlinMatchGame": {
@@ -4700,6 +4813,7 @@
     }
   },
   "events.shrines.GremlinMatchGame$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.GremlinWheelGame": {
@@ -4723,6 +4837,7 @@
     }
   },
   "events.shrines.GremlinWheelGame$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.Lab": {
@@ -4732,6 +4847,7 @@
     }
   },
   "events.shrines.Lab$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.Nloth": {
@@ -4753,6 +4869,7 @@
     }
   },
   "events.shrines.NoteForYourself$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.PurificationShrine": {
@@ -4762,6 +4879,7 @@
     }
   },
   "events.shrines.PurificationShrine$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.Transmogrifier": {
@@ -4771,6 +4889,7 @@
     }
   },
   "events.shrines.Transmogrifier$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.UpgradeShrine": {
@@ -4780,6 +4899,7 @@
     }
   },
   "events.shrines.UpgradeShrine$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.WeMeetAgain": {
@@ -4793,6 +4913,7 @@
     }
   },
   "events.shrines.WeMeetAgain$1": {
+    "extends": null,
     "fields": {}
   },
   "events.shrines.WomanInBlue": {
@@ -4802,6 +4923,7 @@
     }
   },
   "events.shrines.WomanInBlue$1": {
+    "extends": null,
     "fields": {}
   },
   "exceptions.SaveFileLoadError": {
@@ -4809,23 +4931,29 @@
     "fields": {}
   },
   "helpers.AbstractDrawable": {
+    "extends": null,
     "fields": {
       "z": "int"
     }
   },
   "helpers.AsyncSaver": {
+    "extends": null,
     "fields": {}
   },
   "helpers.BadWordChecker": {
+    "extends": null,
     "fields": {}
   },
   "helpers.BlightHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.CardHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.CardHelper$CardInfo": {
+    "extends": null,
     "fields": {
       "color": "com.megacrit.cardcrawl.cards.AbstractCard$CardColor",
       "id": "java.lang.String",
@@ -4833,33 +4961,41 @@
     }
   },
   "helpers.CardLibrary": {
+    "extends": null,
     "fields": {}
   },
   "helpers.CardLibrary$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.DrawMaster": {
+    "extends": null,
     "fields": {}
   },
   "helpers.EffectHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.EnemyData": {
+    "extends": null,
     "fields": {
       "level": "int",
       "type": "com.megacrit.cardcrawl.helpers.EnemyData$MonsterType"
     }
   },
   "helpers.EventHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.File": {
+    "extends": null,
     "fields": {
       "data": "byte[]",
       "filepath": "java.lang.String"
     }
   },
   "helpers.FileSaver": {
+    "extends": null,
     "fields": {
       "queue": "java.util.concurrent.BlockingQueue<com.megacrit.cardcrawl.helpers.File>"
     }
@@ -4869,27 +5005,35 @@
     "fields": {}
   },
   "helpers.FontHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.FontHelper$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.GameDataStringBuilder": {
+    "extends": null,
     "fields": {}
   },
   "helpers.GameDictionary": {
+    "extends": null,
     "fields": {}
   },
   "helpers.GameTips": {
+    "extends": null,
     "fields": {}
   },
   "helpers.GetAllInBattleInstances": {
+    "extends": null,
     "fields": {}
   },
   "helpers.HeartAnimListener": {
+    "extends": null,
     "fields": {}
   },
   "helpers.Hitbox": {
+    "extends": null,
     "fields": {
       "cX": "float",
       "cY": "float",
@@ -4902,9 +5046,11 @@
     }
   },
   "helpers.ImageMaster": {
+    "extends": null,
     "fields": {}
   },
   "helpers.ImageMaster$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.Label": {
@@ -4917,39 +5063,49 @@
     }
   },
   "helpers.MathHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.ModHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.MonsterHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.PotionHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.PotionHelper$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.PowerTip": {
+    "extends": null,
     "fields": {
       "body": "java.lang.String",
       "header": "java.lang.String"
     }
   },
   "helpers.Prefs": {
+    "extends": null,
     "fields": {
       "data": "java.util.Map<java.lang.String, java.lang.String>",
       "filepath": "java.lang.String"
     }
   },
   "helpers.RelicLibrary": {
+    "extends": null,
     "fields": {}
   },
   "helpers.RelicLibrary$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.SaveHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.SaveHelper$1": {
@@ -4957,6 +5113,7 @@
     "fields": {}
   },
   "helpers.ScreenShake": {
+    "extends": null,
     "fields": {
       "duration": "float",
       "intensityValue": "float",
@@ -4967,18 +5124,23 @@
     }
   },
   "helpers.ScreenShake$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.SeedHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.ShaderHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.ShaderHelper$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.SlimeAnimListener": {
+    "extends": null,
     "fields": {}
   },
   "helpers.Sprite": {
@@ -4993,23 +5155,29 @@
     }
   },
   "helpers.TipHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.TipTracker": {
+    "extends": null,
     "fields": {}
   },
   "helpers.TrialHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.TrialHelper$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.TypeHelper": {
+    "extends": null,
     "fields": {
       "seed": "boolean"
     }
   },
   "helpers.controller.CInputAction": {
+    "extends": null,
     "fields": {
       "justPressed": "boolean",
       "justReleased": "boolean",
@@ -5018,51 +5186,65 @@
     }
   },
   "helpers.controller.CInputActionSet": {
+    "extends": null,
     "fields": {}
   },
   "helpers.controller.CInputHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.controller.CInputListener": {
+    "extends": null,
     "fields": {
       "axisValues": "float[]"
     }
   },
   "helpers.controller.CInputListener$1": {
+    "extends": null,
     "fields": {}
   },
   "helpers.input.DevInputActionSet": {
+    "extends": null,
     "fields": {}
   },
   "helpers.input.InputAction": {
+    "extends": null,
     "fields": {
       "keycode": "int"
     }
   },
   "helpers.input.InputActionSet": {
+    "extends": null,
     "fields": {}
   },
   "helpers.input.InputHelper": {
+    "extends": null,
     "fields": {}
   },
   "helpers.input.ScrollInputProcessor": {
+    "extends": null,
     "fields": {}
   },
   "helpers.steamInput.SteamInputAction": {
+    "extends": null,
     "fields": {
       "ref": "com.megacrit.cardcrawl.helpers.controller.CInputAction"
     }
   },
   "helpers.steamInput.SteamInputActionSet": {
+    "extends": null,
     "fields": {}
   },
   "helpers.steamInput.SteamInputDetect": {
+    "extends": null,
     "fields": {}
   },
   "helpers.steamInput.SteamInputHelper": {
+    "extends": null,
     "fields": {}
   },
   "integrations.DistributorFactory": {
+    "extends": null,
     "fields": {}
   },
   "integrations.DistributorFactoryException": {
@@ -5070,6 +5252,7 @@
     "fields": {}
   },
   "integrations.SteelSeries": {
+    "extends": null,
     "fields": {
       "gameName": "java.lang.String",
       "timeAtLastHealthcheck": "long",
@@ -5077,85 +5260,116 @@
     }
   },
   "integrations.SteelSeries$1": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.integrations.SteelSeries"
+    }
   },
   "integrations.SteelSeries$2": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.integrations.SteelSeries"
+    }
   },
   "integrations.SteelSeries$3": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.integrations.SteelSeries"
+    }
   },
   "integrations.SteelSeries$4": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.integrations.SteelSeries"
+    }
   },
   "integrations.discord.DiscordIntegration": {
+    "extends": null,
     "fields": {
       "TEXT": "java.lang.String[]"
     }
   },
   "integrations.ea.EaIntegration": {
+    "extends": null,
     "fields": {}
   },
   "integrations.gog.GogIntegration": {
+    "extends": null,
     "fields": {}
   },
   "integrations.microsoft.MicrosoftIntegration": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SFCallback": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SRCallback": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SSCallback": {
+    "extends": null,
     "fields": {
       "steamIntegration": "com.megacrit.cardcrawl.integrations.steam.SteamIntegration"
     }
   },
   "integrations.steam.SSCallback$1": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SUCallback": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SteamIntegration": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SteamIntegration$1": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SteamIntegration$StatTuple": {
+    "extends": null,
     "fields": {
       "score": "int",
       "stat": "java.lang.String"
     }
   },
   "integrations.steam.SteamTicker": {
+    "extends": null,
     "fields": {}
   },
   "integrations.steam.SteamUGC": {
+    "extends": null,
     "fields": {}
   },
   "integrations.wegame.WeGameIntegration": {
+    "extends": null,
     "fields": {}
   },
   "localization.AchievementStrings": {
+    "extends": null,
     "fields": {
       "NAMES": "java.lang.String[]",
       "TEXT": "java.lang.String[]"
     }
   },
   "localization.BlightStrings": {
+    "extends": null,
     "fields": {}
   },
   "localization.CardStrings": {
+    "extends": null,
     "fields": {
       "EXTENDED_DESCRIPTION": "java.lang.String[]",
       "UPGRADE_DESCRIPTION": "java.lang.String"
     }
   },
   "localization.CharacterStrings": {
+    "extends": null,
     "fields": {
       "NAMES": "java.lang.String[]",
       "OPTIONS": "java.lang.String[]",
@@ -5164,23 +5378,27 @@
     }
   },
   "localization.CreditStrings": {
+    "extends": null,
     "fields": {
       "HEADER": "java.lang.String",
       "NAMES": "java.lang.String[]"
     }
   },
   "localization.EventStrings": {
+    "extends": null,
     "fields": {
       "DESCRIPTIONS": "java.lang.String[]",
       "OPTIONS": "java.lang.String[]"
     }
   },
   "localization.Keyword": {
+    "extends": null,
     "fields": {
       "NAMES": "java.lang.String[]"
     }
   },
   "localization.KeywordStrings": {
+    "extends": null,
     "fields": {
       "ARTIFACT": "com.megacrit.cardcrawl.localization.Keyword",
       "BLOCK": "com.megacrit.cardcrawl.localization.Keyword",
@@ -5234,122 +5452,168 @@
     }
   },
   "localization.LocalizedStrings": {
+    "extends": null,
     "fields": {}
   },
   "localization.LocalizedStrings$1": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$10": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$11": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$12": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$13": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$14": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$15": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$16": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$17": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$18": {
+    "extends": null,
     "fields": {}
   },
   "localization.LocalizedStrings$2": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$3": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$4": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$5": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$6": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$7": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$8": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.LocalizedStrings$9": {
     "extends": "com.google.gson.reflect.TypeToken",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.localization.LocalizedStrings"
+    }
   },
   "localization.MonsterStrings": {
+    "extends": null,
     "fields": {
       "DIALOG": "java.lang.String[]",
       "MOVES": "java.lang.String[]"
     }
   },
   "localization.OrbStrings": {
+    "extends": null,
     "fields": {}
   },
   "localization.PotionStrings": {
+    "extends": null,
     "fields": {
       "DESCRIPTIONS": "java.lang.String[]"
     }
   },
   "localization.PowerStrings": {
+    "extends": null,
     "fields": {
       "DESCRIPTIONS": "java.lang.String[]"
     }
   },
   "localization.RelicStrings": {
+    "extends": null,
     "fields": {
       "DESCRIPTIONS": "java.lang.String[]",
       "FLAVOR": "java.lang.String"
     }
   },
   "localization.RunModStrings": {
+    "extends": null,
     "fields": {}
   },
   "localization.ScoreBonusStrings": {
+    "extends": null,
     "fields": {
       "DESCRIPTIONS": "java.lang.String[]"
     }
   },
   "localization.StanceStrings": {
+    "extends": null,
     "fields": {}
   },
   "localization.TutorialStrings": {
+    "extends": null,
     "fields": {
       "LABEL": "java.lang.String[]",
       "TEXT": "java.lang.String[]"
     }
   },
   "localization.UIStrings": {
+    "extends": null,
     "fields": {
       "EXTRA_TEXT": "java.lang.String[]",
       "TEXT": "java.lang.String[]",
@@ -5357,6 +5621,7 @@
     }
   },
   "map.DungeonMap": {
+    "extends": null,
     "fields": {
       "atBoss": "boolean",
       "legend": "com.megacrit.cardcrawl.map.Legend",
@@ -5365,15 +5630,18 @@
     }
   },
   "map.EdgeComparator": {
+    "extends": null,
     "fields": {}
   },
   "map.Legend": {
+    "extends": null,
     "fields": {
       "isLegendHighlighted": "boolean",
       "items": "java.util.ArrayList<com.megacrit.cardcrawl.map.LegendItem>"
     }
   },
   "map.LegendItem": {
+    "extends": null,
     "fields": {
       "body": "java.lang.String",
       "header": "java.lang.String",
@@ -5382,6 +5650,7 @@
     }
   },
   "map.MapEdge": {
+    "extends": null,
     "fields": {
       "dstX": "int",
       "dstY": "int",
@@ -5390,9 +5659,11 @@
     }
   },
   "map.MapGenerator": {
+    "extends": null,
     "fields": {}
   },
   "map.MapRoomNode": {
+    "extends": null,
     "fields": {
       "edges": "java.util.ArrayList<com.megacrit.cardcrawl.map.MapEdge>",
       "hasEmeraldKey": "boolean",
@@ -5404,9 +5675,11 @@
     }
   },
   "map.RoomTypeAssigner": {
+    "extends": null,
     "fields": {}
   },
   "metrics.BotDataUploader": {
+    "extends": null,
     "fields": {
       "data": "java.util.ArrayList<java.lang.String>",
       "header": "java.lang.String",
@@ -5415,12 +5688,17 @@
     }
   },
   "metrics.BotDataUploader$1": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.metrics.BotDataUploader"
+    }
   },
   "metrics.BotDataUploader$2": {
+    "extends": null,
     "fields": {}
   },
   "metrics.MetricData": {
+    "extends": null,
     "fields": {
       "boss_relics": "java.util.ArrayList<java.util.HashMap>",
       "campfire_choices": "java.util.ArrayList<java.util.HashMap>",
@@ -5449,6 +5727,7 @@
     }
   },
   "metrics.Metrics": {
+    "extends": null,
     "fields": {
       "death": "boolean",
       "lastPlaytimeEnd": "long",
@@ -5459,9 +5738,14 @@
     }
   },
   "metrics.Metrics$1": {
-    "fields": {}
+    "extends": null,
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.metrics.Metrics",
+      "val$fileToDelete": "java.lang.String"
+    }
   },
   "metrics.Metrics$2": {
+    "extends": null,
     "fields": {}
   },
   "monsters.AbstractMonster": {
@@ -5483,9 +5767,11 @@
     }
   },
   "monsters.AbstractMonster$1": {
+    "extends": null,
     "fields": {}
   },
   "monsters.EnemyMoveInfo": {
+    "extends": null,
     "fields": {
       "baseDamage": "int",
       "intent": "com.megacrit.cardcrawl.monsters.AbstractMonster$Intent",
@@ -5495,16 +5781,19 @@
     }
   },
   "monsters.MonsterGroup": {
+    "extends": null,
     "fields": {
       "monsters": "java.util.ArrayList<com.megacrit.cardcrawl.monsters.AbstractMonster>"
     }
   },
   "monsters.MonsterInfo": {
+    "extends": null,
     "fields": {
       "weight": "float"
     }
   },
   "monsters.MonsterQueueItem": {
+    "extends": null,
     "fields": {
       "monster": "com.megacrit.cardcrawl.monsters.AbstractMonster"
     }
@@ -5774,11 +6063,15 @@
   },
   "monsters.city.Mugger$1": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.monsters.city.Mugger"
+    }
   },
   "monsters.city.Mugger$2": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.monsters.city.Mugger"
+    }
   },
   "monsters.city.ShelledParasite": {
     "extends": "monsters.AbstractMonster",
@@ -5951,6 +6244,7 @@
     }
   },
   "monsters.exordium.HexaghostBody": {
+    "extends": null,
     "fields": {
       "m": "com.megacrit.cardcrawl.monsters.AbstractMonster",
       "plasma1Angle": "float",
@@ -5961,6 +6255,7 @@
     }
   },
   "monsters.exordium.HexaghostOrb": {
+    "extends": null,
     "fields": {
       "activateTimer": "float",
       "activated": "boolean",
@@ -6008,11 +6303,15 @@
   },
   "monsters.exordium.Looter$1": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.monsters.exordium.Looter"
+    }
   },
   "monsters.exordium.Looter$2": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.monsters.exordium.Looter"
+    }
   },
   "monsters.exordium.LouseDefensive": {
     "extends": "monsters.AbstractMonster",
@@ -6109,6 +6408,7 @@
     }
   },
   "neow.NeowReward": {
+    "extends": null,
     "fields": {
       "activated": "boolean",
       "cursed": "boolean",
@@ -6120,15 +6420,18 @@
     }
   },
   "neow.NeowReward$1": {
+    "extends": null,
     "fields": {}
   },
   "neow.NeowReward$NeowRewardDef": {
+    "extends": null,
     "fields": {
       "desc": "java.lang.String",
       "type": "com.megacrit.cardcrawl.neow.NeowReward$NeowRewardType"
     }
   },
   "neow.NeowReward$NeowRewardDrawbackDef": {
+    "extends": null,
     "fields": {
       "desc": "java.lang.String",
       "type": "com.megacrit.cardcrawl.neow.NeowReward$NeowRewardDrawback"
@@ -6139,6 +6442,7 @@
     "fields": {}
   },
   "neow.NeowUnlockScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.ui.buttons.UnlockConfirmButton",
       "cones": "java.util.ArrayList<com.megacrit.cardcrawl.vfx.ConeEffect>",
@@ -6148,9 +6452,11 @@
     }
   },
   "neow.NeowUnlockScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "orbs.AbstractOrb": {
+    "extends": null,
     "fields": {
       "ID": "java.lang.String",
       "baseEvokeAmount": "int",
@@ -6183,6 +6489,7 @@
     "fields": {}
   },
   "potions.AbstractPotion": {
+    "extends": null,
     "fields": {
       "ID": "java.lang.String",
       "canUse": "boolean",
@@ -6195,6 +6502,7 @@
     }
   },
   "potions.AbstractPotion$1": {
+    "extends": null,
     "fields": {}
   },
   "potions.Ambrosia": {
@@ -6370,6 +6678,7 @@
     "fields": {}
   },
   "powers.AbstractPower": {
+    "extends": null,
     "fields": {
       "ID": "java.lang.String",
       "amount": "int",
@@ -6697,7 +7006,9 @@
   },
   "powers.MayhemPower$1": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.powers.MayhemPower"
+    }
   },
   "powers.MetallicizePower": {
     "extends": "powers.AbstractPower",
@@ -7089,6 +7400,7 @@
     "fields": {}
   },
   "random.Random": {
+    "extends": null,
     "fields": {
       "counter": "int"
     }
@@ -7098,6 +7410,7 @@
     "fields": {}
   },
   "relics.AbstractRelic": {
+    "extends": null,
     "fields": {
       "cost": "int",
       "counter": "int",
@@ -7111,6 +7424,7 @@
     }
   },
   "relics.AbstractRelic$1": {
+    "extends": null,
     "fields": {}
   },
   "relics.Akabeko": {
@@ -7672,7 +7986,9 @@
   },
   "relics.RedSkull$1": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.relics.RedSkull"
+    }
   },
   "relics.RegalPillow": {
     "extends": "relics.AbstractRelic",
@@ -7909,7 +8225,9 @@
   },
   "relics.deprecated.DEPRECATEDDodecahedron$1": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.relics.deprecated.DEPRECATEDDodecahedron"
+    }
   },
   "relics.deprecated.DEPRECATEDYin": {
     "extends": "relics.AbstractRelic",
@@ -7924,6 +8242,7 @@
     "fields": {}
   },
   "rewards.RewardItem": {
+    "extends": null,
     "fields": {
       "bonusGold": "int",
       "cards": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
@@ -7937,9 +8256,11 @@
     }
   },
   "rewards.RewardItem$1": {
+    "extends": null,
     "fields": {}
   },
   "rewards.RewardSave": {
+    "extends": null,
     "fields": {
       "amount": "int",
       "bonusGold": "int",
@@ -7948,6 +8269,7 @@
     }
   },
   "rewards.chests.AbstractChest": {
+    "extends": null,
     "fields": {
       "COMMON_CHANCE": "int",
       "GOLD_AMT": "int",
@@ -7961,6 +8283,7 @@
     }
   },
   "rewards.chests.AbstractChest$1": {
+    "extends": null,
     "fields": {}
   },
   "rewards.chests.BossChest": {
@@ -7983,6 +8306,7 @@
     "fields": {}
   },
   "rooms.AbstractRoom": {
+    "extends": null,
     "fields": {
       "baseRareCardChance": "int",
       "baseUncommonCardChance": "int",
@@ -8008,12 +8332,16 @@
   },
   "rooms.AbstractRoom$1": {
     "extends": "actions.AbstractGameAction",
-    "fields": {}
+    "fields": {
+      "this$0": "com.megacrit.cardcrawl.rooms.AbstractRoom"
+    }
   },
   "rooms.AbstractRoom$2": {
+    "extends": null,
     "fields": {}
   },
   "rooms.CampfireUI": {
+    "extends": null,
     "fields": {
       "buttons": "java.util.ArrayList<com.megacrit.cardcrawl.ui.campfire.AbstractCampfireOption>",
       "somethingSelected": "boolean"
@@ -8080,12 +8408,15 @@
     }
   },
   "rooms.VictoryRoom$1": {
+    "extends": null,
     "fields": {}
   },
   "saveAndContinue.SaveAndContinue": {
+    "extends": null,
     "fields": {}
   },
   "saveAndContinue.SaveFile": {
+    "extends": null,
     "fields": {
       "act_num": "int",
       "ai_seed_count": "int",
@@ -8214,12 +8545,15 @@
     }
   },
   "saveAndContinue.SaveFile$1": {
+    "extends": null,
     "fields": {}
   },
   "saveAndContinue.SaveFileObfuscator": {
+    "extends": null,
     "fields": {}
   },
   "scenes.AbstractScene": {
+    "extends": null,
     "fields": {
       "ambianceName": "java.lang.String",
       "bgOverlayTarget": "float",
@@ -8256,6 +8590,7 @@
     }
   },
   "scenes.TheBeyondScene$1": {
+    "extends": null,
     "fields": {}
   },
   "scenes.TheBottomScene": {
@@ -8295,6 +8630,7 @@
     }
   },
   "scenes.TheCityScene$1": {
+    "extends": null,
     "fields": {}
   },
   "scenes.TheEndingScene": {
@@ -8304,6 +8640,7 @@
     }
   },
   "scenes.TitleBackground": {
+    "extends": null,
     "fields": {
       "activated": "boolean",
       "dust": "java.util.ArrayList<com.megacrit.cardcrawl.vfx.scene.TitleDustEffect>",
@@ -8319,9 +8656,11 @@
     }
   },
   "scenes.TitleBackground$1": {
+    "extends": null,
     "fields": {}
   },
   "scenes.TitleCloud": {
+    "extends": null,
     "fields": {
       "sliderJiggle": "float",
       "vX": "float",
@@ -8331,6 +8670,7 @@
     }
   },
   "screens.CardRewardScreen": {
+    "extends": null,
     "fields": {
       "cardOnly": "boolean",
       "chooseOne": "boolean",
@@ -8347,9 +8687,11 @@
     }
   },
   "screens.CardRewardScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.CharSelectInfo": {
+    "extends": null,
     "fields": {
       "cardDraw": "int",
       "currentHp": "int",
@@ -8370,6 +8712,7 @@
     }
   },
   "screens.CombatRewardScreen": {
+    "extends": null,
     "fields": {
       "hasTakenAll": "boolean",
       "mug": "boolean",
@@ -8378,6 +8721,7 @@
     }
   },
   "screens.CombatRewardScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.DeathScreen": {
@@ -8391,6 +8735,7 @@
     }
   },
   "screens.DiscardPileViewScreen": {
+    "extends": null,
     "fields": {
       "controllerCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "currentDiffY": "float",
@@ -8403,6 +8748,7 @@
     }
   },
   "screens.DisplayOption": {
+    "extends": null,
     "fields": {
       "aspectRatio": "java.lang.String",
       "height": "int",
@@ -8410,6 +8756,7 @@
     }
   },
   "screens.DoorLock": {
+    "extends": null,
     "fields": {
       "c": "com.megacrit.cardcrawl.screens.DoorLock$LockColor",
       "glowing": "boolean",
@@ -8422,9 +8769,11 @@
     }
   },
   "screens.DoorLock$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.DoorUnlockScreen": {
+    "extends": null,
     "fields": {
       "autoContinueTimer": "float",
       "circleAngle": "float",
@@ -8445,6 +8794,7 @@
     }
   },
   "screens.DrawPileViewScreen": {
+    "extends": null,
     "fields": {
       "controllerCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "currentDiffY": "float",
@@ -8458,6 +8808,7 @@
     }
   },
   "screens.DungeonMapScreen": {
+    "extends": null,
     "fields": {
       "clickStartX": "float",
       "clickStartY": "float",
@@ -8477,6 +8828,7 @@
     }
   },
   "screens.DungeonTransitionScreen": {
+    "extends": null,
     "fields": {
       "continueFader": "float",
       "isComplete": "boolean",
@@ -8492,6 +8844,7 @@
     }
   },
   "screens.ExhaustPileViewScreen": {
+    "extends": null,
     "fields": {
       "controllerCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "currentDiffY": "float",
@@ -8505,6 +8858,7 @@
     }
   },
   "screens.GameOverScreen": {
+    "extends": null,
     "fields": {
       "maxLevel": "boolean",
       "nextUnlockCost": "int",
@@ -8530,6 +8884,7 @@
     }
   },
   "screens.GameOverStat": {
+    "extends": null,
     "fields": {
       "hidden": "boolean",
       "label": "java.lang.String",
@@ -8545,9 +8900,11 @@
     }
   },
   "screens.MasterDeckSortHeader$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.MasterDeckViewScreen": {
+    "extends": null,
     "fields": {
       "clickStartedCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "controllerCard": "com.megacrit.cardcrawl.cards.AbstractCard",
@@ -8567,6 +8924,7 @@
     }
   },
   "screens.SingleCardViewPopup": {
+    "extends": null,
     "fields": {
       "card": "com.megacrit.cardcrawl.cards.AbstractCard",
       "card_energy_w": "float",
@@ -8582,9 +8940,11 @@
     }
   },
   "screens.SingleCardViewPopup$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.SingleRelicViewPopup": {
+    "extends": null,
     "fields": {
       "RELIC_OFFSET_Y": "float",
       "fadeTimer": "float",
@@ -8597,6 +8957,7 @@
     }
   },
   "screens.SingleRelicViewPopup$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.VictoryScreen": {
@@ -8610,9 +8971,11 @@
     }
   },
   "screens.VictoryScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.charSelect.CharacterOption": {
+    "extends": null,
     "fields": {
       "c": "com.megacrit.cardcrawl.characters.AbstractPlayer",
       "charInfo": "com.megacrit.cardcrawl.screens.CharSelectInfo",
@@ -8629,6 +8992,7 @@
     }
   },
   "screens.charSelect.CharacterSelectScreen": {
+    "extends": null,
     "fields": {
       "anySelected": "boolean",
       "ascLevelInfoString": "java.lang.String",
@@ -8643,6 +9007,7 @@
     }
   },
   "screens.compendium.CardLibSortHeader": {
+    "extends": null,
     "fields": {
       "buttons": "com.megacrit.cardcrawl.screens.mainMenu.SortHeaderButton[]",
       "costButton": "com.megacrit.cardcrawl.screens.mainMenu.SortHeaderButton",
@@ -8655,6 +9020,7 @@
     }
   },
   "screens.compendium.CardLibraryScreen": {
+    "extends": null,
     "fields": {
       "blueCards": "com.megacrit.cardcrawl.cards.CardGroup",
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
@@ -8679,9 +9045,11 @@
     }
   },
   "screens.compendium.CardLibraryScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.compendium.PotionViewScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "col": "int",
@@ -8699,9 +9067,11 @@
     }
   },
   "screens.compendium.PotionViewScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.compendium.RelicViewScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "clickStartedRelic": "com.megacrit.cardcrawl.relics.AbstractRelic",
@@ -8718,9 +9088,11 @@
     }
   },
   "screens.compendium.RelicViewScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.custom.CustomMod": {
+    "extends": null,
     "fields": {
       "ID": "java.lang.String",
       "color": "java.lang.String",
@@ -8732,6 +9104,7 @@
     }
   },
   "screens.custom.CustomModeCharacterButton": {
+    "extends": null,
     "fields": {
       "c": "com.megacrit.cardcrawl.characters.AbstractPlayer",
       "charStrings": "com.megacrit.cardcrawl.localization.CharacterStrings",
@@ -8743,6 +9116,7 @@
     }
   },
   "screens.custom.CustomModeScreen": {
+    "extends": null,
     "fields": {
       "ASCENSION_TEXT_Y": "float",
       "ascensionLevel": "int",
@@ -8765,9 +9139,11 @@
     }
   },
   "screens.custom.CustomModeScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.leaderboards.FilterButton": {
+    "extends": null,
     "fields": {
       "active": "boolean",
       "lType": "com.megacrit.cardcrawl.screens.leaderboards.FilterButton$LeaderboardType",
@@ -8777,9 +9153,11 @@
     }
   },
   "screens.leaderboards.FilterButton$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.leaderboards.LeaderboardEntry": {
+    "extends": null,
     "fields": {
       "isTime": "boolean",
       "rank": "int",
@@ -8787,6 +9165,7 @@
     }
   },
   "screens.leaderboards.LeaderboardScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "charButtons": "java.util.ArrayList<com.megacrit.cardcrawl.screens.leaderboards.FilterButton>",
@@ -8806,23 +9185,28 @@
     }
   },
   "screens.leaderboards.LeaderboardScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.mainMenu.ColorTabBar": {
+    "extends": null,
     "fields": {
       "curTab": "com.megacrit.cardcrawl.screens.mainMenu.ColorTabBar$CurrentTab",
       "delegate": "com.megacrit.cardcrawl.screens.mainMenu.TabBarListener"
     }
   },
   "screens.mainMenu.ColorTabBar$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.mainMenu.EarlyAccessPopup": {
+    "extends": null,
     "fields": {
       "darken": "boolean"
     }
   },
   "screens.mainMenu.HorizontalScrollBar": {
+    "extends": null,
     "fields": {
       "CURSOR_H": "float",
       "CURSOR_W": "float",
@@ -8836,6 +9220,7 @@
     }
   },
   "screens.mainMenu.MainMenuPanelButton": {
+    "extends": null,
     "fields": {
       "header": "java.lang.String",
       "pColor": "com.megacrit.cardcrawl.screens.mainMenu.MainMenuPanelButton$PanelColor",
@@ -8845,9 +9230,11 @@
     }
   },
   "screens.mainMenu.MainMenuPanelButton$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.mainMenu.MainMenuScreen": {
+    "extends": null,
     "fields": {
       "abandonPopup": "com.megacrit.cardcrawl.screens.options.ConfirmPopup",
       "abandonedRun": "boolean",
@@ -8886,9 +9273,11 @@
     }
   },
   "screens.mainMenu.MainMenuScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.mainMenu.MenuButton": {
+    "extends": null,
     "fields": {
       "confirmation": "boolean",
       "hidden": "boolean",
@@ -8900,9 +9289,11 @@
     }
   },
   "screens.mainMenu.MenuButton$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.mainMenu.MenuCancelButton": {
+    "extends": null,
     "fields": {
       "buttonText": "java.lang.String",
       "current_x": "float",
@@ -8912,6 +9303,7 @@
     }
   },
   "screens.mainMenu.MenuPanelScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "panels": "java.util.ArrayList<com.megacrit.cardcrawl.screens.mainMenu.MainMenuPanelButton>",
@@ -8919,9 +9311,11 @@
     }
   },
   "screens.mainMenu.MenuPanelScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.mainMenu.PatchNotesScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "grabStartY": "float",
@@ -8934,6 +9328,7 @@
     }
   },
   "screens.mainMenu.SaveSlot": {
+    "extends": null,
     "fields": {
       "completionPercentage": "float",
       "emptySlot": "boolean",
@@ -8942,6 +9337,7 @@
     }
   },
   "screens.mainMenu.SaveSlotScreen": {
+    "extends": null,
     "fields": {
       "cancelButton": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "curPop": "com.megacrit.cardcrawl.screens.mainMenu.SaveSlotScreen$CurrentPopup",
@@ -8952,9 +9348,11 @@
     }
   },
   "screens.mainMenu.SaveSlotScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.mainMenu.ScrollBar": {
+    "extends": null,
     "fields": {
       "CURSOR_H": "float",
       "CURSOR_W": "float",
@@ -8970,6 +9368,7 @@
     }
   },
   "screens.mainMenu.SortHeaderButton": {
+    "extends": null,
     "fields": {
       "ARROW_SIZE": "float",
       "delegate": "com.megacrit.cardcrawl.screens.mainMenu.SortHeaderButtonListener",
@@ -8980,12 +9379,14 @@
     }
   },
   "screens.mainMenu.SyncMessage": {
+    "extends": null,
     "fields": {
       "isShowing": "boolean",
       "x": "float"
     }
   },
   "screens.options.AbandonRunButton": {
+    "extends": null,
     "fields": {
       "H": "int",
       "W": "int",
@@ -8994,6 +9395,7 @@
     }
   },
   "screens.options.ConfirmPopup": {
+    "extends": null,
     "fields": {
       "desc": "java.lang.String",
       "shown": "boolean",
@@ -9005,9 +9407,11 @@
     }
   },
   "screens.options.ConfirmPopup$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.options.DropdownMenu": {
+    "extends": null,
     "fields": {
       "cachedMaxWidth": "float",
       "isOpen": "boolean",
@@ -9022,13 +9426,16 @@
     }
   },
   "screens.options.DropdownMenu$DropdownRow": {
+    "extends": null,
     "fields": {
       "index": "int",
       "isSelected": "boolean",
-      "text": "java.lang.String"
+      "text": "java.lang.String",
+      "this$0": "com.megacrit.cardcrawl.screens.options.DropdownMenu"
     }
   },
   "screens.options.ExitGameButton": {
+    "extends": null,
     "fields": {
       "H": "int",
       "W": "int",
@@ -9038,6 +9445,7 @@
     }
   },
   "screens.options.GiantToggleButton": {
+    "extends": null,
     "fields": {
       "label": "java.lang.String",
       "scale": "float",
@@ -9048,9 +9456,11 @@
     }
   },
   "screens.options.GiantToggleButton$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.options.InputSettingsScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "controllerEnabledToggleButton": "com.megacrit.cardcrawl.screens.options.GiantToggleButton",
@@ -9066,9 +9476,11 @@
     }
   },
   "screens.options.InputSettingsScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.options.OptionsPanel": {
+    "extends": null,
     "fields": {
       "FRAMERATE_LABELS": "java.lang.String[]",
       "FRAMERATE_OPTIONS": "int[]",
@@ -9101,6 +9513,7 @@
     }
   },
   "screens.options.RemapInputElement": {
+    "extends": null,
     "fields": {
       "action": "com.megacrit.cardcrawl.helpers.input.InputAction",
       "cAction": "com.megacrit.cardcrawl.helpers.controller.CInputAction",
@@ -9119,6 +9532,7 @@
     }
   },
   "screens.options.SettingsScreen": {
+    "extends": null,
     "fields": {
       "abandonPopup": "com.megacrit.cardcrawl.screens.options.ConfirmPopup",
       "exitPopup": "com.megacrit.cardcrawl.screens.options.ConfirmPopup",
@@ -9126,9 +9540,11 @@
     }
   },
   "screens.options.SettingsScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.options.Slider": {
+    "extends": null,
     "fields": {
       "sliderGrabbed": "boolean",
       "type": "com.megacrit.cardcrawl.screens.options.Slider$SliderType",
@@ -9138,9 +9554,11 @@
     }
   },
   "screens.options.Slider$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.options.ToggleButton": {
+    "extends": null,
     "fields": {
       "enabled": "boolean",
       "type": "com.megacrit.cardcrawl.screens.options.ToggleButton$ToggleBtnType",
@@ -9149,21 +9567,25 @@
     }
   },
   "screens.options.ToggleButton$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.runHistory.CopyableTextElement": {
+    "extends": null,
     "fields": {
       "copyText": "java.lang.String",
       "text": "java.lang.String"
     }
   },
   "screens.runHistory.ModIcons": {
+    "extends": null,
     "fields": {
       "dailyModList": "java.util.ArrayList<com.megacrit.cardcrawl.daily.mods.AbstractDailyMod>",
       "hitboxes": "java.util.ArrayList<com.megacrit.cardcrawl.helpers.Hitbox>"
     }
   },
   "screens.runHistory.RunHistoryPath": {
+    "extends": null,
     "fields": {
       "pathElements": "java.util.List<com.megacrit.cardcrawl.screens.runHistory.RunPathElement>",
       "rows": "int",
@@ -9171,6 +9593,7 @@
     }
   },
   "screens.runHistory.RunHistoryScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "cardCountByRarityString": "java.lang.String",
@@ -9204,9 +9627,11 @@
     }
   },
   "screens.runHistory.RunHistoryScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.runHistory.RunPathElement": {
+    "extends": null,
     "fields": {
       "battleStats": "com.megacrit.cardcrawl.screens.stats.BattleStats",
       "cachedTooltip": "java.lang.String",
@@ -9224,9 +9649,11 @@
     }
   },
   "screens.runHistory.RunPathElement$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.runHistory.TinyCard": {
+    "extends": null,
     "fields": {
       "card": "com.megacrit.cardcrawl.cards.AbstractCard",
       "col": "int",
@@ -9235,9 +9662,11 @@
     }
   },
   "screens.runHistory.TinyCard$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.select.BossRelicSelectScreen": {
+    "extends": null,
     "fields": {
       "blights": "java.util.ArrayList<com.megacrit.cardcrawl.blights.AbstractBlight>",
       "isDone": "boolean",
@@ -9245,9 +9674,11 @@
     }
   },
   "screens.select.BossRelicSelectScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.select.GridCardSelectScreen": {
+    "extends": null,
     "fields": {
       "anyNumber": "boolean",
       "canCancel": "boolean",
@@ -9267,6 +9698,7 @@
     }
   },
   "screens.select.HandCardSelectScreen": {
+    "extends": null,
     "fields": {
       "anyNumber": "boolean",
       "canPickZero": "boolean",
@@ -9284,6 +9716,7 @@
     }
   },
   "screens.splash.SplashScreen": {
+    "extends": null,
     "fields": {
       "isDone": "boolean",
       "phase": "com.megacrit.cardcrawl.screens.splash.SplashScreen$Phase",
@@ -9298,14 +9731,17 @@
     }
   },
   "screens.splash.SplashScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "screens.stats.AchievementGrid": {
+    "extends": null,
     "fields": {
       "items": "java.util.ArrayList<com.megacrit.cardcrawl.screens.stats.AchievementItem>"
     }
   },
   "screens.stats.AchievementItem": {
+    "extends": null,
     "fields": {
       "desc": "java.lang.String",
       "isUnlocked": "boolean",
@@ -9314,6 +9750,7 @@
     }
   },
   "screens.stats.BattleStats": {
+    "extends": null,
     "fields": {
       "damage": "int",
       "enemies": "java.lang.String",
@@ -9322,12 +9759,14 @@
     }
   },
   "screens.stats.BossRelicChoiceStats": {
+    "extends": null,
     "fields": {
       "not_picked": "java.util.List<java.lang.String>",
       "picked": "java.lang.String"
     }
   },
   "screens.stats.CampfireChoice": {
+    "extends": null,
     "fields": {
       "data": "java.lang.String",
       "floor": "int",
@@ -9335,6 +9774,7 @@
     }
   },
   "screens.stats.CardChoiceStats": {
+    "extends": null,
     "fields": {
       "floor": "int",
       "not_picked": "java.util.List<java.lang.String>",
@@ -9342,6 +9782,7 @@
     }
   },
   "screens.stats.CharStat": {
+    "extends": null,
     "fields": {
       "bestWinStreak": "int",
       "bossKilled": "int",
@@ -9365,6 +9806,7 @@
     }
   },
   "screens.stats.EventStats": {
+    "extends": null,
     "fields": {
       "cards_obtained": "java.util.List<java.lang.String>",
       "cards_removed": "java.util.List<java.lang.String>",
@@ -9385,12 +9827,14 @@
     }
   },
   "screens.stats.ObtainStats": {
+    "extends": null,
     "fields": {
       "floor": "int",
       "key": "java.lang.String"
     }
   },
   "screens.stats.RunData": {
+    "extends": null,
     "fields": {
       "ascension_level": "int",
       "boss_relics": "java.util.List<com.megacrit.cardcrawl.screens.stats.BossRelicChoiceStats>",
@@ -9442,6 +9886,7 @@
     }
   },
   "screens.stats.StatsScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton",
       "grabStartY": "float",
@@ -9457,6 +9902,7 @@
     }
   },
   "shop.Merchant": {
+    "extends": null,
     "fields": {
       "cards1": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
       "cards2": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
@@ -9468,14 +9914,17 @@
     }
   },
   "shop.OnSaleTag": {
+    "extends": null,
     "fields": {
       "card": "com.megacrit.cardcrawl.cards.AbstractCard"
     }
   },
   "shop.OnSaleTag$1": {
+    "extends": null,
     "fields": {}
   },
   "shop.ShopScreen": {
+    "extends": null,
     "fields": {
       "coloredCards": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
       "colorlessCards": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
@@ -9486,9 +9935,11 @@
     }
   },
   "shop.ShopScreen$1": {
+    "extends": null,
     "fields": {}
   },
   "shop.StorePotion": {
+    "extends": null,
     "fields": {
       "isPurchased": "boolean",
       "potion": "com.megacrit.cardcrawl.potions.AbstractPotion",
@@ -9498,6 +9949,7 @@
     }
   },
   "shop.StoreRelic": {
+    "extends": null,
     "fields": {
       "isPurchased": "boolean",
       "price": "int",
@@ -9507,6 +9959,7 @@
     }
   },
   "stances.AbstractStance": {
+    "extends": null,
     "fields": {
       "ID": "java.lang.String"
     }
@@ -9528,6 +9981,7 @@
     "fields": {}
   },
   "trials.AbstractTrial": {
+    "extends": null,
     "fields": {
       "c": "com.megacrit.cardcrawl.characters.AbstractPlayer$PlayerClass",
       "deck": "com.megacrit.cardcrawl.cards.CardGroup",
@@ -9599,6 +10053,7 @@
     "fields": {}
   },
   "ui.DialogWord": {
+    "extends": null,
     "fields": {
       "effect": "com.megacrit.cardcrawl.ui.DialogWord$WordEffect",
       "line": "int",
@@ -9616,9 +10071,11 @@
     }
   },
   "ui.DialogWord$1": {
+    "extends": null,
     "fields": {}
   },
   "ui.FtueTip": {
+    "extends": null,
     "fields": {
       "body": "java.lang.String",
       "button": "com.megacrit.cardcrawl.ui.buttons.GotItButton",
@@ -9632,6 +10089,7 @@
     }
   },
   "ui.FtueTip$1": {
+    "extends": null,
     "fields": {}
   },
   "ui.MultiPageFtue": {
@@ -9648,6 +10106,7 @@
     }
   },
   "ui.SpeechWord": {
+    "extends": null,
     "fields": {
       "effect": "com.megacrit.cardcrawl.ui.DialogWord$WordEffect",
       "line": "int",
@@ -9665,9 +10124,11 @@
     }
   },
   "ui.SpeechWord$1": {
+    "extends": null,
     "fields": {}
   },
   "ui.buttons.Button": {
+    "extends": null,
     "fields": {
       "height": "int",
       "pressed": "boolean",
@@ -9677,6 +10138,7 @@
     }
   },
   "ui.buttons.CancelButton": {
+    "extends": null,
     "fields": {
       "buttonText": "java.lang.String",
       "current_x": "float",
@@ -9686,6 +10148,7 @@
     }
   },
   "ui.buttons.CardSelectConfirmButton": {
+    "extends": null,
     "fields": {
       "buttonText": "java.lang.String",
       "current_x": "float",
@@ -9696,6 +10159,7 @@
     }
   },
   "ui.buttons.ConfirmButton": {
+    "extends": null,
     "fields": {
       "buttonText": "java.lang.String",
       "controller_offset_x": "float",
@@ -9707,6 +10171,7 @@
     }
   },
   "ui.buttons.DynamicBanner": {
+    "extends": null,
     "fields": {
       "height": "int",
       "isLarge": "boolean",
@@ -9722,6 +10187,7 @@
     }
   },
   "ui.buttons.EndTurnButton": {
+    "extends": null,
     "fields": {
       "current_x": "float",
       "current_y": "float",
@@ -9738,12 +10204,14 @@
     }
   },
   "ui.buttons.GotItButton": {
+    "extends": null,
     "fields": {
       "x": "float",
       "y": "float"
     }
   },
   "ui.buttons.GridSelectConfirmButton": {
+    "extends": null,
     "fields": {
       "buttonText": "java.lang.String",
       "controller_offset_x": "float",
@@ -9755,6 +10223,7 @@
     }
   },
   "ui.buttons.LargeDialogOptionButton": {
+    "extends": null,
     "fields": {
       "isDisabled": "boolean",
       "msg": "java.lang.String",
@@ -9762,9 +10231,11 @@
     }
   },
   "ui.buttons.LargeDialogOptionButton$1": {
+    "extends": null,
     "fields": {}
   },
   "ui.buttons.PeekButton": {
+    "extends": null,
     "fields": {
       "current_x": "float",
       "isHidden": "boolean",
@@ -9773,6 +10244,7 @@
     }
   },
   "ui.buttons.ProceedButton": {
+    "extends": null,
     "fields": {
       "callingBellCheck": "boolean",
       "current_x": "float",
@@ -9784,6 +10256,7 @@
     }
   },
   "ui.buttons.RetryButton": {
+    "extends": null,
     "fields": {
       "height": "int",
       "isMoving": "boolean",
@@ -9796,6 +10269,7 @@
     }
   },
   "ui.buttons.ReturnToMenuButton": {
+    "extends": null,
     "fields": {
       "height": "int",
       "isMoving": "boolean",
@@ -9808,6 +10282,7 @@
     }
   },
   "ui.buttons.SingingBowlButton": {
+    "extends": null,
     "fields": {
       "current_x": "float",
       "isHidden": "boolean",
@@ -9816,6 +10291,7 @@
     }
   },
   "ui.buttons.SkipCardButton": {
+    "extends": null,
     "fields": {
       "current_x": "float",
       "isHidden": "boolean",
@@ -9824,6 +10300,7 @@
     }
   },
   "ui.buttons.UnlockConfirmButton": {
+    "extends": null,
     "fields": {
       "buttonText": "java.lang.String",
       "done": "boolean",
@@ -9832,6 +10309,7 @@
     }
   },
   "ui.campfire.AbstractCampfireOption": {
+    "extends": null,
     "fields": {
       "label": "java.lang.String",
       "scale": "float",
@@ -9863,6 +10341,7 @@
     "fields": {}
   },
   "ui.panels.AbstractPanel": {
+    "extends": null,
     "fields": {
       "current_x": "float",
       "current_y": "float",
@@ -9876,6 +10355,7 @@
     }
   },
   "ui.panels.BottomBgPanel": {
+    "extends": null,
     "fields": {
       "current_y": "float",
       "hide_y": "float",
@@ -9885,6 +10365,7 @@
     }
   },
   "ui.panels.BottomBgPanel$1": {
+    "extends": null,
     "fields": {}
   },
   "ui.panels.DeleteSaveConfirmPopup": {
@@ -9916,12 +10397,14 @@
     "fields": {}
   },
   "ui.panels.NextMoveLine": {
+    "extends": null,
     "fields": {
       "text": "java.lang.String",
       "width": "float"
     }
   },
   "ui.panels.PotionPopUp": {
+    "extends": null,
     "fields": {
       "arrowScale": "float",
       "arrowScaleTimer": "float",
@@ -9936,6 +10419,7 @@
     }
   },
   "ui.panels.RenamePopup": {
+    "extends": null,
     "fields": {
       "newSave": "boolean",
       "shown": "boolean",
@@ -9944,6 +10428,7 @@
     }
   },
   "ui.panels.SeedPanel": {
+    "extends": null,
     "fields": {
       "shown": "boolean",
       "sourceScreen": "com.megacrit.cardcrawl.screens.mainMenu.MainMenuScreen$CurScreen",
@@ -9952,6 +10437,7 @@
     }
   },
   "ui.panels.TopPanel": {
+    "extends": null,
     "fields": {
       "ascensionString": "java.lang.String",
       "combinePotionSlot": "int",
@@ -9977,9 +10463,11 @@
     }
   },
   "ui.panels.TopPanel$1": {
+    "extends": null,
     "fields": {}
   },
   "ui.panels.energyorb.EnergyOrbBlue": {
+    "extends": null,
     "fields": {
       "angle2": "float",
       "angle3": "float",
@@ -9988,6 +10476,7 @@
     }
   },
   "ui.panels.energyorb.EnergyOrbGreen": {
+    "extends": null,
     "fields": {
       "angle2": "float",
       "angle3": "float",
@@ -9995,6 +10484,7 @@
     }
   },
   "ui.panels.energyorb.EnergyOrbPurple": {
+    "extends": null,
     "fields": {
       "angle2": "float",
       "angle3": "float",
@@ -10002,6 +10492,7 @@
     }
   },
   "ui.panels.energyorb.EnergyOrbRed": {
+    "extends": null,
     "fields": {
       "angle1": "float",
       "angle2": "float",
@@ -10011,6 +10502,7 @@
     }
   },
   "unlock.AbstractUnlock": {
+    "extends": null,
     "fields": {
       "card": "com.megacrit.cardcrawl.cards.AbstractCard",
       "key": "java.lang.String",
@@ -10021,9 +10513,11 @@
     }
   },
   "unlock.AbstractUnlock$1": {
+    "extends": null,
     "fields": {}
   },
   "unlock.UnlockCharacterScreen": {
+    "extends": null,
     "fields": {
       "button": "com.megacrit.cardcrawl.ui.buttons.UnlockConfirmButton",
       "cones": "java.util.ArrayList<com.megacrit.cardcrawl.vfx.ConeEffect>",
@@ -10033,9 +10527,11 @@
     }
   },
   "unlock.UnlockTracker": {
+    "extends": null,
     "fields": {}
   },
   "unlock.UnlockTracker$1": {
+    "extends": null,
     "fields": {}
   },
   "unlock.cards.defect.EchoFormUnlock": {
@@ -10291,6 +10787,7 @@
     "fields": {}
   },
   "vfx.AbstractGameEffect": {
+    "extends": null,
     "fields": {
       "duration": "float",
       "isDone": "boolean",
@@ -10336,6 +10833,7 @@
     }
   },
   "vfx.BobEffect": {
+    "extends": null,
     "fields": {
       "dist": "float",
       "speed": "float",
@@ -10393,6 +10891,7 @@
     }
   },
   "vfx.CloudBubble": {
+    "extends": null,
     "fields": {
       "fadeInTime": "float",
       "fadeInTimer": "float",
@@ -10451,6 +10950,7 @@
     }
   },
   "vfx.DamageHeartEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.DarkSmokePuffEffect": {
@@ -10583,6 +11083,7 @@
     }
   },
   "vfx.FastDarkSmoke": {
+    "extends": null,
     "fields": {
       "fadeInTime": "float",
       "fadeInTimer": "float",
@@ -10598,6 +11099,7 @@
     }
   },
   "vfx.FastSmoke": {
+    "extends": null,
     "fields": {
       "decelerateY": "float",
       "fadeInTime": "float",
@@ -10658,9 +11160,11 @@
     }
   },
   "vfx.FlashPotionEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.FloatyEffect": {
+    "extends": null,
     "fields": {
       "maxV": "float",
       "minV": "float",
@@ -10798,6 +11302,7 @@
     }
   },
   "vfx.MapDot": {
+    "extends": null,
     "fields": {
       "rotation": "float",
       "x": "float",
@@ -10855,6 +11360,7 @@
     }
   },
   "vfx.ObtainKeyEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.ObtainPotionEffect": {
@@ -11092,6 +11598,7 @@
     }
   },
   "vfx.TintEffect": {
+    "extends": null,
     "fields": {
       "lerpSpeed": "float"
     }
@@ -11283,6 +11790,7 @@
     }
   },
   "vfx.cardManip.CardFlashVfx$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.cardManip.CardGlowBorder": {
@@ -11293,6 +11801,7 @@
     }
   },
   "vfx.cardManip.CardGlowBorder$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.cardManip.ExhaustCardEffect": {
@@ -11309,6 +11818,7 @@
     }
   },
   "vfx.cardManip.PurgeCardEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.cardManip.ShowCardAndAddToDiscardEffect": {
@@ -11772,6 +12282,7 @@
     }
   },
   "vfx.combat.FlashAtkImgEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.combat.FlashIntentEffect": {
@@ -12209,6 +12720,7 @@
     }
   },
   "vfx.combat.OrbFlareEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.combat.PingHpEffect": {
@@ -12387,6 +12899,7 @@
     }
   },
   "vfx.combat.ShockWaveEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.combat.SilentGainPowerEffect": {
@@ -12787,6 +13300,7 @@
     }
   },
   "vfx.scene.InteractableTorchEffect$1": {
+    "extends": null,
     "fields": {}
   },
   "vfx.scene.IroncladVictoryFlameEffect": {
@@ -12951,6 +13465,7 @@
     }
   },
   "vfx.shader.ShaderEffect": {
+    "extends": null,
     "fields": {
       "heatCoords": "java.util.ArrayList<com.badlogic.gdx.math.Vector2>",
       "heatDimensions": "java.util.ArrayList<com.badlogic.gdx.math.Vector2>",

@@ -37,10 +37,11 @@ def build():
                     *map(str, sorted((ROOT / 'java').glob('*.java')))], check=True)
     subprocess.run([java, '-cp', str(classes) + ':' + str(instance / 'ModTheSpire.jar'),
                     'BuildLogicLauncher', str(instance / 'ModTheSpire.jar'),
-                    str(instance / 'launcher.jar')], check=True)
+                    str(instance / 'launcher.jar.tmp')], check=True)
+    (instance / 'launcher.jar.tmp').replace(instance / 'launcher.jar')
     subprocess.run([java, '-cp', str(classes) + ':' + cp, 'oracle.FieldSchema',
                     str(instance / 'desktop-1.0.jar'), str(ROOT.parent / 'inventory/snapshot-fields.json')], check=True)
-    with zipfile.ZipFile(instance / 'mods/Oracle.jar', 'w', zipfile.ZIP_DEFLATED) as jar:
+    with zipfile.ZipFile(instance / 'mods/Oracle.jar.tmp', 'w', zipfile.ZIP_DEFLATED) as jar:
         jar.write(ROOT.parent / 'inventory/snapshot-fields.json', 'snapshot-fields.json')
         jar.writestr('ModTheSpire.json', json.dumps({
             'modid': 'oracle', 'name': 'Silent Oracle', 'author_list': ['Oracle'],
@@ -50,6 +51,7 @@ def build():
         }))
         for file in sorted((classes / 'oracle').rglob('*.class')):
             jar.write(file, str(file.relative_to(classes)))
+    (instance / 'mods/Oracle.jar.tmp').replace(instance / 'mods/Oracle.jar')
     print('Built oracle/instance/mods/Oracle.jar')
 
 

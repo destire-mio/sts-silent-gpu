@@ -63,12 +63,20 @@ final class Snapshot {
     };
 
     static void resetStatics() throws Exception {
+        GameActionManager.turn = 0;
+        GameActionManager.playerHpLastTurn = 0;
+        EnergyPanel.totalCount = 0;
+        AbstractDungeon.nextRoom = null;
+        AbstractDungeon.lastCombatMetricKey = null;
+        AbstractDungeon.is_victory = false;
         for (String[] spec : STATICS) for (String name : spec[1].split(" ")) {
             Field field = Class.forName("com.megacrit.cardcrawl." + spec[0]).getDeclaredField(name);
             field.setAccessible(true);
             if (field.getType() == boolean.class) field.setBoolean(null, false);
             else field.setInt(null, 0);
         }
+        com.megacrit.cardcrawl.events.RoomEventDialog.selectedOption = -1;
+        com.megacrit.cardcrawl.events.RoomEventDialog.waitForInput = true;
         com.megacrit.cardcrawl.events.GenericEventDialog.selectedOption = -1;
         com.megacrit.cardcrawl.events.GenericEventDialog.waitForInput = true;
         com.megacrit.cardcrawl.shop.ShopScreen.actualPurgeCost = 75;
@@ -76,8 +84,8 @@ final class Snapshot {
     }
 
     static final class Schema {
-    static final JsonObject DATA = new JsonParser().parse(new java.io.InputStreamReader(
-        Snapshot.class.getResourceAsStream("/snapshot-fields.json"), java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+        static final JsonObject DATA = new JsonParser().parse(new java.io.InputStreamReader(
+            Snapshot.class.getResourceAsStream("/snapshot-fields.json"), java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
     }
     final IdentityHashMap<Object, Integer> ids = new IdentityHashMap<Object, Integer>();
     final Map<UUID, Integer> uuids = new HashMap<UUID, Integer>();
@@ -190,14 +198,14 @@ final class Snapshot {
     }
 
     static boolean included(Field field) {
-        if (Modifier.isStatic(field.getModifiers()) || field.isSynthetic()) return false;
+        if (Modifier.isStatic(field.getModifiers())) return false;
         Set<String> allowed = FIELDS.get(field.getDeclaringClass().getName());
         if (allowed != null) return allowed.contains(field.getName());
         String name = field.getName().toLowerCase(Locale.ROOT);
         if (name.contains("vfx") || name.contains("sound") || name.contains("texture")
                 || name.contains("img") || name.contains("hover") || name.contains("speech")
-                || (name.equals("tips") || name.equals("tipmsg")) || name.contains("anim") || name.equals("description") || name.equals("name")
-) return false;
+                || (name.equals("tips") || name.equals("tipmsg")) || name.contains("anim")
+                || name.equals("description") || name.equals("name")) return false;
         Class<?> type = field.getType();
         String typeName = type.getName();
         return type.isPrimitive() || type.isEnum() || type == String.class || type == UUID.class || type.isArray()
@@ -248,7 +256,7 @@ final class Snapshot {
             for (Class<?> cls = value.getClass(); cls != Object.class; cls = cls.getSuperclass())
                 for (Map.Entry<String, JsonElement> entry : Schema.DATA.getAsJsonObject(cls.getName().replace("com.megacrit.cardcrawl.", "")).getAsJsonObject("fields").entrySet()) {
                     Field field = cls.getDeclaredField(entry.getKey());
-                    fields.put(cls.getSimpleName() + "." + field.getName(), field);
+                    fields.put(cls.getName().substring(cls.getName().lastIndexOf('.') + 1) + "." + field.getName(), field);
                 }
             JsonObject data = new JsonObject();
             object.add("fields", data);

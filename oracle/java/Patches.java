@@ -24,6 +24,10 @@ public final class Patches {
     public static class Relics {
         @SpirePrefixPatch public static SpireReturn<Boolean> before() { return SpireReturn.Return(false); }
     }
+    @SpirePatch(clz=UnlockTracker.class, method="isAscensionUnlocked")
+    public static class Ascension {
+        @SpirePrefixPatch public static SpireReturn<Boolean> before() { return SpireReturn.Return(true); }
+    }
     @SpirePatch(clz=Settings.class, method="setFinalActAvailability")
     public static class ActFour {
         @SpirePostfixPatch public static void after() { Settings.isFinalActAvailable = true; }
@@ -47,6 +51,20 @@ public final class Patches {
                             call.replace("{ $_ = new java.util.UUID(0L, ++oracle.Unseeded.uuid); }");
                         if (owner.equals("com.badlogic.gdx.math.MathUtils") && name.startsWith("random"))
                             call.replace("{ $_ = oracle.Unseeded." + name + "($$); }");
+                    }
+                });
+            }
+            pool.get("com.megacrit.cardcrawl.monsters.exordium.Cultist").getDeclaredMethod("takeTurn").instrument(new ExprEditor() {
+                public void edit(MethodCall call) throws CannotCompileException {
+                    if (call.getClassName().equals("com.badlogic.gdx.math.MathUtils") && call.getMethodName().equals("random"))
+                        call.replace("{ $_ = oracle.Unseeded.random($$); }");
+                }
+            });
+            for (String name : new String[]{"ObjectSet", "ObjectMap", "IntMap", "LongMap", "IntIntMap", "IntFloatMap", "ObjectIntMap", "ObjectFloatMap"}) {
+                pool.get("com.badlogic.gdx.utils." + name).instrument(new ExprEditor() {
+                    public void edit(MethodCall call) throws CannotCompileException {
+                        if (call.getClassName().equals("com.badlogic.gdx.math.MathUtils") && call.getMethodName().equals("random"))
+                            call.replace("{ $_ = oracle.Platform.deviceRandom.nextInt($1 + 1); }");
                     }
                 });
             }

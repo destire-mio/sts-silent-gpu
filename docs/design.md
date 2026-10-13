@@ -121,8 +121,10 @@ order above; within an object traverse catalog fields by lexicographic
 `DeclaringSimpleClass.field` order. On first encounter reserve the next object index, then
 visit its fields depth first. Every later encounter emits the same `Ref`. The class name is
 relative to `com.megacrit.cardcrawl.`; the catalog's `extends` chain defines inherited fields.
-A field key uses its declaring class, so both `AbstractEvent.screenNum` and `NeowEvent.screenNum`
-can exist. Only fields named in the catalog are emitted. Java arrays and lists preserve order;
+A field key uses its declaring binary class name without the package (including `$` for inner
+classes), so both `AbstractEvent.screenNum` and `NeowEvent.screenNum`
+can exist. Captured fields of anonymous actions retain their owner references. Only fields named
+in the catalog are emitted. Java arrays and lists preserve order;
 Java maps have stringified keys sorted lexicographically. Card UUIDs are replaced by sequential
 integers on first UUID encounter *within that snapshot*, preserving equality between copies.
 Object references and UUID equality are distinct relationships. The one adapter-owned class
@@ -192,20 +194,30 @@ setup and ends on death or combat completion, after original room updates have s
 
 Scenario setup starts a fresh A20 Silent run, replaces the master deck and ordered relics,
 applies original relic `onEquip` hooks, fills potion slots (null means empty), then assigns HP.
+Relics are acquired one at a time in input order. Their acquisition screens and callbacks run
+to completion before acquiring the next relic. Setup choices use an independent
+`RandomXS128(seed)` and the same uniform legal-action enumeration. These setup choices precede
+the trace; the combat policy starts with its own `RandomXS128(seed)`. The input deck is the deck
+before acquisition: original acquisition effects can upgrade, remove or transform its cards.
 It enters a plain Act 1 `MonsterRoom` at floor 1 using the original `nextRoomTransition` and the
 specified encounter as its next monster-list entry. This defines the scenario context; it does
 not apply burning-elite modifiers or boss-room rewards. Piles, energy, monsters and relic battle
-hooks are initialized by the game. Relics with acquisition choices may need decisions before
-combat and are not part of this scenario entry contract.
+hooks are initialized by the game.
 
 The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio
 output. Original update/render callbacks execute. Decisions wait for the communication listener,
 Soul settlement, monster death/intent settlement, card-manipulation callbacks, turn/battle-start
 callbacks, key acquisition, and campfire callbacks unless a selection screen needs input.
+Combat input with no selection screen additionally requires `WAITING_ON_USER`, empty action,
+pre-turn and card queues, and no queued end turn. A GRID notification timeout is used only
+outside combat; closing a combat selection never bypasses action settlement.
+Card, relic and ascension unlock queries are fixed to unlocked, and Act 4 availability is true.
 Only rendering/device state and persistent profile/score/unlock metrics are outside the snapshot.
 Gameplay-affecting unseeded calls are isolated as specified in `inventory/unseeded.md`. The
 presentation RNG is separate and cannot supply the listed rule calls. Batches reset rule statics
-to their fresh-process values before each seed; this includes The Bomb's id allocator.
+to their fresh-process values before each seed; this includes The Bomb's id allocator, turn/energy
+counters, dialog selections, stale next-room/encounter references, and the captured cold-menu
+relic exclusion list. Device-cache RNG is isolated from both presentation and rule streams.
 
 Each UTF-8 JSONL file is `Header`, followed by zero or more `Decision` records, then one `Terminal`.
 Every line ends with LF. Recorded data is never edited. Committed fixtures may use `.jsonl.gz`:
@@ -233,6 +245,6 @@ Record full runs with `python3 oracle/record.py --seed 1 --count 20 --output /tm
 add `--scenario tests/scenarios/starter.json` for combat scenarios. `--workers 1|2|3` partitions
 seeds between isolated JVMs. Each process owns its working directory, preferences and saves;
 no service or network transport is started. `python3 oracle/verify.py --output /tmp/oracle-check`
-records two batches in separate JVMs, reversing job order in the second batch, and compares
+records two concurrent batches in separate JVMs, reversing job order in the second batch, and compares
 20 full runs plus 200 scenarios byte for byte. Timings exclude JVM startup but include game reset,
 original callbacks, snapshot construction and JSONL writes.

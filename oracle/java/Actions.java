@@ -58,7 +58,8 @@ final class Actions {
     }
 
     static void apply(JsonObject action) {
-        boolean grid = AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID;
+        boolean grid = AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID
+            && AbstractDungeon.getCurrRoom().phase != AbstractRoom.RoomPhase.COMBAT;
         switch (action.get("type").getAsString()) {
             case "play": {
                 int target = action.get("target").getAsInt();
