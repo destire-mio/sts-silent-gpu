@@ -1,0 +1,48 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::actions {
+struct SpawnMonster : ActionHooks {
+    SPIRE_STATE(SpawnMonster, int m; bool minion; int target_slot; bool use_smart_positioning; bool used;)
+    SPIRE_FN static Effect construct(int monster, bool minion) {
+        Effect e = construct(monster, minion, -99);
+        e.state.SpawnMonster.use_smart_positioning = true;
+        return e;
+    }
+    SPIRE_FN static Effect construct(int monster, bool minion, int slot) {
+        Effect e{};
+        e.kind = EffectKind::SpawnMonster;
+        action_initialize_state(e);
+        e.source = no_target;
+        e.target = no_target;
+        e.state.SpawnMonster.m = monster;
+        e.state.SpawnMonster.minion = minion;
+        e.state.SpawnMonster.target_slot = slot;
+        return e;
+    }
+    SPIRE_FN static void execute(Game& g, Effect& e) {
+        auto& state = e.state.SpawnMonster;
+        if (state.used) return;
+        for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, state.m);
+        monster_init(g, state.m);
+        monster_applyPowers(g, state.m);
+        int position = state.target_slot;
+        if (state.use_smart_positioning) {
+            position = 0;
+            for (int i = 0; i < g.monster_order.size; ++i)
+                if (g.monsters[state.m].creature.draw_x > g.monsters[g.monster_order[i]].creature.draw_x) ++position;
+        }
+        g.monster_order.insert(position, state.m);
+        if (state.minion) {
+            Effect apply{};
+            apply.kind = EffectKind::ApplyPower;
+            apply.source = state.m;
+            apply.target = state.m;
+            apply.power = power_id("Minion");
+            apply.amount = -1;
+            add_top(g, apply);
+        }
+        state.used = true;
+    }
+};
+}

@@ -20,6 +20,8 @@ struct Card {
     int16_t cost_for_turn = 0;
     int16_t energy_on_use = 0;
     uint8_t multi_damage_count = 0;
+    bool dont_trigger_on_use : 1;
+    bool in_autoplay : 1;
     bool ignore_energy_on_use : 1;
     bool exhaust : 1;
     bool ethereal : 1;
@@ -30,12 +32,13 @@ struct Card {
     bool exhaust_on_use_once : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
-        : ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
+        : dont_trigger_on_use(false), in_autoplay(false), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false) {}
 };
 using Pile = List<uint16_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
 struct Power {
+    uint32_t instance = 0;
     int amount;
     PowerId id;
     bool just_applied : 1;
@@ -114,10 +117,21 @@ struct Effect {
     DamageType damage_type = DamageType::Normal;
     bool flag = false;
     EffectState state{};
+    uint32_t power_instance = 0;
+    bool prepared_power_supplied = false;
+    bool end_turn_draw = false;
     Power prepared_power{};
 };
 using DamageInfo = Effect;
-struct CardQueueItem { int card = -1; int target = -1; int energy_on_use = 0; };
+struct CardQueueItem {
+    int card = -1;
+    int target = no_target;
+    int energy_on_use = 0;
+    bool ignore_energy_total = false;
+    bool autoplay_card = false;
+    bool random_target = false;
+    bool is_end_turn_auto_play = false;
+};
 struct PlayedCards {
     uint16_t values[1024]{};
     uint16_t size = 0;
@@ -179,7 +193,13 @@ struct Game {
     Player player{};
     List<Card, card_capacity> cards{};
     int multi_damage[card_capacity][monster_capacity]{};
-    Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{};
+    Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{};
+    Pile grid_cards{}, reward_cards{};
+    int discovery_card = -1;
+    List<Effect, action_capacity> action_objects{};
+    List<Power, action_capacity> detached_powers{};
+    uint32_t next_power_instance = 1;
+    bool player_turn_effect_pending = false;
     Pile drawn_cards{};
     List<Monster, monster_capacity> monsters{};
     List<int, monster_capacity> monster_order{};

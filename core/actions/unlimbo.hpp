@@ -1,0 +1,19 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::actions {
+struct Unlimbo : ActionHooks {
+    SPIRE_STATE(Unlimbo, bool exhaust;)
+    SPIRE_FN static Effect construct(int card, bool exhaust = false) {
+        Effect e{};
+        e.kind = EffectKind::Unlimbo;
+        action_initialize_state(e);
+        e.source = no_target;
+        e.target = no_target;
+        e.card = card;
+        e.state.Unlimbo.exhaust = exhaust;
+        return e;
+    }
+    SPIRE_FN static void execute(Game& g, const Effect& e) { erase_card(g.limbo, e.card); }
+};
+}

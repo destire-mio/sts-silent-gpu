@@ -4,6 +4,7 @@
 namespace spire::units::actions {
 struct ApplyPower : ActionHooks {
     SPIRE_FN static void prepare(Game& g, Effect& e) {
+        if (e.prepared_power_supplied) return;
         Power& power = e.prepared_power;
         power.id = e.power;
         power.amount = e.amount;

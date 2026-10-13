@@ -22,7 +22,7 @@ SPIRE_FN inline bool card_has_enough_energy_base(const Game& g, int card_id) {
         if (!relic_canPlay(g, i, card_id)) return false;
     for (int i = 0; i < g.hand.size; ++i)
         if (!card_canPlay(g, g.hand[i], card_id)) return false;
-    return card.cost_for_turn <= g.player.energy || card_freeToPlay(g, card_id);
+    return card.cost_for_turn <= g.player.energy || card_freeToPlay(g, card_id) || card.in_autoplay;
 }
 SPIRE_FN inline bool card_can_use_base(const Game& g, int card_id, int target) {
     const Card& c = g.cards[card_id];
@@ -120,6 +120,9 @@ SPIRE_FN inline void play_card_hooks(Game& g, int card, int target) {
 SPIRE_FN inline void use_card(Game& g, int card_id, int target) {
     Card& card = g.cards[card_id];
     card_calculateCardDamage(g, card_id, target);
+    if (card.cost == -1 && g.player.energy < card.energy_on_use && !card.ignore_energy_on_use)
+        card.energy_on_use = g.player.energy;
+    if (card.cost == -1 && card.in_autoplay) card.free_to_play_once = true;
     card_use(g, card_id, target);
     Effect finish{};
     finish.kind = EffectKind::UseCard;
@@ -141,11 +144,9 @@ SPIRE_FN inline void use_card(Game& g, int card_id, int target) {
     for (int i = 0; i < g.hand.size; ++i)
         if (g.hand[i] != card_id) card_triggerOnOtherCardPlayed(g, g.hand[i], card_id);
     for (int i = 0; i < powers.size; ++i) power_onAfterCardPlayed(g, powers[i], player_target, card_id);
-    int hand_index = 0;
-    while (g.hand[hand_index] != card_id) ++hand_index;
-    g.hand.erase(hand_index);
+    erase_card(g.hand, card_id);
     g.player.card_in_use = card_id;
-    if (!card.free_to_play_once && card.cost_for_turn > 0) g.player.energy -= card.cost_for_turn;
+    if (!card_freeToPlay(g, card_id) && !card.in_autoplay && card.cost_for_turn > 0) g.player.energy -= card.cost_for_turn;
 }
 SPIRE_FN inline void starter_deck(Run& run) {
     run.master_deck.clear();

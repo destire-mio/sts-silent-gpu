@@ -1,0 +1,28 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::actions {
+struct DoublePoison : ActionHooks {
+    SPIRE_FN static Effect construct(int target, int source) {
+        Effect e{};
+        e.kind = EffectKind::DoublePoison;
+        action_initialize_state(e);
+        e.target = target;
+        e.source = source;
+        return e;
+    }
+    SPIRE_FN static void execute(Game& g, const Effect& e) {
+        if (e.target == no_target) return;
+        const Creature& target = get_creature(g, e.target);
+        const int index = find_power(target, "Poison");
+        if (index < 0) return;
+        Effect apply{};
+        apply.kind = EffectKind::ApplyPower;
+        apply.source = e.source;
+        apply.target = e.target;
+        apply.power = target.powers[index].id;
+        apply.amount = target.powers[index].amount;
+        add_top(g, apply);
+    }
+};
+}

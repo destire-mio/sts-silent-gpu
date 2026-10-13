@@ -25,14 +25,81 @@ SPIRE_FN inline bool monsters_basically_dead(const Game& g) {
     }
     return true;
 }
+SPIRE_FN inline bool java_id_equal(const char* left, const char* right) {
+    while (*left != '\0' && *left == *right) { ++left; ++right; }
+    return *left == *right;
+}
+SPIRE_FN inline const char* power_java_id(PowerId id) {
+    switch (id) {
+#define SPIRE_UNIT(unit, name, path, type) case PowerId::unit: return name;
+#include "powers/catalog.def"
+#undef SPIRE_UNIT
+    default: SPIRE_ASSERT(false);
+    }
+    __builtin_unreachable();
+}
+SPIRE_FN inline PowerId power_id(const char* name) {
+#define SPIRE_UNIT(unit, id, path, type) if (java_id_equal(name, id)) return PowerId::unit;
+#include "powers/catalog.def"
+#undef SPIRE_UNIT
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline CardId card_id(const char* name) {
+#define SPIRE_UNIT(unit, id, path, type) if (java_id_equal(name, id)) return CardId::unit;
+#include "cards/catalog.def"
+#undef SPIRE_UNIT
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline int find_power(const Creature& creature, const char* name) {
+    for (int i = 0; i < creature.powers.size; ++i)
+        if (java_id_equal(power_java_id(creature.powers[i].id), name)) return i;
+    return -1;
+}
+SPIRE_FN inline bool has_relic(const Game& g, const char* name) {
+    for (int i = 0; i < g.run.relics.size; ++i) {
+        switch (g.run.relics[i].id) {
+#define SPIRE_UNIT(unit, id, path, type) case RelicId::unit: if (java_id_equal(name, id)) return true; break;
+#include "relics/catalog.def"
+#undef SPIRE_UNIT
+        default: SPIRE_ASSERT(false);
+        }
+    }
+    return false;
+}
+SPIRE_FN inline int random_living_monster(Game& g) {
+    if (monsters_basically_dead(g)) return no_target;
+    List<int, monster_capacity> candidates{};
+    for (int i = 0; i < g.monster_order.size; ++i) {
+        const int owner = g.monster_order[i];
+        const Creature& monster = g.monsters[owner].creature;
+        if (!monster.half_dead && !monster.dying && !monster.escaped) candidates.push_back(owner);
+    }
+    if (candidates.empty()) return no_target;
+    return candidates[g.rng.card_random.random(0, candidates.size - 1)];
+}
+SPIRE_FN inline int hold_action(Game& g, const Effect& effect) {
+    Effect prepared = effect;
+    action_prepare(g, prepared);
+    if (prepared.kind == EffectKind::ApplyPower && prepared.prepared_power.instance == 0)
+        prepared.prepared_power.instance = g.next_power_instance++;
+    const int index = g.action_objects.size;
+    g.action_objects.push_back(prepared);
+    return index;
+}
 SPIRE_FN inline void add_bottom(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
+    if (prepared.kind == EffectKind::ApplyPower && prepared.prepared_power.instance == 0)
+        prepared.prepared_power.instance = g.next_power_instance++;
     g.manager.actions.push_back(prepared);
 }
 SPIRE_FN inline void add_top(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
+    if (prepared.kind == EffectKind::ApplyPower && prepared.prepared_power.instance == 0)
+        prepared.prepared_power.instance = g.next_power_instance++;
     g.manager.actions.push_front(prepared);
 }
 SPIRE_FN inline int calculate_damage(const Game& g, int source, int target, int base, DamageType type, int card) {
@@ -130,13 +197,33 @@ SPIRE_FN inline void gain_block(Game& g, int target, int amount) {
     c.block = min(999, c.block + floor_int(value));
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
-SPIRE_FN inline void remove_power(Game& g, int target, PowerId id) {
+SPIRE_FN inline Power& power_instance(Game& g, int owner, uint32_t instance) {
+    Powers& powers = get_creature(g, owner).powers;
+    for (int i = 0; i < powers.size; ++i) if (powers[i].instance == instance) return powers[i];
+    for (int i = 0; i < g.detached_powers.size; ++i)
+        if (g.detached_powers[i].instance == instance) return g.detached_powers[i];
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline const Power& power_instance(const Game& g, int owner, uint32_t instance) {
+    const Powers& powers = get_creature(g, owner).powers;
+    for (int i = 0; i < powers.size; ++i) if (powers[i].instance == instance) return powers[i];
+    for (int i = 0; i < g.detached_powers.size; ++i)
+        if (g.detached_powers[i].instance == instance) return g.detached_powers[i];
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t instance) {
     Creature& c = get_creature(g, target);
     if (c.dying || c.half_dead || (target != player_target && c.escaped)) return;
-    const int index = find_power(c, id);
+    int index = find_power(c, id);
+    if (instance != 0) {
+        index = -1;
+        for (int i = 0; i < c.powers.size; ++i) if (c.powers[i].instance == instance) { index = i; break; }
+    }
     if (index >= 0) {
         power_onRemove(g, c.powers[index], target);
-        c.powers.erase(index);
+        g.detached_powers.push_back(c.powers.erase(index));
         refresh_powers(g);
     }
 }
@@ -172,17 +259,20 @@ SPIRE_FN inline void apply_power(Game& g, int source, int target, PowerId id, in
     incoming.just_applied = just_applied;
     power_initialize_state(incoming);
     power_initialPower(g, incoming, target);
+    incoming.instance = g.next_power_instance++;
     apply_prepared_power(g, source, target, incoming, amount);
 }
-SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount) {
+SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, int source) {
     Creature& c = get_creature(g, target);
     const int index = find_power(c, id);
     if (index < 0) return;
     if (amount >= c.powers[index].amount) {
         Effect e{};
         e.kind = EffectKind::RemovePower;
+        e.source = source;
         e.target = target;
         e.power = id;
+        e.power_instance = c.powers[index].instance;
         add_top(g, e);
     } else {
         power_reducePower(g, c.powers[index], target, amount);
