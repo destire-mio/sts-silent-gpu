@@ -106,6 +106,8 @@ struct SnapshotGraph {
         const py::dict data = metadata("cards", id);
         const auto definition = card_data(card.id);
         return object({3, master ? 1 : 0, index}, class_name("cards", id), [&](const std::string& key) -> py::object {
+            const py::object mapped = cards_snapshot(*this, card, master, index, key);
+            if (mapped) return mapped;
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "baseBlock") return py::int_(card.base_block);
             if (field == "baseDamage") return py::int_(card.base_damage);
@@ -154,9 +156,10 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "price") return py::int_(0);
+            if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
-                field == "isMagicNumberModified" || field == "isMultiDamage" ||
+                field == "isMagicNumberModified" ||
                 field == "isSelected" || field == "isUsed" || field == "upgradedCost") return py::bool_(false);
             return {};
         });

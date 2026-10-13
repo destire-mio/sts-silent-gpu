@@ -79,11 +79,16 @@ SPIRE_FN inline void apply_card_powers(Game& g, int card_id) {
     Card& c = get_card(g, card_id);
     card_applyPowersToBlock(g, card_id);
     c.damage = card_damage_value(g, card_id, no_target);
+    if (card_def(c.id).multi_damage) {
+        c.multi_damage_count = g.monster_order.size;
+        for (int i = 0; i < g.monster_order.size; ++i)
+            g.multi_damage[card_id][i] = c.damage;
+    }
 }
 SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
     Card& c = g.cards[card_id];
     card_applyPowersToBlock(g, card_id);
-    if (target != no_target) c.damage = card_damage_value(g, card_id, target);
+    if (!card_def(c.id).multi_damage && target != no_target) c.damage = card_damage_value(g, card_id, target);
     else {
         // AbstractCard.calculateCardDamage(null) fills multiDamage even for skills.
         c.multi_damage_count = g.monster_order.size;
