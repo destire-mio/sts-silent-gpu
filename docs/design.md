@@ -48,21 +48,189 @@ live in constant tables. Behaviour is a `switch` on the id that follows the Java
 A snapshot is the canonical JSON picture of one decision point. The oracle defines it; the engine
 emits the same shape; tests compare them key by key with no tolerance.
 
-It holds everything that can affect a future decision or outcome:
-- run: seed, floor, act, ascension, HP, max HP, gold, keys, master deck (id, upgrades, misc, in
-  order), relics (id, counter, in order), potions by slot, map, current node, boss ids
-- screen: which decision is being asked and its options
-- combat: energy, block, player powers in order, stance-free player state, hand / draw / discard /
-  exhaust piles in order with per-card cost and modified values, each monster (id, HP, block,
-  powers in order, intent, move history), turn number, cards played this turn
-- rng: every stream's call counter
+Schema version **1** is defined here and in `inventory/snapshot-fields.json`. Java names in
+that inventory are data identifiers, not copied implementation. `oracle/build.py` regenerates
+it from the pinned JAR and `Snapshot.included`; the recorder loads the resulting catalog from
+its own mod. The engine must use the same field membership, including private subclass fields.
+No value is rounded or omitted because it is zero, false, empty or null.
 
-A trace is a JSONL file: a header (seed, character, ascension, any scenario setup), then one line
-per decision with `snapshot`, `legal` (the legal actions in canonical order) and `action` (the
-one taken). The last line is the terminal snapshot.
+```typescript
+type Action =
+  | {type: "play", card: number, target: number}
+  | {type: "end_turn"}
+  | {type: "potion_use", slot: number, target: number}
+  | {type: "potion_discard", slot: number}
+  | {type: "choose", option: number}
+  | {type: "proceed"}
+  | {type: "skip"};
+type CardSpec = {id: string, upgrades: number};
+type Scenario = {
+  deck: CardSpec[], relics: string[], potions: (string | null)[],
+  hp: number, max_hp: number, encounter: string
+};
+type Header = {
+  schema: 1, game_sha256: string, seed: number,
+  character: "THE_SILENT", ascension: 20, scenario: Scenario | null
+};
+type Ref = {ref: number};
+type Value = null | boolean | number | string | Ref | Value[] | {[key: string]: Value};
+type ObjectState = {class: string, fields: {[declaringClassAndField: string]: Value}};
+type RngState = [counter: number, state0: number, state1: number] | null;
+type Position = [x: number, y: number] | null;
+type MapNode = {
+  position: Position, room: string | null, emerald: boolean,
+  taken: boolean, edges: [destinationX: number, destinationY: number][]
+};
+type Snapshot = {
+  run: RunState,
+  player: Ref, room: Ref, map: MapNode[][], node: Position, next_node: Position,
+  manager: Ref,
+  combat: {
+    totalDiscardedThisTurn: number, damageReceivedThisTurn: number,
+    damageReceivedThisCombat: number, hpLossThisCombat: number,
+    playerHpLastTurn: number, energyGainedThisCombat: number, turn: number, energy: number
+  },
+  screen: {
+    type: string, up: boolean, previous: string | null, choice: string, options: string[], state: Ref | null,
+    room_dialog: {optionList: Ref[], selectedOption: number, waitForInput: boolean},
+    image_dialog: {selectedOption: number, waitForInput: boolean}
+    grid: {ritualAnimTimer: number}
+  },
+  globals: Globals,
+  pools: {[pool: string]: [cardId: string, upgrades: number, misc: number][]},
+  rng: {
+    monsterRng: RngState, mapRng: RngState, eventRng: RngState, merchantRng: RngState,
+    cardRng: RngState, treasureRng: RngState, relicRng: RngState, potionRng: RngState,
+    monsterHpRng: RngState, aiRng: RngState, shuffleRng: RngState,
+    cardRandomRng: RngState, miscRng: RngState, neow: RngState, unseeded: RngState
+  },
+  objects: ObjectState[]
+};
+type Decision = {snapshot: Snapshot, legal: Action[], action: Action};
+type Terminal = {snapshot: Snapshot, terminal: "death" | "victory" | "combat_end"};
+```
 
-Actions are canonical and UI-free: `play(card_index, target_index)`, `end_turn`,
-`potion_use(slot, target)`, `potion_discard(slot)`, `choose(option_index)`, `proceed`, `skip`.
+All indices are zero based. A target of -1 means no enemy target. `seed`, RNG state words and
+counters are signed Java integer values serialized as JSON integers; consumers must preserve
+64-bit integers (do not decode them through a JavaScript `Number`). Float fields are the exact
+Java float32 values serialized by Gson, compared numerically without tolerance. Enum values
+are Java enum names. Strings use English localization with formatting retained where the game
+stores it. Object member order is not semantic; array order is semantic throughout.
+
+`objects` is an identity graph, not copies of pile entries. Traverse top-level fields in the
+order above; within an object traverse catalog fields by lexicographic
+`DeclaringSimpleClass.field` order. On first encounter reserve the next object index, then
+visit its fields depth first. Every later encounter emits the same `Ref`. The class name is
+relative to `com.megacrit.cardcrawl.`; the catalog's `extends` chain defines inherited fields.
+A field key uses its declaring binary class name without the package (including `$` for inner
+classes), so both `AbstractEvent.screenNum` and `NeowEvent.screenNum`
+can exist. Captured fields of anonymous actions retain their owner references. Only fields named
+in the catalog are emitted. Java arrays and lists preserve order;
+Java maps have stringified keys sorted lexicographically. Card UUIDs are replaced by sequential
+integers on first UUID encounter *within that snapshot*, preserving equality between copies.
+Object references and UUID equality are distinct relationships. The one adapter-owned class
+`communicationmod.EndOfTurnAction` keeps its full name and inherits `AbstractGameAction` fields.
+It is an observer marker appended by CommunicationMod at the end of a player turn; updating it
+marks it done and changes the listener's turn flag, with no game-rule side effect. It remains
+in snapshots when a retain selection interrupts the queue.
+
+Pile `CardGroup.group` order is Java list order: index 0 is the bottom, the last element is the
+top for draw/discard/exhaust groups; hand indices are its list indices. Master deck, relics,
+powers, monsters, moves, card queues, pre-turn queues, pending actions and played-card histories
+retain their original order. Card fields include costs, damage/block/magic values, upgrade and
+bottle flags, retain/exhaust/autoplay flags, misc, multiDamage, flip/selection state and subclass
+state. Power, relic and monster fields include private subclass counters/references as well as
+base state. `manager.currentAction` and all queues are recorded even at interrupted card-selection
+decisions. Graph references retain the identity of their cards, powers and creatures.
+
+`RunState` has the following exact keys (Java `AbstractDungeon` names except the final two):
+
+- Strings: `id`, `bossKey`, `lastCombatMetricKey` (nullable where Java stores null).
+- Integers: `floorNum`, `actNum`, `ascensionLevel`, `bossCount`, `cardBlizzRandomizer`,
+  `cardBlizzStartOffset`, `cardBlizzGrowth`, `cardBlizzMaxOffset`, `smallChestChance`,
+  `mediumChestChance`, `largeChestChance`, `commonRelicChance`, `uncommonRelicChance`, `rareRelicChance`.
+- Booleans: `isAscensionMode`, `firstRoomChosen`, `isDungeonBeaten`, `is_victory`, `ascensionCheck`.
+- Floats: `shrineChance`, `cardUpgradedChance`, `colorlessRareChance`, `shopRoomChance`,
+  `restRoomChance`, `eventRoomChance`, `eliteRoomChance`, `treasureRoomChance`.
+- Integer lists: `pathX`, `pathY`.
+- String lists: `monsterList`, `eliteMonsterList`, `bossList`, `eventList`, `shrineList`,
+  `specialOneTimeEventList`, `commonRelicPool`, `uncommonRelicPool`, `rareRelicPool`,
+  `shopRelicPool`, `bossRelicPool`, `relicsToRemoveOnStart`.
+- `seed`: signed 64-bit integer. `keys`: `[ruby, emerald, sapphire]` booleans.
+
+`Globals` has the following exact keys and values:
+
+- `event_chances`: `{ELITE_CHANCE, MONSTER_CHANCE, SHOP_CHANCE, TREASURE_CHANCE}` (floats).
+- `potion`: `{blizzardPotionMod}` (integer).
+- `shop`: `{purgeCost, actualPurgeCost}` (integers).
+- `drawn_cards`, `scraped_cards`: ordered arrays of card references.
+- `obtained_cards`: map from card id to acquisition count.
+- `actions.common.DiscardAction`: `{numDiscarded}`.
+- `actions.common.ExhaustAction`: `{numExhausted}`.
+- `actions.common.PutOnBottomOfDeckAction`, `actions.common.PutOnDeckAction`,
+  `actions.unique.CodexAction`: each `{numPlaced}`.
+- `actions.unique.NightmareAction`: `{numDiscarded}`.
+- `events.shrines.FaceTrader`: `{goldReward, damage}`.
+- `powers.TheBombPower`: `{bombIdOffset}`.
+- `relics.CentennialPuzzle`: `{usedThisCombat}` (boolean).
+- `relics.OrangePellets`: `{SKILL, POWER, ATTACK}` (booleans).
+
+The exact pool keys are `colorlessCardPool`, `curseCardPool`, `commonCardPool`, `uncommonCardPool`,
+`rareCardPool` and the corresponding five `src`-prefixed names with capitalized first letters.
+These library-derived template pools contain `[id, timesUpgraded, misc]` entries in pool order.
+`screen.state` points to the active GRID, HAND_SELECT, CARD_REWARD, COMBAT_REWARD, BOSS_REWARD or
+SHOP object, otherwise null; an event's private state is under `room.event`. `screen.options`
+are CommunicationMod's ordered canonical choice names; `choose.option` indexes this list.
+`screen.grid.ritualAnimTimer` is present even outside GRID: Java retains the transform-preview
+timer between openings, and preview refreshes consume the default `Random()` rule draws.
+The active GRID object also includes that timer and `hoveredCard`, the card to confirm.
+Map rows, columns and destination edges retain Java order. Historical rooms on the map are
+represented by their room type; the live room is the separate `room` graph root.
+
+Legal actions are enumerated in this order: playable hand cards (hand index, then living enemy
+index for targeted cards), end turn, occupied potion slots (uses by target index, then discard),
+choices by option index, proceed, skip. Card/potion availability comes from the original
+`canUse`/`canDiscard` methods; dead, escaping and half-dead enemies are excluded as player targets.
+The policy is a separate libGDX `RandomXS128(seed)`, drawing `nextInt(legal.size())` exactly once
+per decision; it never consumes a game RNG. A full run begins at the first Neow prompt and ends
+on death or the victory screen. A scenario starts at the first combat input after the specified
+setup and ends on death or combat completion, after original room updates have settled.
+The initial profile sets `THE_SILENT_SPIRITS=1`, giving Neow's four-reward opening; fresh isolated
+preferences retain the game's default normal animation speed (`FAST_MODE=false`).
+
+Scenario setup starts a fresh A20 Silent run, replaces the master deck and ordered relics,
+applies original relic `onEquip` hooks, fills potion slots (null means empty), then assigns HP.
+Relics are acquired one at a time in input order. Their acquisition screens and callbacks run
+to completion before acquiring the next relic. Setup choices use an independent
+`RandomXS128(seed)` and the same uniform legal-action enumeration. These setup choices precede
+the trace; the combat policy starts with its own `RandomXS128(seed)`. The input deck is the deck
+before acquisition: original acquisition effects can upgrade, remove or transform its cards.
+It enters a plain Act 1 `MonsterRoom` at floor 1 using the original `nextRoomTransition` and the
+specified encounter as its next monster-list entry. This defines the scenario context; it does
+not apply burning-elite modifiers or boss-room rewards. Piles, energy, monsters and relic battle
+hooks are initialized by the game.
+
+The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio
+output. Original update/render callbacks execute. Decisions wait for the communication listener,
+Soul settlement, monster death/intent settlement, card-manipulation callbacks, turn/battle-start
+callbacks, key acquisition, and campfire callbacks unless a selection screen needs input.
+Combat input with no selection screen additionally requires `WAITING_ON_USER`, empty action,
+pre-turn and card queues, and no queued end turn. A GRID notification timeout is used only
+outside combat; closing a combat selection never bypasses action settlement.
+Card, relic and ascension unlock queries are fixed to unlocked, and Act 4 availability is true.
+The launcher loads local mods without Workshop discovery. The publisher adapter uses the game's no-op GOG implementation;
+it never initializes Steam, and metrics upload is disabled.
+Only rendering/device state and persistent profile/score/unlock metrics are outside the snapshot.
+Gameplay-affecting unseeded calls are isolated as specified in `inventory/unseeded.md`. The
+presentation RNG is separate and cannot supply the listed rule calls. Batches reset rule statics
+to their fresh-process values before each seed; this includes The Bomb's id allocator, turn/energy
+counters, dialog selections, stale next-room/encounter references, and the captured cold-menu
+relic exclusion list. Device-cache RNG is isolated from both presentation and rule streams.
+The grid screen is recreated between runs; its transform timer persists within a run.
+
+Each UTF-8 JSONL file is `Header`, followed by zero or more `Decision` records, then one `Terminal`.
+Every line ends with LF. Recorded data is never edited. Committed fixtures may use `.jsonl.gz`:
+gzip is only a lossless storage envelope; replay compares the decompressed JSONL unchanged.
 
 ## Tests
 `tests/` replays a trace through the engine: `reset` (or apply scenario setup), then for each line
@@ -71,7 +239,7 @@ reported with its JSON path and both values. One metric tracks the whole project
 traces that replay with zero differences, split by unit in `inventory/`.
 
 ## Oracle (`oracle/`)
-Drives the unmodified game logic headless and writes traces. Two kinds:
+Drives the original game logic headless and writes traces; deterministic environment patches are listed in the unseeded inventory. Two kinds:
 - scenario traces: a chosen deck, relics, potions and encounter, to cover each unit in isolation
 - full-run traces: whole games from a seed under a seeded random legal policy
 
@@ -79,3 +247,16 @@ Drives the unmodified game logic headless and writes traces. Two kinds:
 One row per unit in scope (card, relic, potion, power, monster, encounter, event, room/screen
 rule, ascension modifier) with its Java path. Status is computed from test results, never typed
 by hand.
+
+Build the local oracle with `python3 oracle/build.py`. This links locally installed JARs/runtime
+into ignored `oracle/instance/`, compiles only our adapter, and writes the field catalog.
+Record full runs with `python3 oracle/record.py --seed 1 --count 20 --output /tmp/oracle-full`;
+add `--scenario tests/scenarios/starter.json` for combat scenarios. `--workers 1|2|3` partitions
+seeds between isolated JVMs. Each process owns its working directory, preferences and saves;
+no service or network transport is started. `python3 oracle/verify.py --output /tmp/oracle-check`
+records two concurrent batches in separate JVMs, reversing job order in the second batch, and compares
+20 full runs plus 200 scenarios byte for byte. Timings exclude JVM startup but include game reset,
+original callbacks, snapshot construction and JSONL writes.
+Regenerate the seven committed fixtures with
+`python3 tests/record_oracle_fixtures.py --output /tmp/oracle-fixtures`, then check their schema,
+scenario initialization and terminal records with `python3 tests/check_oracle.py`.
