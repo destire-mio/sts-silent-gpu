@@ -262,7 +262,13 @@ struct SnapshotGraph {
 
     py::object relic(int index) {
         const Relic& relic = game.run.relics[index];
+        UnitStateSnapshot state;
+        relic_visit_state(relic, state);
         return object({9, index, 0}, class_name("relics", static_cast<int>(relic.id)), [&](const std::string& key) -> py::object {
+            const py::object value = relics_snapshot(*this, relic, index, key);
+            if (value) return value;
+            const std::string field = key.substr(key.find('.') + 1);
+            if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             if (key == "AbstractRelic.relicId") return py::str(relic_names[static_cast<int>(relic.id)]);
             if (key == "AbstractRelic.counter") return py::int_(relic.counter);
             if (key == "AbstractRelic.cost") return py::int_(0);
@@ -290,7 +296,26 @@ struct SnapshotGraph {
         return object({1, 0, 0}, "characters.TheSilent", [&](const std::string& key) -> py::object {
             if (key.compare(0, 17, "AbstractCreature.") == 0) return creature_field(player_target, key);
             const std::string field = key.substr(key.find('.') + 1);
-            if (field == "blights" || field == "orbs") return py::list();
+            if (field == "blights") return py::list();
+            if (field == "orbs") {
+                py::list result;
+                if (game.player.max_orbs == 0) return result;
+                const char* type = nullptr;
+                for (int i = 0; i < static_cast<int>(RelicId::Count); ++i) {
+                    const char* candidate = relic_data(static_cast<RelicId>(i)).empty_orb_class;
+                    if (candidate) type = candidate;
+                }
+                SPIRE_ASSERT(type != nullptr);
+                for (int i = 0; i < game.player.max_orbs; ++i) {
+                    result.append(object({26, i, 0}, type, [&](const std::string& name) -> py::object {
+                        if (name == "AbstractOrb.ID") return py::none();
+                        if (name == "AbstractOrb.baseEvokeAmount" || name == "AbstractOrb.basePassiveAmount" ||
+                            name == "AbstractOrb.evokeAmount" || name == "AbstractOrb.passiveAmount") return py::int_(0);
+                        return {};
+                    }));
+                }
+                return result;
+            }
             if (field == "cardInUse") return card(game.player.card_in_use);
             if (field == "cardsPlayedThisTurn") return py::int_(game.player.cards_played_this_turn);
             if (field == "chosenClass") return py::str("THE_SILENT");
@@ -310,7 +335,8 @@ struct SnapshotGraph {
             if (field == "hoveredCard") return py::none();
             if (field == "limbo") return group(4, "UNSPECIFIED", &game.limbo);
             if (field == "masterDeck") return group(5, "MASTER_DECK");
-            if (field == "masterMaxOrbs" || field == "maxOrbs") return py::int_(0);
+            if (field == "masterMaxOrbs") return py::int_(game.player.master_max_orbs);
+            if (field == "maxOrbs") return py::int_(game.player.max_orbs);
             if (field == "potionSlots") return py::int_(2);
             if (field == "potions") {
                 py::list result;

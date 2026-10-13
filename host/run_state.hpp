@@ -394,11 +394,13 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
     if (game.smoked) return;
     const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
     const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
-    std::array<int, 3> rarities{};
-    for (int i = 0; i < 3; ++i) {
+    int count = 3;
+    for (int i = 0; i < game.run.relics.size; ++i) count = relic_changeNumberOfCardsInReward(game, i, count);
+    std::vector<int> rarities;
+    for (int i = 0; i < count; ++i) {
         const int roll = game.rng.card.random(99) + run.cardBlizzRandomizer;
         const int rarity = roll < 3 ? 2 : roll < 40 ? 1 : 0;
-        rarities[i] = rarity;
+        rarities.push_back(rarity);
         if (rarity == 2) run.cardBlizzRandomizer = 5;
         if (rarity == 0) run.cardBlizzRandomizer = std::max(-40, run.cardBlizzRandomizer - 1);
         std::string card;

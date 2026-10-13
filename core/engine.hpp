@@ -71,7 +71,8 @@ SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
     __builtin_unreachable();
 }
 SPIRE_FN inline void obtain_potion(Game& g, PotionId id, const PotionState& state) {
-    if (has_relic(g, "Sozu")) return;
+    for (int i = 0; i < g.run.relics.size; ++i)
+        if (relic_data(g.run.relics[i].id).blocks_potions) return;
     for (int i = 0; i < 2; ++i) {
         if (g.run.potions[i] != PotionId::Empty) continue;
         g.run.potions[i] = id;
@@ -726,12 +727,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.run.floor = setup.floor;
     g.run.gold = setup.gold;
     g.run.master_deck = setup.deck;
-    g.run.relics = setup.relics;
-    for (int i = 0; i < 2; ++i) {
-        g.run.potions[i] = setup.potions[i];
-        potion_initialize_state(g, i);
-        g.run.potion_state[i] = construct_potion(g, setup.potions[i]);
-    }
+    g.run.relics.clear();
+    for (auto& potion : g.run.potions) potion = PotionId::Empty;
     g.rng.reseed_floor(g.run.seed, setup.floor);
     g.player = Player{};
     g.player.creature.draw_x = 1280.0f * 0.25f;
@@ -761,6 +758,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.turn = 1;
     g.battle_over = false;
     g.room_in_combat = true;
+    g.room_type = RoomType::Monster;
     g.cannot_lose = false;
     g.mugged = false;
     g.smoked = false;
@@ -770,6 +768,19 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.screen = Screen::Combat;
     g.encounter = setup.encounter;
     encounter_initialize_state(g);
+    g.player.creature.hp = 59;
+    g.player.creature.max_hp = 66;
+    for (int i = 0; i < setup.relics.size; ++i) equip_relic(g, setup.relics[i].id);
+    g.player.creature.hp = setup.hp;
+    g.player.creature.max_hp = setup.max_hp;
+    g.player.bloodied = setup.hp <= setup.max_hp / 2;
+    g.player.hand_size = g.player.master_hand_size;
+    g.player.max_orbs = g.player.master_max_orbs;
+    for (int i = 0; i < 2; ++i) {
+        g.run.potions[i] = setup.potions[i];
+        potion_initialize_state(g, i);
+        g.run.potion_state[i] = construct_potion(g, setup.potions[i]);
+    }
     build_encounter(g, setup.encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
@@ -790,6 +801,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     if (innate.size > g.player.hand_size) {
         g.manager.pre_turn_actions.push_front(g.action_objects.add(units::actions::Draw::construct(innate.size - g.player.hand_size)));
     }
+    for (int i = 0; i < g.run.relics.size; ++i) relic_beforeEnergyPrep(g, i);
+    g.player.energy_per_turn = g.player.energy_master;
     for (int i = 0; i < g.monster_order.size; ++i) {
         const int owner = g.monster_order[i];
         monster_pre_battle(g, owner);

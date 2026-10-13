@@ -74,7 +74,7 @@ for name in ("onGainGold", "onLoseGold", "onSpendGold", "onEquip", "onUnequip", 
              "atBattleStart", "atBattleStartPreDraw", "atTurnStart", "atTurnStartPostDraw",
              "onPlayerEndTurn", "onBloodied", "onNotBloodied", "onManualDiscard", "onVictory",
              "onMeditate", "onEnergyRecharge", "onRest", "onRitual", "onEnterRestRoom", "onRefreshHand",
-             "onShuffle", "onSmith", "onDrawOrDiscard", "onMasterDeckChange", "onUsePotion"):
+             "onShuffle", "onSmith", "onDrawOrDiscard", "onMasterDeckChange", "onUsePotion", "beforeEnergyPrep"):
     relic(name)
 for name in ("onExhaust", "onCardDraw"):
     relic(name, "int card")
