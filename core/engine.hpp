@@ -71,8 +71,6 @@ SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
     __builtin_unreachable();
 }
 SPIRE_FN inline void obtain_potion(Game& g, PotionId id, const PotionState& state) {
-    for (int i = 0; i < g.run.relics.size; ++i)
-        if (relic_data(g.run.relics[i].id).blocks_potions) return;
     for (int i = 0; i < 2; ++i) {
         if (g.run.potions[i] != PotionId::Empty) continue;
         g.run.potions[i] = id;
