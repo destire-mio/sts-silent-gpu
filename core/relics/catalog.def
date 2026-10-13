@@ -10,3 +10,4 @@ SPIRE_UNIT(TungstenRod, "TungstenRod", "core/relics/tungsten_rod.hpp", TungstenR
 SPIRE_UNIT(Turnip, "Turnip", "core/relics/turnip.hpp", Turnip)
 SPIRE_UNIT(TwistedFunnel, "TwistedFunnel", "core/relics/twisted_funnel.hpp", TwistedFunnel)
 SPIRE_UNIT(UnceasingTop, "Unceasing Top", "core/relics/unceasing_top.hpp", UnceasingTop)
+SPIRE_UNIT(Vajra, "Vajra", "core/relics/vajra.hpp", Vajra)
