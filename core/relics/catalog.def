@@ -8,3 +8,4 @@ SPIRE_UNIT(RunicPyramid, "Runic Pyramid", "core/relics/runic_pyramid.hpp", Runic
 SPIRE_UNIT(SacredBark, "SacredBark", "core/relics/sacred_bark.hpp", SacredBark)
 SPIRE_UNIT(Shuriken, "Shuriken", "core/relics/shuriken.hpp", Shuriken)
 SPIRE_UNIT(SingingBowl, "Singing Bowl", "core/relics/singing_bowl.hpp", SingingBowl)
+SPIRE_UNIT(SlaversCollar, "SlaversCollar", "core/relics/slavers_collar.hpp", SlaversCollar)
