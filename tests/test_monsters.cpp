@@ -18,9 +18,9 @@ void execute_next(Game& game) {
 }
 
 void encounter_construction() {
-    constexpr int counts[] = {1, 1, 2, 2, 1, 4, 1, 1, 5, 2, 2, 1, 3, 2};
-    constexpr int hp_calls[] = {1, 1, 4, 2, 1, 4, 1, 1, 5, 7, 6, 1, 6, 2};
-    constexpr int misc_calls[] = {0, 0, 2, 1, 0, 4, 0, 1, 5, 4, 3, 0, 3, 0};
+    constexpr int counts[] = {1, 1, 2, 2, 1, 4, 1, 1, 5, 2, 2, 1, 3, 2, 1, 1, 3, 1, 1, 1, 2, 3, 3, 3, 1, 1, 3};
+    constexpr int hp_calls[] = {1, 1, 4, 2, 1, 4, 1, 1, 5, 7, 6, 1, 6, 2, 1, 1, 3, 1, 1, 1, 2, 3, 3, 3, 1, 1, 3};
+    constexpr int misc_calls[] = {0, 0, 2, 1, 0, 4, 0, 1, 5, 4, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     for (int seed = 0; seed < 100; ++seed) {
         for (int id = 0; id < static_cast<int>(EncounterId::Count); ++id) {
             Game g{};
@@ -125,12 +125,15 @@ void split_and_target_identity() {
     g.monsters[0].creature.hp = half;
     monster_on_damage(g, 0);
     CHECK(g.monsters[0].pending_move == 3);
-    CHECK(g.monsters[0].split_triggered);
+    CHECK(g.monsters[0].state.SpikeSlime_L.splitTriggered);
     CHECK(g.manager.actions.size == 1);
     const int history = g.monsters[0].move_history.size;
     monster_on_damage(g, 0);
     CHECK(g.monsters[0].move_history.size == history);
-    split_monster(g, 0);
+    clear_actions(g, g.manager.actions);
+    create_monster_intent(g, 0);
+    monster_take_turn(g, 0);
+    while (!g.manager.actions.empty()) execute_next(g);
     CHECK(g.monsters.size == 4);
     CHECK(g.monster_order[0] == 2 && g.monster_order[1] == 0 && g.monster_order[2] == 1 && g.monster_order[3] == 3);
     CHECK(g.monsters[2].creature.draw_x < g.monsters[0].creature.draw_x);
@@ -139,7 +142,7 @@ void split_and_target_identity() {
     CHECK(g.monsters[1].id == MonsterId::Cultist);
     CHECK(g.monsters[2].creature.hp == half && g.monsters[3].creature.hp == half);
     CHECK(g.rng.monster_hp.counter == hp_calls);
-    CHECK(g.rng.ai.counter == ai_calls + 2);
+    CHECK(g.rng.ai.counter == ai_calls + 3);
 }
 
 void shield_targeting() {

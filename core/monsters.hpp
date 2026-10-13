@@ -11,7 +11,6 @@ SPIRE_FN inline void get_monster_move(Game& g, int index, int num) { monster_get
 SPIRE_FN inline void monster_take_turn(Game& g, int index) { monster_takeTurn(g, index); }
 SPIRE_FN inline void monster_pre_battle(Game& g, int index) { monster_usePreBattleAction(g, index); }
 SPIRE_FN inline void monster_on_damage(Game& g, int index) { monster_onDamage(g, index); }
-SPIRE_FN inline void split_monster(Game& g, int index) { monster_split(g, index); }
 SPIRE_FN inline void build_encounter(Game& g, EncounterId encounter) {
     g.monsters.clear();
     g.monster_order.clear();

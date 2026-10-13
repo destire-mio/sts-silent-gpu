@@ -20,6 +20,13 @@ SPIRE_FN inline CardId card_id(const char* name) {
     SPIRE_ASSERT(false);
     __builtin_unreachable();
 }
+SPIRE_FN inline MonsterId monster_id(const char* name) {
+#define SPIRE_UNIT(unit, id, path, type) if (same_id(name, id)) return MonsterId::unit;
+#include "monsters/catalog.def"
+#undef SPIRE_UNIT
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
 SPIRE_FN inline int find_power(const Game& g, const Creature& c, const char* name) {
     for (int i = 0; i < c.powers.size; ++i) {
         const char* game_id = nullptr;

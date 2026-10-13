@@ -89,13 +89,13 @@ struct Monster {
     bool intent_multi = false;
     uint16_t move_name = 0;
     List<int8_t, 256> move_history{};
-    int16_t damage[3]{};
+    int16_t damage[5]{};
     uint8_t damage_count = 1;
-    int16_t damage_output[3]{};
-    bool damage_modified[3]{};
+    int16_t damage_output[5]{};
+    bool damage_modified[5]{};
     int16_t block_amount = 0;
     int16_t magic = 0;
-    bool split_triggered = false;
+    bool cannot_escape = false;
     bool escape_next = false;
     MonsterState state{};
 };
@@ -189,6 +189,7 @@ struct Run {
     int floor = 0;
     int act = 1;
     int ascension = 20;
+    int boss_count = 0;
     int gold = 99;
     bool ruby_key = false;
     bool emerald_key = false;

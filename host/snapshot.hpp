@@ -335,10 +335,12 @@ struct SnapshotGraph {
         UnitStateSnapshot state;
         monster_visit_state(monster, state);
         return object({5, index, 0}, class_name("monsters", static_cast<int>(monster.id)), [&](const std::string& key) -> py::object {
+            const py::object mapped = monsters_snapshot(*this, monster, index, key);
+            if (mapped) return mapped;
             if (key.compare(0, 17, "AbstractCreature.") == 0) return creature_field(index, key);
             const std::string field = key.substr(key.find('.') + 1);
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
-            if (field == "cannotEscape") return py::bool_(false);
+            if (field == "cannotEscape") return py::bool_(monster.cannot_escape);
             if (field == "damage") {
                 py::list result;
                 for (int i = 0; i < monster.damage_count; ++i) result.append(monster_damage(index, i));
@@ -369,10 +371,6 @@ struct SnapshotGraph {
                 if (name == "EnemyMoveInfo.nextMove") return py::int_(monster.pending_move);
                 return {};
             });
-            if (field == "splitTriggered") return py::bool_(monster.split_triggered);
-            if (field == "saveX") return java_float(monster.offset_x);
-            if (key == "Cultist.ritualAmount") return py::int_(4);
-            if (key == "Cultist.talky") return py::bool_(true);
             return {};
         });
     }
@@ -477,6 +475,17 @@ struct SnapshotGraph {
         });
     }
 
+    template<class T, size_t N> py::object monster_array(const T (&values)[N]) {
+        py::list result;
+        for (const auto& value : values) result.append(creature(value));
+        return result;
+    }
+    template<class T, size_t N> py::object monster_map(const T (&values)[N], int first_key) {
+        py::dict result;
+        for (size_t i = 0; i < N; ++i)
+            if (values[i] != no_target) result[py::str(std::to_string(first_key + i))] = monster(values[i]);
+        return result;
+    }
     template<class T> py::object scalar(const T& value) { return py::cast(value); }
     py::object scalar(const char* value) { return value ? py::object(py::str(value)) : py::object(py::none()); }
     py::object scalar(std::nullptr_t) { return py::none(); }
@@ -720,7 +729,7 @@ struct SnapshotGraph {
         py::dict result("id"_a="Exordium", "floorNum"_a=game.run.floor, "actNum"_a=game.run.act,
             "ascensionLevel"_a=game.run.ascension, "isAscensionMode"_a=true,
             "isDungeonBeaten"_a=false, "is_victory"_a=false, "ascensionCheck"_a=true,
-            "bossKey"_a=fresh.bossKey, "bossCount"_a=0, "firstRoomChosen"_a=false,
+            "bossKey"_a=fresh.bossKey, "bossCount"_a=game.run.boss_count, "firstRoomChosen"_a=false,
             "cardBlizzRandomizer"_a=fresh.cardBlizzRandomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
             "shrineChance"_a=0.25, "cardUpgradedChance"_a=0.0, "colorlessRareChance"_a=0.3,
             "shopRoomChance"_a=0.05, "restRoomChance"_a=0.12, "eventRoomChance"_a=0.22,

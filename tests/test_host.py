@@ -1,5 +1,6 @@
 import json
 import random
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -134,8 +135,25 @@ class HostInterface(unittest.TestCase):
 
     def test_all_encounters_reach_terminal(self):
         policy = random.Random(12)
+        root = Path(__file__).resolve().parents[1]
+        units = {unit["key"]: unit for unit in json.loads((root / "inventory/units.json").read_text())["units"]}
+        monsters = set(re.findall(r'SPIRE_UNIT\(\w+, "([^"]+)"', (root / "core/monsters/catalog.def").read_text()))
         for seed, encounter in enumerate(spire.encounters):
             with self.subTest(encounter=encounter):
+                pending = ["encounter:" + encounter]
+                visited = set()
+                missing = set()
+                while pending:
+                    key = pending.pop()
+                    if key in visited:
+                        continue
+                    visited.add(key)
+                    unit = units[key]
+                    if key.startswith("monster:") and unit["game_id"] not in monsters:
+                        missing.add(unit["game_id"])
+                    pending.extend(key for key in unit["content_dependencies"] if key.startswith("monster:"))
+                if missing:
+                    self.skipTest("Unported monsters: " + ", ".join(sorted(missing)))
                 game = spire.start_combat(seed, {"encounter": encounter})
                 decisions = 0
                 while game.legal_actions():

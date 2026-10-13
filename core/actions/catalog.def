@@ -15,7 +15,6 @@ SPIRE_UNIT(RollMove, "actions.common.RollMoveAction", "core/actions/roll_move.hp
 SPIRE_UNIT(SetMove, "actions.common.SetMoveAction", "core/actions/set_move.hpp", SetMove)
 SPIRE_UNIT(Escape, "actions.common.EscapeAction", "core/actions/escape.hpp", Escape)
 SPIRE_UNIT(AddCardDiscard, "actions.common.MakeTempCardInDiscardAction", "core/actions/add_card_discard.hpp", AddCardDiscard)
-SPIRE_UNIT(Split, "split", "core/actions/split.hpp", Split)
 SPIRE_UNIT(StealGold, "steal_gold", "core/actions/steal_gold.hpp", StealGold)
 SPIRE_UNIT(BlockRandomMonster, "actions.unique.GainBlockRandomMonsterAction", "core/actions/block_random_monster.hpp", BlockRandomMonster)
 SPIRE_UNIT(ExhaustCard, "actions.common.ExhaustSpecificCardAction", "core/actions/exhaust_card.hpp", ExhaustCard)
