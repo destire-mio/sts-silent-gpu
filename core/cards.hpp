@@ -25,7 +25,7 @@ SPIRE_FN inline bool card_has_enough_energy_base(const Game& g, int card_id) {
     return card.cost_for_turn <= g.player.energy || card_freeToPlay(g, card_id) || card.in_autoplay;
 }
 SPIRE_FN inline bool card_can_use_base(const Game& g, int card_id, int target) {
-    const Card& c = g.cards[card_id];
+    const Card& c = get_card(g, card_id);
     const CardType type = card_data(c.id).type;
     if (c.cost_for_turn < -1 && (type == CardType::Status || type == CardType::Curse)) {
         bool allowed = false;
@@ -41,7 +41,7 @@ SPIRE_FN inline bool can_play(const Game& g, int card) {
     return card_canUse(g, card, no_target);
 }
 SPIRE_FN inline Card stat_equivalent_copy(const Game& g, int card_id) {
-    const Card& source = g.cards[card_id];
+    const Card& source = get_card(g, card_id);
     Card copy = make_card(source.id, source.upgrades, source.misc);
     copy.base_damage = source.base_damage;
     copy.base_block = source.base_block;
@@ -52,7 +52,7 @@ SPIRE_FN inline Card stat_equivalent_copy(const Game& g, int card_id) {
     return copy;
 }
 SPIRE_FN inline int card_damage_value(Game& g, int card_id, int target) {
-    Card& c = g.cards[card_id];
+    Card& c = get_card(g, card_id);
     float value = static_cast<float>(c.base_damage);
     for (int i = 0; i < g.run.relics.size; ++i) {
         value = relic_atDamageModify(g, i, value, card_id);
@@ -76,7 +76,7 @@ SPIRE_FN inline int card_damage_value(Game& g, int card_id, int target) {
     return damage;
 }
 SPIRE_FN inline void apply_card_powers(Game& g, int card_id) {
-    Card& c = g.cards[card_id];
+    Card& c = get_card(g, card_id);
     card_applyPowersToBlock(g, card_id);
     c.damage = card_damage_value(g, card_id, no_target);
 }

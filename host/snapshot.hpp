@@ -1,7 +1,7 @@
 #pragma once
 #include "names.hpp"
 #include "run_state.hpp"
-#include "card_pool_data.hpp"
+#include "core/card_pool.hpp"
 #include "core/card_data.hpp"
 #include "spire_host_generated/snapshot.hpp"
 #include <pybind11/pybind11.h>
@@ -432,7 +432,8 @@ struct SnapshotGraph {
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "baseRareCardChance" || field == "rareCardChance") return py::int_(3);
             if (field == "baseUncommonCardChance" || field == "uncommonCardChance") return py::int_(37);
-            if (field == "cannotLose" || field == "combatEvent" || field == "eliteTrigger" || field == "skipMonsterTurn" || field == "smoked") return py::bool_(false);
+            if (field == "cannotLose") return py::bool_(game.cannot_lose);
+            if (field == "combatEvent" || field == "eliteTrigger" || field == "skipMonsterTurn" || field == "smoked") return py::bool_(false);
             if (field == "event") return py::none();
             if (field == "endBattleTimer" && !game.battle_over) return py::float_(0.0);
             if (field == "isBattleOver") return py::bool_(game.battle_over);
@@ -477,6 +478,7 @@ struct SnapshotGraph {
         return object({15, queue, index}, name, [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
             if (key == "AbstractGameAction.actionType") {
+                if (action_data(effect.kind).type) return py::str(action_data(effect.kind).type);
                 switch (effect.kind) {
                 case EffectKind::MakeTempCardInDiscardAndDeck: case EffectKind::MakeTempCardInDrawPile:
                 case EffectKind::MakeTempCardInHand: case EffectKind::ModifyDamage: case EffectKind::PutOnDeck:
@@ -582,7 +584,7 @@ struct SnapshotGraph {
             if (key == "DamageAction.goldAmount") return py::int_(effect.extra);
             if (key == "DamageAction.muteSfx") return py::bool_(false);
             if (key == "DamageAction.skipWait") return py::bool_(effect.flag);
-            if (key == "DamageAction.info") {
+            if (key == "DamageAction.info" || key == "BaneAction.info" || key == "GreedAction.info" || key == "RitualDaggerAction.info") {
                 if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
                     const Monster& owner = game.monsters[effect.source];
                     for (int i = 0; i < owner.damage_count; ++i)
@@ -646,6 +648,18 @@ struct SnapshotGraph {
             if (key == "UseCardAction.reboundCard" || key == "UseCardAction.returnToHand") return py::bool_(false);
             if (key == "UseCardAction.target") return effect.target < 0 ? py::object(py::none()) : monster(effect.target);
             if (key == "UseCardAction.targetCard") return card(effect.card);
+            if (key == "BaneAction.m") return effect.target == no_target ? py::object(py::none()) : monster(effect.target);
+            if (key == "RestoreRetainedCardsAction.group") return group(25, "UNSPECIFIED", &game.retained);
+            if (key == "EnlightenmentAction.p" || key == "ForethoughtAction.p" || key == "MadnessAction.p" || key == "RandomizeHandCostAction.p") return player();
+            if (key == "DiscoveryAction.cardType") {
+                const int type = effect.state.Discovery.cardType;
+                constexpr const char* types[] = {"ATTACK", "SKILL", "POWER", "STATUS", "CURSE"};
+                return type < 0 ? py::object(py::none()) : py::object(py::str(types[type]));
+            }
+            if (key == "RitualDaggerAction.uuid") {
+                const auto inserted = uuids.emplace(effect.state.RitualDagger.uuid, static_cast<int>(uuids.size()));
+                return py::int_(inserted.first->second);
+            }
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             return {};
         });
@@ -737,11 +751,29 @@ struct SnapshotGraph {
     py::dict screen(const FreshRunState& fresh) {
         const bool selecting = game.screen == Screen::Discard || game.screen == Screen::Grid;
         const bool grid = game.screen == Screen::Grid;
+        const bool card_reward = game.screen == Screen::CardReward;
         const bool rewards = game.screen == Screen::Victory;
-        py::dict result("type"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"),
-            "up"_a=(selecting || game.screen == Screen::Death || rewards), "previous"_a=py::none(),
-            "choice"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"));
+        py::dict result("type"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"),
+            "up"_a=(selecting || card_reward || game.screen == Screen::Death || rewards), "previous"_a=py::none(),
+            "choice"_a=(selecting ? (grid ? "GRID" : "HAND_SELECT") : card_reward ? "CARD_REWARD" : game.screen == Screen::Death ? "DEATH" : rewards ? "COMBAT_REWARD" : "NONE"));
         if (rewards) { result["options"] = py::cast(fresh.rewardTypes); result["state"] = reward_screen(fresh); }
+        else if (card_reward) {
+            py::list options;
+            for (int i = 0; i < game.reward_cards.size; ++i)
+                options.append(card_names[static_cast<int>(game.cards[game.reward_cards[i]].id)]);
+            result["options"] = options;
+            result["state"] = object({26, 0, 0}, "screens.CardRewardScreen", [&](const std::string& key) -> py::object {
+                const std::string field = key.substr(key.find('.') + 1);
+                if (field == "rewardGroup") return cards(game.reward_cards);
+                if (field == "discoveryCard") return card(game.discovery_card);
+                if (field == "discovery") return py::bool_(true);
+                if (field == "skippable") return py::bool_(game.reward_skippable);
+                if (field == "draftCount") return py::int_(0);
+                if (field == "codexCard" || field == "rItem") return py::none();
+                if (field == "cardOnly" || field == "chooseOne" || field == "codex" || field == "draft" || field == "hasTakenAll") return py::bool_(false);
+                return {};
+            });
+        }
         else if (!selecting) { result["options"] = py::list(); result["state"] = py::none(); }
         else {
             py::list options;
@@ -777,8 +809,8 @@ struct SnapshotGraph {
                 if (field == "forUpgrade") return py::bool_(game.selection_for_upgrade);
                 if (field == "anyNumber") return py::bool_(game.selection_any_number);
                 if (field == "canPickZero") return py::bool_(game.selection_can_pick_zero);
-                if (field == "forTransform" ||
-                    field == "forUpgrade" || field == "upTo") return py::bool_(false);
+                if (field == "upTo") return py::bool_(game.selection_up_to);
+                if (field == "forTransform") return py::bool_(false);
                 return {};
             });
         }
@@ -863,15 +895,20 @@ struct SnapshotGraph {
     }
 
     template<std::size_t Size>
-    void pool(py::dict& pools, const char* name, const char* const (&ids)[Size]) const {
+    void pool(py::dict& pools, const char* name, const CardPoolEntry (&ids)[Size], int source_index) const {
         py::list direct, source;
         const auto spec = [](const char* id) {
             py::list result;
             result.append(id); result.append(0); result.append(0);
             return result;
         };
-        for (const char* id : ids) direct.append(spec(id));
-        for (std::size_t i = Size; i > 0; --i) source.append(spec(ids[i - 1]));
+        for (const CardPoolEntry& card : ids) direct.append(spec(card.id));
+        if (source_index < 0) {
+            for (std::size_t i = Size; i > 0; --i) source.append(spec(ids[i - 1].id));
+        } else {
+            const auto& entries = game.run.source_card_pools[source_index];
+            for (int i = 0; i < entries.size; ++i) source.append(spec(ids[entries[i]].id));
+        }
         pools[py::str(std::string(name) + "CardPool")] = direct;
         std::string capital(name);
         capital[0] -= 'a' - 'A';
@@ -891,11 +928,11 @@ struct SnapshotGraph {
         result["screen"] = screen(fresh);
         result["globals"] = globals(fresh);
         py::dict pools;
-        pool(pools, "colorless", colorless_card_pool);
-        pool(pools, "curse", curse_card_pool);
-        pool(pools, "common", common_card_pool);
-        pool(pools, "uncommon", uncommon_card_pool);
-        pool(pools, "rare", rare_card_pool);
+        pool(pools, "colorless", colorless_card_pool, 3);
+        pool(pools, "curse", curse_card_pool, -1);
+        pool(pools, "common", common_card_pool, 0);
+        pool(pools, "uncommon", uncommon_card_pool, 1);
+        pool(pools, "rare", rare_card_pool, 2);
         result["pools"] = pools;
         result["rng"] = rng();
         result["objects"] = objects;

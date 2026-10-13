@@ -15,7 +15,7 @@ enum class CardRarity : uint8_t { Basic, Common, Uncommon, Rare, Special, Curse 
 enum class CardTarget : uint8_t { Enemy, Self, None };
 enum class Intent : uint8_t { None, Attack, AttackBuff, AttackDebuff, AttackDefend, Buff, Debuff, StrongDebuff, Defend, DefendBuff, Escape, Magic, Sleep, Stun, Unknown, Debug };
 enum class DamageType : uint8_t { Normal, Thorns, HpLoss };
-enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None };
+enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None, CardReward };
 enum class PileId : uint8_t { Hand, Draw, Discard, Exhaust, Limbo, Grid };
 enum class Phase : uint8_t { WaitingOnUser, ExecutingActions };
 

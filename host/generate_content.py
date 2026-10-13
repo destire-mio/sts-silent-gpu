@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 KINDS = {
-    "cards": ("CardId", "CardHooks", "card", "g.cards[card].id"),
+    "cards": ("CardId", "CardHooks", "card", "get_card(g, card).id"),
     "powers": ("PowerId", "PowerHooks", "power", "p.id"),
     "relics": ("RelicId", "RelicHooks", "relic", "g.run.relics[relic].id"),
     "potions": ("PotionId", "PotionHooks", "potion", "g.run.potions[slot]"),

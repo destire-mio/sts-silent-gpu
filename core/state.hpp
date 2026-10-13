@@ -187,6 +187,7 @@ struct Run {
     bool emerald_key = false;
     bool sapphire_key = false;
     List<Card, card_capacity> master_deck{};
+    List<uint16_t, card_capacity> source_card_pools[4]{};
     List<Relic, 64> relics{};
     PotionId potions[2] = {PotionId::Empty, PotionId::Empty};
     PotionState potion_state[2]{};
@@ -200,6 +201,8 @@ struct Game {
     int multi_damage[card_capacity][monster_capacity]{};
     Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
     Pile drawn_cards{};
+    Pile reward_cards{};
+    int discovery_card = -1;
     List<Monster, monster_capacity> monsters{};
     List<int, monster_capacity> monster_order{};
     ActionManager manager{};
@@ -220,7 +223,10 @@ struct Game {
     bool selection_for_upgrade = false;
     bool selected_cards_retrieved = false;
     bool end_turn_enabled = true;
+    bool selection_up_to = false;
+    bool reward_skippable = false;
     bool battle_over = false;
+    bool cannot_lose = false;
     bool mugged = false;
     int bomb_id_offset = 0;
 };

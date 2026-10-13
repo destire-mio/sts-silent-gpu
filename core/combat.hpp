@@ -2,6 +2,43 @@
 #include "card_data.hpp"
 
 namespace spire {
+SPIRE_FN inline bool same_id(const char* a, const char* b) {
+    while (*a && *a == *b) { ++a; ++b; }
+    return *a == *b;
+}
+SPIRE_FN inline bool card_is(CardId id, const char* name) {
+    switch (id) {
+#define SPIRE_UNIT(id, java_name, header, type) case CardId::id: return same_id(java_name, name);
+#include "cards/catalog.def"
+#undef SPIRE_UNIT
+    default: SPIRE_ASSERT(false); }
+    __builtin_unreachable();
+}
+SPIRE_FN inline CardId card_id(const char* name) {
+    for (int i = 0; i < static_cast<int>(CardId::Count); ++i)
+        if (card_is(static_cast<CardId>(i), name)) return static_cast<CardId>(i);
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline int find_power(const Creature& c, const char* name) {
+    for (int i = 0; i < c.powers.size; ++i) {
+        const char* game_id = nullptr;
+        switch (c.powers[i].id) {
+#define SPIRE_UNIT(id, java_name, header, type) case PowerId::id: game_id = java_name; break;
+#include "powers/catalog.def"
+#undef SPIRE_UNIT
+        default: SPIRE_ASSERT(false); }
+        if (same_id(game_id, name)) return i;
+    }
+    return -1;
+}
+SPIRE_FN inline bool has_power(const Creature& c, const char* name) { return find_power(c, name) >= 0; }
+SPIRE_FN inline Card& get_card(Game& g, int index) {
+    return index <= -2 ? g.run.master_deck[-index - 2] : g.cards[index];
+}
+SPIRE_FN inline const Card& get_card(const Game& g, int index) {
+    return index <= -2 ? g.run.master_deck[-index - 2] : g.cards[index];
+}
 SPIRE_FN inline Creature& get_creature(Game& g, int target) {
     return target == player_target ? g.player.creature : g.monsters[target].creature;
 }
@@ -67,7 +104,7 @@ SPIRE_FN inline int calculate_block(const Game& g, int base, int card) {
     return max(0, floor_int(value));
 }
 SPIRE_FN inline void apply_card_block(Game& g, int card) {
-    Card& c = g.cards[card];
+    Card& c = get_card(g, card);
     float value = static_cast<float>(c.base_block);
     const Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers[i], player_target, value, card);

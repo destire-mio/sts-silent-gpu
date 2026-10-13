@@ -1,6 +1,6 @@
 #pragma once
 #include "core/state.hpp"
-#include "card_pool_data.hpp"
+#include "core/card_pool.hpp"
 #include <algorithm>
 #include <array>
 #include <string>
@@ -428,7 +428,7 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.rewardTypes.push_back("POTION");
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;
-    const char* const* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
+    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
     const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
     std::array<int, 3> rarities{};
     for (int i = 0; i < 3; ++i) {
@@ -438,7 +438,7 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         if (rarity == 2) run.cardBlizzRandomizer = 5;
         if (rarity == 0) run.cardBlizzRandomizer = std::max(-40, run.cardBlizzRandomizer - 1);
         std::string card;
-        do { card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)]; }
+        do { card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)].id; }
         while (std::find(run.rewardCards.begin(), run.rewardCards.end(), card) != run.rewardCards.end());
         run.rewardCards.push_back(card);
     }

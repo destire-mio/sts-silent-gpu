@@ -125,7 +125,7 @@ SPIRE_FN inline void split_into(Game& g, int index, MonsterId child) {
     }
 }
 
-SPIRE_FN inline void block_random_monster(Game& g, const Effect& effect) {
+SPIRE_FN inline void block_random_monster(Game& g, Effect& effect) {
     List<int, monster_capacity> valid{};
     for (int i = 0; i < g.monster_order.size; ++i) {
         const int index = g.monster_order[i];
@@ -133,7 +133,7 @@ SPIRE_FN inline void block_random_monster(Game& g, const Effect& effect) {
         if (index != effect.source && m.intent != Intent::Escape && !m.creature.dying)
             valid.push_back(index);
     }
-    const int target = valid.empty() ? effect.source : valid[g.rng.ai.random(valid.size - 1)];
-    gain_block(g, target, effect.amount);
+    effect.target = valid.empty() ? effect.source : valid[g.rng.ai.random(valid.size - 1)];
+    if (effect.target != no_target) gain_block(g, effect.target, effect.amount);
 }
 }

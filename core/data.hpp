@@ -23,6 +23,6 @@ struct PowerData {
 };
 struct RelicData { int counter = -1; int price = 300; bool can_play_status = false; bool can_play_curse = false; };
 struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; };
-struct ActionData { bool survives_combat_end = false; };
+struct ActionData { bool survives_combat_end = false; const char* type = nullptr; };
 struct MonsterData { int hp_min, hp_max; int damage[2]; int block, magic; uint8_t damage_count = 1; };
 }
