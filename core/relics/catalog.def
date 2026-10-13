@@ -11,3 +11,4 @@ SPIRE_UNIT(OddlySmoothStone, "Oddly Smooth Stone", "core/relics/oddly_smooth_sto
 SPIRE_UNIT(OldCoin, "Old Coin", "core/relics/old_coin.hpp", OldCoin)
 SPIRE_UNIT(Omamori, "Omamori", "core/relics/omamori.hpp", Omamori)
 SPIRE_UNIT(OrangePellets, "OrangePellets", "core/relics/orange_pellets.hpp", OrangePellets)
+SPIRE_UNIT(Orichalcum, "Orichalcum", "core/relics/orichalcum.hpp", Orichalcum)
