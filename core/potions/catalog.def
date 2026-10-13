@@ -8,3 +8,4 @@ SPIRE_UNIT(CultistPotion, "CultistPotion", "core/potions/cultist_potion.hpp", Cu
 SPIRE_UNIT(CunningPotion, "CunningPotion", "core/potions/cunning_potion.hpp", CunningPotion)
 SPIRE_UNIT(DexterityPotion, "Dexterity Potion", "core/potions/dexterity_potion.hpp", DexterityPotion)
 SPIRE_UNIT(DistilledChaosPotion, "DistilledChaos", "core/potions/distilled_chaos_potion.hpp", DistilledChaosPotion)
+SPIRE_UNIT(DuplicationPotion, "DuplicationPotion", "core/potions/duplication_potion.hpp", DuplicationPotion)
