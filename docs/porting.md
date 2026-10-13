@@ -123,7 +123,8 @@ from an object's current position in an ordered list:
   power removes its list entry, retaining the object until combat reset so queued Java object
   references still observe it. These 128 slots include detached powers, not just active powers.
 - The 64 action slots are shared by the current action, both queues and held follow-ups.
-  Queues hold byte indices. Completed ordinary actions release their slot. `hold_action` pins
+  Queues hold byte indices. Completed ordinary actions release their slot. Clear queues with
+  `clear_actions(game, queue)` to release discarded slots as well. `hold_action` pins
   an object until combat reset; queue its index to preserve identity. Java
   `GameActionManager.update` skips an already completed action, including a reused follow-up.
 - `game.multi_damage[card_index]` allocates one of 32 eight-target rows on first use. Ordinary

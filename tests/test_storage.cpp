@@ -26,6 +26,12 @@ static void compact_storage() {
         run_until_decision(game);
     }
     require(game.player.energy == 3 + 8 * action_capacity, "completed action slots are reusable");
+    for (int round = 0; round < 2; ++round) {
+        for (int i = 0; i < action_capacity; ++i)
+            add_bottom(game, units::actions::GainEnergy::make(1));
+        clear_actions(game, game.manager.actions);
+    }
+    require(game.player.energy == 3 + 8 * action_capacity, "discarded queued actions release slots without executing");
     for (int i = 0; i < multi_damage_capacity; ++i) game.multi_damage[127 - i][0] = i + 1;
     apply_power(game, player_target, player_target, PowerId::Strength, 4);
     const int text = game.text.intern("CLOSED");

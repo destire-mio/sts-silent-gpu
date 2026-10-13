@@ -94,7 +94,7 @@ void deterministic_turns() {
     CHECK(g.rng.ai.counter == 1);
     g.monsters.clear();
     g.monster_order.clear();
-    g.manager.actions.clear();
+    clear_actions(g, g.manager.actions);
     append_monster(g, construct_monster(g, MonsterId::GremlinWizard));
     roll_monster_move(g, 0);
     create_monster_intent(g, 0);
@@ -198,7 +198,7 @@ void looter_bookkeeping() {
     CHECK(g.run.gold == 0);
     CHECK(g.player.creature.hp == 70);
     CHECK(g.player.creature.block == 9);
-    g.manager.actions.clear();
+    clear_actions(g, g.manager.actions);
     set_monster_move(g, 0, 3, Intent::Escape);
     create_monster_intent(g, 0);
     monster_take_turn(g, 0);

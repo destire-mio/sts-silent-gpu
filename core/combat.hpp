@@ -117,6 +117,12 @@ SPIRE_FN inline void add_top(Game& g, const Effect& effect) {
     action_prepare(g, prepared);
     g.manager.actions.push_front(g.action_objects.add(prepared));
 }
+SPIRE_FN inline void clear_actions(Game& g, Queue<uint8_t, action_capacity>& queue) {
+    while (!queue.empty()) {
+        const int index = queue.pop_front();
+        if (!g.action_objects[index].held) g.action_objects.release(index);
+    }
+}
 SPIRE_FN inline float rear_damage_multiplier(const Game& g, int monster) {
     const Creature& player = g.player.creature;
     if (!((player.flip_horizontal && player.draw_x < g.monsters[monster].creature.draw_x) ||

@@ -26,6 +26,7 @@ SPIRE_FN inline void draw_pile_to_discard(Game&, int);
 SPIRE_FN inline void hand_to_deck(Game&, int);
 SPIRE_FN inline void add_card_queue_item(Game&, const CardQueueItem&, bool);
 SPIRE_FN inline int hold_action(Game&, const Effect&);
+SPIRE_FN inline void clear_actions(Game&, Queue<uint8_t, action_capacity>&);
 SPIRE_FN inline void add_bottom(Game&, const Effect&);
 SPIRE_FN inline void add_top(Game&, const Effect&);
 SPIRE_FN inline int calculate_damage(const Game&, int, int, int, DamageType = DamageType::Normal, int card = -1);

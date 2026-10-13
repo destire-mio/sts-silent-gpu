@@ -558,8 +558,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             remove_queued_card(g, queued.card);
         } else if (g.battle_over) {
             on_victory(g);
-            g.manager.actions.clear();
-            g.manager.pre_turn_actions.clear();
+            clear_actions(g, g.manager.actions);
+            clear_actions(g, g.manager.pre_turn_actions);
             g.manager.has_current_action = false;
             g.manager.card_queue.clear();
             g.manager.played_cards.clear();

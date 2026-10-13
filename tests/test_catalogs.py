@@ -107,7 +107,7 @@ int main() {
     if (host::parse_id<EncounterId>("CatalogProbe", host::encounter_names) != EncounterId::CatalogProbe) return 13;
     if (host::parse_id<EffectKind>("CatalogProbe", host::effect_names) != EffectKind::CatalogProbe) return 14;
     using namespace spire::units::actions;
-    g.manager.actions.clear();
+    clear_actions(g, g.manager.actions);
     g.run.gold = 0;
     g.hand.push_back(0);
     Effect energy = GainEnergy::make(2);

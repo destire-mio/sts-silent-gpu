@@ -237,7 +237,7 @@ static void moves_and_removal() {
     require(!g.monsters[0].move_name && g.action_objects[g.manager.actions[0]].state.ShowMoveName.msg &&
             std::strcmp(g.text[g.action_objects[g.manager.actions[0]].state.ShowMoveName.msg], "test move") == 0,
             "default ShowMoveName captures and clears the monster name during construction");
-    g.manager.actions.clear();
+    clear_actions(g, g.manager.actions);
     apply_power(g, player_target, player_target, PowerId::Strength, 2);
     const Power old = g.player.creature.powers.at(g.power_objects, 0);
     const Effect remove = units::actions::RemovePower::from_instance(player_target, player_target, old);
@@ -246,7 +246,7 @@ static void moves_and_removal() {
     remove_power(g, player_target, PowerId::Strength);
     require(power_instance(g, g.action_objects[g.manager.actions[0]].power_instance).amount == 6,
             "queued power references retain the object's final amount after removal");
-    g.manager.actions.clear();
+    clear_actions(g, g.manager.actions);
     apply_power(g, player_target, player_target, PowerId::Strength, 3);
     Effect queued = remove;
     execute_effect(g, queued);
