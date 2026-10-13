@@ -11,6 +11,7 @@ struct CardDef {
     bool innate = false;
     bool multi_damage = false;
     int misc = 0;
+    bool purgeable = true;
 };
 struct PowerData {
     int priority = 5;

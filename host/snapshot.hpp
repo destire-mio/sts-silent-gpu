@@ -105,11 +105,11 @@ struct SnapshotGraph {
         return py::dict("ref"_a=index);
     }
 
-    py::object card_value(const Card& card, bool master, int index) {
+    py::object card_value(const Card& card, bool master, int index, int origin = 1) {
         const int id = static_cast<int>(card.id);
         const py::dict data = metadata("cards", id);
         const auto definition = card_data(card.id);
-        return object({3, master ? 1 : 0, index}, class_name("cards", id), [&](const std::string& key) -> py::object {
+        return object({3, master ? origin : 0, index}, class_name("cards", id), [&](const std::string& key) -> py::object {
             const py::object mapped = cards_snapshot(*this, card, master, index, key);
             if (mapped) return mapped;
             const std::string field = key.substr(key.find('.') + 1);
@@ -166,6 +166,9 @@ struct SnapshotGraph {
                 for (int i = 0; i < combat_card.multi_damage_count; ++i) result.append(game.multi_damage[index][i]);
                 return result;
             }
+            if (field == "inBottleFlame") return py::bool_(card.bottle_flame);
+            if (field == "inBottleLightning") return py::bool_(card.bottle_lightning);
+            if (field == "inBottleTornado") return py::bool_(card.bottle_tornado);
             if (field == "price") return py::int_(0);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
@@ -173,6 +176,18 @@ struct SnapshotGraph {
                 field == "isSelected" || field == "isUsed") return py::bool_(false);
             return {};
         });
+    }
+
+    py::object master_card_uuid(uint32_t uuid) {
+        if (uuid == 0) return py::none();
+        for (int i = 0; i < game.run.master_deck.size; ++i)
+            if (game.run.master_deck[i].uuid == uuid) return card_value(game.run.master_deck[i], true, i);
+        for (int i = 0; i < game.detached_master_cards.size; ++i) {
+            const int index = game.detached_master_cards[i];
+            if (game.cards[index].uuid == uuid) return card_value(game.cards[index], true, index, 2);
+        }
+        SPIRE_ASSERT(false);
+        __builtin_unreachable();
     }
 
     py::object card(int index) {
@@ -262,7 +277,14 @@ struct SnapshotGraph {
 
     py::object relic(int index) {
         const Relic& relic = game.run.relics[index];
+        UnitStateSnapshot state;
+        relic_visit_state(relic, state);
         return object({9, index, 0}, class_name("relics", static_cast<int>(relic.id)), [&](const std::string& key) -> py::object {
+            const py::object mapped = relics_snapshot(*this, relic, index, key);
+            if (mapped) return mapped;
+            const std::string field = key.substr(key.find('.') + 1);
+            if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
+            if (key == "AbstractRelic.grayscale") return py::bool_(relic.grayscale);
             if (key == "AbstractRelic.relicId") return py::str(relic_names[static_cast<int>(relic.id)]);
             if (key == "AbstractRelic.counter") return py::int_(relic.counter);
             if (key == "AbstractRelic.cost") return py::int_(0);
@@ -721,7 +743,7 @@ struct SnapshotGraph {
             "ascensionLevel"_a=game.run.ascension, "isAscensionMode"_a=true,
             "isDungeonBeaten"_a=false, "is_victory"_a=false, "ascensionCheck"_a=true,
             "bossKey"_a=fresh.bossKey, "bossCount"_a=0, "firstRoomChosen"_a=false,
-            "cardBlizzRandomizer"_a=fresh.cardBlizzRandomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
+            "cardBlizzRandomizer"_a=game.run.card_blizz_randomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
             "shrineChance"_a=0.25, "cardUpgradedChance"_a=0.0, "colorlessRareChance"_a=0.3,
             "shopRoomChance"_a=0.05, "restRoomChance"_a=0.12, "eventRoomChance"_a=0.22,
             "eliteRoomChance"_a=0.08, "treasureRoomChance"_a=0.0,
@@ -741,6 +763,12 @@ struct SnapshotGraph {
         result["rareRelicPool"] = py::cast(fresh.rareRelicPool);
         result["shopRelicPool"] = py::cast(fresh.shopRelicPool);
         result["bossRelicPool"] = py::cast(fresh.bossRelicPool);
+        const char* pool_names[] = {"commonRelicPool", "uncommonRelicPool", "rareRelicPool", "shopRelicPool", "bossRelicPool"};
+        for (int p = 0; p < 5; ++p) {
+            py::list pool;
+            for (int i = 0; i < game.run.relic_pools[p].size; ++i) pool.append(relic_key_name(game.run.relic_pools[p][i]));
+            result[pool_names[p]] = pool;
+        }
         if (!fresh.relicsToRemoveOnStart.empty()) result["relicsToRemoveOnStart"] = py::cast(fresh.relicsToRemoveOnStart);
         return result;
     }

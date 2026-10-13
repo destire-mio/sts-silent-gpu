@@ -1,0 +1,35 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "Acrobatics",
+      "upgrades": 0
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "TheAbacus"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 49,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

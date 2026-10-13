@@ -27,7 +27,6 @@ struct FreshRunState {
     int rewardGold = 0;
     int stolenGold = 0;
     int blizzardPotionMod = 0;
-    int cardBlizzRandomizer = 5;
 };
 
 inline void initialize_monster_lists(Random& rng, FreshRunState& run) {
@@ -392,21 +391,15 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;
     if (game.smoked) return;
-    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
-    const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
-    std::array<int, 3> rarities{};
-    for (int i = 0; i < 3; ++i) {
-        const int roll = game.rng.card.random(99) + run.cardBlizzRandomizer;
-        const int rarity = roll < 3 ? 2 : roll < 40 ? 1 : 0;
-        rarities[i] = rarity;
-        if (rarity == 2) run.cardBlizzRandomizer = 5;
-        if (rarity == 0) run.cardBlizzRandomizer = std::max(-40, run.cardBlizzRandomizer - 1);
-        std::string card;
-        do { card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)].id; }
-        while (std::find(run.rewardCards.begin(), run.rewardCards.end(), card) != run.rewardCards.end());
-        run.rewardCards.push_back(card);
+    List<CardId, 128> cards{};
+    card_reward_ids(game, cards);
+    for (int i = 0; i < cards.size; ++i) {
+        switch (cards[i]) {
+#define SPIRE_UNIT(id, name, path, type) case CardId::id: run.rewardCards.push_back(name); break;
+#include "core/cards/catalog.def"
+#undef SPIRE_UNIT
+        default: SPIRE_ASSERT(false); }
     }
-    for (const int rarity : rarities) if (rarity != 2) game.rng.card.randomBoolean(0.0f);
     run.rewardTypes.push_back("CARD");
 }
 
@@ -424,6 +417,15 @@ inline void initialize_fresh_run(Game& game, FreshRunState& run) {
     }
     run.relicsToRemoveOnStart.push_back("Ring of the Snake");
     initialize_relic_pools(game.rng.relic, run);
+    const std::vector<std::string>* relic_pools[] = {&run.commonRelicPool, &run.uncommonRelicPool, &run.rareRelicPool, &run.shopRelicPool, &run.bossRelicPool};
+    for (int p = 0; p < 5; ++p) game.run.relic_pools[p].clear();
+    for (int p = 0; p < 5; ++p) for (const auto& id : *relic_pools[p]) {
+        int key = 0;
+        while (key < static_cast<int>(RelicKey::Count) && id != relic_key_name(static_cast<RelicKey>(key))) ++key;
+        SPIRE_ASSERT(key < static_cast<int>(RelicKey::Count));
+        game.run.relic_pools[p].push_back(static_cast<RelicKey>(key));
+    }
+
     game.rng.reseed_map(game.run.seed, 1);
     initialize_map(game.rng.map, run);
     // Exordium calls MainMusic.getSong, which consumes miscRng even without audio output.

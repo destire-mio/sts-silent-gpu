@@ -54,6 +54,13 @@ SPIRE_FN inline PotionState construct_potion(const Game& g, PotionId id) {
     potion_constructPotion(g, state, id);
     return state;
 }
+SPIRE_FN inline PotionId random_potion_from_pool(Game&, Random& rng) {
+    const char* id = silent_potion_pool[rng.random(static_cast<int>(sizeof(silent_potion_pool) / sizeof(*silent_potion_pool)) - 1)].id;
+    for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
+        if (potion_matches_id(static_cast<PotionId>(i), id)) return static_cast<PotionId>(i);
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
 SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
     const int roll = g.rng.potion.random(0, 99);
     const int rarity = roll < 65 ? 0 : roll < 90 ? 1 : 2;
@@ -723,22 +730,35 @@ SPIRE_FN inline void reset(Game& g, uint64_t seed) {
 SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     if (g.fault != 0) return;
     bind_fault(g);
-    g.run.floor = setup.floor;
+    g.run.floor = 0;
     g.run.gold = setup.gold;
     g.run.master_deck = setup.deck;
-    g.run.relics = setup.relics;
+    g.cards.clear();
+    g.detached_master_cards.clear();
+    g.run.relics.clear();
+    g.player = Player{};
+    g.player.creature.hp = 59;
+    g.player.creature.max_hp = 66;
+    g.next_card_uuid = 1;
+    for (int i = 0; i < g.run.master_deck.size; ++i) g.run.master_deck[i].uuid = g.next_card_uuid++;
+    RandomXS128 acquisition(g.run.seed);
+    g.screen = Screen::None;
+    for (int i = 0; i < setup.relics.size; ++i) {
+        equip_relic(g, setup.relics[i].id);
+        settle_relic_acquisition(g, acquisition);
+    }
     for (int i = 0; i < 2; ++i) {
         g.run.potions[i] = setup.potions[i];
         potion_initialize_state(g, i);
         g.run.potion_state[i] = construct_potion(g, setup.potions[i]);
     }
+    g.run.floor = setup.floor;
+    g.player.energy_per_turn = g.player.energy_master;
     g.rng.reseed_floor(g.run.seed, setup.floor);
-    g.player = Player{};
     g.player.creature.draw_x = 1280.0f * 0.25f;
     g.player.creature.hp = setup.hp;
     g.player.creature.max_hp = setup.max_hp;
     g.player.bloodied = setup.hp <= setup.max_hp / 2;
-    g.cards.clear();
     g.text.clear();
     g.room_event_class = 0;
     g.multi_damage.clear();
@@ -773,17 +793,16 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     build_encounter(g, setup.encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
-    g.next_card_uuid = g.run.master_deck.size + 1;
     for (int i = 0; i < g.run.master_deck.size; ++i) {
-        g.run.master_deck[i].uuid = i + 1;
+        const int index = g.cards.size;
         g.cards.push_back(g.run.master_deck[i]);
-        copy.push_back(i);
+        copy.push_back(index);
     }
     shuffle(copy.values, copy.size, g.rng.shuffle);
     Pile innate{};
     for (int i = 0; i < copy.size; ++i) {
         const int card = copy[i];
-        if (g.cards[card].innate) innate.push_back(card);
+        if (g.cards[card].innate || g.cards[card].bottle_flame || g.cards[card].bottle_lightning || g.cards[card].bottle_tornado) innate.push_back(card);
         else g.draw.push_back(card);
     }
     for (int i = 0; i < innate.size; ++i) g.draw.push_back(innate[i]);

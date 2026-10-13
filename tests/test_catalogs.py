@@ -152,7 +152,7 @@ class CatalogExtension(unittest.TestCase):
             shutil.copytree(ROOT / "core", root / "core")
             (root / "inventory").mkdir()
             inventory = json.loads((ROOT / "inventory/units.json").read_text())
-            inventory["units"].append({"kind": "card", "game_id": "CatalogProbe", "facts": {"rarity": "SPECIAL"}})
+            inventory["units"].append({"kind": "card", "game_id": "CatalogProbe", "facts": {"rarity": "SPECIAL", "color": "GREEN"}})
             (root / "inventory/units.json").write_text(json.dumps(inventory))
             originals = {p: p.read_bytes() for p in (root / "core").rglob("*") if p.is_file()}
             for kind, (base, methods) in UNITS.items():

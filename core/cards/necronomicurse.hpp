@@ -4,7 +4,9 @@
 namespace spire::units::cards {
 struct Necronomicurse : CardHooks {
     static SPIRE_FN constexpr CardDef data() {
-        return {CardType::Curse, CardTarget::None, -2, -1, -1, -1, 0, 0, 0, false, false};
+        CardDef data{CardType::Curse, CardTarget::None, -2, -1, -1, -1, 0, 0, 0, false, false};
+        data.purgeable = false;
+        return data;
     }
     static SPIRE_FN void use(Game&, int, int) {}
     static SPIRE_FN void onRemoveFromMasterDeck(Game& g, Card&) {

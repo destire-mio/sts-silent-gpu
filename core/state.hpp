@@ -36,15 +36,19 @@ struct Card {
     bool shuffle_back_into_draw_pile : 1;
     bool return_to_hand : 1;
     bool pending_clear : 1;
+    bool bottle_flame : 1;
+    bool bottle_lightning : 1;
+    bool bottle_tornado : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : upgraded_cost(false), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
-          shuffle_back_into_draw_pile(false), return_to_hand(false), pending_clear(false) {}
+          shuffle_back_into_draw_pile(false), return_to_hand(false), pending_clear(false),
+          bottle_flame(false), bottle_lightning(false), bottle_tornado(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
-struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
+struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; bool grayscale = false; };
 struct Power {
     uint32_t instance = 0;
     int amount;
@@ -190,12 +194,14 @@ struct Run {
     int act = 1;
     int ascension = 20;
     int gold = 99;
+    int card_blizz_randomizer = 5;
     bool ruby_key = false;
     bool emerald_key = false;
     bool sapphire_key = false;
     List<Card, master_deck_capacity> master_deck{};
     List<uint8_t, card_pool_capacity> source_card_pools[4]{};
     List<Relic, 64> relics{};
+    List<RelicKey, 64> relic_pools[5]{};
     PotionId potions[2] = {PotionId::Empty, PotionId::Empty};
     PotionState potion_state[2]{};
 };
@@ -225,10 +231,12 @@ struct Game {
     uint32_t fault = 0;
     TextStore text{};
     Run run{};
+    UnitStatics unit_statics{};
     RngStreams rng{};
     UnseededRandom unseeded{0};
     Player player{};
     List<Card, card_capacity> cards{};
+    List<uint8_t, 64> detached_master_cards{};
     CardDamage multi_damage{};
     Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
     Pool<Effect, action_capacity> action_objects{};
@@ -236,6 +244,9 @@ struct Game {
     bool player_turn_effect_pending = false;
     Pile drawn_cards{};
     Pile reward_cards{};
+    List<PotionId, 5> acquisition_potions{};
+    List<RelicKey, 3> acquisition_relics{};
+    CardId confirmation_card = CardId::Strike_G;
     int discovery_card = -1;
     List<Monster, monster_capacity> monsters{};
     List<uint8_t, monster_capacity> monster_order{};
