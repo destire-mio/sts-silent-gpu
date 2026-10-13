@@ -34,6 +34,7 @@ static void test_setup() {
     const int first = card(g, CardId::Defend_G, g.hand);
     const int second = card(g, CardId::Neutralize, g.hand);
     g.cards[first].cost_for_turn = 2;
+    g.cards[first].block = 15;
     add_bottom(g, Setup::construct());
     run_until_decision(g);
     require(g.screen == Screen::Discard && g.hand.size == 2, "Setup pauses for one hand selection");
@@ -41,8 +42,9 @@ static void test_setup() {
     require(g.hand.size == 1 && g.selected_cards[0] == first, "selection retains card identity");
     step(g, {ActionKind::Proceed});
     require(g.draw.size == 1 && g.draw[0] == first && g.cards[first].free_to_play_once &&
-            g.cards[first].cost_for_turn == 2 && g.manager.total_discarded_this_turn == 0,
-            "Setup moves selected card to top without discarding or resetting its turn cost");
+            g.cards[first].cost_for_turn == g.cards[first].cost &&
+            g.cards[first].block == g.cards[first].base_block && g.manager.total_discarded_this_turn == 0,
+            "Setup preserves the free-play flag while Soul clears card attributes in the draw pile");
     add_bottom(g, Setup::construct());
     run_until_decision(g);
     require(g.draw[1] == second && !g.cards[second].free_to_play_once, "zero-cost single card is moved without making it free");
