@@ -12,3 +12,4 @@ SPIRE_UNIT(DollysMirror, "DollysMirror", "core/relics/dollys_mirror.hpp", Dollys
 SPIRE_UNIT(DreamCatcher, "Dream Catcher", "core/relics/dream_catcher.hpp", DreamCatcher)
 SPIRE_UNIT(DuVuDoll, "Du-Vu Doll", "core/relics/du_vu_doll.hpp", DuVuDoll)
 SPIRE_UNIT(Ectoplasm, "Ectoplasm", "core/relics/ectoplasm.hpp", Ectoplasm)
+SPIRE_UNIT(EmptyCage, "Empty Cage", "core/relics/empty_cage.hpp", EmptyCage)
