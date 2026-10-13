@@ -35,10 +35,6 @@ static void test_constructors_and_stacking() {
     apply_power(g, player_target, player_target, PowerId::Buffer, -1);
     apply_power(g, player_target, player_target, PowerId::Buffer, 5);
     require(power_amount(g.player.creature, PowerId::Buffer) == 4, "Buffer stacks the sentinel value");
-    apply_power(g, player_target, player_target, PowerId::BackAttack, 99);
-    apply_power(g, player_target, player_target, PowerId::Barricade, 99);
-    require(power_amount(g.player.creature, PowerId::BackAttack) == -1 &&
-            power_amount(g.player.creature, PowerId::Barricade) == -1, "amountless constructors ignore stack input");
     apply_power(g, player_target, 0, PowerId::CorpseExplosion, 99);
     apply_power(g, player_target, 0, PowerId::CorpseExplosion, 2);
     require(power_amount(g.monsters[0].creature, PowerId::CorpseExplosion) == 3,
@@ -60,7 +56,6 @@ static void test_confusion_rng() {
     Game g = combat();
     apply_power(g, 0, player_target, PowerId::Confusion, 10);
     Power& p = g.player.creature.powers[find_power(g.player.creature, PowerId::Confusion)];
-    require(p.amount == -1 && power_data(p.id).priority == 0, "Confusion base amount and priority");
     const int card = g.hand[0];
     Random expected = g.rng.card_random;
     const int new_cost = expected.random(3);

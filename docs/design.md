@@ -316,10 +316,10 @@ no service or network transport is started. `python3 oracle/verify.py --output /
 records two concurrent batches in separate JVMs, reversing job order in the second batch, and compares
 20 full runs plus 200 scenarios byte for byte. Timings exclude JVM startup but include game reset,
 original callbacks, snapshot construction and JSONL writes.
-Regenerate the seven committed fixtures with
+Regenerate the committed fixtures from their recorded headers with
 `python3 tests/record_oracle_fixtures.py --output /tmp/oracle-fixtures`, then check their schema,
 scenario initialization and terminal records with `python3 tests/check_oracle.py`.
 
 `python3 tests/check_oracle_frames.py` compares a full run containing a transform-preview screen
-and three scenarios against the same recordings with 13 extra original game frames at each
+and four scenarios, including monster escape, against the same recordings with 13 extra original game frames at each
 nonterminal decision. Its test agent changes the recorder only, not any game class.

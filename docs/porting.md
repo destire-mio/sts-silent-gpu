@@ -131,10 +131,9 @@ Adding a queued action or content unit can call the existing dispatcher from its
 | Missing caller | Hooks awaiting that caller |
 | --- | --- |
 | Room entry, campfires, chests, rewards and shops | Relic `onEnterRoom`, `justEnteredRoom`, `onEnterRestRoom`, `addCampfireOption`, `canUseCampfireOption`, `onRest`, `onSmith`, `onChestOpen`, `onChestOpenAfter`, `changeNumberOfCardsInReward`, `changeRareCardRewardChance`, `changeUncommonCardRewardChance`, `canSpawn`, `getPrice` |
-| Actions not in the current catalog | Power `onScry`, `triggerMarks`, `onDamageAllEnemies`; card `triggerOnScry`, `triggerOnGainEnergy`, `triggerWhenCopied`, `onChoseThisOption` |
-| Additional relic/monster rules and bosses | Relic `onTrigger`, `checkTrigger`; monster `heal`, `deathReact`, `onBossVictoryLogic`, `onFinalBossVictoryLogic` |
+| Actions not in the current catalog | Power `onScry`, `triggerMarks`; card `triggerOnScry`, `onChoseThisOption` |
+| Additional relic/monster rules and bosses | Relic `onTrigger`, `checkTrigger`; monster `deathReact`, `onBossVictoryLogic`, `onFinalBossVictoryLogic` |
 | Stance and orb mechanics | Power `onChannel`, `onChangeStance`; relic `onChangeStance`; card `switchedStance`, `triggerExhaustedCardsOnStanceChange` |
-| PlayerTurnEffect completion | Power `atEnergyGain` |
 
 Java hooks without gameplay callers (`onGainCharge`, `onMeditate`, `onRitual`, `onPlayerGainBlock`,
 `onEvokeOrb`, `triggerAtStartOfTurn`, `escapeNext`, and the integer `onPlayerGainedBlock` overload)

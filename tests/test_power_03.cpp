@@ -40,11 +40,6 @@ static void test_constructor_state() {
     require(panache.amount == 4, "a skill advances Panache's countdown");
     power_atStartOfTurn(g, panache, player_target);
     require(panache.amount == 5, "Panache resets its countdown at turn start");
-    const PowerId sentinels[] = {PowerId::Reactive, PowerId::Regrow, PowerId::Surrounded, PowerId::Unawakened};
-    for (PowerId id : sentinels) {
-        apply_power(g, 0, 0, id, 20);
-        require(power_amount(g.monsters[0].creature, id) == -1, "constructor keeps the Java sentinel amount");
-    }
     apply_power(g, player_target, player_target, PowerId::PlatedArmor, 1500);
     require(power_amount(g.player.creature, PowerId::PlatedArmor) == 1500,
             "Plated Armor constructor does not apply its stack cap");

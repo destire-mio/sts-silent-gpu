@@ -92,14 +92,16 @@ Each decision has `snapshot`, `legal` and `action`; the last record has `snapsho
 Comparison includes every key, scalar type, value and
 list position, without tolerance or field filtering. Failures report the first differing JSON
 path and both values. Output reports passing traces and matched decisions, including matching
-prefixes of failed traces. Directory discovery selects scenario traces; full runs require an
-explicit file argument. See [the porting guide](docs/porting.md) for recording and replay commands.
+decisions after earlier differences. Directory discovery includes scenario and full-run traces.
+Both scopes must match. `full-run-1` is reported separately as an expected failure until Neow,
+map and room flow are ported; it is excluded from pass totals. See [the porting guide](docs/porting.md) for recording and replay commands.
 
 The host snapshot uses the oracle's object graph and preserves object references, UUID equality,
 ordered fields and piles, queues and RNG counters/state words. `game.schema_gaps()` lists fields
 whose engine state or serializer is missing; these fields remain absent and fail strict replay.
-Zero-difference oracle acceptance is pending. Self-generated host traces test replayer wiring;
-they do not establish agreement with the game.
+The committed scenario fixtures are the regression gate. Units without a triggering original-game
+trace remain unaccepted. Self-generated host traces test replayer wiring; they do not establish
+agreement with the game.
 
 ## CPU throughput
 

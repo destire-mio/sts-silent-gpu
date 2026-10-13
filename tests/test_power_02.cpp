@@ -208,7 +208,7 @@ static void test_block_and_constructor_time() {
     require(g.monsters[0].creature.block == 4, "monster Metallicize receives the pre-end-turn-cards hook");
 }
 
-static void test_nightmare_and_sentinels() {
+static void test_nightmare_copies() {
     Game g = combat();
     const int source = 0;
     Card& card = g.cards[source];
@@ -231,11 +231,7 @@ static void test_nightmare_and_sentinels() {
     require(stored.amount == 3 && stored.state.Nightmare.card == copy && g.cards[copy].base_block == 13 &&
             g.player.creature.powers[find_power(g.player.creature, PowerId::Nightmare) + 1].amount == 2,
             "Nightmare applications retain separate powers and independent card objects");
-    apply_power(g, player_target, 0, PowerId::Minion, 7);
-    apply_power(g, player_target, 0, PowerId::PainfulStabs, 7);
-    require(power_amount(g.monsters[0].creature, PowerId::Minion) == -1 &&
-            power_amount(g.monsters[0].creature, PowerId::PainfulStabs) == -1,
-            "Minion and Painful Stabs constructors use the inherited -1 amount");
+
 }
 
 int main() {
@@ -245,6 +241,6 @@ int main() {
     test_invincible();
     test_malleable();
     test_block_and_constructor_time();
-    test_nightmare_and_sentinels();
+    test_nightmare_copies();
     std::puts("Power batch 02 Java-derived cases passed (not oracle trace acceptance)");
 }

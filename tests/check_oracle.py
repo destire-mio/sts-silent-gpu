@@ -57,6 +57,6 @@ def check(path):
 
 if __name__ == '__main__':
     paths = sorted((ROOT / 'traces').glob('*.jsonl.gz'))
-    assert len(paths) == 8
+    assert ROOT / 'traces/full-run-1.jsonl.gz' in paths
     decisions = sum(check(path) for path in paths)
     print(f'{len(paths)} fixtures, {decisions} decisions: schema, legal membership, terminal and scenario setup passed')

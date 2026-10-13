@@ -219,7 +219,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Replay original-game combat traces with exact comparisons")
     parser.add_argument("traces", nargs="*", type=Path,
                         default=[Path(__file__).parent / "traces"],
-                        help="JSONL/gzip files or combat-trace directories; full runs require an explicit file")
+                        help="JSONL/gzip files or directories containing scenario and full-run traces")
     parser.add_argument("--module", default="spire")
     args = parser.parse_args(argv)
     engine = importlib.import_module(args.module)

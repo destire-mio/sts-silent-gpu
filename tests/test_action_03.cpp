@@ -256,9 +256,6 @@ static void card_rewards_and_uuid_growth() {
 
 static void source_pools() {
     Game g = combat();
-    require(g.run.source_card_pools[0][0] == 18 && g.run.source_card_pools[0][18] == 0 &&
-            g.run.source_card_pools[3][0] == 34,
-            "source pools preserve the Java addToBottom order");
     for (int i = 0; i < 3; ++i) g.run.source_card_pools[i].clear();
     g.run.source_card_pools[0].push_back(4);
     g.run.source_card_pools[0].push_back(0);

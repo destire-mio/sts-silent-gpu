@@ -11,14 +11,15 @@ from verify import check_trace
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Regenerate the seven original-game fixtures')
+    parser = argparse.ArgumentParser(description='Regenerate all committed fixtures from their recorded headers')
     parser.add_argument('--output', required=True, type=Path)
     output = parser.parse_args().output.resolve()
-    jobs = [dict(seed=1, scenario=None, output=str(output / 'full-run-1.jsonl'))]
-    for i, path in enumerate(sorted((ROOT / 'scenarios').glob('*.json'))):
-        jobs.append(dict(seed=101 + i, scenario=json.loads(path.read_text()),
-                         output=str(output / (path.stem + '.jsonl'))))
-    assert len(jobs) == 7
+    jobs = []
+    for path in sorted((ROOT / 'traces').glob('*.jsonl.gz')):
+        with gzip.open(path, 'rt') as stream:
+            header = json.loads(next(stream))
+        jobs.append(dict(seed=header['seed'], scenario=header['scenario'],
+                         output=str(output / path.name.removesuffix('.gz'))))
     run_jobs(jobs)
     for job in jobs:
         raw = Path(job['output'])
