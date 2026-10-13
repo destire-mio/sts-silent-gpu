@@ -1,1 +1,2 @@
 SPIRE_UNIT(Empty, "Potion Slot", "core/potions/potion_slot.hpp", PotionSlot)
+SPIRE_UNIT(AncientPotion, "Ancient Potion", "core/potions/ancient_potion.hpp", AncientPotion)
