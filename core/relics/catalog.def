@@ -17,3 +17,4 @@ SPIRE_UNIT(Enchiridion, "Enchiridion", "core/relics/enchiridion.hpp", Enchiridio
 SPIRE_UNIT(EternalFeather, "Eternal Feather", "core/relics/eternal_feather.hpp", EternalFeather)
 SPIRE_UNIT(FaceOfCleric, "FaceOfCleric", "core/relics/face_of_cleric.hpp", FaceOfCleric)
 SPIRE_UNIT(FossilizedHelix, "FossilizedHelix", "core/relics/fossilized_helix.hpp", FossilizedHelix)
+SPIRE_UNIT(FrozenEgg2, "Frozen Egg 2", "core/relics/frozen_egg_2.hpp", FrozenEgg2)
