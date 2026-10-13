@@ -471,7 +471,8 @@ struct SnapshotGraph {
             if (field == "baseRareCardChance" || field == "rareCardChance") return py::int_(3);
             if (field == "baseUncommonCardChance" || field == "uncommonCardChance") return py::int_(37);
             if (field == "cannotLose") return py::bool_(game.cannot_lose);
-            if (field == "combatEvent" || field == "eliteTrigger" || field == "skipMonsterTurn") return py::bool_(false);
+            if (field == "eliteTrigger") return py::bool_(game.elite_trigger);
+            if (field == "combatEvent" || field == "skipMonsterTurn") return py::bool_(false);
             if (field == "smoked") return py::bool_(game.smoked);
             if (field == "event") return py::none();
             if (field == "endBattleTimer" && !game.battle_over) return py::float_(0.0);

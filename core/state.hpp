@@ -265,6 +265,7 @@ struct Game {
     bool battle_over = false;
     bool room_in_combat = false;
     RoomType room_type = RoomType::Monster;
+    bool elite_trigger = false;
     uint16_t room_event_class = 0;
     bool cannot_lose = false;
     bool mugged = false;

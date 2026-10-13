@@ -758,6 +758,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.battle_over = false;
     g.room_in_combat = true;
     g.room_type = RoomType::Monster;
+    g.elite_trigger = false;
     g.cannot_lose = false;
     g.mugged = false;
     g.smoked = false;

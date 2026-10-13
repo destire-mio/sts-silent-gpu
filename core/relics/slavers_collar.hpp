@@ -6,7 +6,7 @@ struct SlaversCollar : RelicHooks {
     static SPIRE_FN constexpr RelicData data() { return {-1, 999}; }
     SPIRE_STATE(SlaversCollar, bool pulse;)
     static SPIRE_FN void beforeEnergyPrep(Game& g, int relic) {
-        bool elite_or_boss = g.room_type == RoomType::Elite;
+        bool elite_or_boss = g.elite_trigger;
         for (int i = 0; i < g.monster_order.size; ++i)
             if (monster_data(g.monsters[g.monster_order[i]].id).type == EnemyType::Boss) elite_or_boss = true;
         if (elite_or_boss) {
