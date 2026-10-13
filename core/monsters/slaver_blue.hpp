@@ -17,7 +17,7 @@ struct SlaverBlue : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
-        if ((num >= 40 && !last_two_moves(m, 1)) || (g.run.ascension >= 17 ? last_move(m, 4) : last_two_moves(m, 4)))
+        if ((num >= 40 && !last_two_moves(g, m, 1)) || (g.run.ascension >= 17 ? last_move(g, m, 4) : last_two_moves(g, m, 4)))
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         else set_monster_move(g, index, 4, Intent::AttackDebuff, m.damage[1]);
     }

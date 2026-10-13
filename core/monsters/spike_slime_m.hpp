@@ -12,7 +12,7 @@ struct SpikeSlime_M : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
-        if ((num < 30 && !last_two_moves(m, 1)) || (num >= 30 && (g.run.ascension >= 17 ? last_move(m, 4) : last_two_moves(m, 4))))
+        if ((num < 30 && !last_two_moves(g, m, 1)) || (num >= 30 && (g.run.ascension >= 17 ? last_move(g, m, 4) : last_two_moves(g, m, 4))))
             set_monster_move(g, index, 1, Intent::AttackDebuff, m.damage[0]);
         else set_monster_move(g, index, 4, Intent::Debuff);
     }

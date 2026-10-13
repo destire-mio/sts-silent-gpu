@@ -24,14 +24,14 @@ struct TimeEater : MonsterHooks {
         }
         for (;;) {
             if (num < 45) {
-                if (!last_two_moves(m, 2)) { set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 3); return; }
+                if (!last_two_moves(g, m, 2)) { set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 3); return; }
                 num = g.rng.ai.random(50, 99);
             } else if (num < 80) {
-                if (!last_move(m, 4)) set_monster_move(g, owner, 4, Intent::AttackDebuff, m.damage[1]);
+                if (!last_move(g, m, 4)) set_monster_move(g, owner, 4, Intent::AttackDebuff, m.damage[1]);
                 else if (g.rng.ai.randomBoolean(0.66f)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 3);
                 else set_monster_move(g, owner, 3, Intent::DefendDebuff);
                 return;
-            } else if (!last_move(m, 3)) { set_monster_move(g, owner, 3, Intent::DefendDebuff); return; }
+            } else if (!last_move(g, m, 3)) { set_monster_move(g, owner, 3, Intent::DefendDebuff); return; }
             else num = g.rng.ai.random(74);
         }
     }

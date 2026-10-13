@@ -16,7 +16,7 @@ struct SlimeBoss : MonsterHooks {
         Power split{PowerId::Split, -1};
         split.instance = g.next_power_instance++;
         power_initialize_state(split);
-        m.creature.powers.push_back(g.power_objects.add(split));
+        m.creature.powers.push_back(g.power_objects, g.power_objects.add(split));
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int owner, int) {

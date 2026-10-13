@@ -32,13 +32,13 @@ static void compact_storage() {
         clear_actions(game, game.manager.actions);
     }
     require(game.player.energy == 3 + 8 * action_capacity, "discarded queued actions release slots without executing");
-    for (int i = 0; i < multi_damage_capacity; ++i) game.multi_damage[127 - i][0] = i + 1;
+    for (int i = 0; i < card_capacity; ++i) game.multi_damage[card_capacity - 1 - i].base = i + 1;
     apply_power(game, player_target, player_target, PowerId::Strength, 4);
     const int text = game.text.intern("CLOSED");
     Game copy = game;
-    copy.multi_damage[127][0] = 99;
+    copy.multi_damage[card_capacity - 1].base = 99;
     apply_power(copy, player_target, player_target, PowerId::Strength, 2);
-    require(game.multi_damage[127][0] == 1 && power_amount(game, game.player.creature, PowerId::Strength) == 4 &&
+    require(game.multi_damage[card_capacity - 1][0] == 1 && power_amount(game, game.player.creature, PowerId::Strength) == 4 &&
             power_amount(copy, copy.player.creature, PowerId::Strength) == 6 &&
             std::strcmp(copy.text[text], "CLOSED") == 0, "a relocated Game owns independent arena and text storage");
 }

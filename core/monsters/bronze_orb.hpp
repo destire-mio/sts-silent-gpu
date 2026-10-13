@@ -16,7 +16,7 @@ struct BronzeOrb : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         Monster& m = g.monsters[owner];
         if (!m.state.BronzeOrb.usedStasis && num >= 25) { set_monster_move(g, owner, 3, Intent::StrongDebuff); m.state.BronzeOrb.usedStasis = true; }
-        else if ((num >= 70 && !last_two_moves(m, 2)) || last_two_moves(m, 1)) set_monster_move(g, owner, 2, Intent::Defend);
+        else if ((num >= 70 && !last_two_moves(g, m, 2)) || last_two_moves(g, m, 1)) set_monster_move(g, owner, 2, Intent::Defend);
         else set_monster_move(g, owner, 1, Intent::Attack, 8);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

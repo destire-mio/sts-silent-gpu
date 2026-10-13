@@ -22,7 +22,7 @@ struct OrbWalker : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         const Monster& m = g.monsters[owner];
-        if ((num < 40 && !last_two_moves(m, 2)) || (num >= 40 && last_two_moves(m, 1)))
+        if ((num < 40 && !last_two_moves(g, m, 2)) || (num >= 40 && last_two_moves(g, m, 1)))
             set_monster_move(g, owner, 2, Intent::Attack, m.damage[1]);
         else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
     }

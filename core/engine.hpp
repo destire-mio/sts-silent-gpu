@@ -416,7 +416,7 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
             if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         m.damage_output[d] = static_cast<int>(max(0, floor_int(value)) * rear_multiplier);
-        m.damage_modified[d] = modified;
+        m.damage_modified = (m.damage_modified & ~(1u << d)) | (static_cast<unsigned>(modified) << d);
     }
     if (m.pending_base_damage >= 0) m.intent_damage = calculate_intent_damage(g, owner, m.pending_base_damage);
 }
@@ -821,6 +821,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.drawn_cards.clear();
     g.selection_any_number = false;
     g.selection_can_pick_zero = false;
+    g.move_histories.size = 0;
     g.monsters.clear();
     g.monster_order.clear();
     g.manager = ActionManager{};

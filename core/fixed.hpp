@@ -110,6 +110,51 @@ struct Queue {
     }
 };
 
+struct MoveHistory { uint16_t head = 0; uint16_t size = 0; };
+struct MoveHistories {
+    int8_t moves[1024]{};
+    uint16_t previous[1024]{};
+    uint16_t size = 0;
+    SPIRE_FN void append(MoveHistory& history, int move) {
+        SPIRE_ASSERT(size < 1024);
+        moves[size] = move;
+        previous[size] = history.head;
+        history.head = ++size;
+        ++history.size;
+    }
+    SPIRE_FN int last(const MoveHistory& history, int back = 0) const {
+        SPIRE_ASSERT(back >= 0 && back < history.size);
+        int node = history.head;
+        while (back--) node = previous[node - 1];
+        return moves[node - 1];
+    }
+};
+struct DamageArray {
+    int base;
+    int values[5];
+    uint8_t targets[5];
+    uint8_t size;
+    SPIRE_FN int operator[](int target) const {
+        for (int i = 0; i < size; ++i) if (targets[i] == target) return values[i];
+        return base;
+    }
+    SPIRE_FN void assign(const int* amounts, int count) {
+        size = 0;
+        if (count == 0) return;
+        int best = 0;
+        for (int i = 0; i < count; ++i) {
+            int repeats = 0;
+            for (int j = 0; j < count; ++j) repeats += amounts[j] == amounts[i];
+            if (repeats > best) { best = repeats; base = amounts[i]; }
+        }
+        for (int i = 0; i < count; ++i) if (amounts[i] != base) {
+            SPIRE_ASSERT(size < 5);
+            targets[size] = i;
+            values[size++] = amounts[i];
+        }
+    }
+};
+
 struct TextStore {
     char values[1024]{};
     uint16_t size = 1;

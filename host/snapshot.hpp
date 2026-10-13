@@ -52,7 +52,7 @@ struct UnitStateSnapshot {
             for (const auto& item : value) items.append(py::cast(item));
             fields[py::str(field)] = items;
         } else if constexpr (std::is_enum_v<T>) fields[py::str(field)] = py::cast(static_cast<std::underlying_type_t<T>>(value));
-        else fields[py::str(field)] = py::cast(value);
+        else if constexpr (std::is_arithmetic_v<T>) fields[py::str(field)] = py::cast(value);
     }
 };
 
@@ -406,7 +406,7 @@ struct SnapshotGraph {
             if (field == "isMultiDmg") return py::bool_(monster.intent_multi);
             if (field == "moveHistory") {
                 py::list result;
-                for (int i = 0; i < monster.move_history.size; ++i) result.append(monster.move_history[i]);
+                for (int i = 0; i < monster.move_history.size; ++i) result.append(game.move_histories.last(monster.move_history, monster.move_history.size - 1 - i));
                 return result;
             }
             if (field == "nextMove") return py::int_(monster.move);
@@ -543,7 +543,7 @@ struct SnapshotGraph {
         return object({7, owner, index}, "cards.DamageInfo", [&](const std::string& field) -> py::object {
             if (field == "DamageInfo.base") return py::int_(monster.damage[index]);
             if (field == "DamageInfo.output") return py::int_(monster.damage_output[index]);
-            if (field == "DamageInfo.isModified") return py::bool_(monster.damage_modified[index]);
+            if (field == "DamageInfo.isModified") return py::bool_((monster.damage_modified & (1u << index)) != 0);
             if (field == "DamageInfo.owner") return creature(owner);
             if (field == "DamageInfo.type") return damage_type(monster_data(monster.id).damage_types[index]);
             return {};
@@ -578,7 +578,7 @@ struct SnapshotGraph {
         for (int i = 0; i < count; ++i) result.append(card(values[i]));
         return result;
     }
-    py::object damage_array(const int* values, int count, int card, bool initialized) {
+    py::object damage_array(const DamageArray& values, int count, int card, bool initialized) {
         if (!initialized) return py::none();
         py::list result;
         for (int i = 0; i < count; ++i) result.append(card >= 0 ? game.multi_damage[card][i] : values[i]);

@@ -22,7 +22,7 @@ struct SlaverRed : MonsterHooks {
             m.state.SlaverRed.firstTurn = false;
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         } else if (num >= 75 && !m.state.SlaverRed.usedEntangle) set_monster_move(g, index, 2, Intent::StrongDebuff);
-        else if ((num >= 55 && m.state.SlaverRed.usedEntangle && !last_two_moves(m, 1)) || (g.run.ascension >= 17 ? last_move(m, 3) : last_two_moves(m, 3)))
+        else if ((num >= 55 && m.state.SlaverRed.usedEntangle && !last_two_moves(g, m, 1)) || (g.run.ascension >= 17 ? last_move(g, m, 3) : last_two_moves(g, m, 3)))
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         else set_monster_move(g, index, 3, Intent::AttackDebuff, m.damage[1]);
     }

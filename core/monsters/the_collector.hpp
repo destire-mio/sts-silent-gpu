@@ -31,9 +31,9 @@ struct TheCollector : MonsterHooks {
         const auto& state = m.state.TheCollector;
         if (state.initialSpawn) set_monster_move(g, owner, 1, Intent::Unknown);
         else if (state.turnsTaken >= 3 && !state.ultUsed) set_monster_move(g, owner, 4, Intent::StrongDebuff);
-        else if (num <= 25 && isMinionDead(g, owner) && !last_move(m, 5)) set_monster_move(g, owner, 5, Intent::Unknown);
-        else if (num <= 70 && !last_two_moves(m, 2)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
-        else if (!last_move(m, 3)) set_monster_move(g, owner, 3, Intent::DefendBuff);
+        else if (num <= 25 && isMinionDead(g, owner) && !last_move(g, m, 5)) set_monster_move(g, owner, 5, Intent::Unknown);
+        else if (num <= 70 && !last_two_moves(g, m, 2)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
+        else if (!last_move(g, m, 3)) set_monster_move(g, owner, 3, Intent::DefendBuff);
         else set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

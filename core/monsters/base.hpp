@@ -31,13 +31,13 @@ SPIRE_FN inline void append_monster(Game& g, Monster monster, float offset_x = 0
     g.monsters.push_back(monster);
 }
 
-SPIRE_FN inline bool last_move(const Monster& m, int move) {
-    return m.move_history.size > 0 && m.move_history[m.move_history.size - 1] == move;
+SPIRE_FN inline bool last_move(const Game& g, const Monster& m, int move) {
+    return m.move_history.size > 0 && g.move_histories.last(m.move_history) == move;
 }
 
-SPIRE_FN inline bool last_two_moves(const Monster& m, int move) {
-    return m.move_history.size >= 2 && m.move_history[m.move_history.size - 1] == move &&
-        m.move_history[m.move_history.size - 2] == move;
+SPIRE_FN inline bool last_two_moves(const Game& g, const Monster& m, int move) {
+    return m.move_history.size >= 2 && g.move_histories.last(m.move_history) == move &&
+        g.move_histories.last(m.move_history, 1) == move;
 }
 
 SPIRE_FN inline void set_monster_move(Game& g, int index, int move, Intent intent, int base_damage, int hits) {
@@ -48,7 +48,7 @@ SPIRE_FN inline void set_monster_move(Game& g, int index, int move, Intent inten
     m.pending_base_damage = base_damage;
     m.pending_hits = hits > 1 ? hits : 0;
     m.pending_multi = hits > 1;
-    if (move != -1) m.move_history.push_back(move);
+    if (move != -1) g.move_histories.append(m.move_history, move);
 }
 
 SPIRE_FN inline void create_monster_intent(Game& g, int index) {

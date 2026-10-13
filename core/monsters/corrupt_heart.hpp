@@ -22,7 +22,7 @@ struct CorruptHeart : MonsterHooks {
         if (s.isFirstMove) { s.isFirstMove = false; set_monster_move(g, owner, 3, Intent::StrongDebuff); return; }
         const int phase = s.moveCount++ % 3;
         if (phase == 2) set_monster_move(g, owner, 4, Intent::Buff);
-        else if (phase == 0 ? g.rng.ai.randomBoolean() : last_move(m, 2)) set_monster_move(g, owner, 1, Intent::Attack, m.damage[1], s.bloodHitCount);
+        else if (phase == 0 ? g.rng.ai.randomBoolean() : last_move(g, m, 2)) set_monster_move(g, owner, 1, Intent::Attack, m.damage[1], s.bloodHitCount);
         else set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

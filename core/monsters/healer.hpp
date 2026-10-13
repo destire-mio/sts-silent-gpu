@@ -22,9 +22,9 @@ struct Healer : MonsterHooks {
             const Creature& c = g.monsters[g.monster_order[i]].creature;
             if (!c.dying && !c.escaped) missing += c.max_hp - c.hp;
         }
-        if (missing > (g.run.ascension >= 17 ? 20 : 15) && !last_two_moves(m, 2)) set_monster_move(g, owner, 2, Intent::Buff);
-        else if (num >= 40 && !(g.run.ascension >= 17 ? last_move(m, 1) : last_two_moves(m, 1))) set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
-        else if (!last_two_moves(m, 3)) set_monster_move(g, owner, 3, Intent::Buff);
+        if (missing > (g.run.ascension >= 17 ? 20 : 15) && !last_two_moves(g, m, 2)) set_monster_move(g, owner, 2, Intent::Buff);
+        else if (num >= 40 && !(g.run.ascension >= 17 ? last_move(g, m, 1) : last_two_moves(g, m, 1))) set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
+        else if (!last_two_moves(g, m, 3)) set_monster_move(g, owner, 3, Intent::Buff);
         else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

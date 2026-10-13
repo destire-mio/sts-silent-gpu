@@ -5,7 +5,9 @@
 
 namespace spire::units::monsters {
 struct GremlinLeader : MonsterHooks {
-    SPIRE_STATE(GremlinLeader, int gremlins[3]; int strAmt; int blockAmt;)
+    SPIRE_STATE(GremlinLeader, int8_t gremlins[3];)
+    SPIRE_SNAPSHOT("GremlinLeader.strAmt", scalar, game.run.ascension >= 18 ? 5 : game.run.ascension >= 3 ? 4 : 3)
+    SPIRE_SNAPSHOT("GremlinLeader.blockAmt", scalar, game.run.ascension >= 18 ? 10 : 6)
     SPIRE_SNAPSHOT("GremlinLeader.gremlins", creature_array, monster.state.GremlinLeader.gremlins, 3)
     SPIRE_SNAPSHOT("GremlinLeader.STAB_DMG", scalar, 6)
     SPIRE_SNAPSHOT("GremlinLeader.STAB_AMT", scalar, 3)
@@ -16,8 +18,7 @@ struct GremlinLeader : MonsterHooks {
         Monster m = make_monster(g, MonsterId::GremlinLeader, d, hp);
         auto& s = m.state.GremlinLeader;
         for (int i = 0; i < 3; ++i) s.gremlins[i] = no_target;
-        s.strAmt = g.run.ascension >= 18 ? 5 : g.run.ascension >= 3 ? 4 : 3;
-        s.blockAmt = g.run.ascension >= 18 ? 10 : 6;
+
         position_monster(m, 35.0f);
         return m;
     }
@@ -37,17 +38,17 @@ struct GremlinLeader : MonsterHooks {
         for (int i = 0; i < g.monster_order.size; ++i) if (g.monster_order[i] != owner && !g.monsters[g.monster_order[i]].creature.dying) ++count;
         for (;;) {
             int move;
-            if (count == 0) move = num < 75 ? (last_move(m, 2) ? 4 : 2) : (last_move(m, 4) ? 2 : 4);
+            if (count == 0) move = num < 75 ? (last_move(g, m, 2) ? 4 : 2) : (last_move(g, m, 4) ? 2 : 4);
             else if (count < 2) {
                 if (num < 50) {
-                    if (last_move(m, 2)) { num = g.rng.ai.random(50, 99); continue; }
+                    if (last_move(g, m, 2)) { num = g.rng.ai.random(50, 99); continue; }
                     move = 2;
-                } else if (num < 80) move = last_move(m, 3) ? 4 : 3;
+                } else if (num < 80) move = last_move(g, m, 3) ? 4 : 3;
                 else {
-                    if (last_move(m, 4)) { num = g.rng.ai.random(0, 80); continue; }
+                    if (last_move(g, m, 4)) { num = g.rng.ai.random(0, 80); continue; }
                     move = 4;
                 }
-            } else move = num < 66 ? (last_move(m, 3) ? 4 : 3) : (last_move(m, 4) ? 3 : 4);
+            } else move = num < 66 ? (last_move(g, m, 3) ? 4 : 3) : (last_move(g, m, 4) ? 3 : 4);
             if (move == 2) set_monster_move(g, owner, 2, Intent::Unknown);
             else if (move == 3) set_monster_move(g, owner, 3, Intent::DefendBuff);
             else set_monster_move(g, owner, 4, Intent::Attack, 6, 3);
@@ -65,8 +66,8 @@ struct GremlinLeader : MonsterHooks {
             for (int i = 0; i < g.monster_order.size; ++i) {
                 const int target = g.monster_order[i];
                 if (target != owner && g.monsters[target].creature.dying) continue;
-                queue_power(g, owner, target, PowerId::Strength, s.strAmt);
-                if (target != owner) queue_block(g, target, s.blockAmt);
+                queue_power(g, owner, target, PowerId::Strength, (g.run.ascension >= 18 ? 5 : g.run.ascension >= 3 ? 4 : 3));
+                if (target != owner) queue_block(g, target, (g.run.ascension >= 18 ? 10 : 6));
             }
         } else for (int i = 0; i < 3; ++i) queue_damage(g, owner, player_target, m.damage[0]);
         queue_monster_roll(g, owner);

@@ -16,8 +16,8 @@ struct SnakePlant : MonsterHooks {
     SPIRE_FN static void usePreBattleAction(Game& g, int owner) { queue_power(g, owner, owner, PowerId::Malleable, 3); }
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         Monster& m = g.monsters[owner];
-        const bool before = m.move_history.size >= 2 && m.move_history[m.move_history.size - 2] == 2;
-        const bool spores = num < 65 ? last_two_moves(m, 1) : !(last_move(m, 2) || (g.run.ascension >= 17 && before));
+        const bool before = m.move_history.size >= 2 && g.move_histories.last(m.move_history, 1) == 2;
+        const bool spores = num < 65 ? last_two_moves(g, m, 1) : !(last_move(g, m, 2) || (g.run.ascension >= 17 && before));
         if (spores) set_monster_move(g, owner, 2, Intent::StrongDebuff);
         else set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], 3);
     }

@@ -2,12 +2,10 @@
 #include "platform.hpp"
 
 namespace spire {
-constexpr int card_capacity = 128;
+constexpr int card_capacity = 160;
 constexpr int master_deck_capacity = 128;
 constexpr int card_pool_capacity = 64;
-// AbstractCard.calculateCardDamage also allocates multiDamage for non-attacks with a null target.
-constexpr int multi_damage_capacity = card_capacity;
-constexpr int monster_capacity = 8;
+constexpr int monster_capacity = 64;
 constexpr int power_capacity = 32;
 constexpr int power_object_capacity = 128;
 constexpr int action_capacity = 64;

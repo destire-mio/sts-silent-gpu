@@ -20,7 +20,7 @@ struct Snecko : MonsterHooks {
         if (m.state.Snecko.firstTurn) {
             m.state.Snecko.firstTurn = false;
             set_monster_move(g, owner, 1, Intent::StrongDebuff);
-        } else if (num < 40 || last_two_moves(m, 2)) set_monster_move(g, owner, 3, Intent::AttackDebuff, m.damage[1]);
+        } else if (num < 40 || last_two_moves(g, m, 2)) set_monster_move(g, owner, 3, Intent::AttackDebuff, m.damage[1]);
         else set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

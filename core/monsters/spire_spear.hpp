@@ -21,7 +21,7 @@ struct SpireSpear : MonsterHooks {
         (void)num; Monster& m = g.monsters[owner];
         const int phase = m.state.SpireSpear.moveCount++ % 3;
         if (phase == 1) set_monster_move(g, owner, 3, Intent::Attack, m.damage[1], m.state.SpireSpear.skewerCount);
-        else if (phase == 0 ? last_move(m, 1) : g.rng.ai.randomBoolean()) set_monster_move(g, owner, 2, Intent::Buff);
+        else if (phase == 0 ? last_move(g, m, 1) : g.rng.ai.randomBoolean()) set_monster_move(g, owner, 2, Intent::Buff);
         else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0], 2);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

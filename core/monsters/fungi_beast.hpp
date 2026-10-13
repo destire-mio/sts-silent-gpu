@@ -15,7 +15,7 @@ struct FungiBeast : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
-        if ((num < 60 && !last_two_moves(m, 1)) || (num >= 60 && last_move(m, 2)))
+        if ((num < 60 && !last_two_moves(g, m, 1)) || (num >= 60 && last_move(g, m, 2)))
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         else set_monster_move(g, index, 2, Intent::Buff);
     }

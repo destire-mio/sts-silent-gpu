@@ -127,7 +127,7 @@ int main() {
     shuffle = g.action_objects[g.manager.actions.pop_front()];
     execute_effect(g, shuffle);
     if (g.run.gold != 100) return 20;
-    g.multi_damage[0][0] = 1;
+    g.multi_damage[0].base = 1;
     g.cards[0].multi_damage_count = 1;
     Effect all = DamageAllEnemies::from_card(g, 0);
     execute_effect(g, all);

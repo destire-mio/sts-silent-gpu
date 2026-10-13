@@ -31,7 +31,7 @@ struct Reptomancer : MonsterHooks {
                 power_constructPower(g, power, owner, owner, 0, -1);
                 add_bottom(g, actions::ApplyPower::make(id, id, power, -1));
             }
-            if (g.monsters[id].id == monster_id("SnakeDagger")) g.monsters[owner].state.Reptomancer.daggers[i > position ? 0 : 1] = id;
+            if (g.monsters[id].id == MonsterId::SnakeDagger) g.monsters[owner].state.Reptomancer.daggers[i > position ? 0 : 1] = id;
         }
     }
     SPIRE_FN static bool canSpawn(const Game& g, int owner) {
@@ -47,9 +47,9 @@ struct Reptomancer : MonsterHooks {
             return;
         }
         // Reptomancer.getMove rerolls only a forbidden attack branch.
-        while ((num < 33 && last_move(m, 1)) || (num >= 66 && last_move(m, 3)))
+        while ((num < 33 && last_move(g, m, 1)) || (num >= 66 && last_move(g, m, 3)))
             num = num < 33 ? g.rng.ai.random(33, 99) : g.rng.ai.random(65);
-        if (num < 33 || (num < 66 && (last_two_moves(m, 2) || !canSpawn(g, owner))))
+        if (num < 33 || (num < 66 && (last_two_moves(g, m, 2) || !canSpawn(g, owner))))
             set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0], 2);
         else if (num < 66) set_monster_move(g, owner, 2, Intent::Unknown);
         else set_monster_move(g, owner, 3, Intent::Attack, m.damage[1]);
@@ -58,7 +58,9 @@ struct Reptomancer : MonsterHooks {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
+            add_bottom(g, actions::VFX::make());
             queue_damage(g, owner, player_target, m.damage[0]);
+            add_bottom(g, actions::VFX::make());
             queue_damage(g, owner, player_target, m.damage[0]);
             queue_power(g, owner, player_target, PowerId::Weak, 1, true);
         } else if (m.move == 2) {
@@ -67,11 +69,15 @@ struct Reptomancer : MonsterHooks {
             constexpr float positions[]{210.0f, -220.0f, 180.0f, -250.0f};
             for (int i = 0; spawned < (g.run.ascension >= 18 ? 2 : 1) && i < 4; ++i) {
                 const int dagger = m.state.Reptomancer.daggers[i];
-                if (dagger != no_target && !g.monsters[dagger].creature.dead && !g.monsters[dagger].creature.escaped) continue;
-                m.state.Reptomancer.daggers[i] = queue_spawn_monster(g, monster_id("SnakeDagger"), positions[i], true);
+                if (dagger != no_target && alive(g.monsters[dagger].creature)) continue;
+                m.state.Reptomancer.daggers[i] = queue_spawn_monster(g, MonsterId::SnakeDagger, positions[i], true);
                 ++spawned;
             }
-        } else if (m.move == 3) queue_damage(g, owner, player_target, m.damage[1]);
+        } else if (m.move == 3) {
+            add_bottom(g, actions::AnimateFastAttack::make(owner));
+            add_bottom(g, actions::VFX::make());
+            queue_damage(g, owner, player_target, m.damage[1]);
+        }
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {

@@ -18,7 +18,7 @@ struct Sentry : MonsterHooks {
     SPIRE_FN static void usePreBattleAction(Game& g, int owner) { queue_power(g, owner, owner, PowerId::Artifact, 1); }
     SPIRE_FN static void getMove(Game& g, int owner, int) {
         Monster& m = g.monsters[owner];
-        bool bolt = last_move(m, 4);
+        bool bolt = last_move(g, m, 4);
         if (m.state.Sentry.firstMove) {
             int position = -1;
             for (int i = 0; i < g.monster_order.size; ++i) if (g.monster_order[i] == owner) position = i;

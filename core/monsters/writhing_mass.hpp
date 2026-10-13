@@ -31,21 +31,21 @@ struct WrithingMass : MonsterHooks {
         int move = -1;
         while (move < 0) {
             if (num < 10) {
-                if (!last_move(m, 0)) move = 0;
+                if (!last_move(g, m, 0)) move = 0;
                 else num = g.rng.ai.random(10, 99);
             } else if (num < 20) {
-                if (!s.usedMegaDebuff && !last_move(m, 4)) move = 4;
+                if (!s.usedMegaDebuff && !last_move(g, m, 4)) move = 4;
                 else if (g.rng.ai.randomBoolean(0.1f)) move = 0;
                 else num = g.rng.ai.random(20, 99);
             } else if (num < 40) {
-                if (!last_move(m, 3)) move = 3;
+                if (!last_move(g, m, 3)) move = 3;
                 else if (g.rng.ai.randomBoolean(0.4f)) num = g.rng.ai.random(19);
                 else num = g.rng.ai.random(40, 99);
             } else if (num < 70) {
-                if (!last_move(m, 1)) move = 1;
+                if (!last_move(g, m, 1)) move = 1;
                 else if (g.rng.ai.randomBoolean(0.3f)) move = 2;
                 else num = g.rng.ai.random(39);
-            } else if (!last_move(m, 2)) move = 2;
+            } else if (!last_move(g, m, 2)) move = 2;
             else num = g.rng.ai.random(69);
         }
         if (move == 4) set_monster_move(g, owner, 4, Intent::StrongDebuff);

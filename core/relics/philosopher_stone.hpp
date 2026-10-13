@@ -17,7 +17,7 @@ struct PhilosopherStone : RelicHooks {
             Power p(PowerId::Strength, 1);
             p.instance = g.next_power_instance++;
             power_constructPower(g, p, owner, owner, 0, -1);
-            powers.push_back(g.power_objects.add(p));
+            powers.push_back(g.power_objects, g.power_objects.add(p));
         }
     }
     static SPIRE_FN void atBattleStart(Game& g, int relic) {

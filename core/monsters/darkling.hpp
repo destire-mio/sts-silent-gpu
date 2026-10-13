@@ -35,13 +35,13 @@ struct Darkling : MonsterHooks {
         for (int i = 0; i < g.monster_order.size; ++i) if (g.monster_order[i] == owner) position = i;
         for (;;) {
             if (num < 40) {
-                if (!last_move(m, 1) && position % 2 == 0) { set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], 2); return; }
+                if (!last_move(g, m, 1) && position % 2 == 0) { set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], 2); return; }
                 num = g.rng.ai.random(40, 99);
             } else if (num < 70) {
-                if (!last_move(m, 2)) set_monster_move(g, owner, 2, g.run.ascension >= 17 ? Intent::DefendBuff : Intent::Defend);
+                if (!last_move(g, m, 2)) set_monster_move(g, owner, 2, g.run.ascension >= 17 ? Intent::DefendBuff : Intent::Defend);
                 else set_monster_move(g, owner, 3, Intent::Attack, m.damage[1]);
                 return;
-            } else if (!last_two_moves(m, 3)) { set_monster_move(g, owner, 3, Intent::Attack, m.damage[1]); return; }
+            } else if (!last_two_moves(g, m, 3)) { set_monster_move(g, owner, 3, Intent::Attack, m.damage[1]); return; }
             else num = g.rng.ai.random(0, 99);
         }
     }

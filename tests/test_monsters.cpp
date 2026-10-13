@@ -145,7 +145,7 @@ void lethal_attack_keeps_published_intent() {
     CHECK(g.monsters[0].intent == Intent::Attack);
     CHECK(g.monsters[0].pending_move == 2);
     CHECK(g.monsters[0].pending_intent == Intent::Debuff);
-    CHECK(g.monsters[0].move_history[g.monsters[0].move_history.size - 1] == 2);
+    CHECK(g.move_histories.last(g.monsters[0].move_history) == 2);
     CHECK(g.action_objects[g.manager.actions[0]].kind == EffectKind::Damage);
     execute_next(g);
     CHECK(g.screen == Screen::Death);

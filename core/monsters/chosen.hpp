@@ -25,7 +25,7 @@ struct Chosen : MonsterHooks {
         } else if (!s.usedHex) {
             s.usedHex = true;
             set_monster_move(g, owner, 4, Intent::StrongDebuff);
-        } else if (!last_move(m, 3) && !last_move(m, 2)) {
+        } else if (!last_move(g, m, 3) && !last_move(g, m, 2)) {
             if (num < 50) set_monster_move(g, owner, 3, Intent::AttackDebuff, m.damage[1]);
             else set_monster_move(g, owner, 2, Intent::Debuff);
         } else if (num < 40) set_monster_move(g, owner, 1, Intent::Attack, m.damage[0]);

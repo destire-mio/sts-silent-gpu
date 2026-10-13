@@ -32,14 +32,14 @@ struct JawWorm : MonsterHooks {
             m.state.JawWorm.firstMove = false;
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         } else if (num < 25) {
-            if (!last_move(m, 1)) set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+            if (!last_move(g, m, 1)) set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
             else if (g.rng.ai.randomBoolean(0.5625f)) set_monster_move(g, index, 2, Intent::DefendBuff);
             else set_monster_move(g, index, 3, Intent::AttackDefend, m.damage[1]);
         } else if (num < 55) {
-            if (!last_two_moves(m, 3)) set_monster_move(g, index, 3, Intent::AttackDefend, m.damage[1]);
+            if (!last_two_moves(g, m, 3)) set_monster_move(g, index, 3, Intent::AttackDefend, m.damage[1]);
             else if (g.rng.ai.randomBoolean(0.357f)) set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
             else set_monster_move(g, index, 2, Intent::DefendBuff);
-        } else if (!last_move(m, 2)) set_monster_move(g, index, 2, Intent::DefendBuff);
+        } else if (!last_move(g, m, 2)) set_monster_move(g, index, 2, Intent::DefendBuff);
         else if (g.rng.ai.randomBoolean(0.416f)) set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         else set_monster_move(g, index, 3, Intent::AttackDefend, m.damage[1]);
     }

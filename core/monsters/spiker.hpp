@@ -21,7 +21,7 @@ struct Spiker : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         const Monster& m = g.monsters[owner];
-        if (m.state.Spiker.thornsCount > 5 || (num < 50 && !last_move(m, 1)))
+        if (m.state.Spiker.thornsCount > 5 || (num < 50 && !last_move(g, m, 1)))
             set_monster_move(g, owner, 1, Intent::Attack, m.damage[0]);
         else set_monster_move(g, owner, 2, Intent::Buff);
     }

@@ -22,8 +22,8 @@ struct GremlinNob : MonsterHooks {
             set_monster_move(g, owner, 3, Intent::Buff);
             return;
         }
-        const bool before = m.move_history.size >= 2 && m.move_history[m.move_history.size - 2] == 2;
-        const bool bash = last_two_moves(m, 1) || (g.run.ascension >= 18 ? !last_move(m, 2) && !before : num < 33);
+        const bool before = m.move_history.size >= 2 && g.move_histories.last(m.move_history, 1) == 2;
+        const bool bash = last_two_moves(g, m, 1) || (g.run.ascension >= 18 ? !last_move(g, m, 2) && !before : num < 33);
         if (bash) set_monster_move(g, owner, 2, m.state.GremlinNob.canVuln ? Intent::AttackDebuff : Intent::Attack, m.damage[1]);
         else set_monster_move(g, owner, 1, Intent::Attack, m.damage[0]);
     }

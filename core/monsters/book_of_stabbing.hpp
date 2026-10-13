@@ -18,7 +18,7 @@ struct BookOfStabbing : MonsterHooks {
     SPIRE_FN static void usePreBattleAction(Game& g, int owner) { queue_power(g, owner, owner, PowerId::PainfulStabs, -1); }
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         Monster& m = g.monsters[owner]; auto& s = m.state.BookOfStabbing;
-        if ((num < 15 && !last_move(m, 2)) || (num >= 15 && last_two_moves(m, 1))) {
+        if ((num < 15 && !last_move(g, m, 2)) || (num >= 15 && last_two_moves(g, m, 1))) {
             set_monster_move(g, owner, 2, Intent::Attack, m.damage[1]);
             if (g.run.ascension >= 18) ++s.stabCount;
         } else { ++s.stabCount; set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], s.stabCount); }

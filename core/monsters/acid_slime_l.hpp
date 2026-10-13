@@ -14,24 +14,24 @@ struct AcidSlime_L : MonsterHooks {
         Power split{PowerId::Split, -1};
         split.instance = g.next_power_instance++;
         power_initialize_state(split);
-        m.creature.powers.push_back(g.power_objects.add(split));
+        m.creature.powers.push_back(g.power_objects, g.power_objects.add(split));
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
         if (num < (g.run.ascension >= 17 ? 40 : 30)) {
-            if (!last_two_moves(m, 1)) set_monster_move(g, index, 1, Intent::AttackDebuff, m.damage[0]);
+            if (!last_two_moves(g, m, 1)) set_monster_move(g, index, 1, Intent::AttackDebuff, m.damage[0]);
             else {
                 const bool attack = g.run.ascension >= 17 ? g.rng.ai.randomBoolean(0.6f) : g.rng.ai.randomBoolean();
                 if (attack) set_monster_move(g, index, 2, Intent::Attack, m.damage[1]);
                 else set_monster_move(g, index, 4, Intent::Debuff);
             }
         } else if (num < 70) {
-            if (!(g.run.ascension >= 17 ? last_two_moves(m, 2) : last_move(m, 2))) set_monster_move(g, index, 2, Intent::Attack, m.damage[1]);
+            if (!(g.run.ascension >= 17 ? last_two_moves(g, m, 2) : last_move(g, m, 2))) set_monster_move(g, index, 2, Intent::Attack, m.damage[1]);
             else if (g.rng.ai.randomBoolean(g.run.ascension >= 17 ? 0.6f : 0.4f))
                 set_monster_move(g, index, 1, Intent::AttackDebuff, m.damage[0]);
             else set_monster_move(g, index, 4, Intent::Debuff);
-        } else if (!(g.run.ascension >= 17 ? last_move(m, 4) : last_two_moves(m, 4))) set_monster_move(g, index, 4, Intent::Debuff);
+        } else if (!(g.run.ascension >= 17 ? last_move(g, m, 4) : last_two_moves(g, m, 4))) set_monster_move(g, index, 4, Intent::Debuff);
         else if (g.rng.ai.randomBoolean(0.4f)) set_monster_move(g, index, 1, Intent::AttackDebuff, m.damage[0]);
         else set_monster_move(g, index, 2, Intent::Attack, m.damage[1]);
     }

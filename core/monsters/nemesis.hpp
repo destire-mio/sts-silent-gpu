@@ -21,14 +21,14 @@ struct Nemesis : MonsterHooks {
         int move;
         if (s.firstMove) { s.firstMove = false; move = num < 50 ? 2 : 4; }
         else if (num < 30) {
-            if (!last_move(m, 3) && s.scytheCooldown <= 0) move = 3;
-            else if (g.rng.ai.randomBoolean()) move = !last_two_moves(m, 2) ? 2 : 4;
-            else move = !last_move(m, 4) ? 4 : 2;
+            if (!last_move(g, m, 3) && s.scytheCooldown <= 0) move = 3;
+            else if (g.rng.ai.randomBoolean()) move = !last_two_moves(g, m, 2) ? 2 : 4;
+            else move = !last_move(g, m, 4) ? 4 : 2;
         } else if (num < 65) {
-            if (!last_two_moves(m, 2)) move = 2;
+            if (!last_two_moves(g, m, 2)) move = 2;
             else if (g.rng.ai.randomBoolean()) move = s.scytheCooldown > 0 ? 4 : 3;
             else move = 4;
-        } else if (!last_move(m, 4)) move = 4;
+        } else if (!last_move(g, m, 4)) move = 4;
         else if (g.rng.ai.randomBoolean() && s.scytheCooldown <= 0) move = 3;
         else move = 2;
         if (move == 3) { s.scytheCooldown = 2; set_monster_move(g, owner, 3, Intent::Attack, 45); }

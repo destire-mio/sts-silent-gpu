@@ -24,9 +24,9 @@ struct BronzeAutomaton : MonsterHooks {
         auto& state = m.state.BronzeAutomaton;
         if (state.firstTurn) { state.firstTurn = false; set_monster_move(g, owner, 4, Intent::Unknown); }
         else if (state.numTurns == 4) { state.numTurns = 0; set_monster_move(g, owner, 2, Intent::Attack, m.damage[1]); }
-        else if (last_move(m, 2)) set_monster_move(g, owner, g.run.ascension >= 19 ? 5 : 3, g.run.ascension >= 19 ? Intent::DefendBuff : Intent::Stun);
+        else if (last_move(g, m, 2)) set_monster_move(g, owner, g.run.ascension >= 19 ? 5 : 3, g.run.ascension >= 19 ? Intent::DefendBuff : Intent::Stun);
         else {
-            if (last_move(m, 3) || last_move(m, 5) || last_move(m, 4)) set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], 2);
+            if (last_move(g, m, 3) || last_move(g, m, 5) || last_move(g, m, 4)) set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], 2);
             else set_monster_move(g, owner, 5, Intent::DefendBuff);
             ++state.numTurns;
         }
@@ -34,8 +34,9 @@ struct BronzeAutomaton : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         const Monster& m = g.monsters[owner];
         if (m.move == 4) {
-            queue_spawn_monster(g, monster_id("BronzeOrb"), -300.0f, true);
-            queue_spawn_monster(g, monster_id("BronzeOrb"), 200.0f, true);
+            queue_spawn_monster(g, MonsterId::BronzeOrb, -300.0f, true);
+            const int right = queue_spawn_monster(g, MonsterId::BronzeOrb, 200.0f, true);
+            g.monsters[right].state.BronzeOrb.count = 1;
         } else if (m.move == 1) {
             queue_damage(g, owner, player_target, m.damage[0]);
             queue_damage(g, owner, player_target, m.damage[0]);

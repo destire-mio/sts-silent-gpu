@@ -30,9 +30,9 @@ struct ShelledParasite : MonsterHooks {
             else set_monster_move(g, owner, 3, Intent::AttackBuff, m.damage[2]);
             return;
         }
-        if (num < 20 && last_move(m, 1)) num = g.rng.ai.random(20, 99);
+        if (num < 20 && last_move(g, m, 1)) num = g.rng.ai.random(20, 99);
         if (num < 20) set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[1]);
-        else if (num < 60 ? !last_two_moves(m, 2) : last_two_moves(m, 3)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 2);
+        else if (num < 60 ? !last_two_moves(g, m, 2) : last_two_moves(g, m, 3)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 2);
         else set_monster_move(g, owner, 3, Intent::AttackBuff, m.damage[2]);
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* key) {

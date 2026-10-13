@@ -18,7 +18,7 @@ struct Repulsor : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         const Monster& m = g.monsters[owner];
-        if (num < 20 && !last_move(m, 2)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
+        if (num < 20 && !last_move(g, m, 2)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
         else set_monster_move(g, owner, 1, Intent::Debuff);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

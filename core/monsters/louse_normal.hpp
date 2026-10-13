@@ -18,7 +18,7 @@ struct LouseNormal : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
-        if ((num < 25 && !(g.run.ascension >= 17 ? last_move(m, 4) : last_two_moves(m, 4))) || (num >= 25 && last_two_moves(m, 3)))
+        if ((num < 25 && !(g.run.ascension >= 17 ? last_move(g, m, 4) : last_two_moves(g, m, 4))) || (num >= 25 && last_two_moves(g, m, 3)))
             set_monster_move(g, index, 4, Intent::Buff);
         else set_monster_move(g, index, 3, Intent::Attack, m.damage[0]);
     }

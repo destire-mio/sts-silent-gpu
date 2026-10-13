@@ -25,7 +25,7 @@ struct Lagavulin : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int) {
         Monster& m = g.monsters[owner];
         if (!m.state.Lagavulin.isOut) set_monster_move(g, owner, 5, Intent::Sleep);
-        else if (m.state.Lagavulin.debuffTurnCount < 2 && !last_two_moves(m, 3))
+        else if (m.state.Lagavulin.debuffTurnCount < 2 && !last_two_moves(g, m, 3))
             set_monster_move(g, owner, 3, Intent::Attack, m.damage[0]);
         else set_monster_move(g, owner, 1, Intent::StrongDebuff);
     }

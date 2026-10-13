@@ -15,11 +15,11 @@ struct Card {
     int base_magic = -1;
     int magic = -1;
     CardId id = CardId::Strike_G;
-    CardTarget target = CardTarget::Enemy;
     int16_t upgrades = 0;
     int16_t cost = 0;
     int16_t cost_for_turn = 0;
     int16_t energy_on_use = 0;
+    CardTarget target = CardTarget::Enemy;
     uint8_t multi_damage_count = 0;
     bool upgraded_cost : 1;
     bool ignore_energy_on_use : 1;
@@ -48,7 +48,14 @@ struct Card {
           bottle_flame(false), bottle_lightning(false), bottle_tornado(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
-struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; bool grayscale = false; bool used_up = false; };
+struct Relic {
+    RelicId id;
+    bool grayscale = false;
+    bool used_up = false;
+    int counter;
+    RelicState state{};
+    SPIRE_FN constexpr Relic(RelicId id = RelicId::SnakeRing, int counter = -1) : id(id), counter(counter) {}
+};
 struct Power {
     uint32_t instance = 0;
     int amount;
@@ -58,10 +65,41 @@ struct Power {
     bool just_applied : 1;
     bool triggered : 1;
     bool skip_first : 1;
+    uint8_t next = 255;
     SPIRE_FN constexpr Power(PowerId id = PowerId::Strength, int amount = 0)
         : amount(amount), id(id), just_applied(false), triggered(false), skip_first(true) {}
 };
-using Powers = List<uint8_t, power_capacity>;
+struct Powers {
+    uint8_t head = 255;
+    uint8_t size = 0;
+    template<class Objects> SPIRE_FN int index(const Objects& objects, int position) const {
+        SPIRE_ASSERT(position >= 0 && position < size);
+        int current = head;
+        while (position--) current = objects[current].next;
+        return current;
+    }
+    template<class Objects> SPIRE_FN auto& at(Objects& objects, int position) { return objects[index(objects, position)]; }
+    template<class Objects> SPIRE_FN const auto& at(const Objects& objects, int position) const { return objects[index(objects, position)]; }
+    template<class Objects> SPIRE_FN void insert(Objects& objects, int position, int value) {
+        SPIRE_ASSERT(position >= 0 && position <= size && size < power_capacity);
+        if (position == 0) { objects[value].next = head; head = value; }
+        else {
+            auto& previous = at(objects, position - 1);
+            objects[value].next = previous.next;
+            previous.next = value;
+        }
+        ++size;
+    }
+    template<class Objects> SPIRE_FN void push_back(Objects& objects, int value) { insert(objects, size, value); }
+    template<class Objects> SPIRE_FN void erase(Objects& objects, int position) {
+        SPIRE_ASSERT(position >= 0 && position < size);
+        if (position == 0) head = objects[head].next;
+        else { auto& previous = at(objects, position - 1); previous.next = objects[previous.next].next; }
+        --size;
+    }
+    SPIRE_FN void clear() { head = 255; size = 0; }
+    SPIRE_FN bool empty() const { return size == 0; }
+};
 struct Creature {
     float draw_x = 0.0f;
     int hp = 0;
@@ -70,11 +108,12 @@ struct Creature {
     int last_damage_taken = 0;
     int gold = 0;
     Powers powers{};
-    bool dead = false;
-    bool dying = false;
-    bool escaped = false;
-    bool flip_horizontal = false;
-    bool half_dead = false;
+    bool dead : 1;
+    bool dying : 1;
+    bool escaped : 1;
+    bool flip_horizontal : 1;
+    bool half_dead : 1;
+    SPIRE_FN constexpr Creature() : dead(false), dying(false), escaped(false), flip_horizontal(false), half_dead(false) {}
 };
 struct Monster {
     MonsterId id = MonsterId::Cultist;
@@ -92,11 +131,11 @@ struct Monster {
     bool pending_multi = false;
     bool intent_multi = false;
     uint16_t move_name = 0;
-    List<int8_t, 256> move_history{};
+    MoveHistory move_history{};
     int16_t damage[8]{};
     uint8_t damage_count = 1;
     int16_t damage_output[8]{};
-    bool damage_modified[8]{};
+    uint8_t damage_modified = 0;
     int16_t block_amount = 0;
     int16_t magic = 0;
     bool cannot_escape = false;
@@ -147,14 +186,19 @@ struct Effect {
 };
 using DamageInfo = Effect;
 struct CardQueueItem {
-    int card = -1;
-    int target = no_target;
-    int energy_on_use = 0;
-    bool ignore_energy_total = false;
-    bool autoplay_card = false;
-    bool random_target = false;
-    bool is_end_turn_auto_play = false;
+    int16_t card;
+    int16_t energy_on_use;
+    int8_t target;
+    bool ignore_energy_total : 1;
+    bool autoplay_card : 1;
+    bool random_target : 1;
+    bool is_end_turn_auto_play : 1;
+    SPIRE_FN constexpr CardQueueItem(int card = -1, int target = no_target, int energy = 0,
+                                    bool ignore = false, bool autoplay = false, bool random = false, bool end_turn = false)
+        : card(card), energy_on_use(energy), target(target), ignore_energy_total(ignore), autoplay_card(autoplay),
+          random_target(random), is_end_turn_auto_play(end_turn) {}
 };
+
 struct PlayedCards {
     uint8_t values[1024]{};
     uint16_t size = 0;
@@ -217,27 +261,12 @@ struct RoomReward {
     int identity = 0;
 };
 struct CardDamage {
-    int values[multi_damage_capacity][monster_capacity]{};
-    uint8_t slots[card_capacity]{};
-    uint8_t size = 0;
-    SPIRE_FN int* operator[](int card) {
-        SPIRE_ASSERT(card >= 0 && card < card_capacity);
-        if (slots[card] == 0) {
-            SPIRE_ASSERT(size < multi_damage_capacity);
-            slots[card] = ++size;
-            for (int& value : values[size - 1]) value = 0;
-        }
-        return values[slots[card] - 1];
-    }
-    SPIRE_FN const int* operator[](int card) const {
-        SPIRE_ASSERT(card >= 0 && card < card_capacity && slots[card] != 0);
-        return values[slots[card] - 1];
-    }
-    SPIRE_FN void clear() {
-        for (auto& slot : slots) slot = 0;
-        size = 0;
-    }
+    DamageArray values[card_capacity]{};
+    SPIRE_FN DamageArray& operator[](int card) { SPIRE_ASSERT(card >= 0 && card < card_capacity); return values[card]; }
+    SPIRE_FN const DamageArray& operator[](int card) const { SPIRE_ASSERT(card >= 0 && card < card_capacity); return values[card]; }
+    SPIRE_FN void clear() { for (auto& value : values) value = DamageArray{}; }
 };
+
 struct Game {
     uint32_t fault = 0;
     TextStore text{};
@@ -263,6 +292,7 @@ struct Game {
     int next_reward_identity = 1;
     int acquisition_reward = -1;
     int discovery_card = -1;
+    MoveHistories move_histories{};
     List<Monster, monster_capacity> monsters{};
     List<uint8_t, monster_capacity> monster_order{};
     ActionManager manager{};

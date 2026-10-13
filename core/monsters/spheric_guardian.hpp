@@ -24,7 +24,7 @@ struct SphericGuardian : MonsterHooks {
         auto& s = m.state.SphericGuardian;
         if (s.firstMove) { s.firstMove = false; set_monster_move(g, owner, 2, Intent::Defend); }
         else if (s.secondMove) { s.secondMove = false; set_monster_move(g, owner, 4, Intent::AttackDebuff, m.damage[0]); }
-        else if (last_move(m, 1)) set_monster_move(g, owner, 3, Intent::AttackDefend, m.damage[0]);
+        else if (last_move(g, m, 1)) set_monster_move(g, owner, 3, Intent::AttackDefend, m.damage[0]);
         else set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], 2);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

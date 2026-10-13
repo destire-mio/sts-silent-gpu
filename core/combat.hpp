@@ -281,7 +281,7 @@ SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t inst
     }
     if (index >= 0) {
         power_onRemove(g, c.powers.at(g.power_objects, index), target);
-        c.powers.erase(index);
+        c.powers.erase(g.power_objects, index);
         refresh_powers(g);
     }
 }
@@ -323,7 +323,7 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
         if (incoming.instance == 0) incoming.instance = g.next_power_instance++;
         int index = c.powers.size;
         while (index > 0 && power_data(c.powers.at(g.power_objects, index - 1).id).priority > power_data(id).priority) --index;
-        c.powers.insert(index, g.power_objects.add(incoming));
+        c.powers.insert(g.power_objects, index, g.power_objects.add(incoming));
         power_onInitialApplication(g, c.powers.at(g.power_objects, index), target);
         refresh_powers(g);
     }

@@ -25,11 +25,11 @@ struct AwakenedOne : MonsterHooks {
         auto& state = m.state.AwakenedOne;
         if (state.form1) {
             if (state.firstTurn) { state.firstTurn = false; set_monster_move(g, owner, 1, Intent::Attack, 20); }
-            else if ((num < 25 && !last_move(m, 2)) || (num >= 25 && last_two_moves(m, 1))) set_monster_move(g, owner, 2, Intent::Attack, 6, 4);
+            else if ((num < 25 && !last_move(g, m, 2)) || (num >= 25 && last_two_moves(g, m, 1))) set_monster_move(g, owner, 2, Intent::Attack, 6, 4);
             else set_monster_move(g, owner, 1, Intent::Attack, 20);
         } else {
             if (state.firstTurn) set_monster_move(g, owner, 5, Intent::Attack, 40);
-            else if ((num < 50 && !last_two_moves(m, 6)) || (num >= 50 && last_two_moves(m, 8))) set_monster_move(g, owner, 6, Intent::AttackDebuff, 18);
+            else if ((num < 50 && !last_two_moves(g, m, 6)) || (num >= 50 && last_two_moves(g, m, 8))) set_monster_move(g, owner, 6, Intent::AttackDebuff, 18);
             else set_monster_move(g, owner, 8, Intent::Attack, 10, 3);
         }
     }
@@ -73,7 +73,7 @@ struct AwakenedOne : MonsterHooks {
             Effect e{}; e.kind = EffectKind::ClearCardQueue; add_top(g, e);
             for (int i = 0; i < c.powers.size;) {
                 const Power& p = c.powers.at(g.power_objects, i);
-                if (power_data(p.id).debuff || p.id == PowerId::Curiosity || p.id == PowerId::Unawakened || power_matches_id(p.id, "Shackled")) c.powers.erase(i);
+                if (power_data(p.id).debuff || p.id == PowerId::Curiosity || p.id == PowerId::Unawakened || power_matches_id(p.id, "Shackled")) c.powers.erase(g.power_objects, i);
                 else ++i;
             }
             set_monster_move(g, owner, 3, Intent::Unknown);

@@ -10,7 +10,7 @@ struct TorchHead : MonsterHooks {
         MonsterData d = data();
         if (g.run.ascension < 9) { d.hp_min = 38; d.hp_max = 40; }
         Monster m = make_monster(g, MonsterId::TorchHead, d, hp);
-        m.pending_move = 1; m.pending_intent = Intent::Attack; m.pending_base_damage = 7; m.move_history.push_back(1);
+        m.pending_move = 1; m.pending_intent = Intent::Attack; m.pending_base_damage = 7; g.move_histories.append(m.move_history, 1);
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int owner, int num) { (void)num; set_monster_move(g, owner, 1, Intent::Attack, 7); }

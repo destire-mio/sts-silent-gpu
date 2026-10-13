@@ -20,7 +20,7 @@ struct SpireShield : MonsterHooks {
         (void)num; Monster& m = g.monsters[owner];
         const int phase = m.state.SpireShield.moveCount++ % 3;
         if (phase == 2) set_monster_move(g, owner, 3, Intent::AttackDefend, m.damage[1]);
-        else if (phase == 0 ? g.rng.ai.randomBoolean() : last_move(m, 1)) set_monster_move(g, owner, 2, Intent::Defend);
+        else if (phase == 0 ? g.rng.ai.randomBoolean() : last_move(g, m, 1)) set_monster_move(g, owner, 2, Intent::Defend);
         else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {

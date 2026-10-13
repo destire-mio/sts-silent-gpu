@@ -13,7 +13,7 @@ struct Regen : ActionHooks {
         }
         if (e.target == player_target) {
             const int regen = find_power(g, target, "Regeneration");
-            if (regen >= 0 && --target.powers.at(g.power_objects, regen).amount == 0) target.powers.erase(regen);
+            if (regen >= 0 && --target.powers.at(g.power_objects, regen).amount == 0) target.powers.erase(g.power_objects, regen);
         }
     }
 };

@@ -84,8 +84,8 @@ SPIRE_FN inline void apply_card_powers(Game& g, int card_id) {
     c.damage = card_damage_value(g, card_id, no_target);
     if (card_def(c.id).multi_damage) {
         c.multi_damage_count = g.monster_order.size;
-        for (int i = 0; i < g.monster_order.size; ++i)
-            g.multi_damage[card_id][i] = c.damage;
+        g.multi_damage[card_id].base = c.damage;
+        g.multi_damage[card_id].size = 0;
     }
 }
 SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
@@ -95,12 +95,14 @@ SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
     else {
         // AbstractCard.calculateCardDamage fills multiDamage for multi-target cards and null targets.
         c.multi_damage_count = g.monster_order.size;
+        int amounts[monster_capacity]{};
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int owner = g.monster_order[i];
             const Creature& monster = g.monsters[owner].creature;
-            g.multi_damage[card_id][i] = card_damage_value(g, card_id, monster.dying || monster.escaped ? no_target : owner);
+            amounts[i] = card_damage_value(g, card_id, monster.dying || monster.escaped ? no_target : owner);
         }
-        c.damage = g.multi_damage[card_id][0];
+        g.multi_damage[card_id].assign(amounts, g.monster_order.size);
+        c.damage = amounts[0];
     }
 }
 SPIRE_FN inline void queue_card_damage(Game& g, int card, int target) {

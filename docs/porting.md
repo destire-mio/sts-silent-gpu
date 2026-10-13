@@ -73,8 +73,9 @@ SPIRE_STATE(MyPower, int counter; bool active;)
 ```
 
 The generator places these fields in the category's tagged union; a power hook accesses them
-through `power.state.MyPower.counter`. Fields must be trivial scalars, enums or C arrays,
-without field initializers or `List` members. Set constructor values after initializing the
+through `power.state.MyPower.counter`. Fields must have trivial default construction: scalars, enums, C arrays or compact
+value records such as `DamageArray`, without field initializers or `List` members.
+Non-scalar records require an explicit `SPIRE_SNAPSHOT` mapping. Set constructor values after initializing the
 selected union member. This keeps state local to each instance and adds storage for the largest
 payload in that category rather than every unit's payload.
 
@@ -136,13 +137,16 @@ Do not store a host pointer, vector, string, whole card or large per-unit array 
 `Game` owns its storage and remains relocatable by a byte copy. Keep object identity separate
 from an object's current position in an ordered list:
 
-- Master-deck cards removed while a relic references them stay in the existing 128-card arena.
+- Master-deck cards removed while a relic references them stay in the existing 160-card arena.
   A 64-byte index list covers the 64 relic instances; these retained master objects consume
   the same execution budget as combat cards and keep a distinct snapshot identity.
 - Master-deck and combat cards are different objects with matching UUIDs
-  (`AbstractCard.makeSameInstanceOf`). Both stores hold 128 cards; piles and played histories
-  hold byte indices into combat cards. Do not put `Card` values in another pile or queue.
-- Each creature holds up to 32 byte indices into the shared 128-object power arena. Use
+  (`AbstractCard.makeSameInstanceOf`). The master deck holds 128 cards and the combat arena holds 160; piles and played histories
+  hold byte indices into combat cards. The Reptomancer high-health recordings exceed 128
+  combat card objects through Wound generation. These capacities are execution budgets.
+  Do not put `Card` values in another pile or queue.
+- Each creature holds the head and size of an ordered list in the shared 128-object power arena.
+  `Power::next` links the objects with byte indices; the per-creature budget remains 32. Use
   `creature.powers.at(game.power_objects, index)` and pass `game` to power queries. Removing a
   power removes its list entry, retaining the object until combat reset so queued Java object
   references still observe it. These 128 slots include detached powers, not just active powers.
@@ -151,16 +155,26 @@ from an object's current position in an ordered list:
   `clear_actions(game, queue)` to release discarded slots as well. `hold_action` pins
   an object until combat reset; queue its index to preserve identity. Java
   `GameActionManager.update` skips an already completed action, including a reused follow-up.
-- `game.multi_damage[card_index]` allocates one of 32 eight-target rows on first use. Ordinary
-  cards and master-deck cards reserve no damage row. The per-card count preserves the array's
-  length when the monster group changes. Rows reset at combat start.
+- The monster arena retains 64 objects, including dead and escaped monsters. Java
+  `SpawnMonsterAction.update` inserts without removing earlier objects. Reptomancer recordings
+  retain 39 objects; the high-health integration scenario retains 63. This is an execution
+  budget, not a Java maximum. Never recycle a dead monster's identity.
+- Monster move histories share 1,024 nodes, each holding the signed byte move and a previous
+  node index. Each monster keeps a head and length; both rule lookbacks and host snapshots
+  read the same history. The history budget spans the entire combat.
+- `game.multi_damage[card_index]` stores an exact common value and up to five target exceptions.
+  The current encounters have at most five living monsters; dead targets receive the common
+  untargeted card damage in `AbstractCard.calculateCardDamage`. Dead monster indices remain in
+  the array, and its original length stays in the card or action. `DamageAllEnemiesAction`
+  shares a card's row when Java shares its array. Rows reset at combat start; the representation
+  asserts if a future unit needs more exceptions.
 - `manager.played_cards` stores each play once, including repeated references to the same card.
   Combat history is `[0, size)`; turn history is `[turn_start, size)`. Compute type counts from
   these references as `DamagePerAttackPlayedAction.update` does, without duplicate counters.
 - Text needed by action state uses offsets into a 1,024-byte per-combat interned buffer, with
   offset zero representing Java null. No process pointers or per-action character buffers.
   Constant facts and derivable snapshot fields belong in unit data and host projections.
-- Pending card acquisition effects hold byte indices in a 128-entry list into the same card
+- Pending card acquisition effects hold byte indices in a 160-entry list into the same card
   arena. Their callbacks settle before a decision; they do not enter the Java action queue.
 
 The hand limit of 10 comes from `DrawCardAction.update` and card-generation actions; Armaments'
@@ -307,20 +321,25 @@ Keep generated batches outside the repository. Add a small representative fixtur
 compression, for example `gzip -n -c /tmp/spire-neutralize/101.jsonl > tests/traces/Neutralize-seed101.jsonl.gz`.
 Keep the original header, scenario, actions and snapshots unchanged.
 
-For the standard card and potion set, `tests/content.py record /tmp/spire-content` records every
-unit scenario on seeds 101, 102 and 103 in two isolated JVMs. After building the engine, run
+For the implemented content set, `tests/content.py record /tmp/spire-content` records every
+scenario on seeds 101, 102 and 103 in one JVM. Each job restores the initial Boss-seen
+preferences, so an earlier Boss encounter cannot change a later job's run initialization. After building the engine, run
 `PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/content.py replay /tmp/spire-content`.
 This generates `inventory/status.json` from strict replay results, including source/scenario/trace
 hashes, per-scope counts, terminal results and first differences. Do not edit that file. A unit's
 `matched` status requires its primary scenario and all runnable supplements to match; the separate
-blocked count is not a pass. This covers the recorded scenarios, not every possible interaction.
+blocked count is not a pass. Encounter coverage comes from the scenario encounter; powers and
+queued actions also report direct object observations. `unobserved` means no such evidence in
+this recording set, not a replay failure. Rules-only hook consumers remain a separate list even
+when the unit's combat scenario matches. This covers the recorded scenarios, not every interaction.
 
 Use the Java class name for a primary scenario and `<Class>-<case>.json` for a supplement.
 Scenarios waiting for content use `blocked--<kind>-<ID>--<Class>-<case>.json`, stripping spaces and
 punctuation from the dependency ID in the filename; the JSON keeps the original Java IDs.
-Multiple dependencies are joined with `+`. These scenarios are recorded too. Only an actual
-unknown-ID initialization error for absent catalog content is classified as blocked; differences
-or assertion faults remain failures. The next wave can replay the existing recordings after
+Multiple dependencies are joined with `+`. These scenarios are recorded too. Only absent catalog content in the scenario or actually acquired objects in its oracle
+snapshots is classified as blocked; differences or assertion faults remain failures.
+Use `blocked--rule-<caller>--<Class>-<case>.json` when an existing scenario still needs a rules
+caller (for example a real Boss room). Its ambient replay may match without exercising that hook. The next wave can replay the existing recordings after
 adding the dependency, then rename the scenario when it passes.
 
 Never edit a recorded trace, filter comparison fields, relax types or add numeric tolerances to

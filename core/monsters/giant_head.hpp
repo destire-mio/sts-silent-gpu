@@ -29,7 +29,7 @@ struct GiantHead : MonsterHooks {
             set_monster_move(g, owner, 2, Intent::Attack, s.startingDeathDmg - s.count * 5);
         } else {
             --s.count;
-            if ((num < 50 && !last_two_moves(m, 1)) || (num >= 50 && last_two_moves(m, 3)))
+            if ((num < 50 && !last_two_moves(g, m, 1)) || (num >= 50 && last_two_moves(g, m, 3)))
                 set_monster_move(g, owner, 1, Intent::Debuff);
             else set_monster_move(g, owner, 3, Intent::Attack, 13);
         }

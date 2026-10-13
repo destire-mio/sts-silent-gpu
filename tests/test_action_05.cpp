@@ -189,7 +189,7 @@ static void test_use_card_movement() {
 
 static void test_summon_construction() {
     Game g = combat();
-    int slots[]{-1, -1, -1};
+    int8_t slots[]{-1, -1, -1};
     const int ai_calls = g.rng.ai.counter;
     const int hp_calls = g.rng.monster_hp.counter;
     Effect summon = SummonGremlinAction::construct(g, slots);

@@ -14,12 +14,12 @@ struct SpikeSlime_L : MonsterHooks {
         Power split{PowerId::Split, -1};
         split.instance = g.next_power_instance++;
         power_initialize_state(split);
-        m.creature.powers.push_back(g.power_objects.add(split));
+        m.creature.powers.push_back(g.power_objects, g.power_objects.add(split));
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
-        if ((num < 30 && !last_two_moves(m, 1)) || (num >= 30 && (g.run.ascension >= 17 ? last_move(m, 4) : last_two_moves(m, 4))))
+        if ((num < 30 && !last_two_moves(g, m, 1)) || (num >= 30 && (g.run.ascension >= 17 ? last_move(g, m, 4) : last_two_moves(g, m, 4))))
             set_monster_move(g, index, 1, Intent::AttackDebuff, m.damage[0]);
         else set_monster_move(g, index, 4, Intent::Debuff);
     }
