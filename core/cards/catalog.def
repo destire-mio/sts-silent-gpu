@@ -17,3 +17,4 @@ SPIRE_UNIT(SecretTechnique, "Secret Technique", "core/cards/secret_technique.hpp
 SPIRE_UNIT(SecretWeapon, "Secret Weapon", "core/cards/secret_weapon.hpp", SecretWeapon)
 SPIRE_UNIT(SwiftStrike, "Swift Strike", "core/cards/swift_strike.hpp", SwiftStrike)
 SPIRE_UNIT(TheBomb, "The Bomb", "core/cards/the_bomb.hpp", TheBomb)
+SPIRE_UNIT(ThinkingAhead, "Thinking Ahead", "core/cards/thinking_ahead.hpp", ThinkingAhead)
