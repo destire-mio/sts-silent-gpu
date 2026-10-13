@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deadly Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Deadly Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Ice Cream"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
