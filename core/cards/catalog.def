@@ -17,3 +17,4 @@ SPIRE_UNIT(DeadlyPoison, "Deadly Poison", "core/cards/deadly_poison.hpp", Deadly
 SPIRE_UNIT(Deflect, "Deflect", "core/cards/deflect.hpp", Deflect)
 SPIRE_UNIT(DieDieDie, "Die Die Die", "core/cards/die_die_die.hpp", DieDieDie)
 SPIRE_UNIT(Distraction, "Distraction", "core/cards/distraction.hpp", Distraction)
+SPIRE_UNIT(DodgeAndRoll, "Dodge and Roll", "core/cards/dodge_and_roll.hpp", DodgeAndRoll)
