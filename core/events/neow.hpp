@@ -26,7 +26,8 @@ struct Neow : EventHooks {
     static SPIRE_FN void enter(Game& g) {
         auto& s = g.event.state.Neow;
         s.screen = 1;
-        s.boss_count = g.run.profile.neow_spirits;
+        s.boss_count = g.run.profile.seeded ? 1 : g.run.profile.neow_spirits;
+        if (!g.run.profile.seeded) g.run.boss_count = s.boss_count;
         s.hp_bonus = static_cast<int>(g.player.creature.max_hp * 0.1f);
         g.room_phase = RoomPhase::Event;
         g.room_dialog.clear();

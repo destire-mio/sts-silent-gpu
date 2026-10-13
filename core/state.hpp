@@ -287,6 +287,7 @@ struct MapNode {
 struct RunProfile {
     int neow_spirits = 1;
     uint16_t bosses_seen = 0;
+    bool seeded = true;
 };
 struct Run {
     uint64_t seed = 0;

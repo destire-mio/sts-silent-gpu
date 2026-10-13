@@ -116,6 +116,7 @@ struct Environment {
         if (scenario.contains("profile")) {
             const py::dict value = scenario["profile"].cast<py::dict>();
             profile.neow_spirits = value["neow_spirits"].cast<int>();
+            profile.seeded = value["seeded"].cast<bool>();
             const char* keys[] = {"GUARDIAN", "GHOST", "SLIME", "CHAMP", "AUTOMATON", "COLLECTOR", "CROW", "DONUT", "WIZARD"};
             for (auto item : value["bosses_seen"].cast<py::list>()) {
                 const auto key = py::cast<std::string>(item);

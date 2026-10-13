@@ -76,7 +76,7 @@ type CardSpec = {id: string, upgrades: number};
 type Scenario = {
   deck: CardSpec[], relics: string[], potions: (string | null)[],
   hp: number, max_hp: number, encounter: string,
-  profile?: {neow_spirits: number, bosses_seen: string[]},
+  profile?: {neow_spirits: number, bosses_seen: string[], seeded: boolean},
   start?: {
     act: 1 | 2 | 3 | 4, floor: number, node: [x: number, y: number],
     room: "MonsterRoom" | "MonsterRoomElite" | "MonsterRoomBoss" | "RestRoom" |
@@ -250,7 +250,9 @@ These recordings continue through rooms and acts until death or victory; combat-
 without `start` retain their existing combat-end boundary. The engine applies the same setup.
 A `NeowRoom` start replaces the opening room after acquisition and HP setup, without a floor
 transition. Optional `profile` supplies the original Silent spirit count and boss-seen preference
-keys before dungeon construction; its default is one spirit and no seen bosses. This covers
+keys and the original `Settings.seedSet` before dungeon construction; its default is one spirit,
+no seen bosses and a manually seeded run. Mini blessings require `seeded: false`, because
+`NeowEvent` ignores spirit preferences in manually seeded runs. This covers
 mini blessings, first-unseen boss selection and the all-seen shuffle without changing the policy.
 
 The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio

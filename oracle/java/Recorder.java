@@ -198,7 +198,7 @@ public final class Recorder {
             com.megacrit.cardcrawl.unlock.UnlockTracker.bossSeenPref.putInteger(boss.getAsString(), 1);
         CardCrawlGame.playerPref.putInteger("THE_SILENT_SPIRITS", profile == null ? 1 : profile.get("neow_spirits").getAsInt());
         Settings.seed = seed;
-        Settings.seedSet = true;
+        Settings.seedSet = profile == null || profile.get("seeded").getAsBoolean();
         AbstractDungeon.generateSeeds();
         AbstractDungeon.ascensionLevel = 20;
         AbstractDungeon.isAscensionMode = true;

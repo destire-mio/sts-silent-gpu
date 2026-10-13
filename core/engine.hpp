@@ -1027,6 +1027,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
         g.run.floor = setup.floor;
         g.player.creature.hp = setup.hp; g.player.creature.max_hp = setup.max_hp;
         g.run.node_x = 0; g.run.node_y = -1;
+        g.player.creature.draw_x = 320.0f;
+        g.player.energy_per_turn = 0;
         g.room_kind = RoomKind::Neow;
         g.event.id = EventId::Neow; event_initialize_state(g.event); event_enter(g);
         return;
