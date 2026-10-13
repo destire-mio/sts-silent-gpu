@@ -7,3 +7,4 @@ SPIRE_UNIT(LiquidMemories, "LiquidMemories", "core/potions/liquid_memories.hpp",
 SPIRE_UNIT(PoisonPotion, "Poison Potion", "core/potions/poison_potion.hpp", PoisonPotion)
 SPIRE_UNIT(PowerPotion, "PowerPotion", "core/potions/power_potion.hpp", PowerPotion)
 SPIRE_UNIT(RegenPotion, "Regen Potion", "core/potions/regen_potion.hpp", RegenPotion)
+SPIRE_UNIT(SkillPotion, "SkillPotion", "core/potions/skill_potion.hpp", SkillPotion)
