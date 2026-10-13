@@ -1,0 +1,42 @@
+{
+  "deck": [
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 1
+    },
+    {
+      "id": "Predator",
+      "upgrades": 1
+    },
+    {
+      "id": "Predator",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Block Potion",
+    "FairyPotion"
+  ],
+  "hp": 3000,
+  "max_hp": 3000,
+  "encounter": "Nemesis"
+}
