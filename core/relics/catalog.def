@@ -8,3 +8,4 @@ SPIRE_UNIT(BagOfMarbles, "Bag of Marbles", "core/relics/bag_of_marbles.hpp", Bag
 SPIRE_UNIT(BagOfPreparation, "Bag of Preparation", "core/relics/bag_of_preparation.hpp", BagOfPreparation)
 SPIRE_UNIT(BirdFacedUrn, "Bird Faced Urn", "core/relics/bird_faced_urn.hpp", BirdFacedUrn)
 SPIRE_UNIT(BlackStar, "Black Star", "core/relics/black_star.hpp", BlackStar)
+SPIRE_UNIT(BloodVial, "Blood Vial", "core/relics/blood_vial.hpp", BloodVial)
