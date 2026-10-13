@@ -1,0 +1,38 @@
+{
+  "deck": [
+    {
+      "id": "Adrenaline",
+      "upgrades": 0
+    },
+    {
+      "id": "Terror",
+      "upgrades": 0
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 0
+    },
+    {
+      "id": "Backstab",
+      "upgrades": 0
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Strange Spoon"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Jaw Worm"
+}
