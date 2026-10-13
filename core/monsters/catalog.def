@@ -28,3 +28,4 @@ SPIRE_UNIT(SpireGrowth, "Serpent", "core/monsters/spire_growth.hpp", SpireGrowth
 SPIRE_UNIT(Darkling, "Darkling", "core/monsters/darkling.hpp", Darkling)
 SPIRE_UNIT(Deca, "Deca", "core/monsters/deca.hpp", Deca)
 SPIRE_UNIT(Donu, "Donu", "core/monsters/donu.hpp", Donu)
+SPIRE_UNIT(Byrd, "Byrd", "core/monsters/byrd.hpp", Byrd)
