@@ -212,6 +212,17 @@ def generate(root, output):
             value = ('CardRarity::' + card_facts[game_id]['rarity'].title()) if name == 'card_rarity' else str(ranks[game_id])
             content.append(f'case CardId::{unit}: return {value};')
         content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    potion_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'potion'}
+    declarations.append('SPIRE_FN inline int potion_rarity(const char* id);')
+    content.append('SPIRE_FN inline int potion_rarity(const char* id) {')
+    for game_id, facts in potion_facts.items():
+        content.append(f'if (same_text(id, "{game_id}")) return {("COMMON", "UNCOMMON", "RARE").index(facts["rarity"])};')
+    content.append('SPIRE_ASSERT(false); __builtin_unreachable(); }')
+    declarations.append('SPIRE_FN inline PotionId potion_id(const char* id);')
+    content.append('SPIRE_FN inline PotionId potion_id(const char* id) {')
+    for unit, game_id, _, _ in catalogs['potions']:
+        content.append(f'if (same_text(id, "{game_id}")) return PotionId::{unit};')
+    content.append('SPIRE_ASSERT(false); __builtin_unreachable(); }')
     for kind in ('powers', 'relics'):
         enum, _, prefix, _ = KINDS[kind]
         declarations.append(f'SPIRE_FN inline bool {prefix}_matches_id({enum} id, const char* java_id);')
