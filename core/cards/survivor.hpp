@@ -13,6 +13,7 @@ struct Survivor : CardHooks {
         discard.amount = 1;
         add_bottom(g, discard);
     }
+    static SPIRE_FN Card makeCopy(const Game&, int) { return make_card(CardId::Survivor); }
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {
             ++card.upgrades;
