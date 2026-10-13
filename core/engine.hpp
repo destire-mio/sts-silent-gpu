@@ -371,22 +371,23 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     const Powers& source = m.creature.powers;
     const Powers& target = g.player.creature.powers;
     for (int d = 0; d < m.damage_count; ++d) {
+        const DamageType type = monster_data(m.id).damage_types[d];
         float value = static_cast<float>(m.damage[d]);
         bool modified = false;
         for (int i = 0; i < source.size; ++i) {
-            value = power_atDamageGive(g, source.at(g.power_objects, i), owner, value, DamageType::Normal, -1);
+            value = power_atDamageGive(g, source.at(g.power_objects, i), owner, value, type, -1);
             if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
-            value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, DamageType::Normal, -1);
+            value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, type, -1);
             if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < source.size; ++i) {
-            value = power_atDamageFinalGive(g, source.at(g.power_objects, i), owner, value, DamageType::Normal, -1);
+            value = power_atDamageFinalGive(g, source.at(g.power_objects, i), owner, value, type, -1);
             if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
-            value = power_atDamageFinalReceive(g, target.at(g.power_objects, i), player_target, value, DamageType::Normal, -1);
+            value = power_atDamageFinalReceive(g, target.at(g.power_objects, i), player_target, value, type, -1);
             if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         m.damage_output[d] = static_cast<int>(max(0, floor_int(value)) * rear_multiplier);
