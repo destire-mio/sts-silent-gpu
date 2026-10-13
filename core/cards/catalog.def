@@ -22,3 +22,4 @@ SPIRE_UNIT(Forethought, "Forethought", "core/cards/forethought.hpp", Forethought
 SPIRE_UNIT(GoodInstincts, "Good Instincts", "core/cards/good_instincts.hpp", GoodInstincts)
 SPIRE_UNIT(HandOfGreed, "HandOfGreed", "core/cards/hand_of_greed.hpp", HandOfGreed)
 SPIRE_UNIT(Impatience, "Impatience", "core/cards/impatience.hpp", Impatience)
+SPIRE_UNIT(JAX, "J.A.X.", "core/cards/jax.hpp", JAX)
