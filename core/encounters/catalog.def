@@ -17,3 +17,4 @@ SPIRE_UNIT(LagavulinEvent, "Lagavulin Event", "core/encounters/lagavulin_event.h
 SPIRE_UNIT(ThreeSentries, "3 Sentries", "core/encounters/three_sentries.hpp", ThreeSentries)
 SPIRE_UNIT(Hexaghost, "Hexaghost", "core/encounters/hexaghost.hpp", Hexaghost)
 SPIRE_UNIT(TheGuardian, "The Guardian", "core/encounters/the_guardian.hpp", TheGuardian)
+SPIRE_UNIT(SlimeBoss, "Slime Boss", "core/encounters/slime_boss.hpp", SlimeBoss)
