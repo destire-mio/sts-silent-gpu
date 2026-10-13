@@ -13,3 +13,4 @@ SPIRE_UNIT(UnceasingTop, "Unceasing Top", "core/relics/unceasing_top.hpp", Uncea
 SPIRE_UNIT(Vajra, "Vajra", "core/relics/vajra.hpp", Vajra)
 SPIRE_UNIT(VelvetChoker, "Velvet Choker", "core/relics/velvet_choker.hpp", VelvetChoker)
 SPIRE_UNIT(Waffle, "Lee's Waffle", "core/relics/waffle.hpp", Waffle)
+SPIRE_UNIT(WarPaint, "War Paint", "core/relics/war_paint.hpp", WarPaint)
