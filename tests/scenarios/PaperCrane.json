@@ -1,0 +1,42 @@
+{
+  "deck": [
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Sucker Punch",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Paper Crane"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Jaw Worm"
+}

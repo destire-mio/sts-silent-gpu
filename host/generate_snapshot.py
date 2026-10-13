@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 
-def reward_templates(units, schema):
+def reward_potion_templates(units, schema):
     potions = {}
     for unit in units:
         if unit["kind"] != "potion":
@@ -74,7 +74,7 @@ def generate(root, output):
             entries.append(entry)
         metadata[directory] = entries
     output.parent.mkdir(parents=True, exist_ok=True)
-    payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_templates(units, schema), "globals": unit_inventory["snapshot_statics"]}, separators=(",", ":"))
+    payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_potion_templates(units, schema), "globals": unit_inventory["snapshot_statics"]}, separators=(",", ":"))
     output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n' + unit_snapshot_dispatch(root, units) + '\n}\n')
 
 

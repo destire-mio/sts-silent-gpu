@@ -18,8 +18,15 @@ struct Vulnerable : PowerHooks {
         e.amount = 1;
         add_bottom(g, e);
     }
-    static SPIRE_FN float atDamageReceive(const Game&, const Power&, int, float value, DamageType type, int = -1) {
-        return type == DamageType::Normal ? value * 1.5f : value;
+    static SPIRE_FN float atDamageReceive(const Game& g, const Power&, int owner, float value, DamageType type, int = -1) {
+        if (type != DamageType::Normal) return value;
+        if (owner == player_target) {
+            for (int i = 0; i < g.run.relics.size; ++i) {
+                const float multiplier = relic_data(g.run.relics[i].id).player_vulnerable_multiplier;
+                if (multiplier != 0.0f) return value * multiplier;
+            }
+        }
+        return value * 1.5f;
     }
 };
 }

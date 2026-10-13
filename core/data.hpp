@@ -44,6 +44,9 @@ struct RelicData {
     bool triggers_at_battle_end = false;
     bool prevents_event_combat = false;
     float shop_multiplier = 1.0f;
+    float player_vulnerable_multiplier = 0.0f;
+    float monster_weak_multiplier = 0.0f;
+    bool extra_normal_combat_card_reward = false;
 };
 struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; bool revives_player = false; };
 struct ActionData { bool survives_combat_end = false; const char* type = nullptr; bool multi_step = false; };

@@ -1,0 +1,62 @@
+{
+  "deck": [
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Pen Nib"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1000,
+  "max_hp": 1000,
+  "encounter": "Cultist"
+}

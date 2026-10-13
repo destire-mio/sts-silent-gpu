@@ -48,7 +48,7 @@ struct Card {
           bottle_flame(false), bottle_lightning(false), bottle_tornado(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
-struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; bool grayscale = false; };
+struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; bool grayscale = false; bool used_up = false; };
 struct Power {
     uint32_t instance = 0;
     int amount;
@@ -195,6 +195,7 @@ struct Run {
     int ascension = 20;
     int gold = 99;
     int card_blizz_randomizer = 5;
+    float card_upgraded_chance = 0.0f;
     bool ruby_key = false;
     bool emerald_key = false;
     bool sapphire_key = false;
@@ -202,8 +203,15 @@ struct Run {
     List<uint8_t, card_pool_capacity> source_card_pools[4]{};
     List<Relic, 64> relics{};
     List<RelicKey, 64> relic_pools[5]{};
-    PotionId potions[2] = {PotionId::Empty, PotionId::Empty};
-    PotionState potion_state[2]{};
+    int potion_slots = 2;
+    PotionId potions[potion_capacity]{};
+    PotionState potion_state[potion_capacity]{};
+};
+struct RoomReward {
+    List<uint8_t, reward_card_capacity> cards{};
+    RelicId relic = RelicId::Count;
+    int relic_link = -1;
+    int identity = 0;
 };
 struct CardDamage {
     int values[multi_damage_capacity][monster_capacity]{};
@@ -245,10 +253,12 @@ struct Game {
     Pile drawn_cards{};
     Pile pending_obtains{};
     Pile reward_cards{};
-    Pile combat_reward_cards{};
     List<PotionId, 5> acquisition_potions{};
     List<RelicKey, 3> acquisition_relics{};
     CardId confirmation_card = CardId::Strike_G;
+    List<RoomReward, room_reward_capacity> room_rewards{};
+    int next_reward_identity = 1;
+    int acquisition_reward = -1;
     int discovery_card = -1;
     List<Monster, monster_capacity> monsters{};
     List<uint8_t, monster_capacity> monster_order{};
@@ -271,6 +281,7 @@ struct Game {
     bool selection_for_upgrade = false;
     bool grid_for_purge = false;
     bool grid_can_cancel = true;
+    bool selection_confirmation = false;
     bool selected_cards_retrieved = false;
     bool end_turn_enabled = true;
     bool selection_up_to = false;
@@ -279,6 +290,9 @@ struct Game {
     bool room_in_combat = false;
     RoomKind room_kind = RoomKind::Monster;
     RoomPhase room_phase = RoomPhase::Incomplete;
+    bool room_elite_trigger = false;
+    int room_rare_card_chance = 3;
+    int room_uncommon_card_chance = 37;
     uint16_t room_event_class = 0;
     bool cannot_lose = false;
     bool mugged = false;
@@ -303,6 +317,6 @@ struct CombatSetup {
     int gold = 99;
     List<Card, master_deck_capacity> deck{};
     List<Relic, 64> relics{};
-    PotionId potions[2] = {PotionId::Empty, PotionId::Empty};
+    PotionId potions[potion_capacity]{};
 };
 }

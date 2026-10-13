@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Predator",
+      "upgrades": 0
+    },
+    {
+      "id": "Predator",
+      "upgrades": 0
+    },
+    {
+      "id": "Dash",
+      "upgrades": 0
+    },
+    {
+      "id": "Dash",
+      "upgrades": 0
+    },
+    {
+      "id": "Skewer",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Adrenaline",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Necronomicon"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

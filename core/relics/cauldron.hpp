@@ -7,8 +7,8 @@ struct Cauldron : RelicHooks {
     static SPIRE_FN void onEquip(Game& g, int) {
         g.acquisition_potions.clear();
         for (int i = 0; i < 5; ++i) g.acquisition_potions.push_back(random_potion_from_pool(g, g.rng.potion));
-        List<CardId, 128> cards{};
-        card_reward_ids(g, cards);
+        add_room_card_reward(g);
+        g.room_rewards.clear();
         g.screen = Screen::PotionRewards;
     }
 };

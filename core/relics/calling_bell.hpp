@@ -19,8 +19,8 @@ struct CallingBell : RelicHooks {
     }
     static SPIRE_FN void update(Game& g, int relic) {
         if (!g.run.relics[relic].state.CallingBell.cardsReceived && g.screen == Screen::None) {
-            List<CardId, 128> cards{};
-            card_reward_ids(g, cards);
+            add_room_card_reward(g);
+            g.room_rewards.clear();
             g.acquisition_relics.clear();
             for (int tier = 0; tier < 3; ++tier) g.acquisition_relics.push_back(screenlessRelic(g, tier));
             g.screen = Screen::RelicRewards;

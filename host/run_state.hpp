@@ -22,7 +22,7 @@ struct FreshRunState {
     std::vector<std::string> eventList, shrineList, specialOneTimeEventList;
     std::vector<std::string> commonRelicPool, uncommonRelicPool, rareRelicPool;
     std::vector<std::string> shopRelicPool, bossRelicPool, relicsToRemoveOnStart;
-    std::vector<std::string> rewardTypes, rewardCards;
+    std::vector<std::string> rewardTypes;
     std::string rewardPotion;
     int rewardGold = 0;
     int stolenGold = 0;
@@ -391,22 +391,14 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;
     if (game.smoked) return;
-    List<CardId, 128> cards{};
-    card_reward_ids(game, cards);
-    for (int i = 0; i < cards.size; ++i) {
-        switch (cards[i]) {
-#define SPIRE_UNIT(id, name, path, type) case CardId::id: run.rewardCards.push_back(name); break;
-#include "core/cards/catalog.def"
-#undef SPIRE_UNIT
-        default: SPIRE_ASSERT(false); }
+    add_room_card_reward(game);
+    for (int i = 0; i < game.run.relics.size; ++i) {
+        if (relic_data(game.run.relics[i].id).extra_normal_combat_card_reward) {
+            add_room_card_reward(game);
+            break;
+        }
     }
-    game.combat_reward_cards.clear();
-    for (const std::string& id : run.rewardCards) {
-        Card card = make_card(card_id(id.c_str()));
-        preview_card_obtain(game, card);
-        game.combat_reward_cards.push_back(create_card(game, card));
-    }
-    run.rewardTypes.push_back("CARD");
+    for (int i = 0; i < game.room_rewards.size; ++i) run.rewardTypes.push_back("CARD");
 }
 
 inline void initialize_fresh_run(Game& game, FreshRunState& run) {

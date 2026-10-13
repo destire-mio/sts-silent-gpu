@@ -44,6 +44,8 @@ SPIRE_FN inline void obtain_card(Game& g, Card card) {
     const CardRarity rarity = card_rarity(card.id);
     if (rarity != CardRarity::Basic && rarity != CardRarity::Special && rarity != CardRarity::Curse)
         ++g.obtained_cards[static_cast<int>(card.id)];
+    if (card_data(card.id).type == CardType::Curse)
+        for (int i = 0; i < g.run.relics.size; ++i) if (relic_onCurseObtain(g, i)) return;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onObtainCard(g, i, card);
     g.run.master_deck.push_back(card);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);
@@ -77,6 +79,58 @@ SPIRE_FN inline void queue_relic_above(Game& g, int relic, int owner, bool top) 
     const int index = g.action_objects.add(e);
     if (top) g.manager.actions.push_front(index);
     else g.manager.actions.push_back(index);
+}
+SPIRE_FN inline void add_room_card_reward(Game& g) {
+    RoomReward reward{};
+    reward.identity = g.next_reward_identity++;
+    int count = 3;
+    for (int i = 0; i < g.run.relics.size; ++i) count = relic_changeNumberOfCardsInReward(g, i, count);
+    SPIRE_ASSERT(count <= reward_card_capacity);
+    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
+    const int sizes[] = {static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
+        static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
+        static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool))};
+    for (int i = 0; i < count; ++i) {
+        const int roll = g.rng.card.random(99) + g.run.card_blizz_randomizer;
+        g.room_rare_card_chance = 3;
+        g.room_uncommon_card_chance = 37;
+        for (int r = 0; r < g.run.relics.size; ++r) {
+            g.room_rare_card_chance = relic_changeRareCardRewardChance(g, r, g.room_rare_card_chance);
+            g.room_uncommon_card_chance = relic_changeUncommonCardRewardChance(g, r, g.room_uncommon_card_chance);
+        }
+        const int rarity = roll < g.room_rare_card_chance ? 2 : roll < g.room_rare_card_chance + g.room_uncommon_card_chance ? 1 : 0;
+        if (rarity == 2) g.run.card_blizz_randomizer = 5;
+        else if (rarity == 0) g.run.card_blizz_randomizer = max(-40, g.run.card_blizz_randomizer - 1);
+        CardId id;
+        bool duplicate;
+        do {
+            id = card_id(pools[rarity][g.rng.card.random(sizes[rarity] - 1)].id);
+            duplicate = false;
+            for (int c = 0; c < reward.cards.size; ++c) if (g.cards[reward.cards[c]].id == id) duplicate = true;
+        } while (duplicate);
+        reward.cards.push_back(create_card(g, make_card(id)));
+    }
+    for (int i = 0; i < reward.cards.size; ++i) {
+        Card& card = g.cards[reward.cards[i]];
+        if (card_rarity(card.id) != CardRarity::Rare && g.rng.card.randomBoolean(g.run.card_upgraded_chance) &&
+            card_canUpgrade(g, reward.cards[i])) card_upgrade(card);
+        else preview_card_obtain(g, card);
+    }
+    if (!reward.cards.empty()) g.room_rewards.push_back(reward);
+}
+SPIRE_FN inline void open_room_card_rewards(Game& g) {
+    add_room_card_reward(g);
+    g.screen = Screen::CombatReward;
+}
+SPIRE_FN inline void remove_room_relic_reward(Game& g) {
+    for (int i = 0; i < g.room_rewards.size; ++i) {
+        const RoomReward& reward = g.room_rewards[i];
+        if (reward.relic == RelicId::Count) continue;
+        const int link = reward.relic_link;
+        g.room_rewards.erase(i);
+        if (i < g.room_rewards.size && link == g.room_rewards[i].identity) g.room_rewards.erase(i);
+        break;
+    }
 }
 SPIRE_FN inline void remove_master_card(Game& g, int index) {
     Card removed = g.run.master_deck.erase(index);
@@ -154,31 +208,6 @@ SPIRE_FN inline Card transform_card(Game& g, const Card& original, bool upgrade,
     result.uuid = g.next_card_uuid++;
     return result;
 }
-SPIRE_FN inline void card_reward_ids(Game& g, List<CardId, 128>& cards) {
-    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
-    const int sizes[] = {static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
-                         static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
-                         static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool))};
-    int count = 3;
-    for (int i = 0; i < g.run.relics.size; ++i) count = relic_changeNumberOfCardsInReward(g, i, count);
-    List<uint8_t, 128> rarities{};
-    for (int i = 0; i < count; ++i) {
-        const int roll = g.rng.card.random(99) + g.run.card_blizz_randomizer;
-        const int rarity = roll < 3 ? 2 : roll < 40 ? 1 : 0;
-        rarities.push_back(rarity);
-        if (rarity == 2) g.run.card_blizz_randomizer = 5;
-        if (rarity == 0) g.run.card_blizz_randomizer = max(-40, g.run.card_blizz_randomizer - 1);
-        CardId card;
-        bool duplicate;
-        do {
-            card = card_id(pools[rarity][g.rng.card.random(sizes[rarity] - 1)].id);
-            duplicate = false;
-            for (int j = 0; j < cards.size; ++j) if (cards[j] == card) duplicate = true;
-        } while (duplicate);
-        cards.push_back(card);
-    }
-    for (int i = 0; i < rarities.size; ++i) if (rarities[i] != 2) g.rng.card.randomBoolean(0.0f);
-}
 SPIRE_FN inline RelicId relic_id(const char* name) {
     for (int i = 0; i < static_cast<int>(RelicId::Count); ++i)
         if (relic_matches_id(static_cast<RelicId>(i), name)) return static_cast<RelicId>(i);
@@ -223,7 +252,7 @@ SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
     }
     while (g.screen == Screen::PotionRewards) {
         ActionSet actions{};
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < g.run.potion_slots; ++i) {
             if (g.run.potions[i] == PotionId::Empty) continue;
             if (potion_canUse(g, i)) actions.push_back({ActionKind::PotionUse, i, no_target});
             if (potion_canDiscard(g, i)) actions.push_back({ActionKind::PotionDiscard, i, no_target});
@@ -241,18 +270,19 @@ SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
             potion_initialize_state(g, action.index);
         } else {
             bool full = true;
-            for (int i = 0; i < 2; ++i) if (g.run.potions[i] == PotionId::Empty) full = false;
+            for (int i = 0; i < g.run.potion_slots; ++i) if (g.run.potions[i] == PotionId::Empty) full = false;
             if (!full) {
                 const PotionId id = g.acquisition_potions.erase(action.index);
                 obtain_potion(g, id, construct_potion(g, id));
             }
         }
     }
-    while (g.screen == Screen::Grid) {
+    while (g.screen == Screen::Grid || g.screen == Screen::CombatReward || g.screen == Screen::CardReward) {
         ActionSet actions{};
         legal_actions(g, actions);
         SPIRE_ASSERT(!actions.empty());
         step(g, actions[policy.nextInt(actions.size)]);
+        for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
     }
     settle_card_obtains(g);
 }

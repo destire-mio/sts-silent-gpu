@@ -70,6 +70,7 @@ def relic(name, suffix="", result="void", body="", const=False):
     hook("relics", name, prefix + (", " + suffix if suffix else ""), result, body)
 
 hook("relics", "initializeState", "Relic& relic", selector="relic.id")
+relic("onCurseObtain", result="bool", body="return false;")
 relic("referencesMasterCard", "uint32_t uuid", "bool", "return false;", True)
 
 

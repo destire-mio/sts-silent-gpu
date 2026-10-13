@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "execution_budgets": {
+    "Run.potions": {
+      "capacity": 8,
+      "java": ["characters.AbstractPlayer.potions", "relics.PotionBelt.onEquip"],
+      "lifetime": "Run; potionSlots starts at two at A20 and PotionBelt appends two slots on acquisition.",
+      "overflow": "SPIRE_ASSERT in PotionBelt.onEquip before indexing appended slots. Java uses a growing ArrayList; eight is an execution budget."
+    },
+    "Game.room_rewards": {
+      "capacity": 16,
+      "java": ["rooms.AbstractRoom.rewards", "screens.CombatRewardScreen.rewards"],
+      "lifetime": "Current room; card reward objects survive reward selection and carry distinct identities for relicLink comparisons. The scenario acquisition room is cleared before combat.",
+      "overflow": "SPIRE_ASSERT on List insertion. Java uses growing ArrayLists; sixteen is an execution budget."
+    },
+    "RoomReward.cards": {
+      "capacity": 8,
+      "java": ["rewards.RewardItem.cards", "dungeons.AbstractDungeon.getRewardCards"],
+      "lifetime": "One room reward; references point into the shared card arena. Java starts with three cards and applies relic reward-count hooks.",
+      "overflow": "SPIRE_ASSERT before generating more than eight cards and on List insertion. Eight is an execution budget, not a Java limit."
+    }
+  }
+}
