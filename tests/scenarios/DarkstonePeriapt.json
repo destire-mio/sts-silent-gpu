@@ -1,0 +1,19 @@
+{
+  "deck": [
+    {
+      "id": "Injury",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Darkstone Periapt",
+    "DollysMirror"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
