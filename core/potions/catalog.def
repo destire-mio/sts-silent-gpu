@@ -10,3 +10,4 @@ SPIRE_UNIT(DexterityPotion, "Dexterity Potion", "core/potions/dexterity_potion.h
 SPIRE_UNIT(DistilledChaosPotion, "DistilledChaos", "core/potions/distilled_chaos_potion.hpp", DistilledChaosPotion)
 SPIRE_UNIT(DuplicationPotion, "DuplicationPotion", "core/potions/duplication_potion.hpp", DuplicationPotion)
 SPIRE_UNIT(EnergyPotion, "Energy Potion", "core/potions/energy_potion.hpp", EnergyPotion)
+SPIRE_UNIT(EntropicBrew, "EntropicBrew", "core/potions/entropic_brew.hpp", EntropicBrew)
