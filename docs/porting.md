@@ -291,6 +291,22 @@ Keep generated batches outside the repository. Add a small representative fixtur
 compression, for example `gzip -n -c /tmp/spire-neutralize/101.jsonl > tests/traces/Neutralize-seed101.jsonl.gz`.
 Keep the original header, scenario, actions and snapshots unchanged.
 
+For the standard card and potion set, `tests/content.py record /tmp/spire-content` records every
+unit scenario on seeds 101, 102 and 103 in two isolated JVMs. After building the engine, run
+`PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/content.py replay /tmp/spire-content`.
+This generates `inventory/status.json` from strict replay results, including source/scenario/trace
+hashes, per-scope counts, terminal results and first differences. Do not edit that file. A unit's
+`matched` status requires its primary scenario and all runnable supplements to match; the separate
+blocked count is not a pass. This covers the recorded scenarios, not every possible interaction.
+
+Use the Java class name for a primary scenario and `<Class>-<case>.json` for a supplement.
+Scenarios waiting for content use `blocked--<kind>-<ID>--<Class>-<case>.json`, stripping spaces and
+punctuation from the dependency ID in the filename; the JSON keeps the original Java IDs.
+Multiple dependencies are joined with `+`. These scenarios are recorded too. Only an actual
+unknown-ID initialization error for absent catalog content is classified as blocked; differences
+or assertion faults remain failures. The next wave can replay the existing recordings after
+adding the dependency, then rename the scenario when it passes.
+
 Never edit a recorded trace, filter comparison fields, relax types or add numeric tolerances to
 make a port pass. An observation omission is fixed in `oracle/java/Snapshot.java` and the field
 catalog by rebuilding with `python3 oracle/build.py`, then re-recording affected scenarios.

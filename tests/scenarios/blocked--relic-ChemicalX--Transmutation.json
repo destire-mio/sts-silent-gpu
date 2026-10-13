@@ -1,0 +1,47 @@
+{
+  "deck": [
+    {
+      "id": "Transmutation",
+      "upgrades": 0
+    },
+    {
+      "id": "Transmutation",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Chemical X"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 66,
+  "max_hp": 66,
+  "encounter": "Jaw Worm"
+}
