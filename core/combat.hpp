@@ -133,15 +133,30 @@ SPIRE_FN inline void gain_block(Game& g, int target, int amount) {
     c.block = min(999, c.block + floor_int(value));
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
+SPIRE_FN inline void remove_power_at(Game& g, int target, int index) {
+    Creature& c = get_creature(g, target);
+    power_onRemove(g, c.powers[index], target);
+    const Power removed = c.powers[index];
+    for (int q = 0; q < 2; ++q) {
+        Queue<Effect, action_capacity>& queue = q == 0 ? g.manager.actions : g.manager.pre_turn_actions;
+        for (int i = 0; i < queue.size; ++i) {
+            Effect& e = queue[i];
+            if (e.kind == EffectKind::RemovePower && e.flag && e.target == target &&
+                e.prepared_power.instance == removed.instance) e.prepared_power = removed;
+        }
+    }
+    Effect& current = g.manager.current_action;
+    if (g.manager.has_current_action && current.kind == EffectKind::RemovePower && current.flag &&
+        current.target == target && current.prepared_power.instance == removed.instance)
+        current.prepared_power = removed;
+    c.powers.erase(index);
+    refresh_powers(g);
+}
 SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, int offset) {
     Creature& c = get_creature(g, target);
     if (c.dying || c.half_dead || (target != player_target && c.escaped)) return;
     const int index = find_power(c, id, offset);
-    if (index >= 0) {
-        power_onRemove(g, c.powers[index], target);
-        c.powers.erase(index);
-        refresh_powers(g);
-    }
+    if (index >= 0) remove_power_at(g, target, index);
 }
 SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power incoming, int amount) {
     if (target == no_target) return;
@@ -168,6 +183,7 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
         refresh_powers(g);
     }
     if (!stacked) {
+        incoming.instance = g.next_power_instance++;
         int index = c.powers.size;
         while (index > 0 && power_data(c.powers[index - 1].id).priority > power_data(id).priority) --index;
         c.powers.insert(index, incoming);

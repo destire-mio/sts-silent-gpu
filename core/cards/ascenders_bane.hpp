@@ -4,7 +4,7 @@
 namespace spire::units::cards {
 struct AscendersBane : CardHooks {
     static SPIRE_FN constexpr CardDef data() {
-        return {CardType::Curse, CardTarget::None, -2, -1, -1, -1, 0, 0, 0, false, true};
+        return {CardType::Curse, CardTarget::None, -2, -1, -1, -1, 0, 0, 0, false, true, CardRarity::Special};
     }
     static SPIRE_FN void use(Game&, int, int) {}
     static SPIRE_FN void upgrade(Card&) {}

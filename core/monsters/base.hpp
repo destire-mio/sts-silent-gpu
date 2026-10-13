@@ -42,9 +42,11 @@ SPIRE_FN inline bool last_two_moves(const Monster& m, int move) {
 SPIRE_FN inline void set_monster_move(Game& g, int index, int move, Intent intent, int base_damage, int hits) {
     Monster& m = g.monsters[index];
     m.pending_move = move;
+    m.move_name_present = false;
     m.pending_intent = intent;
     m.pending_base_damage = base_damage;
     m.pending_hits = hits > 1 ? hits : 0;
+    m.pending_multi = hits > 1;
     if (move != -1) m.move_history.push_back(move);
 }
 
@@ -55,13 +57,15 @@ SPIRE_FN inline void create_monster_intent(Game& g, int index) {
     m.intent_base_damage = m.pending_base_damage;
     if (m.pending_base_damage >= 0) {
         m.intent_damage = calculate_damage(g, index, player_target, m.pending_base_damage);
-        m.intent_hits = m.pending_hits > 1 ? m.pending_hits : -1;
+        m.intent_multi = m.pending_multi;
+        m.intent_hits = m.pending_multi ? m.pending_hits : -1;
     }
 }
 
 SPIRE_FN inline void queue_monster_move(Game& g, int index, int move, Intent intent, int damage = -1) {
     Effect e{};
     e.kind = EffectKind::SetMove;
+    action_initialize_state(e);
     e.target = index;
     e.amount = move;
     e.extra = static_cast<int>(intent);

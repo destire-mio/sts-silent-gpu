@@ -37,6 +37,7 @@ struct BetterDiscardPileToHand : ActionHooks {
                 for (int i = 0; i < cards.size; ++i) move(g, e, cards[i]);
                 return;
             }
+            g.grid_source = PileId::Discard;
             g.selected_cards.clear();
             g.selection_amount = count;
             g.selection_any_number = e.state.BetterDiscardPileToHand.optional;

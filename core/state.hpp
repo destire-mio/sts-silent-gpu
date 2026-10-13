@@ -40,6 +40,7 @@ struct Card {
 using Pile = List<uint16_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
 struct Power {
+    uint32_t instance = 0;
     int amount;
     PowerId id;
     int id_offset = -1;
@@ -78,6 +79,10 @@ struct Monster {
     Intent pending_intent = Intent::None;
     int16_t pending_base_damage = -1;
     int16_t pending_hits = 0;
+    bool pending_multi = false;
+    bool intent_multi = false;
+    char move_name[128]{};
+    bool move_name_present = false;
     List<int8_t, 256> move_history{};
     int16_t damage[3]{};
     uint8_t damage_count = 1;
@@ -122,6 +127,7 @@ struct Effect {
     bool flag = false;
     EffectState state{};
     Power prepared_power{};
+    PotionState prepared_potion_state{};
 };
 using DamageInfo = Effect;
 struct CardQueueItem {
@@ -192,7 +198,7 @@ struct Game {
     Player player{};
     List<Card, card_capacity> cards{};
     int multi_damage[card_capacity][monster_capacity]{};
-    Pile hand{}, draw{}, discard{}, exhaust{}, limbo{}, retained{}, selected_cards{};
+    Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
     Pile drawn_cards{};
     List<Monster, monster_capacity> monsters{};
     List<int, monster_capacity> monster_order{};
@@ -204,9 +210,14 @@ struct Game {
     int discard_remaining = 0;
     int discard_action_num = 0;
     int exhaust_action_num = 0;
+    PileId grid_source = PileId::Grid;
     int selection_amount = 0;
     bool selection_any_number = false;
     bool selection_can_pick_zero = false;
+    int put_on_deck_num = 0;
+    uint32_t next_power_instance = 1;
+    int obtained_cards[static_cast<int>(CardId::Count)]{};
+    bool selection_for_upgrade = false;
     bool selected_cards_retrieved = false;
     bool end_turn_enabled = true;
     bool battle_over = false;
