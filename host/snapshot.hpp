@@ -176,15 +176,19 @@ struct SnapshotGraph {
 
     py::object power_value(const Power& power, int owner, std::array<int, 3> identity) {
         const PowerData data = power_data(power.id);
+        UnitStateSnapshot state;
+        power_visit_state(power, state);
         return object(identity, class_name("powers", static_cast<int>(power.id)), [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
+            if (key == "NightmarePower.card") return card(power.state.Nightmare.card);
+            if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             if (field == "ID") return py::str(power_names[static_cast<int>(power.id)]);
             if (field == "owner") return creature(owner);
             if (field == "amount") return py::int_(power.amount);
             if (field == "priority") return py::int_(data.priority);
             if (field == "type") return py::str(power_isDebuff(power, owner) ? "DEBUFF" : "BUFF");
             if (field == "canGoNegative") return py::bool_(data.can_negative);
-            if (field == "isTurnBased") return py::bool_(power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::Entangled);
+            if (field == "isTurnBased") return py::bool_(power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::Entangled || power.id == PowerId::NoBlock);
             if (field == "isPostActionPower") return py::bool_(power.id == PowerId::Angry);
             if (field == "justApplied") return py::bool_(power.just_applied);
             if (field == "triggered") return py::bool_(power.triggered);

@@ -122,7 +122,10 @@ SPIRE_FN inline void monster_damage_base(Game& g, int owner, const DamageInfo& i
 }
 SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
     Creature& target = g.player.creature;
-    int amount = decrement_block(g, player_target, info, max(0, info.amount));
+    int amount = max(0, info.amount);
+    // AbstractPlayer.damage caps uncalculated DamageInfo before block, including HP_LOSS.
+    if (amount > 1 && has_power(target, PowerId::IntangiblePlayer)) amount = 1;
+    amount = decrement_block(g, player_target, info, amount);
     if (info.source == player_target)
         for (int i = 0; i < g.run.relics.size; ++i) amount = relic_onAttackToChangeDamage(g, i, info, amount);
     if (info.source != no_target) {
