@@ -170,9 +170,13 @@ SPIRE_FN inline void apply_power(Game& g, int source, int target, PowerId id, in
     incoming.id = id;
     incoming.amount = amount;
     incoming.just_applied = just_applied;
-    power_initialize_state(incoming);
-    power_initialPower(g, incoming, target);
+    construct_power(g, incoming, target, source);
     apply_prepared_power(g, source, target, incoming, amount);
+}
+SPIRE_FN inline void construct_power(Game& g, Power& power, int owner, int source) {
+    power_initialize_state(power);
+    power_initialPower(g, power, owner);
+    if (power.id == PowerId::Constricted) power.state.Constricted.source = source;
 }
 SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount) {
     Creature& c = get_creature(g, target);

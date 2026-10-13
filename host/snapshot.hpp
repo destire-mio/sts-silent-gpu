@@ -121,6 +121,9 @@ struct SnapshotGraph {
             if (field == "selfRetain") return py::bool_(card.self_retain);
             if (field == "freeToPlayOnce") return py::bool_(card.free_to_play_once);
             if (field == "exhaustOnUseOnce") return py::bool_(card.exhaust_on_use_once);
+            if (field == "purgeOnUse") return py::bool_(card.purge_on_use);
+            if (field == "isInAutoplay") return py::bool_(card.in_autoplay);
+            if (field == "dontTriggerOnUseCard") return py::bool_(card.dont_trigger_on_use_card);
             if (field == "uuid") {
                 const auto inserted = uuids.emplace(card.uuid, static_cast<int>(uuids.size()));
                 return py::int_(inserted.first->second);
@@ -137,10 +140,10 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "price") return py::int_(0);
-            if (field == "dontTriggerOnUseCard" || field == "exhaustOnFire" || field == "inBottleFlame" ||
+            if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
-                field == "isInAutoplay" || field == "isMagicNumberModified" || field == "isMultiDamage" ||
-                field == "isSelected" || field == "isUsed" || field == "purgeOnUse" || field == "returnToHand" ||
+                field == "isMagicNumberModified" || field == "isMultiDamage" ||
+                field == "isSelected" || field == "isUsed" || field == "returnToHand" ||
                 field == "shuffleBackIntoDrawPile" || field == "upgradedCost") return py::bool_(false);
             return {};
         });
@@ -176,6 +179,8 @@ struct SnapshotGraph {
 
     py::object power_value(const Power& power, int owner, std::array<int, 3> identity) {
         const PowerData data = power_data(power.id);
+        UnitStateSnapshot state;
+        power_visit_state(power, state);
         return object(identity, class_name("powers", static_cast<int>(power.id)), [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
             if (field == "ID") return py::str(power_names[static_cast<int>(power.id)]);
@@ -184,8 +189,13 @@ struct SnapshotGraph {
             if (field == "priority") return py::int_(data.priority);
             if (field == "type") return py::str(power_isDebuff(power, owner) ? "DEBUFF" : "BUFF");
             if (field == "canGoNegative") return py::bool_(data.can_negative);
-            if (field == "isTurnBased") return py::bool_(power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::Entangled);
+            if (field == "isTurnBased") return py::bool_(data.turn_based || power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail);
             if (field == "isPostActionPower") return py::bool_(power.id == PowerId::Angry);
+            if (key == "ConstrictedPower.source") {
+                const int source = power.state.Constricted.source;
+                return source == no_target ? py::object(py::none()) : creature(source);
+            }
+            if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
             if (field == "justApplied") return py::bool_(power.just_applied);
             if (field == "triggered") return py::bool_(power.triggered);
             if (field == "skipFirst") return py::bool_(power.skip_first);
@@ -266,10 +276,11 @@ struct SnapshotGraph {
                 return {};
             });
             if (field == "exhaustPile") return group(2, "EXHAUST_PILE", &game.exhaust);
-            if (field == "gameHandSize" || field == "masterHandSize") return py::int_(game.player.hand_size);
+            if (field == "gameHandSize") return py::int_(game.player.hand_size);
+            if (field == "masterHandSize") return py::int_(game.player.master_hand_size);
             if (field == "hand") return group(3, "HAND", &game.hand);
             if (field == "hoveredCard") return py::none();
-            if (field == "limbo") return group(4, "UNSPECIFIED");
+            if (field == "limbo") return group(4, "UNSPECIFIED", &game.limbo);
             if (field == "masterDeck") return group(5, "MASTER_DECK");
             if (field == "masterMaxOrbs" || field == "maxOrbs") return py::int_(0);
             if (field == "potionSlots") return py::int_(2);
@@ -445,7 +456,7 @@ struct SnapshotGraph {
                 if (effect.kind == EffectKind::Draw) return py::str("DRAW");
                 if (effect.kind == EffectKind::Discard) return py::str("DISCARD");
                 if (effect.kind == EffectKind::UseCard) return py::str(effect.flag ? "EXHAUST" : "USE");
-                if (effect.kind == EffectKind::ApplyPower) return py::str(power_isDebuff(effect.prepared_power, effect.target) ? "DEBUFF" : "POWER");
+                if (effect.kind == EffectKind::ApplyPower) return py::str("POWER");
                 if (effect.kind == EffectKind::ReducePower) return py::str("REDUCE_POWER");
                 if (effect.kind == EffectKind::RemovePower) return py::str("DEBUFF");
                 if (effect.kind == EffectKind::Shuffle) return py::str("SHUFFLE");
@@ -472,7 +483,7 @@ struct SnapshotGraph {
             if (key == "DamageAction.goldAmount") return py::int_(effect.extra);
             if (key == "DamageAction.muteSfx" || key == "DamageAction.skipWait") return py::bool_(false);
             if (key == "DamageAction.info") {
-                if (effect.source >= 0) {
+                if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
                     const Monster& owner = game.monsters[effect.source];
                     for (int i = 0; i < owner.damage_count; ++i)
                         if (owner.damage[i] == effect.info_base) return monster_damage(effect.source, i);
@@ -481,7 +492,7 @@ struct SnapshotGraph {
                     if (name == "DamageInfo.base") return py::int_(effect.info_base);
                     if (name == "DamageInfo.output") return py::int_(effect.amount);
                     if (name == "DamageInfo.isModified") return py::bool_(false);
-                    if (name == "DamageInfo.owner") return creature(effect.source);
+                    if (name == "DamageInfo.owner") return effect.source == no_target ? py::object(py::none()) : creature(effect.source);
                     if (name == "DamageInfo.type") return py::str(damage_type_names[static_cast<int>(effect.damage_type)]);
                     return {};
                 });
@@ -539,8 +550,9 @@ struct SnapshotGraph {
                         if (field == "card") return card(item.card);
                         if (field == "monster") return item.target < 0 ? py::object(py::none()) : monster(item.target);
                         if (field == "energyOnUse") return py::int_(item.energy_on_use);
-                        if (field == "autoplayCard" || field == "ignoreEnergyTotal" ||
-                            field == "isEndTurnAutoPlay" || field == "randomTarget") return py::bool_(false);
+                        if (field == "autoplayCard") return py::bool_(item.autoplay_card);
+                        if (field == "ignoreEnergyTotal") return py::bool_(item.ignore_energy_total);
+                        if (field == "isEndTurnAutoPlay" || field == "randomTarget") return py::bool_(false);
                         return {};
                     }));
                 }
