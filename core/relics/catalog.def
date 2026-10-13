@@ -16,3 +16,4 @@ SPIRE_UNIT(BronzeScales, "Bronze Scales", "core/relics/bronze_scales.hpp", Bronz
 SPIRE_UNIT(BustedCrown, "Busted Crown", "core/relics/busted_crown.hpp", BustedCrown)
 SPIRE_UNIT(Calipers, "Calipers", "core/relics/calipers.hpp", Calipers)
 SPIRE_UNIT(CaptainsWheel, "CaptainsWheel", "core/relics/captains_wheel.hpp", CaptainsWheel)
+SPIRE_UNIT(CentennialPuzzle, "Centennial Puzzle", "core/relics/centennial_puzzle.hpp", CentennialPuzzle)
