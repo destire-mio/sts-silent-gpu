@@ -20,3 +20,4 @@ SPIRE_UNIT(Distraction, "Distraction", "core/cards/distraction.hpp", Distraction
 SPIRE_UNIT(DodgeAndRoll, "Dodge and Roll", "core/cards/dodge_and_roll.hpp", DodgeAndRoll)
 SPIRE_UNIT(Doppelganger, "Doppelganger", "core/cards/doppelganger.hpp", Doppelganger)
 SPIRE_UNIT(EndlessAgony, "Endless Agony", "core/cards/endless_agony.hpp", EndlessAgony)
+SPIRE_UNIT(Envenom, "Envenom", "core/cards/envenom.hpp", Envenom)
