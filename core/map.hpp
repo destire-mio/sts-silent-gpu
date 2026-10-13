@@ -2,7 +2,15 @@
 #include "state.hpp"
 
 namespace spire {
-using MapParents = List<uint8_t, 6>;
+struct MapParents {
+    List<uint8_t, 6> entries{};
+    uint8_t minimum = 7, maximum = 0;
+    SPIRE_FN void add(int x) {
+        entries.push_back(x);
+        minimum = min(minimum, x);
+        maximum = max(maximum, x);
+    }
+};
 
 SPIRE_FN inline int map_ancestor(const MapParents (&parents)[15][7], int first, int second, int row) {
     // MapGenerator.getCommonAncestor compares node1.x with node2.y.
@@ -11,30 +19,33 @@ SPIRE_FN inline int map_ancestor(const MapParents (&parents)[15][7], int first, 
     for (int y = row; y >= 0 && y >= row - 5; --y) {
         const auto& lp = parents[y][left];
         const auto& rp = parents[y][right];
-        if (lp.empty() || rp.empty()) return -1;
-        left = lp[0];
-        right = rp[0];
-        for (int i = 1; i < lp.size; ++i) if (lp[i] > left) left = lp[i];
-        for (int i = 1; i < rp.size; ++i) if (rp[i] < right) right = rp[i];
+        if (lp.entries.empty() || rp.entries.empty()) return -1;
+        left = lp.maximum;
+        right = rp.minimum;
         if (left == right) return y - 1;
     }
     return -1;
 }
 
-SPIRE_FN inline bool map_room_allowed(const Run& run, const MapParents (&parents)[15][7], int x, int y, RoomKind room) {
-    const bool rest = room == RoomKind::Rest;
-    const bool elite = room == RoomKind::Elite;
-    if ((y <= 4 && (rest || elite)) || (y >= 13 && rest)) return false;
-    const bool shop = room == RoomKind::Shop;
-    const bool parent_rule = rest || elite || shop || room == RoomKind::Treasure;
-    const bool sibling_rule = rest || elite || shop || room == RoomKind::Monster || room == RoomKind::Event;
-    for (int i = 0; i < parents[y][x].size; ++i) {
-        const auto& parent = run.map[y - 1][parents[y][x][i]];
-        if (parent_rule && parent.room == room) return false;
-        if (sibling_rule) for (int other = 0; other < 7; ++other)
-            if (other != x && (parent.edges & (1 << other)) && run.map[y][other].room == room) return false;
+SPIRE_FN inline unsigned map_room_bit(RoomKind room) { return 1u << static_cast<int>(room); }
+
+SPIRE_FN inline unsigned map_forbidden_rooms(const Run& run, const MapParents (&parents)[15][7], int x, int y) {
+    const unsigned rest = map_room_bit(RoomKind::Rest), elite = map_room_bit(RoomKind::Elite);
+    const unsigned shop = map_room_bit(RoomKind::Shop);
+    const unsigned parent_rule = rest | elite | shop | map_room_bit(RoomKind::Treasure);
+    const unsigned sibling_rule = rest | elite | shop | map_room_bit(RoomKind::Monster) | map_room_bit(RoomKind::Event);
+    unsigned forbidden = y <= 4 ? rest | elite : y >= 13 ? rest : 0;
+    unsigned siblings = 0;
+    const auto& entries = parents[y][x].entries;
+    for (int i = 0; i < entries.size; ++i) {
+        const auto& parent = run.map[y - 1][entries[i]];
+        forbidden |= map_room_bit(parent.room) & parent_rule;
+        siblings |= parent.edges;
     }
-    return true;
+    siblings &= ~(1u << x);
+    for (int other = 0; other < 7; ++other)
+        if (siblings & (1u << other)) forbidden |= map_room_bit(run.map[y][other].room) & sibling_rule;
+    return forbidden;
 }
 
 SPIRE_FN inline void generate_map(Game& g) {
@@ -59,7 +70,7 @@ SPIRE_FN inline void generate_map(Game& g) {
             MapNode& current = run.map[y][x];
             if (y == 14) { current.edges |= 1 << 3; break; }
             int next = x + rng.random(x == 0 ? 0 : -1, x == 6 ? 0 : 1);
-            const auto& target_parents = parents[y + 1][next];
+            const auto& target_parents = parents[y + 1][next].entries;
             for (int i = 0; i < target_parents.size; ++i) {
                 const int parent = target_parents[i];
                 if (parent == x) continue;
@@ -77,12 +88,16 @@ SPIRE_FN inline void generate_map(Game& g) {
                     if (next > 6) next = x;
                 }
             }
-            if (x > 0) for (int edge = 0; edge < 7; ++edge)
-                if ((run.map[y][x - 1].edges & (1 << edge)) && edge > next) next = edge;
-            if (x < 6) for (int edge = 6; edge >= 0; --edge)
-                if ((run.map[y][x + 1].edges & (1 << edge)) && edge < next) next = edge;
+            if (x > 0) {
+                const unsigned edges = run.map[y][x - 1].edges;
+                if (edges) next = max(next, 31 - __builtin_clz(edges));
+            }
+            if (x < 6) {
+                const unsigned edges = run.map[y][x + 1].edges;
+                if (edges) next = min(next, __builtin_ctz(edges));
+            }
             current.edges |= 1 << next;
-            parents[y + 1][next].push_back(x);
+            parents[y + 1][next].add(x);
             x = next;
         }
     }
@@ -115,8 +130,9 @@ SPIRE_FN inline void generate_map(Game& g) {
     for (int y = 0; y < 15; ++y) for (int x = 0; x < 7; ++x) {
         auto& node = run.map[y][x];
         if (!node.edges || node.room != RoomKind::Empty) continue;
+        const unsigned forbidden = map_forbidden_rooms(run, parents, x, y);
         for (int i = 0; i < rooms.size; ++i) {
-            if (!map_room_allowed(run, parents, x, y, rooms[i])) continue;
+            if (forbidden & map_room_bit(rooms[i])) continue;
             node.room = rooms.erase(i);
             break;
         }

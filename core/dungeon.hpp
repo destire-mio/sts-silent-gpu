@@ -6,23 +6,27 @@ namespace spire {
 struct EncounterWeight { EncounterId id; float weight; };
 
 template<int Size>
-SPIRE_FN inline void normalize_encounters(EncounterWeight (&entries)[Size]) {
-    for (int i = 1; i < Size; ++i) {
-        const EncounterWeight value = entries[i];
-        int j = i;
-        while (j > 0 && entries[j - 1].weight > value.weight) { entries[j] = entries[j - 1]; --j; }
-        entries[j] = value;
+struct EncounterTable {
+    EncounterWeight values[Size]{};
+    SPIRE_FN constexpr EncounterTable(const EncounterWeight (&entries)[Size]) {
+        for (int i = 0; i < Size; ++i) values[i] = entries[i];
+        for (int i = 1; i < Size; ++i) {
+            const EncounterWeight value = values[i];
+            int j = i;
+            while (j > 0 && values[j - 1].weight > value.weight) { values[j] = values[j - 1]; --j; }
+            values[j] = value;
+        }
+        float total = 0.0f;
+        for (const auto& entry : values) total += entry.weight;
+        for (auto& entry : values) entry.weight /= total;
     }
-    float total = 0.0f;
-    for (const auto& entry : entries) total += entry.weight;
-    for (auto& entry : entries) entry.weight /= total;
-}
+};
 
 template<int Size>
-SPIRE_FN inline EncounterId roll_encounter(Random& rng, const EncounterWeight (&entries)[Size]) {
+SPIRE_FN inline EncounterId roll_encounter(Random& rng, const EncounterTable<Size>& entries) {
     const float roll = rng.random();
     float cumulative = 0.0f;
-    for (const auto& entry : entries) {
+    for (const auto& entry : entries.values) {
         cumulative += entry.weight;
         if (roll < cumulative) return entry.id;
     }
@@ -31,8 +35,7 @@ SPIRE_FN inline EncounterId roll_encounter(Random& rng, const EncounterWeight (&
 }
 
 template<int Size, int Capacity>
-SPIRE_FN inline void populate_encounters(Random& rng, EncounterWeight (&entries)[Size], List<EncounterId, Capacity>& list, int count, bool elites) {
-    normalize_encounters(entries);
+SPIRE_FN inline void populate_encounters(Random& rng, const EncounterTable<Size>& entries, List<EncounterId, Capacity>& list, int count, bool elites) {
     const int end = list.size + count;
     while (list.size < end) {
         const EncounterId next = roll_encounter(rng, entries);
@@ -59,8 +62,7 @@ SPIRE_FN inline bool first_strong_excluded(EncounterId previous, EncounterId nex
 }
 
 template<int Size>
-SPIRE_FN inline void populate_strong_encounters(Game& g, EncounterWeight (&entries)[Size]) {
-    normalize_encounters(entries);
+SPIRE_FN inline void populate_strong_encounters(Game& g, const EncounterTable<Size>& entries) {
     EncounterId next;
     do { next = roll_encounter(g.rng.monster, entries); }
     while (first_strong_excluded(g.run.monster_list[g.run.monster_list.size - 1], next));
@@ -80,29 +82,29 @@ SPIRE_FN inline void generate_encounters(Game& g) {
     run.boss_list.clear();
     // Exordium/TheCity/TheBeyond.initializeBoss use the recorder's fresh boss-seen profile.
     if (run.act == 1) {
-        EncounterWeight weak[] = {{EncounterId::Cultist, 2}, {EncounterId::JawWorm, 2}, {EncounterId::TwoLouse, 2}, {EncounterId::SmallSlimes, 2}};
+        constexpr EncounterTable<4> weak{{{EncounterId::Cultist, 2}, {EncounterId::JawWorm, 2}, {EncounterId::TwoLouse, 2}, {EncounterId::SmallSlimes, 2}}};
         populate_encounters(g.rng.monster, weak, run.monster_list, 3, false);
-        EncounterWeight strong[] = {{EncounterId::BlueSlaver, 2}, {EncounterId::GremlinGang, 1}, {EncounterId::Looter, 2}, {EncounterId::LargeSlime, 2}, {EncounterId::LotsOfSlimes, 1}, {EncounterId::ExordiumThugs, 1.5f}, {EncounterId::ExordiumWildlife, 1.5f}, {EncounterId::RedSlaver, 1}, {EncounterId::ThreeLouse, 2}, {EncounterId::TwoFungiBeasts, 2}};
+        constexpr EncounterTable<10> strong{{{EncounterId::BlueSlaver, 2}, {EncounterId::GremlinGang, 1}, {EncounterId::Looter, 2}, {EncounterId::LargeSlime, 2}, {EncounterId::LotsOfSlimes, 1}, {EncounterId::ExordiumThugs, 1.5f}, {EncounterId::ExordiumWildlife, 1.5f}, {EncounterId::RedSlaver, 1}, {EncounterId::ThreeLouse, 2}, {EncounterId::TwoFungiBeasts, 2}}};
         populate_strong_encounters(g, strong);
-        EncounterWeight elites[] = {{EncounterId::GremlinNob, 1}, {EncounterId::Lagavulin, 1}, {EncounterId::ThreeSentries, 1}};
+        constexpr EncounterTable<3> elites{{{EncounterId::GremlinNob, 1}, {EncounterId::Lagavulin, 1}, {EncounterId::ThreeSentries, 1}}};
         populate_encounters(g.rng.monster, elites, run.elite_list, 10, true);
         run.boss_list.push_back(EncounterId::TheGuardian);
         run.boss_list.push_back(EncounterId::TheGuardian);
     } else if (run.act == 2) {
-        EncounterWeight weak[] = {{EncounterId::SphericGuardian, 2}, {EncounterId::Chosen, 2}, {EncounterId::ShellParasite, 2}, {EncounterId::Byrds, 2}, {EncounterId::TwoThieves, 2}};
+        constexpr EncounterTable<5> weak{{{EncounterId::SphericGuardian, 2}, {EncounterId::Chosen, 2}, {EncounterId::ShellParasite, 2}, {EncounterId::Byrds, 2}, {EncounterId::TwoThieves, 2}}};
         populate_encounters(g.rng.monster, weak, run.monster_list, 2, false);
-        EncounterWeight strong[] = {{EncounterId::ChosenAndByrds, 2}, {EncounterId::SentryAndSphere, 2}, {EncounterId::SnakePlant, 6}, {EncounterId::Snecko, 4}, {EncounterId::CenturionAndHealer, 6}, {EncounterId::CultistAndChosen, 3}, {EncounterId::ThreeCultists, 3}, {EncounterId::ShelledParasiteAndFungi, 3}};
+        constexpr EncounterTable<8> strong{{{EncounterId::ChosenAndByrds, 2}, {EncounterId::SentryAndSphere, 2}, {EncounterId::SnakePlant, 6}, {EncounterId::Snecko, 4}, {EncounterId::CenturionAndHealer, 6}, {EncounterId::CultistAndChosen, 3}, {EncounterId::ThreeCultists, 3}, {EncounterId::ShelledParasiteAndFungi, 3}}};
         populate_strong_encounters(g, strong);
-        EncounterWeight elites[] = {{EncounterId::GremlinLeader, 1}, {EncounterId::Slavers, 1}, {EncounterId::BookOfStabbing, 1}};
+        constexpr EncounterTable<3> elites{{{EncounterId::GremlinLeader, 1}, {EncounterId::Slavers, 1}, {EncounterId::BookOfStabbing, 1}}};
         populate_encounters(g.rng.monster, elites, run.elite_list, 10, true);
         run.boss_list.push_back(EncounterId::Champ);
         run.boss_list.push_back(EncounterId::Champ);
     } else if (run.act == 3) {
-        EncounterWeight weak[] = {{EncounterId::Darkling, 2}, {EncounterId::OrbWalker, 2}, {EncounterId::ThreeShapes, 2}};
+        constexpr EncounterTable<3> weak{{{EncounterId::Darkling, 2}, {EncounterId::OrbWalker, 2}, {EncounterId::ThreeShapes, 2}}};
         populate_encounters(g.rng.monster, weak, run.monster_list, 2, false);
-        EncounterWeight strong[] = {{EncounterId::SpireGrowth, 1}, {EncounterId::Transient, 1}, {EncounterId::FourShapes, 1}, {EncounterId::Maw, 1}, {EncounterId::SphereAndTwoShapes, 1}, {EncounterId::JawWormHorde, 1}, {EncounterId::Darkling, 1}, {EncounterId::WrithingMass, 1}};
+        constexpr EncounterTable<8> strong{{{EncounterId::SpireGrowth, 1}, {EncounterId::Transient, 1}, {EncounterId::FourShapes, 1}, {EncounterId::Maw, 1}, {EncounterId::SphereAndTwoShapes, 1}, {EncounterId::JawWormHorde, 1}, {EncounterId::Darkling, 1}, {EncounterId::WrithingMass, 1}}};
         populate_strong_encounters(g, strong);
-        EncounterWeight elites[] = {{EncounterId::GiantHead, 2}, {EncounterId::Nemesis, 2}, {EncounterId::Reptomancer, 2}};
+        constexpr EncounterTable<3> elites{{{EncounterId::GiantHead, 2}, {EncounterId::Nemesis, 2}, {EncounterId::Reptomancer, 2}}};
         populate_encounters(g.rng.monster, elites, run.elite_list, 10, true);
         run.boss_list.push_back(EncounterId::AwakenedOne);
         run.boss_list.push_back(EncounterId::AwakenedOne);
