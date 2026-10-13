@@ -20,13 +20,9 @@ struct Discard : ActionHooks {
             while (!g.hand.empty()) discard_card(g, g.hand.size - 1, e.flag);
         } else {
             SPIRE_ASSERT(!e.flag);
-            g.discard_remaining = e.amount;
             g.discard_action_num = e.amount;
-            g.selection_amount = e.amount;
-            g.selected_cards.clear();
-            g.selected_cards_retrieved = false;
+            open_hand_selection(g, e.amount);
             e.state.Discard.selecting = true;
-            g.screen = Screen::Discard;
         }
     }
 };
