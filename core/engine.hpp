@@ -631,7 +631,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 else remove_from_pile(g.limbo, queued.card);
             }
             remove_queued_card(g, queued.card);
-        } else if (g.player.end_turn_queued) {
+        } else if (g.player.end_turn_queued && !monsters_basically_dead(g)) {
+            // AbstractRoom.update skips AbstractPlayer.updateInput after the final monster dies.
             complete_end_turn(g);
         } else if (!g.manager.monster_attacks_queued) {
             g.manager.monster_attacks_queued = true;

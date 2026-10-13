@@ -16,3 +16,4 @@ SPIRE_UNIT(SneckoSkull, "Snake Skull", "core/relics/snecko_skull.hpp", SneckoSku
 SPIRE_UNIT(Sozu, "Sozu", "core/relics/sozu.hpp", Sozu)
 SPIRE_UNIT(SpiritPoop, "Spirit Poop", "core/relics/spirit_poop.hpp", SpiritPoop)
 SPIRE_UNIT(SsserpentHead, "SsserpentHead", "core/relics/ssserpent_head.hpp", SsserpentHead)
+SPIRE_UNIT(StoneCalendar, "StoneCalendar", "core/relics/stone_calendar.hpp", StoneCalendar)
