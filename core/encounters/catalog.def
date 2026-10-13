@@ -16,3 +16,5 @@ SPIRE_UNIT(ThreeCultists, "3 Cultists", "core/encounters/three_cultists.hpp", Th
 SPIRE_UNIT(TheMushroomLair, "The Mushroom Lair", "core/encounters/the_mushroom_lair.hpp", TheMushroomLair)
 SPIRE_UNIT(JawWormHorde, "Jaw Worm Horde", "core/encounters/jaw_worm_horde.hpp", JawWormHorde)
 SPIRE_UNIT(ColosseumSlavers, "Colosseum Slavers", "core/encounters/colosseum_slavers.hpp", ColosseumSlavers)
+SPIRE_UNIT(Chosen, "Chosen", "core/encounters/chosen.hpp", Chosen)
+SPIRE_UNIT(CultistAndChosen, "Cultist and Chosen", "core/encounters/cultist_and_chosen.hpp", CultistAndChosen)

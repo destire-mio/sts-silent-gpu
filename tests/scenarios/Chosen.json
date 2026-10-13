@@ -1,0 +1,62 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Dodge and Roll",
+      "upgrades": 1
+    },
+    {
+      "id": "Dodge and Roll",
+      "upgrades": 1
+    },
+    {
+      "id": "Bite",
+      "upgrades": 1
+    },
+    {
+      "id": "Bite",
+      "upgrades": 1
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Block Potion",
+    "Regen Potion"
+  ],
+  "hp": 300,
+  "max_hp": 300,
+  "encounter": "Chosen"
+}
