@@ -17,7 +17,7 @@ SPIRE_FN inline std::int64_t java_long_cast(double value) {
     return static_cast<std::int64_t>(value);
 }
 
-SPIRE_FN inline std::uint64_t rng_murmur_hash(std::uint64_t value) {
+SPIRE_FN constexpr std::uint64_t rng_murmur_hash(std::uint64_t value) {
     value ^= value >> 33;
     value *= 0xff51afd7ed558ccdULL;
     value ^= value >> 33;
@@ -30,9 +30,9 @@ struct RandomXS128 {
     std::uint64_t s1 = 0;
 
     SPIRE_FN RandomXS128() = default;
-    SPIRE_FN explicit RandomXS128(std::uint64_t seed) { reset(seed); }
+    SPIRE_FN constexpr explicit RandomXS128(std::uint64_t seed) { reset(seed); }
 
-    SPIRE_FN void reset(std::uint64_t seed) {
+    SPIRE_FN constexpr void reset(std::uint64_t seed) {
         // RandomXS128.setSeed maps zero to Long.MIN_VALUE before hashing.
         s0 = rng_murmur_hash(seed == 0 ? 0x8000000000000000ULL : seed);
         s1 = rng_murmur_hash(s0);
@@ -169,8 +169,8 @@ struct UnseededRandom {
     std::int64_t counter = 0;
 
     SPIRE_FN UnseededRandom() = default;
-    SPIRE_FN explicit UnseededRandom(std::uint64_t seed) { reset(seed); }
-    SPIRE_FN void reset(std::uint64_t seed) { generator.reset(seed); counter = 0; }
+    SPIRE_FN constexpr explicit UnseededRandom(std::uint64_t seed) { reset(seed); }
+    SPIRE_FN constexpr void reset(std::uint64_t seed) { generator.reset(seed); counter = 0; }
     SPIRE_FN void set_state(std::uint64_t first, std::uint64_t second, std::int64_t calls) {
         generator.set_state(first, second);
         counter = calls;

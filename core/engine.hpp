@@ -864,9 +864,11 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     refresh_hand(g);
 }
+constexpr Game initial_game{};
+
 SPIRE_FN inline void reset(Game& g, uint64_t seed) {
     bind_fault(g);
-    g = Game{};
+    g = initial_game;
     g.run.seed = seed;
     g.unseeded.reset(seed);
     g.rng.generate_seeds(seed);
@@ -984,12 +986,11 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     if (g.screen == Screen::Combat) {
         for (int i = 0; i < g.hand.size; ++i) {
             const Card& card = g.cards[g.hand[i]];
-            if (!can_play(g, g.hand[i])) continue;
             if (card.target == CardTarget::Enemy) {
                 for (int j = 0; j < g.monster_order.size; ++j) {
                     if (alive(g.monsters[g.monster_order[j]].creature) && card_canUse(g, g.hand[i], g.monster_order[j])) actions.push_back({ActionKind::Play, i, j});
                 }
-            } else actions.push_back({ActionKind::Play, i, -1});
+            } else if (card_canUse(g, g.hand[i], no_target)) actions.push_back({ActionKind::Play, i, -1});
         }
         if (g.end_turn_enabled) actions.push_back({ActionKind::EndTurn, -1, -1});
     }

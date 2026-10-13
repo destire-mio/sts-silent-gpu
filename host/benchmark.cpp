@@ -12,17 +12,21 @@ int main(int argc, char** argv) {
     SPIRE_ASSERT(requested > 0);
     spire::Game game;
     std::mt19937_64 policy(1);
+    spire::CombatSetup setup;
+    for (int i = 0; i < 5; ++i) setup.deck.push_back(spire::make_card(spire::CardId::Strike_G));
+    for (int i = 0; i < 5; ++i) setup.deck.push_back(spire::make_card(spire::CardId::Defend_G));
+    setup.deck.push_back(spire::make_card(spire::CardId::Survivor));
+    setup.deck.push_back(spire::make_card(spire::CardId::Neutralize));
+    setup.deck.push_back(spire::make_card(spire::CardId::AscendersBane));
+    setup.relics.push_back({spire::RelicId::SnakeRing, -1});
+    setup.hp = 59;
+    setup.max_hp = 66;
     std::uint64_t completed = 0;
     std::uint64_t games = 0;
     const auto begin = std::chrono::steady_clock::now();
     while (completed < requested) {
         spire::reset(game, games++);
-        spire::CombatSetup setup;
         setup.encounter = static_cast<spire::EncounterId>((games - 1) % static_cast<int>(spire::EncounterId::Count));
-        setup.deck = game.run.master_deck;
-        setup.relics = game.run.relics;
-        setup.hp = game.player.creature.hp;
-        setup.max_hp = game.player.creature.max_hp;
         spire::start_combat(game, setup);
         while (completed < requested && game.screen != spire::Screen::Victory && game.screen != spire::Screen::Death) {
             spire::ActionSet actions;
