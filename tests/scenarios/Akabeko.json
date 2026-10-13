@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Riddle With Holes",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Akabeko"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 49,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

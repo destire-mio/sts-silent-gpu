@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Deadly Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 0
+    },
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Art of War"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 49,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

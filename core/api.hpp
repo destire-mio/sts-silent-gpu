@@ -4,6 +4,7 @@
 
 namespace spire {
 SPIRE_FN inline bool keeps_block(const Game&, int);
+SPIRE_FN inline int relic_block_loss(const Game&);
 SPIRE_FN inline float rear_damage_multiplier(const Game&, int);
 SPIRE_FN inline int calculate_intent_damage(const Game&, int, int);
 SPIRE_FN inline void end_turn_early(Game&);
@@ -17,6 +18,16 @@ SPIRE_FN inline bool monsters_basically_dead(const Game&);
 SPIRE_FN inline PowerId power_id(const char*);
 SPIRE_FN inline CardId card_id(const char*);
 SPIRE_FN inline bool has_relic(const Game&, const char*);
+SPIRE_FN inline bool card_colorless(CardId);
+SPIRE_FN inline RelicId relic_id(const char*);
+SPIRE_FN inline RelicKey random_relic_key(Game&, int tier, bool from_end = false);
+SPIRE_FN inline void master_selection_cards(Game&, int type);
+SPIRE_FN inline void master_selection_cards(Game&, CardType type);
+SPIRE_FN inline void open_master_selection(Game&, int amount);
+SPIRE_FN inline const Card& master_card_by_uuid(const Game&, uint32_t uuid);
+SPIRE_FN inline Card transform_card(Game&, const Card&, bool upgrade, Random&);
+SPIRE_FN inline void card_reward_ids(Game&, List<CardId, 128>&);
+SPIRE_FN inline void queue_relic_display(Game&, int relic, int target, bool top);
 SPIRE_FN inline bool potion_can_use_base(const Game&, int);
 SPIRE_FN inline bool potion_can_discard_base(const Game&, int);
 SPIRE_FN inline int potion_potency(const Game&, int);
@@ -109,6 +120,7 @@ SPIRE_FN inline void move_to_bottom_of_deck(Game&, int);
 SPIRE_FN inline int create_card(Game&, Card);
 SPIRE_FN inline const char* random_card_in_combat(Game&, int, bool);
 SPIRE_FN inline PotionId random_potion(Game&, bool);
+SPIRE_FN inline PotionId random_potion_from_pool(Game&, Random&);
 SPIRE_FN inline PotionState construct_potion(const Game&, PotionId);
 SPIRE_FN inline void obtain_potion(Game&, PotionId, const PotionState&);
 SPIRE_FN inline void add_created_card_to_hand(Game&, int);

@@ -98,6 +98,9 @@ SPIRE_SNAPSHOT("DrawCardAction.followUpAction", action_reference, effect.state.D
 These declarations contain field identifiers and value expressions; they emit no device code.
 The host generator emits dispatch to the graph's scalar, card, creature, power and action
 reference writers. Scalar state fields with matching Java names use the generated state visitor.
+Run-owned Java statics use `SPIRE_STATIC_STATE(Type, fields)` beside their unit; the generator
+places them in `Game::unit_statics`. They survive unequipping the unit and remain isolated
+between Game instances.
 An explicit mapping overrides that visitor and inherited base fields. `SPIRE_STATIC("field", game.expression)` maps a unit static; the inventory generator reads observed static initial values from Java. Power flags and action
 categories belong in `data()`. Adding a unit does not change the serializer.
 
@@ -133,6 +136,9 @@ Do not store a host pointer, vector, string, whole card or large per-unit array 
 `Game` owns its storage and remains relocatable by a byte copy. Keep object identity separate
 from an object's current position in an ordered list:
 
+- Master-deck cards removed while a relic references them stay in the existing 128-card arena.
+  A 64-byte index list covers the 64 relic instances; these retained master objects consume
+  the same execution budget as combat cards and keep a distinct snapshot identity.
 - Master-deck and combat cards are different objects with matching UUIDs
   (`AbstractCard.makeSameInstanceOf`). Both stores hold 128 cards; piles and played histories
   hold byte indices into combat cards. Do not put `Card` values in another pile or queue.
@@ -160,6 +166,14 @@ The hand limit of 10 comes from `DrawCardAction.update` and card-generation acti
 indices use bytes: the current Silent pools contain 19 common, 33 uncommon, 19 rare and 35
 colorless templates. Each source pool reserves 64 entries and preserves Java list order,
 including the remove-and-append behavior of `AbstractDungeon.srcTransformCard`.
+
+Relic acquisition shares a five-potion reward list (`Cauldron.onEquip` creates five), a
+three-relic reward list (`CallingBell.update` creates one of each tier), and the existing
+selection piles. The five ordered relic pools each reserve 64 byte keys; the pinned Silent
+library has fewer than 64 entries in each tier. The keys name inventory content, including
+content awaiting later batches; dispatch requires the corresponding catalog unit. Card-reward
+generation uses a 128-card temporary list, an execution budget for Java
+`AbstractDungeon.getRewardCards`, rather than adding card objects to Game.
 
 The remaining budgets are 8 monster objects, 32 card-queue entries, 64 relics, 256 moves per
 monster and 1,024 played-card references per combat. The master deck starts with 13 cards at

@@ -69,6 +69,11 @@ def relic(name, suffix="", result="void", body="", const=False):
     prefix = "const Game& g, int relic" if const else "Game& g, int relic"
     hook("relics", name, prefix + (", " + suffix if suffix else ""), result, body)
 
+hook("relics", "initializeState", "Relic& relic", selector="relic.id")
+relic("update")
+relic("referencesMasterCard", "uint32_t uuid", "bool", "return false;", True)
+relic("setCounter", "int counter", body="g.run.relics[relic].counter = counter;")
+
 
 for name in ("onGainGold", "onLoseGold", "onSpendGold", "onEquip", "onUnequip", "atPreBattle",
              "atBattleStart", "atBattleStartPreDraw", "atTurnStart", "atTurnStartPostDraw",
@@ -196,6 +201,14 @@ def generate(root, output):
             if match:
                 states[kind][unit] = (typename, match[1].strip())
     ids = ['#pragma once', '#include "core/fixed.hpp"', '#include "core/types.hpp"', 'namespace spire {']
+    ids.append('struct UnitStatics {')
+    for entries in catalogs.values():
+        for _, _, path, typename in entries:
+            match = re.search(r'SPIRE_STATIC_STATE\(\s*' + typename + r'\s*,(.*?)\)', (root / path).read_text(), re.S)
+            if match:
+                ids.append(f'    struct {{ {match[1].strip()} }} {typename}{{}};')
+    ids.append('};')
+
     for kind, (enum, _, _, _) in KINDS.items():
         ids.append(f'enum class {enum} : uint16_t {{ ' + ', '.join(row[0] for row in catalogs[kind]) + ', Count };')
     declarations = ['#pragma once', 'namespace spire {']
@@ -215,6 +228,24 @@ def generate(root, output):
             value = ('CardRarity::' + card_facts[game_id]['rarity'].title()) if name == 'card_rarity' else str(ranks[game_id])
             content.append(f'case CardId::{unit}: return {value};')
         content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    declarations.append('SPIRE_FN inline bool card_colorless(CardId id);')
+    content.append('SPIRE_FN inline bool card_colorless(CardId id) { switch (id) {')
+    for unit, game_id, _, _ in catalogs['cards']:
+        content.append(f'case CardId::{unit}: return ' + ('true' if card_facts[game_id]['color'] == 'COLORLESS' else 'false') + ';')
+    content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    relic_inventory = [unit for unit in inventory if unit['kind'] == 'relic']
+    ids.append('enum class RelicKey : uint8_t { ' + ', '.join(unit['java_class'].rsplit('.', 1)[1] for unit in relic_inventory) + ', Count };')
+    declarations.append('SPIRE_FN inline const char* relic_key_name(RelicKey key);')
+    content.append('SPIRE_FN inline const char* relic_key_name(RelicKey key) { switch (key) {')
+    for unit in relic_inventory:
+        name = unit['java_class'].rsplit('.', 1)[1]
+        content.append(f'case RelicKey::{name}: return ' + json.dumps(unit['game_id']) + ';')
+    content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    declarations.append('SPIRE_FN inline bool relic_can_spawn_id(const Game& g, RelicId id);')
+    content.append('SPIRE_FN inline bool relic_can_spawn_id(const Game& g, RelicId id) { switch (id) {')
+    for unit, _, _, typename in catalogs['relics']:
+        content.append(f'case RelicId::{unit}: return units::relics::{typename}::canSpawn(g, -1);')
+    content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
     potion_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'potion'}
     potion_pool = next(unit['facts']['silent_pool'] for unit in inventory if unit['key'] == 'rule:helpers.PotionHelper')
     content.append('struct PotionPoolEntry { const char* id; int rarity; };')
@@ -249,7 +280,7 @@ def generate(root, output):
             content.append(f'SPIRE_FN inline void {prefix}_initialize_state({entity}& value) {{ switch ({discriminator}) {{')
             for unit, _, _, typename in entries:
                 assign = f'value.state.{typename} = {{}};' if unit in states[kind] else ''
-                content.append(f'case {enum}::{unit}: {assign} return;')
+                content.append(f'case {enum}::{unit}: {assign} ' + ('relic_initializeState(value); ' if kind == 'relics' else '') + 'return;')
             content.append('default: SPIRE_ASSERT(false); } }')
         if kind in ("cards", "powers", "relics", "monsters", "actions"):
             content.append(f'template<class Visitor> SPIRE_FN inline void {prefix}_visit_state(const {entity}& value, Visitor& visitor) {{ (void)visitor; switch ({discriminator}) {{')
