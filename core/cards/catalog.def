@@ -19,3 +19,4 @@ SPIRE_UNIT(SwiftStrike, "Swift Strike", "core/cards/swift_strike.hpp", SwiftStri
 SPIRE_UNIT(TheBomb, "The Bomb", "core/cards/the_bomb.hpp", TheBomb)
 SPIRE_UNIT(ThinkingAhead, "Thinking Ahead", "core/cards/thinking_ahead.hpp", ThinkingAhead)
 SPIRE_UNIT(Transmutation, "Transmutation", "core/cards/transmutation.hpp", Transmutation)
+SPIRE_UNIT(Trip, "Trip", "core/cards/trip.hpp", Trip)
