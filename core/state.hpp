@@ -162,6 +162,7 @@ struct PlayedCards {
 struct ActionManager {
     int8_t current_action = -1;
     bool has_current_action = false;
+    bool using_card = false;
     Queue<uint8_t, action_capacity> actions{};
     Queue<uint8_t, action_capacity> pre_turn_actions{};
     Queue<CardQueueItem, 32> card_queue{};

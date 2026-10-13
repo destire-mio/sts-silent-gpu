@@ -514,6 +514,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             if (g.action_objects[g.manager.current_action].done) {
                 if (!g.action_objects[g.manager.current_action].held) g.action_objects.release(g.manager.current_action);
                 g.manager.has_current_action = false;
+                g.manager.using_card = false;
             }
         } else if (!g.manager.actions.empty()) {
             g.manager.current_action = g.manager.actions.pop_front();
@@ -522,6 +523,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.manager.current_action = g.manager.pre_turn_actions.pop_front();
             g.manager.has_current_action = true;
         } else if (!g.manager.card_queue.empty()) {
+            g.manager.using_card = true;
             CardQueueItem queued = g.manager.card_queue[0];
             if (queued.card < 0) {
                 begin_end_turn(g);

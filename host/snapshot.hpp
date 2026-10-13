@@ -597,7 +597,7 @@ struct SnapshotGraph {
             if (field == "currentAction") return manager.has_current_action ? effect(game.action_objects[manager.current_action], 3, manager.current_action) : py::object(py::none());
             if (field == "hasControl") return py::bool_(manager.has_current_action);
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
-            if (field == "usingCard") return py::bool_(false);
+            if (field == "usingCard") return py::bool_(manager.using_card);
             if (field == "mantraGained") return py::int_(0);
             if (field == "monsterAttacksQueued") return py::bool_(manager.monster_attacks_queued);
             if (field == "nextCombatActions" || field == "orbsChanneledThisCombat" || field == "orbsChanneledThisTurn") return py::list();
