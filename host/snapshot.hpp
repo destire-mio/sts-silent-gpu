@@ -138,6 +138,8 @@ struct SnapshotGraph {
             if (field == "exhaust") return py::bool_(card.exhaust);
             if (field == "isEthereal") return py::bool_(card.ethereal);
             if (field == "isInnate") return py::bool_(card.innate);
+            if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
+            if (field == "upgradedCost") return py::bool_(card.upgraded_cost);
             if (field == "retain") return py::bool_(card.retain);
             if (field == "selfRetain") return py::bool_(card.self_retain);
             if (field == "freeToPlayOnce") return py::bool_(card.free_to_play_once);
@@ -164,7 +166,7 @@ struct SnapshotGraph {
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
                 field == "isMagicNumberModified" ||
-                field == "isSelected" || field == "isUsed" || field == "upgradedCost") return py::bool_(false);
+                field == "isSelected" || field == "isUsed") return py::bool_(false);
             return {};
         });
     }

@@ -103,3 +103,5 @@ SPIRE_UNIT(EscapePlanAction, "actions.unique.EscapePlanAction", "core/actions/es
 SPIRE_UNIT(PlayTopCardAction, "actions.common.PlayTopCardAction", "core/actions/play_top_card.hpp", PlayTopCardAction)
 SPIRE_UNIT(HeelHookAction, "actions.unique.HeelHookAction", "core/actions/heel_hook.hpp", HeelHookAction)
 SPIRE_UNIT(RoomEndTurn, "rooms.AbstractRoom$1", "core/actions/end_turn.hpp", RoomEndTurn)
+SPIRE_UNIT(SFX, "actions.utility.SFXAction", "core/actions/intent_flash.hpp", SFX)
+SPIRE_UNIT(VFX, "actions.animations.VFXAction", "core/actions/intent_flash.hpp", VFX)

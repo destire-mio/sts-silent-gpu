@@ -5,7 +5,7 @@
 namespace spire::units::cards {
 struct GrandFinale : CardHooks {
     static SPIRE_FN constexpr CardDef data() {
-        return {CardType::Attack, CardTarget::AllEnemies, 0, 50, -1, -1, 10, 0, 0, false, false, true};
+        return {CardType::Attack, CardTarget::AllEnemies, 0, 50, -1, -1, 10, 0, 0, false, false, false, true};
     }
     static SPIRE_FN void use(Game& g, int card, int) {
         add_bottom(g, actions::DamageAllEnemies::from_card(g, card));

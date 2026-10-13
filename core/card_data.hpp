@@ -21,6 +21,7 @@ SPIRE_FN inline Card make_card(CardId id, int upgrades, int misc) {
     card.base_magic = def.magic;
     card.exhaust = def.exhaust;
     card.ethereal = def.ethereal;
+    card.innate = def.innate;
     for (int i = 0; i < upgrades; ++i) card_upgrade(card);
     card.cost_for_turn = card.cost;
     card.magic = card.base_magic;

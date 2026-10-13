@@ -10,7 +10,7 @@ struct Nightmare : PowerHooks {
         power_initialize_state(p);
         const int card = g.cards.size;
         g.cards.push_back(card_makeStatEquivalentCopy(g, copy_me));
-        g.cards[card].uuid = card + 1;
+        g.cards[card].uuid = g.next_card_uuid++;
         card_resetAttributes(g, card);
         p.state.Nightmare.card = card;
     }

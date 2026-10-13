@@ -5,7 +5,7 @@
 namespace spire::units::cards {
 struct DaggerSpray : CardHooks {
     static SPIRE_FN constexpr CardDef data() {
-        return {CardType::Attack, CardTarget::None, 1, 4, -1, -1, 2, 0, 0, false, false, true};
+        return {CardType::Attack, CardTarget::None, 1, 4, -1, -1, 2, 0, 0, false, false, false, true};
     }
     static SPIRE_FN void use(Game& g, int card, int) {
         add_bottom(g, actions::DamageAllEnemies::from_card(g, card));

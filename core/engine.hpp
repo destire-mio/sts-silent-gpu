@@ -12,7 +12,7 @@ SPIRE_FN inline void insert_random_card(Game& g, Pile& pile, int card) {
 SPIRE_FN inline int copy_card(Game& g, int source, bool same_uuid) {
     const int index = g.cards.size;
     Card card = card_makeStatEquivalentCopy(g, source);
-    card.uuid = same_uuid ? g.cards[source].uuid : index + 1;
+    card.uuid = same_uuid ? g.cards[source].uuid : g.next_card_uuid++;
     g.cards.push_back(card);
     return index;
 }
@@ -27,7 +27,7 @@ SPIRE_FN inline void remove_queued_card(Game& g, int card) {
 }
 SPIRE_FN inline int create_card(Game& g, Card card) {
     const int index = g.cards.size;
-    card.uuid = index + 1;
+    card.uuid = g.next_card_uuid++;
     g.cards.push_back(card);
     return index;
 }
@@ -442,6 +442,7 @@ SPIRE_FN inline void end_turn_early(Game& g) {
     add_bottom(g, units::actions::NewQueueCard::construct());
 }
 SPIRE_FN inline void begin_end_turn(Game& g) {
+    g.player.end_turn_queued = true;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onPlayerEndTurn(g, i);
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_atEndOfTurnPreEndTurnCards(g, powers.at(g.power_objects, i), player_target, true);
@@ -719,6 +720,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     build_encounter(g, setup.encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
+    g.next_card_uuid = g.run.master_deck.size + 1;
     for (int i = 0; i < g.run.master_deck.size; ++i) {
         g.run.master_deck[i].uuid = i + 1;
         g.cards.push_back(g.run.master_deck[i]);
@@ -841,6 +843,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
         if (action.kind == ActionKind::EndTurn) {
             g.player.end_turn_queued = true;
             g.manager.card_queue.push_back({-1, -1});
+            g.player.end_turn_queued = true;
         } else if (action.kind == ActionKind::PotionUse) {
             SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable && potion_canUse(g, action.index));
             const int target = action.target >= 0 ? g.monster_order[action.target] : player_target;
@@ -858,9 +861,11 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 target = g.monster_order[action.target];
                 SPIRE_ASSERT(alive(g.monsters[target].creature));
                 const Powers& powers = g.player.creature.powers;
-                for (int i = 0; i < powers.size; ++i)
-                    if (power_data(powers.at(g.power_objects, i).id).rear_attack_power != PowerId::Count)
+                for (int i = 0; i < powers.size; ++i) {
+                    if (power_data(powers.at(g.power_objects, i).id).rear_attack_power != PowerId::Count) {
                         g.player.creature.flip_horizontal = g.monsters[target].creature.draw_x < g.player.creature.draw_x;
+                    }
+                }
             }
             g.manager.card_queue.push_back({card, target, g.player.energy});
         }
