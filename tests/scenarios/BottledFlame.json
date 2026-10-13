@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bottled Flame"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 49,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
