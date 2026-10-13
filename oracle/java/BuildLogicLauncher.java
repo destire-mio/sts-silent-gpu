@@ -12,19 +12,14 @@ public final class BuildLogicLauncher {
         ClassPool pool = new ClassPool(true);
         pool.insertClassPath(args[0]);
         CtClass loader = pool.get("com.evacipated.cardcrawl.modthespire.Loader");
-        final int[] replaced = {0};
-        loader.getDeclaredMethod("main").instrument(new ExprEditor() {
-            public void edit(MethodCall call) throws javassist.CannotCompileException {
-                if (call.getClassName().equals("java.awt.EventQueue") && call.getMethodName().equals("invokeLater")) {
-                    call.replace("{ ALLMODINFOS = getAllMods(getWorkshopInfos()); "
-                        + "java.io.File[] files = new java.io.File[ALLMODINFOS.length]; "
-                        + "for (int i=0;i<files.length;i++) files[i]=new java.io.File(ALLMODINFOS[i].jarURL.toURI()); "
-                        + "runMods(files); }");
-                    replaced[0]++;
-                }
-            }
-        });
-        if (replaced[0] != 1) throw new IllegalStateException("Unexpected MTS launch structure");
+        loader.getDeclaredMethod("main").setBody("{ ARGS = $1; SKIP_INTRO = true; allowBeta = true; "
+            + "manualModIds = java.util.Arrays.asList(new String[]{\"basemod\", \"CommunicationMod\", \"oracle\"}); "
+            + "MTS_CONFIG = new com.evacipated.cardcrawl.modthespire.lib.SpireConfig(null, \"ModTheSpire\", new java.util.Properties()); "
+            + "WORKSHOP_INFOS = new java.util.ArrayList(); loadMTSVersion(); findGameVersion(); "
+            + "ALLMODINFOS = getAllMods(WORKSHOP_INFOS); "
+            + "java.io.File[] files = new java.io.File[ALLMODINFOS.length]; "
+            + "for (int i=0;i<files.length;i++) files[i]=new java.io.File(ALLMODINFOS[i].jarURL.toURI()); "
+            + "runMods(files); }");
         loader.getDeclaredMethod("closeWindow").setBody("{}");
         loader.getDeclaredMethod("restoreWindowOnCrash").setBody("{ System.exit(1); }");
         loader.getDeclaredMethod("runMods").instrument(new ExprEditor() {
