@@ -421,6 +421,12 @@ Keep generated batches outside the repository. Add a small representative fixtur
 compression, for example `gzip -n -c /tmp/spire-neutralize/101.jsonl > tests/traces/Neutralize-seed101.jsonl.gz`.
 Keep the original header, scenario, actions and snapshots unchanged.
 
+`python3 tests/check_oracle_frames.py /tmp/spire-runs` records each input twice, with 13 extra
+idle frames before every decision and terminal observation in the second recording, and
+compares the JSONL bytes. The permanent suite includes full seeds 1 through 31, every committed
+fixture and the recorder callback scenarios. Optional trace files or directories add their
+original seed/scenario inputs, so generated run-start batches can use the same check.
+
 For the implemented content set, `tests/content.py record /tmp/spire-content` records every
 scenario on seeds 101, 102 and 103 in one JVM. Each job restores the initial Boss-seen
 preferences, so an earlier Boss encounter cannot change a later job's run initialization. After building the engine, run

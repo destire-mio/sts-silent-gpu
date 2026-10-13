@@ -1,4 +1,4 @@
-import gzip
+import argparse
 import json
 import os
 from pathlib import Path
@@ -12,26 +12,38 @@ sys.path.insert(0, str(ROOT / 'oracle'))
 from record import run_jobs
 from verify import compare
 from check_oracle_run_starts import jobs as run_start_jobs
+from replay import open_trace, trace_paths
 
 
-def jobs(output):
+def jobs(output, paths=()):
     full_seeds = set(range(1, 32))
     recordings = []
-    for path in sorted((ROOT / 'tests/traces').glob('*.jsonl.gz')):
-        with gzip.open(path, 'rt') as stream:
+    seen = set()
+    fixtures = sorted((ROOT / 'tests/traces').glob('*.jsonl.gz'))
+    for index, path in enumerate(fixtures + list(trace_paths(paths))):
+        with open_trace(path) as stream:
             header = json.loads(next(stream))
         if header['scenario'] is None:
             full_seeds.add(header['seed'])
         else:
+            key = json.dumps([header['seed'], header['scenario']], sort_keys=True)
+            if index >= len(fixtures) and key in seen:
+                continue
+            seen.add(key)
+            destination = output / 'scenarios' / path.name[:-3] if index < len(fixtures) else output / 'extra' / f'{index}.jsonl'
             recordings.append(dict(seed=header['seed'], scenario=header['scenario'],
-                                   output=str(output / 'scenarios' / path.name[:-3])))
+                                   output=str(destination)))
     recordings[:0] = [dict(seed=seed, scenario=None, output=str(output / 'full' / f'{seed}.jsonl'))
                       for seed in sorted(full_seeds)]
-    recordings.extend(run_start_jobs(output / 'run-starts'))
+    for job in run_start_jobs(output / 'run-starts'):
+        key = json.dumps([job['seed'], job['scenario']], sort_keys=True)
+        if key not in seen:
+            seen.add(key)
+            recordings.append(job)
     return recordings
 
 
-def check(output):
+def check(output, paths=()):
     instance = ROOT / 'oracle/instance'
     classes = output / 'classes'
     classes.mkdir()
@@ -44,8 +56,8 @@ def check(output):
         jar.writestr('META-INF/MANIFEST.MF', 'Manifest-Version: 1.0\nPremain-Class: oracle.test.OracleIdleFrames\n\n')
         for path in classes.rglob('*.class'):
             jar.write(path, str(path.relative_to(classes)))
-    first = jobs(output / 'a')
-    second = jobs(output / 'b')
+    first = jobs(output / 'a', paths)
+    second = jobs(output / 'b', paths)
     run_jobs(first)
     with (output / 'a/full/16.jsonl').open() as stream:
         snapshots = [json.loads(line)['snapshot'] for line in list(stream)[1:]]
@@ -71,6 +83,9 @@ def check(output):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Compare original recordings with 13 extra idle frames before every observation')
+    parser.add_argument('traces', nargs='*', type=Path)
+    args = parser.parse_args()
     output = Path(tempfile.mkdtemp(prefix='oracle-frames-'))
     print('Frame-check output:', output, flush=True)
-    check(output)
+    check(output, args.traces)
