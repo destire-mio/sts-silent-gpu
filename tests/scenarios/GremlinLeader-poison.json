@@ -1,0 +1,62 @@
+{
+  "deck": [
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 1
+    },
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 1
+    },
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 1
+    },
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 1
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Block Potion",
+    "Regen Potion"
+  ],
+  "hp": 500,
+  "max_hp": 500,
+  "encounter": "Gremlin Leader"
+}

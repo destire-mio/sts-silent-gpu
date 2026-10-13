@@ -25,8 +25,8 @@ struct SummonGremlinAction : ActionHooks {
         constexpr float positions[]{-366.0f, -170.0f, -532.0f};
         const MonsterId id = pool[g.rng.ai.random(0, 7)];
         Monster monster = construct_monster(g, id);
-        monster.offset_x = positions[slot];
-        monster.creature.draw_x = 1280.0f * 0.75f + positions[slot] * (1280.0f / 1920.0f);
+        monster.offset_x += positions[slot];
+        monster.creature.draw_x = 1280.0f * 0.75f + monster.offset_x * (1280.0f / 1920.0f);
         const int owner = g.monsters.size;
         g.monsters.push_back(monster);
         gremlins[slot] = e.state.SummonGremlinAction.m = owner;
@@ -44,8 +44,8 @@ struct SummonGremlinAction : ActionHooks {
             ++position;
         }
         g.monster_order.insert(position, owner);
+        queue_power(g, owner, owner, PowerId::Minion, -1);
         monster_usePreBattleAction(g, owner);
-        queue_power(g, owner, owner, PowerId::Minion, 1);
         e.done = true;
     }
 };
