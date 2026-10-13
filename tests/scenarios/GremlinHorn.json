@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "All Out Attack",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 1
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Gremlin Horn"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Small Slimes"
+}
