@@ -33,3 +33,4 @@ SPIRE_UNIT(WrithingMass, "WrithingMass", "core/monsters/writhing_mass.hpp", Writ
 SPIRE_UNIT(TimeEater, "TimeEater", "core/monsters/time_eater.hpp", TimeEater)
 SPIRE_UNIT(BookOfStabbing, "BookOfStabbing", "core/monsters/book_of_stabbing.hpp", BookOfStabbing)
 SPIRE_UNIT(Byrd, "Byrd", "core/monsters/byrd.hpp", Byrd)
+SPIRE_UNIT(Champ, "Champ", "core/monsters/champ.hpp", Champ)
