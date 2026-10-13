@@ -145,6 +145,9 @@ state. Card text-color flags, preview copies, cursor hover targets, timers, acti
 animation and sound state are excluded. `AbstractRelic.grayscale` remains: Captain's Wheel and
 Horn Cleat read it. Creature `drawX`/`flipHorizontal`, slime `saveX`, and Hexaghost's attack-cycle
 index remain because spawn ordering, back attacks, splitting and move selection read them.
+For an escaping or escaped monster, `drawX` is projected to null: `updateEscapeAnimation` moves
+it on every frame, and no encounter combines an escaper with a `SpawnMonsterAction` user, so
+no subsequent rule reads that position. The conditional exclusion is recorded in the catalog.
 Power, relic and monster fields include private subclass counters/references as well as
 base state. `manager.currentAction` and all rule actions in queues are recorded even at interrupted
 card-selection decisions. The observer omits exact `WaitAction` queue entries and projects an

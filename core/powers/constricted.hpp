@@ -5,6 +5,10 @@ namespace spire::units::powers {
 struct Constricted : PowerHooks {
     SPIRE_STATE(Constricted, int source;)
     static SPIRE_FN constexpr PowerData data() { return {105, true}; }
+    static SPIRE_FN void constructPower(Game&, Power& p, int, int source, int, int) {
+        power_initialize_state(p);
+        p.state.Constricted.source = source;
+    }
     static SPIRE_FN void atEndOfTurn(Game& g, Power& p, int owner, bool) {
         Effect e{};
         e.kind = EffectKind::Damage;

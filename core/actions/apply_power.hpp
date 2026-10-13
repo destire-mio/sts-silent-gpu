@@ -8,7 +8,7 @@ struct ApplyPower : ActionHooks {
         power.id = e.power;
         power.amount = e.amount;
         power.just_applied = e.flag;
-        construct_power(g, power, e.target, e.source);
+        power_constructPower(g, power, e.target, e.source, e.extra, e.card);
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         apply_prepared_power(g, e.source, e.target, e.prepared_power, e.amount);

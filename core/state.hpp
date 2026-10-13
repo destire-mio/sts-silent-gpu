@@ -42,6 +42,7 @@ struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState sta
 struct Power {
     int amount;
     PowerId id;
+    int id_offset = -1;
     bool just_applied : 1;
     bool triggered : 1;
     bool skip_first : 1;
@@ -115,6 +116,7 @@ struct Effect {
     int info_base = 0;
     int16_t card = -1;
     PowerId power = PowerId::Strength;
+    int power_offset = -1;
     int extra = 0;
     DamageType damage_type = DamageType::Normal;
     bool flag = false;
@@ -205,6 +207,7 @@ struct Game {
     bool selected_cards_retrieved = false;
     bool battle_over = false;
     bool mugged = false;
+    int bomb_id_offset = 0;
 };
 struct CombatSetup {
     EncounterId encounter = EncounterId::Cultist;

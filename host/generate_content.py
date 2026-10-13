@@ -27,6 +27,7 @@ def power(name, suffix="", result="void", body="", const=False):
 power("stackPower", "int amount", body="if (p.amount != -1) p.amount += amount;")
 power("reducePower", "int amount", body="p.amount = max(0, p.amount - amount);")
 power("initialPower")
+power("constructPower", "int source, int extra, int card", body="power_initialize_state(p); power_initialPower(g, p, owner);")
 power("initFromSource", "bool monster_source", body="p.just_applied = monster_source;")
 hook("powers", "isDebuff", "const Power& p, int owner", "bool", "return power_data(p.id).debuff;")
 for name in ("atDamageGive", "atDamageReceive", "atDamageFinalGive", "atDamageFinalReceive"):

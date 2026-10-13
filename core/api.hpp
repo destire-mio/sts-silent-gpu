@@ -6,7 +6,7 @@ namespace spire {
 SPIRE_FN inline Creature& get_creature(Game&, int);
 SPIRE_FN inline const Creature& get_creature(const Game&, int);
 SPIRE_FN inline bool alive(const Creature&);
-SPIRE_FN inline int find_power(const Creature&, PowerId);
+SPIRE_FN inline int find_power(const Creature&, PowerId, int offset = -1);
 SPIRE_FN inline bool has_power(const Creature&, PowerId);
 SPIRE_FN inline int power_amount(const Creature&, PowerId);
 SPIRE_FN inline bool monsters_basically_dead(const Game&);
@@ -21,13 +21,12 @@ SPIRE_FN inline void queue_damage(Game&, int, int, int, DamageType = DamageType:
 SPIRE_FN inline void queue_block(Game&, int, int);
 SPIRE_FN inline void queue_card_damage(Game&, int, int);
 SPIRE_FN inline void queue_card_copy(Game&, int, int);
-SPIRE_FN inline void queue_power(Game&, int, int, PowerId, int, bool monster_source = false);
+SPIRE_FN inline void queue_power(Game&, int, int, PowerId, int, bool monster_source = false, int extra = 0, int card = -1);
 SPIRE_FN inline void gain_block(Game&, int, int);
-SPIRE_FN inline void remove_power(Game&, int, PowerId);
-SPIRE_FN inline void apply_power(Game&, int, int, PowerId, int, bool just_applied = false);
+SPIRE_FN inline void remove_power(Game&, int, PowerId, int offset = -1);
+SPIRE_FN inline void apply_power(Game&, int, int, PowerId, int, bool just_applied = false, int extra = 0, int card = -1);
 SPIRE_FN inline void apply_prepared_power(Game&, int, int, Power, int);
-SPIRE_FN inline void construct_power(Game&, Power&, int, int);
-SPIRE_FN inline void reduce_power(Game&, int, PowerId, int);
+SPIRE_FN inline void reduce_power(Game&, int, PowerId, int, int offset = -1, int source = no_target);
 SPIRE_FN inline void at_end_of_round(Game&, int);
 SPIRE_FN inline void at_end_of_turn(Game&, int);
 SPIRE_FN inline void reset_attributes(Card&);

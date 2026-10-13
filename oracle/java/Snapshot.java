@@ -46,6 +46,7 @@ final class Snapshot {
 
     static final Map<String, String> EXCLUDED = new TreeMap<String, String>();
     static {
+        exclude("core.AbstractCreature", "drawX[escaping-or-escaped]", "Projected to null for escaping or escaped monsters: AbstractMonster.updateEscapeAnimation moves drawX each frame; no encounter combines an escaper with a SpawnMonsterAction user, so no subsequent rule reads it.");
         exclude("cards.CardGroup", "queued", "renderHand scratch list controlling draw order, cleared after rendering.");
         exclude("potions.AbstractPotion", "size isThrown", "Bottle artwork and drink/throw tooltip wording; use and target rules are separate.");
         exclude("characters.AbstractPlayer", "damagedThisCombat", "Vanilla increments and resets this unused counter but never reads it.");
@@ -354,6 +355,11 @@ final class Snapshot {
             for (Map.Entry<String, Field> entry : fields.entrySet()) {
                 entry.getValue().setAccessible(true);
                 if (entry.getKey().equals("GridCardSelectScreen.hoveredCard") && !AbstractDungeon.gridSelectScreen.confirmScreenUp)
+                    data.add(entry.getKey(), JsonNull.INSTANCE);
+                else if (entry.getKey().equals("AbstractCreature.drawX")
+                        && value instanceof com.megacrit.cardcrawl.monsters.AbstractMonster
+                        && (((com.megacrit.cardcrawl.monsters.AbstractMonster)value).isEscaping
+                            || ((com.megacrit.cardcrawl.monsters.AbstractMonster)value).escaped))
                     data.add(entry.getKey(), JsonNull.INSTANCE);
                 else data.add(entry.getKey(), value(entry.getValue().get(value)));
             }

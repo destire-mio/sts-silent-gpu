@@ -27,6 +27,9 @@ def check(output):
             jar.write(path, str(path.relative_to(classes)))
     first = [suite(output / 'a')[i] for i in (15, 20, 23, 216)]
     second = [suite(output / 'b')[i] for i in (15, 20, 23, 216)]
+    scenario = json.loads((ROOT / 'tests/scenarios/Thievery.json').read_text())
+    first.append(dict(seed=101, scenario=scenario, output=str(output / 'a/escaping.jsonl')))
+    second.append(dict(seed=101, scenario=scenario, output=str(output / 'b/escaping.jsonl')))
     run_jobs(first)
     with Path(first[0]['output']).open() as stream:
         snapshots = [json.loads(line)['snapshot'] for line in list(stream)[1:]]
@@ -34,13 +37,18 @@ def check(output):
                and snapshot['objects'][snapshot['screen']['state']['ref']]['fields']['GridCardSelectScreen.forTransform']
                and snapshot['objects'][snapshot['screen']['state']['ref']]['fields']['GridCardSelectScreen.confirmScreenUp']
                for snapshot in snapshots)
+    with Path(first[-1]['output']).open() as stream:
+        terminal = json.loads(list(stream)[-1])['snapshot']
+    escaped = [obj['fields'] for obj in terminal['objects']
+               if obj['fields'].get('AbstractMonster.escaped')]
+    assert escaped and all(monster['AbstractCreature.drawX'] is None for monster in escaped)
     marker = output / 'probe-active'
     os.environ['JAVA_TOOL_OPTIONS'] = '-javaagent:' + str(agent) + '=' + str(marker)
     run_jobs(second)
     assert marker.read_text() == 'active\n'
     for a, b in zip(first, second):
         compare(Path(a['output']), Path(b['output']))
-    print('13 extra frames per decision: 1 full run (including transform preview) and 3 scenarios byte-identical')
+    print('13 extra frames per decision: 1 full run (including transform preview) and 4 scenarios (including escape) byte-identical')
 
 
 if __name__ == '__main__':
