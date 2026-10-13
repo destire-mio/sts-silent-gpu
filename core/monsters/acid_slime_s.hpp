@@ -14,17 +14,17 @@ struct AcidSlime_S : MonsterHooks {
         Monster& m = g.monsters[index];
         (void)num;
         // AcidSlime_S.getMove checks for two attacks, then chooses another attack.
-        if (g.run.ascension >= 17 ? last_two_moves(g, m, 1) : g.rng.ai.randomBoolean()) set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+        if (g.run.ascension >= 17 ? last_two_moves(g, m, 1) : g.rng.ai.randomBoolean()) set_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
         else set_monster_move(g, index, 2, Intent::Debuff);
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 1) {
-            queue_damage(g, index, player_target, m.damage[0]);
+            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
             set_monster_move(g, index, 2, Intent::Debuff);
         } else {
             queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
-            set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+            set_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
         }
     }
 };

@@ -5,14 +5,15 @@
 
 namespace spire::units::monsters {
 struct Nemesis : MonsterHooks {
-    SPIRE_STATE(Nemesis, int fireDmg; int scytheCooldown; bool firstMove;)
+    SPIRE_SNAPSHOT("Nemesis.fireDmg", scalar, monster_base_damage(graph.game, monster, 1))
+    SPIRE_STATE(Nemesis, int scytheCooldown; bool firstMove;)
     SPIRE_FN static constexpr MonsterData data() { return {200, 200, {45, 7}, 0, 0, 2, EnemyType::Elite}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         MonsterData stats = data();
         if (g.run.ascension < 8) stats.hp_min = stats.hp_max = 185;
         if (g.run.ascension < 3) stats.damage[1] = 6;
         Monster m = make_monster(g, MonsterId::Nemesis, stats, hp_override);
-        m.state.Nemesis.fireDmg = m.damage[1]; m.state.Nemesis.firstMove = true;
+        m.state.Nemesis.firstMove = true;
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
@@ -32,7 +33,7 @@ struct Nemesis : MonsterHooks {
         else if (g.rng.ai.randomBoolean() && s.scytheCooldown <= 0) move = 3;
         else move = 2;
         if (move == 3) { s.scytheCooldown = 2; set_monster_move(g, owner, 3, Intent::Attack, 45); }
-        else if (move == 2) set_monster_move(g, owner, 2, Intent::Attack, s.fireDmg, 3);
+        else if (move == 2) set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 1), 3);
         else set_monster_move(g, owner, 4, Intent::Debuff);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
@@ -40,9 +41,9 @@ struct Nemesis : MonsterHooks {
         if (m.move == 3) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
         }
-        else if (m.move == 2) for (int i = 0; i < 3; ++i) queue_damage(g, owner, player_target, m.damage[1]);
+        else if (m.move == 2) for (int i = 0; i < 3; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
         else {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
             add_bottom(g, actions::VFX::make(owner));

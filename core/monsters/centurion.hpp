@@ -5,8 +5,8 @@
 
 namespace spire::units::monsters {
 struct Centurion : MonsterHooks {
-    SPIRE_SNAPSHOT("Centurion.slashDmg", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("Centurion.furyDmg", scalar, monster.damage[1])
+    SPIRE_SNAPSHOT("Centurion.slashDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("Centurion.furyDmg", scalar, monster_base_damage(graph.game, monster, 1))
     SPIRE_SNAPSHOT("Centurion.furyHits", scalar, 3)
     SPIRE_SNAPSHOT("Centurion.blockAmount", scalar, game.run.ascension >= 17 ? 20 : 15)
     SPIRE_SNAPSHOT("Centurion.BLOCK_AMOUNT", scalar, 15)
@@ -29,8 +29,8 @@ struct Centurion : MonsterHooks {
                 if (!c.dying && !c.escaped) ++count;
             }
             if (count > 1) set_monster_move(g, owner, 2, Intent::Defend);
-            else set_monster_move(g, owner, 3, Intent::Attack, m.damage[1], (3));
-        } else set_monster_move(g, owner, 1, Intent::Attack, m.damage[0]);
+            else set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 1), (3));
+        } else set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         const Monster& m = g.monsters[owner];
@@ -38,7 +38,7 @@ struct Centurion : MonsterHooks {
         else for (int i = 0; i < (m.move == 3 ? (3) : 1); ++i) {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
             add_bottom(g, actions::ChangeState::make(g, owner, "MACE_HIT"));
-            queue_damage(g, owner, player_target, m.damage[m.move == 3 ? 1 : 0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 3 ? 1 : 0));
         }
         queue_monster_roll(g, owner);
     }

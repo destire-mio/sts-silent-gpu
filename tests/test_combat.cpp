@@ -58,7 +58,7 @@ static void test_default_cultist() {
     // CardGroup.initializeDeck/draw use the end of the list. Orders use target-JAR RNG and Collections.shuffle.
     require_pile(g.hand, {4,11,0,1,9,3,5}, "first hand");
     require_pile(g.draw, {10,12,2,7,8,6}, "first draw pile");
-    require(g.cards[10].base_block == 8 && g.cards[10].block == -1 &&
+    require(card_baseBlock(g.cards[10]) == 8 && g.cards[10].block == -1 &&
             g.cards[2].base_damage == 6 && g.cards[2].damage == -1,
             "undrawn cards retain AbstractCard constructor values until applyPowers");
     require_pile(g.drawn_cards, {3,5}, "Ring of the Snake draw history");

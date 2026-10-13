@@ -5,7 +5,7 @@ namespace spire::units::actions {
 struct SpawnMonster : ActionHooks {
     SPIRE_SNAPSHOT("SpawnMonsterAction.m", monster, effect.payload.state.SpawnMonster.m)
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
-    SPIRE_STATE(SpawnMonster, int m; bool minion; int target_slot; bool use_smart_positioning; bool used;)
+    SPIRE_STATE(SpawnMonster, int8_t m; bool minion; int8_t target_slot; bool use_smart_positioning; bool used;)
     SPIRE_FN static Effect construct(int monster, bool minion) {
         Effect e = construct(monster, minion, -99);
         e.payload.state.SpawnMonster.use_smart_positioning = true;

@@ -14,7 +14,6 @@ struct Dash : CardHooks {
         if (card.upgrades == 0) {
             ++card.upgrades;
             card.base_damage += data().upgrade_damage;
-            card.base_block += data().upgrade_block;
         }
     }
 };

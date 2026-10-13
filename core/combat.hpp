@@ -2,6 +2,18 @@
 #include "card_data.hpp"
 
 namespace spire {
+SPIRE_FN inline int16_t& monster_base_damage(Game& g, Monster& m, int slot) {
+    return slot < 3 ? m.damage[slot] : g.monster_damage_extra[m.damage_extra + slot - 3].base;
+}
+SPIRE_FN inline const int16_t& monster_base_damage(const Game& g, const Monster& m, int slot) {
+    return slot < 3 ? m.damage[slot] : g.monster_damage_extra[m.damage_extra + slot - 3].base;
+}
+SPIRE_FN inline int16_t& monster_output_damage(Game& g, Monster& m, int slot) {
+    return slot < 3 ? m.damage_output[slot] : g.monster_damage_extra[m.damage_extra + slot - 3].output;
+}
+SPIRE_FN inline const int16_t& monster_output_damage(const Game& g, const Monster& m, int slot) {
+    return slot < 3 ? m.damage_output[slot] : g.monster_damage_extra[m.damage_extra + slot - 3].output;
+}
 SPIRE_FN inline bool same_id(const char* a, const char* b) {
     while (*a && *a == *b) { ++a; ++b; }
     return *a == *b;
@@ -196,7 +208,7 @@ SPIRE_FN inline int calculate_block(const Game& g, int base, int card) {
 }
 SPIRE_FN inline void apply_card_block(Game& g, int card) {
     Card& c = get_card(g, card);
-    float value = static_cast<float>(c.base_block);
+    float value = static_cast<float>(card_baseBlock(c));
     const Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers.at(g.power_objects, i), player_target, value, card);
     for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers.at(g.power_objects, i), player_target, value);
@@ -351,7 +363,7 @@ SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, i
         e.source = source;
         e.target = target;
         e.power = id;
-        e.power_instance = c.powers.at(g.power_objects, index).instance;
+        e.extra = c.powers.at(g.power_objects, index).instance;
         add_top(g, e);
     } else {
         power_reducePower(g, c.powers.at(g.power_objects, index), target, amount);

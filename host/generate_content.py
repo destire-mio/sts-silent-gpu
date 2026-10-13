@@ -123,6 +123,7 @@ def card(name, suffix="", result="void", body="", const=False):
 
 
 hook("cards", "upgrade", "Card& card", selector="card.id")
+hook("cards", "baseBlock", "const Card& card", "int", "const CardDef d = card_def(card.id); return d.block + card.upgrades * d.upgrade_block;", selector="card.id")
 card("use", "int target")
 for name in ("tookDamage", "didDiscard", "onMoveToDiscard", "triggerWhenDrawn",
              "triggerWhenCopied", "triggerOnEndOfTurnForPlayingCard", "triggerOnManualDiscard", "triggerOnScry",
@@ -334,11 +335,19 @@ def generate(root, output):
             content.append('default: SPIRE_ASSERT(false); } }')
         if kind in ("cards", "powers", "relics", "potions", "monsters", "actions"):
             datatype = {"cards": "CardDef", "powers": "PowerData", "relics": "RelicData", "potions": "PotionData", "monsters": "MonsterData", "actions": "ActionData"}[kind]
-            declarations.append(f'SPIRE_FN inline {datatype} {prefix}_data({enum} id);')
-            content.append(f'SPIRE_FN inline {datatype} {prefix}_data({enum} id) {{ switch (id) {{')
-            for unit, _, _, typename in entries:
-                content.append(f'case {enum}::{unit}: return units::{kind}::{typename}::data();')
-            content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+            if kind == "cards":
+                declarations.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id);')
+                content.append(f'constexpr {datatype} {prefix}_definitions[] = {{')
+                for _, _, _, typename in entries:
+                    content.append(f'    units::{kind}::{typename}::data(),')
+                content.append('};')
+                content.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id) {{ SPIRE_ASSERT(id < {enum}::Count); return {prefix}_definitions[static_cast<int>(id)]; }}')
+            else:
+                declarations.append(f'SPIRE_FN inline {datatype} {prefix}_data({enum} id);')
+                content.append(f'SPIRE_FN inline {datatype} {prefix}_data({enum} id) {{ switch (id) {{')
+                for unit, _, _, typename in entries:
+                    content.append(f'case {enum}::{unit}: return units::{kind}::{typename}::data();')
+                content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
         if base:
             bases.append(f'struct {base} {{')
             if kind == "actions":

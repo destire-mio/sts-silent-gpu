@@ -3,7 +3,11 @@
 
 namespace spire::units::monsters {
 struct Looter : MonsterHooks {
-    SPIRE_STATE(Looter, int32_t stolenGold; int16_t escapeDef; int16_t goldAmt; int16_t lungeDmg; int16_t slashCount; int16_t swipeDmg;)
+    SPIRE_SNAPSHOT("Looter.escapeDef", scalar, monster.block_amount)
+    SPIRE_SNAPSHOT("Looter.goldAmt", scalar, monster.magic)
+    SPIRE_SNAPSHOT("Looter.lungeDmg", scalar, monster_base_damage(graph.game, monster, 1))
+    SPIRE_SNAPSHOT("Looter.swipeDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_STATE(Looter, int32_t stolenGold; uint8_t slashCount;)
     SPIRE_FN static constexpr MonsterData data() { return {46, 50, {11, 14}, 6, 20, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         MonsterData stats = data();
@@ -11,16 +15,12 @@ struct Looter : MonsterHooks {
         if (g.run.ascension < 2) { stats.damage[0] = 10; stats.damage[1] = 12; }
         if (g.run.ascension < 17) stats.magic = 15;
         Monster m = make_monster(g, MonsterId::Looter, stats, hp_override);
-        m.state.Looter.escapeDef = m.block_amount;
-        m.state.Looter.goldAmt = m.magic;
-        m.state.Looter.lungeDmg = m.damage[1];
-        m.state.Looter.swipeDmg = m.damage[0];
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
         (void)num;
-        set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+        set_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
@@ -31,17 +31,17 @@ struct Looter : MonsterHooks {
             Effect steal{};
             steal.kind = EffectKind::StealGold;
             steal.target = index;
-            steal.amount = m.state.Looter.goldAmt;
+            steal.amount = m.magic;
             add_bottom(g, steal);
-            queue_damage(g, index, player_target, m.damage[move == 1 ? 0 : 1], DamageType::Normal, m.state.Looter.goldAmt);
+            queue_damage(g, index, player_target, monster_base_damage(g, m, move == 1 ? 0 : 1), DamageType::Normal, m.magic);
             ++m.state.Looter.slashCount;
             if (move == 4) set_monster_move(g, index, 2, Intent::Defend);
             else if (m.state.Looter.slashCount == 2) {
                 if (g.rng.ai.randomBoolean(0.5f)) set_monster_move(g, index, 2, Intent::Defend);
-                else queue_monster_move(g, index, 4, Intent::Attack, m.damage[1]);
-            } else queue_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+                else queue_monster_move(g, index, 4, Intent::Attack, monster_base_damage(g, m, 1));
+            } else queue_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
         } else if (m.move == 2) {
-            queue_block(g, index, m.state.Looter.escapeDef);
+            queue_block(g, index, m.block_amount);
             queue_monster_move(g, index, 3, Intent::Escape);
         } else {
             g.mugged = true;
@@ -57,7 +57,7 @@ struct Looter : MonsterHooks {
         monster_die_base(g, owner, trigger_relics);
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int index) {
-        queue_power(g, index, index, PowerId::Thievery, g.monsters[index].state.Looter.goldAmt);
+        queue_power(g, index, index, PowerId::Thievery, g.monsters[index].magic);
     }
 };
 }

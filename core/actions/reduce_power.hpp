@@ -3,8 +3,8 @@
 
 namespace spire::units::actions {
 struct ReducePower : ActionHooks {
-    SPIRE_SNAPSHOT("ReducePowerAction.powerID", power_id, effect.power, effect.power_instance)
-    SPIRE_SNAPSHOT("ReducePowerAction.powerInstance", power_reference, effect.target, effect.power_instance)
+    SPIRE_SNAPSHOT("ReducePowerAction.powerID", power_id, effect.power, effect.extra)
+    SPIRE_SNAPSHOT("ReducePowerAction.powerInstance", power_reference, effect.target, effect.extra)
     static SPIRE_FN constexpr ActionData data() { return {false, "REDUCE_POWER"}; }
     SPIRE_FN static Effect construct(int target, int source, PowerId power, int amount) {
         Effect e{};
@@ -19,12 +19,12 @@ struct ReducePower : ActionHooks {
     SPIRE_FN static Effect construct(int target, int source, const Power& power, int amount) {
         SPIRE_ASSERT(power.instance != 0);
         Effect e = construct(target, source, power.id, amount);
-        e.power_instance = power.instance;
+        e.extra = power.instance;
         return e;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
-        if (e.power_instance == 0) { reduce_power(g, e.target, e.power, e.amount, e.source); return; }
-        Power& power = power_instance(g, e.power_instance);
+        if (e.extra == 0) { reduce_power(g, e.target, e.power, e.amount, e.source); return; }
+        Power& power = power_instance(g, e.extra);
         if (e.amount < power.amount) {
             power_reducePower(g, power, e.target, e.amount);
             refresh_powers(g);
@@ -34,7 +34,7 @@ struct ReducePower : ActionHooks {
             remove.source = e.source;
             remove.target = e.target;
             remove.power = power.id;
-            remove.power_instance = power.instance;
+            remove.extra = power.instance;
             add_top(g, remove);
         }
     }

@@ -3,7 +3,7 @@
 
 namespace spire::units::actions {
 struct MayhemPlay : ActionHooks {
-    SPIRE_SNAPSHOT("MayhemPower$1.this$0", power_reference, player_target, effect.power_instance)
+    SPIRE_SNAPSHOT("MayhemPower$1.this$0", power_reference, player_target, effect.extra)
     static SPIRE_FN constexpr ActionData data() { return {}; }
     static SPIRE_FN void execute(Game& g, Effect&) {
         Effect play{};
@@ -22,7 +22,7 @@ struct Mayhem : PowerHooks {
             Effect e{};
             e.kind = EffectKind::MayhemPlay;
             e.source = e.target = no_target;
-            e.power_instance = power.instance;
+            e.extra = power.instance;
             add_bottom(g, e);
         }
     }

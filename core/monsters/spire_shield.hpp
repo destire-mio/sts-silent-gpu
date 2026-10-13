@@ -19,20 +19,20 @@ struct SpireShield : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         (void)num; Monster& m = g.monsters[owner];
         const int phase = m.state.SpireShield.moveCount++ % 3;
-        if (phase == 2) set_monster_move(g, owner, 3, Intent::AttackDefend, m.damage[1]);
+        if (phase == 2) set_monster_move(g, owner, 3, Intent::AttackDefend, monster_base_damage(g, m, 1));
         else if (phase == 0 ? g.rng.ai.randomBoolean() : last_move(g, m, 1)) set_monster_move(g, owner, 2, Intent::Defend);
-        else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
+        else set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             queue_power(g, owner, player_target, PowerId::Strength, -1);
         } else if (m.move == 2) {
             for (int i = 0; i < g.monster_order.size; ++i) queue_block(g, g.monster_order[i], 30);
         } else {
-            queue_damage(g, owner, player_target, m.damage[1]);
-            queue_block(g, owner, g.run.ascension >= 18 ? 99 : m.damage_output[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_block(g, owner, g.run.ascension >= 18 ? 99 : monster_output_damage(g, m, 1));
         }
         queue_monster_roll(g, owner);
     }

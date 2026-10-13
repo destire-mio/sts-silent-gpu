@@ -38,7 +38,7 @@ struct AwakenedOne : MonsterHooks {
         if (m.move == 1 || m.move == 5 || m.move == 6) {
             add_bottom(g, actions::ChangeState::make(g, owner, m.move == 1 ? "ATTACK_1" : "ATTACK_2"));
             if (m.move == 5) m.state.AwakenedOne.firstTurn = false;
-            queue_damage(g, owner, player_target, m.damage[m.move == 1 ? 0 : m.move == 5 ? 2 : 3]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : m.move == 5 ? 2 : 3));
             if (m.move == 6) {
                 Effect e{}; e.kind = EffectKind::MakeTempCardInDrawPile; action_initialize_state(e);
                 e.source = e.target = no_target;
@@ -49,7 +49,7 @@ struct AwakenedOne : MonsterHooks {
             }
         } else if (m.move == 2 || m.move == 8) {
             const int count = m.move == 2 ? 4 : 3;
-            for (int i = 0; i < count; ++i) queue_damage(g, owner, player_target, m.damage[m.move == 2 ? 1 : 4]);
+            for (int i = 0; i < count; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 2 ? 1 : 4));
         } else if (m.move == 3) add_bottom(g, actions::ChangeState::make(g, owner, "REBIRTH"));
         queue_monster_roll(g, owner);
     }

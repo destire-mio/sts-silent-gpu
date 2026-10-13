@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct BottledLightning : RelicHooks {
-    SPIRE_STATE(BottledLightning, bool cardSelected; uint32_t card;)
+    SPIRE_STATE(BottledLightning, bool cardSelected; uint16_t card;)
     SPIRE_SNAPSHOT("BottledLightning.card", master_card_uuid, relic.state.BottledLightning.card)
     static SPIRE_FN constexpr RelicData data() { return {-1, 250}; }
     static SPIRE_FN void initializeState(Relic& relic) { relic.state.BottledLightning.cardSelected = true; }

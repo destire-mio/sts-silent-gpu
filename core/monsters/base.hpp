@@ -16,9 +16,11 @@ SPIRE_FN inline Monster make_monster(Game& g, MonsterId id, const MonsterData& d
     m.creature.hp = hp_override == 0 ? g.rng.monster_hp.random(data.hp_min, data.hp_max) : hp_override;
     m.creature.max_hp = m.creature.hp;
     m.damage_count = data.damage_count;
+    m.damage_extra = g.monster_damage_extra.size;
+    for (int i = 3; i < data.damage_count; ++i) g.monster_damage_extra.push_back({});
     for (int i = 0; i < m.damage_count; ++i) {
-        m.damage[i] = data.damage[i];
-        m.damage_output[i] = data.damage[i];
+        monster_base_damage(g, m, i) = data.damage[i];
+        monster_output_damage(g, m, i) = data.damage[i];
     }
     m.block_amount = data.block;
     m.magic = data.magic;

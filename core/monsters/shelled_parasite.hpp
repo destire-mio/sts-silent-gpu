@@ -4,9 +4,9 @@
 namespace spire::units::monsters {
 struct ShelledParasite : MonsterHooks {
     SPIRE_STATE(ShelledParasite, bool firstMove;)
-    SPIRE_SNAPSHOT("ShelledParasite.doubleStrikeDmg", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("ShelledParasite.fellDmg", scalar, monster.damage[1])
-    SPIRE_SNAPSHOT("ShelledParasite.suckDmg", scalar, monster.damage[2])
+    SPIRE_SNAPSHOT("ShelledParasite.doubleStrikeDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("ShelledParasite.fellDmg", scalar, monster_base_damage(graph.game, monster, 1))
+    SPIRE_SNAPSHOT("ShelledParasite.suckDmg", scalar, monster_base_damage(graph.game, monster, 2))
     SPIRE_FN static constexpr MonsterData data() { return {70, 75, {7, 21, 12}, 0, 0, 3}; }
     SPIRE_FN static Monster construct(Game& g, int hp) {
         MonsterData d = data();
@@ -25,15 +25,15 @@ struct ShelledParasite : MonsterHooks {
         Monster& m = g.monsters[owner];
         if (m.state.ShelledParasite.firstMove) {
             m.state.ShelledParasite.firstMove = false;
-            if (g.run.ascension >= 17) { set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[1]); return; }
-            if (g.rng.ai.randomBoolean()) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 2);
-            else set_monster_move(g, owner, 3, Intent::AttackBuff, m.damage[2]);
+            if (g.run.ascension >= 17) { set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 1)); return; }
+            if (g.rng.ai.randomBoolean()) set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0), 2);
+            else set_monster_move(g, owner, 3, Intent::AttackBuff, monster_base_damage(g, m, 2));
             return;
         }
         if (num < 20 && last_move(g, m, 1)) num = g.rng.ai.random(20, 99);
-        if (num < 20) set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[1]);
-        else if (num < 60 ? !last_two_moves(g, m, 2) : last_two_moves(g, m, 3)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 2);
-        else set_monster_move(g, owner, 3, Intent::AttackBuff, m.damage[2]);
+        if (num < 20) set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 1));
+        else if (num < 60 ? !last_two_moves(g, m, 2) : last_two_moves(g, m, 3)) set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0), 2);
+        else set_monster_move(g, owner, 3, Intent::AttackBuff, monster_base_damage(g, m, 2));
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* key) {
         if (same_text(key, "ARMOR_BREAK")) {
@@ -45,18 +45,18 @@ struct ShelledParasite : MonsterHooks {
         Monster& m = g.monsters[owner];
         switch (m.move) {
         case 1:
-            queue_damage(g, owner, player_target, m.damage[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
             break;
         case 2:
-            queue_damage(g, owner, player_target, m.damage[0]);
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             break;
         case 3: {
             Effect e{}; e.kind = EffectKind::VampireDamageAction; e.source = owner; e.target = player_target;
-            e.info_base = m.damage[2]; e.amount = m.damage_output[2]; add_bottom(g, e); break;
+            e.info_base = monster_base_damage(g, m, 2); e.amount = monster_output_damage(g, m, 2); add_bottom(g, e); break;
         }
-        case 4: set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[1]); break;
+        case 4: set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 1)); break;
         }
         queue_monster_roll(g, owner);
     }

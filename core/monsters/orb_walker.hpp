@@ -13,8 +13,8 @@ struct OrbWalker : MonsterHooks {
         if (g.run.ascension < 7) { stats.hp_min = 90; stats.hp_max = 96; }
         if (g.run.ascension < 2) { stats.damage[0] = 10; stats.damage[1] = 15; }
         Monster m = make_monster(g, MonsterId::OrbWalker, stats, hp_override);
-        m.state.OrbWalker.clawDmg = m.damage[1];
-        m.state.OrbWalker.laserDmg = m.damage[0];
+        m.state.OrbWalker.clawDmg = monster_base_damage(g, m, 1);
+        m.state.OrbWalker.laserDmg = monster_base_damage(g, m, 0);
         return m;
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int owner) {
@@ -23,14 +23,14 @@ struct OrbWalker : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         const Monster& m = g.monsters[owner];
         if ((num < 40 && !last_two_moves(g, m, 2)) || (num >= 40 && last_two_moves(g, m, 1)))
-            set_monster_move(g, owner, 2, Intent::Attack, m.damage[1]);
-        else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
+            set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 1));
+        else set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         const Monster& m = g.monsters[owner];
         if (m.move == 2) add_bottom(g, actions::AnimateSlowAttack::make(owner));
         else add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-        queue_damage(g, owner, player_target, m.damage[m.move == 2 ? 1 : 0]);
+        queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 2 ? 1 : 0));
         if (m.move == 1) queue_monster_card(g, CardId::Burn, EffectKind::MakeTempCardInDiscardAndDeck, 1);
         queue_monster_roll(g, owner);
     }

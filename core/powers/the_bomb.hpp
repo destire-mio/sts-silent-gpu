@@ -20,7 +20,7 @@ struct TheBomb : PowerHooks {
             e.source = owner;
             e.target = owner;
             e.power = PowerId::TheBomb;
-            e.power_instance = p.instance;
+            e.extra = p.instance;
             e.amount = 1;
             add_bottom(g, e);
             if (p.amount == 1) {

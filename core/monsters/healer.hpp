@@ -4,7 +4,7 @@
 namespace spire::units::monsters {
 struct Healer : MonsterHooks {
     SPIRE_STATE(Healer, int strAmt; int healAmt;)
-    SPIRE_SNAPSHOT("Healer.magicDmg", scalar, monster.damage[0])
+    SPIRE_SNAPSHOT("Healer.magicDmg", scalar, monster_base_damage(graph.game, monster, 0))
     SPIRE_FN static constexpr MonsterData data() { return {50, 58, {9}, 0, 0}; }
     SPIRE_FN static Monster construct(Game& g, int hp) {
         MonsterData d = data();
@@ -23,14 +23,14 @@ struct Healer : MonsterHooks {
             if (!c.dying && !c.escaped) missing += c.max_hp - c.hp;
         }
         if (missing > (g.run.ascension >= 17 ? 20 : 15) && !last_two_moves(g, m, 2)) set_monster_move(g, owner, 2, Intent::Buff);
-        else if (num >= 40 && !(g.run.ascension >= 17 ? last_move(g, m, 1) : last_two_moves(g, m, 1))) set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
+        else if (num >= 40 && !(g.run.ascension >= 17 ? last_move(g, m, 1) : last_two_moves(g, m, 1))) set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 0));
         else if (!last_two_moves(g, m, 3)) set_monster_move(g, owner, 3, Intent::Buff);
-        else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0]);
+        else set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
         } else for (int i = 0; i < g.monster_order.size; ++i) {
             const int target = g.monster_order[i];

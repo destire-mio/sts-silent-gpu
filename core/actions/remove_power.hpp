@@ -4,8 +4,8 @@
 namespace spire::units::actions {
 struct RemovePower : ActionHooks {
     SPIRE_SNAPSHOT("AbstractGameAction.amount", scalar, 0)
-    SPIRE_SNAPSHOT("RemoveSpecificPowerAction.powerToRemove", power_id, effect.power, effect.power_instance)
-    SPIRE_SNAPSHOT("RemoveSpecificPowerAction.powerInstance", power_reference, effect.target, effect.power_instance)
+    SPIRE_SNAPSHOT("RemoveSpecificPowerAction.powerToRemove", power_id, effect.power, effect.extra)
+    SPIRE_SNAPSHOT("RemoveSpecificPowerAction.powerInstance", power_reference, effect.target, effect.extra)
     static SPIRE_FN constexpr ActionData data() { return {false, "DEBUFF"}; }
     SPIRE_FN static Effect from_instance(int target, int source, const Power& power) {
         Effect e{};
@@ -14,9 +14,9 @@ struct RemovePower : ActionHooks {
         e.target = target;
         e.source = source;
         e.power = power.id;
-        e.power_instance = power.instance;
+        e.extra = power.instance;
         return e;
     }
-    SPIRE_FN static void execute(Game& g, const Effect& e) { remove_power(g, e.target, e.power, e.power_instance); }
+    SPIRE_FN static void execute(Game& g, const Effect& e) { remove_power(g, e.target, e.power, e.extra); }
 };
 }

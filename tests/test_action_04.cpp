@@ -43,7 +43,7 @@ static void test_setup() {
     step(g, {ActionKind::Proceed});
     require(g.draw.size == 1 && g.draw[0] == first && g.cards[first].free_to_play_once &&
             g.cards[first].cost_for_turn == g.cards[first].cost &&
-            g.cards[first].block == g.cards[first].base_block && g.manager.total_discarded_this_turn == 0,
+            g.cards[first].block == card_baseBlock(g.cards[first]) && g.manager.total_discarded_this_turn == 0,
             "Setup preserves the free-play flag while Soul clears card attributes in the draw pile");
     add_bottom(g, Setup::construct());
     run_until_decision(g);

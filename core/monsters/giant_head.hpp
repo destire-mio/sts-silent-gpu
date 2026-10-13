@@ -14,7 +14,7 @@ struct GiantHead : MonsterHooks {
         Monster m = make_monster(g, MonsterId::GiantHead, stats, hp_override);
         position_monster(m, -70.0f);
         m.state.GiantHead.count = 5;
-        m.state.GiantHead.startingDeathDmg = m.damage[1];
+        m.state.GiantHead.startingDeathDmg = monster_base_damage(g, m, 1);
         return m;
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int owner) {
@@ -38,7 +38,7 @@ struct GiantHead : MonsterHooks {
         const Monster& m = g.monsters[owner];
         Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e); add_bottom(g, actions::Shout::make(owner));
         if (m.move == 1) queue_power(g, owner, player_target, PowerId::Weak, 1, true);
-        else queue_damage(g, owner, player_target, m.damage[m.move == 3 ? 0 : min(7, 1 - m.state.GiantHead.count)]);
+        else queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 3 ? 0 : min(7, 1 - m.state.GiantHead.count)));
         queue_monster_roll(g, owner);
     }
 };

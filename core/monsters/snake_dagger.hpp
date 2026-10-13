@@ -20,7 +20,7 @@ struct SnakeDagger : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         const Monster& m = g.monsters[owner];
         add_bottom(g, actions::ChangeState::make(g, owner, m.move == 1 ? "ATTACK" : "SUICIDE"));
-        queue_damage(g, owner, player_target, m.damage[m.move == 1 ? 0 : 1]);
+        queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : 1));
         if (m.move == 1) queue_monster_card(g, CardId::Wound, EffectKind::AddCardDiscard, 1);
         else { Effect e{}; e.kind = EffectKind::LoseHP; e.source = e.target = owner; e.amount = m.creature.hp; add_bottom(g, e); }
         queue_monster_roll(g, owner);

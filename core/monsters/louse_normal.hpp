@@ -10,9 +10,9 @@ struct LouseNormal : MonsterHooks {
         MonsterData stats = data();
         if (g.run.ascension < 7) { stats.hp_min = 10; stats.hp_max = 15; }
         Monster m = make_monster(g, MonsterId::LouseNormal, stats, hp_override);
-        m.damage[0] = g.run.ascension >= 2 ? g.rng.monster_hp.random(6, 8) : g.rng.monster_hp.random(5, 7);
-        m.damage_output[0] = m.damage[0];
-        m.state.LouseNormal.biteDamage = m.damage[0];
+        monster_base_damage(g, m, 0) = g.run.ascension >= 2 ? g.rng.monster_hp.random(6, 8) : g.rng.monster_hp.random(5, 7);
+        monster_output_damage(g, m, 0) = monster_base_damage(g, m, 0);
+        m.state.LouseNormal.biteDamage = monster_base_damage(g, m, 0);
         m.state.LouseNormal.isOpen = true;
         return m;
     }
@@ -20,13 +20,13 @@ struct LouseNormal : MonsterHooks {
         Monster& m = g.monsters[index];
         if ((num < 25 && !(g.run.ascension >= 17 ? last_move(g, m, 4) : last_two_moves(g, m, 4))) || (num >= 25 && last_two_moves(g, m, 3)))
             set_monster_move(g, index, 4, Intent::Buff);
-        else set_monster_move(g, index, 3, Intent::Attack, m.damage[0]);
+        else set_monster_move(g, index, 3, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 3) {
             if (!m.state.LouseNormal.isOpen) add_bottom(g, units::actions::ChangeState::make(g, index, "OPEN"));
-            queue_damage(g, index, player_target, m.damage[0]);
+            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
         } else {
             add_bottom(g, units::actions::ChangeState::make(g, index, m.state.LouseNormal.isOpen ? "REAR_IDLE" : "REAR"));
             queue_power(g, index, index, PowerId::Strength, g.run.ascension >= 17 ? 4 : 3);

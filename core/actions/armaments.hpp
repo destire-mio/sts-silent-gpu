@@ -8,7 +8,7 @@ struct Armaments : ActionHooks {
     SPIRE_SNAPSHOT("ArmamentsAction.p", player)
     SPIRE_SNAPSHOT("ArmamentsAction.cannotUpgrade", card_array, effect.payload.state.Armaments.cannot_upgrade, effect.payload.state.Armaments.cannot_upgrade_count)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
-    SPIRE_STATE(Armaments, uint16_t cannot_upgrade[hand_limit]; uint8_t cannot_upgrade_count; bool upgraded; bool selecting;)
+    SPIRE_STATE(Armaments, uint8_t cannot_upgrade[hand_limit]; uint8_t cannot_upgrade_count; bool upgraded; bool selecting;)
     SPIRE_FN static void return_cards(Game& g, const Effect& e) {
         for (int i = 0; i < e.payload.state.Armaments.cannot_upgrade_count; ++i)
             g.hand.push_back(e.payload.state.Armaments.cannot_upgrade[i]);

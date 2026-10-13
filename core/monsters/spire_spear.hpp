@@ -20,16 +20,16 @@ struct SpireSpear : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int num) {
         (void)num; Monster& m = g.monsters[owner];
         const int phase = m.state.SpireSpear.moveCount++ % 3;
-        if (phase == 1) set_monster_move(g, owner, 3, Intent::Attack, m.damage[1], m.state.SpireSpear.skewerCount);
+        if (phase == 1) set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 1), m.state.SpireSpear.skewerCount);
         else if (phase == 0 ? last_move(g, m, 1) : g.rng.ai.randomBoolean()) set_monster_move(g, owner, 2, Intent::Buff);
-        else set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0], 2);
+        else set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 0), 2);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
             for (int i = 0; i < 2; ++i) {
                 add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-                queue_damage(g, owner, player_target, m.damage[0]);
+                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             }
             Effect e{}; e.kind = g.run.ascension >= 18 ? EffectKind::MakeTempCardInDrawPile : EffectKind::AddCardDiscard;
             action_initialize_state(e); e.card = g.cards.size; e.amount = 2;
@@ -39,7 +39,7 @@ struct SpireSpear : MonsterHooks {
             for (int i = 0; i < g.monster_order.size; ++i) queue_power(g, owner, g.monster_order[i], PowerId::Strength, 2);
         } else for (int i = 0; i < m.state.SpireSpear.skewerCount; ++i) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-            queue_damage(g, owner, player_target, m.damage[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
         }
         queue_monster_roll(g, owner);
     }

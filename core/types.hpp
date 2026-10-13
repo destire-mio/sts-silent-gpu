@@ -14,6 +14,7 @@ constexpr int potion_capacity = 8;
 constexpr int room_reward_capacity = 16;
 constexpr int reward_card_capacity = 8;
 static_assert(card_capacity <= 256 && power_object_capacity <= 256 && action_capacity <= 128);
+static_assert(monster_capacity < 128, "Card multi-damage count uses seven bits");
 constexpr int player_target = -1;
 constexpr int no_target = -2;
 

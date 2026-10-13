@@ -6,13 +6,13 @@
 
 namespace spire::units::monsters {
 struct TheGuardian : MonsterHooks {
-    SPIRE_STATE(TheGuardian, int dmgThreshold; int dmgTaken; bool isOpen; bool closeUpTriggered;)
+    SPIRE_STATE(TheGuardian, int dmgTaken; int16_t dmgThreshold; bool isOpen; bool closeUpTriggered;)
     SPIRE_SNAPSHOT("TheGuardian.DEFENSIVE_BLOCK", scalar, 20)
     SPIRE_SNAPSHOT("TheGuardian.VENT_DEBUFF", scalar, 2)
     SPIRE_SNAPSHOT("TheGuardian.blockAmount", scalar, 9)
     SPIRE_SNAPSHOT("TheGuardian.dmgThresholdIncrease", scalar, 10)
-    SPIRE_SNAPSHOT("TheGuardian.fierceBashDamage", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("TheGuardian.rollDamage", scalar, monster.damage[1])
+    SPIRE_SNAPSHOT("TheGuardian.fierceBashDamage", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("TheGuardian.rollDamage", scalar, monster_base_damage(graph.game, monster, 1))
     SPIRE_SNAPSHOT("TheGuardian.thornsDamage", scalar, 3)
     SPIRE_SNAPSHOT("TheGuardian.twinSlamDamage", scalar, 8)
     SPIRE_SNAPSHOT("TheGuardian.whirlwindCount", scalar, 4)
@@ -34,17 +34,17 @@ struct TheGuardian : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int owner, int) {
         if (g.monsters[owner].state.TheGuardian.isOpen) set_monster_move(g, owner, 6, Intent::Defend);
-        else set_monster_move(g, owner, 3, Intent::Attack, g.monsters[owner].damage[1]);
+        else set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, g.monsters[owner], 1));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         switch (m.move) {
         case 1:
             queue_power(g, owner, owner, PowerId::SharpHide, g.run.ascension >= 19 ? 4 : 3);
-            set_monster_move(g, owner, 3, Intent::Attack, m.damage[1]);
+            set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 1));
             break;
         case 2:
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             set_monster_move(g, owner, 7, Intent::StrongDebuff);
             break;
         case 7:
@@ -53,13 +53,13 @@ struct TheGuardian : MonsterHooks {
             set_monster_move(g, owner, 5, Intent::Attack, 5, 4);
             break;
         case 3:
-            queue_damage(g, owner, player_target, m.damage[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
             set_monster_move(g, owner, 4, Intent::AttackBuff, 8, 2);
             break;
         case 4: {
             add_bottom(g, actions::ChangeState::make(g, owner, "Offensive Mode"));
-            queue_damage(g, owner, player_target, m.damage[3]);
-            queue_damage(g, owner, player_target, m.damage[3]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 3));
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 3));
             Effect e{}; e.kind = EffectKind::RemovePower; e.source = e.target = owner; e.power = PowerId::SharpHide; add_bottom(g, e);
             set_monster_move(g, owner, 5, Intent::Attack, 5, 4);
             break;
@@ -69,14 +69,14 @@ struct TheGuardian : MonsterHooks {
             for (int i = 0; i < 4; ++i) {
                 add_bottom(g, e);
                 add_bottom(g, actions::VFX::make(owner));
-                queue_damage(g, owner, player_target, m.damage[2]);
+                queue_damage(g, owner, player_target, monster_base_damage(g, m, 2));
             }
             set_monster_move(g, owner, 6, Intent::Defend);
             break;
         }
         case 6:
             queue_block(g, owner, 9);
-            set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
+            set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0));
             break;
         }
     }

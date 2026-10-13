@@ -4,6 +4,8 @@
 
 namespace spire::units::cards {
 struct RitualDagger : CardHooks {
+    SPIRE_STATE(RitualDagger, bool block_from_misc;)
+    static SPIRE_FN int baseBlock(const Card& card) { return card.state.RitualDagger.block_from_misc ? card.misc : -1; }
     static SPIRE_FN constexpr CardDef data() {
         return {CardType::Attack, CardTarget::Enemy, 1, 15, -1, 3, 0, 0, 2, true, false, false, false, 15};
     }
@@ -22,7 +24,7 @@ struct RitualDagger : CardHooks {
     }
     static SPIRE_FN void applyPowers(Game& g, int card) {
         // RitualDagger.applyPowers writes baseBlock, not baseDamage.
-        get_card(g, card).base_block = get_card(g, card).misc;
+        get_card(g, card).state.RitualDagger.block_from_misc = true;
         apply_card_powers(g, card);
     }
 };

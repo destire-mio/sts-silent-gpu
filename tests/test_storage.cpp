@@ -54,6 +54,19 @@ static void compact_storage() {
             std::strcmp(copy.text[text], "CLOSED") == 0, "a relocated Game owns independent arena and text storage");
 }
 
+static void interleaved_histories() {
+    MoveHistories storage{};
+    MoveHistory histories[7]{};
+    for (int i = 0; i < 1024; ++i) storage.append(histories[i % 7], i % 121 - 60);
+    MoveHistories copy = storage;
+    for (int owner = 0; owner < 7; ++owner) {
+        const int last = 1023 - (1023 - owner) % 7;
+        for (int back = 0; back < histories[owner].size; ++back)
+            require(copy.last(histories[owner], back) == (last - back * 7) % 121 - 60,
+                    "packed links preserve interleaved histories through the final arena slot");
+    }
+}
+
 static void fault_isolation() {
     host::Batch batch(2);
     batch.reset({7, 8});
@@ -94,6 +107,7 @@ static void host_overflow_aborts() {
 
 int main() {
     compact_storage();
+    interleaved_histories();
     fault_isolation();
     host_overflow_aborts();
 }

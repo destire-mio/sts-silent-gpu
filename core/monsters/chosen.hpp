@@ -4,9 +4,9 @@
 namespace spire::units::monsters {
 struct Chosen : MonsterHooks {
     SPIRE_STATE(Chosen, bool firstTurn; bool usedHex;)
-    SPIRE_SNAPSHOT("Chosen.zapDmg", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("Chosen.debilitateDmg", scalar, monster.damage[1])
-    SPIRE_SNAPSHOT("Chosen.pokeDmg", scalar, monster.damage[2])
+    SPIRE_SNAPSHOT("Chosen.zapDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("Chosen.debilitateDmg", scalar, monster_base_damage(graph.game, monster, 1))
+    SPIRE_SNAPSHOT("Chosen.pokeDmg", scalar, monster_base_damage(graph.game, monster, 2))
     SPIRE_FN static constexpr MonsterData data() { return {98, 103, {21, 12, 6}, 0, 0, 3}; }
     SPIRE_FN static Monster construct(Game& g, int hp) {
         MonsterData d = data();
@@ -21,30 +21,30 @@ struct Chosen : MonsterHooks {
         auto& s = m.state.Chosen;
         if (g.run.ascension < 17 && s.firstTurn) {
             s.firstTurn = false;
-            set_monster_move(g, owner, 5, Intent::Attack, m.damage[2], 2);
+            set_monster_move(g, owner, 5, Intent::Attack, monster_base_damage(g, m, 2), 2);
         } else if (!s.usedHex) {
             s.usedHex = true;
             set_monster_move(g, owner, 4, Intent::StrongDebuff);
         } else if (!last_move(g, m, 3) && !last_move(g, m, 2)) {
-            if (num < 50) set_monster_move(g, owner, 3, Intent::AttackDebuff, m.damage[1]);
+            if (num < 50) set_monster_move(g, owner, 3, Intent::AttackDebuff, monster_base_damage(g, m, 1));
             else set_monster_move(g, owner, 2, Intent::Debuff);
-        } else if (num < 40) set_monster_move(g, owner, 1, Intent::Attack, m.damage[0]);
-        else set_monster_move(g, owner, 5, Intent::Attack, m.damage[2], 2);
+        } else if (num < 40) set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 0));
+        else set_monster_move(g, owner, 5, Intent::Attack, monster_base_damage(g, m, 2), 2);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         switch (m.move) {
         case 5:
-            queue_damage(g, owner, player_target, m.damage[2]);
-            queue_damage(g, owner, player_target, m.damage[2]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 2));
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 2));
             break;
-        case 1: queue_damage(g, owner, player_target, m.damage[0]); break;
+        case 1: queue_damage(g, owner, player_target, monster_base_damage(g, m, 0)); break;
         case 2:
             queue_power(g, owner, player_target, PowerId::Weak, 3, true);
             queue_power(g, owner, owner, PowerId::Strength, 3);
             break;
         case 3:
-            queue_damage(g, owner, player_target, m.damage[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
             queue_power(g, owner, player_target, PowerId::Vulnerable, 2, true);
             break;
         case 4: queue_power(g, owner, player_target, PowerId::Hex, 1); break;

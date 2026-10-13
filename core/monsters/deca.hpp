@@ -13,7 +13,7 @@ struct Deca : MonsterHooks {
         if (g.run.ascension < 4) stats.damage[0] = 10;
         Monster m = make_monster(g, MonsterId::Deca, stats, hp_override);
         position_monster(m, -350.0f);
-        m.state.Deca.beamDmg = m.damage[0]; m.state.Deca.isAttacking = true;
+        m.state.Deca.beamDmg = monster_base_damage(g, m, 0); m.state.Deca.isAttacking = true;
         return m;
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int owner) {
@@ -21,14 +21,14 @@ struct Deca : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int owner, int) {
         const Monster& m = g.monsters[owner];
-        if (m.state.Deca.isAttacking) set_monster_move(g, owner, 0, Intent::AttackDebuff, m.damage[0], 2);
+        if (m.state.Deca.isAttacking) set_monster_move(g, owner, 0, Intent::AttackDebuff, monster_base_damage(g, m, 0), 2);
         else set_monster_move(g, owner, 2, g.run.ascension >= 19 ? Intent::DefendBuff : Intent::Defend);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 0) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-            for (int i = 0; i < 2; ++i) queue_damage(g, owner, player_target, m.damage[0]);
+            for (int i = 0; i < 2; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             queue_monster_card(g, CardId::Dazed, EffectKind::AddCardDiscard, 2);
             m.state.Deca.isAttacking = false;
         } else {

@@ -406,25 +406,25 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     const Powers& target = g.player.creature.powers;
     for (int d = 0; d < m.damage_count; ++d) {
         const DamageType type = monster_data(m.id).damage_types[d];
-        float value = static_cast<float>(m.damage[d]);
+        float value = static_cast<float>(monster_base_damage(g, m, d));
         bool modified = false;
         for (int i = 0; i < source.size; ++i) {
             value = power_atDamageGive(g, source.at(g.power_objects, i), owner, value, type, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
+            if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
             value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, type, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
+            if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < source.size; ++i) {
             value = power_atDamageFinalGive(g, source.at(g.power_objects, i), owner, value, type, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
+            if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
             value = power_atDamageFinalReceive(g, target.at(g.power_objects, i), player_target, value, type, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
+            if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
-        m.damage_output[d] = static_cast<int>(max(0, floor_int(value)) * rear_multiplier);
+        monster_output_damage(g, m, d) = static_cast<int>(max(0, floor_int(value)) * rear_multiplier);
         m.damage_modified = (m.damage_modified & ~(1u << d)) | (static_cast<unsigned>(modified) << d);
     }
     if (m.pending_base_damage >= 0) m.intent_damage = calculate_intent_damage(g, owner, m.pending_base_damage);
@@ -835,6 +835,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.selection_can_pick_zero = false;
     g.move_histories.size = 0;
     g.monsters.clear();
+    g.monster_damage_extra.clear();
     g.monster_order.clear();
     g.manager = ActionManager{};
     g.manager.player_hp_last_turn = setup.hp;

@@ -7,7 +7,7 @@ struct TheCollector : MonsterHooks {
     SPIRE_SNAPSHOT("TheCollector.enemySlots", monster_map, monster.state.TheCollector.enemySlots, 1)
     SPIRE_SNAPSHOT("TheCollector.blockAmt", scalar, game.run.ascension >= 9 ? 18 : 15)
     SPIRE_SNAPSHOT("TheCollector.megaDebuffAmt", scalar, game.run.ascension >= 19 ? 5 : 3)
-    SPIRE_SNAPSHOT("TheCollector.rakeDmg", scalar, monster.damage[0])
+    SPIRE_SNAPSHOT("TheCollector.rakeDmg", scalar, monster_base_damage(graph.game, monster, 0))
     SPIRE_SNAPSHOT("TheCollector.spawnX", scalar, -100.0f)
     SPIRE_SNAPSHOT("TheCollector.strAmt", scalar, game.run.ascension >= 19 ? 5 : game.run.ascension >= 4 ? 4 : 3)
     SPIRE_FN static constexpr MonsterData data() { return {300, 300, {21, 0}, 0, 0, 1, EnemyType::Boss}; }
@@ -32,9 +32,9 @@ struct TheCollector : MonsterHooks {
         if (state.initialSpawn) set_monster_move(g, owner, 1, Intent::Unknown);
         else if (state.turnsTaken >= 3 && !state.ultUsed) set_monster_move(g, owner, 4, Intent::StrongDebuff);
         else if (num <= 25 && isMinionDead(g, owner) && !last_move(g, m, 5)) set_monster_move(g, owner, 5, Intent::Unknown);
-        else if (num <= 70 && !last_two_moves(g, m, 2)) set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
+        else if (num <= 70 && !last_two_moves(g, m, 2)) set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0));
         else if (!last_move(g, m, 3)) set_monster_move(g, owner, 3, Intent::DefendBuff);
-        else set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
+        else set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
@@ -42,7 +42,7 @@ struct TheCollector : MonsterHooks {
         if (m.move == 1) {
             for (int i = 0; i < 2; ++i) state.enemySlots[i] = queue_spawn_monster(g, monster_id("TorchHead"), -100.0f - 185.0f * static_cast<float>(i + 1), true);
             state.initialSpawn = false;
-        } else if (m.move == 2) queue_damage(g, owner, player_target, m.damage[0]);
+        } else if (m.move == 2) queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
         else if (m.move == 3) {
             queue_block(g, owner, (g.run.ascension >= 9 ? 18 : 15) + (g.run.ascension >= 19 ? 5 : 0));
             for (int i = 0; i < g.monster_order.size; ++i) {

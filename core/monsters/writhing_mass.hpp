@@ -23,9 +23,9 @@ struct WrithingMass : MonsterHooks {
         Monster& m = g.monsters[owner]; auto& s = m.state.WrithingMass;
         if (s.firstMove) {
             s.firstMove = false;
-            if (num < 33) set_monster_move(g, owner, 1, Intent::Attack, m.damage[1], 3);
-            else if (num < 66) set_monster_move(g, owner, 2, Intent::AttackDefend, m.damage[2]);
-            else set_monster_move(g, owner, 3, Intent::AttackDebuff, m.damage[3]);
+            if (num < 33) set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 1), 3);
+            else if (num < 66) set_monster_move(g, owner, 2, Intent::AttackDefend, monster_base_damage(g, m, 2));
+            else set_monster_move(g, owner, 3, Intent::AttackDebuff, monster_base_damage(g, m, 3));
             return;
         }
         int move = -1;
@@ -49,7 +49,7 @@ struct WrithingMass : MonsterHooks {
             else num = g.rng.ai.random(69);
         }
         if (move == 4) set_monster_move(g, owner, 4, Intent::StrongDebuff);
-        else set_monster_move(g, owner, move, move == 2 ? Intent::AttackDefend : move == 3 ? Intent::AttackDebuff : Intent::Attack, m.damage[move], move == 1 ? 3 : 1);
+        else set_monster_move(g, owner, move, move == 2 ? Intent::AttackDefend : move == 3 ? Intent::AttackDebuff : Intent::Attack, monster_base_damage(g, m, move), move == 1 ? 3 : 1);
         monster_createIntent(g, owner);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
@@ -62,8 +62,8 @@ struct WrithingMass : MonsterHooks {
             if (m.move == 0) add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
             else if (m.move == 1) add_bottom(g, actions::AnimateSlowAttack::make(owner));
             else if (m.move == 2) add_bottom(g, actions::AnimateFastAttack::make(owner));
-            for (int i = 0; i < (m.move == 1 ? 3 : 1); ++i) queue_damage(g, owner, player_target, m.damage[m.move]);
-            if (m.move == 2) queue_block(g, owner, m.damage[2]);
+            for (int i = 0; i < (m.move == 1 ? 3 : 1); ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move));
+            if (m.move == 2) queue_block(g, owner, monster_base_damage(g, m, 2));
             else if (m.move == 3) {
                 queue_power(g, owner, player_target, PowerId::Weak, m.state.WrithingMass.normalDebuffAmt, true);
                 queue_power(g, owner, player_target, PowerId::Vulnerable, m.state.WrithingMass.normalDebuffAmt, true);

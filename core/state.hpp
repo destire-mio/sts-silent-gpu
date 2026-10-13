@@ -6,22 +6,21 @@
 
 namespace spire {
 struct Card {
-    uint32_t uuid = 0;
     int misc = 0;
     int base_damage = -1;
     int damage = -1;
-    int base_block = -1;
     int block = -1;
-    CardId id = CardId::Strike_G;
-    uint8_t upgrades = 0;
     int16_t cost = 0;
     int16_t cost_for_turn = 0;
     int16_t energy_on_use = 0;
+    uint16_t uuid = 0;
+    CardId id = CardId::Strike_G;
     int8_t base_magic = -1;
     int8_t magic = -1;
-    CardTarget target = CardTarget::Enemy;
-    uint8_t multi_damage_count = 0;
+    uint8_t multi_damage_count : 7;
     bool upgraded_cost : 1;
+    CardTarget target : 2;
+    uint8_t upgrades : 1;
     bool ignore_energy_on_use : 1;
     bool exhaust : 1;
     bool ethereal : 1;
@@ -41,7 +40,7 @@ struct Card {
     bool bottle_tornado : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
-        : upgraded_cost(false), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
+        : multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), upgrades(0), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false), pending_clear(false),
@@ -118,31 +117,32 @@ struct Creature {
     SPIRE_FN constexpr Creature() : dead(false), dying(false), escaped(false), flip_horizontal(false), half_dead(false) {}
 };
 struct Monster {
-    MonsterId id = MonsterId::Cultist;
     Creature creature{};
     float offset_x = 0.0f;
-    Intent intent = Intent::Debug;
-    int8_t move = -1;
+    MonsterState state{};
+    MoveHistory move_history{};
+    int16_t damage[3]{};
+    int16_t damage_output[3]{};
     int16_t intent_base_damage = -1;
     int16_t intent_damage = -1;
     int16_t intent_hits = 0;
-    int8_t pending_move = -1;
-    Intent pending_intent = Intent::None;
     int16_t pending_base_damage = -1;
     int16_t pending_hits = 0;
-    bool pending_multi = false;
-    bool intent_multi = false;
     uint16_t move_name = 0;
-    MoveHistory move_history{};
-    int16_t damage[8]{};
-    uint8_t damage_count = 1;
-    int16_t damage_output[8]{};
-    uint8_t damage_modified = 0;
     int16_t block_amount = 0;
     int16_t magic = 0;
+    MonsterId id = MonsterId::Cultist;
+    Intent intent = Intent::Debug;
+    int8_t move = -1;
+    int8_t pending_move = -1;
+    Intent pending_intent = Intent::None;
+    uint8_t damage_extra = 0;
+    uint8_t damage_count = 1;
+    uint8_t damage_modified = 0;
+    bool pending_multi = false;
+    bool intent_multi = false;
     bool cannot_escape = false;
     bool escape_next = false;
-    MonsterState state{};
 };
 struct Player {
     Creature creature{};
@@ -167,30 +167,32 @@ struct Action {
     int target = -1;
 };
 using ActionSet = List<Action, 128>;
+struct PreparedPotion { PotionState state; PotionId id; };
 union EffectPayload {
     EffectState state;
     Power power;
+    PreparedPotion potion;
     SPIRE_FN constexpr EffectPayload() : state{} {}
     SPIRE_FN constexpr EffectPayload(const Power& value) : power(value) {}
+    SPIRE_FN constexpr EffectPayload(const PreparedPotion& value) : potion(value) {}
 };
 struct Effect {
     int amount = 0;
     int info_base = 0;
     int extra = 0;
-    uint32_t power_instance = 0;
     EffectPayload payload{};
-    bool power_constructed = false;
     int16_t card = -1;
     PowerId power = PowerId::Strength;
     EffectKind kind = EffectKind::Draw;
     int8_t source = player_target;
     int8_t target = player_target;
     DamageType damage_type = DamageType::Normal;
-    bool done = false;
-    bool held = false;
-    bool flag = false;
-    bool end_turn_draw = false;
-    PotionState prepared_potion_state{};
+    bool power_constructed : 1;
+    bool done : 1;
+    bool held : 1;
+    bool flag : 1;
+    bool end_turn_draw : 1;
+    SPIRE_FN constexpr Effect() : power_constructed(false), done(false), held(false), flag(false), end_turn_draw(false) {}
 };
 using DamageInfo = Effect;
 struct CardQueueItem {
@@ -280,6 +282,7 @@ struct CardDamage {
     SPIRE_FN void clear() { for (auto& value : head) value = 0; }
 };
 
+struct MonsterDamage { int16_t base; int16_t output; };
 struct Game {
     uint32_t fault = 0;
     TextStore text{};
@@ -306,6 +309,7 @@ struct Game {
     int discovery_card = -1;
     MoveHistories move_histories{};
     List<Monster, monster_capacity> monsters{};
+    List<MonsterDamage, 16> monster_damage_extra{};
     List<uint8_t, monster_capacity> monster_order{};
     ActionManager manager{};
     Screen screen = Screen::None;

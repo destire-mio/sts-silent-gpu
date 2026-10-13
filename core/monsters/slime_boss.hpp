@@ -4,8 +4,8 @@
 namespace spire::units::monsters {
 struct SlimeBoss : MonsterHooks {
     SPIRE_STATE(SlimeBoss, bool firstTurn;)
-    SPIRE_SNAPSHOT("SlimeBoss.tackleDmg", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("SlimeBoss.slamDmg", scalar, monster.damage[1])
+    SPIRE_SNAPSHOT("SlimeBoss.tackleDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("SlimeBoss.slamDmg", scalar, monster_base_damage(graph.game, monster, 1))
     SPIRE_FN static constexpr MonsterData data() { return {150, 150, {10, 38}, 0, 0, 2, EnemyType::Boss}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         MonsterData stats = data();
@@ -30,9 +30,9 @@ struct SlimeBoss : MonsterHooks {
         if (m.move == 4) {
             queue_slimed(g, g.run.ascension >= 19 ? 5 : 3);
             set_monster_move(g, owner, 2, Intent::Unknown);
-        } else if (m.move == 2) set_monster_move(g, owner, 1, Intent::Attack, m.damage[1]);
+        } else if (m.move == 2) set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 1));
         else if (m.move == 1) {
-            queue_damage(g, owner, player_target, m.damage[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
             set_monster_move(g, owner, 4, Intent::StrongDebuff);
         } else if (m.move == 3) {
             queue_split(g, owner, MonsterId::SpikeSlime_L, MonsterId::AcidSlime_L, -385.0f, 120.0f);

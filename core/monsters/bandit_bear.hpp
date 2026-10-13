@@ -5,8 +5,8 @@
 
 namespace spire::units::monsters {
 struct BanditBear : MonsterHooks {
-    SPIRE_SNAPSHOT("BanditBear.maulDmg", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("BanditBear.lungeDmg", scalar, monster.damage[1])
+    SPIRE_SNAPSHOT("BanditBear.maulDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("BanditBear.lungeDmg", scalar, monster_base_damage(graph.game, monster, 1))
     SPIRE_SNAPSHOT("BanditBear.con_reduction", scalar, game.run.ascension >= 17 ? -4 : -2)
     SPIRE_FN static constexpr MonsterData data() { return {40, 44, {20, 10}, 9, 0, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
@@ -22,10 +22,10 @@ struct BanditBear : MonsterHooks {
         if (m.move == 1) add_bottom(g, actions::ChangeState::make(g, owner, "MAUL"));
         else add_bottom(g, actions::AnimateSlowAttack::make(owner));
         if (m.move == 2) queue_power(g, owner, player_target, PowerId::Dexterity, g.run.ascension >= 17 ? -4 : -2);
-        else queue_damage(g, owner, player_target, m.damage[m.move == 1 ? 0 : 1]);
+        else queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : 1));
         if (m.move == 3) {
-            queue_block(g, owner, 9); queue_monster_move(g, owner, 1, Intent::Attack, m.damage[0]);
-        } else queue_monster_move(g, owner, 3, Intent::AttackDefend, m.damage[1]);
+            queue_block(g, owner, 9); queue_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 0));
+        } else queue_monster_move(g, owner, 3, Intent::AttackDefend, monster_base_damage(g, m, 1));
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics) {
         monster_die_base(g, owner, trigger_relics);

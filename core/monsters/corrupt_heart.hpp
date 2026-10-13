@@ -3,7 +3,7 @@
 
 namespace spire::units::monsters {
 struct CorruptHeart : MonsterHooks {
-    SPIRE_STATE(CorruptHeart, int bloodHitCount; int moveCount; int buffCount; bool isFirstMove;)
+    SPIRE_STATE(CorruptHeart, uint8_t bloodHitCount; uint16_t moveCount; uint16_t buffCount; bool isFirstMove;)
     SPIRE_FN static constexpr MonsterData data() { return {800, 800, {45, 2}, 0, 0, 2, EnemyType::Boss}; }
     SPIRE_FN static Monster construct(Game& g, int hp) {
         MonsterData d = data(); if (g.run.ascension < 4) d.damage[0] = 40;
@@ -22,8 +22,8 @@ struct CorruptHeart : MonsterHooks {
         if (s.isFirstMove) { s.isFirstMove = false; set_monster_move(g, owner, 3, Intent::StrongDebuff); return; }
         const int phase = s.moveCount++ % 3;
         if (phase == 2) set_monster_move(g, owner, 4, Intent::Buff);
-        else if (phase == 0 ? g.rng.ai.randomBoolean() : last_move(g, m, 2)) set_monster_move(g, owner, 1, Intent::Attack, m.damage[1], s.bloodHitCount);
-        else set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
+        else if (phase == 0 ? g.rng.ai.randomBoolean() : last_move(g, m, 2)) set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 1), s.bloodHitCount);
+        else set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner]; auto& s = m.state.CorruptHeart;
@@ -46,8 +46,8 @@ struct CorruptHeart : MonsterHooks {
             case 3: queue_power(g, owner, owner, PowerId::Strength, 10); break;
             default: queue_power(g, owner, owner, PowerId::Strength, 50); break;
             }
-        } else if (m.move == 1) for (int i = 0; i < s.bloodHitCount; ++i) queue_damage(g, owner, player_target, m.damage[1]);
-        else queue_damage(g, owner, player_target, m.damage[0]);
+        } else if (m.move == 1) for (int i = 0; i < s.bloodHitCount; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+        else queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {

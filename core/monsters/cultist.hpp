@@ -20,14 +20,14 @@ struct Cultist : MonsterHooks {
         if (m.state.Cultist.firstMove) {
             m.state.Cultist.firstMove = false;
             set_monster_move(g, index, 3, Intent::Buff);
-        } else set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+        } else set_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 3) {
             queue_power(g, index, index, PowerId::Ritual, m.state.Cultist.ritualAmount + (g.run.ascension >= 17 ? 1 : 0));
         } else {
-            queue_damage(g, index, player_target, m.damage[0]);
+            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
         }
         queue_monster_roll(g, index);
     }

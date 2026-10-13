@@ -212,7 +212,8 @@ static void test_nightmare_copies() {
     Game g = combat();
     const int source = 0;
     Card& card = g.cards[source];
-    card.base_block = 13;
+    card = make_card(CardId::RitualDagger, 0, 13);
+    card.state.RitualDagger.block_from_misc = true;
     card.block = 0;
     card.cost_for_turn = 0;
     card.free_to_play_once = true;
@@ -224,11 +225,11 @@ static void test_nightmare_copies() {
     require(copy != source && copy != second.state.Nightmare.card && g.cards[copy].uuid != card.uuid &&
             g.cards[copy].block == 13 && g.cards[copy].cost_for_turn == card.cost && g.cards[copy].free_to_play_once,
             "Nightmare creates a distinct stat-equivalent card and resets temporary attributes");
-    card.base_block = 2;
+    card.misc = 2;
     apply_prepared_power(g, player_target, player_target, first, 3);
     apply_prepared_power(g, player_target, player_target, second, 2);
     const Power& stored = g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::Nightmare));
-    require(stored.amount == 3 && stored.state.Nightmare.card == copy && g.cards[copy].base_block == 13 &&
+    require(stored.amount == 3 && stored.state.Nightmare.card == copy && card_baseBlock(g.cards[copy]) == 13 &&
             g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::Nightmare) + 1).amount == 2,
             "Nightmare applications retain separate powers and independent card objects");
 

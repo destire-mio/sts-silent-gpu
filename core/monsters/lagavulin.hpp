@@ -4,8 +4,8 @@
 
 namespace spire::units::monsters {
 struct Lagavulin : MonsterHooks {
-    SPIRE_STATE(Lagavulin, int debuffTurnCount; int idleCount; bool asleep; bool isOut; bool isOutTriggered;)
-    SPIRE_SNAPSHOT("Lagavulin.attackDmg", scalar, monster.damage[0])
+    SPIRE_STATE(Lagavulin, uint8_t debuffTurnCount; uint8_t idleCount; bool asleep; bool isOut; bool isOutTriggered;)
+    SPIRE_SNAPSHOT("Lagavulin.attackDmg", scalar, monster_base_damage(graph.game, monster, 0))
     SPIRE_SNAPSHOT("Lagavulin.debuff", scalar, game.run.ascension >= 18 ? -2 : -1)
     SPIRE_FN static constexpr MonsterData data() { return {112, 115, {20, 0}, 0, 0, 1, EnemyType::Elite}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
@@ -26,7 +26,7 @@ struct Lagavulin : MonsterHooks {
         Monster& m = g.monsters[owner];
         if (!m.state.Lagavulin.isOut) set_monster_move(g, owner, 5, Intent::Sleep);
         else if (m.state.Lagavulin.debuffTurnCount < 2 && !last_two_moves(g, m, 3))
-            set_monster_move(g, owner, 3, Intent::Attack, m.damage[0]);
+            set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 0));
         else set_monster_move(g, owner, 1, Intent::StrongDebuff);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
@@ -43,7 +43,7 @@ struct Lagavulin : MonsterHooks {
         case 3:
             ++state.debuffTurnCount;
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             queue_monster_roll(g, owner);
             break;
         case 5:
@@ -51,14 +51,14 @@ struct Lagavulin : MonsterHooks {
             if (state.idleCount >= 3) {
                 state.isOutTriggered = true;
                 add_bottom(g, actions::ChangeState::make(g, owner, "OPEN"));
-                queue_monster_move(g, owner, 3, Intent::Attack, m.damage[0]);
+                queue_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 0));
             } else set_monster_move(g, owner, 5, Intent::Sleep);
             if (state.idleCount == 1 || state.idleCount == 2) queue_monster_roll(g, owner);
             break;
         case 4: queue_monster_roll(g, owner); break;
         case 6:
             add_bottom(g, actions::ChangeState::make(g, owner, "OPEN"));
-            set_monster_move(g, owner, 3, Intent::Attack, m.damage[0]);
+            set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 0));
             monster_createIntent(g, owner);
             state.isOutTriggered = true;
             queue_monster_roll(g, owner);

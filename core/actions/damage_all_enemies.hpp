@@ -5,7 +5,7 @@ namespace spire::units::actions {
 struct DamageAllEnemies : ActionHooks {
     SPIRE_SNAPSHOT("AbstractGameAction.damageType", damage_type, effect.damage_type)
     SPIRE_SNAPSHOT("DamageAllEnemiesAction.damage", damage_array, effect.payload.state.DamageAllEnemies.damage, effect.payload.state.DamageAllEnemies.damageCount, effect.card, !(effect.payload.state.DamageAllEnemies.utilizeBaseDamage && effect.payload.state.DamageAllEnemies.firstFrame))
-    SPIRE_STATE(DamageAllEnemies, DamageArray damage; int damageCount; int baseDamage; bool firstFrame; bool utilizeBaseDamage;)
+    SPIRE_STATE(DamageAllEnemies, DamageArray damage; int baseDamage; uint8_t damageCount; bool firstFrame; bool utilizeBaseDamage;)
     SPIRE_FN static constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_FN static Effect make(int base_damage, DamageType type = DamageType::Normal) {
         Effect e{};

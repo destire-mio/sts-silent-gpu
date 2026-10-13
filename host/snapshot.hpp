@@ -113,7 +113,7 @@ struct SnapshotGraph {
             const py::object mapped = cards_snapshot(*this, card, master, index, key);
             if (mapped) return mapped;
             const std::string field = key.substr(key.find('.') + 1);
-            if (field == "baseBlock") return py::int_(card.base_block);
+            if (field == "baseBlock") return py::int_(card_baseBlock(card));
             if (field == "baseDamage") return py::int_(card.base_damage);
             if (field == "baseMagicNumber") return py::int_(card.base_magic);
             if (field == "block") return py::int_(card.block);
@@ -541,8 +541,8 @@ struct SnapshotGraph {
     py::object monster_damage(int owner, int index) {
         const Monster& monster = game.monsters[owner];
         return object({7, owner, index}, "cards.DamageInfo", [&](const std::string& field) -> py::object {
-            if (field == "DamageInfo.base") return py::int_(monster.damage[index]);
-            if (field == "DamageInfo.output") return py::int_(monster.damage_output[index]);
+            if (field == "DamageInfo.base") return py::int_(monster_base_damage(game, monster, index));
+            if (field == "DamageInfo.output") return py::int_(monster_output_damage(game, monster, index));
             if (field == "DamageInfo.isModified") return py::bool_((monster.damage_modified & (1u << index)) != 0);
             if (field == "DamageInfo.owner") return creature(owner);
             if (field == "DamageInfo.type") return damage_type(monster_data(monster.id).damage_types[index]);
@@ -605,7 +605,7 @@ struct SnapshotGraph {
         if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
             const Monster& owner = game.monsters[effect.source];
             for (int i = 0; i < owner.damage_count; ++i)
-                if (owner.damage[i] == effect.info_base) return monster_damage(effect.source, i);
+                if (monster_base_damage(game, owner, i) == effect.info_base) return monster_damage(effect.source, i);
         }
         return object({16, queue, index}, "cards.DamageInfo", [&](const std::string& name) -> py::object {
             if (name == "DamageInfo.base") return py::int_(effect.info_base);

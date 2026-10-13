@@ -131,7 +131,7 @@ static void test_turn_hooks() {
             !has_power(g, g.player.creature, PowerId::DrawCardNextTurn) && !has_power(g, g.player.creature, PowerId::Energized),
             "next-turn draw and energy resolve once and remove their powers");
     apply_power(g, player_target, player_target, PowerId::Blur, 1);
-    const int attack = g.monsters[0].damage_output[0];
+    const int attack = monster_output_damage(g, g.monsters[0], 0);
     g.player.creature.block = 100;
     step(g, {ActionKind::EndTurn});
     require(g.player.creature.block == 100 - attack && !has_power(g, g.player.creature, PowerId::Blur),

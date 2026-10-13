@@ -13,11 +13,11 @@ struct SpikeSlime_S : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
         (void)num;
-        set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
+        set_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        queue_damage(g, index, player_target, m.damage[0]);
+        queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
         queue_monster_roll(g, index);
     }
 };

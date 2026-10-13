@@ -8,7 +8,7 @@ struct Byrd : MonsterHooks {
     SPIRE_STATE(Byrd, bool firstMove; bool isFlying;)
     SPIRE_SNAPSHOT("Byrd.peckDmg", scalar, 1)
     SPIRE_SNAPSHOT("Byrd.peckCount", scalar, game.run.ascension >= 2 ? 6 : 5)
-    SPIRE_SNAPSHOT("Byrd.swoopDmg", scalar, monster.damage[1])
+    SPIRE_SNAPSHOT("Byrd.swoopDmg", scalar, monster_base_damage(graph.game, monster, 1))
     SPIRE_SNAPSHOT("Byrd.flightAmt", scalar, game.run.ascension >= 17 ? 4 : 3)
     SPIRE_FN static constexpr MonsterData data() { return {26, 33, {1, 14, 3}, 0, 0, 3}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
@@ -41,7 +41,7 @@ struct Byrd : MonsterHooks {
         } else if (last_move(g, m, 6)) move = g.rng.ai.randomBoolean(0.2857f) ? 3 : 1;
         else move = 6;
         if (move == 6) set_monster_move(g, owner, 6, Intent::Buff);
-        else set_monster_move(g, owner, move, Intent::Attack, m.damage[move == 1 ? 0 : move == 3 ? 1 : 2], move == 1 ? (g.run.ascension >= 2 ? 6 : 5) : 1);
+        else set_monster_move(g, owner, move, Intent::Attack, monster_base_damage(g, m, move == 1 ? 0 : move == 3 ? 1 : 2), move == 1 ? (g.run.ascension >= 2 ? 6 : 5) : 1);
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner]; auto& s = m.state.Byrd;
@@ -49,11 +49,11 @@ struct Byrd : MonsterHooks {
             add_bottom(g, actions::AnimateFastAttack::make(owner));
             for (int i = 0; i < (g.run.ascension >= 2 ? 6 : 5); ++i) {
                 Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
-                queue_damage(g, owner, player_target, m.damage[0]);
+                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             }
         } else if (m.move == 5) {
             add_bottom(g, actions::AnimateSlowAttack::make(owner));
-            queue_damage(g, owner, player_target, m.damage[2]); set_monster_move(g, owner, 2, Intent::Unknown); return;
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 2)); set_monster_move(g, owner, 2, Intent::Unknown); return;
         } else if (m.move == 2) {
             s.isFlying = true; add_bottom(g, actions::ChangeState::make(g, owner, "FLYING"));
             queue_power(g, owner, owner, PowerId::Flight, (g.run.ascension >= 17 ? 4 : 3));
@@ -61,7 +61,7 @@ struct Byrd : MonsterHooks {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
             add_bottom(g, actions::Talk::make(owner)); queue_power(g, owner, owner, PowerId::Strength, 1);
         }
-        else if (m.move == 3) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_damage(g, owner, player_target, m.damage[1]); }
+        else if (m.move == 3) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_damage(g, owner, player_target, monster_base_damage(g, m, 1)); }
         else if (m.move == 4) { add_bottom(g, actions::SetAnimation::make(owner)); add_bottom(g, actions::TextAboveCreature::make(owner)); }
         queue_monster_roll(g, owner);
     }

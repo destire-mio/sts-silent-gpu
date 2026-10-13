@@ -24,7 +24,7 @@ struct BronzeOrb : MonsterHooks {
         if (m.move == 1) {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
             add_bottom(g, actions::VFX::make()); add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
         }
         else if (m.move == 2) {
             int target = no_target;

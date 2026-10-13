@@ -3,7 +3,7 @@
 
 namespace spire::units::relics {
 struct BottledTornado : RelicHooks {
-    SPIRE_STATE(BottledTornado, bool cardSelected; uint32_t card;)
+    SPIRE_STATE(BottledTornado, bool cardSelected; uint16_t card;)
     SPIRE_SNAPSHOT("BottledTornado.card", master_card_uuid, relic.state.BottledTornado.card)
     static SPIRE_FN constexpr RelicData data() { return {-1, 250}; }
     static SPIRE_FN void initializeState(Relic& relic) { relic.state.BottledTornado.cardSelected = true; }

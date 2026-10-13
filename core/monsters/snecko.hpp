@@ -4,8 +4,8 @@
 namespace spire::units::monsters {
 struct Snecko : MonsterHooks {
     SPIRE_STATE(Snecko, bool firstTurn;)
-    SPIRE_SNAPSHOT("Snecko.biteDmg", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("Snecko.tailDmg", scalar, monster.damage[1])
+    SPIRE_SNAPSHOT("Snecko.biteDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("Snecko.tailDmg", scalar, monster_base_damage(graph.game, monster, 1))
     SPIRE_FN static constexpr MonsterData data() { return {120, 125, {18, 10}, 0, 0, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp) {
         MonsterData d = data();
@@ -20,15 +20,15 @@ struct Snecko : MonsterHooks {
         if (m.state.Snecko.firstTurn) {
             m.state.Snecko.firstTurn = false;
             set_monster_move(g, owner, 1, Intent::StrongDebuff);
-        } else if (num < 40 || last_two_moves(g, m, 2)) set_monster_move(g, owner, 3, Intent::AttackDebuff, m.damage[1]);
-        else set_monster_move(g, owner, 2, Intent::Attack, m.damage[0]);
+        } else if (num < 40 || last_two_moves(g, m, 2)) set_monster_move(g, owner, 3, Intent::AttackDebuff, monster_base_damage(g, m, 1));
+        else set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) queue_power(g, owner, player_target, PowerId::Confusion, -1);
-        else if (m.move == 2) queue_damage(g, owner, player_target, m.damage[0]);
+        else if (m.move == 2) queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
         else {
-            queue_damage(g, owner, player_target, m.damage[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
             if (g.run.ascension >= 17) queue_power(g, owner, player_target, PowerId::Weak, 2, true);
             queue_power(g, owner, player_target, PowerId::Vulnerable, 2, true);
         }

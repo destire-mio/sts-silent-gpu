@@ -4,7 +4,7 @@
 namespace spire::units::monsters {
 struct Sentry : MonsterHooks {
     SPIRE_STATE(Sentry, bool firstMove;)
-    SPIRE_SNAPSHOT("Sentry.beamDmg", scalar, monster.damage[0])
+    SPIRE_SNAPSHOT("Sentry.beamDmg", scalar, monster_base_damage(graph.game, monster, 0))
     SPIRE_SNAPSHOT("Sentry.dazedAmt", scalar, game.run.ascension >= 18 ? 3 : 2)
     SPIRE_FN static constexpr MonsterData data() { return {39, 45, {10, 0}, 0, 0, 1, EnemyType::Elite}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
@@ -26,11 +26,11 @@ struct Sentry : MonsterHooks {
             m.state.Sentry.firstMove = false;
         }
         if (bolt) set_monster_move(g, owner, 3, Intent::Debuff);
-        else set_monster_move(g, owner, 4, Intent::Attack, m.damage[0]);
+        else set_monster_move(g, owner, 4, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         if (g.monsters[owner].move == 3) queue_monster_card(g, CardId::Dazed, EffectKind::AddCardDiscard, g.run.ascension >= 18 ? 3 : 2);
-        else queue_damage(g, owner, player_target, g.monsters[owner].damage[0]);
+        else queue_damage(g, owner, player_target, monster_base_damage(g, g.monsters[owner], 0));
         queue_monster_roll(g, owner);
     }
 };

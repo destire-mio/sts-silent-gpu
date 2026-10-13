@@ -4,8 +4,8 @@
 namespace spire::units::monsters {
 struct BronzeAutomaton : MonsterHooks {
     SPIRE_STATE(BronzeAutomaton, int numTurns; bool firstTurn;)
-    SPIRE_SNAPSHOT("BronzeAutomaton.beamDmg", scalar, monster.damage[1])
-    SPIRE_SNAPSHOT("BronzeAutomaton.flailDmg", scalar, monster.damage[0])
+    SPIRE_SNAPSHOT("BronzeAutomaton.beamDmg", scalar, monster_base_damage(graph.game, monster, 1))
+    SPIRE_SNAPSHOT("BronzeAutomaton.flailDmg", scalar, monster_base_damage(graph.game, monster, 0))
     SPIRE_SNAPSHOT("BronzeAutomaton.blockAmt", scalar, game.run.ascension >= 9 ? 12 : 9)
     SPIRE_SNAPSHOT("BronzeAutomaton.strAmt", scalar, game.run.ascension >= 4 ? 4 : 3)
     SPIRE_FN static constexpr MonsterData data() { return {320, 320, {8, 50}, 0, 0, 2, EnemyType::Boss}; }
@@ -23,10 +23,10 @@ struct BronzeAutomaton : MonsterHooks {
         Monster& m = g.monsters[owner];
         auto& state = m.state.BronzeAutomaton;
         if (state.firstTurn) { state.firstTurn = false; set_monster_move(g, owner, 4, Intent::Unknown); }
-        else if (state.numTurns == 4) { state.numTurns = 0; set_monster_move(g, owner, 2, Intent::Attack, m.damage[1]); }
+        else if (state.numTurns == 4) { state.numTurns = 0; set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 1)); }
         else if (last_move(g, m, 2)) set_monster_move(g, owner, g.run.ascension >= 19 ? 5 : 3, g.run.ascension >= 19 ? Intent::DefendBuff : Intent::Stun);
         else {
-            if (last_move(g, m, 3) || last_move(g, m, 5) || last_move(g, m, 4)) set_monster_move(g, owner, 1, Intent::Attack, m.damage[0], 2);
+            if (last_move(g, m, 3) || last_move(g, m, 5) || last_move(g, m, 4)) set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 0), 2);
             else set_monster_move(g, owner, 5, Intent::DefendBuff);
             ++state.numTurns;
         }
@@ -38,12 +38,12 @@ struct BronzeAutomaton : MonsterHooks {
             const int right = queue_spawn_monster(g, MonsterId::BronzeOrb, 200.0f, true);
             g.monsters[right].state.BronzeOrb.count = 1;
         } else if (m.move == 1) {
-            queue_damage(g, owner, player_target, m.damage[0]);
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
         } else if (m.move == 5) {
             queue_block(g, owner, g.run.ascension >= 9 ? 12 : 9);
             queue_power(g, owner, owner, PowerId::Strength, g.run.ascension >= 4 ? 4 : 3);
-        } else if (m.move == 2) queue_damage(g, owner, player_target, m.damage[1]);
+        } else if (m.move == 2) queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {

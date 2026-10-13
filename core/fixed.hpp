@@ -113,19 +113,26 @@ struct Queue {
 struct MoveHistory { uint16_t head = 0; uint16_t size = 0; };
 struct MoveHistories {
     int8_t moves[1024]{};
-    uint16_t previous[1024]{};
+    uint8_t links[1280]{};
+    SPIRE_FN int previous(int node) const {
+        const int bit = node * 10;
+        return ((links[bit / 8] | (links[bit / 8 + 1] << 8)) >> (bit % 8)) & 1023;
+    }
     uint16_t size = 0;
     SPIRE_FN void append(MoveHistory& history, int move) {
         SPIRE_ASSERT(size < 1024);
         moves[size] = move;
-        previous[size] = history.head;
+        const int bit = size * 10;
+        const int value = ((links[bit / 8] | (links[bit / 8 + 1] << 8)) & ~(1023 << (bit % 8))) | (history.head << (bit % 8));
+        links[bit / 8] = value;
+        links[bit / 8 + 1] = value >> 8;
         history.head = ++size;
         ++history.size;
     }
     SPIRE_FN int last(const MoveHistory& history, int back = 0) const {
         SPIRE_ASSERT(back >= 0 && back < history.size);
         int node = history.head;
-        while (back--) node = previous[node - 1];
+        while (back--) node = previous(node - 1);
         return moves[node - 1];
     }
 };
@@ -167,6 +174,7 @@ struct DamageArray {
         if (count == 0) return;
         int best = 0;
         for (int i = 0; i < count; ++i) {
+            if (i && amounts[i] == base) continue;
             int repeats = 0;
             for (int j = 0; j < count; ++j) repeats += amounts[j] == amounts[i];
             if (repeats > best) { best = repeats; base = amounts[i]; }

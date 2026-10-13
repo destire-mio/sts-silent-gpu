@@ -3,6 +3,10 @@
 #include "spire_generated/declarations.hpp"
 
 namespace spire {
+SPIRE_FN inline int16_t& monster_base_damage(Game&, Monster&, int);
+SPIRE_FN inline const int16_t& monster_base_damage(const Game&, const Monster&, int);
+SPIRE_FN inline int16_t& monster_output_damage(Game&, Monster&, int);
+SPIRE_FN inline const int16_t& monster_output_damage(const Game&, const Monster&, int);
 SPIRE_FN inline PotionId potion_from_pool(Random&);
 SPIRE_FN inline void add_gold_reward(Game&, int);
 SPIRE_FN inline void add_potion_reward(Game&, PotionId);
@@ -66,7 +70,7 @@ SPIRE_FN inline void at_end_of_turn(Game&, int);
 SPIRE_FN inline void reset_attributes(Card&);
 SPIRE_FN inline Card make_card(CardId, int upgrades = 0);
 SPIRE_FN inline Card make_card(CardId, int upgrades, int misc);
-SPIRE_FN inline CardDef card_def(CardId);
+SPIRE_FN inline const CardDef& card_def(CardId);
 SPIRE_FN inline void apply_card_powers(Game&, int);
 SPIRE_FN inline void calculate_card_damage(Game&, int, int);
 SPIRE_FN inline bool can_play(const Game&, int);

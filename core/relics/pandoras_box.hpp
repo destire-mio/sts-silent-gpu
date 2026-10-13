@@ -5,7 +5,7 @@
 namespace spire::units::relics {
 struct PandorasBox : RelicHooks {
     static SPIRE_FN constexpr RelicData data() { return {-1, 999}; }
-    SPIRE_STATE(PandorasBox, int count; bool calledTransform;)
+    SPIRE_STATE(PandorasBox, uint8_t count; bool calledTransform;)
     static SPIRE_FN void initializeState(Relic& r) { r.state.PandorasBox.calledTransform = true; }
     static SPIRE_FN void onEquip(Game& g, int relic) {
         auto& s = g.run.relics[relic].state.PandorasBox;

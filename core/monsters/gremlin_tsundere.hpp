@@ -10,7 +10,7 @@ struct GremlinTsundere : MonsterHooks {
         if (g.run.ascension < 7) { d.hp_min = 12; d.hp_max = 15; }
         if (g.run.ascension < 2) d.damage[0] = 6;
         Monster m = make_monster(g, MonsterId::GremlinTsundere, d, hp_override);
-        m.state.GremlinTsundere.bashDmg = m.damage[0];
+        m.state.GremlinTsundere.bashDmg = monster_base_damage(g, m, 0);
         m.state.GremlinTsundere.blockAmt = g.run.ascension >= 17 ? 11 : g.run.ascension >= 7 ? 8 : 7;
         return m;
     }
@@ -37,11 +37,11 @@ struct GremlinTsundere : MonsterHooks {
             }
             if (m.escape_next) queue_monster_move(g, index, 99, Intent::Escape);
             else if (alive > 1) set_monster_move(g, index, 1, Intent::Defend);
-            else set_monster_move(g, index, 2, Intent::Attack, m.damage[0]);
+            else set_monster_move(g, index, 2, Intent::Attack, monster_base_damage(g, m, 0));
         } else {
-            queue_damage(g, index, player_target, m.damage[0]);
+            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
             if (m.escape_next) queue_monster_move(g, index, 99, Intent::Escape);
-            else queue_monster_move(g, index, 2, Intent::Attack, m.damage[0]);
+            else queue_monster_move(g, index, 2, Intent::Attack, monster_base_damage(g, m, 0));
         }
     }
     SPIRE_FN static void deathReact(Game& g, int owner) {

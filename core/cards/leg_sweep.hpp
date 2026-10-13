@@ -13,7 +13,6 @@ struct LegSweep : CardHooks {
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {
             ++card.upgrades;
-            card.base_block += data().upgrade_block;
             card.base_magic += data().upgrade_magic;
             card.magic = card.base_magic;
         }

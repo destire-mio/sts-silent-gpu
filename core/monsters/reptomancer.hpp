@@ -50,18 +50,18 @@ struct Reptomancer : MonsterHooks {
         while ((num < 33 && last_move(g, m, 1)) || (num >= 66 && last_move(g, m, 3)))
             num = num < 33 ? g.rng.ai.random(33, 99) : g.rng.ai.random(65);
         if (num < 33 || (num < 66 && (last_two_moves(g, m, 2) || !canSpawn(g, owner))))
-            set_monster_move(g, owner, 1, Intent::AttackDebuff, m.damage[0], 2);
+            set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 0), 2);
         else if (num < 66) set_monster_move(g, owner, 2, Intent::Unknown);
-        else set_monster_move(g, owner, 3, Intent::Attack, m.damage[1]);
+        else set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 1));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
             add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, m.damage[0]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             queue_power(g, owner, player_target, PowerId::Weak, 1, true);
         } else if (m.move == 2) {
             add_bottom(g, actions::ChangeState::make(g, owner, "SUMMON"));
@@ -76,7 +76,7 @@ struct Reptomancer : MonsterHooks {
         } else if (m.move == 3) {
             add_bottom(g, actions::AnimateFastAttack::make(owner));
             add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, m.damage[1]);
+            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
         }
         queue_monster_roll(g, owner);
     }

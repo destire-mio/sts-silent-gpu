@@ -6,8 +6,8 @@ namespace spire::units::monsters {
 struct Hexaghost : MonsterHooks {
     SPIRE_STATE(Hexaghost, int orbActiveCount; bool activated; bool burnUpgraded;)
     SPIRE_SNAPSHOT("Hexaghost.fireTackleCount", scalar, 2)
-    SPIRE_SNAPSHOT("Hexaghost.fireTackleDmg", scalar, monster.damage[0])
-    SPIRE_SNAPSHOT("Hexaghost.infernoDmg", scalar, monster.damage[3])
+    SPIRE_SNAPSHOT("Hexaghost.fireTackleDmg", scalar, monster_base_damage(graph.game, monster, 0))
+    SPIRE_SNAPSHOT("Hexaghost.infernoDmg", scalar, monster_base_damage(graph.game, monster, 3))
     SPIRE_SNAPSHOT("Hexaghost.infernoHits", scalar, 6)
     SPIRE_SNAPSHOT("Hexaghost.searBurnCount", scalar, game.run.ascension >= 19 ? 2 : 1)
     SPIRE_SNAPSHOT("Hexaghost.searDmg", scalar, 6)
@@ -27,10 +27,10 @@ struct Hexaghost : MonsterHooks {
             state.activated = true;
             set_monster_move(g, owner, 5, Intent::Unknown);
         } else switch (state.orbActiveCount) {
-        case 0: case 2: case 5: set_monster_move(g, owner, 4, Intent::AttackDebuff, m.damage[1]); break;
-        case 1: case 4: set_monster_move(g, owner, 2, Intent::Attack, m.damage[0], 2); break;
+        case 0: case 2: case 5: set_monster_move(g, owner, 4, Intent::AttackDebuff, monster_base_damage(g, m, 1)); break;
+        case 1: case 4: set_monster_move(g, owner, 2, Intent::Attack, monster_base_damage(g, m, 0), 2); break;
         case 3: set_monster_move(g, owner, 3, Intent::DefendBuff); break;
-        case 6: set_monster_move(g, owner, 6, Intent::AttackDebuff, m.damage[3], 6); break;
+        case 6: set_monster_move(g, owner, 6, Intent::AttackDebuff, monster_base_damage(g, m, 3), 6); break;
         }
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* name) {
@@ -40,20 +40,20 @@ struct Hexaghost : MonsterHooks {
         else if (same_id(name, "Deactivate")) state.orbActiveCount = 0;
         else if (same_id(name, "Activate Orb")) {
             ++state.orbActiveCount;
-            if (state.orbActiveCount == 6) set_monster_move(g, owner, 6, Intent::AttackDebuff, m.damage[3], 6);
+            if (state.orbActiveCount == 6) set_monster_move(g, owner, 6, Intent::AttackDebuff, monster_base_damage(g, m, 3), 6);
         }
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 5) {
             add_bottom(g, actions::ChangeState::make(g, owner, "Activate"));
-            m.damage[2] = g.player.creature.hp / 12 + 1;
+            monster_base_damage(g, m, 2) = g.player.creature.hp / 12 + 1;
             monster_applyPowers(g, owner);
-            set_monster_move(g, owner, 1, Intent::Attack, m.damage[2], 6);
+            set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 2), 6);
             return;
         }
         if (m.move == 1 || m.move == 6) {
-            for (int i = 0; i < 6; ++i) queue_damage(g, owner, player_target, m.damage[m.move == 1 ? 2 : 3]);
+            for (int i = 0; i < 6; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 2 : 3));
             if (m.move == 6) {
                 Effect e{}; e.kind = EffectKind::BurnIncrease; add_bottom(g, e);
                 m.state.Hexaghost.burnUpgraded = true;
@@ -61,10 +61,10 @@ struct Hexaghost : MonsterHooks {
             add_bottom(g, actions::ChangeState::make(g, owner, "Deactivate"));
         } else {
             if (m.move == 2) {
-                queue_damage(g, owner, player_target, m.damage[0]);
-                queue_damage(g, owner, player_target, m.damage[0]);
+                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             } else if (m.move == 4) {
-                queue_damage(g, owner, player_target, m.damage[1]);
+                queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
                 queue_monster_card(g, CardId::Burn, EffectKind::AddCardDiscard, g.run.ascension >= 19 ? 2 : 1, m.state.Hexaghost.burnUpgraded ? 1 : 0);
             } else if (m.move == 3) {
                 queue_block(g, owner, 12);
