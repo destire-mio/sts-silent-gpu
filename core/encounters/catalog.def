@@ -19,3 +19,4 @@ SPIRE_UNIT(TwoOrbWalkers, "2 Orb Walkers", "core/encounters/two_orb_walkers.hpp"
 SPIRE_UNIT(GiantHead, "Giant Head", "core/encounters/giant_head.hpp", GiantHead)
 SPIRE_UNIT(Maw, "Maw", "core/encounters/maw.hpp", Maw)
 SPIRE_UNIT(Transient, "Transient", "core/encounters/transient.hpp", Transient)
+SPIRE_UNIT(SpireGrowth, "Spire Growth", "core/encounters/spire_growth.hpp", SpireGrowth)
