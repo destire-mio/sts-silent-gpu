@@ -24,3 +24,4 @@ SPIRE_UNIT(TheGuardian, "TheGuardian", "core/monsters/the_guardian.hpp", TheGuar
 SPIRE_UNIT(SlimeBoss, "SlimeBoss", "core/monsters/slime_boss.hpp", SlimeBoss)
 SPIRE_UNIT(BanditLeader, "BanditLeader", "core/monsters/bandit_leader.hpp", BanditLeader)
 SPIRE_UNIT(BronzeAutomaton, "BronzeAutomaton", "core/monsters/bronze_automaton.hpp", BronzeAutomaton)
+SPIRE_UNIT(TheCollector, "TheCollector", "core/monsters/the_collector.hpp", TheCollector)
