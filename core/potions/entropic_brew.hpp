@@ -10,7 +10,7 @@ struct EntropicBrew : PotionHooks {
         state.EntropicBrew.potency = data().potency * (has_relic(g, "SacredBark") ? 2 : 1);
     }
     static SPIRE_FN int potency(const Game& g, int slot) { return g.run.potion_state[slot].EntropicBrew.potency; }
-    static SPIRE_FN bool canUse(const Game& g, int) { return !(g.manager.turn_has_ended && g.room_in_combat); }
+    static SPIRE_FN bool canUse(const Game& g, int slot) { return PotionHooks::canDiscard(g, slot) && !(g.manager.turn_has_ended && g.room_in_combat); }
     static SPIRE_FN void use(Game& g, int, int) {
         if (g.room_in_combat) {
             for (int i = 0; i < 2; ++i) {

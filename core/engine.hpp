@@ -697,6 +697,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.player.bloodied = setup.hp <= setup.max_hp / 2;
     g.cards.clear();
     g.text.clear();
+    g.room_event_class = 0;
     g.multi_damage.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
@@ -792,7 +793,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
                     if (alive(g.monsters[g.monster_order[i]].creature)) actions.push_back({ActionKind::PotionUse, slot, i});
             } else actions.push_back({ActionKind::PotionUse, slot, -1});
         }
-        actions.push_back({ActionKind::PotionDiscard, slot, -1});
+        if (potion_canDiscard(g, slot)) actions.push_back({ActionKind::PotionDiscard, slot, -1});
     }
     if (g.screen == Screen::Discard) {
         if (g.selected_cards.size < g.selection_amount)

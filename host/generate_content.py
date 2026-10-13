@@ -149,7 +149,8 @@ card("makeCopy", result="Card", body="return make_card(g.cards[card].id);", cons
 
 for name in ("use",):
     hook("potions", name, "Game& g, int slot, int target")
-hook("potions", "canUse", "const Game& g, int slot", "bool", "return g.room_in_combat && !g.manager.turn_has_ended && !monsters_basically_dead(g);")
+hook("potions", "canDiscard", "const Game& g, int slot", "bool", 'return g.room_event_class == 0 || !same_text(g.text[g.room_event_class], "events.shrines.WeMeetAgain");')
+hook("potions", "canUse", "const Game& g, int slot", "bool", "return potion_canDiscard(g, slot) && g.room_in_combat && !g.manager.turn_has_ended && !monsters_basically_dead(g);")
 hook("potions", "constructPotion", "const Game& g, PotionState& state, PotionId id", selector="id")
 hook("potions", "potency", "const Game& g, int slot", "int", "return potion_data(g.run.potions[slot]).potency;")
 for name in ("takeTurn", "usePreBattleAction", "useUniversalPreBattleAction", "onDamage", "deathReact",
