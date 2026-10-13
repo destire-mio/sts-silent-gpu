@@ -18,3 +18,4 @@ SPIRE_UNIT(WarpedTongs, "WarpedTongs", "core/relics/warped_tongs.hpp", WarpedTon
 SPIRE_UNIT(Whetstone, "Whetstone", "core/relics/whetstone.hpp", Whetstone)
 SPIRE_UNIT(WhiteBeast, "White Beast Statue", "core/relics/white_beast.hpp", WhiteBeast)
 SPIRE_UNIT(WingBoots, "WingedGreaves", "core/relics/wing_boots.hpp", WingBoots)
+SPIRE_UNIT(WristBlade, "WristBlade", "core/relics/wrist_blade.hpp", WristBlade)
