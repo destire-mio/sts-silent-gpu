@@ -34,7 +34,7 @@ Every function, including `data()`, carries `SPIRE_FN`.
 | Potions | `PotionHooks`, `PotionData` | `use(Game&, int slot, int target)`; metadata gives potency, target and usability |
 | Monsters | `MonsterHooks`, `MonsterData` | `construct(Game&, int hp_override)`, `getMove(Game&, int owner, int roll)`, `takeTurn(Game&, int owner)` |
 | Encounters | No base or metadata type | `build(Game&)` |
-| Actions | `ActionHooks`, `ActionData` | `prepare(Game&, Effect&)` for constructor behavior, `execute(Game&, const Effect&)` for queued behavior |
+| Actions | `ActionHooks`, `ActionData` | `prepare(Game&, Effect&)` for constructor behavior, `execute(Game&, Effect&)` for queued behavior |
 
 Monster and encounter headers include their local `base.hpp` for construction and encounter
 helpers. Other unit headers include `../hooks.hpp`. `core/api.hpp` and the generator's hook
@@ -90,14 +90,10 @@ payload in that category rather than every unit's payload.
 
 Set the instance ID before calling its initializer. Existing card, power, relic and monster
 construction paths and combat setup initialize their selected payload. A new action constructor
-must initialize its effect before assigning payload fields and queueing it. Generated visitors
-serialize these fields without a host edit. Combat objects contain a `state` dictionary;
-`run.master_deck_state`, `run.relic_state` and `run.potion_state` follow their corresponding
-ordered lists, and `combat.encounter_state` holds the encounter payload.
-
-Monster and card-play histories retain a two-entry suffix plus total counts; card histories also retain
-counts by card type. Snapshots expose the suffix and these counts. A rule that reads older
-entries requires an explicit state design rather than pretending that the suffix is a full log.
+must initialize its effect before assigning payload fields and queueing it. Snapshot field names,
+membership and object identity follow `inventory/snapshot-fields.json` and `docs/design.md`;
+the engine's internal field names do not define the trace format. Preserve state required by
+the Java fields, including ordered histories, even when no current gameplay rule reads it.
 
 The current budgets are 256 card instances, 8 monster instances, 64 powers per creature and
 128 actions in each queue. They cover the current content and tested workloads. Card creation
@@ -115,22 +111,46 @@ Adding a queued action or content unit can call the existing dispatcher from its
 | --- | --- |
 | Room entry, campfires, chests, rewards and shops | Relic `onEnterRoom`, `justEnteredRoom`, `onEnterRestRoom`, `addCampfireOption`, `canUseCampfireOption`, `onRest`, `onSmith`, `onChestOpen`, `onChestOpenAfter`, `changeNumberOfCardsInReward`, `changeRareCardRewardChance`, `changeUncommonCardRewardChance`, `canSpawn`, `getPrice` |
 | Actions not in the current catalog | Power `onScry`, `triggerMarks`, `onDamageAllEnemies`; card `triggerOnScry`, `triggerOnGainEnergy`, `triggerWhenCopied`, `onChoseThisOption` |
-| Additional relic/monster rules and bosses | Relic `onTrigger`, `checkTrigger`; monster `changeState`, `heal`, `deathReact`, `onBossVictoryLogic`, `onFinalBossVictoryLogic` |
+| Additional relic/monster rules and bosses | Relic `onTrigger`, `checkTrigger`; monster `heal`, `deathReact`, `onBossVictoryLogic`, `onFinalBossVictoryLogic` |
 | Stance and orb mechanics | Power `onChannel`, `onChangeStance`; relic `onChangeStance`; card `switchedStance`, `triggerExhaustedCardsOnStanceChange` |
 | PlayerTurnEffect completion | Power `atEnergyGain` |
 
 Java hooks without gameplay callers (`onGainCharge`, `onMeditate`, `onRitual`, `onPlayerGainBlock`,
 `onEvokeOrb`, `triggerAtStartOfTurn`, `escapeNext`, and the integer `onPlayerGainedBlock` overload)
 have defaults but no invented events. Copy/upgrade/query methods are callable by their consumers.
-The pre-existing terminal `damaged_this_combat` diagnostic remains unchanged in this structural
-migration; Java's `onVictory` reset and original-game oracle acceptance remain separate work.
-
 ## Checking a port
+
+Add `tests/scenarios/<unit>.json` using the original Java IDs. All six keys are required:
+
+```json
+{
+  "deck": [{"id": "Neutralize", "upgrades": 0}, {"id": "Strike_G", "upgrades": 1}],
+  "relics": ["Ring of the Snake"],
+  "potions": [null, null],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
+```
+
+For a power or queued action, choose cards, relics and monsters that trigger it. Scenario setup
+starts a fresh Silent A20 run, replaces the deck, acquires relics in order through `onEquip`,
+fills potions, assigns HP and enters a floor-1 MonsterRoom. The deck is the input before relic
+acquisition effects. See `tests/scenarios/starter.json` for the starter deck.
+
+Record the original game with several seeds; at most three JVMs may run at once. The oracle
+must have been built with `python3 oracle/build.py` before recording.
+
+```sh
+python3 oracle/record.py --seed 101 --count 3 --scenario tests/scenarios/Neutralize.json --output /tmp/spire-neutralize
+```
+
+Build, test and replay those files:
 
 ```sh
 cmake --build /private/tmp/spire-build --parallel 1
 ctest --test-dir /private/tmp/spire-build --output-on-failure
-PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py /path/to/unit/traces
+PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py /tmp/spire-neutralize
 ```
 
 `SPIRE_PYTHON` and build configuration are described in the root README. The build checks source
@@ -138,6 +158,23 @@ and generated headers against the same device restrictions. Native and host test
 only their covered behavior. A unit is accepted when its original-game traces replay with zero
 differences, including legal actions, card/monster state, queue state and RNG state/counters.
 
+Run the committed combat fixtures with one command:
+
+```sh
+PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py
+```
+
+The replayer accepts `.jsonl` and `.jsonl.gz` files and directories. Directory discovery selects
+scenario traces; a full-run trace requires an explicit file argument. Each result prints `PASS`
+and its decision count, or `FAIL` with the first differing JSON path and both values. The final
+line counts passing traces and matched decisions, including matching prefixes of failed traces;
+any failure returns exit status 1. A terminal snapshot is compared even when no decisions remain.
+
+Keep generated batches outside the repository. Add a small representative fixture by lossless
+compression, for example `gzip -n -c /tmp/spire-neutralize/101.jsonl > tests/traces/Neutralize-seed101.jsonl.gz`.
+Keep the original header, scenario, actions and snapshots unchanged.
+
 Never edit a recorded trace, filter comparison fields, relax types or add numeric tolerances to
 make a port pass. Report an apparent oracle error with the first differing JSON path and the
-Java evidence. Current oracle contract limitations are listed in the README.
+Java evidence. If required engine state is missing, report the field and implement its source
+behavior; do not substitute a trace value or invent a default.

@@ -27,7 +27,8 @@ struct GremlinTsundere : MonsterHooks {
             if (alive > 1) set_monster_move(g, index, 1, Intent::Defend);
             else set_monster_move(g, index, 2, Intent::Attack, m.damage[0]);
         } else {
-            queue_damage(g, index, player_target, m.damage[0]);
+            queue_animation(g, index, EffectKind::AnimateSlowAttack);
+            queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::BluntLight);
             queue_monster_move(g, index, 2, Intent::Attack, m.damage[0]);
         }
     }

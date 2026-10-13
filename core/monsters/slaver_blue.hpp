@@ -3,7 +3,7 @@
 
 namespace spire::units::monsters {
 struct SlaverBlue : MonsterHooks {
-    SPIRE_FN static constexpr MonsterData data() { return {48, 52, {13, 8}, 0, 2}; }
+    SPIRE_FN static constexpr MonsterData data() { return {48, 52, {13, 8}, 0, 2, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         return make_monster(g, MonsterId::SlaverBlue, data(), hp_override);
     }
@@ -15,7 +15,8 @@ struct SlaverBlue : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        queue_damage(g, index, player_target, m.damage[m.move == 1 ? 0 : 1]);
+        queue_animation(g, index, EffectKind::AnimateSlowAttack);
+        queue_damage(g, index, player_target, m.damage[m.move == 1 ? 0 : 1], DamageType::Normal, 0, m.move == 1 ? AttackEffect::SlashHorizontal : AttackEffect::SlashDiagonal);
         if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
         queue_monster_roll(g, index);
     }

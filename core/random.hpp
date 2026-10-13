@@ -164,6 +164,53 @@ struct Random {
     }
 };
 
+struct UnseededRandom {
+    RandomXS128 generator;
+    std::int64_t counter = 0;
+
+    SPIRE_FN UnseededRandom() = default;
+    SPIRE_FN explicit UnseededRandom(std::uint64_t seed) { reset(seed); }
+    SPIRE_FN void reset(std::uint64_t seed) { generator.reset(seed); counter = 0; }
+    SPIRE_FN void set_state(std::uint64_t first, std::uint64_t second, std::int64_t calls) {
+        generator.set_state(first, second);
+        counter = calls;
+    }
+    SPIRE_FN std::int64_t nextLong() { ++counter; return generator.nextLong(); }
+    SPIRE_FN std::int64_t nextLong(std::int64_t bound) {
+        SPIRE_ASSERT(bound > 0);
+        const auto n = static_cast<std::uint64_t>(bound);
+        for (;;) {
+            const auto bits = static_cast<std::uint64_t>(nextLong()) >> 1;
+            const auto value = bits % n;
+            if (bits - value + n - 1 <= 0x7fffffffffffffffULL) return static_cast<std::int64_t>(value);
+        }
+    }
+    SPIRE_FN std::int32_t nextInt(std::int32_t bound) { return static_cast<std::int32_t>(nextLong(bound)); }
+    SPIRE_FN double nextDouble() { return static_cast<double>(static_cast<std::uint64_t>(nextLong()) >> 11) * 0x1p-53; }
+    SPIRE_FN float nextFloat() { return static_cast<float>(static_cast<double>(static_cast<std::uint64_t>(nextLong()) >> 40) * 0x1p-24); }
+    SPIRE_FN bool nextBoolean() { return (static_cast<std::uint64_t>(nextLong()) & 1) != 0; }
+    SPIRE_FN std::int32_t random(std::int32_t range) { return nextInt(range + 1); }
+    SPIRE_FN std::int32_t random(std::int32_t start, std::int32_t end) { return start + nextInt(end - start + 1); }
+    SPIRE_FN std::int64_t random(std::int64_t range) { return java_long_cast(nextDouble() * static_cast<double>(range)); }
+    SPIRE_FN float random() { return nextFloat(); }
+    SPIRE_FN float random(float range) { return nextFloat() * range; }
+    SPIRE_FN float random(float start, float end) { return start + nextFloat() * (end - start); }
+    SPIRE_FN bool randomBoolean() { return nextBoolean(); }
+    SPIRE_FN bool randomBoolean(float chance) { return nextFloat() < chance; }
+};
+
+SPIRE_FN inline Random make_unseeded_random(UnseededRandom& unseeded) {
+    const auto seed = unseeded.random(std::int64_t{9999});
+    const auto calls = unseeded.random(99);
+    return Random(static_cast<std::uint64_t>(seed), calls);
+}
+
+SPIRE_FN inline Random copy_random(const Random& source, UnseededRandom& unseeded) {
+    Random result = make_unseeded_random(unseeded);
+    result.set_state(source.generator.s0, source.generator.s1, source.counter);
+    return result;
+}
+
 struct JavaRandom {
     std::uint64_t state;
 
@@ -206,6 +253,12 @@ SPIRE_FN inline void shuffle(T* items, std::int32_t count, Random& rng) {
     shuffle_java(items, count, java_rng);
 }
 
+template <typename T>
+SPIRE_FN inline void shuffle_unseeded(T* items, std::int32_t count, UnseededRandom& rng) {
+    JavaRandom java_rng(static_cast<std::uint64_t>(rng.nextLong()));
+    shuffle_java(items, count, java_rng);
+}
+
 struct RngStreams {
     Random monster;
     Random map;
@@ -220,6 +273,8 @@ struct RngStreams {
     Random shuffle;
     Random card_random;
     Random misc;
+    Random neow;
+    bool neow_initialized = false;
 
     SPIRE_FN void generate_seeds(std::uint64_t seed) {
         monster.reset(seed);

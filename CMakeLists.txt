@@ -31,6 +31,15 @@ add_custom_command(OUTPUT ${content_headers}
     VERBATIM)
 add_custom_target(generate_content DEPENDS ${content_headers})
 
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.hpp"
+    COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_snapshot.py"
+        --root "${CMAKE_CURRENT_SOURCE_DIR}" --output "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.hpp"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_snapshot.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/inventory/snapshot-fields.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/inventory/units.json" ${content_sources}
+    VERBATIM)
+add_custom_target(generate_snapshot DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.hpp")
+
 add_custom_target(check_device_core ALL
     COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_device_core.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/core" --compiler "${CMAKE_CXX_COMPILER}"
@@ -48,6 +57,7 @@ target_compile_options(spire_core INTERFACE
 pybind11_add_module(spire host/bindings.cpp)
 target_link_libraries(spire PRIVATE spire_core)
 add_dependencies(spire check_device_core)
+add_dependencies(spire generate_snapshot)
 
 add_executable(spire_benchmark host/benchmark.cpp)
 target_link_libraries(spire_benchmark PRIVATE spire_core)

@@ -15,7 +15,11 @@ struct FungiBeast : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        if (m.move == 1) queue_damage(g, index, player_target, m.damage[0]);
+        if (m.move == 1) {
+            queue_monster_state(g, index, MonsterStateChange::Attack);
+            queue_wait(g, 0.5f);
+            queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::BluntLight);
+        }
         else queue_power(g, index, index, PowerId::Strength, m.magic);
         queue_monster_roll(g, index);
     }

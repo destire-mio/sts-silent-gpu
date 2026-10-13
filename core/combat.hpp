@@ -65,17 +65,29 @@ SPIRE_FN inline int calculate_block(const Game& g, int base, int card) {
     for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers[i], player_target, value);
     return max(0, floor_int(value));
 }
+SPIRE_FN inline void apply_card_block(Game& g, int card) {
+    Card& c = g.cards[card];
+    float value = static_cast<float>(c.base_block);
+    const Powers& powers = g.player.creature.powers;
+    for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers[i], player_target, value, card);
+    for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers[i], player_target, value);
+    // AbstractCard.applyPowersToBlock compares before clamping negative block.
+    c.block_modified = c.base_block != floor_int(value);
+    c.block = max(0, floor_int(value));
+}
 SPIRE_FN inline void refresh_powers(Game& g) {
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
     for (int i = 0; i < g.monster_order.size; ++i) monster_applyPowers(g, g.monster_order[i]);
 }
-SPIRE_FN inline void queue_damage(Game& g, int source, int target, int base, DamageType type, int steal) {
+SPIRE_FN inline void queue_damage(Game& g, int source, int target, int base, DamageType type, int steal, AttackEffect attack) {
     Effect e{};
     e.kind = EffectKind::Damage;
     e.source = source;
     e.target = target;
     e.amount = calculate_damage(g, source, target, base, type);
+    e.info_base = base;
     e.damage_type = type;
+    e.attack_effect = attack;
     e.extra = steal;
     add_bottom(g, e);
 }

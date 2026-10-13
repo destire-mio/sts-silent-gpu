@@ -2,6 +2,7 @@
 #include "base.hpp"
 
 namespace spire::units::monsters {
+SPIRE_STATE(Cultist, bool said_power;)
 struct Cultist : MonsterHooks {
     SPIRE_FN static constexpr MonsterData data() { return {50, 56, {6, 0}, 0, 5}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
@@ -17,8 +18,13 @@ struct Cultist : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        if (m.move == 3) queue_power(g, index, index, PowerId::Ritual, m.magic);
-        else queue_damage(g, index, player_target, m.damage[0]);
+        if (m.move == 3) {
+            m.state.Cultist.said_power = g.unseeded.random(1, 10) < 4;
+            queue_power(g, index, index, PowerId::Ritual, m.magic);
+        } else {
+            queue_animation(g, index, EffectKind::AnimateSlowAttack);
+            queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::SlashHorizontal);
+        }
         queue_monster_roll(g, index);
     }
 };

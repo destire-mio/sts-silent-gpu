@@ -12,6 +12,11 @@ void require(bool condition, const char* expression, int line) {
 }
 #define CHECK(condition) require((condition), #condition, __LINE__)
 
+void execute_next(Game& game) {
+    Effect effect = game.manager.actions.pop_front();
+    execute_effect(game, effect);
+}
+
 void encounter_construction() {
     constexpr int counts[] = {1, 1, 2, 2, 1, 4, 1, 1, 5, 2, 2, 1, 3, 2};
     constexpr int hp_calls[] = {1, 1, 4, 2, 1, 4, 1, 1, 5, 7, 6, 1, 6, 2};
@@ -25,6 +30,8 @@ void encounter_construction() {
             CHECK(g.monster_order.size == counts[id]);
             CHECK(g.rng.monster_hp.counter == hp_calls[id]);
             CHECK(g.rng.misc.counter == misc_calls[id]);
+            CHECK(g.unseeded.counter == (id == static_cast<int>(EncounterId::ExordiumThugs) ||
+                id == static_cast<int>(EncounterId::ExordiumWildlife) ? 4 : 0));
             int louses = 0;
             for (int i = 0; i < g.monsters.size; ++i) {
                 CHECK(g.monster_order[i] == i);
@@ -125,7 +132,9 @@ void split_and_target_identity() {
     CHECK(g.monsters[0].move_history.size == history);
     split_monster(g, 0);
     CHECK(g.monsters.size == 4);
-    CHECK(g.monster_order[0] == 2 && g.monster_order[1] == 0 && g.monster_order[2] == 3 && g.monster_order[3] == 1);
+    CHECK(g.monster_order[0] == 2 && g.monster_order[1] == 0 && g.monster_order[2] == 1 && g.monster_order[3] == 3);
+    CHECK(g.monsters[2].creature.draw_x < g.monsters[0].creature.draw_x);
+    CHECK(g.monsters[3].creature.draw_x > g.monsters[1].creature.draw_x);
     CHECK(g.monsters[0].creature.dead);
     CHECK(g.monsters[1].id == MonsterId::Cultist);
     CHECK(g.monsters[2].creature.hp == half && g.monsters[3].creature.hp == half);
@@ -165,7 +174,10 @@ void lethal_attack_keeps_published_intent() {
     CHECK(g.monsters[0].pending_move == 2);
     CHECK(g.monsters[0].pending_intent == Intent::Debuff);
     CHECK(g.monsters[0].move_history[g.monsters[0].move_history.size - 1] == 2);
-    execute_effect(g, g.manager.actions.pop_front());
+    CHECK(g.manager.actions[0].kind == EffectKind::AnimateSlowAttack);
+    execute_next(g);
+    CHECK(g.manager.actions[0].kind == EffectKind::Damage);
+    execute_next(g);
     CHECK(g.screen == Screen::Death);
     CHECK(g.monsters[0].move == 1);
     CHECK(g.monsters[0].pending_move == 2);
@@ -181,10 +193,12 @@ void looter_bookkeeping() {
     roll_monster_move(g, 0);
     create_monster_intent(g, 0);
     monster_take_turn(g, 0);
-    execute_effect(g, g.manager.actions.pop_front());
+    CHECK(g.manager.actions[0].kind == EffectKind::AnimateSlowAttack);
+    execute_next(g);
+    execute_next(g);
     CHECK(g.monsters[0].stolen_gold == 3);
     CHECK(g.run.gold == 3);
-    execute_effect(g, g.manager.actions.pop_front());
+    execute_next(g);
     CHECK(g.run.gold == 0);
     CHECK(g.player.creature.hp == 70);
     CHECK(g.player.creature.block == 9);
@@ -194,7 +208,7 @@ void looter_bookkeeping() {
     monster_take_turn(g, 0);
     CHECK(g.mugged);
     CHECK(!g.monsters[0].creature.escaped);
-    execute_effect(g, g.manager.actions.pop_front());
+    execute_next(g);
     CHECK(g.monsters[0].creature.escaped);
 }
 

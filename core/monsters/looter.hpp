@@ -3,7 +3,7 @@
 
 namespace spire::units::monsters {
 struct Looter : MonsterHooks {
-    SPIRE_FN static constexpr MonsterData data() { return {46, 50, {11, 14}, 6, 20}; }
+    SPIRE_FN static constexpr MonsterData data() { return {46, 50, {11, 14}, 6, 20, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         return make_monster(g, MonsterId::Looter, data(), hp_override);
     }
@@ -18,12 +18,13 @@ struct Looter : MonsterHooks {
             const int move = m.move;
             // Looter.takeTurn consumes aiRng for its first Mug speech even without rendering.
             if (move == 1 && m.turn_count == 0) g.rng.ai.randomBoolean(0.6f);
+            queue_animation(g, index, EffectKind::AnimateSlowAttack);
             Effect steal{};
             steal.kind = EffectKind::StealGold;
             steal.target = index;
             steal.amount = m.magic;
             add_bottom(g, steal);
-            queue_damage(g, index, player_target, m.damage[move == 1 ? 0 : 1], DamageType::Normal, m.magic);
+            queue_damage(g, index, player_target, m.damage[move == 1 ? 0 : 1], DamageType::Normal, m.magic, AttackEffect::SlashDiagonal);
             ++m.turn_count;
             if (move == 4) set_monster_move(g, index, 2, Intent::Defend);
             else if (m.turn_count == 2) {

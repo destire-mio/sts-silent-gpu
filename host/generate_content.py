@@ -131,7 +131,7 @@ for name in ("triggerExhaustedCardsOnStanceChange",):
 card("triggerOnGainEnergy", "int amount, bool due_to_card")
 card("onPlayCard", "int other_card, int target")
 card("applyPowers", body="apply_card_powers(g, card);")
-card("applyPowersToBlock", body="g.cards[card].block = calculate_block(g, g.cards[card].base_block, card);")
+card("applyPowersToBlock", body="apply_card_block(g, card);")
 card("calculateCardDamage", "int target", body="calculate_card_damage(g, card, target);")
 card("resetAttributes", body="reset_attributes(g.cards[card]);")
 card("clearPowers", body="card_resetAttributes(g, card);")
@@ -165,7 +165,7 @@ hook("monsters", "setMove", "Game& g, int owner, int move, Intent intent, int da
 hook("monsters", "construct", "Game& g, MonsterId id, int hp_override", "Monster", selector="id")
 hook("encounters", "build", "Game& g, EncounterId id")
 hook("actions", "prepare", "Game& g, Effect& e")
-hook("actions", "execute", "Game& g, const Effect& e")
+hook("actions", "execute", "Game& g, Effect& e")
 
 
 def parameters(signature):

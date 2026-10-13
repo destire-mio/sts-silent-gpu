@@ -6,6 +6,7 @@ struct GremlinWizard : MonsterHooks {
     SPIRE_FN static constexpr MonsterData data() { return {22, 26, {30, 0}, 0, 0}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         Monster m = make_monster(g, MonsterId::GremlinWizard, data(), hp_override);
+        position_monster(m, -35.0f, 0.0f);
         m.turn_count = 1;
         return m;
     }
@@ -21,7 +22,7 @@ struct GremlinWizard : MonsterHooks {
             else set_monster_move(g, index, 2, Intent::Unknown);
         } else {
             m.turn_count = 0;
-            queue_damage(g, index, player_target, m.damage[0]);
+            queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::Fire);
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         }
     }

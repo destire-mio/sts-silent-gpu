@@ -103,6 +103,11 @@ static void test_survivor_and_slimed() {
     require(actions.size == 4, "discard choice count");
     for (int i = 0; i < 4; ++i) require(actions[i].kind == ActionKind::Choose && actions[i].index == i, "discard action order");
     step(g, {ActionKind::Choose, hand_index(g, CardId::Dazed), -1});
+    require(g.screen == Screen::Discard && g.selected_cards.size == 1 && g.discard.empty(),
+            "discard selection waits for confirmation");
+    legal_actions(g, actions);
+    require(actions.size == 1 && actions[0].kind == ActionKind::Proceed, "selected discard offers confirmation");
+    step(g, {ActionKind::Proceed});
     require(g.screen == Screen::Combat && g.hand.size == 3 && g.player.card_in_use == -1, "Survivor resumes card flow");
     require_pile(g.discard, {4,0}, "chosen card precedes Survivor in discard");
     require(g.manager.total_discarded_this_turn == 1 && g.player.cards_played_this_turn == 1, "manual discard and play counts");

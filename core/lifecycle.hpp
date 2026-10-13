@@ -53,6 +53,7 @@ SPIRE_FN inline void on_victory(Game& g) {
         Powers& powers = g.player.creature.powers;
         for (int i = 0; i < powers.size; ++i) power_onVictory(g, powers[i], player_target);
     }
+    g.player.damaged_this_combat = 0;
 }
 SPIRE_FN inline void gain_energy(Game& g, int amount) {
     g.player.energy = min(999, g.player.energy + amount);

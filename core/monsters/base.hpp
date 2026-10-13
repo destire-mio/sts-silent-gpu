@@ -2,20 +2,53 @@
 #include "../hooks.hpp"
 
 namespace spire {
+SPIRE_FN inline void queue_animation(Game& g, int owner, EffectKind kind) {
+    Effect e{};
+    e.kind = kind;
+    e.source = owner;
+    add_bottom(g, e);
+}
+
+SPIRE_FN inline void queue_wait(Game& g, float duration) {
+    Effect e{};
+    e.kind = EffectKind::Wait;
+    e.duration = duration;
+    add_bottom(g, e);
+}
+
+SPIRE_FN inline void queue_monster_state(Game& g, int owner, MonsterStateChange state) {
+    Effect e{};
+    e.kind = EffectKind::ChangeState;
+    e.card = owner;
+    e.extra = static_cast<int>(state);
+    add_bottom(g, e);
+}
+
+SPIRE_FN inline void position_monster(Monster& monster, float offset_x, float offset_y) {
+    monster.offset_x = offset_x;
+    monster.offset_y = offset_y;
+    monster.creature.draw_x = 1280.0f * 0.75f + offset_x * (1280.0f / 1920.0f);
+}
+
 SPIRE_FN inline Monster make_monster(Game& g, MonsterId id, const MonsterData& data, int hp_override) {
     Monster m{};
     m.id = id;
+    position_monster(m, 0.0f, 0.0f);
     monster_initialize_state(m);
     m.creature.hp = hp_override == 0 ? g.rng.monster_hp.random(data.hp_min, data.hp_max) : hp_override;
     m.creature.max_hp = m.creature.hp;
-    m.damage[0] = data.damage[0];
-    m.damage[1] = data.damage[1];
+    m.damage_count = data.damage_count;
+    for (int i = 0; i < m.damage_count; ++i) {
+        m.damage[i] = data.damage[i];
+        m.damage_output[i] = data.damage[i];
+    }
     m.block_amount = data.block;
     m.magic = data.magic;
     return m;
 }
 
-SPIRE_FN inline void append_monster(Game& g, const Monster& monster) {
+SPIRE_FN inline void append_monster(Game& g, Monster monster, float offset_x = 0.0f, float offset_y = 0.0f) {
+    position_monster(monster, monster.offset_x + offset_x, monster.offset_y + offset_y);
     g.monster_order.push_back(g.monsters.size);
     g.monsters.push_back(monster);
 }
@@ -34,7 +67,7 @@ SPIRE_FN inline void set_monster_move(Game& g, int index, int move, Intent inten
     m.pending_move = move;
     m.pending_intent = intent;
     m.pending_base_damage = base_damage;
-    m.pending_hits = hits > 1 ? hits : -1;
+    m.pending_hits = hits > 1 ? hits : 0;
     if (move != -1) m.move_history.push_back(move);
 }
 
@@ -45,7 +78,7 @@ SPIRE_FN inline void create_monster_intent(Game& g, int index) {
     m.intent_base_damage = m.pending_base_damage;
     if (m.pending_base_damage >= 0) {
         m.intent_damage = calculate_damage(g, index, player_target, m.pending_base_damage);
-        m.intent_hits = m.pending_hits;
+        m.intent_hits = m.pending_hits > 1 ? m.pending_hits : -1;
     }
 }
 
@@ -94,20 +127,19 @@ SPIRE_FN inline void split_into(Game& g, int index, MonsterId child) {
     const int hp = parent.creature.hp;
     parent.creature.hp = 0;
     monster_die(g, index, false);
-    int position = 0;
-    while (g.monster_order[position] != index) ++position;
-    const int left = g.monsters.size;
-    g.monsters.push_back(construct_monster(g, child, hp));
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, left);
-    monster_init(g, left);
-    monster_applyPowers(g, left);
-    g.monster_order.insert(position, left);
-    const int right = g.monsters.size;
-    g.monsters.push_back(construct_monster(g, child, hp));
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, right);
-    monster_init(g, right);
-    monster_applyPowers(g, right);
-    g.monster_order.insert(position + 2, right);
+    for (int side = 0; side < 2; ++side) {
+        const int spawned = g.monsters.size;
+        Monster monster = construct_monster(g, child, hp);
+        position_monster(monster, parent.offset_x + (side == 0 ? -134.0f : 134.0f), parent.offset_y);
+        g.monsters.push_back(monster);
+        for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, spawned);
+        monster_init(g, spawned);
+        monster_applyPowers(g, spawned);
+        int position = 0;
+        for (int i = 0; i < g.monster_order.size; ++i)
+            if (monster.creature.draw_x > g.monsters[g.monster_order[i]].creature.draw_x) ++position;
+        g.monster_order.insert(position, spawned);
+    }
 }
 
 SPIRE_FN inline void block_random_monster(Game& g, const Effect& effect) {

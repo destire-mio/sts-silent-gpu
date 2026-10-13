@@ -8,6 +8,10 @@ SPIRE_FN inline void reset_attributes(Card& card) {
     card.block = card.base_block;
     card.magic = card.base_magic;
     card.cost_for_turn = card.cost;
+    card.damage_modified = false;
+    card.block_modified = false;
+    card.magic_modified = false;
+    card.cost_modified_for_turn = false;
 }
 SPIRE_FN inline Card make_card(CardId id, int upgrades, int misc) {
     const CardDef def = card_def(id);

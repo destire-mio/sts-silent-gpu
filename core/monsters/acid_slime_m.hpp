@@ -3,7 +3,7 @@
 
 namespace spire::units::monsters {
 struct AcidSlime_M : MonsterHooks {
-    SPIRE_FN static constexpr MonsterData data() { return {29, 34, {8, 12}, 0, 1}; }
+    SPIRE_FN static constexpr MonsterData data() { return {29, 34, {8, 12}, 0, 1, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         return make_monster(g, MonsterId::AcidSlime_M, data(), hp_override);
     }
@@ -27,9 +27,10 @@ struct AcidSlime_M : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
+        queue_animation(g, index, EffectKind::AnimateSlowAttack);
         if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
         else {
-            queue_damage(g, index, player_target, m.damage[m.move == 2 ? 1 : 0]);
+            queue_damage(g, index, player_target, m.damage[m.move == 2 ? 1 : 0], DamageType::Normal, 0, AttackEffect::BluntHeavy);
             if (m.move == 1) queue_slimed(g, 1);
         }
         queue_monster_roll(g, index);

@@ -3,7 +3,7 @@
 
 namespace spire::units::monsters {
 struct AcidSlime_L : MonsterHooks {
-    SPIRE_FN static constexpr MonsterData data() { return {68, 72, {12, 18}, 0, 2}; }
+    SPIRE_FN static constexpr MonsterData data() { return {68, 72, {12, 18}, 0, 2, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         Monster m = make_monster(g, MonsterId::AcidSlime_L, data(), hp_override);
         m.creature.powers.push_back(Power{PowerId::Split, -1});
@@ -36,9 +36,11 @@ struct AcidSlime_L : MonsterHooks {
             add_bottom(g, e);
             set_monster_move(g, index, 3, Intent::Unknown);
             return;
-        } else if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
+        }
+        queue_animation(g, index, EffectKind::AnimateSlowAttack);
+        if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
         else {
-            queue_damage(g, index, player_target, m.damage[m.move == 2 ? 1 : 0]);
+            queue_damage(g, index, player_target, m.damage[m.move == 2 ? 1 : 0], DamageType::Normal, 0, AttackEffect::BluntHeavy);
             if (m.move == 1) queue_slimed(g, 2);
         }
         queue_monster_roll(g, index);

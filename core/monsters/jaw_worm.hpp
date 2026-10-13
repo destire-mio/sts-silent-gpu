@@ -3,7 +3,7 @@
 
 namespace spire::units::monsters {
 struct JawWorm : MonsterHooks {
-    SPIRE_FN static constexpr MonsterData data() { return {42, 46, {12, 7}, 9, 5}; }
+    SPIRE_FN static constexpr MonsterData data() { return {42, 46, {12, 7}, 9, 5, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         return make_monster(g, MonsterId::JawWorm, data(), hp_override);
     }
@@ -28,10 +28,12 @@ struct JawWorm : MonsterHooks {
         Monster& m = g.monsters[index];
         if (m.move == 1) queue_damage(g, index, player_target, m.damage[0]);
         else if (m.move == 2) {
+            queue_wait(g, 0.5f);
             queue_power(g, index, index, PowerId::Strength, m.magic);
             queue_block(g, index, m.block_amount);
         } else {
-            queue_damage(g, index, player_target, m.damage[1]);
+            queue_animation(g, index, EffectKind::AnimateHop);
+            queue_damage(g, index, player_target, m.damage[1], DamageType::Normal, 0, AttackEffect::BluntLight);
             queue_block(g, index, 5);
         }
         queue_monster_roll(g, index);

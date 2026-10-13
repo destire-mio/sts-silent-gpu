@@ -14,7 +14,8 @@ struct GremlinThief : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        queue_damage(g, index, player_target, m.damage[0]);
+        queue_animation(g, index, EffectKind::AnimateSlowAttack);
+        queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::SlashHorizontal);
         queue_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
     }
 };

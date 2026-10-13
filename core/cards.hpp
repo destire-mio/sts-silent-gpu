@@ -51,28 +51,63 @@ SPIRE_FN inline Card stat_equivalent_copy(const Game& g, int card_id) {
     copy.free_to_play_once = source.free_to_play_once;
     return copy;
 }
+SPIRE_FN inline int card_damage_value(Game& g, int card_id, int target) {
+    Card& c = g.cards[card_id];
+    float value = static_cast<float>(c.base_damage);
+    for (int i = 0; i < g.run.relics.size; ++i) {
+        value = relic_atDamageModify(g, i, value, card_id);
+        if (c.base_damage != static_cast<int>(value)) c.damage_modified = true;
+    }
+    const Powers& source = g.player.creature.powers;
+    for (int i = 0; i < source.size; ++i)
+        value = power_atDamageGive(g, source[i], player_target, value, DamageType::Normal, card_id);
+    if (c.base_damage != static_cast<int>(value)) c.damage_modified = true;
+    if (target != no_target) {
+        const Powers& receive = g.monsters[target].creature.powers;
+        for (int i = 0; i < receive.size; ++i)
+            value = power_atDamageReceive(g, receive[i], target, value, DamageType::Normal, card_id);
+    }
+    for (int i = 0; i < source.size; ++i)
+        value = power_atDamageFinalGive(g, source[i], player_target, value, DamageType::Normal, card_id);
+    if (target != no_target) {
+        const Powers& receive = g.monsters[target].creature.powers;
+        for (int i = 0; i < receive.size; ++i)
+            value = power_atDamageFinalReceive(g, receive[i], target, value, DamageType::Normal, card_id);
+    }
+    const int damage = max(0, floor_int(value));
+    if (c.base_damage != damage) c.damage_modified = true;
+    return damage;
+}
 SPIRE_FN inline void apply_card_powers(Game& g, int card_id) {
     Card& c = g.cards[card_id];
     card_applyPowersToBlock(g, card_id);
-    c.damage = calculate_damage(g, player_target, no_target, c.base_damage, DamageType::Normal, card_id);
+    c.damage_modified = false;
+    c.damage = card_damage_value(g, card_id, no_target);
 }
 SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
     Card& c = g.cards[card_id];
-    int damage_target = target;
-    // AbstractCard.calculateCardDamage(null) computes values for monsters even for skills.
-    if (target == no_target && !g.monster_order.empty()) {
-        const int first = g.monster_order[0];
-        if (!g.monsters[first].creature.dying && !g.monsters[first].creature.escaped) damage_target = first;
-    }
     card_applyPowersToBlock(g, card_id);
-    c.damage = calculate_damage(g, player_target, damage_target, c.base_damage, DamageType::Normal, card_id);
+    c.damage_modified = false;
+    if (target != no_target) c.damage = card_damage_value(g, card_id, target);
+    else {
+        // AbstractCard.calculateCardDamage(null) fills multiDamage even for skills.
+        c.multi_damage_count = g.monster_order.size;
+        for (int i = 0; i < g.monster_order.size; ++i) {
+            const int owner = g.monster_order[i];
+            const Creature& monster = g.monsters[owner].creature;
+            c.multi_damage[i] = card_damage_value(g, card_id, monster.dying || monster.escaped ? no_target : owner);
+        }
+        c.damage = c.multi_damage[0];
+    }
 }
-SPIRE_FN inline void queue_card_damage(Game& g, int card, int target) {
+SPIRE_FN inline void queue_card_damage(Game& g, int card, int target, AttackEffect attack) {
     Effect e{};
     e.kind = EffectKind::Damage;
     e.source = player_target;
     e.target = target;
     e.amount = g.cards[card].damage;
+    e.info_base = e.amount;
+    e.attack_effect = attack;
     add_bottom(g, e);
 }
 SPIRE_FN inline void play_card_hooks(Game& g, int card, int target) {

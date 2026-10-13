@@ -156,10 +156,68 @@ static void test_streams() {
     }
 }
 
+static void test_unseeded() {
+    struct UnseededVector {
+        std::uint64_t seed;
+        int inclusive, ranged;
+        bool boolean, chance;
+        std::uint32_t unit, scaled, ranged_float;
+        std::int64_t scaled_long;
+        std::uint64_t final0, final1;
+    };
+    constexpr UnseededVector expected[] = {
+        {0,72,6,true,false,0x3ec79804,0x4044cc44,0x406423a6,2777,0xa427991d6d1fcfd8ULL,0xa2f2709904a41b20ULL},
+        {1,55,12,false,true,0x3f741b2a,0x402be9bd,0x40691f56,2588,0x8de30ea50ab309e5ULL,0xb463e00d661948c3ULL},
+        {0xffffffffffffffffULL,41,-3,true,true,0x3f19d0d8,0x3f4ab6ff,0x40e9d768,9740,0x524ebededd3fd087ULL,0xa715bd3c48d252ceULL},
+        {123456789,47,7,false,false,0x3d596ba0,0x403ae0ec,0x406c2090,8857,0x9621c5f83ac27c02ULL,0x4ca5c3ab85e410afULL},
+    };
+    for (const auto& v : expected) {
+        spire::UnseededRandom rng(v.seed);
+        require(rng.random(99) == v.inclusive, "pinned inclusive int");
+        require(rng.random(-7, 13) == v.ranged, "pinned ranged int");
+        require(rng.randomBoolean() == v.boolean, "pinned boolean");
+        require(rng.randomBoolean(0.375f) == v.chance, "pinned chance");
+        require(float_bits(rng.random()) == v.unit, "pinned unit float");
+        require(float_bits(rng.random(3.25f)) == v.scaled, "pinned scaled float");
+        require(float_bits(rng.random(-2.5f, 7.75f)) == v.ranged_float, "pinned ranged float");
+        require(rng.random(std::int64_t{9999}) == v.scaled_long, "pinned scaled long");
+        require(rng.counter == 8 && rng.generator.s0 == v.final0 && rng.generator.s1 == v.final1, "pinned mixed draw state");
+    }
+    spire::UnseededRandom rejected(0xffffffffffffffffULL);
+    require(rejected.nextLong(4611686018427387905LL) == 3412722986677424662LL, "pinned bounded long");
+    require(rejected.counter == 2, "pinned rejection counts each raw nextLong");
+    spire::UnseededRandom constructors(1);
+    const auto constructed = spire::make_unseeded_random(constructors);
+    require(constructed.counter == 5 && constructed.generator.s0 == 0x67ca77a31b4740ddULL && constructed.generator.s1 == 0x9aac60212bbec212ULL, "default Random constructor state");
+    require(constructors.counter == 2 && constructors.generator.s0 == 0xb722f2631cb7b14dULL && constructors.generator.s1 == 0xab89235541870f7dULL, "default Random consumes two rule draws");
+    const spire::Random source(42, 7);
+    const auto copied = spire::copy_random(source, constructors);
+    require(copied.counter == source.counter && copied.generator.s0 == source.generator.s0 && copied.generator.s1 == source.generator.s1, "Random.copy preserves stream");
+    require(constructors.counter == 4, "Random.copy consumes default constructor draws");
+    constexpr int orders[][12] = {
+        {0,8,5,1,6,2,7,10,3,4,11,9},
+        {8,3,6,4,0,7,2,5,1,10,9,11},
+        {8,2,3,9,4,7,1,5,11,10,6,0},
+    };
+    spire::UnseededRandom shuffle_rng(0);
+    for (int draw = 0; draw < 3; ++draw) {
+        int cards[12];
+        for (int i = 0; i < 12; ++i) cards[i] = i;
+        spire::shuffle_unseeded(cards, 12, shuffle_rng);
+        for (int i = 0; i < 12; ++i) require(cards[i] == orders[draw][i], "pinned Collections.shuffle order");
+        require(shuffle_rng.counter == draw + 1, "pinned shuffle consumes one raw draw");
+    }
+    int only_card = 7;
+    spire::shuffle_unseeded(&only_card, 0, shuffle_rng);
+    spire::shuffle_unseeded(&only_card, 1, shuffle_rng);
+    require(only_card == 7 && shuffle_rng.counter == 5, "empty and singleton pinned shuffle consume seeds");
+}
+
 int main() {
     test_game_random();
     test_rejection();
     test_shuffle();
     test_streams();
-    std::puts("RNG vectors, rejection, shuffle, and stream seeding passed");
+    test_unseeded();
+    std::puts("RNG vectors, rejection, shuffle, stream seeding, and pinned rule stream passed");
 }

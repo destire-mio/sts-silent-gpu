@@ -7,6 +7,7 @@ struct AddCardDiscard : ActionHooks {
         for (int i = 0; i < e.amount; ++i) {
             const int card = g.cards.size;
             g.cards.push_back(make_card(static_cast<CardId>(e.card)));
+            g.cards[card].uuid = card + 1;
             g.discard.push_back(card);
         }
     }

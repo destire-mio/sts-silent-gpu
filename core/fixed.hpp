@@ -60,17 +60,4 @@ struct Queue {
         return value;
     }
 };
-template<class T, int Capacity>
-struct RecentHistory {
-    T values[Capacity]{};
-    int size = 0;
-    SPIRE_FN void clear() { size = 0; }
-    SPIRE_FN bool empty() const { return size == 0; }
-    SPIRE_FN int first_index() const { return max(0, size - Capacity); }
-    SPIRE_FN void push_back(T value) { values[size++ % Capacity] = value; }
-    SPIRE_FN const T& operator[](int index) const {
-        SPIRE_ASSERT(index >= first_index() && index < size);
-        return values[index % Capacity];
-    }
-};
 }

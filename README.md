@@ -65,12 +65,13 @@ state = game.snapshot()
 the Silent A20 starter setup; an explicit empty list stays empty. Card entries use Java IDs and
 support `upgrades` and `misc`. Relics and potions use catalog Java ID strings. Empty potion slots
 are `None`; the current potion catalog contains the empty slot. Unknown IDs raise an error.
-Additional scenario fields are `floor`, `gold` and `unseeded_seed`. Defaults are 59 HP, 66 max HP,
-floor 1, 99 gold and unseeded seed 0.
+Additional scenario fields are `floor` and `gold`. Defaults are 59 HP, 66 max HP,
+floor 1 and 99 gold. The pinned unseeded stream starts from the run seed.
 Seeds accept Java signed 64-bit integers.
 
 Actions are dictionaries: `{"type": "play", "card": 0, "target": 0}`,
-`{"type": "end_turn"}` or `{"type": "choose", "option": 0}`. Non-targeted cards use `target: -1`.
+`{"type": "end_turn"}`, `{"type": "choose", "option": 0}` or `{"type": "proceed"}`.
+Hand selection requires confirmation after choosing cards. Non-targeted cards use `target: -1`.
 Use the returned legal actions in their existing order. Invalid core actions abort through
 `SPIRE_ASSERT`.
 
@@ -85,19 +86,20 @@ uses one CPU thread and retains the Python GIL.
 PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py /path/to/traces
 ```
 
-The replayer accepts JSONL files or directories. A header supplies `seed`, `character`,
-`ascension` and an optional `scenario`. Each decision has `snapshot`, `legal` and `action`; the
-last record has a terminal `snapshot`. Comparison includes every key, scalar type, value and
+The replayer accepts JSONL, gzip-compressed JSONL and directories. A header supplies `schema`,
+`game_sha256`, `seed`, `character`, `ascension` and `scenario` (null for a full run).
+Each decision has `snapshot`, `legal` and `action`; the last record has `snapshot` and `terminal`.
+Comparison includes every key, scalar type, value and
 list position, without tolerance or field filtering. Failures report the first differing JSON
-path and both values. Output reports passing traces overall and by header `unit`, otherwise
-scenario encounter or `full_run`.
+path and both values. Output reports passing traces and matched decisions, including matching
+prefixes of failed traces. Directory discovery selects scenario traces; full runs require an
+explicit file argument. See [the porting guide](docs/porting.md) for recording and replay commands.
 
-The current host snapshot is a diagnostic `run` / `screen` / `combat` / `rng` structure. It
-includes card identities, ordered piles and powers, monster state, pending action queues and RNG
-states/counters. The independently developed oracle currently emits a Java object graph; these
-schemas do not match. Its pinned unseeded RNG contract also differs from the current core.
-Oracle replay acceptance is pending resolution of both contracts and zero-difference traces.
-Self-generated host traces test replayer wiring; they do not establish agreement with the game.
+The host snapshot uses the oracle's object graph and preserves object references, UUID equality,
+ordered fields and piles, queues and RNG counters/state words. `game.schema_gaps()` lists fields
+whose engine state or serializer is missing; these fields remain absent and fail strict replay.
+Zero-difference oracle acceptance is pending. Self-generated host traces test replayer wiring;
+they do not establish agreement with the game.
 
 ## CPU throughput
 

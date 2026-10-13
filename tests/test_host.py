@@ -5,7 +5,20 @@ import unittest
 from pathlib import Path
 
 import spire
-from replay import replay
+from replay import GAME_SHA256, replay
+
+
+def fields(state, reference):
+    return state["objects"][reference["ref"]]["fields"]
+
+
+def player(state):
+    return fields(state, state["player"])
+
+
+def pile(state, name):
+    group = fields(state, player(state)["AbstractPlayer." + name])
+    return [fields(state, card) for card in group["CardGroup.group"]]
 
 
 class HostInterface(unittest.TestCase):
@@ -13,9 +26,11 @@ class HostInterface(unittest.TestCase):
         game = spire.start_combat(1, {"encounter": "Cultist"})
         state = game.snapshot()
         self.assertEqual(state, json.loads(json.dumps(state)))
-        self.assertEqual(20, state["run"]["ascension"])
-        self.assertEqual(7, len(state["combat"]["hand"]))
-        self.assertEqual([{"id": "Ring of the Snake", "counter": -1}], state["run"]["relics"])
+        self.assertEqual(20, state["run"]["ascensionLevel"])
+        self.assertEqual(7, len(pile(state, "hand")))
+        relic = fields(state, player(state)["AbstractPlayer.relics"][0])
+        self.assertEqual("Ring of the Snake", relic["AbstractRelic.relicId"])
+        self.assertEqual(-1, relic["AbstractRelic.counter"])
 
     def test_scenario_replaces_deck_and_relics(self):
         game = spire.start_combat(2, {
@@ -23,16 +38,20 @@ class HostInterface(unittest.TestCase):
             "relics": [], "potions": [None, None], "hp": 12, "max_hp": 30, "gold": 4,
         })
         state = game.snapshot()
-        self.assertEqual(12, state["run"]["hp"])
-        self.assertEqual(30, state["run"]["max_hp"])
-        self.assertEqual(4, state["run"]["gold"])
-        self.assertEqual([], state["run"]["relics"])
-        self.assertEqual([{"id": "Defend_G", "upgrades": 1, "misc": 0}], state["run"]["master_deck"])
-        self.assertEqual("Defend_G", state["combat"]["hand"][0]["id"])
+        self.assertEqual(12, player(state)["AbstractCreature.currentHealth"])
+        self.assertEqual(30, player(state)["AbstractCreature.maxHealth"])
+        self.assertEqual(4, player(state)["AbstractCreature.gold"])
+        self.assertEqual([], player(state)["AbstractPlayer.relics"])
+        deck = pile(state, "masterDeck")
+        self.assertEqual(1, len(deck))
+        self.assertEqual("Defend_G", deck[0]["AbstractCard.cardID"])
+        self.assertEqual(1, deck[0]["AbstractCard.timesUpgraded"])
+        self.assertEqual(deck[0]["AbstractCard.uuid"], pile(state, "hand")[0]["AbstractCard.uuid"])
+        self.assertEqual("Defend_G", pile(state, "hand")[0]["AbstractCard.cardID"])
 
     def test_empty_deck_is_empty(self):
         game = spire.start_combat(3, {"encounter": "Cultist", "deck": [], "relics": []})
-        self.assertEqual([], game.snapshot()["combat"]["hand"])
+        self.assertEqual([], pile(game.snapshot(), "hand"))
         self.assertEqual([{"type": "end_turn"}], game.legal_actions())
 
     def test_signed_java_seed(self):
@@ -56,7 +75,7 @@ class HostInterface(unittest.TestCase):
     def test_terminal_combat_and_replayer_wiring(self):
         scenario = {"encounter": "Cultist", "deck": [], "relics": [], "hp": 1}
         game = spire.start_combat(8, scenario)
-        records = [{"seed": 8, "character": "THE_SILENT", "ascension": 20, "scenario": scenario}]
+        records = [{"schema": 1, "game_sha256": GAME_SHA256, "seed": 8, "character": "THE_SILENT", "ascension": 20, "scenario": scenario}]
         decisions = 0
         while game.legal_actions():
             actions = game.legal_actions()
@@ -65,8 +84,8 @@ class HostInterface(unittest.TestCase):
             game.step(action)
             decisions += 1
             self.assertLess(decisions, 10)
-        records.append({"snapshot": game.snapshot()})
-        self.assertEqual("death", game.snapshot()["screen"]["type"])
+        records.append({"snapshot": game.snapshot(), "terminal": "death"})
+        self.assertEqual("DEATH", game.snapshot()["screen"]["type"])
         with tempfile.TemporaryDirectory() as temporary:
             trace = Path(temporary) / "self_trace.jsonl"
             trace.write_text("".join(json.dumps(record) + "\n" for record in records))
@@ -82,7 +101,9 @@ class HostInterface(unittest.TestCase):
                     game.step(policy.choice(game.legal_actions()))
                     decisions += 1
                     self.assertLess(decisions, 2000)
-                self.assertIn(game.snapshot()["screen"]["type"], ["victory", "death"])
+                state = game.snapshot()
+                room = fields(state, state["room"])
+                self.assertTrue(player(state)["AbstractCreature.isDead"] or room["AbstractRoom.isBattleOver"])
 
 
 if __name__ == "__main__":
