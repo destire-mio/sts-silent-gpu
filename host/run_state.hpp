@@ -25,7 +25,6 @@ struct FreshRunState {
     std::vector<std::string> rewardTypes, rewardCards;
     std::string rewardPotion;
     int rewardGold = 0;
-    int stolenGold = 0;
     int blizzardPotionMod = 0;
     int cardBlizzRandomizer = 5;
 };
@@ -374,9 +373,8 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
     for (int i = 0; i < game.monster_order.size; ++i) {
         const Monster& monster = game.monsters[game.monster_order[i]];
         escaped &= monster.creature.escaped;
-        if (monster.creature.dead) run.stolenGold += monster_stolenGold(game, game.monster_order[i]);
     }
-    if (run.stolenGold > 0) run.rewardTypes.push_back("STOLEN_GOLD");
+    if (game.room_stolen_gold > 0) run.rewardTypes.push_back("STOLEN_GOLD");
     if (!escaped) {
         run.rewardGold = game.rng.treasure.random(10, 20);
         run.rewardTypes.push_back("GOLD");

@@ -399,11 +399,10 @@ struct SnapshotGraph {
         });
     }
 
-    py::object reward(const FreshRunState& fresh, int index) {
-        const std::string& type = fresh.rewardTypes[index];
+    py::object reward(const FreshRunState& fresh, int index, const std::string& type) {
         return object({23, index, 0}, "rewards.RewardItem", [&](const std::string& key) -> py::object {
             if (key == "RewardItem.type") return py::str(type);
-            if (key == "RewardItem.goldAmt") return py::int_(type == "GOLD" ? fresh.rewardGold : type == "STOLEN_GOLD" ? fresh.stolenGold : 0);
+            if (key == "RewardItem.goldAmt") return py::int_(type == "GOLD" ? fresh.rewardGold : type == "STOLEN_GOLD" ? game.room_stolen_gold : 0);
             if (key == "RewardItem.bonusGold") return py::int_(0);
             if (key == "RewardItem.ignoreReward" || key == "RewardItem.isDone") return py::bool_(false);
             if (key == "RewardItem.relic" || key == "RewardItem.relicLink") return py::none();
@@ -426,7 +425,7 @@ struct SnapshotGraph {
             if (key == "CombatRewardScreen.rewards") {
                 py::list result;
                 if (!game.smoked)
-                    for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i) result.append(reward(fresh, i));
+                    for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i) result.append(reward(fresh, i, fresh.rewardTypes[i]));
                 return result;
             }
             return {};
@@ -457,8 +456,9 @@ struct SnapshotGraph {
             if (field == "rewardTime") return py::bool_(game.battle_over);
             if (field == "rewards") {
                 py::list result;
+                if (!game.battle_over && game.room_stolen_gold > 0) result.append(reward(fresh, 0, "STOLEN_GOLD"));
                 for (int i = 0; i < static_cast<int>(fresh.rewardTypes.size()); ++i)
-                    if (fresh.rewardTypes[i] != "CARD") result.append(reward(fresh, i));
+                    if (fresh.rewardTypes[i] != "CARD") result.append(reward(fresh, i, fresh.rewardTypes[i]));
                 return result;
             }
             return {};

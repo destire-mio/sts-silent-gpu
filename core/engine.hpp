@@ -763,6 +763,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.room_in_combat = true;
     g.cannot_lose = false;
     g.mugged = false;
+    g.room_stolen_gold = 0;
     g.smoked = false;
     g.discard_remaining = 0;
     g.selection_any_number = g.selection_can_pick_zero = false;
