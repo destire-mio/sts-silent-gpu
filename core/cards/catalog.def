@@ -15,3 +15,4 @@ SPIRE_UNIT(RitualDagger, "RitualDagger", "core/cards/ritual_dagger.hpp", RitualD
 SPIRE_UNIT(SadisticNature, "Sadistic Nature", "core/cards/sadistic_nature.hpp", SadisticNature)
 SPIRE_UNIT(SecretTechnique, "Secret Technique", "core/cards/secret_technique.hpp", SecretTechnique)
 SPIRE_UNIT(SecretWeapon, "Secret Weapon", "core/cards/secret_weapon.hpp", SecretWeapon)
+SPIRE_UNIT(SwiftStrike, "Swift Strike", "core/cards/swift_strike.hpp", SwiftStrike)
