@@ -99,7 +99,7 @@ struct Monster {
     bool damage_modified[8]{};
     int16_t block_amount = 0;
     int16_t magic = 0;
-    bool split_triggered = false;
+    bool cannot_escape = false;
     bool escape_next = false;
     MonsterState state{};
 };

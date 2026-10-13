@@ -183,6 +183,22 @@ static void test_tools_of_the_trade() {
             "Tools completes a manual two-card discard before returning to combat input");
 }
 
+static void test_minion_constructor_owner() {
+    Game g = combat();
+    append_monster(g, construct_monster(g, MonsterId::Cultist));
+    Power first{PowerId::Minion, -1};
+    power_constructPower(g, first, 1, 0, 0, -1);
+    add_bottom(g, units::actions::ApplyPower::make(0, 0, first, -1));
+    Power second{PowerId::Minion, -1};
+    power_constructPower(g, second, 0, 1, 0, -1);
+    add_bottom(g, units::actions::ApplyPower::make(1, 1, second, -1));
+    run_until_decision(g);
+    const Power& attached_first = g.monsters[0].creature.powers.at(g.power_objects, find_power(g, g.monsters[0].creature, PowerId::Minion));
+    const Power& attached_second = g.monsters[1].creature.powers.at(g.power_objects, find_power(g, g.monsters[1].creature, PowerId::Minion));
+    require(attached_first.state.Minion.owner == 1 && attached_second.state.Minion.owner == 0,
+            "Minion retains each constructor owner independently of the creature receiving the action");
+}
+
 int main() {
     test_constructor_state();
     test_pen_nib_and_sharp_hide();
@@ -192,5 +208,6 @@ int main() {
     test_bomb_identity();
     test_stasis_discard_identity();
     test_tools_of_the_trade();
+    test_minion_constructor_owner();
     std::puts("power batch checks passed");
 }

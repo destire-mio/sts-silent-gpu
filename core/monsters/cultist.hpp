@@ -3,7 +3,7 @@
 
 namespace spire::units::monsters {
 struct Cultist : MonsterHooks {
-    SPIRE_STATE(Cultist, int16_t ritualAmount; bool firstMove;)
+    SPIRE_STATE(Cultist, int16_t ritualAmount; bool firstMove; bool talky;)
     SPIRE_FN static constexpr MonsterData data() { return {50, 56, {6, 0}, 0, 5}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         MonsterData d = data();
@@ -11,6 +11,7 @@ struct Cultist : MonsterHooks {
         Monster m = make_monster(g, MonsterId::Cultist, d, hp_override);
         m.state.Cultist.ritualAmount = g.run.ascension >= 2 ? 4 : 3;
         m.state.Cultist.firstMove = true;
+        m.state.Cultist.talky = true;
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {

@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "../actions/spawn_monster.hpp"
 
 namespace spire {
 SPIRE_FN inline void position_monster(Monster& monster, float offset_x) {
@@ -92,49 +93,48 @@ SPIRE_FN inline void queue_slimed(Game& g, int amount) {
     add_bottom(g, e);
 }
 
-SPIRE_FN inline void queue_monster_card(Game& g, CardId card, EffectKind kind, int amount) {
+SPIRE_FN inline void queue_monster_card(Game& g, CardId card, EffectKind kind, int amount, int upgrades = 0) {
     Effect e{};
     e.kind = kind;
     action_initialize_state(e);
-    e.card = create_card(g, make_card(card));
+    e.card = create_card(g, make_card(card, upgrades));
     e.amount = kind == EffectKind::MakeTempCardInDiscardAndDeck ? 0 : amount;
     if (kind == EffectKind::MakeTempCardInDrawPile) e.state.MakeTempCardInDrawPile.random_spot = true;
     add_bottom(g, e);
 }
 
+SPIRE_FN inline int queue_spawn_monster(Game& g, MonsterId id, float offset_x, bool minion, int hp = 0) {
+    const int index = g.monsters.size;
+    Monster monster = construct_monster(g, id, hp);
+    position_monster(monster, monster.offset_x + offset_x);
+    g.monsters.push_back(monster);
+    add_bottom(g, units::actions::SpawnMonster::construct(index, minion));
+    return index;
+}
+
+SPIRE_FN inline void queue_suicide(Game& g, int index, bool trigger_relics) {
+    Effect e{};
+    e.kind = EffectKind::Suicide;
+    action_initialize_state(e);
+    e.target = index;
+    e.state.Suicide.suppress_relics = !trigger_relics;
+    add_bottom(g, e);
+}
+
+SPIRE_FN inline void queue_split(Game& g, int index, MonsterId left, MonsterId right, float left_x, float right_x) {
+    Effect e{};
+    e.kind = EffectKind::CannotLose;
+    add_bottom(g, e);
+    queue_suicide(g, index, false);
+    const int hp = g.monsters[index].creature.hp;
+    queue_spawn_monster(g, left, left_x, false, hp);
+    queue_spawn_monster(g, right, right_x, false, hp);
+    e.kind = EffectKind::CanLose;
+    add_bottom(g, e);
+}
+
 SPIRE_FN inline void roll_monster_move(Game& g, int index) {
     monster_rollMove(g, index);
-}
-
-SPIRE_FN inline void interrupt_for_split(Game& g, int index) {
-    Monster& m = g.monsters[index];
-    if (!m.creature.dying && static_cast<float>(m.creature.hp) <= static_cast<float>(m.creature.max_hp) / 2.0f &&
-        m.move != 3 && !m.split_triggered) {
-        set_monster_move(g, index, 3, Intent::Unknown);
-        monster_createIntent(g, index);
-        queue_monster_move(g, index, 3, Intent::Unknown);
-        m.split_triggered = true;
-    }
-}
-
-SPIRE_FN inline void split_into(Game& g, int index, MonsterId child) {
-    Monster& parent = g.monsters[index];
-    const int hp = parent.creature.hp;
-    parent.creature.hp = 0;
-    monster_die(g, index, false);
-    for (int side = 0; side < 2; ++side) {
-        const int spawned = g.monsters.size;
-        Monster monster = construct_monster(g, child, hp);
-        position_monster(monster, parent.offset_x + (side == 0 ? -134.0f : 134.0f));
-        g.monsters.push_back(monster);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, spawned);
-        monster_init(g, spawned);
-        monster_applyPowers(g, spawned);
-        int position = 0;
-        for (int i = 0; i < g.monster_order.size; ++i)
-            if (monster.creature.draw_x > g.monsters[g.monster_order[i]].creature.draw_x) ++position;
-        g.monster_order.insert(position, spawned);
-    }
 }
 
 SPIRE_FN inline void block_random_monster(Game& g, Effect& effect) {

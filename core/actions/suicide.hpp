@@ -13,7 +13,8 @@ struct Suicide : ActionHooks {
         Creature& c = g.monsters[e.target].creature;
         c.gold = 0;
         c.hp = 0;
-        monster_die(g, e.target, !e.state.Suicide.suppress_relics);
+        // SuicideAction.update calls die(boolean), not the monsters' die() overrides.
+        monster_die_base(g, e.target, !e.state.Suicide.suppress_relics);
     }
 };
 }

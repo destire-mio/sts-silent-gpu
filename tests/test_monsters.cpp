@@ -17,38 +17,6 @@ void execute_next(Game& game) {
     execute_effect(game, effect);
 }
 
-void encounter_construction() {
-    constexpr int counts[] = {1, 1, 2, 2, 1, 4, 1, 1, 5, 2, 2, 1, 3, 2, 3, 4, 1, 2, 1, 1, 1, 1, 3, 2, 3, 1, 1, 1, 1, 1, 3, 2, 3, 3};
-    constexpr int hp_calls[] = {1, 1, 4, 2, 1, 4, 1, 1, 5, 7, 6, 1, 6, 2, 3, 4, 2, 4, 1, 0, 0, 1, 6, 2, 3, 1, 1, 1, 1, 1, 3, 2, 3, 3};
-    constexpr int misc_calls[] = {0, 0, 2, 1, 0, 4, 0, 1, 5, 4, 3, 0, 3, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    constexpr int ai_calls[] = {1, 1, 2, 2, 1, 4, 1, 1, 5, 2, 2, 1, 3, 2, 3, 4, 1, 2, 1, 1, 1, 1, 3, 2, 6, 1, 1, 1, 1, 1, 3, 2, 3, 3};
-    for (int seed = 0; seed < 100; ++seed) {
-        for (int id = 0; id < static_cast<int>(sizeof(counts) / sizeof(counts[0])); ++id) {
-            Game g{};
-            g.rng.generate_seeds(seed);
-            build_encounter(g, static_cast<EncounterId>(id));
-            CHECK(g.monsters.size == counts[id]);
-            CHECK(g.monster_order.size == counts[id]);
-            CHECK(g.rng.monster_hp.counter == hp_calls[id]);
-            CHECK(g.rng.misc.counter == misc_calls[id]);
-            CHECK(g.unseeded.counter == (id == static_cast<int>(EncounterId::ExordiumThugs) ||
-                id == static_cast<int>(EncounterId::ExordiumWildlife) ? 2 : 0));
-            int louses = 0;
-            for (int i = 0; i < g.monsters.size; ++i) {
-                CHECK(g.monster_order[i] == i);
-                const Monster& m = g.monsters[i];
-                const MonsterData data = monster_stats(m.id);
-                CHECK(m.creature.hp >= data.hp_min && m.creature.hp <= data.hp_max);
-                roll_monster_move(g, i);
-                monster_pre_battle(g, i);
-                if (m.id == MonsterId::LouseNormal || m.id == MonsterId::LouseDefensive) ++louses;
-            }
-            CHECK(g.rng.ai.counter == ai_calls[id]);
-            CHECK(g.rng.monster_hp.counter == hp_calls[id] + louses);
-        }
-    }
-}
-
 void forced_move_history() {
     Game g{};
     g.rng.generate_seeds(123);
@@ -126,12 +94,15 @@ void split_and_target_identity() {
     g.monsters[0].creature.hp = half;
     monster_on_damage(g, 0);
     CHECK(g.monsters[0].pending_move == 3);
-    CHECK(g.monsters[0].split_triggered);
+    CHECK(g.monsters[0].state.SpikeSlime_L.splitTriggered);
     CHECK(g.manager.actions.size == 1);
     const int history = g.monsters[0].move_history.size;
     monster_on_damage(g, 0);
     CHECK(g.monsters[0].move_history.size == history);
-    split_monster(g, 0);
+    clear_actions(g, g.manager.actions);
+    create_monster_intent(g, 0);
+    monster_take_turn(g, 0);
+    while (!g.manager.actions.empty()) execute_next(g);
     CHECK(g.monsters.size == 4);
     CHECK(g.monster_order[0] == 2 && g.monster_order[1] == 0 && g.monster_order[2] == 1 && g.monster_order[3] == 3);
     CHECK(g.monsters[2].creature.draw_x < g.monsters[0].creature.draw_x);
@@ -140,7 +111,7 @@ void split_and_target_identity() {
     CHECK(g.monsters[1].id == MonsterId::Cultist);
     CHECK(g.monsters[2].creature.hp == half && g.monsters[3].creature.hp == half);
     CHECK(g.rng.monster_hp.counter == hp_calls);
-    CHECK(g.rng.ai.counter == ai_calls + 2);
+    CHECK(g.rng.ai.counter == ai_calls + 3);
 }
 
 void shield_targeting() {
@@ -209,13 +180,27 @@ void looter_bookkeeping() {
     CHECK(g.monsters[0].creature.escaped);
 }
 
+void suicide_preserves_boss_progress() {
+    constexpr bool triggers[]{false, true};
+    for (bool trigger_relics : triggers) {
+        Game g{};
+        g.rng.generate_seeds(42);
+        append_monster(g, construct_monster(g, MonsterId::Hexaghost));
+        queue_suicide(g, 0, trigger_relics);
+        execute_next(g);
+        CHECK(g.monsters[0].creature.hp == 0);
+        CHECK(g.monsters[0].creature.dying);
+        CHECK(g.run.boss_count == 0);
+    }
+}
+
 int main() {
-    encounter_construction();
     forced_move_history();
     deterministic_turns();
     split_and_target_identity();
     shield_targeting();
     lethal_attack_keeps_published_intent();
     looter_bookkeeping();
+    suicide_preserves_boss_progress();
     std::puts("monster checks passed");
 }

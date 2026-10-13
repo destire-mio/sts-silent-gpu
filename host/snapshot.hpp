@@ -391,7 +391,7 @@ struct SnapshotGraph {
             if (key.compare(0, 17, "AbstractCreature.") == 0) return creature_field(index, key);
             const std::string field = key.substr(key.find('.') + 1);
             if (state.fields.contains(py::str(field))) return py::reinterpret_borrow<py::object>(state.fields[py::str(field)]);
-            if (field == "cannotEscape") return py::bool_(false);
+            if (field == "cannotEscape") return py::bool_(monster.cannot_escape);
             if (field == "damage") {
                 py::list result;
                 for (int i = 0; i < monster.damage_count; ++i) result.append(monster_damage(index, i));
@@ -422,8 +422,6 @@ struct SnapshotGraph {
                 if (name == "EnemyMoveInfo.nextMove") return py::int_(monster.pending_move);
                 return {};
             });
-            if (field == "splitTriggered") return py::bool_(monster.split_triggered);
-            if (field == "saveX") return java_float(monster.offset_x);
             return {};
         });
     }
@@ -552,6 +550,17 @@ struct SnapshotGraph {
         });
     }
 
+    template<class T, size_t N> py::object monster_array(const T (&values)[N]) {
+        py::list result;
+        for (const auto& value : values) result.append(creature(value));
+        return result;
+    }
+    template<class T, size_t N> py::object monster_map(const T (&values)[N], int first_key) {
+        py::dict result;
+        for (size_t i = 0; i < N; ++i)
+            if (values[i] != no_target) result[py::str(std::to_string(first_key + i))] = monster(values[i]);
+        return result;
+    }
     template<class T> py::object scalar(const T& value) { return py::cast(value); }
     py::object scalar(const char* value) { return value ? py::object(py::str(value)) : py::object(py::none()); }
     py::object scalar(std::nullptr_t) { return py::none(); }

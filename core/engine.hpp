@@ -891,7 +891,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
     run_until_decision(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
-    refresh_powers(g);
+    refresh_hand(g);
 }
 SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     actions.clear();

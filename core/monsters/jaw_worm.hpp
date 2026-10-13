@@ -6,7 +6,11 @@ struct JawWorm : MonsterHooks {
     SPIRE_STATE(JawWorm, int16_t bellowBlock; int16_t bellowStr; int16_t chompDmg; int16_t thrashBlock; int16_t thrashDmg; bool firstMove; bool hardMode;)
     SPIRE_FN static constexpr MonsterData data() { return {42, 46, {12, 7}, 9, 5, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        Monster m = make_monster(g, MonsterId::JawWorm, data(), hp_override);
+        MonsterData stats = data();
+        if (g.run.ascension < 7) { stats.hp_min = 40; stats.hp_max = 44; }
+        if (g.run.ascension < 17) { stats.block = 6; stats.magic = g.run.ascension >= 2 ? 4 : 3; }
+        if (g.run.ascension < 2) stats.damage[0] = 11;
+        Monster m = make_monster(g, MonsterId::JawWorm, stats, hp_override);
         m.state.JawWorm.bellowBlock = m.block_amount;
         m.state.JawWorm.bellowStr = m.magic;
         m.state.JawWorm.chompDmg = m.damage[0];
