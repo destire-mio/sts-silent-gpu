@@ -21,3 +21,4 @@ SPIRE_UNIT(AllOutAttack, "All Out Attack", "core/cards/all_out_attack.hpp", AllO
 SPIRE_UNIT(Backflip, "Backflip", "core/cards/backflip.hpp", Backflip)
 SPIRE_UNIT(Backstab, "Backstab", "core/cards/backstab.hpp", Backstab)
 SPIRE_UNIT(Bane, "Bane", "core/cards/bane.hpp", Bane)
+SPIRE_UNIT(Blur, "Blur", "core/cards/blur.hpp", Blur)
