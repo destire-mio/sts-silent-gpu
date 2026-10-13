@@ -149,7 +149,8 @@ card("makeCopy", result="Card", body="return make_card(g.cards[card].id);", cons
 
 for name in ("use",):
     hook("potions", name, "Game& g, int slot, int target")
-hook("potions", "canUse", "const Game& g, int slot", "bool", "return true;")
+hook("potions", "canUse", "const Game& g, int slot", "bool", "return potion_can_use_base(g, slot);")
+hook("potions", "canDiscard", "const Game& g, int slot", "bool", "return potion_can_discard_base(g, slot);")
 for name in ("takeTurn", "usePreBattleAction", "useUniversalPreBattleAction", "onDamage", "deathReact",
              "escapeNext", "escape", "init", "applyPowers", "createIntent", "rollMove",
              "onBossVictoryLogic", "onFinalBossVictoryLogic"):

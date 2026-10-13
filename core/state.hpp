@@ -234,6 +234,7 @@ struct Game {
     List<uint8_t, monster_capacity> monster_order{};
     ActionManager manager{};
     Screen screen = Screen::None;
+    uint16_t room_event_id = 0;
     EncounterId encounter = EncounterId::Cultist;
     EncounterState encounter_state{};
     int turn = 1;
