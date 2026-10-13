@@ -11,3 +11,4 @@ SPIRE_UNIT(JuzuBracelet, "Juzu Bracelet", "core/relics/juzu_bracelet.hpp", JuzuB
 SPIRE_UNIT(Kunai, "Kunai", "core/relics/kunai.hpp", Kunai)
 SPIRE_UNIT(Lantern, "Lantern", "core/relics/lantern.hpp", Lantern)
 SPIRE_UNIT(LetterOpener, "Letter Opener", "core/relics/letter_opener.hpp", LetterOpener)
+SPIRE_UNIT(LizardTail, "Lizard Tail", "core/relics/lizard_tail.hpp", LizardTail)
