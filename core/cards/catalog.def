@@ -21,3 +21,4 @@ SPIRE_UNIT(ThinkingAhead, "Thinking Ahead", "core/cards/thinking_ahead.hpp", Thi
 SPIRE_UNIT(Transmutation, "Transmutation", "core/cards/transmutation.hpp", Transmutation)
 SPIRE_UNIT(Trip, "Trip", "core/cards/trip.hpp", Trip)
 SPIRE_UNIT(Violence, "Violence", "core/cards/violence.hpp", Violence)
+SPIRE_UNIT(Clumsy, "Clumsy", "core/cards/clumsy.hpp", Clumsy)
