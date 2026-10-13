@@ -20,3 +20,4 @@ SPIRE_UNIT(GremlinWizard, "GremlinWizard", "core/monsters/gremlin_wizard.hpp", G
 SPIRE_UNIT(Lagavulin, "Lagavulin", "core/monsters/lagavulin.hpp", Lagavulin)
 SPIRE_UNIT(Sentry, "Sentry", "core/monsters/sentry.hpp", Sentry)
 SPIRE_UNIT(Hexaghost, "Hexaghost", "core/monsters/hexaghost.hpp", Hexaghost)
+SPIRE_UNIT(TheGuardian, "TheGuardian", "core/monsters/the_guardian.hpp", TheGuardian)
