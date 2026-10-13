@@ -102,6 +102,10 @@ if(BUILD_TESTING)
     endforeach()
     add_test(NAME host_tests COMMAND "${Python_EXECUTABLE}" -m unittest discover
         -s "${CMAKE_CURRENT_SOURCE_DIR}/tests" -p "test_*.py")
+    add_test(NAME oracle_fixtures COMMAND "${Python_EXECUTABLE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_oracle.py")
+    add_test(NAME run_coverage COMMAND "${Python_EXECUTABLE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_run_coverage.py" "${CMAKE_CURRENT_SOURCE_DIR}/tests/traces")
     add_test(NAME combat_replay COMMAND "${Python_EXECUTABLE}"
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/replay.py" "${CMAKE_CURRENT_SOURCE_DIR}/tests/traces")
     set_tests_properties(host_tests combat_replay PROPERTIES

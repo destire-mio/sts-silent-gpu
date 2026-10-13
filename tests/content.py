@@ -17,7 +17,7 @@ SEEDS = (101, 102, 103)
 def catalogs():
     return {kind: re.findall(r'SPIRE_UNIT\((\w+), "([^\"]+)", "([^\"]+)", (\w+)\)',
                             (ROOT / "core" / (kind + "s") / "catalog.def").read_text())
-            for kind in ("card", "potion", "relic", "monster", "encounter", "power", "action")}
+            for kind in ("card", "potion", "relic", "monster", "encounter", "power", "action", "event")}
 
 
 def content_cases():
@@ -32,10 +32,11 @@ def content_cases():
             if not matches and kind == "potion" and enum == "Empty":
                 continue
             if not matches:
-                assert kind == "action", (kind, game_id)
-                matches = [dict(key="action:" + game_id, kind=kind, game_id=game_id,
-                                java_class="com.megacrit.cardcrawl." + game_id,
-                                java_path=game_id.replace(".", "/") + ".java", facts={}, stage="internal")]
+                assert kind in ("action", "event"), (kind, game_id)
+                java_class = game_id if kind == "action" else re.search(r'return \{"([^"]+)"', (ROOT / header).read_text())[1]
+                matches = [dict(key=kind + ":" + java_class, kind=kind, game_id=game_id,
+                                java_class="com.megacrit.cardcrawl." + java_class,
+                                java_path=java_class.replace(".", "/") + ".java", facts={}, stage="internal")]
             unit = dict(matches[0], header=header, enum=enum)
             units[unit["key"]] = unit
     cases = {}
@@ -58,24 +59,65 @@ def content_cases():
     return units, cases
 
 
-def waiting_rules(unit):
-    hooks = set(unit["facts"].get("hooks", []))
-    waiting = hooks & {"onEnterRoom", "justEnteredRoom", "onEnterRestRoom", "onChestOpen",
-                       "onChestOpenAfter", "addCampfireOption", "canUseCampfireOption", "onRest",
-                       "onSmith", "getPrice"}
-    if unit["kind"] == "relic" and "canSpawn" in hooks:
-        waiting.add("canSpawn outside relic acquisition")
+RULE_CALLERS = {
+    "onEnterRoom": ("core/engine.hpp", "relic_onEnterRoom("),
+    "justEnteredRoom": ("core/engine.hpp", "relic_justEnteredRoom("),
+    "onEnterRestRoom": ("core/campfire.hpp", "relic_onEnterRestRoom("),
+    "onChestOpen": ("core/treasure.hpp", "relic_onChestOpen("),
+    "onChestOpenAfter": ("core/treasure.hpp", "relic_onChestOpenAfter("),
+    "addCampfireOption": ("core/campfire.hpp", "relic_addCampfireOption("),
+    "canUseCampfireOption": ("core/campfire.hpp", "relic_canUseCampfireOption("),
+    "onRest": ("core/campfire.hpp", "relic_onRest("),
+    "onSmith": ("core/campfire.hpp", "relic_onSmith("),
+    "changeNumberOfCardsInReward": ("core/rewards.hpp", "relic_changeNumberOfCardsInReward("),
+    "changeRareCardRewardChance": ("core/lifecycle.hpp", "relic_changeRareCardRewardChance("),
+    "changeUncommonCardRewardChance": ("core/lifecycle.hpp", "relic_changeUncommonCardRewardChance("),
+    "canSpawn": ("core/lifecycle.hpp", "relic_can_spawn_id("),
+    "deathReact": ("core/monsters/bandit_bear.hpp", "monster_deathReact("),
+    "boss room flag": ("core/engine.hpp", "enter_boss_treasure("),
+    "shop_multiplier": ("core/shop.hpp", ".shop_multiplier"),
+    "purge_cost": ("core/shop.hpp", ".purge_cost"),
+    "rest_heal_bonus": ("core/campfire.hpp", ".rest_heal_bonus"),
+    "bowl_hp": ("core/engine.hpp", ".bowl_hp"),
+    "event_chest_interval": ("core/event_room.hpp", ".event_chest_interval"),
+    "crosses_map_paths": ("core/engine.hpp", ".crosses_map_paths"),
+}
+
+
+def rule_consumers(unit):
     source = (ROOT / unit["header"]).read_text()
-    waiting.update(re.findall(r'SPIRE_WAITING_RULE\("([^\"]+)"\)', source))
-    if "escape_next" in source:
-        waiting.add("escapeNext")
-        if "deathReact" in hooks:
-            waiting.add("deathReact")
+    hooks = set(unit["facts"].get("hooks", [])) & RULE_CALLERS.keys()
+    if unit["kind"] != "relic":
+        hooks.discard("canSpawn")
     if "RoomKind::Boss" in source:
-        waiting.add("boss room flag")
-    for field in ("shop_multiplier", "purge_cost", "rest_heal_bonus", "bowl_hp", "score", "hides_intents"):
+        hooks.add("boss room flag")
+    for field in ("shop_multiplier", "purge_cost", "rest_heal_bonus", "bowl_hp",
+                  "event_chest_interval", "crosses_map_paths"):
         if "." + field in source:
-            waiting.add(field)
+            hooks.add(field)
+    result = {}
+    for hook in sorted(hooks):
+        path, expression = RULE_CALLERS[hook]
+        lines = (ROOT / path).read_text().splitlines()
+        matches = [index + 1 for index, line in enumerate(lines) if expression in line]
+        assert matches, (hook, path, expression)
+        result[hook] = [f"{path}:{line}" for line in matches]
+    if unit["kind"] == "event" and "canSpawn(" in source:
+        path = "core/event_room.hpp"
+        result["canSpawn"] = [f"{path}:{index + 1}" for index, line in
+                              enumerate((ROOT / path).read_text().splitlines()) if "event_canSpawn(" in line]
+    return result
+
+
+def waiting_rules(unit):
+    source = (ROOT / unit["header"]).read_text()
+    waiting = set(re.findall(r'SPIRE_WAITING_RULE\("([^\"]+)"\)', source))
+    if "escape_next" in source:
+        waiting.add("escapeNext: no caller in the original Java")
+    if ".score" in source:
+        waiting.add("score: GameOverScreen calculation is outside the snapshot contract")
+    if ".hides_intents" in source:
+        waiting.add("hides_intents: original rendering only")
     return sorted(waiting)
 
 
@@ -144,7 +186,7 @@ def trace_evidence(path, units):
     classes = {u["java_class"].removeprefix("com.megacrit.cardcrawl."): key for key, u in units.items()}
     known_relics = {u["game_id"] for u in units.values() if u["kind"] == "relic"}
     observed, missing, decisions = set(), [], 0
-    with path.open() as stream:
+    with replay.open_trace(path) as stream:
         header = json.loads(next(stream))
         for line in stream:
             row = json.loads(line)
@@ -161,7 +203,7 @@ def trace_evidence(path, units):
     return header, observed, missing, decisions
 
 
-def replay_content(output, units, cases):
+def replay_content(output, units, cases, run_paths=()):
     import spire
     document = dict(schema=2, source_sha256=source_digest(), seeds=list(SEEDS),
                     scope="Both scopes and terminal snapshots; missing units and rules-only hooks are separate",
@@ -199,6 +241,24 @@ def replay_content(output, units, cases):
         document["scenarios"][name] = dict(units=owners,
             scenario_sha256=hashlib.sha256(scenario_path.read_bytes()).hexdigest(),
             waiting_for=missing + rules, results=rows)
+    for path in run_paths:
+        header, observed, missing, decisions = trace_evidence(path, units)
+        assert header["scenario"] is None or "start" in header["scenario"], path
+        assert not missing, (path, missing)
+        name = "run:" + path.name.removesuffix(".gz").removesuffix(".jsonl")
+        assert name not in document["scenarios"], name
+        row = replay_trace(path, spire)
+        row.update(seed=header["seed"], trace_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        document["scenarios"][name] = dict(units=sorted(observed), waiting_for=[], results=[row])
+        for scope in row.get("scopes", {}).values():
+            if scope["first_difference"]:
+                scope["first_difference"] = scope["first_difference"].replace(str(path), name)
+        if row["status"] == "matched":
+            for key in observed:
+                observations[key].append(name)
+        else:
+            failed = True
+        print(name, json.dumps(row), flush=True)
     for key, unit in sorted(units.items()):
         selected = {name: value for name, value in document["scenarios"].items() if key in value["units"]}
         # An encounter's acceptance excludes foreign-content supplements; its ordinary scenarios must match.
@@ -210,6 +270,7 @@ def replay_content(output, units, cases):
         status = "different" if bad else "blocked" if any(r["status"] == "blocked" for r in primary_rows) else "matched" if eligible or observations[key] else "unobserved"
         document["units"][key] = dict(status=status, scenarios=list(selected),
             observed_in=sorted(set(observations[key])), waiting_for_rules=waiting_rules(unit),
+            rule_callers=rule_consumers(unit),
             matched_traces=sum(row["status"] == "matched" for row in eligible), blocked_traces=len(blocked))
     rows = [row for value in document["scenarios"].values() for row in value["results"]]
     document["totals"] = dict(
@@ -231,9 +292,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("record", "replay"))
     parser.add_argument("output", type=Path)
+    parser.add_argument("--runs", nargs="*", type=Path, default=[])
     args = parser.parse_args()
     units, cases = content_cases()
     if args.command == "record":
         record_content(args.output, cases)
     else:
-        raise SystemExit(replay_content(args.output, units, cases))
+        raise SystemExit(replay_content(args.output, units, cases, replay.trace_paths(args.runs)))

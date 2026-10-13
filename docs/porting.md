@@ -311,17 +311,19 @@ When CUDA is available, CTest adds `test_cuda_faults`: a capacity failure must l
 lane running, preserve the first fault, make later steps inert and allow an indexed reset.
 That runtime test is skipped when there is no GPU; LLVM generation is not GPU execution.
 
-## Hook call sites still absent
+## Hook call sites
 
 All gameplay hook names from the four Java base classes have generated declarations and static
-dispatch. The following callers are not implemented; declarations alone do not establish parity.
+dispatch. Room entry, campfires, chests, rewards and shops call their relic hooks at the Java
+sites. Relic prices are immutable tier data read by shop stock generation. Boss deaths call
+their victory hooks; Bandit Bear's death calls `deathReact` on the remaining monsters.
+`inventory/status.json` records source callers separately from trace observations.
+The following callers are outside the current Silent content; declarations alone do not establish parity.
 Adding a queued action or content unit can call the existing dispatcher from its own header.
 
 | Missing caller | Hooks awaiting that caller |
 | --- | --- |
-| Room entry, campfires, chests, rewards and shops | Relic `onEnterRoom`, `justEnteredRoom`, `onEnterRestRoom`, `addCampfireOption`, `canUseCampfireOption`, `onRest`, `onSmith`, `onChestOpen`, `onChestOpenAfter`, `changeNumberOfCardsInReward`, `changeRareCardRewardChance`, `changeUncommonCardRewardChance`, `canSpawn`, `getPrice` |
 | Actions not in the current catalog | Power `onScry`, `triggerMarks`; card `triggerOnScry`, `onChoseThisOption` |
-| Additional relic/monster rules and bosses | Relic `onTrigger`, `checkTrigger`; monster `deathReact`, `onBossVictoryLogic`, `onFinalBossVictoryLogic` |
 | Stance and orb mechanics | Power `onChannel`, `onChangeStance`; relic `onChangeStance`; card `switchedStance`, `triggerExhaustedCardsOnStanceChange` |
 
 Java hooks without gameplay callers (`onGainCharge`, `onMeditate`, `onRitual`, `onPlayerGainBlock`,
@@ -361,9 +363,10 @@ The recorder uses original dungeon constructors and room-entry callbacks and rec
 death or victory. `encounter` overrides the corresponding list entry or boss key when the
 starting room is a monster, elite or boss room. The existing combat-only format keeps its
 original behavior. `docs/design.md` specifies the setup order. Engine support for replaying
-these run-level starts is pending.
+these run-level starts uses the same room-entry path as map choices.
 
-Record the original game with several seeds; at most three JVMs may run at once. The oracle
+Record the original game with several seeds in one JVM. Keep at most two CPU-heavy processes
+running during run-loop validation. The oracle
 must have been built with `python3 oracle/build.py` before recording.
 
 ```sh
@@ -385,7 +388,7 @@ scopes through the terminal record, including legal actions, every included play
 action field, selection state and all RNG counters/state words. Full-run acceptance requires
 both scopes as well.
 
-Run all native tests, host tests and the committed combat fixtures with one command:
+Run native tests, host tests, fixture schema checks, run coverage and strict replay with one command:
 
 ```sh
 ctest --test-dir /private/tmp/spire-build --output-on-failure
@@ -416,14 +419,17 @@ Keep the original header, scenario, actions and snapshots unchanged.
 For the implemented content set, `tests/content.py record /tmp/spire-content` records every
 scenario on seeds 101, 102 and 103 in one JVM. Each job restores the initial Boss-seen
 preferences, so an earlier Boss encounter cannot change a later job's run initialization. After building the engine, run
-`PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/content.py replay /tmp/spire-content`.
+`PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/content.py replay /tmp/spire-content --runs /tmp/spire-runs`.
+The run directory contains full-run and run-start recordings; it contributes per-event
+observations and run-hook consumers to the same generated inventory.
 This generates `inventory/status.json` from strict replay results, including source/scenario/trace
 hashes, per-scope counts, terminal results and first differences. Do not edit that file. A unit's
 `matched` status requires its primary scenario and all runnable supplements to match; the separate
 blocked count is not a pass. Encounter coverage comes from the scenario encounter; powers and
 queued actions also report direct object observations. `unobserved` means no such evidence in
-this recording set, not a replay failure. Rules-only hook consumers remain a separate list even
-when the unit's combat scenario matches. This covers the recorded scenarios, not every interaction.
+this recording set, not a replay failure. Rule consumers include source call-site references. Methods without an original Java caller,
+rendering-only properties and excluded score calculations remain listed with their reasons,
+even when the unit's combat scenario matches. This covers the recorded scenarios, not every interaction.
 
 Use the Java class name for a primary scenario and `<Class>-<case>.json` for a supplement.
 Scenarios waiting for content use `blocked--<kind>-<ID>--<Class>-<case>.json`, stripping spaces and
