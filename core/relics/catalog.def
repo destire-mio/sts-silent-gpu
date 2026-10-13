@@ -6,3 +6,4 @@ SPIRE_UNIT(RegalPillow, "Regal Pillow", "core/relics/regal_pillow.hpp", RegalPil
 SPIRE_UNIT(RunicDome, "Runic Dome", "core/relics/runic_dome.hpp", RunicDome)
 SPIRE_UNIT(RunicPyramid, "Runic Pyramid", "core/relics/runic_pyramid.hpp", RunicPyramid)
 SPIRE_UNIT(SacredBark, "SacredBark", "core/relics/sacred_bark.hpp", SacredBark)
+SPIRE_UNIT(Shuriken, "Shuriken", "core/relics/shuriken.hpp", Shuriken)
