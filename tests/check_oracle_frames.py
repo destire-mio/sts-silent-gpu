@@ -60,8 +60,9 @@ def check(output):
     assert marker.read_text() == 'active\n'
     for a, b in zip(first, second):
         compare(Path(a['output']), Path(b['output']))
-    print(f'13 extra frames per decision: 31 full runs, {len(first) - 33} committed scenarios '
-          'and 2 run-start scenarios byte-identical')
+    starts = len(run_start_jobs(output / 'run-starts'))
+    print(f'13 extra frames per decision: 31 full runs, {len(first) - 31 - starts} committed scenarios '
+          f'and {starts} run-start scenarios byte-identical')
 
 
 if __name__ == '__main__':

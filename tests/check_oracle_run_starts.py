@@ -30,8 +30,14 @@ def jobs(output):
                          'Lizard Tail', 'TungstenRod', 'Torii', 'Ice Cream'],
                  potions=[None, None], hp=10000, max_hp=10000,
                  encounter='The Heart', start=dict(start, gold=0))
+    dagger = dict(deck=[dict(id='Strike_G', upgrades=1)] * 5,
+                  relics=['Ring of the Snake', 'Cursed Key', 'Matryoshka'],
+                  potions=[None, None], hp=1, max_hp=70, encounter='Maw',
+                  start=dict(act=3, floor=42, node=[1, 8], room='TreasureRoom',
+                             gold=0, keys=[True, True, False], emerald=False))
     return [dict(seed=seed, scenario=scenario, output=str(output / name))
-            for seed, scenario, name in [(204, mirror, 'mirror.jsonl'), (205, heart, 'heart.jsonl')]]
+            for seed, scenario, name in [(204, mirror, 'mirror.jsonl'), (205, heart, 'heart.jsonl'),
+                                        (332, dagger, 'dagger-death.jsonl')]]
 
 
 def check(output):
@@ -80,6 +86,11 @@ def check(output):
     assert rows[-1]['terminal'] == 'victory'
     assert rows[-1]['snapshot']['run']['is_victory']
     assert rows[-1]['snapshot']['run']['lastCombatMetricKey'] == 'The Heart'
+    rows = [json.loads(line) for line in Path(recordings[2]['output']).read_text().splitlines()][1:]
+    assert rows[-1]['terminal'] == 'death'
+    assert any(obj['class'] == 'monsters.beyond.SnakeDagger'
+               and obj['fields']['AbstractMonster.intent'] == 'DEBUG'
+               for obj in rows[-1]['snapshot']['objects'])
     print('Run starts: mirror copies without purge; purge settles before observation; Act 4 reaches victory through Shield and Spear and the Heart')
 
 

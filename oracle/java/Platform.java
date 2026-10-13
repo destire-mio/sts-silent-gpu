@@ -109,7 +109,8 @@ public final class Platform {
             }
             for (AbstractMonster monster : room.monsters.monsters) {
                 if (monster.isDying && !monster.isDead) return false;
-                if (!monster.isDeadOrEscaped() && monster.intent == AbstractMonster.Intent.DEBUG) return false;
+                // AbstractRoom.update stops the action manager on DEATH; summoned monsters may retain DEBUG.
+                if (!AbstractDungeon.player.isDead && !monster.isDeadOrEscaped() && monster.intent == AbstractMonster.Intent.DEBUG) return false;
             }
         }
         return !hasPendingCallback(AbstractDungeon.topLevelEffects)
