@@ -11,3 +11,4 @@ SPIRE_UNIT(SkillPotion, "SkillPotion", "core/potions/skill_potion.hpp", SkillPot
 SPIRE_UNIT(SmokeBomb, "SmokeBomb", "core/potions/smoke_bomb.hpp", SmokeBomb)
 SPIRE_UNIT(SneckoOil, "SneckoOil", "core/potions/snecko_oil.hpp", SneckoOil)
 SPIRE_UNIT(SpeedPotion, "SpeedPotion", "core/potions/speed_potion.hpp", SpeedPotion)
+SPIRE_UNIT(SteroidPotion, "SteroidPotion", "core/potions/steroid_potion.hpp", SteroidPotion)
