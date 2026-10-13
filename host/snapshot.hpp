@@ -185,7 +185,7 @@ struct SnapshotGraph {
             if (field == "type") return py::str(power_isDebuff(power, owner) ? "DEBUFF" : "BUFF");
             if (field == "canGoNegative") return py::bool_(data.can_negative);
             if (field == "isTurnBased") return py::bool_(power.id == PowerId::Weak || power.id == PowerId::Vulnerable || power.id == PowerId::Frail || power.id == PowerId::Entangled);
-            if (field == "isPostActionPower") return py::bool_(power.id == PowerId::Angry);
+            if (field == "isPostActionPower") return py::bool_(power.id == PowerId::Angry || power.id == PowerId::Shifting);
             if (field == "justApplied") return py::bool_(power.just_applied);
             if (field == "triggered") return py::bool_(power.triggered);
             if (field == "skipFirst") return py::bool_(power.skip_first);
@@ -445,7 +445,7 @@ struct SnapshotGraph {
                 if (effect.kind == EffectKind::Draw) return py::str("DRAW");
                 if (effect.kind == EffectKind::Discard) return py::str("DISCARD");
                 if (effect.kind == EffectKind::UseCard) return py::str(effect.flag ? "EXHAUST" : "USE");
-                if (effect.kind == EffectKind::ApplyPower) return py::str(power_isDebuff(effect.prepared_power, effect.target) ? "DEBUFF" : "POWER");
+                if (effect.kind == EffectKind::ApplyPower) return py::str("POWER");
                 if (effect.kind == EffectKind::ReducePower) return py::str("REDUCE_POWER");
                 if (effect.kind == EffectKind::RemovePower) return py::str("DEBUFF");
                 if (effect.kind == EffectKind::Shuffle) return py::str("SHUFFLE");
