@@ -13,7 +13,12 @@ struct Nightmare : PowerHooks {
         card_resetAttributes(g, card);
         p.state.Nightmare.card = card;
     }
-    static SPIRE_FN void atStartOfTurn(Game& g, Power&, int owner) {
+    static SPIRE_FN void atStartOfTurn(Game& g, Power& p, int owner) {
+        Effect copy{};
+        copy.kind = EffectKind::MakeTempCardInHand;
+        copy.card = p.state.Nightmare.card;
+        copy.amount = p.amount;
+        add_bottom(g, copy);
         Effect e{};
         e.kind = EffectKind::RemovePower;
         e.source = owner;

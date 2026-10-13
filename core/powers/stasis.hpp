@@ -18,6 +18,13 @@ struct Stasis : PowerHooks {
             e.amount = 1;
             e.flag = true;
             add_bottom(g, e);
+        } else {
+            Effect e{};
+            e.kind = EffectKind::MakeTempCardInHand;
+            e.card = p.state.Stasis.card;
+            e.amount = 1;
+            e.state.MakeTempCardInHand.same_uuid = true;
+            add_bottom(g, e);
         }
     }
 };

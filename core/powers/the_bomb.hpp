@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "../actions/damage_all_enemies.hpp"
 
 namespace spire::units::powers {
 struct TheBomb : PowerHooks {
@@ -21,6 +22,11 @@ struct TheBomb : PowerHooks {
             e.power_instance = p.instance;
             e.amount = 1;
             add_bottom(g, e);
+            if (p.amount == 1) {
+                int amounts[monster_capacity];
+            for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = p.state.TheBomb.damage;
+            add_bottom(g, actions::DamageAllEnemies::make(no_target, amounts, g.monster_order.size, DamageType::Thorns));
+            }
         }
     }
 };

@@ -8,10 +8,15 @@ struct Explosive : PowerHooks {
         Effect e{};
         e.source = owner;
         if (p.amount == 1 && !get_creature(g, owner).dying) {
+            Effect suicide{};
+            suicide.kind = EffectKind::Suicide;
+            suicide.target = owner;
+            add_bottom(g, suicide);
             // ExplosivePower.duringTurn constructs DamageInfo without applyPowers.
             e.kind = EffectKind::Damage;
             e.target = player_target;
             e.amount = 30;
+            e.flag = true;
             e.info_base = 30;
             e.damage_type = DamageType::Thorns;
         } else {

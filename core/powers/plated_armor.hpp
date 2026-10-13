@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "../actions/change_state.hpp"
 
 namespace spire::units::powers {
 struct PlatedArmor : PowerHooks {
@@ -19,6 +20,9 @@ struct PlatedArmor : PowerHooks {
     }
     static SPIRE_FN void atEndOfTurnPreEndTurnCards(Game& g, Power& p, int owner, bool) {
         queue_block(g, owner, p.amount);
+    }
+    static SPIRE_FN void onRemove(Game& g, Power&, int owner) {
+        if (owner != player_target) add_bottom(g, actions::ChangeState::make(owner, "ARMOR_BREAK"));
     }
 };
 }

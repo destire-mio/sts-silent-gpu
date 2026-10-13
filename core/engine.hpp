@@ -317,6 +317,21 @@ SPIRE_FN inline void heal_creature(Game& g, int owner, int amount) {
 }
 SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     Monster& m = g.monsters[owner];
+    const float rear_multiplier = rear_damage_multiplier(g, owner);
+    if (rear_multiplier != 1.0f) {
+        const Powers& powers = g.player.creature.powers;
+        for (int i = 0; i < powers.size; ++i) {
+            const PowerId id = power_data(powers[i].id).rear_attack_power;
+            if (id == PowerId::Count || has_power(m.creature, id)) continue;
+            Effect e{};
+            e.kind = EffectKind::ApplyPower;
+            e.source = no_target;
+            e.target = owner;
+            e.power = id;
+            e.amount = 1;
+            add_top(g, e);
+        }
+    }
     const Powers& source = m.creature.powers;
     const Powers& target = g.player.creature.powers;
     for (int d = 0; d < m.damage_count; ++d) {
@@ -338,10 +353,10 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
             value = power_atDamageFinalReceive(g, target[i], player_target, value, DamageType::Normal, -1);
             if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
-        m.damage_output[d] = max(0, floor_int(value));
+        m.damage_output[d] = static_cast<int>(max(0, floor_int(value)) * rear_multiplier);
         m.damage_modified[d] = modified;
     }
-    if (m.pending_base_damage >= 0) m.intent_damage = calculate_damage(g, owner, player_target, m.pending_base_damage);
+    if (m.pending_base_damage >= 0) m.intent_damage = calculate_intent_damage(g, owner, m.pending_base_damage);
 }
 SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
     if (!effect.flag) { g.drawn_cards.clear(); effect.flag = true; }
@@ -396,6 +411,17 @@ SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
     action_execute(g, e);
     if (e.kind != EffectKind::Draw && g.screen != Screen::Discard &&
         g.screen != Screen::Grid && g.screen != Screen::CardReward) e.done = true;
+}
+SPIRE_FN inline void end_turn_early(Game& g) {
+    for (int i = 0; i < g.manager.card_queue.size; ++i) {
+        const CardQueueItem& item = g.manager.card_queue[i];
+        if (!item.autoplay_card) continue;
+        g.cards[item.card].dont_trigger_on_use_card = true;
+        add_bottom(g, units::actions::UseCard::construct(g, item.card, no_target));
+    }
+    g.manager.card_queue.clear();
+    g.limbo.clear();
+    add_bottom(g, units::actions::NewQueueCard::construct());
 }
 SPIRE_FN inline void begin_end_turn(Game& g) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onPlayerEndTurn(g, i);
@@ -559,6 +585,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                     show.source = id;
                     show.target = id;
                     add_bottom(g, show);
+                    add_bottom(g, units::actions::IntentFlash::make(id));
                 }
                 monster_take_turn(g, id);
                 Powers& powers = g.monsters[id].creature.powers;
@@ -780,6 +807,11 @@ SPIRE_FN inline void step(Game& g, Action action) {
             if (card_def(g.cards[card].id).target == CardTarget::Enemy) {
                 target = g.monster_order[action.target];
                 SPIRE_ASSERT(alive(g.monsters[target].creature));
+                const Powers& powers = g.player.creature.powers;
+                for (int i = 0; i < powers.size; ++i)
+                    if (power_data(powers[i].id).rear_attack_power != PowerId::Count)
+                        g.player.creature.flip_horizontal = g.monsters[target].creature.draw_x < g.player.creature.draw_x;
+                refresh_powers(g);
             }
             g.manager.card_queue.push_back({card, target, g.player.energy});
         }

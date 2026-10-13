@@ -10,5 +10,15 @@ struct Poison : PowerHooks {
         p.state.Poison.source = source;
         p.amount = min(9999, p.amount);
     }
+    static SPIRE_FN void atStartOfTurn(Game& g, Power& p, int owner) {
+        if (!g.battle_over && !monsters_basically_dead(g)) {
+            Effect e{};
+            e.kind = EffectKind::PoisonLoseHp;
+            e.source = p.state.Poison.source;
+            e.target = owner;
+            e.amount = p.amount;
+            add_bottom(g, e);
+        }
+    }
 };
 }

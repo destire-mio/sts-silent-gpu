@@ -56,7 +56,7 @@ SPIRE_FN inline void create_monster_intent(Game& g, int index) {
     m.intent = m.pending_intent;
     m.intent_base_damage = m.pending_base_damage;
     if (m.pending_base_damage >= 0) {
-        m.intent_damage = calculate_damage(g, index, player_target, m.pending_base_damage);
+        m.intent_damage = calculate_intent_damage(g, index, m.pending_base_damage);
         m.intent_multi = m.pending_multi;
         m.intent_hits = m.pending_multi ? m.pending_hits : -1;
     }

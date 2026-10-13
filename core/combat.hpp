@@ -118,6 +118,27 @@ SPIRE_FN inline void add_top(Game& g, const Effect& effect) {
     action_prepare(g, prepared);
     g.manager.actions.push_front(prepared);
 }
+SPIRE_FN inline float rear_damage_multiplier(const Game& g, int monster) {
+    const Creature& player = g.player.creature;
+    if (!((player.flip_horizontal && player.draw_x < g.monsters[monster].creature.draw_x) ||
+          (!player.flip_horizontal && player.draw_x > g.monsters[monster].creature.draw_x))) return 1.0f;
+    float multiplier = 1.0f;
+    for (int i = 0; i < player.powers.size; ++i)
+        multiplier *= power_data(player.powers[i].id).rear_damage_multiplier;
+    return multiplier;
+}
+SPIRE_FN inline int calculate_intent_damage(const Game& g, int monster, int base) {
+    float value = static_cast<float>(base);
+    const Powers& source = g.monsters[monster].creature.powers;
+    const Powers& target = g.player.creature.powers;
+    for (int i = 0; i < source.size; ++i) value = power_atDamageGive(g, source[i], monster, value, DamageType::Normal);
+    for (int i = 0; i < target.size; ++i) value = power_atDamageReceive(g, target[i], player_target, value, DamageType::Normal);
+    const float multiplier = rear_damage_multiplier(g, monster);
+    if (multiplier != 1.0f) value = static_cast<int>(value * multiplier);
+    for (int i = 0; i < source.size; ++i) value = power_atDamageFinalGive(g, source[i], monster, value, DamageType::Normal);
+    for (int i = 0; i < target.size; ++i) value = power_atDamageFinalReceive(g, target[i], player_target, value, DamageType::Normal);
+    return max(0, floor_int(value));
+}
 SPIRE_FN inline int calculate_damage(const Game& g, int source, int target, int base, DamageType type, int card) {
     float value = static_cast<float>(base);
     if (card >= 0) {
@@ -167,6 +188,8 @@ SPIRE_FN inline void queue_damage(Game& g, int source, int target, int base, Dam
     e.source = source;
     e.target = target;
     e.amount = calculate_damage(g, source, target, base, type);
+    if (source >= 0 && target == player_target && type == DamageType::Normal)
+        e.amount = static_cast<int>(e.amount * rear_damage_multiplier(g, source));
     e.info_base = base;
     e.damage_type = type;
     e.extra = steal;

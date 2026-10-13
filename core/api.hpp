@@ -3,6 +3,9 @@
 #include "spire_generated/declarations.hpp"
 
 namespace spire {
+SPIRE_FN inline float rear_damage_multiplier(const Game&, int);
+SPIRE_FN inline int calculate_intent_damage(const Game&, int, int);
+SPIRE_FN inline void end_turn_early(Game&);
 SPIRE_FN inline Creature& get_creature(Game&, int);
 SPIRE_FN inline const Creature& get_creature(const Game&, int);
 SPIRE_FN inline bool alive(const Creature&);

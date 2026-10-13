@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "../actions/change_state.hpp"
 
 namespace spire::units::powers {
 struct Flight : PowerHooks {
@@ -28,6 +29,9 @@ struct Flight : PowerHooks {
             add_bottom(g, e);
         }
         return amount;
+    }
+    static SPIRE_FN void onRemove(Game& g, Power&, int owner) {
+        add_bottom(g, actions::ChangeState::make(owner, "GROUNDED"));
     }
 };
 }

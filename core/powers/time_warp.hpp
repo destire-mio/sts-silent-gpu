@@ -9,6 +9,7 @@ struct TimeWarp : PowerHooks {
         ++p.amount;
         if (p.amount == 12) {
             p.amount = 0;
+            end_turn_early(g);
             for (int i = 0; i < g.monster_order.size; ++i) {
                 const int owner = g.monster_order[i];
                 Effect e{};
