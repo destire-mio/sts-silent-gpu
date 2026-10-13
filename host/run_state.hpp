@@ -396,6 +396,8 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
     const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
     int count = 3;
     for (int i = 0; i < game.run.relics.size; ++i) count = relic_changeNumberOfCardsInReward(game, i, count);
+    bool any_color = false;
+    for (int i = 0; i < game.run.relics.size; ++i) any_color |= relic_data(game.run.relics[i].id).any_color_rewards;
     std::vector<int> rarities;
     for (int i = 0; i < count; ++i) {
         const int roll = game.rng.card.random(99) + run.cardBlizzRandomizer;
@@ -404,7 +406,17 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         if (rarity == 2) run.cardBlizzRandomizer = 5;
         if (rarity == 0) run.cardBlizzRandomizer = std::max(-40, run.cardBlizzRandomizer - 1);
         std::string card;
-        do { card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)].id; }
+        do {
+            if (any_color) {
+                std::vector<const char*> candidates;
+                const CardRarity types[] = {CardRarity::Common, CardRarity::Uncommon, CardRarity::Rare};
+                for (const auto& entry : library_reward_cards)
+                    if (entry.rarity == types[rarity]) candidates.push_back(entry.id);
+                // CardLibrary.getAnyColorCard shuffles, then CardGroup.getRandomCard sorts by cardID.
+                game.rng.card.randomLong();
+                card = candidates[game.rng.card.random(static_cast<int>(candidates.size()) - 1)];
+            } else card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)].id;
+        }
         while (std::find(run.rewardCards.begin(), run.rewardCards.end(), card) != run.rewardCards.end());
         run.rewardCards.push_back(card);
     }

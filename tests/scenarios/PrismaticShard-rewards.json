@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 150,
+  "max_hp": 150,
+  "encounter": "Cultist"
+}

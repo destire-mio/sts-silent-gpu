@@ -25,7 +25,7 @@ def reward_templates(units, schema):
     cards = {}
     for unit in units:
         facts = unit["facts"]
-        if unit["kind"] != "card" or facts.get("color") != "GREEN" or facts["rarity"] not in ("COMMON", "UNCOMMON", "RARE"):
+        if unit["kind"] != "card" or facts["rarity"] not in ("COMMON", "UNCOMMON", "RARE") or facts["type"] in ("CURSE", "STATUS"):
             continue
         fields = dict(card_base, cardID=unit["game_id"], cost=facts["cost"], costForTurn=facts["cost"])
         fields.update({key: facts[key] for key in ("color", "rarity", "target", "type", "tags")})
@@ -35,8 +35,13 @@ def reward_templates(units, schema):
             field = change["field"].removeprefix("this.")
             if change.get("method") == constructor and field in schema["cards.AbstractCard"]["fields"]:
                 assert change["operation"] == "=" and not change["conditions"]
-                assert isinstance(change["value"], (int, bool, str))
-                fields[field] = change["value"]
+                value = change["value"]
+                if isinstance(value, dict):
+                    member = re.fullmatch(r'this\s*\.\s*(\w+)', value['expression'])
+                    assert member is not None
+                    value = fields[member[1]]
+                assert isinstance(value, (int, bool, str))
+                fields[field] = value
         assert set(fields) | {"uuid"} == set(schema["cards.AbstractCard"]["fields"])
         cards[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
                                   "fields": {"AbstractCard." + key: value for key, value in fields.items()}}
