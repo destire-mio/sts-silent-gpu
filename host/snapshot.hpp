@@ -511,7 +511,7 @@ struct SnapshotGraph {
     }
     py::object effect(const Effect& effect, int queue, int index) {
         const std::string name = effect_names[static_cast<int>(effect.kind)];
-        if (name.compare(0, 8, "actions.") != 0) return {};
+        if (!inventory["schema"].cast<py::dict>().contains(py::str(name))) return {};
         UnitStateSnapshot state;
         action_visit_state(effect, state);
         return object({15, queue, index}, name, [&](const std::string& key) -> py::object {
@@ -536,7 +536,7 @@ struct SnapshotGraph {
         case PileId::Discard: return group(0, "DISCARD_PILE", &game.discard);
         case PileId::Exhaust: return group(2, "EXHAUST_PILE", &game.exhaust);
         case PileId::Limbo: return group(4, "UNSPECIFIED", &game.limbo);
-        case PileId::Grid: return group(21, "UNSPECIFIED", &game.grid_cards);
+        case PileId::Grid: return group(7, "UNSPECIFIED", &game.grid_cards);
         }
         SPIRE_ASSERT(false);
         __builtin_unreachable();
@@ -651,7 +651,7 @@ struct SnapshotGraph {
             result["state"] = object({17, grid ? 1 : 0, 0}, grid ? "screens.select.GridCardSelectScreen" : "screens.select.HandCardSelectScreen", [&](const std::string& key) -> py::object {
                 const std::string field = key.substr(key.find('.') + 1);
                 if (grid) {
-                    if (field == "targetGroup") return game.grid_source == PileId::Discard ? group(0, "DISCARD_PILE", &game.discard) : group(7, "UNSPECIFIED", &game.grid_cards);
+                    if (field == "targetGroup") return pile_group(game.grid_source);
                     if (field == "selectedCards") {
                         py::list selected;
                         for (int i = 0; i < game.selected_cards.size; ++i) selected.append(card(game.selected_cards[i]));
