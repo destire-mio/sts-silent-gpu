@@ -620,6 +620,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
     }
 }
 SPIRE_FN inline void reset(Game& g, uint64_t seed) {
+    bind_fault(g);
     g = Game{};
     g.run.seed = seed;
     g.unseeded.reset(seed);
@@ -638,6 +639,8 @@ SPIRE_FN inline void reset(Game& g, uint64_t seed) {
         for (int i = pool_sizes[p] - 1; i >= 0; --i) g.run.source_card_pools[p].push_back(i);
 }
 SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
+    if (g.fault != 0) return;
+    bind_fault(g);
     g.run.floor = setup.floor;
     g.run.gold = setup.gold;
     g.run.master_deck = setup.deck;
@@ -725,6 +728,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
 }
 SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     actions.clear();
+    if (g.fault != 0) return;
     if (g.screen == Screen::Discard) {
         if (g.selected_cards.size < g.selection_amount)
             for (int i = 0; i < g.hand.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
@@ -768,6 +772,8 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     }
 }
 SPIRE_FN inline void step(Game& g, Action action) {
+    if (g.fault != 0) return;
+    bind_fault(g);
     if (g.screen == Screen::Discard) {
         if (action.kind == ActionKind::Choose) {
             SPIRE_ASSERT(g.selected_cards.size < g.selection_amount);

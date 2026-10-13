@@ -105,6 +105,7 @@ struct Environment {
     }
     py::list legal_actions() const { return legal_snapshot(game); }
     void step(const py::dict& action) {
+        if (game.fault != 0) return;
         spire::step(game, parse_action(action));
         if (game.screen == Screen::Victory) settle_combat_rewards(game, fresh);
     }
@@ -126,7 +127,8 @@ PYBIND11_MODULE(spire, module) {
         .def("legal_actions", &Environment::legal_actions)
         .def("step", &Environment::step, "action"_a)
         .def("snapshot", &Environment::snapshot)
-        .def("schema_gaps", &Environment::schema_gaps);
+        .def("schema_gaps", &Environment::schema_gaps)
+        .def_property_readonly("fault", [](const Environment& env) { return env.game.fault; });
     module.def("reset", [](std::int64_t seed) { Environment result; result.reset(seed); return result; }, "seed"_a);
     module.def("start_combat", [](std::int64_t seed, const py::dict& scenario) {
         Environment result; result.start_combat(seed, scenario); return result;
@@ -153,6 +155,14 @@ PYBIND11_MODULE(spire, module) {
             SPIRE_ASSERT(values.size() == batch.games.size());
             for (std::size_t i = 0; i < batch.games.size(); ++i) batch.games[i].step(values[i].cast<py::dict>());
         }, "actions"_a)
+        .def("faults", [](const EnvironmentBatch& batch) {
+            std::vector<uint32_t> result;
+            for (const auto& env : batch.games) result.push_back(env.game.fault);
+            return result;
+        })
+        .def("reset_at", [](EnvironmentBatch& batch, std::size_t index, std::int64_t seed) {
+            batch.games[index].reset(seed);
+        }, "index"_a, "seed"_a)
         .def("snapshot", [](const EnvironmentBatch& batch) {
             py::list result;
             for (const auto& game : batch.games) result.append(game.snapshot());

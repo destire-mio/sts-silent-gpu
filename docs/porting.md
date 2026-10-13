@@ -149,13 +149,42 @@ and events, and the combat copy has the same capacity plus whatever unused slots
 created cards. **128 cards, 64 actions and 128 powers are execution budgets, not Java limits.**
 Java uses growing lists; card-creation loops and repeated turns have no finite bound. Histories,
 held actions, detached powers, text and damage rows can also exhaust their budgets. A valid Java
-sequence can exceed these budgets and trigger `SPIRE_ASSERT`. Never silently truncate, overwrite
-live slots, or shrink an amount to fit a capacity.
+sequence can therefore fault an environment; count this separately from losses and reset it.
+Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
 Card damage/block/magic, power amounts, energy and rule counters keep Java's 32-bit range.
 Poison's constructor cap, for example, is not its stacking limit. Only bounded indices use
 bytes; signed card references and costs retain 16 bits, and monster moves use Java signed bytes.
 The index-width assertions in `types.hpp` must hold when changing capacities.
+
+## Device faults
+
+`SPIRE_ASSERT` is the only capacity/invariant failure mechanism. Host builds trap even with
+`NDEBUG`. On device, the first failure records a nonzero 32-bit hash of `__FILE__` and `__LINE__`
+in `Game::fault`, then [PTX `exit`](https://docs.nvidia.com/cuda/parallel-thread-execution/#control-flow-instructions-exit)
+ends that thread before the failed operation writes out of bounds. The compiler memory clobber
+keeps the fault store before the exit. Earlier mutations in that step are not rolled back.
+`step` then does nothing until `reset` clears the fault; `legal_actions` returns an empty set.
+Fault metadata is outside the oracle snapshot and does not filter the comparison.
+
+The block-shared pointer array in `platform.hpp` binds each CUDA thread to its own fault word.
+This is the sole exception to the no-mutable-statics rule, not a content state mechanism.
+`reset`, `start_combat` and `step` bind their Game on entry. Custom kernels must call
+`bind_fault(game)` before other core operations that can assert, including `legal_actions`.
+There are 1,024 pointer slots per block (8 KiB), CUDA's maximum threads per block; each lane
+writes and reads only its own slot. No pointer is stored in `Game` or shared across launches.
+
+Host batches expose `faults()` and `reset_at(index, seed)`; individual Python environments
+expose the read-only `fault` property. CUDA batch entry points are declared in `cuda/batch.cuh`:
+`spire_faults_batch` writes one fault code per environment, and `spire_reset_batch` resets the
+listed environment indices with their supplied seeds. Launch these kernels with one-dimensional
+grids/blocks and assign each environment to one thread. Reset indices must be distinct.
+
+The normal build checks the host device-C++ restrictions and compiles the device branch and
+batch kernels to NVPTX-targeted LLVM with Clang, without requiring a CUDA installation.
+When CUDA is available, CTest adds `test_cuda_faults`: a capacity failure must leave the other
+lane running, preserve the first fault, make later steps inert and allow an indexed reset.
+That runtime test is skipped when there is no GPU; LLVM generation is not GPU execution.
 
 ## Hook call sites still absent
 

@@ -215,6 +215,7 @@ struct CardDamage {
     }
 };
 struct Game {
+    uint32_t fault = 0;
     TextStore text{};
     Run run{};
     RngStreams rng{};
@@ -256,6 +257,14 @@ struct Game {
     bool mugged = false;
     int bomb_id_offset = 0;
 };
+SPIRE_FN inline void bind_fault(Game& g) {
+#if defined(__CUDA_ARCH__)
+    device_fault_target() = &g.fault;
+#else
+    (void)g;
+#endif
+}
+
 struct CombatSetup {
     EncounterId encounter = EncounterId::Cultist;
     int floor = 1;

@@ -25,9 +25,14 @@ Device C++: the code under `core/` must compile both as host C++17 and inside CU
 - every function carries `SPIRE_FN` (`__host__ __device__` under CUDA, empty otherwise)
 - no heap, no exceptions, no RTTI, no virtual functions, no recursion, no function pointers
 - no standard library beyond `<cstdint>`, `<cstddef>` and fixed-size helpers defined in `core/`
-- no mutable globals or statics; constant tables are `constexpr` arrays
-- capacities (cards per pile, monsters, queued actions, powers) are constants sized from the
-  game's real limits; overflow is `SPIRE_ASSERT`, never silent truncation
+- no mutable globals or statics; constant tables are `constexpr` arrays. The sole exception is
+  the per-thread fault-pointer array in CUDA block shared memory in `platform.hpp`; it routes
+  assertions to the owning `Game` and stores no rule state
+- capacities and their Java basis are documented in `porting.md`. Java growing lists have
+  execution budgets, not invented game limits; overflow is `SPIRE_ASSERT`, never truncation
+- host assertions abort, including release builds. Device assertions latch the first call-site
+  code in `Game::fault` and end only that thread with PTX `exit`. `step` on a faulted game is a
+  no-op; the trainer reads faults through the batch API and resets those environments
 
 Faithfulness comes from keeping the game's own structure:
 - the action queue, with `addToBottom` / `addToTop`, the pre-turn and card queues, and the

@@ -139,14 +139,32 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("root", type=Path)
     parser.add_argument("--compiler", required=True)
-    parser.add_argument("--generated", type=Path)
+    parser.add_argument("--generated", type=Path, required=True)
     args = parser.parse_args()
     errors = check(args.root, args.compiler, args.generated)
+    if not errors:
+        with tempfile.TemporaryDirectory(prefix="spire-cuda-check-") as temporary:
+            unit = Path(temporary) / "batch.cu"
+            unit.write_text('''#define __CUDACC__ 1
+#define __device__ __attribute__((device))
+#define __host__ __attribute__((host))
+#define __global__ __attribute__((global))
+#define __shared__ __attribute__((shared))
+struct dim3 { unsigned x, y, z; };
+extern __device__ const dim3 threadIdx, blockIdx, blockDim;
+#include "cuda/batch.cu"
+''')
+            result = subprocess.run(
+                [args.compiler, "-std=c++17", "-x", "cuda", "--cuda-device-only", "-nocudainc",
+                 "-nocudalib", "-O1", "-S", "-emit-llvm", "-o", str(Path(temporary) / "batch.ll"), "-I", str(args.root.resolve().parent),
+                 "-I", str(args.generated.resolve().parent), str(unit)], capture_output=True, text=True)
+            if result.returncode:
+                errors.append(result.stderr.rstrip())
     for error in errors:
         print(error, file=sys.stderr)
     if errors:
         return 1
-    print("Device C++ check passed")
+    print("Device C++ and CUDA device LLVM generation checks passed")
     return 0
 
 

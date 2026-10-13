@@ -22,6 +22,17 @@ def pile(state, name):
 
 
 class HostInterface(unittest.TestCase):
+    def test_fault_api_and_indexed_reset(self):
+        batch = spire.Batch(2)
+        batch.start_combat([1, 2], {"encounter": "Cultist"})
+        batch.step([{"type": "end_turn"}, {"type": "end_turn"}])
+        other = batch.snapshot()[1]
+        batch.reset_at(0, 19)
+        self.assertEqual([0, 0], batch.faults())
+        self.assertEqual(19, batch.snapshot()[0]["run"]["seed"])
+        self.assertEqual(other, batch.snapshot()[1])
+        self.assertEqual(0, spire.reset(1).fault)
+
     def test_snapshot_is_json(self):
         game = spire.start_combat(1, {"encounter": "Cultist"})
         state = game.snapshot()
