@@ -6,3 +6,4 @@ SPIRE_UNIT(LiquidBronze, "LiquidBronze", "core/potions/liquid_bronze.hpp", Liqui
 SPIRE_UNIT(LiquidMemories, "LiquidMemories", "core/potions/liquid_memories.hpp", LiquidMemories)
 SPIRE_UNIT(PoisonPotion, "Poison Potion", "core/potions/poison_potion.hpp", PoisonPotion)
 SPIRE_UNIT(PowerPotion, "PowerPotion", "core/potions/power_potion.hpp", PowerPotion)
+SPIRE_UNIT(RegenPotion, "Regen Potion", "core/potions/regen_potion.hpp", RegenPotion)
