@@ -18,8 +18,10 @@ inventory entry. Do not edit the engine's dispatch, a shared list of IDs, or hos
 
 CMake runs `host/generate_content.py` before compilation. It writes enum IDs, base hooks,
 declarations and switch dispatch into `spire_generated/` inside the build directory. Host names
-read the same catalogs. Card metadata is a shared constexpr table built from each unit's
-`data()`; `card_def` returns a const reference and adds no per-Game storage. Generated files are build products; do not edit or commit them.
+read the same catalogs. Unit metadata uses shared constexpr tables built from each unit's
+`data()`; the generated accessors return const references and add no per-Game storage. Units
+inheriting the same default hook share one dispatch branch. Generated files are build products;
+do not edit or commit them.
 
 ## Unit code
 
@@ -389,8 +391,8 @@ and `run` results, their matching/total decision counts, and the first differing
 both values in each failed scope. Both scopes are checked at every decision, including after a
 difference when the recorded action remains legal. The final line counts passing traces and
 matching decision records per scope. Terminal snapshots and reasons must match for a trace to
-pass but do not add a decision to the count. Both scopes must pass for a scenario or full-run trace. The committed `full-run-1` fixture is
-reported separately as an expected failure until the rules wave; it never counts as a pass.
+pass but do not add a decision to the count. Both scopes must pass for a scenario or full-run
+trace, including the committed `full-run-1` fixture.
 
 Comparison resolves object references from roots and checks identity with bijective mappings;
 renumbering the object table does not create a difference. Combat includes the whole player,

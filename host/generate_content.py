@@ -124,7 +124,7 @@ def card(name, suffix="", result="void", body="", const=False):
 
 
 hook("cards", "upgrade", "Card& card", selector="card.id")
-hook("cards", "baseBlock", "const Card& card", "int", "const CardDef d = card_def(card.id); return d.block + card.upgrades * d.upgrade_block;", selector="card.id")
+hook("cards", "baseBlock", "const Card& card", "int", "const CardDef& d = card_def(card.id); return d.block + card.upgrades * d.upgrade_block;", selector="card.id")
 card("use", "int target")
 for name in ("tookDamage", "didDiscard", "onMoveToDiscard", "triggerWhenDrawn",
              "triggerWhenCopied", "triggerOnEndOfTurnForPlayingCard", "triggerOnManualDiscard", "triggerOnScry",
@@ -359,19 +359,12 @@ def generate(root, output):
             content.append('default: SPIRE_ASSERT(false); } }')
         if kind in ("cards", "powers", "relics", "potions", "monsters", "actions", "events"):
             datatype = {"cards": "CardDef", "powers": "PowerData", "relics": "RelicData", "potions": "PotionData", "monsters": "MonsterData", "actions": "ActionData", "events": "EventData"}[kind]
-            if kind == "cards":
-                declarations.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id);')
-                content.append(f'constexpr {datatype} {prefix}_definitions[] = {{')
-                for _, _, _, typename in entries:
-                    content.append(f'    units::{kind}::{typename}::data(),')
-                content.append('};')
-                content.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id) {{ SPIRE_ASSERT(id < {enum}::Count); return {prefix}_definitions[static_cast<int>(id)]; }}')
-            else:
-                declarations.append(f'SPIRE_FN inline {datatype} {prefix}_data({enum} id);')
-                content.append(f'SPIRE_FN inline {datatype} {prefix}_data({enum} id) {{ switch (id) {{')
-                for unit, _, _, typename in entries:
-                    content.append(f'case {enum}::{unit}: return units::{kind}::{typename}::data();')
-                content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+            declarations.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id);')
+            content.append(f'constexpr {datatype} {prefix}_definitions[] = {{')
+            for _, _, _, typename in entries:
+                content.append(f'    units::{kind}::{typename}::data(),')
+            content.append('};')
+            content.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id) {{ SPIRE_ASSERT(id < {enum}::Count); return {prefix}_definitions[static_cast<int>(id)]; }}')
         if base:
             bases.append(f'struct {base} {{')
             if kind == "actions":
@@ -385,14 +378,23 @@ def generate(root, output):
             if base and name != "construct" and not (kind == "monsters" and name in ("getMove", "takeTurn")) and not (kind == "actions" and name == "execute"):
                 unused = ' '.join(f'(void){arg};' for arg in args if not re.search(r'\b' + arg + r'\b', body))
                 bases.append(f'    static SPIRE_FN {result} {name}({signature}) {{ {unused} {body} }}')
-            content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ switch ({custom_selector or selector}) {{')
+            discriminator = custom_selector or selector
+            content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ SPIRE_ASSERT({discriminator} < {enum}::Count); switch ({discriminator}) {{')
             call_args = list(args)
             if name == 'construct' or kind == 'encounters':
                 call_args.remove('id')
-            for unit, _, _, typename in entries:
+            inherited = []
+            for unit, _, path, typename in entries:
+                source = (root / path).read_text()
+                if base and re.search(r'\bstruct\s+' + typename + r'\s*:\s*' + base + r'\s*\{', source) and not re.search(r'\b' + name + r'\s*\(', source):
+                    inherited.append(unit)
+                    continue
                 invocation = f'units::{kind}::{typename}::{name}({", ".join(call_args)})'
                 content.append(f'case {enum}::{unit}: return {invocation};')
-            content.append('default: SPIRE_ASSERT(false); }' + (' __builtin_unreachable();' if result != 'void' else '') + ' }')
+            if inherited:
+                content.append(f'default: return {base}::{name}({", ".join(call_args)}); }} }}')
+            else:
+                content.append('default: SPIRE_ASSERT(false); }' + (' __builtin_unreachable();' if result != 'void' else '') + ' }')
         if base:
             bases.append('};')
     for lines in (ids, declarations, bases, content):
