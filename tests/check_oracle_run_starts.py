@@ -39,8 +39,20 @@ def check(output):
     run_jobs(recordings)
     rows = [json.loads(line) for line in Path(recordings[0]['output']).read_text().splitlines()][1:]
     copied = False
+    purged = False
     for before, after in zip(rows, rows[1:]):
         snapshot = before['snapshot']
+        if snapshot['screen']['type'] == 'GRID':
+            grid = fields(snapshot, snapshot['screen']['state'])
+            if grid['GridCardSelectScreen.forPurge'] and grid['GridCardSelectScreen.confirmScreenUp']:
+                assert before['action']['type'] == 'proceed'
+                following = after['snapshot']
+                assert following['screen']['type'] == 'SHOP'
+                assert len(deck(following)) == len(deck(snapshot)) - 1
+                assert fields(snapshot, snapshot['player'])['AbstractCreature.gold'] - fields(following, following['player'])['AbstractCreature.gold'] == snapshot['globals']['shop']['actualPurgeCost']
+                assert following['globals']['shop']['purgeCost'] == snapshot['globals']['shop']['purgeCost'] + 25
+                assert not fields(following, following['screen']['state'])['ShopScreen.purgeAvailable']
+                purged = True
         pending = [obj for obj in snapshot['objects'] if obj['class'] == 'relics.DollysMirror'
                    and not obj['fields']['DollysMirror.cardSelected']]
         if snapshot['screen']['type'] != 'GRID' or not pending:
@@ -58,6 +70,7 @@ def check(output):
                    for obj in following['objects'])
         copied = True
     assert copied
+    assert purged
     assert rows[-1]['terminal'] in ('death', 'victory')
     rows = [json.loads(line) for line in Path(recordings[1]['output']).read_text().splitlines()][1:]
     rooms = {row['snapshot']['objects'][row['snapshot']['room']['ref']]['class'] for row in rows}
@@ -67,7 +80,7 @@ def check(output):
     assert rows[-1]['terminal'] == 'victory'
     assert rows[-1]['snapshot']['run']['is_victory']
     assert rows[-1]['snapshot']['run']['lastCombatMetricKey'] == 'The Heart'
-    print('Run starts: shop mirror copies without purge; Act 4 reaches victory through Shield and Spear and the Heart')
+    print('Run starts: mirror copies without purge; purge settles before observation; Act 4 reaches victory through Shield and Spear and the Heart')
 
 
 if __name__ == '__main__':

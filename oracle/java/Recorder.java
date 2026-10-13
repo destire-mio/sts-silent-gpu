@@ -59,7 +59,9 @@ public final class Recorder {
         if (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) return CardCrawlGame.mode == CardCrawlGame.GameMode.CHAR_SELECT && !CardCrawlGame.mainMenuScreen.isFadingOut;
         if (AbstractDungeon.isFadingOut || AbstractDungeon.isFadingIn || AbstractDungeon.player == null) return false;
         if (terminal(false)) return true;
-        if (!AbstractDungeon.isScreenUp && !AbstractDungeon.gridSelectScreen.selectedCards.isEmpty()) return false;
+        // ShopScreen.updatePurge consumes the GRID result on the next SHOP update.
+        if ((!AbstractDungeon.isScreenUp || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.SHOP)
+                && !AbstractDungeon.gridSelectScreen.selectedCards.isEmpty()) return false;
         if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.HAND_SELECT
                 && Choices.<Boolean>get(AbstractDungeon.handCardSelectScreen, "waitThenClose")) return false;
         if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.MAP)
