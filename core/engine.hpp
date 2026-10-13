@@ -476,6 +476,10 @@ SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
 SPIRE_FN inline void begin_player_turn(Game& g) {
     settle_card_moves(g);
     for (int i = 0; i < g.monster_order.size; ++i) {
+        Creature& creature = g.monsters[g.monster_order[i]].creature;
+        if (creature.dead) creature.powers.clear();
+    }
+    for (int i = 0; i < g.monster_order.size; ++i) {
         const int id = g.monster_order[i];
         if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_turn(g, id);
     }
