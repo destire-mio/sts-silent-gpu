@@ -418,9 +418,15 @@ struct SnapshotGraph {
     py::object reward_potion(const FreshRunState& fresh) {
         const py::dict data = inventory["rewards"].cast<py::dict>()["potions"].cast<py::dict>()[py::str(fresh.rewardPotion)].cast<py::dict>();
         const py::dict fields = data["fields"].cast<py::dict>();
+        Game initialized = game;
+        PotionId id = PotionId::Count;
+        for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
+            if (fresh.rewardPotion == potion_names[i]) id = static_cast<PotionId>(i);
+        SPIRE_ASSERT(id != PotionId::Count);
+        initialized.run.potions[0] = id;
+        initialized.run.potion_state[0] = construct_potion(initialized, initialized.run.potions[0]);
         return object({22, 0, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractPotion.potency" && fields[py::str(key)].is_none())
-                return py::int_(std::size(game.run.potions));
+            if (key == "AbstractPotion.potency") return py::int_(potion_potency(initialized, 0));
             return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
         });
     }
