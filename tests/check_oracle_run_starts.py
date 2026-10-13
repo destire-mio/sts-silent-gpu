@@ -18,7 +18,7 @@ def deck(snapshot):
     return [fields(snapshot, card) for card in group['CardGroup.group']]
 
 
-def check(output):
+def jobs(output):
     start = dict(act=4, floor=52, node=[3, 0], room='RestRoom', gold=2000,
                  keys=[True, True, True], emerald=False)
     mirror = dict(deck=[dict(id='Grand Finale', upgrades=1)] * 5,
@@ -30,10 +30,14 @@ def check(output):
                          'Lizard Tail', 'TungstenRod', 'Torii', 'Ice Cream'],
                  potions=[None, None], hp=10000, max_hp=10000,
                  encounter='The Heart', start=dict(start, gold=0))
-    jobs = [dict(seed=seed, scenario=scenario, output=str(output / name))
+    return [dict(seed=seed, scenario=scenario, output=str(output / name))
             for seed, scenario, name in [(204, mirror, 'mirror.jsonl'), (205, heart, 'heart.jsonl')]]
-    run_jobs(jobs)
-    rows = [json.loads(line) for line in Path(jobs[0]['output']).read_text().splitlines()][1:]
+
+
+def check(output):
+    recordings = jobs(output)
+    run_jobs(recordings)
+    rows = [json.loads(line) for line in Path(recordings[0]['output']).read_text().splitlines()][1:]
     copied = False
     for before, after in zip(rows, rows[1:]):
         snapshot = before['snapshot']
@@ -55,7 +59,7 @@ def check(output):
         copied = True
     assert copied
     assert rows[-1]['terminal'] in ('death', 'victory')
-    rows = [json.loads(line) for line in Path(jobs[1]['output']).read_text().splitlines()][1:]
+    rows = [json.loads(line) for line in Path(recordings[1]['output']).read_text().splitlines()][1:]
     rooms = {row['snapshot']['objects'][row['snapshot']['room']['ref']]['class'] for row in rows}
     assert {'rooms.RestRoom', 'rooms.ShopRoom', 'rooms.MonsterRoomElite', 'rooms.MonsterRoomBoss'} <= rooms
     assert rows[0]['snapshot']['run']['actNum'] == 4

@@ -1,3 +1,4 @@
+import gzip
 import json
 import os
 from pathlib import Path
@@ -9,7 +10,21 @@ import zipfile
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'oracle'))
 from record import run_jobs
-from verify import compare, suite
+from verify import compare
+from check_oracle_run_starts import jobs as run_start_jobs
+
+
+def jobs(output):
+    recordings = [dict(seed=seed, scenario=None, output=str(output / 'full' / f'{seed}.jsonl'))
+                  for seed in range(1, 32)]
+    for path in sorted((ROOT / 'tests/traces').glob('*.jsonl.gz')):
+        with gzip.open(path, 'rt') as stream:
+            header = json.loads(next(stream))
+        if header['scenario'] is not None:
+            recordings.append(dict(seed=header['seed'], scenario=header['scenario'],
+                                   output=str(output / 'scenarios' / path.name[:-3])))
+    recordings.extend(run_start_jobs(output / 'run-starts'))
+    return recordings
 
 
 def check(output):
@@ -25,19 +40,16 @@ def check(output):
         jar.writestr('META-INF/MANIFEST.MF', 'Manifest-Version: 1.0\nPremain-Class: oracle.test.OracleIdleFrames\n\n')
         for path in classes.rglob('*.class'):
             jar.write(path, str(path.relative_to(classes)))
-    first = [suite(output / 'a')[i] for i in (15, 20, 23, 216)]
-    second = [suite(output / 'b')[i] for i in (15, 20, 23, 216)]
-    scenario = json.loads((ROOT / 'tests/scenarios/Thievery.json').read_text())
-    first.append(dict(seed=101, scenario=scenario, output=str(output / 'a/escaping.jsonl')))
-    second.append(dict(seed=101, scenario=scenario, output=str(output / 'b/escaping.jsonl')))
+    first = jobs(output / 'a')
+    second = jobs(output / 'b')
     run_jobs(first)
-    with Path(first[0]['output']).open() as stream:
+    with (output / 'a/full/16.jsonl').open() as stream:
         snapshots = [json.loads(line)['snapshot'] for line in list(stream)[1:]]
     assert any(snapshot['screen']['type'] == 'GRID'
                and snapshot['objects'][snapshot['screen']['state']['ref']]['fields']['GridCardSelectScreen.forTransform']
                and snapshot['objects'][snapshot['screen']['state']['ref']]['fields']['GridCardSelectScreen.confirmScreenUp']
                for snapshot in snapshots)
-    with Path(first[-1]['output']).open() as stream:
+    with (output / 'a/scenarios/Thievery-seed101.jsonl').open() as stream:
         terminal = json.loads(list(stream)[-1])['snapshot']
     escaped = [obj['fields'] for obj in terminal['objects']
                if obj['fields'].get('AbstractMonster.escaped')]
@@ -48,7 +60,8 @@ def check(output):
     assert marker.read_text() == 'active\n'
     for a, b in zip(first, second):
         compare(Path(a['output']), Path(b['output']))
-    print('13 extra frames per decision: 1 full run (including transform preview) and 4 scenarios (including escape) byte-identical')
+    print(f'13 extra frames per decision: 31 full runs, {len(first) - 33} committed scenarios '
+          'and 2 run-start scenarios byte-identical')
 
 
 if __name__ == '__main__':

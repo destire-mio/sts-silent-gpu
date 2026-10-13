@@ -9,8 +9,10 @@ Read `docs/design.md` before writing code.
 - Port the Java behaviour, including its quirks and its order of operations. Do not "fix" the game,
   do not approximate, do not port from memory of the game or from wikis.
 - A unit is done when its oracle traces replay with zero differences. Your own report does not count.
-- Never edit a recorded trace or weaken a comparison to make a test pass. If the oracle looks
-  wrong, stop and say so.
+- Recorder driving and observation code may be fixed when the Java and a reproduction show
+  that it misobserves. The 18 patched game classes, the RNG split and the comparison must stay
+  unchanged. Traces may only be re-recorded from the original with the same seed and scenario,
+  never edited.
 
 ## Code
 - No defensive programming. No fallback paths, no try/catch around things that should work, no

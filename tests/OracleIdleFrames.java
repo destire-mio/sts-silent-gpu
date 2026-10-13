@@ -12,14 +12,12 @@ public final class OracleIdleFrames {
         pool.insertClassPath("mods/Oracle.jar");
         pool.insertClassPath("desktop-1.0.jar");
         CtClass cls = pool.get("oracle.Recorder");
-        cls.addField(CtField.make("private static boolean oracleTestScenario;", cls));
-        cls.getDeclaredMethod("record").insertBefore("{ oracleTestScenario = !$1.get(\"scenario\").isJsonNull(); }");
         final int[] sites = {0};
         cls.getDeclaredMethod("record").instrument(new ExprEditor() {
             public void edit(MethodCall call) throws CannotCompileException {
                 if (call.getClassName().equals("oracle.Snapshot") && call.getMethodName().equals("capture")) {
                     sites[0]++;
-                    call.replace("{ if (!terminal(oracleTestScenario)) { for (int i=0; i<13; i++) tick(); } $_ = $proceed($$); }");
+                    call.replace("{ for (int i=0; i<13; i++) tick(); $_ = $proceed($$); }");
                 }
             }
         });

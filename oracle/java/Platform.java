@@ -86,6 +86,12 @@ public final class Platform {
         if (SoulGroup.isActive()) return false;
         AbstractRoom room = AbstractDungeon.getCurrRoom();
         if (room == null || room.phase == null) return false;
+        // AbstractRelic.update calls onEquip only after an obtained relic reaches its slot.
+        for (com.megacrit.cardcrawl.relics.AbstractRelic relic : AbstractDungeon.player.relics)
+            if (relic.isObtained && !relic.isDone) return false;
+        // AbstractRoom.updateObjects removes these after running the same callback.
+        for (com.megacrit.cardcrawl.relics.AbstractRelic relic : room.relics)
+            if (relic.isObtained) return false;
         GameActionManager manager = AbstractDungeon.actionManager;
         boolean selecting = AbstractDungeon.isScreenUp && (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID
             || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.HAND_SELECT || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.CARD_REWARD);
@@ -120,6 +126,7 @@ public final class Platform {
                     || name.startsWith("com.megacrit.cardcrawl.vfx.campfire.") && !AbstractDungeon.isScreenUp
                     || effect instanceof PlayerTurnEffect || effect instanceof BattleStartEffect
                     || effect instanceof com.megacrit.cardcrawl.vfx.ObtainKeyEffect
+                    || effect instanceof com.megacrit.cardcrawl.vfx.NecronomicurseEffect
                     || effect instanceof com.megacrit.cardcrawl.vfx.FastCardObtainEffect
                     || effect instanceof com.megacrit.cardcrawl.vfx.ObtainPotionEffect)) return true;
         }
