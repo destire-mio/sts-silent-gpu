@@ -165,6 +165,7 @@ SPIRE_FN inline void hand_to_deck(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.hand, card);
     g.draw.push_back(card);
+    card_clearPowers(g, card);
 }
 SPIRE_FN inline void add_card_queue_item(Game& g, const CardQueueItem& item, bool immediate) {
     // GameActionManager.addCardQueueItem inserts after the currently queued card.
