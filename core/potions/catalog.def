@@ -4,3 +4,4 @@ SPIRE_UNIT(AttackPotion, "AttackPotion", "core/potions/attack_potion.hpp", Attac
 SPIRE_UNIT(BlessingOfTheForge, "BlessingOfTheForge", "core/potions/blessing_of_the_forge.hpp", BlessingOfTheForge)
 SPIRE_UNIT(BlockPotion, "Block Potion", "core/potions/block_potion.hpp", BlockPotion)
 SPIRE_UNIT(ColorlessPotion, "ColorlessPotion", "core/potions/colorless_potion.hpp", ColorlessPotion)
+SPIRE_UNIT(CultistPotion, "CultistPotion", "core/potions/cultist_potion.hpp", CultistPotion)
