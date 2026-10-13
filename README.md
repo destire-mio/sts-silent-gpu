@@ -59,7 +59,7 @@ state = game.snapshot()
 `Game` exposes `reset(seed)`, `start_combat(seed, scenario)`, `legal_actions()`, `step(action)` and
 `snapshot()`. Module functions expose the same operations: `reset(seed)` and
 `start_combat(seed, scenario)` return a `Game`; the other functions take a `Game` first.
-`reset` initializes run data; map and Neow decisions are outside this implementation.
+`reset` opens Neow; the same action interface drives maps, rooms, rewards and act transitions.
 
 `start_combat` requires an encounter key from `spire.encounters`. Omitted deck and relic fields use
 the Silent A20 starter setup; an explicit empty list stays empty. Card entries use Java IDs and
@@ -67,7 +67,9 @@ support `upgrades` and `misc`. Relics and potions use catalog Java ID strings. E
 are `None`; the current potion catalog contains the empty slot. Unknown IDs raise an error.
 Additional scenario fields are `floor` and `gold`. Defaults are 59 HP, 66 max HP,
 floor 1 and 99 gold. The pinned unseeded stream starts from the run seed.
-Seeds accept Java signed 64-bit integers.
+Seeds accept Java signed 64-bit integers. Run-level scenarios supply `start` for a later act,
+floor, map node, room, gold and keys. Optional `profile` supplies Neow spirit and boss-seen
+preferences. The setup contract and exact fields are in [the design](docs/design.md).
 
 Actions are dictionaries: `{"type": "play", "card": 0, "target": 0}`,
 `{"type": "end_turn"}`, `{"type": "choose", "option": 0}` or `{"type": "proceed"}`.
@@ -93,8 +95,7 @@ Comparison includes every key, scalar type, value and
 list position, without tolerance or field filtering. Failures report the first differing JSON
 path and both values. Output reports passing traces and matched decisions, including matching
 decisions after earlier differences. Directory discovery includes scenario and full-run traces.
-Both scopes must match. `full-run-1` is reported separately as an expected failure until Neow,
-map and room flow are ported; it is excluded from pass totals. See [the porting guide](docs/porting.md) for recording and replay commands.
+Both scopes and the terminal record must match for every fixture, including `full-run-1`. See [the porting guide](docs/porting.md) for recording and replay commands.
 
 The host snapshot uses the oracle's object graph and preserves object references, UUID equality,
 ordered fields and piles, queues and RNG counters/state words. `game.schema_gaps()` lists fields
@@ -112,14 +113,14 @@ cmake --build /private/tmp/spire-build --target benchmark --parallel 1
 ```
 
 This prints `sizeof(Game)` in bytes, elapsed time and decisions per second for 100,000 steps,
-one CPU thread, a seeded random legal policy and a cycle through the implemented Act 1
-weak/strong encounters. It includes
-combat resets. To choose the decision count, run `/private/tmp/spire-build/spire_benchmark 1000000`.
+one CPU thread, a seeded random legal policy and a cycle through the encounter catalog.
+The combat deck and starting HP are fixed so adding run initialization does not change the
+benchmark load. Timing includes complete run resets and dungeon generation. To choose the decision count, run `/private/tmp/spire-build/spire_benchmark 1000000`.
 Results are written to stdout.
 
 ## Layout
 
-- `core/`: fixed-capacity C++17 game state, RNG, queues and combat content.
+- `core/`: fixed-capacity C++17 run and combat state, RNG, queues and per-unit content.
 - `host/`: CPU batch driver, Python binding, snapshot serialization and benchmark.
 - `cuda/`: conditional CUDA batch kernel.
 - `tests/`: native checks, device discipline checker and strict trace replayer.

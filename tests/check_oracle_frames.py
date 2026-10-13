@@ -15,14 +15,18 @@ from check_oracle_run_starts import jobs as run_start_jobs
 
 
 def jobs(output):
-    recordings = [dict(seed=seed, scenario=None, output=str(output / 'full' / f'{seed}.jsonl'))
-                  for seed in range(1, 32)]
+    full_seeds = set(range(1, 32))
+    recordings = []
     for path in sorted((ROOT / 'tests/traces').glob('*.jsonl.gz')):
         with gzip.open(path, 'rt') as stream:
             header = json.loads(next(stream))
-        if header['scenario'] is not None:
+        if header['scenario'] is None:
+            full_seeds.add(header['seed'])
+        else:
             recordings.append(dict(seed=header['seed'], scenario=header['scenario'],
                                    output=str(output / 'scenarios' / path.name[:-3])))
+    recordings[:0] = [dict(seed=seed, scenario=None, output=str(output / 'full' / f'{seed}.jsonl'))
+                      for seed in sorted(full_seeds)]
     recordings.extend(run_start_jobs(output / 'run-starts'))
     return recordings
 
@@ -60,8 +64,9 @@ def check(output):
     assert marker.read_text() == 'active\n'
     for a, b in zip(first, second):
         compare(Path(a['output']), Path(b['output']))
-    starts = len(run_start_jobs(output / 'run-starts'))
-    print(f'13 extra frames per decision: 31 full runs, {len(first) - 31 - starts} committed scenarios '
+    full = sum(job['scenario'] is None for job in first)
+    starts = sum(job['scenario'] is not None and 'start' in job['scenario'] for job in first)
+    print(f'13 extra frames per observation: {full} full runs, {len(first) - full - starts} combat scenarios '
           f'and {starts} run-start scenarios byte-identical')
 
 
