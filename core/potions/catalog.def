@@ -1,2 +1,3 @@
 SPIRE_UNIT(Empty, "Potion Slot", "core/potions/potion_slot.hpp", PotionSlot)
 SPIRE_UNIT(FruitJuice, "Fruit Juice", "core/potions/fruit_juice.hpp", FruitJuice)
+SPIRE_UNIT(GamblersBrew, "GamblersBrew", "core/potions/gamblers_brew.hpp", GamblersBrew)
