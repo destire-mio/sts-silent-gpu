@@ -9,3 +9,4 @@ SPIRE_UNIT(PowerPotion, "PowerPotion", "core/potions/power_potion.hpp", PowerPot
 SPIRE_UNIT(RegenPotion, "Regen Potion", "core/potions/regen_potion.hpp", RegenPotion)
 SPIRE_UNIT(SkillPotion, "SkillPotion", "core/potions/skill_potion.hpp", SkillPotion)
 SPIRE_UNIT(SmokeBomb, "SmokeBomb", "core/potions/smoke_bomb.hpp", SmokeBomb)
+SPIRE_UNIT(SneckoOil, "SneckoOil", "core/potions/snecko_oil.hpp", SneckoOil)
