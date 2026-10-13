@@ -5,11 +5,14 @@ namespace spire::units::monsters {
 struct SpikeSlime_M : MonsterHooks {
     SPIRE_FN static constexpr MonsterData data() { return {29, 34, {10, 0}, 0, 1}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        return make_monster(g, MonsterId::SpikeSlime_M, data(), hp_override);
+        MonsterData stats = data();
+        if (g.run.ascension < 7) { stats.hp_min = 28; stats.hp_max = 32; }
+        if (g.run.ascension < 2) stats.damage[0] = 8;
+        return make_monster(g, MonsterId::SpikeSlime_M, stats, hp_override);
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
-        if ((num < 30 && !last_two_moves(m, 1)) || (num >= 30 && last_move(m, 4)))
+        if ((num < 30 && !last_two_moves(m, 1)) || (num >= 30 && (g.run.ascension >= 17 ? last_move(m, 4) : last_two_moves(m, 4))))
             set_monster_move(g, index, 1, Intent::AttackDebuff, m.damage[0]);
         else set_monster_move(g, index, 4, Intent::Debuff);
     }
