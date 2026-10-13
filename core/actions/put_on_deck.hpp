@@ -13,6 +13,8 @@ struct PutOnDeck : ActionHooks {
         for (int i = 0; i < g.hand.size; ++i)
             if (g.hand[i] == card) { g.hand.erase(i); break; }
         g.draw.push_back(card);
+        card_clearPowers(g, card);
+        for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         if (!e.state.PutOnDeck.selecting) {
