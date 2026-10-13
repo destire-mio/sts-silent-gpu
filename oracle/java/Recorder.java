@@ -143,6 +143,7 @@ public final class Recorder {
         MathUtils.random = new RandomXS128(0L);
         Platform.listener = new CardCrawlGame(".prefs/");
         Platform.listener.create();
+        com.megacrit.cardcrawl.core.Settings.UPLOAD_DATA = false;
         settle();
         initialRelicExclusions = new ArrayList<String>(AbstractDungeon.relicsToRemoveOnStart);
         JsonArray jobs;

@@ -4,11 +4,25 @@ import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.desktop.DesktopLauncher;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
+import com.megacrit.cardcrawl.integrations.DistributorFactory;
+import com.megacrit.cardcrawl.integrations.PublisherIntegration;
+import com.megacrit.cardcrawl.integrations.gog.GogIntegration;
 import communicationmod.CommunicationMod;
 import javassist.*;
 import javassist.expr.*;
 
 public final class Patches {
+    @SpirePatch(clz=DistributorFactory.class, method="getEnabledDistributor")
+    public static class OfflinePublisher {
+        @SpirePrefixPatch public static SpireReturn<PublisherIntegration> before() {
+            return SpireReturn.Return(new GogIntegration() {
+                @Override public DistributorFactory.Distributor getType() {
+                    return DistributorFactory.Distributor.STEAM;
+                }
+            });
+        }
+    }
+
     @SpirePatch(clz=CommunicationMod.class, method="sendGameState")
     public static class NoTransport {
         @SpirePrefixPatch public static SpireReturn<Void> before() {

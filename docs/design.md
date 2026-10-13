@@ -212,6 +212,8 @@ Combat input with no selection screen additionally requires `WAITING_ON_USER`, e
 pre-turn and card queues, and no queued end turn. A GRID notification timeout is used only
 outside combat; closing a combat selection never bypasses action settlement.
 Card, relic and ascension unlock queries are fixed to unlocked, and Act 4 availability is true.
+The publisher adapter uses the game's no-op GOG implementation with Steam's platform tag;
+it never initializes Steam, and metrics upload is disabled.
 Only rendering/device state and persistent profile/score/unlock metrics are outside the snapshot.
 Gameplay-affecting unseeded calls are isolated as specified in `inventory/unseeded.md`. The
 presentation RNG is separate and cannot supply the listed rule calls. Batches reset rule statics
@@ -248,3 +250,6 @@ no service or network transport is started. `python3 oracle/verify.py --output /
 records two concurrent batches in separate JVMs, reversing job order in the second batch, and compares
 20 full runs plus 200 scenarios byte for byte. Timings exclude JVM startup but include game reset,
 original callbacks, snapshot construction and JSONL writes.
+Regenerate the seven committed fixtures with
+`python3 tests/record_oracle_fixtures.py --output /tmp/oracle-fixtures`, then check their schema,
+scenario initialization and terminal records with `python3 tests/check_oracle.py`.
