@@ -15,3 +15,4 @@ SPIRE_UNIT(DarkShackles, "Dark Shackles", "core/cards/dark_shackles.hpp", DarkSh
 SPIRE_UNIT(DeepBreath, "Deep Breath", "core/cards/deep_breath.hpp", DeepBreath)
 SPIRE_UNIT(Discovery, "Discovery", "core/cards/discovery.hpp", Discovery)
 SPIRE_UNIT(DramaticEntrance, "Dramatic Entrance", "core/cards/dramatic_entrance.hpp", DramaticEntrance)
+SPIRE_UNIT(Enlightenment, "Enlightenment", "core/cards/enlightenment.hpp", Enlightenment)
