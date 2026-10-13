@@ -178,8 +178,10 @@ final class Choices {
                     node.update(); point(node.hb); AbstractDungeon.dungeonMapScreen.clicked = true; node.update();
                     if (Choices.<Float>get(node, "animWaitTimer") == 0.0f) throw new AssertionError("Map input was not accepted");
                 } else {
+                    AbstractDungeon.dungeonMapScreen.map.update();
                     point(AbstractDungeon.dungeonMapScreen.map.bossHb); InputHelper.justClickedLeft = true;
                     AbstractDungeon.dungeonMapScreen.map.update();
+                    if (!AbstractDungeon.isFadingOut) throw new AssertionError("Boss map input was not accepted");
                 }
                 break;
             case "GRID":
