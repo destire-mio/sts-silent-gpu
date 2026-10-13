@@ -1,0 +1,62 @@
+{
+  "deck": [
+    {
+      "id": "Panache",
+      "upgrades": 0
+    },
+    {
+      "id": "Panache",
+      "upgrades": 1
+    },
+    {
+      "id": "Panache",
+      "upgrades": 0
+    },
+    {
+      "id": "Panache",
+      "upgrades": 1
+    },
+    {
+      "id": "Trip",
+      "upgrades": 0
+    },
+    {
+      "id": "Trip",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Swift Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 66,
+  "max_hp": 66,
+  "encounter": "Jaw Worm"
+}
