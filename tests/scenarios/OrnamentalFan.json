@@ -1,0 +1,62 @@
+{
+  "deck": [
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ornamental Fan"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1000,
+  "max_hp": 1000,
+  "encounter": "Jaw Worm"
+}
