@@ -7,3 +7,4 @@ SPIRE_UNIT(HoveringKite, "HoveringKite", "core/relics/hovering_kite.hpp", Hoveri
 SPIRE_UNIT(IceCream, "Ice Cream", "core/relics/ice_cream.hpp", IceCream)
 SPIRE_UNIT(IncenseBurner, "Incense Burner", "core/relics/incense_burner.hpp", IncenseBurner)
 SPIRE_UNIT(InkBottle, "InkBottle", "core/relics/ink_bottle.hpp", InkBottle)
+SPIRE_UNIT(JuzuBracelet, "Juzu Bracelet", "core/relics/juzu_bracelet.hpp", JuzuBracelet)
