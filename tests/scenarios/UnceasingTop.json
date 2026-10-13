@@ -1,0 +1,54 @@
+{
+  "deck": [
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Unceasing Top"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 45,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
