@@ -147,7 +147,8 @@ static void test_stasis_selection() {
     stasis.target = 0;
     add_bottom(g, stasis);
     run_until_decision(g);
-    require(g.retained.size == 1 && g.retained[0] == selected && g.draw.size == 1,
+    require(g.limbo.empty() && g.retained.empty() && g.draw.size == 1 &&
+            g.monsters[0].creature.powers[find_power(g.monsters[0].creature, PowerId::Stasis)].state.Stasis.card == selected,
             "ApplyStasis sorts the available highest-rarity cards by Java ID before selection");
     require(g.rng.card_random.counter == expected.counter &&
             g.rng.card_random.generator.s0 == expected.generator.s0 &&

@@ -25,6 +25,13 @@ struct VampireDamageAction : ActionHooks {
                 g.manager.card_queue.clear();
             }
         }
+        if (get_creature(g, e.target).last_damage_taken > 0) {
+            Effect heal{};
+            heal.kind = EffectKind::Heal;
+            heal.source = heal.target = e.source;
+            heal.amount = get_creature(g, e.target).last_damage_taken;
+            add_top(g, heal);
+        }
         if (monsters_basically_dead(g)) clear_post_combat_actions(g);
         e.done = true;
     }

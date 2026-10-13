@@ -21,6 +21,10 @@ struct HeelHookAction : ActionHooks {
             draw.source = player_target;
             draw.amount = 1;
             add_top(g, draw);
+            Effect energy{};
+            energy.kind = EffectKind::GainEnergy;
+            energy.amount = 1;
+            add_top(g, energy);
         }
         Effect hit{};
         hit.kind = EffectKind::Damage;

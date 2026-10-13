@@ -1,5 +1,7 @@
 #pragma once
 #include "../hooks.hpp"
+#include "unlimbo.hpp"
+#include "new_queue_card.hpp"
 
 namespace spire::units::actions {
 struct PlayTopCardAction : ActionHooks {
@@ -23,8 +25,10 @@ struct PlayTopCardAction : ActionHooks {
         }
         const int card = g.draw.pop_back();
         g.cards[card].exhaust_on_use_once = e.state.PlayTopCardAction.exhaust_cards;
-        g.retained.push_back(card);
+        g.limbo.push_back(card);
         card_applyPowers(g, card);
+        add_top(g, NewQueueCard::construct(card, e.target, false, true));
+        add_top(g, Unlimbo::construct(card));
         e.done = true;
     }
 };

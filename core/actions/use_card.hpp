@@ -1,5 +1,7 @@
 #pragma once
 #include "../hooks.hpp"
+#include "show_card_and_poof.hpp"
+#include "show_card.hpp"
 
 namespace spire::units::actions {
 struct UseCard : ActionHooks {
@@ -48,11 +50,13 @@ struct UseCard : ActionHooks {
         card.free_to_play_once = false;
         card.in_autoplay = false;
         if (card.purge_on_use) {
+            add_top(g, ShowCardAndPoof::construct(e.card));
             g.player.card_in_use = -1;
             e.done = true;
             return;
         }
         if (card_data(card.id).type == CardType::Power) {
+            add_top(g, ShowCard::construct(e.card));
             remove_queued_card(g, e.card);
             for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
             g.player.card_in_use = -1;

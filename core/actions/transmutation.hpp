@@ -19,7 +19,19 @@ struct TransmutationAction : ActionHooks {
         const auto& state = e.state.TransmutationAction;
         int effect = state.energy_on_use == -1 ? g.player.energy : state.energy_on_use;
         if (has_relic(g, "Chemical X")) effect += 2;
-        if (effect > 0 && !state.free_to_play_once) g.player.energy = 0;
+        if (effect > 0) {
+            for (int i = 0; i < effect; ++i) {
+                const int card = create_card(g, make_card(card_id(random_card_in_combat(g, -1, true))));
+                if (state.upgraded) card_upgrade(g.cards[card]);
+                if (g.cards[card].cost_for_turn >= 0) g.cards[card].cost_for_turn = 0;
+                Effect copy{};
+                copy.kind = EffectKind::MakeTempCardInHand;
+                copy.card = card;
+                copy.amount = 1;
+                add_bottom(g, copy);
+            }
+            if (!state.free_to_play_once) g.player.energy = 0;
+        }
         e.done = true;
     }
 };

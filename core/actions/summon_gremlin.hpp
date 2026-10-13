@@ -43,6 +43,7 @@ struct SummonGremlinAction : ActionHooks {
         }
         g.monster_order.insert(position, owner);
         monster_usePreBattleAction(g, owner);
+        queue_power(g, owner, owner, PowerId::Minion, 1);
         e.done = true;
     }
 };

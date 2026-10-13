@@ -1,5 +1,7 @@
 #pragma once
 #include "../hooks.hpp"
+#include "show_card.hpp"
+#include "apply_power.hpp"
 
 namespace spire::units::actions {
 struct ApplyStasisAction : ActionHooks {
@@ -36,7 +38,12 @@ struct ApplyStasisAction : ActionHooks {
         }
         for (int i = 0; i < pile.size; ++i) if (pile[i] == card) { pile.erase(i); break; }
         e.state.ApplyStasisAction.card = card;
-        g.retained.insert(0, card);
+        g.limbo.insert(0, card);
+        Power power{PowerId::Stasis, -1};
+        const int owner = e.state.ApplyStasisAction.owner;
+        power_constructPower(g, power, owner, owner, 0, card);
+        add_top(g, ApplyPower::make(owner, owner, power, 1));
+        add_top(g, ShowCard::construct(card));
         e.done = true;
     }
 };
