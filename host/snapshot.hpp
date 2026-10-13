@@ -114,7 +114,12 @@ struct SnapshotGraph {
             if (field == "damage") return py::int_(card.damage);
             if (field == "magicNumber") return py::int_(card.magic);
             if (field == "cardID") return py::str(card_names[id]);
-            if (field == "color" || field == "rarity" || field == "type" || field == "target" || field == "tags")
+            if (field == "target") {
+                const char* targets[] = {"ENEMY", "SELF", "NONE", "ALL_ENEMY"};
+                return py::str(targets[static_cast<int>(card.target)]);
+            }
+            if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
+            if (field == "color" || field == "rarity" || field == "type" || field == "tags")
                 return py::reinterpret_borrow<py::object>(data[py::str(field)]);
             if (field == "cost") return py::int_(card.cost);
             if (field == "costForTurn") return py::int_(card.cost_for_turn);

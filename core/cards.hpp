@@ -49,6 +49,7 @@ SPIRE_FN inline Card stat_equivalent_copy(const Game& g, int card_id) {
     copy.cost = source.cost;
     copy.cost_for_turn = source.cost_for_turn;
     copy.free_to_play_once = source.free_to_play_once;
+    copy.target = source.target;
     return copy;
 }
 SPIRE_FN inline int card_damage_value(Game& g, int card_id, int target) {
@@ -79,6 +80,10 @@ SPIRE_FN inline void apply_card_powers(Game& g, int card_id) {
     Card& c = get_card(g, card_id);
     card_applyPowersToBlock(g, card_id);
     c.damage = card_damage_value(g, card_id, no_target);
+    if (card_data(c.id).multi_damage) {
+        c.multi_damage_count = g.monster_order.size;
+        for (int i = 0; i < c.multi_damage_count; ++i) g.multi_damage[card_id][i] = c.damage;
+    }
 }
 SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
     Card& c = g.cards[card_id];

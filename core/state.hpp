@@ -20,6 +20,7 @@ struct Card {
     int16_t cost_for_turn = 0;
     int16_t energy_on_use = 0;
     uint8_t multi_damage_count = 0;
+    CardTarget target = CardTarget::None;
     bool ignore_energy_on_use : 1;
     bool exhaust : 1;
     bool ethereal : 1;
