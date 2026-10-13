@@ -303,7 +303,7 @@ class OracleFormat(unittest.TestCase):
         write_trace(self.path, rows)
         self.assertTrue(replay(self.path, types.SimpleNamespace(Game=FullRun)).passed)
 
-    def test_directories_select_combat_but_explicit_file_allows_full_run(self):
+    def test_directories_include_scenarios_and_full_runs(self):
         plain = self.root / "a.jsonl"
         zipped = self.root / "b.jsonl.gz"
         full = self.root / "full-run-1.jsonl.gz"
@@ -312,7 +312,7 @@ class OracleFormat(unittest.TestCase):
         rows = records()
         rows[0]["scenario"] = None
         write_trace(full, rows)
-        self.assertEqual([plain, zipped], list(trace_paths([self.root])))
+        self.assertEqual([plain, zipped, full], list(trace_paths([self.root])))
         self.assertEqual([full], list(trace_paths([full])))
 
     def test_first_difference_and_per_scope_totals(self):
@@ -329,19 +329,36 @@ class OracleFormat(unittest.TestCase):
         self.assertIn(f"PASS combat {passed}: 1/1 decisions", output.getvalue())
         self.assertIn("combat: 1/2 traces passed, 2/2 matched decisions; run: 2/2 traces passed, 2/2 matched decisions", output.getvalue())
 
-    def test_run_failure_does_not_hide_combat_or_fail_scenario(self):
+    def test_run_failure_does_not_hide_combat_but_fails_scenario(self):
         rows = records()
         rows[1]["snapshot"]["run"]["value"] = 99
         rows[-1]["snapshot"]["run"]["value"] = 99
         write_trace(self.path, rows)
         result = replay(self.path, ENGINE)
-        self.assertTrue(result.passed)
+        self.assertFalse(result.passed)
         self.assertTrue(result.scopes["combat"].passed)
         self.assertEqual(2, len(result.scopes["run"].differences))
         output = io.StringIO()
         with patch("replay.importlib.import_module", return_value=ENGINE), contextlib.redirect_stdout(output):
-            self.assertEqual(0, main([str(self.path)]))
+            self.assertEqual(1, main([str(self.path)]))
         self.assertIn("combat: 1/1 traces passed, 1/1 matched decisions; run: 0/1 traces passed, 0/1 matched decisions", output.getvalue())
+
+    def test_known_full_run_failure_is_separate_and_unexpected_success_fails(self):
+        write_trace(self.path, records())
+        with patch("replay.EXPECTED_FULL_RUN", self.path), patch("replay.importlib.import_module", return_value=ENGINE):
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(1, main([str(self.path)]))
+            self.assertIn("XPASS", output.getvalue())
+            rows = records()
+            rows[1]["action"] = {"type": "choose", "option": 0}
+            write_trace(self.path, rows)
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(0, main([str(self.path)]))
+            self.assertIn("XFAIL", output.getvalue())
+            self.assertIn("0/0 traces passed", output.getvalue())
+            self.assertIn("expected full-run failures: 1", output.getvalue())
 
     def test_full_run_requires_both_scopes(self):
         class FullRun(Game):

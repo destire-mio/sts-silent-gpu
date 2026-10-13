@@ -284,9 +284,10 @@ shifts. Identity maps are shared between the two scope comparisons at each snaps
 
 Both scopes are checked at every decision and terminal record even after earlier differences.
 A recorded action is applied only when it is legal in the engine; otherwise the trace reports
-where replay stopped. A scenario passes when combat matches at every decision and the terminal
-snapshot/reason matches. An explicit full-run trace requires both scopes. Run differences never
-hide a combat result or fail a combat scenario. Each trace prints both scope results and its
+where replay stopped. A scenario passes when both scopes match at every decision and the terminal snapshot/reason
+matches. Run differences never hide a combat result. The committed `full-run-1` fixture is an
+expected failure until Neow, map and room flow are ported; replay reports it separately and
+excludes it from pass totals. An unexpected pass fails the gate until that exception is removed. Each trace prints both scope results and its
 first difference per scope, including the JSON path and both values. Summary counts report
 passing traces and matching decision records per scope; terminal snapshots affect trace success
 but are not counted as decisions. Matching later decisions are counted after an earlier failure.

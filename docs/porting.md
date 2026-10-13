@@ -176,14 +176,13 @@ ctest --test-dir /private/tmp/spire-build --output-on-failure
 
 The `combat_replay` test compares every committed scenario trace. Add `-V -R '^combat_replay$'`
 to the CTest command to show per-trace results on success as well. The replayer requires schema 2
-and accepts `.jsonl` and `.jsonl.gz` files and directories. Directory discovery selects scenario
-traces; a full-run trace requires an explicit file argument. Each trace prints separate `combat`
+and accepts `.jsonl` and `.jsonl.gz` files and directories. Directory discovery includes scenario and full-run traces. Each trace prints separate `combat`
 and `run` results, their matching/total decision counts, and the first differing JSON path with
 both values in each failed scope. Both scopes are checked at every decision, including after a
 difference when the recorded action remains legal. The final line counts passing traces and
 matching decision records per scope. Terminal snapshots and reasons must match for a trace to
-pass but do not add a decision to the count. Scenario failures in combat return status 1; run
-scope differences are reported without failing a scenario. Full-run traces require both scopes.
+pass but do not add a decision to the count. Both scopes must pass for a scenario or full-run trace. The committed `full-run-1` fixture is
+reported separately as an expected failure until the rules wave; it never counts as a pass.
 
 Comparison resolves object references from roots and checks identity with bijective mappings;
 renumbering the object table does not create a difference. Combat includes the whole player,
