@@ -1,0 +1,18 @@
+{
+  "deck": [
+    {
+      "id": "AscendersBane",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "FairyPotion",
+    "FairyPotion"
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Jaw Worm"
+}
