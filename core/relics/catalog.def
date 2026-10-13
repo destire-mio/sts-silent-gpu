@@ -4,3 +4,4 @@ SPIRE_UNIT(QuestionCard, "Question Card", "core/relics/question_card.hpp", Quest
 SPIRE_UNIT(RedMask, "Red Mask", "core/relics/red_mask.hpp", RedMask)
 SPIRE_UNIT(RegalPillow, "Regal Pillow", "core/relics/regal_pillow.hpp", RegalPillow)
 SPIRE_UNIT(RunicDome, "Runic Dome", "core/relics/runic_dome.hpp", RunicDome)
+SPIRE_UNIT(RunicPyramid, "Runic Pyramid", "core/relics/runic_pyramid.hpp", RunicPyramid)
