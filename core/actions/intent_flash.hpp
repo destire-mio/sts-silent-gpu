@@ -2,6 +2,16 @@
 #include "../hooks.hpp"
 
 namespace spire::units::actions {
+struct RelicAboveCreature : ActionHooks {
+    SPIRE_STATE(RelicAboveCreature, bool used;)
+    SPIRE_SNAPSHOT("RelicAboveCreatureAction.relic", relic, effect.extra)
+    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
+    SPIRE_FN static void execute(Game&, Effect& e) { e.state.RelicAboveCreature.used = true; }
+};
+struct Talk : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
+    SPIRE_FN static void execute(Game&, const Effect&) {}
+};
 struct SFX : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_FN static void prepare(Game&, Effect& e) { e.source = e.target = no_target; }

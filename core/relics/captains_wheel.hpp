@@ -9,7 +9,7 @@ struct CaptainsWheel : RelicHooks {
         Relic& r = g.run.relics[relic];
         if (!r.grayscale) ++r.counter;
         if (r.counter == 3) {
-            queue_relic_display(g, relic, player_target, false);
+            queue_relic_above(g, relic, player_target, false);
             queue_block(g, player_target, 18);
             r.counter = -1;
             r.grayscale = true;

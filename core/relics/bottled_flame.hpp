@@ -11,7 +11,7 @@ struct BottledFlame : RelicHooks {
         master_selection_cards(g, CardType::Attack);
         if (!g.grid_cards.empty()) {
             g.run.relics[relic].state.BottledFlame.cardSelected = false;
-            open_master_selection(g, 1);
+            open_master_selection(g, 1, false);
         }
     }
     static SPIRE_FN void update(Game& g, int relic) {
@@ -33,7 +33,7 @@ struct BottledFlame : RelicHooks {
         for (int i = 0; i < g.run.master_deck.size; ++i)
             if (uuid != 0 && g.run.master_deck[i].uuid == uuid) g.run.master_deck[i].bottle_flame = false;
     }
-    static SPIRE_FN void atBattleStart(Game& g, int relic) { queue_relic_display(g, relic, player_target, true); }
+    static SPIRE_FN void atBattleStart(Game& g, int relic) { queue_relic_above(g, relic, player_target, true); }
     static SPIRE_FN bool canSpawn(const Game& g, int) {
         for (int i = 0; i < g.run.master_deck.size; ++i) {
             const Card& c = g.run.master_deck[i];

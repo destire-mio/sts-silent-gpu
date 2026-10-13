@@ -160,6 +160,8 @@ from an object's current position in an ordered list:
 - Text needed by action state uses offsets into a 1,024-byte per-combat interned buffer, with
   offset zero representing Java null. No process pointers or per-action character buffers.
   Constant facts and derivable snapshot fields belong in unit data and host projections.
+- Pending card acquisition effects hold byte indices in a 128-entry list into the same card
+  arena. Their callbacks settle before a decision; they do not enter the Java action queue.
 
 The hand limit of 10 comes from `DrawCardAction.update` and card-generation actions; Armaments'
 `cannotUpgrade` list only collects that hand (`ArmamentsAction.update`). Source card pool

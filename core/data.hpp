@@ -31,7 +31,15 @@ struct PowerData {
     float rear_damage_multiplier = 1.0f;
     PowerId rear_attack_power = PowerId::Count;
 };
-struct RelicData { int counter = -1; int price = 300; bool can_play_status = false; bool can_play_curse = false; };
+struct RelicData {
+    int counter = -1;
+    int price = 300;
+    bool can_play_status = false;
+    bool can_play_curse = false;
+    bool blocks_gold = false;
+    PowerId blocked_debuff = PowerId::Count;
+    float gold_reward_bonus = 0.0f;
+};
 struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; bool revives_player = false; };
 struct ActionData { bool survives_combat_end = false; const char* type = nullptr; bool multi_step = false; };
 struct MonsterData { int hp_min, hp_max; int damage[2]; int block, magic; uint8_t damage_count = 1; EnemyType type = EnemyType::Normal; };

@@ -400,6 +400,12 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
 #undef SPIRE_UNIT
         default: SPIRE_ASSERT(false); }
     }
+    game.reward_cards.clear();
+    for (const std::string& id : run.rewardCards) {
+        Card card = make_card(card_id(id.c_str()));
+        preview_card_obtain(game, card);
+        game.reward_cards.push_back(create_card(game, card));
+    }
     run.rewardTypes.push_back("CARD");
 }
 

@@ -4,6 +4,8 @@
 
 namespace spire {
 SPIRE_FN inline void gain_gold(Game& g, int amount) {
+    for (int i = 0; i < g.run.relics.size; ++i)
+        if (relic_data(g.run.relics[i].id).blocks_gold) return;
     if (amount <= 0) return;
     g.run.gold += amount;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onGainGold(g, i);
@@ -39,12 +41,42 @@ SPIRE_FN inline void preview_card_obtain(Game& g, Card& card) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onPreviewObtainCard(g, i, card);
 }
 SPIRE_FN inline void obtain_card(Game& g, Card card) {
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onObtainCard(g, i, card);
     const CardRarity rarity = card_rarity(card.id);
     if (rarity != CardRarity::Basic && rarity != CardRarity::Special && rarity != CardRarity::Curse)
         ++g.obtained_cards[static_cast<int>(card.id)];
+    for (int i = 0; i < g.run.relics.size; ++i) relic_onObtainCard(g, i, card);
     g.run.master_deck.push_back(card);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);
+}
+SPIRE_FN inline void increase_max_hp(Game& g, int amount) {
+    g.player.creature.max_hp += amount;
+    heal_creature(g, player_target, amount);
+}
+SPIRE_FN inline void queue_card_obtain(Game& g, Card card) {
+    g.pending_obtains.push_back(create_card(g, card));
+}
+SPIRE_FN inline void settle_card_obtains(Game& g) {
+    for (int i = 0; i < g.pending_obtains.size; ++i) obtain_card(g, g.cards[g.pending_obtains[i]]);
+    g.pending_obtains.clear();
+}
+SPIRE_FN inline void open_master_selection(Game& g, int amount, bool for_purge) {
+    g.screen = Screen::Grid;
+    g.grid_source = PileId::MasterDeck;
+    g.selection_amount = amount;
+    g.selection_any_number = false;
+    g.grid_for_purge = for_purge;
+    g.grid_can_cancel = false;
+    g.selected_cards.clear();
+}
+SPIRE_FN inline void queue_relic_above(Game& g, int relic, int owner, bool top) {
+    Effect e{};
+    e.kind = EffectKind::RelicAboveCreature;
+    action_initialize_state(e);
+    e.source = e.target = owner;
+    e.extra = relic;
+    const int index = g.action_objects.add(e);
+    if (top) g.manager.actions.push_front(index);
+    else g.manager.actions.push_back(index);
 }
 SPIRE_FN inline void remove_master_card(Game& g, int index) {
     Card removed = g.run.master_deck.erase(index);
@@ -85,11 +117,6 @@ SPIRE_FN inline void master_selection_cards(Game& g, int type) {
     }
 }
 SPIRE_FN inline void master_selection_cards(Game& g, CardType type) { master_selection_cards(g, static_cast<int>(type)); }
-SPIRE_FN inline void open_master_selection(Game& g, int amount) {
-    g.selection_amount = amount;
-    g.selected_cards.clear();
-    g.screen = Screen::MasterGrid;
-}
 SPIRE_FN inline Card transform_card(Game& g, const Card& original, bool upgrade, Random& rng) {
     const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool, colorless_card_pool, curse_card_pool};
     const int sizes[] = {static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
@@ -216,18 +243,12 @@ SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
             }
         }
     }
-    while (g.screen == Screen::MasterGrid) {
-        const int index = g.grid_cards[policy.nextInt(g.grid_cards.size)];
-        bool selected = false;
-        for (int i = 0; i < g.selected_cards.size; ++i) {
-            if (g.selected_cards[i] != index) continue;
-            g.selected_cards.erase(i);
-            selected = true;
-            break;
-        }
-        if (!selected) g.selected_cards.push_back(index);
-        if (g.selected_cards.size == g.selection_amount) g.screen = Screen::None;
-        for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
+    while (g.screen == Screen::Grid) {
+        ActionSet actions{};
+        legal_actions(g, actions);
+        SPIRE_ASSERT(!actions.empty());
+        step(g, actions[policy.nextInt(actions.size)]);
     }
+    settle_card_obtains(g);
 }
 }

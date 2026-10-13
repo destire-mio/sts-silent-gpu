@@ -11,7 +11,7 @@ struct BottledLightning : RelicHooks {
         master_selection_cards(g, CardType::Skill);
         if (!g.grid_cards.empty()) {
             g.run.relics[relic].state.BottledLightning.cardSelected = false;
-            open_master_selection(g, 1);
+            open_master_selection(g, 1, false);
         }
     }
     static SPIRE_FN void update(Game& g, int relic) {
@@ -33,7 +33,7 @@ struct BottledLightning : RelicHooks {
         for (int i = 0; i < g.run.master_deck.size; ++i)
             if (uuid != 0 && g.run.master_deck[i].uuid == uuid) g.run.master_deck[i].bottle_lightning = false;
     }
-    static SPIRE_FN void atBattleStart(Game& g, int relic) { queue_relic_display(g, relic, player_target, true); }
+    static SPIRE_FN void atBattleStart(Game& g, int relic) { queue_relic_above(g, relic, player_target, true); }
     static SPIRE_FN bool canSpawn(const Game& g, int) {
         for (int i = 0; i < g.run.master_deck.size; ++i) {
             const Card& c = g.run.master_deck[i];

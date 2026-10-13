@@ -10,7 +10,7 @@ struct BirdFacedUrn : RelicHooks {
             e.kind = EffectKind::Heal;
             e.amount = 2;
             add_top(g, e);
-            queue_relic_display(g, relic, player_target, true);
+            queue_relic_above(g, relic, player_target, true);
         }
     }
 };

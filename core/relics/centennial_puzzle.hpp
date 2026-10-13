@@ -13,7 +13,7 @@ struct CentennialPuzzle : RelicHooks {
             e.kind = EffectKind::Draw;
             e.amount = 3;
             add_top(g, e);
-            queue_relic_display(g, relic, player_target, true);
+            queue_relic_above(g, relic, player_target, true);
             g.unit_statics.CentennialPuzzle.usedThisCombat = true;
             g.run.relics[relic].grayscale = true;
         }

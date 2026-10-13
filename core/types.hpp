@@ -21,8 +21,11 @@ enum class CardTarget : uint8_t { Enemy, Self, None, AllEnemies };
 enum class Intent : uint8_t { None, Attack, AttackBuff, AttackDebuff, AttackDefend, Buff, Debuff, StrongDebuff, Defend, DefendBuff, Escape, Magic, Sleep, Stun, Unknown, Debug };
 enum class DamageType : uint8_t { Normal, Thorns, HpLoss };
 enum class EnemyType : uint8_t { Normal, Elite, Boss };
-enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None, CardReward, MasterGrid, PotionRewards, MasterConfirm, RelicRewards };
-enum class PileId : uint8_t { Hand, Draw, Discard, Exhaust, Limbo, Grid };
+enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None, CardReward, PotionRewards, MasterConfirm, RelicRewards };
+enum class PileId : uint8_t { Hand, Draw, Discard, Exhaust, Limbo, Grid, MasterDeck };
+enum class RoomKind : uint8_t { Monster, Shop, Treasure, Rest };
+enum class RoomPhase : uint8_t { Incomplete, Combat, Complete };
+enum class CampfireOption : uint8_t { Rest, Smith };
 enum class Phase : uint8_t { WaitingOnUser, ExecutingActions };
 
 }

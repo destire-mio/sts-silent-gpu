@@ -204,7 +204,14 @@ struct SnapshotGraph {
     py::object group(int id, const char* type, const Pile* pile = nullptr) {
         return object({2, id, 0}, "cards.CardGroup", [&](const std::string& key) -> py::object {
             if (key == "CardGroup.group") {
-                if (pile) return cards(*pile);
+                if (pile) {
+                    if (id == 7 && game.grid_source == PileId::MasterDeck) {
+                        py::list result;
+                        for (int i = 0; i < pile->size; ++i) result.append(card_value(game.run.master_deck[(*pile)[i]], true, (*pile)[i]));
+                        return result;
+                    }
+                    return cards(*pile);
+                }
                 py::list result;
                 if (id == 5) for (int i = 0; i < game.run.master_deck.size; ++i)
                     result.append(card_value(game.run.master_deck[i], true, i));
@@ -400,15 +407,8 @@ struct SnapshotGraph {
     }
 
     py::object reward_card(const FreshRunState& fresh, int index) {
-        const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(fresh.rewardCards[index])].cast<py::dict>();
-        const py::dict fields = data["fields"].cast<py::dict>();
-        return object({21, index, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractCard.uuid") {
-                const auto inserted = uuids.emplace(0x80000000u + index, static_cast<int>(uuids.size()));
-                return py::int_(inserted.first->second);
-            }
-            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
-        });
+        (void)fresh;
+        return card(game.reward_cards[index]);
     }
 
     py::object reward_potion(const FreshRunState& fresh) {
@@ -426,7 +426,12 @@ struct SnapshotGraph {
         return object({23, index, 0}, "rewards.RewardItem", [&](const std::string& key) -> py::object {
             if (key == "RewardItem.type") return py::str(type);
             if (key == "RewardItem.goldAmt") return py::int_(type == "GOLD" ? fresh.rewardGold : type == "STOLEN_GOLD" ? fresh.stolenGold : 0);
-            if (key == "RewardItem.bonusGold") return py::int_(0);
+            if (key == "RewardItem.bonusGold") {
+                int bonus = 0;
+                if (type == "GOLD") for (int i = 0; i < game.run.relics.size; ++i)
+                    bonus += floor_int(fresh.rewardGold * relic_data(game.run.relics[i].id).gold_reward_bonus + 0.5f);
+                return py::int_(bonus);
+            }
             if (key == "RewardItem.ignoreReward" || key == "RewardItem.isDone") return py::bool_(false);
             if (key == "RewardItem.relic" || key == "RewardItem.relicLink") return py::none();
             if (key == "RewardItem.potion") return type == "POTION" ? reward_potion(fresh) : py::object(py::none());
@@ -473,7 +478,10 @@ struct SnapshotGraph {
                 return result;
             });
             if (field == "mugged") return py::bool_(game.mugged);
-            if (field == "phase") return py::str(game.battle_over ? "COMPLETE" : "COMBAT");
+            if (field == "phase") {
+                const char* phases[] = {"INCOMPLETE", "COMBAT", "COMPLETE"};
+                return py::str(phases[static_cast<int>(game.room_phase)]);
+            }
             if (field == "potions" || field == "relics") return py::list();
             if (field == "rewardAllowed") return py::bool_(true);
             if (field == "rewardTime") return py::bool_(game.battle_over);
@@ -577,6 +585,7 @@ struct SnapshotGraph {
         case PileId::Exhaust: return group(2, "EXHAUST_PILE", &game.exhaust);
         case PileId::Limbo: return group(4, "UNSPECIFIED", &game.limbo);
         case PileId::Grid: return group(7, "UNSPECIFIED", &game.grid_cards);
+        case PileId::MasterDeck: return game.grid_for_purge ? group(7, "UNSPECIFIED", &game.grid_cards) : group(5, "MASTER_DECK");
         }
         SPIRE_ASSERT(false);
         __builtin_unreachable();
@@ -686,7 +695,7 @@ struct SnapshotGraph {
             const Pile& choices = grid ? get_pile(game, game.grid_source) : game.hand;
             if (grid || game.selected_cards.size < game.selection_amount)
                 for (int i = 0; i < choices.size; ++i)
-                    options.append(card_names[static_cast<int>(game.cards[choices[i]].id)]);
+                    options.append(card_names[static_cast<int>(get_card(game, grid && game.grid_source == PileId::MasterDeck ? -choices[i] - 2 : choices[i]).id)]);
             result["options"] = options;
             result["state"] = object({17, grid ? 1 : 0, 0}, grid ? "screens.select.GridCardSelectScreen" : "screens.select.HandCardSelectScreen", [&](const std::string& key) -> py::object {
                 const std::string field = key.substr(key.find('.') + 1);
@@ -694,7 +703,10 @@ struct SnapshotGraph {
                     if (field == "targetGroup") return pile_group(game.grid_source);
                     if (field == "selectedCards") {
                         py::list selected;
-                        for (int i = 0; i < game.selected_cards.size; ++i) selected.append(card(game.selected_cards[i]));
+                        for (int i = 0; i < game.selected_cards.size; ++i) {
+                            const int index = game.selected_cards[i];
+                            selected.append(game.grid_source == PileId::MasterDeck ? card_value(game.run.master_deck[index], true, index) : card(index));
+                        }
                         return selected;
                     }
                     if (field == "numCards") return py::int_(game.selection_amount);
@@ -702,8 +714,9 @@ struct SnapshotGraph {
                     if (field == "prevDeckSize") return py::int_(choices.size);
                     if (field == "hoveredCard") return py::none();
                     if (field == "anyNumber") return py::bool_(game.selection_any_number);
-                    if (field == "canCancel") return py::bool_(true);
-                    if (field == "forUpgrade" || field == "forTransform" || field == "forPurge" || field == "confirmScreenUp" ||
+                    if (field == "canCancel") return py::bool_(game.grid_can_cancel);
+                    if (field == "forPurge") return py::bool_(game.grid_for_purge);
+                    if (field == "forUpgrade" || field == "forTransform" || field == "confirmScreenUp" ||
                         field == "isJustForConfirming" || field == "cancelWasOn" || field == "forClarity") return py::bool_(false);
                     return {};
                 }

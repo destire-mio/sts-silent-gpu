@@ -29,7 +29,7 @@ struct Astrolabe : RelicHooks {
             g.selected_cards = g.grid_cards;
             giveCards(g, relic);
         } else {
-            open_master_selection(g, 3);
+            open_master_selection(g, 3, false);
         }
     }
     static SPIRE_FN void update(Game& g, int relic) {

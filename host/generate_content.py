@@ -70,9 +70,7 @@ def relic(name, suffix="", result="void", body="", const=False):
     hook("relics", name, prefix + (", " + suffix if suffix else ""), result, body)
 
 hook("relics", "initializeState", "Relic& relic", selector="relic.id")
-relic("update")
 relic("referencesMasterCard", "uint32_t uuid", "bool", "return false;", True)
-relic("setCounter", "int counter", body="g.run.relics[relic].counter = counter;")
 
 
 for name in ("onGainGold", "onLoseGold", "onSpendGold", "onEquip", "onUnequip", "atPreBattle",
@@ -81,6 +79,8 @@ for name in ("onGainGold", "onLoseGold", "onSpendGold", "onEquip", "onUnequip", 
              "onMeditate", "onEnergyRecharge", "onRest", "onRitual", "onEnterRestRoom", "onRefreshHand",
              "onShuffle", "onSmith", "onDrawOrDiscard", "onMasterDeckChange", "onUsePotion"):
     relic(name)
+relic("update")
+relic("setCounter", "int counter", body="g.run.relics[relic].counter = counter;")
 for name in ("onExhaust", "onCardDraw"):
     relic(name, "int card")
 for name in ("onPreviewObtainCard", "onObtainCard"):

@@ -243,6 +243,7 @@ struct Game {
     Pool<Power, power_object_capacity> power_objects{};
     bool player_turn_effect_pending = false;
     Pile drawn_cards{};
+    Pile pending_obtains{};
     Pile reward_cards{};
     List<PotionId, 5> acquisition_potions{};
     List<RelicKey, 3> acquisition_relics{};
@@ -267,12 +268,16 @@ struct Game {
     uint32_t next_card_uuid = 1;
     int obtained_cards[static_cast<int>(CardId::Count)]{};
     bool selection_for_upgrade = false;
+    bool grid_for_purge = false;
+    bool grid_can_cancel = true;
     bool selected_cards_retrieved = false;
     bool end_turn_enabled = true;
     bool selection_up_to = false;
     bool reward_skippable = false;
     bool battle_over = false;
     bool room_in_combat = false;
+    RoomKind room_kind = RoomKind::Monster;
+    RoomPhase room_phase = RoomPhase::Incomplete;
     uint16_t room_event_class = 0;
     bool cannot_lose = false;
     bool mugged = false;

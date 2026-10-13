@@ -122,7 +122,7 @@ SPIRE_FN inline Pile& get_pile(Game& g, PileId pile) {
     case PileId::Discard: return g.discard;
     case PileId::Exhaust: return g.exhaust;
     case PileId::Limbo: return g.limbo;
-    case PileId::Grid: return g.grid_cards;
+    case PileId::Grid: case PileId::MasterDeck: return g.grid_cards;
     }
     SPIRE_ASSERT(false);
     __builtin_unreachable();
@@ -134,7 +134,7 @@ SPIRE_FN inline const Pile& get_pile(const Game& g, PileId pile) {
     case PileId::Discard: return g.discard;
     case PileId::Exhaust: return g.exhaust;
     case PileId::Limbo: return g.limbo;
-    case PileId::Grid: return g.grid_cards;
+    case PileId::Grid: case PileId::MasterDeck: return g.grid_cards;
     }
     SPIRE_ASSERT(false);
     __builtin_unreachable();
@@ -679,6 +679,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.manager.total_discarded_this_turn = 0;
             g.turn = 1;
             g.room_in_combat = false;
+            g.room_phase = RoomPhase::Complete;
             g.screen = Screen::Victory;
             g.manager.phase = Phase::WaitingOnUser;
             g.manager.using_card = false;
@@ -700,6 +701,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             break;
         }
     }
+    settle_card_obtains(g);
     settle_card_moves(g);
     for (int i = 0; i < g.monster_order.size; ++i) {
         Creature& creature = g.monsters[g.monster_order[i]].creature;
@@ -765,6 +767,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
     g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
+    g.grid_source = PileId::Grid;
     g.discovery_card = -1;
     g.action_objects.clear();
     g.power_objects.clear();
@@ -781,6 +784,8 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.turn = 1;
     g.battle_over = false;
     g.room_in_combat = true;
+    g.room_kind = RoomKind::Monster;
+    g.room_phase = RoomPhase::Combat;
     g.cannot_lose = false;
     g.mugged = false;
     g.smoked = false;
@@ -919,6 +924,15 @@ SPIRE_FN inline void step(Game& g, Action action) {
             if (g.selected_cards.size != g.selection_amount ||
                 (g.selection_any_number && g.selected_cards.size == get_pile(g, g.grid_source).size)) return;
         } else SPIRE_ASSERT(action.kind == ActionKind::Proceed && g.selection_any_number);
+        if (g.grid_source == PileId::MasterDeck) {
+            g.screen = Screen::None;
+            for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
+            settle_card_obtains(g);
+            g.grid_source = PileId::Grid;
+            g.grid_for_purge = false;
+            g.grid_can_cancel = true;
+            return;
+        }
         g.screen = Screen::Combat;
     } else {
         SPIRE_ASSERT(g.screen == Screen::Combat);

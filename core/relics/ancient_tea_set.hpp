@@ -14,7 +14,7 @@ struct AncientTeaSet : RelicHooks {
                 r.counter = -1;
                 Effect e = units::actions::GainEnergy::make(2);
                 add_top(g, e);
-                queue_relic_display(g, relic, player_target, true);
+                queue_relic_above(g, relic, player_target, true);
             }
             r.state.AncientTeaSet.firstTurn = false;
         }

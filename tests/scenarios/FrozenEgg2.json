@@ -1,0 +1,19 @@
+{
+  "deck": [
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Frozen Egg 2",
+    "DollysMirror"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

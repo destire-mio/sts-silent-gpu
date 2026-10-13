@@ -10,7 +10,7 @@ struct Akabeko : RelicHooks {
         e.power = PowerId::Vigor;
         e.amount = 8;
         add_top(g, e);
-        queue_relic_display(g, relic, player_target, true);
+        queue_relic_above(g, relic, player_target, true);
     }
 };
 }

@@ -7,39 +7,6 @@ from pathlib import Path
 
 
 def reward_templates(units, schema):
-    # AbstractCard field initializers and constructor; per-card writes come from the inventory.
-    card_base = {
-        "baseBlock": -1, "baseDamage": -1, "baseDiscard": -1, "baseDraw": -1,
-        "baseHeal": -1, "baseMagicNumber": -1, "block": -1, "damage": -1,
-        "damageType": "NORMAL", "damageTypeForTurn": "NORMAL", "discard": -1,
-        "draw": -1, "heal": -1, "magicNumber": -1, "energyOnUse": 0,
-        "misc": 0, "multiDamage": None, "price": 0, "timesUpgraded": 0,
-        "dontTriggerOnUseCard": False, "exhaust": False, "exhaustOnFire": False,
-        "exhaustOnUseOnce": False, "freeToPlayOnce": False, "ignoreEnergyOnUse": False,
-        "inBottleFlame": False, "inBottleLightning": False, "inBottleTornado": False,
-        "isEthereal": False, "isFlipped": False, "isInAutoplay": False,
-        "isInnate": False, "isMultiDamage": False, "purgeOnUse": False,
-        "retain": False, "returnToHand": False, "selfRetain": False,
-        "shuffleBackIntoDrawPile": False, "upgraded": False,
-    }
-    cards = {}
-    for unit in units:
-        facts = unit["facts"]
-        if unit["kind"] != "card" or facts.get("color") != "GREEN" or facts["rarity"] not in ("COMMON", "UNCOMMON", "RARE"):
-            continue
-        fields = dict(card_base, cardID=unit["game_id"], cost=facts["cost"], costForTurn=facts["cost"])
-        fields.update({key: facts[key] for key in ("color", "rarity", "target", "type", "tags")})
-        fields.update(facts["flags"])
-        constructor = unit["java_class"].rsplit(".", 1)[1]
-        for change in unit["sizing"]["state_changes"]:
-            field = change["field"].removeprefix("this.")
-            if change.get("method") == constructor and field in schema["cards.AbstractCard"]["fields"]:
-                assert change["operation"] == "=" and not change["conditions"]
-                assert isinstance(change["value"], (int, bool, str))
-                fields[field] = change["value"]
-        assert set(fields) | {"uuid"} == set(schema["cards.AbstractCard"]["fields"])
-        cards[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
-                                  "fields": {"AbstractCard." + key: value for key, value in fields.items()}}
     potions = {}
     for unit in units:
         if unit["kind"] != "potion":
@@ -50,15 +17,15 @@ def reward_templates(units, schema):
         assert set(fields) == set(schema["potions.AbstractPotion"]["fields"])
         potions[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
                                     "fields": {"AbstractPotion." + key: value for key, value in fields.items()}}
-    return {"cards": cards, "potions": potions}
+    return {"potions": potions}
 
 def unit_snapshot_dispatch(root, units):
     lines = []
     for kind, enum, entity, variable, selector, context in (
         ("cards", "CardId", "Card", "card", "card.id", "bool master, int index"),
         ("powers", "PowerId", "Power", "power", "power.id", "int owner"),
-        ("relics", "RelicId", "Relic", "relic", "relic.id", "int index"),
         ("actions", "EffectKind", "Effect", "effect", "effect.kind", "int queue, int index"),
+        ("relics", "RelicId", "Relic", "relic", "relic.id", "int index"),
     ):
         lines.append(f'template<class Graph> auto {kind}_snapshot(Graph& graph, const {entity}& {variable}, {context}, const std::string& key) -> decltype(graph.scalar(0)) {{')
         lines.append('const Game& game = graph.game; (void)game;')

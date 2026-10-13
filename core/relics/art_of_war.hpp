@@ -13,7 +13,7 @@ struct ArtOfWar : RelicHooks {
     static SPIRE_FN void atTurnStart(Game& g, int relic) {
         auto& state = g.run.relics[relic].state.ArtOfWar;
         if (state.gainEnergyNext && !state.firstTurn) {
-            queue_relic_display(g, relic, player_target, false);
+            queue_relic_above(g, relic, player_target, false);
             Effect e = units::actions::GainEnergy::make(1);
             add_bottom(g, e);
         }
