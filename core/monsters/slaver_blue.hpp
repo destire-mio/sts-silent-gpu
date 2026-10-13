@@ -3,9 +3,14 @@
 
 namespace spire::units::monsters {
 struct SlaverBlue : MonsterHooks {
+    SPIRE_STATE(SlaverBlue, int16_t rakeDmg; int16_t stabDmg; int16_t weakAmt;)
     SPIRE_FN static constexpr MonsterData data() { return {48, 52, {13, 8}, 0, 2, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        return make_monster(g, MonsterId::SlaverBlue, data(), hp_override);
+        Monster m = make_monster(g, MonsterId::SlaverBlue, data(), hp_override);
+        m.state.SlaverBlue.rakeDmg = m.damage[1];
+        m.state.SlaverBlue.stabDmg = m.damage[0];
+        m.state.SlaverBlue.weakAmt = 1;
+        return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
@@ -15,9 +20,8 @@ struct SlaverBlue : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        queue_animation(g, index, EffectKind::AnimateSlowAttack);
-        queue_damage(g, index, player_target, m.damage[m.move == 1 ? 0 : 1], DamageType::Normal, 0, m.move == 1 ? AttackEffect::SlashHorizontal : AttackEffect::SlashDiagonal);
-        if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
+        queue_damage(g, index, player_target, m.damage[m.move == 1 ? 0 : 1]);
+        if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.state.SlaverBlue.weakAmt + 1, true);
         queue_monster_roll(g, index);
     }
 };

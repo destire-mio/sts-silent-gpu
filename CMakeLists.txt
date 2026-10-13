@@ -86,5 +86,8 @@ if(BUILD_TESTING)
     endforeach()
     add_test(NAME host_tests COMMAND "${Python_EXECUTABLE}" -m unittest discover
         -s "${CMAKE_CURRENT_SOURCE_DIR}/tests" -p "test_*.py")
-    set_tests_properties(host_tests PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:spire>")
+    add_test(NAME combat_replay COMMAND "${Python_EXECUTABLE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/replay.py" "${CMAKE_CURRENT_SOURCE_DIR}/tests/traces")
+    set_tests_properties(host_tests combat_replay PROPERTIES
+        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:spire>")
 endif()

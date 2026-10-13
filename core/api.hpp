@@ -12,21 +12,14 @@ SPIRE_FN inline int power_amount(const Creature&, PowerId);
 SPIRE_FN inline bool monsters_basically_dead(const Game&);
 SPIRE_FN inline void add_bottom(Game&, const Effect&);
 SPIRE_FN inline void add_top(Game&, const Effect&);
-SPIRE_FN inline void finish_action_duration(Effect& e) {
-    do { e.duration -= 1.0f / 60.0f; } while (e.duration >= 0.0f);
-    e.done = true;
-}
-SPIRE_FN inline void queue_animation(Game&, int, EffectKind);
-SPIRE_FN inline void queue_wait(Game&, float);
-SPIRE_FN inline void queue_monster_state(Game&, int, MonsterStateChange);
 SPIRE_FN inline int calculate_damage(const Game&, int, int, int, DamageType = DamageType::Normal, int card = -1);
 SPIRE_FN inline int calculate_block(const Game&, int, int card = -1);
 SPIRE_FN inline void apply_card_block(Game&, int);
 SPIRE_FN inline void refresh_powers(Game&);
 SPIRE_FN inline void monster_apply_powers(Game&, int);
-SPIRE_FN inline void queue_damage(Game&, int, int, int, DamageType = DamageType::Normal, int steal = 0, AttackEffect = AttackEffect::None);
+SPIRE_FN inline void queue_damage(Game&, int, int, int, DamageType = DamageType::Normal, int steal = 0);
 SPIRE_FN inline void queue_block(Game&, int, int);
-SPIRE_FN inline void queue_card_damage(Game&, int, int, AttackEffect = AttackEffect::None);
+SPIRE_FN inline void queue_card_damage(Game&, int, int);
 SPIRE_FN inline void queue_power(Game&, int, int, PowerId, int, bool monster_source = false);
 SPIRE_FN inline void gain_block(Game&, int, int);
 SPIRE_FN inline void remove_power(Game&, int, PowerId);

@@ -107,11 +107,6 @@ struct SnapshotGraph {
             if (field == "misc") return py::int_(card.misc);
             if (field == "energyOnUse") return py::int_(card.energy_on_use);
             if (field == "ignoreEnergyOnUse") return py::bool_(card.ignore_energy_on_use);
-            if (field == "isDamageModified") return py::bool_(card.damage_modified);
-            if (field == "isBlockModified") return py::bool_(card.block_modified);
-            if (field == "isMagicNumberModified") return py::bool_(card.magic_modified);
-            if (field == "isCostModified") return py::bool_(card.cost_modified);
-            if (field == "isCostModifiedForTurn") return py::bool_(card.cost_modified_for_turn);
             if (field == "timesUpgraded") return py::int_(card.upgrades);
             if (field == "upgraded") return py::bool_(card.upgrades > 0);
             if (field == "upgradedDamage") return py::bool_(card.upgrades > 0 && definition.upgrade_damage != 0);
@@ -255,7 +250,6 @@ struct SnapshotGraph {
             if (field == "cardInUse") return card(game.player.card_in_use);
             if (field == "cardsPlayedThisTurn") return py::int_(game.player.cards_played_this_turn);
             if (field == "chosenClass") return py::str("THE_SILENT");
-            if (field == "damagedThisCombat") return py::int_(game.player.damaged_this_combat);
             if (field == "discardPile") return group(0, "DISCARD_PILE", &game.discard);
             if (field == "drawPile") return group(1, "DRAW_PILE", &game.draw);
             if (field == "endTurnQueued" || field == "isEndingTurn") return py::bool_(game.manager.turn_has_ended);
@@ -326,10 +320,8 @@ struct SnapshotGraph {
                 if (name == "EnemyMoveInfo.nextMove") return py::int_(monster.pending_move);
                 return {};
             });
-            if (field == "firstMove") return py::bool_(monster.first_move);
             if (field == "splitTriggered") return py::bool_(monster.split_triggered);
             if (field == "saveX") return java_float(monster.offset_x);
-            if (field == "saveY") return java_float(monster.offset_y);
             if (key == "Cultist.ritualAmount") return py::int_(4);
             if (key == "Cultist.talky") return py::bool_(true);
             return {};
@@ -366,7 +358,6 @@ struct SnapshotGraph {
         return object({7, owner, index}, "cards.DamageInfo", [&](const std::string& field) -> py::object {
             if (field == "DamageInfo.base") return py::int_(monster.damage[index]);
             if (field == "DamageInfo.output") return py::int_(monster.damage_output[index]);
-            if (field == "DamageInfo.isModified") return py::bool_(monster.damage_modified[index]);
             if (field == "DamageInfo.owner") return creature(owner);
             if (field == "DamageInfo.type") return py::str("NORMAL");
             return {};
@@ -386,28 +377,21 @@ struct SnapshotGraph {
                 if (effect.kind == EffectKind::Draw) return py::str("DRAW");
                 if (effect.kind == EffectKind::Discard) return py::str("DISCARD");
                 if (effect.kind == EffectKind::UseCard) return py::str(effect.flag ? "EXHAUST" : "USE");
-                if (effect.kind == EffectKind::Wait || effect.kind == EffectKind::AnimateSlowAttack || effect.kind == EffectKind::AnimateFastAttack || effect.kind == EffectKind::AnimateHop) return py::str("WAIT");
                 if (effect.kind == EffectKind::ApplyPower) return py::str(power_isDebuff(effect.prepared_power, effect.target) ? "DEBUFF" : "POWER");
                 if (effect.kind == EffectKind::ReducePower) return py::str("REDUCE_POWER");
                 if (effect.kind == EffectKind::Shuffle) return py::str("SHUFFLE");
                 return py::none();
             }
             if (key == "AbstractGameAction.amount") return py::int_(effect.kind == EffectKind::UseCard ? 1 : effect.amount);
-            if (key == "AbstractGameAction.attackEffect") {
-                const char* effects[] = {"BLUNT_LIGHT", "BLUNT_HEAVY", "SLASH_DIAGONAL", "SMASH", "SLASH_HEAVY", "SLASH_HORIZONTAL", "SLASH_VERTICAL", "NONE", "FIRE", "POISON", "SHIELD", "LIGHTNING"};
-                return py::str(effects[static_cast<int>(effect.attack_effect)]);
-            }
             if (key == "AbstractGameAction.damageType") return py::none();
-            if (key == "AbstractGameAction.duration") return java_float(effect.duration);
             if (key == "AbstractGameAction.isDone") return py::bool_(effect.done);
             if (key == "AbstractGameAction.source") {
-                if (effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove || effect.kind == EffectKind::ChangeState) return py::none();
+                if (effect.kind == EffectKind::UseCard || effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove) return py::none();
                 return effect.source == no_target ? py::object(py::none()) : creature(effect.source);
             }
-            if (key == "AbstractGameAction.startDuration") return java_float(effect.start_duration);
             if (key == "AbstractGameAction.target") {
                 if (effect.kind == EffectKind::UseCard) return player();
-                if (effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove || effect.kind == EffectKind::ChangeState) return py::none();
+                if (effect.kind == EffectKind::HandCheck || effect.kind == EffectKind::RollMove) return py::none();
                 return effect.target == no_target ? py::object(py::none()) : creature(effect.target);
             }
             if (key == "DamageAction.goldAmount") return py::int_(effect.extra);
@@ -463,7 +447,6 @@ struct SnapshotGraph {
             if (field == "cardsPlayedThisCombat") return cards(manager.cards_played_this_combat);
             if (field == "cardsPlayedThisTurn") return cards(manager.cards_played_this_turn);
             if (field == "currentAction") return manager.has_current_action ? effect(manager.current_action, 2, 0) : py::object(py::none());
-            if (field == "previousAction") return manager.has_previous_action ? effect(manager.previous_action, 3, 0) : py::object(py::none());
             if (field == "hasControl") return py::bool_(manager.has_current_action);
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
             if (field == "usingCard") return py::bool_(false);
@@ -493,7 +476,6 @@ struct SnapshotGraph {
             "choice"_a=(selecting ? "HAND_SELECT" : game.screen == Screen::Death ? "GAME_OVER" : "NONE"));
         if (!selecting) { result["options"] = py::list(); result["state"] = py::none(); }
         else { gaps.insert("screen.options"); gaps.insert("screen.state"); }
-        result["grid"] = py::dict("ritualAnimTimer"_a=0.0);
         result["room_dialog"] = py::dict("optionList"_a=py::list(), "selectedOption"_a=-1, "waitForInput"_a=true);
         result["image_dialog"] = py::dict("selectedOption"_a=-1, "waitForInput"_a=true);
         return result;

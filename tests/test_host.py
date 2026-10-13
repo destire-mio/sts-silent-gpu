@@ -75,7 +75,7 @@ class HostInterface(unittest.TestCase):
     def test_terminal_combat_and_replayer_wiring(self):
         scenario = {"encounter": "Cultist", "deck": [], "relics": [], "hp": 1}
         game = spire.start_combat(8, scenario)
-        records = [{"schema": 1, "game_sha256": GAME_SHA256, "seed": 8, "character": "THE_SILENT", "ascension": 20, "scenario": scenario}]
+        records = [{"schema": 2, "game_sha256": GAME_SHA256, "seed": 8, "character": "THE_SILENT", "ascension": 20, "scenario": scenario}]
         decisions = 0
         while game.legal_actions():
             actions = game.legal_actions()

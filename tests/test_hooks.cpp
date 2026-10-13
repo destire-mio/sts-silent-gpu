@@ -110,10 +110,9 @@ static void test_attacked_hook_order() {
     require(g.manager.actions.empty(), "fully blocked normal damage does not trigger Angry or Curl Up");
     hit.amount = 9;
     damage(g, hit);
-    require(g.manager.actions.size == 4 && g.manager.actions[0].kind == EffectKind::ApplyPower &&
-            g.manager.actions[0].power == PowerId::Strength && g.manager.actions[1].kind == EffectKind::ChangeState &&
-            g.manager.actions[2].kind == EffectKind::Block && g.manager.actions[3].kind == EffectKind::RemovePower,
-            "Angry adds Strength before Curl Up closes the louse, gains block, and removes itself");
+    require(g.manager.actions.size == 3 && g.manager.actions[0].kind == EffectKind::ApplyPower &&
+            g.manager.actions[0].power == PowerId::Strength && g.manager.actions[1].kind == EffectKind::Block && g.manager.actions[2].kind == EffectKind::RemovePower,
+            "Angry adds Strength before Curl Up gains block and removes itself");
     run_until_decision(g);
     require(g.monsters[0].creature.hp == 47 && g.monsters[0].creature.block == 7 &&
             power_amount(g.monsters[0].creature, PowerId::Strength) == 2 &&

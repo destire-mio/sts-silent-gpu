@@ -31,7 +31,7 @@ void encounter_construction() {
             CHECK(g.rng.monster_hp.counter == hp_calls[id]);
             CHECK(g.rng.misc.counter == misc_calls[id]);
             CHECK(g.unseeded.counter == (id == static_cast<int>(EncounterId::ExordiumThugs) ||
-                id == static_cast<int>(EncounterId::ExordiumWildlife) ? 4 : 0));
+                id == static_cast<int>(EncounterId::ExordiumWildlife) ? 2 : 0));
             int louses = 0;
             for (int i = 0; i < g.monsters.size; ++i) {
                 CHECK(g.monster_order[i] == i);
@@ -70,7 +70,7 @@ void forced_move_history() {
     CHECK(g.monsters[0].pending_move == 2);
     create_monster_intent(g, 0);
     monster_take_turn(g, 0);
-    CHECK(g.monsters[0].used_special);
+    CHECK(g.monsters[0].state.SlaverRed.usedEntangle);
     get_monster_move(g, 0, 99);
     CHECK(g.monsters[0].pending_move == 1);
     get_monster_move(g, 0, 99);
@@ -174,8 +174,6 @@ void lethal_attack_keeps_published_intent() {
     CHECK(g.monsters[0].pending_move == 2);
     CHECK(g.monsters[0].pending_intent == Intent::Debuff);
     CHECK(g.monsters[0].move_history[g.monsters[0].move_history.size - 1] == 2);
-    CHECK(g.manager.actions[0].kind == EffectKind::AnimateSlowAttack);
-    execute_next(g);
     CHECK(g.manager.actions[0].kind == EffectKind::Damage);
     execute_next(g);
     CHECK(g.screen == Screen::Death);
@@ -193,10 +191,8 @@ void looter_bookkeeping() {
     roll_monster_move(g, 0);
     create_monster_intent(g, 0);
     monster_take_turn(g, 0);
-    CHECK(g.manager.actions[0].kind == EffectKind::AnimateSlowAttack);
     execute_next(g);
-    execute_next(g);
-    CHECK(g.monsters[0].stolen_gold == 3);
+    CHECK(g.monsters[0].state.Looter.stolenGold == 3);
     CHECK(g.run.gold == 3);
     execute_next(g);
     CHECK(g.run.gold == 0);

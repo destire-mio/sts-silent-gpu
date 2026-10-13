@@ -7,7 +7,7 @@ struct Neutralize : CardHooks {
         return {CardType::Attack, CardTarget::Enemy, 0, 3, -1, 1, 1, 0, 1, false, false};
     }
     static SPIRE_FN void use(Game& g, int card, int target) {
-        queue_card_damage(g, card, target, AttackEffect::BluntHeavy);
+        queue_card_damage(g, card, target);
         queue_power(g, player_target, target, PowerId::Weak, g.cards[card].magic);
     }
     static SPIRE_FN void upgrade(Card& card) {

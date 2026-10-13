@@ -8,7 +8,6 @@ struct CurlUp : PowerHooks {
         if (!p.triggered && amount < get_creature(g, owner).hp && amount > 0 &&
             info.source != no_target && info.damage_type == DamageType::Normal) {
             p.triggered = true;
-            queue_monster_state(g, owner, MonsterStateChange::Closed);
             queue_block(g, owner, p.amount);
             Effect e{};
             e.kind = EffectKind::RemovePower;

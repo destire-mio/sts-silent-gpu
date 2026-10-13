@@ -5,13 +5,11 @@ namespace spire::units::actions {
 struct UseCard : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {true}; }
     SPIRE_FN static void prepare(Game&, Effect& e) {
-        e.duration = 0.15f;
         e.amount = 1;
         e.source = no_target;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         finish_card_use(g, e);
-        finish_action_duration(e);
     }
 };
 }

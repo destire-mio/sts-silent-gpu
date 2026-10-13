@@ -21,11 +21,6 @@ struct Card {
     int magic = -1;
     int multi_damage[monster_capacity]{};
     uint8_t multi_damage_count = 0;
-    bool damage_modified = false;
-    bool block_modified = false;
-    bool magic_modified = false;
-    bool cost_modified = false;
-    bool cost_modified_for_turn = false;
     bool ignore_energy_on_use = false;
     bool exhaust = false;
     bool ethereal = false;
@@ -65,7 +60,6 @@ struct Monster {
     MonsterId id = MonsterId::Cultist;
     Creature creature{};
     float offset_x = 0.0f;
-    float offset_y = 0.0f;
     Intent intent = Intent::Debug;
     int8_t move = -1;
     int16_t intent_base_damage = -1;
@@ -79,13 +73,8 @@ struct Monster {
     int16_t damage[3]{};
     uint8_t damage_count = 1;
     int16_t damage_output[3]{};
-    bool damage_modified[3]{};
     int16_t block_amount = 0;
     int16_t magic = 0;
-    int turn_count = 0;
-    int stolen_gold = 0;
-    bool first_move = true;
-    bool used_special = false;
     bool split_triggered = false;
     bool escape_next = false;
     MonsterState state{};
@@ -98,7 +87,6 @@ struct Player {
     int hand_size = 5;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
-    int damaged_this_combat = 0;
     bool bloodied = false;
 };
 enum class ActionKind : uint8_t { Play, EndTurn, Choose, PotionUse, PotionDiscard, Proceed, Skip };
@@ -109,8 +97,6 @@ struct Action {
 };
 using ActionSet = List<Action, 128>;
 struct Effect {
-    float duration = 0.0f;
-    float start_duration = 0.0f;
     bool done = false;
     EffectKind kind = EffectKind::Draw;
     int8_t source = player_target;
@@ -121,7 +107,6 @@ struct Effect {
     PowerId power = PowerId::Strength;
     int extra = 0;
     DamageType damage_type = DamageType::Normal;
-    AttackEffect attack_effect = AttackEffect::None;
     bool flag = false;
     EffectState state{};
     Power prepared_power{};
@@ -154,9 +139,7 @@ struct CardHistory {
 };
 struct ActionManager {
     Effect current_action{};
-    Effect previous_action{};
     bool has_current_action = false;
-    bool has_previous_action = false;
     Queue<Effect, action_capacity> actions{};
     Queue<Effect, action_capacity> pre_turn_actions{};
     Queue<CardQueueItem, 32> card_queue{};

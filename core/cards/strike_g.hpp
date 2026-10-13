@@ -7,7 +7,7 @@ struct StrikeG : CardHooks {
         return {CardType::Attack, CardTarget::Enemy, 1, 6, -1, -1, 3, 0, 0, false, false};
     }
     static SPIRE_FN void use(Game& g, int card, int target) {
-        queue_card_damage(g, card, target, AttackEffect::SlashHorizontal);
+        queue_card_damage(g, card, target);
     }
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {

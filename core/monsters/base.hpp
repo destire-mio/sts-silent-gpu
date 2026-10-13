@@ -2,38 +2,15 @@
 #include "../hooks.hpp"
 
 namespace spire {
-SPIRE_FN inline void queue_animation(Game& g, int owner, EffectKind kind) {
-    Effect e{};
-    e.kind = kind;
-    e.source = owner;
-    add_bottom(g, e);
-}
-
-SPIRE_FN inline void queue_wait(Game& g, float duration) {
-    Effect e{};
-    e.kind = EffectKind::Wait;
-    e.duration = duration;
-    add_bottom(g, e);
-}
-
-SPIRE_FN inline void queue_monster_state(Game& g, int owner, MonsterStateChange state) {
-    Effect e{};
-    e.kind = EffectKind::ChangeState;
-    e.card = owner;
-    e.extra = static_cast<int>(state);
-    add_bottom(g, e);
-}
-
-SPIRE_FN inline void position_monster(Monster& monster, float offset_x, float offset_y) {
+SPIRE_FN inline void position_monster(Monster& monster, float offset_x) {
     monster.offset_x = offset_x;
-    monster.offset_y = offset_y;
     monster.creature.draw_x = 1280.0f * 0.75f + offset_x * (1280.0f / 1920.0f);
 }
 
 SPIRE_FN inline Monster make_monster(Game& g, MonsterId id, const MonsterData& data, int hp_override) {
     Monster m{};
     m.id = id;
-    position_monster(m, 0.0f, 0.0f);
+    position_monster(m, 0.0f);
     monster_initialize_state(m);
     m.creature.hp = hp_override == 0 ? g.rng.monster_hp.random(data.hp_min, data.hp_max) : hp_override;
     m.creature.max_hp = m.creature.hp;
@@ -47,8 +24,8 @@ SPIRE_FN inline Monster make_monster(Game& g, MonsterId id, const MonsterData& d
     return m;
 }
 
-SPIRE_FN inline void append_monster(Game& g, Monster monster, float offset_x = 0.0f, float offset_y = 0.0f) {
-    position_monster(monster, monster.offset_x + offset_x, monster.offset_y + offset_y);
+SPIRE_FN inline void append_monster(Game& g, Monster monster, float offset_x = 0.0f) {
+    position_monster(monster, monster.offset_x + offset_x);
     g.monster_order.push_back(g.monsters.size);
     g.monsters.push_back(monster);
 }
@@ -130,7 +107,7 @@ SPIRE_FN inline void split_into(Game& g, int index, MonsterId child) {
     for (int side = 0; side < 2; ++side) {
         const int spawned = g.monsters.size;
         Monster monster = construct_monster(g, child, hp);
-        position_monster(monster, parent.offset_x + (side == 0 ? -134.0f : 134.0f), parent.offset_y);
+        position_monster(monster, parent.offset_x + (side == 0 ? -134.0f : 134.0f));
         g.monsters.push_back(monster);
         for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, spawned);
         monster_init(g, spawned);

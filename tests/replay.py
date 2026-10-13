@@ -52,7 +52,7 @@ def replay(path, engine):
     decisions = 0
     with open_trace(path) as stream:
         header = json.loads(next(stream))
-        compare(1, header["schema"], f"{path}:1:$.schema")
+        compare(2, header["schema"], f"{path}:1:$.schema")
         compare(GAME_SHA256, header["game_sha256"], f"{path}:1:$.game_sha256")
         compare("THE_SILENT", header["character"], f"{path}:1:$.character")
         compare(20, header["ascension"], f"{path}:1:$.ascension")

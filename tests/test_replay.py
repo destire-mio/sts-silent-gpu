@@ -54,7 +54,7 @@ ENGINE = types.SimpleNamespace(Game=Game)
 
 def records():
     return [
-        {"schema": 1, "game_sha256": GAME_SHA256, "seed": 7,
+        {"schema": 2, "game_sha256": GAME_SHA256, "seed": 7,
          "character": "THE_SILENT", "ascension": 20, "scenario": copy.deepcopy(SCENARIO)},
         {"snapshot": snapshot(7), "legal": [ACTION], "action": ACTION},
         {"snapshot": snapshot(8, True), "terminal": "combat_end"},
@@ -149,7 +149,7 @@ class OracleFormat(unittest.TestCase):
             replay(self.path, ENGINE)
 
     def test_header_version_and_game_are_checked(self):
-        for key, value in (("schema", 2), ("game_sha256", "different"),
+        for key, value in (("schema", 1), ("game_sha256", "different"),
                            ("character", "IRONCLAD"), ("ascension", 19)):
             with self.subTest(key=key):
                 rows = records()

@@ -15,6 +15,7 @@ SPIRE_FN inline void on_draw_or_discard(Game& g) {
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
 SPIRE_FN inline void move_to_discard(Game& g, int card) {
+    card_resetAttributes(g, card);
     card_onMoveToDiscard(g, card);
     g.discard.push_back(card);
     on_draw_or_discard(g);
@@ -36,6 +37,7 @@ SPIRE_FN inline void exhaust_card(Game& g, int card) {
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_onExhaust(g, powers[i], player_target, card);
     card_triggerOnExhaust(g, card);
+    card_resetAttributes(g, card);
     for (int i = 0; i < g.hand.size; ++i) if (g.hand[i] == card) { g.hand.erase(i); break; }
     g.exhaust.push_back(card);
     on_draw_or_discard(g);
@@ -153,7 +155,6 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
         if (info.damage_type == DamageType::HpLoss) g.manager.hp_loss_this_combat += amount;
         target.hp -= amount;
         if (amount > 0) {
-            ++g.player.damaged_this_combat;
             for (int i = 0; i < g.hand.size; ++i) card_tookDamage(g, g.hand[i]);
             for (int i = 0; i < g.discard.size; ++i) card_tookDamage(g, g.discard[i]);
             for (int i = 0; i < g.draw.size; ++i) card_tookDamage(g, g.draw[i]);
@@ -203,25 +204,19 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     const Powers& target = g.player.creature.powers;
     for (int d = 0; d < m.damage_count; ++d) {
         float value = static_cast<float>(m.damage[d]);
-        bool modified = false;
         for (int i = 0; i < source.size; ++i) {
             value = power_atDamageGive(g, source[i], owner, value, DamageType::Normal, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
             value = power_atDamageReceive(g, target[i], player_target, value, DamageType::Normal, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < source.size; ++i) {
             value = power_atDamageFinalGive(g, source[i], owner, value, DamageType::Normal, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
             value = power_atDamageFinalReceive(g, target[i], player_target, value, DamageType::Normal, -1);
-            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         m.damage_output[d] = max(0, floor_int(value));
-        m.damage_modified[d] = modified;
     }
     if (m.pending_base_damage >= 0) m.intent_damage = calculate_damage(g, owner, player_target, m.pending_base_damage);
 }
@@ -360,9 +355,6 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     draw.amount = g.player.hand_size;
     add_bottom(g, draw);
     after_draw_turn_hooks(g);
-    Effect enable{};
-    enable.kind = EffectKind::EnableEndTurn;
-    add_bottom(g, enable);
     refresh_powers(g);
 }
 SPIRE_FN inline void run_until_decision(Game& g) {
@@ -371,8 +363,6 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         if (g.manager.has_current_action) {
             execute_effect(g, g.manager.current_action);
             if (g.screen == Screen::Discard || g.screen == Screen::Death) break;
-            g.manager.previous_action = g.manager.current_action;
-            g.manager.has_previous_action = true;
             g.manager.has_current_action = false;
         } else if (!g.manager.actions.empty()) {
             g.manager.current_action = g.manager.actions.pop_front();
@@ -411,7 +401,6 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 Powers& powers = g.monsters[id].creature.powers;
                 for (int i = 0; i < powers.size; ++i) power_duringTurn(g, powers[i], id);
             }
-            if (g.manager.monster_queue.empty()) queue_wait(g, 1.5f);
         } else if (g.manager.turn_has_ended && !monsters_basically_dead(g)) {
             begin_player_turn(g);
         } else {
@@ -504,9 +493,6 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     draw.kind = EffectKind::Draw;
     draw.amount = g.player.hand_size;
     add_bottom(g, draw);
-    Effect enable{};
-    enable.kind = EffectKind::EnableEndTurn;
-    add_bottom(g, enable);
     relics_at_battle_start(g);
     run_until_decision(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);

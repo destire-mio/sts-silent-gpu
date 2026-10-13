@@ -37,10 +37,9 @@ struct AcidSlime_L : MonsterHooks {
             set_monster_move(g, index, 3, Intent::Unknown);
             return;
         }
-        queue_animation(g, index, EffectKind::AnimateSlowAttack);
         if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
         else {
-            queue_damage(g, index, player_target, m.damage[m.move == 2 ? 1 : 0], DamageType::Normal, 0, AttackEffect::BluntHeavy);
+            queue_damage(g, index, player_target, m.damage[m.move == 2 ? 1 : 0]);
             if (m.move == 1) queue_slimed(g, 2);
         }
         queue_monster_roll(g, index);

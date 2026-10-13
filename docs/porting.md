@@ -92,8 +92,10 @@ Set the instance ID before calling its initializer. Existing card, power, relic 
 construction paths and combat setup initialize their selected payload. A new action constructor
 must initialize its effect before assigning payload fields and queueing it. Snapshot field names,
 membership and object identity follow `inventory/snapshot-fields.json` and `docs/design.md`;
-the engine's internal field names do not define the trace format. Preserve state required by
-the Java fields, including ordered histories, even when no current gameplay rule reads it.
+the engine's internal field names do not define the trace format. Preserve included Java fields,
+including ordered histories. The catalog's `excluded` entries are outside the contract: do not
+add timers, animation queues or other presentation state to match them. Creature positions used
+for spawn ordering and other rule-read fields remain part of the engine.
 
 The current budgets are 256 card instances, 8 monster instances, 64 powers per creature and
 128 actions in each queue. They cover the current content and tested workloads. Card creation
@@ -158,14 +160,16 @@ and generated headers against the same device restrictions. Native and host test
 only their covered behavior. A unit is accepted when its original-game traces replay with zero
 differences, including legal actions, card/monster state, queue state and RNG state/counters.
 
-Run the committed combat fixtures with one command:
+Run all native tests, host tests and the committed combat fixtures with one command:
 
 ```sh
-PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py
+ctest --test-dir /private/tmp/spire-build --output-on-failure
 ```
 
-The replayer accepts `.jsonl` and `.jsonl.gz` files and directories. Directory discovery selects
-scenario traces; a full-run trace requires an explicit file argument. Each result prints `PASS`
+The `combat_replay` test compares every committed scenario trace. Add `-V -R '^combat_replay$'`
+to the CTest command to show per-trace results on success as well. The replayer requires schema 2
+and accepts `.jsonl` and `.jsonl.gz` files and directories. Directory discovery selects scenario
+traces; a full-run trace requires an explicit file argument. Each result prints `PASS`
 and its decision count, or `FAIL` with the first differing JSON path and both values. The final
 line counts passing traces and matched decisions, including matching prefixes of failed traces;
 any failure returns exit status 1. A terminal snapshot is compared even when no decisions remain.

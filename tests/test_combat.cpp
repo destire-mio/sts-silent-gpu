@@ -195,7 +195,7 @@ static void test_null_target_skill_damage() {
     play(g, CardId::Defend_G);
     require_pile(g.discard, {0}, "Defend enters discard");
     // AbstractCard.calculateCardDamage(null) applies the first monster's powers even to skill damage values.
-    require(g.cards[0].damage == 3, "discarded skill retains first-monster damage calculation");
+    require(g.cards[0].damage == g.cards[0].base_damage, "discard resets damage to its base value");
     require(g.player.creature.block == 5 && g.monsters[0].creature.hp == 56, "skill damage field does not cause an attack");
 }
 

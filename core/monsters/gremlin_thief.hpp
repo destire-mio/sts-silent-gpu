@@ -3,9 +3,12 @@
 
 namespace spire::units::monsters {
 struct GremlinThief : MonsterHooks {
+    SPIRE_STATE(GremlinThief, int16_t thiefDamage;)
     SPIRE_FN static constexpr MonsterData data() { return {11, 15, {10, 0}, 0, 0}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        return make_monster(g, MonsterId::GremlinThief, data(), hp_override);
+        Monster m = make_monster(g, MonsterId::GremlinThief, data(), hp_override);
+        m.state.GremlinThief.thiefDamage = m.damage[0];
+        return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
@@ -14,8 +17,7 @@ struct GremlinThief : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        queue_animation(g, index, EffectKind::AnimateSlowAttack);
-        queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::SlashHorizontal);
+        queue_damage(g, index, player_target, m.damage[0]);
         queue_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
     }
 };

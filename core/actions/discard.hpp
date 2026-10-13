@@ -4,7 +4,6 @@
 namespace spire::units::actions {
 struct Discard : ActionHooks {
     SPIRE_STATE(Discard, bool selecting;)
-    SPIRE_FN static void prepare(Game&, Effect& e) { e.duration = 0.1f; }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         if (e.state.Discard.selecting) {
             for (int i = 0; i < g.selected_cards.size; ++i) {
@@ -13,14 +12,12 @@ struct Discard : ActionHooks {
                 discard_card(g, g.hand.size - 1, false);
             }
             g.selected_cards_retrieved = true;
-            finish_action_duration(e);
             return;
         }
         if (monsters_basically_dead(g)) { e.done = true; return; }
         if (g.hand.size <= e.amount) {
             e.amount = g.hand.size;
             while (!g.hand.empty()) discard_card(g, g.hand.size - 1, e.flag);
-            finish_action_duration(e);
         } else {
             SPIRE_ASSERT(!e.flag);
             g.discard_remaining = e.amount;
@@ -29,7 +26,6 @@ struct Discard : ActionHooks {
             g.selected_cards.clear();
             g.selected_cards_retrieved = false;
             e.state.Discard.selecting = true;
-            e.duration -= 1.0f / 60.0f;
             g.screen = Screen::Discard;
         }
     }

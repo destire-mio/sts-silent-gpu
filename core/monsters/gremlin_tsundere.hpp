@@ -3,9 +3,13 @@
 
 namespace spire::units::monsters {
 struct GremlinTsundere : MonsterHooks {
+    SPIRE_STATE(GremlinTsundere, int16_t bashDmg; int16_t blockAmt;)
     SPIRE_FN static constexpr MonsterData data() { return {13, 17, {8, 0}, 11, 0}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        return make_monster(g, MonsterId::GremlinTsundere, data(), hp_override);
+        Monster m = make_monster(g, MonsterId::GremlinTsundere, data(), hp_override);
+        m.state.GremlinTsundere.bashDmg = m.damage[0];
+        m.state.GremlinTsundere.blockAmt = m.block_amount;
+        return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         (void)num;
@@ -17,7 +21,7 @@ struct GremlinTsundere : MonsterHooks {
             Effect e{};
             e.kind = EffectKind::BlockRandomMonster;
             e.source = index;
-            e.amount = m.block_amount;
+            e.amount = m.state.GremlinTsundere.blockAmt;
             add_bottom(g, e);
             int alive = 0;
             for (int i = 0; i < g.monster_order.size; ++i) {
@@ -27,8 +31,7 @@ struct GremlinTsundere : MonsterHooks {
             if (alive > 1) set_monster_move(g, index, 1, Intent::Defend);
             else set_monster_move(g, index, 2, Intent::Attack, m.damage[0]);
         } else {
-            queue_animation(g, index, EffectKind::AnimateSlowAttack);
-            queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::BluntLight);
+            queue_damage(g, index, player_target, m.damage[0]);
             queue_monster_move(g, index, 2, Intent::Attack, m.damage[0]);
         }
     }

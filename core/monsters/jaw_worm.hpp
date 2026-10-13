@@ -3,14 +3,22 @@
 
 namespace spire::units::monsters {
 struct JawWorm : MonsterHooks {
+    SPIRE_STATE(JawWorm, int16_t bellowBlock; int16_t bellowStr; int16_t chompDmg; int16_t thrashBlock; int16_t thrashDmg; bool firstMove; bool hardMode;)
     SPIRE_FN static constexpr MonsterData data() { return {42, 46, {12, 7}, 9, 5, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        return make_monster(g, MonsterId::JawWorm, data(), hp_override);
+        Monster m = make_monster(g, MonsterId::JawWorm, data(), hp_override);
+        m.state.JawWorm.bellowBlock = m.block_amount;
+        m.state.JawWorm.bellowStr = m.magic;
+        m.state.JawWorm.chompDmg = m.damage[0];
+        m.state.JawWorm.thrashBlock = 5;
+        m.state.JawWorm.thrashDmg = m.damage[1];
+        m.state.JawWorm.firstMove = true;
+        return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
-        if (m.first_move) {
-            m.first_move = false;
+        if (m.state.JawWorm.firstMove) {
+            m.state.JawWorm.firstMove = false;
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         } else if (num < 25) {
             if (!last_move(m, 1)) set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
@@ -28,13 +36,11 @@ struct JawWorm : MonsterHooks {
         Monster& m = g.monsters[index];
         if (m.move == 1) queue_damage(g, index, player_target, m.damage[0]);
         else if (m.move == 2) {
-            queue_wait(g, 0.5f);
-            queue_power(g, index, index, PowerId::Strength, m.magic);
-            queue_block(g, index, m.block_amount);
+            queue_power(g, index, index, PowerId::Strength, m.state.JawWorm.bellowStr);
+            queue_block(g, index, m.state.JawWorm.bellowBlock);
         } else {
-            queue_animation(g, index, EffectKind::AnimateHop);
-            queue_damage(g, index, player_target, m.damage[1], DamageType::Normal, 0, AttackEffect::BluntLight);
-            queue_block(g, index, 5);
+            queue_damage(g, index, player_target, m.damage[1]);
+            queue_block(g, index, m.state.JawWorm.thrashBlock);
         }
         queue_monster_roll(g, index);
     }

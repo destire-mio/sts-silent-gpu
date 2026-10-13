@@ -3,9 +3,13 @@
 
 namespace spire::units::monsters {
 struct FungiBeast : MonsterHooks {
+    SPIRE_STATE(FungiBeast, int16_t biteDamage; int16_t strAmt;)
     SPIRE_FN static constexpr MonsterData data() { return {24, 28, {6, 0}, 0, 5}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        return make_monster(g, MonsterId::FungiBeast, data(), hp_override);
+        Monster m = make_monster(g, MonsterId::FungiBeast, data(), hp_override);
+        m.state.FungiBeast.biteDamage = m.damage[0];
+        m.state.FungiBeast.strAmt = 4;
+        return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
@@ -16,11 +20,9 @@ struct FungiBeast : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 1) {
-            queue_monster_state(g, index, MonsterStateChange::Attack);
-            queue_wait(g, 0.5f);
-            queue_damage(g, index, player_target, m.damage[0], DamageType::Normal, 0, AttackEffect::BluntLight);
+            queue_damage(g, index, player_target, m.damage[0]);
         }
-        else queue_power(g, index, index, PowerId::Strength, m.magic);
+        else queue_power(g, index, index, PowerId::Strength, m.state.FungiBeast.strAmt + 1);
         queue_monster_roll(g, index);
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int index) {
