@@ -552,7 +552,7 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     g.manager.played_cards.begin_turn();
     g.manager.damage_received_this_turn = 0;
     if (!keeps_block(g, player_target))
-        g.player.creature.block = 0;
+        g.player.creature.block = max(0, g.player.creature.block - relic_block_loss(g));
     recharge_energy(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     add_bottom(g, units::actions::Draw::construct(g.player.hand_size, true, -1, no_target, true));
