@@ -340,15 +340,15 @@ struct SnapshotGraph {
             if (field == "blights") return py::list();
             if (field == "orbs") {
                 py::list result;
-                if (game.player.max_orbs == 0) return result;
+                if (game.player.orb_count == 0) return result;
                 const char* type = nullptr;
                 for (int i = 0; i < static_cast<int>(RelicId::Count); ++i) {
                     const char* candidate = relic_data(static_cast<RelicId>(i)).empty_orb_class;
                     if (candidate) type = candidate;
                 }
                 SPIRE_ASSERT(type != nullptr);
-                for (int i = 0; i < game.player.max_orbs; ++i) {
-                    result.append(object({26, i, 0}, type, [&](const std::string& name) -> py::object {
+                for (int i = 0; i < game.player.orb_count; ++i) {
+                    result.append(object({46, i, 0}, type, [&](const std::string& name) -> py::object {
                         if (name == "AbstractOrb.ID") return py::none();
                         if (name == "AbstractOrb.baseEvokeAmount" || name == "AbstractOrb.basePassiveAmount" ||
                             name == "AbstractOrb.evokeAmount" || name == "AbstractOrb.passiveAmount") return py::int_(0);

@@ -827,6 +827,7 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.player.end_turn_queued = false;
     g.player.card_in_use = -1;
     g.player.max_orbs = g.player.master_max_orbs;
+    g.player.orb_count = static_cast<uint8_t>(g.player.max_orbs);
     build_encounter(g, encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
@@ -927,6 +928,7 @@ SPIRE_FN inline void reset(Game& g, uint64_t seed, RunProfile profile = {}) {
     event_enter(g);
 }
 SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
+    g.player.orb_count = 0;
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
     g.player.creature.powers.clear();
     g.player.creature.block = 0;

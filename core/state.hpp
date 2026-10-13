@@ -180,6 +180,7 @@ struct Player {
     int max_orbs = 0;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
+    uint8_t orb_count = 0;
     bool bloodied = false;
     bool end_turn_queued = false;
     bool escaping = false;
