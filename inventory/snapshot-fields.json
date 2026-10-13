@@ -4,12 +4,9 @@
     "fields": {
       "actionType": "com.megacrit.cardcrawl.actions.AbstractGameAction$ActionType",
       "amount": "int",
-      "attackEffect": "com.megacrit.cardcrawl.actions.AbstractGameAction$AttackEffect",
       "damageType": "com.megacrit.cardcrawl.cards.DamageInfo$DamageType",
-      "duration": "float",
       "isDone": "boolean",
       "source": "com.megacrit.cardcrawl.core.AbstractCreature",
-      "startDuration": "float",
       "target": "com.megacrit.cardcrawl.core.AbstractCreature"
     }
   },
@@ -41,9 +38,7 @@
       "orbsChanneledThisTurn": "java.util.ArrayList<com.megacrit.cardcrawl.orbs.AbstractOrb>",
       "phase": "com.megacrit.cardcrawl.actions.GameActionManager$Phase",
       "preTurnActions": "java.util.ArrayList<com.megacrit.cardcrawl.actions.AbstractGameAction>",
-      "previousAction": "com.megacrit.cardcrawl.actions.AbstractGameAction",
       "turnHasEnded": "boolean",
-      "turnStartCurrentAction": "com.megacrit.cardcrawl.actions.AbstractGameAction",
       "uniqueStancesThisCombat": "java.util.HashMap<java.lang.String, java.lang.Integer>",
       "usingCard": "boolean"
     }
@@ -104,55 +99,38 @@
   },
   "actions.animations.ShoutAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "bubbleDuration": "float",
-      "msg": "java.lang.String",
-      "used": "boolean"
-    }
+    "fields": {}
   },
   "actions.animations.TalkAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "bubbleDuration": "float",
-      "msg": "java.lang.String",
-      "player": "boolean",
-      "used": "boolean"
-    }
+    "fields": {}
   },
   "actions.animations.VFXAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "isTopLevelEffect": "boolean",
-      "startingDuration": "float"
-    }
+    "fields": {}
   },
   "actions.common.ApplyPoisonOnRandomMonsterAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "powerToApply": "com.megacrit.cardcrawl.powers.AbstractPower",
-      "startingDuration": "float"
+      "powerToApply": "com.megacrit.cardcrawl.powers.AbstractPower"
     }
   },
   "actions.common.ApplyPowerAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "powerToApply": "com.megacrit.cardcrawl.powers.AbstractPower",
-      "startingDuration": "float"
+      "powerToApply": "com.megacrit.cardcrawl.powers.AbstractPower"
     }
   },
   "actions.common.ApplyPowerToRandomEnemyAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "effect": "com.megacrit.cardcrawl.actions.AbstractGameAction$AttackEffect",
-      "isFast": "boolean",
       "powerToApply": "com.megacrit.cardcrawl.powers.AbstractPower"
     }
   },
   "actions.common.AttackDamageRandomEnemyAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "card": "com.megacrit.cardcrawl.cards.AbstractCard",
-      "effect": "com.megacrit.cardcrawl.actions.AbstractGameAction$AttackEffect"
+      "card": "com.megacrit.cardcrawl.cards.AbstractCard"
     }
   },
   "actions.common.BetterDiscardPileToHandAction": {
@@ -185,9 +163,7 @@
     "extends": "actions.AbstractGameAction",
     "fields": {
       "goldAmount": "int",
-      "info": "com.megacrit.cardcrawl.cards.DamageInfo",
-      "muteSfx": "boolean",
-      "skipWait": "boolean"
+      "info": "com.megacrit.cardcrawl.cards.DamageInfo"
     }
   },
   "actions.common.DamageAllEnemiesAction": {
@@ -208,8 +184,7 @@
   "actions.common.DarkOrbEvokeAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "info": "com.megacrit.cardcrawl.cards.DamageInfo",
-      "muteSfx": "boolean"
+      "info": "com.megacrit.cardcrawl.cards.DamageInfo"
     }
   },
   "actions.common.DiscardAction": {
@@ -271,7 +246,6 @@
     "extends": "actions.AbstractGameAction",
     "fields": {
       "group": "com.megacrit.cardcrawl.cards.CardGroup",
-      "startingDuration": "float",
       "targetCard": "com.megacrit.cardcrawl.cards.AbstractCard"
     }
   },
@@ -338,12 +312,9 @@
   "actions.common.MakeTempCardInDrawPileAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "autoPosition": "boolean",
       "cardToMake": "com.megacrit.cardcrawl.cards.AbstractCard",
       "randomSpot": "boolean",
-      "toBottom": "boolean",
-      "x": "float",
-      "y": "float"
+      "toBottom": "boolean"
     }
   },
   "actions.common.MakeTempCardInHandAction": {
@@ -446,9 +417,7 @@
   },
   "actions.common.ReviveMonsterAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "healingEffect": "boolean"
-    }
+    "fields": {}
   },
   "actions.common.RollMoveAction": {
     "extends": "actions.AbstractGameAction",
@@ -471,8 +440,7 @@
       "theMultiplier": "int",
       "theNextDamage": "int",
       "theNextIntent": "com.megacrit.cardcrawl.monsters.AbstractMonster$Intent",
-      "theNextMove": "byte",
-      "theNextName": "java.lang.String"
+      "theNextMove": "byte"
     }
   },
   "actions.common.ShowMoveNameAction": {
@@ -831,8 +799,7 @@
     "extends": "actions.AbstractGameAction",
     "fields": {
       "card": "com.megacrit.cardcrawl.cards.AbstractCard",
-      "owner": "com.megacrit.cardcrawl.core.AbstractCreature",
-      "startingDuration": "float"
+      "owner": "com.megacrit.cardcrawl.core.AbstractCreature"
     }
   },
   "actions.unique.ArmamentsAction": {
@@ -891,8 +858,7 @@
   "actions.unique.CalculatedGambleAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "isUpgraded": "boolean",
-      "startingDuration": "float"
+      "isUpgraded": "boolean"
     }
   },
   "actions.unique.CanLoseAction": {
@@ -999,9 +965,7 @@
   },
   "actions.unique.ExhaustAllNonAttackAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "startingDuration": "float"
-    }
+    "fields": {}
   },
   "actions.unique.ExhumeAction": {
     "extends": "actions.AbstractGameAction",
@@ -1025,8 +989,7 @@
   "actions.unique.FiendFireAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "info": "com.megacrit.cardcrawl.cards.DamageInfo",
-      "startingDuration": "float"
+      "info": "com.megacrit.cardcrawl.cards.DamageInfo"
     }
   },
   "actions.unique.FlechetteAction": {
@@ -1087,8 +1050,7 @@
   "actions.unique.IncreaseMaxHpAction": {
     "extends": "actions.AbstractGameAction",
     "fields": {
-      "increasePercent": "float",
-      "showEffect": "boolean"
+      "increasePercent": "float"
     }
   },
   "actions.unique.InspirationAction": {
@@ -1408,25 +1370,15 @@
   },
   "actions.utility.SFXAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "adjust": "boolean",
-      "key": "java.lang.String",
-      "pitchVar": "float"
-    }
+    "fields": {}
   },
   "actions.utility.ScryAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "startingDuration": "float"
-    }
+    "fields": {}
   },
   "actions.utility.ShakeScreenAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "intensity": "com.megacrit.cardcrawl.helpers.ScreenShake$ShakeIntensity",
-      "shakeDur": "com.megacrit.cardcrawl.helpers.ScreenShake$ShakeDur",
-      "startDur": "float"
-    }
+    "fields": {}
   },
   "actions.utility.ShowCardAction": {
     "extends": "actions.AbstractGameAction",
@@ -1509,9 +1461,7 @@
   },
   "actions.watcher.ClarityAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "startingDuration": "float"
-    }
+    "fields": {}
   },
   "actions.watcher.CollectAction": {
     "extends": "actions.AbstractGameAction",
@@ -1913,18 +1863,11 @@
       "inBottleFlame": "boolean",
       "inBottleLightning": "boolean",
       "inBottleTornado": "boolean",
-      "isBlockModified": "boolean",
-      "isCostModified": "boolean",
-      "isCostModifiedForTurn": "boolean",
-      "isDamageModified": "boolean",
       "isEthereal": "boolean",
       "isFlipped": "boolean",
       "isInAutoplay": "boolean",
       "isInnate": "boolean",
-      "isMagicNumberModified": "boolean",
       "isMultiDamage": "boolean",
-      "isSelected": "boolean",
-      "isUsed": "boolean",
       "magicNumber": "int",
       "misc": "int",
       "multiDamage": "int[]",
@@ -1940,10 +1883,6 @@
       "timesUpgraded": "int",
       "type": "com.megacrit.cardcrawl.cards.AbstractCard$CardType",
       "upgraded": "boolean",
-      "upgradedBlock": "boolean",
-      "upgradedCost": "boolean",
-      "upgradedDamage": "boolean",
-      "upgradedMagicNumber": "boolean",
       "uuid": "java.util.UUID"
     }
   },
@@ -1955,7 +1894,6 @@
     "extends": null,
     "fields": {
       "group": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
-      "queued": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
       "type": "com.megacrit.cardcrawl.cards.CardGroup$CardGroupType"
     }
   },
@@ -3846,7 +3784,6 @@
       "cardInUse": "com.megacrit.cardcrawl.cards.AbstractCard",
       "cardsPlayedThisTurn": "int",
       "chosenClass": "com.megacrit.cardcrawl.characters.AbstractPlayer$PlayerClass",
-      "damagedThisCombat": "int",
       "discardPile": "com.megacrit.cardcrawl.cards.CardGroup",
       "drawPile": "com.megacrit.cardcrawl.cards.CardGroup",
       "endTurnQueued": "boolean",
@@ -3854,7 +3791,6 @@
       "exhaustPile": "com.megacrit.cardcrawl.cards.CardGroup",
       "gameHandSize": "int",
       "hand": "com.megacrit.cardcrawl.cards.CardGroup",
-      "hoveredCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "isEndingTurn": "boolean",
       "limbo": "com.megacrit.cardcrawl.cards.CardGroup",
       "masterDeck": "com.megacrit.cardcrawl.cards.CardGroup",
@@ -3895,10 +3831,6 @@
   },
   "characters.Watcher": {
     "extends": "characters.AbstractPlayer",
-    "fields": {}
-  },
-  "communicationmod.EndOfTurnAction": {
-    "extends": "actions.AbstractGameAction",
     "fields": {}
   },
   "core.AbstractCreature": {
@@ -4336,15 +4268,12 @@
       "imageEventText": "com.megacrit.cardcrawl.events.GenericEventDialog",
       "noCardsInRewards": "boolean",
       "roomEventText": "com.megacrit.cardcrawl.events.RoomEventDialog",
-      "screenNum": "int",
-      "waitTimer": "float"
+      "screenNum": "int"
     }
   },
   "events.AbstractImageEvent": {
     "extends": "events.AbstractEvent",
-    "fields": {
-      "title": "java.lang.String"
-    }
+    "fields": {}
   },
   "events.GenericEventDialog": {
     "extends": null,
@@ -4423,15 +4352,7 @@
   "events.beyond.SpireHeart": {
     "extends": "events.AbstractEvent",
     "fields": {
-      "damageDealt": "int",
-      "eventFadeTimer": "float",
-      "globalDamageDealt": "long",
-      "npc": "com.megacrit.cardcrawl.characters.AnimatedNpc",
-      "screen": "com.megacrit.cardcrawl.events.beyond.SpireHeart$CUR_SCREEN",
-      "totalDamageDealt": "long",
-      "winstreak": "int",
-      "x": "float",
-      "y": "float"
+      "screen": "com.megacrit.cardcrawl.events.beyond.SpireHeart$CUR_SCREEN"
     }
   },
   "events.beyond.SpireHeart$1": {
@@ -4567,8 +4488,6 @@
     "extends": "events.AbstractImageEvent",
     "fields": {
       "betFor": "boolean",
-      "clangCount": "int",
-      "joustTimer": "float",
       "ownerWins": "boolean",
       "screen": "com.megacrit.cardcrawl.events.city.TheJoust$CUR_SCREEN"
     }
@@ -4632,9 +4551,7 @@
       "numRewards": "int",
       "relicRewardMetric": "com.megacrit.cardcrawl.relics.AbstractRelic",
       "rewards": "java.util.ArrayList<java.lang.String>",
-      "screen": "com.megacrit.cardcrawl.events.exordium.DeadAdventurer$CUR_SCREEN",
-      "x": "float",
-      "y": "float"
+      "screen": "com.megacrit.cardcrawl.events.exordium.DeadAdventurer$CUR_SCREEN"
     }
   },
   "events.exordium.DeadAdventurer$1": {
@@ -4806,10 +4723,8 @@
       "chosenCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "cleanUpCalled": "boolean",
       "gameDone": "boolean",
-      "hoveredCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "matchedCards": "java.util.List<java.lang.String>",
-      "screen": "com.megacrit.cardcrawl.events.shrines.GremlinMatchGame$CUR_SCREEN",
-      "waitTimer": "float"
+      "screen": "com.megacrit.cardcrawl.events.shrines.GremlinMatchGame$CUR_SCREEN"
     }
   },
   "events.shrines.GremlinMatchGame$1": {
@@ -4819,8 +4734,6 @@
   "events.shrines.GremlinWheelGame": {
     "extends": "events.AbstractImageEvent",
     "fields": {
-      "bounceIn": "boolean",
-      "bounceTimer": "float",
       "buttonPressed": "boolean",
       "doneSpinning": "boolean",
       "finishSpin": "boolean",
@@ -4828,12 +4741,8 @@
       "hpLossPercent": "float",
       "purgeResult": "boolean",
       "result": "int",
-      "resultAngle": "float",
       "screen": "com.megacrit.cardcrawl.events.shrines.GremlinWheelGame$CUR_SCREEN",
-      "spinVelocity": "float",
-      "startSpin": "boolean",
-      "tmpAngle": "float",
-      "wheelAngle": "float"
+      "startSpin": "boolean"
     }
   },
   "events.shrines.GremlinWheelGame$1": {
@@ -5801,11 +5710,8 @@
   "monsters.beyond.AwakenedOne": {
     "extends": "monsters.AbstractMonster",
     "fields": {
-      "fireTimer": "float",
       "firstTurn": "boolean",
-      "form1": "boolean",
-      "saidPower": "boolean",
-      "wParticles": "java.util.ArrayList<com.megacrit.cardcrawl.vfx.AwakenedWingParticle>"
+      "form1": "boolean"
     }
   },
   "monsters.beyond.Darkling": {
@@ -5859,7 +5765,6 @@
     "extends": "monsters.AbstractMonster",
     "fields": {
       "fireDmg": "int",
-      "fireTimer": "float",
       "firstMove": "boolean",
       "scytheCooldown": "int"
     }
@@ -6115,7 +6020,6 @@
     "fields": {
       "blockAmt": "int",
       "enemySlots": "java.util.HashMap<java.lang.Integer, com.megacrit.cardcrawl.monsters.AbstractMonster>",
-      "fireTimer": "float",
       "initialSpawn": "boolean",
       "megaDebuffAmt": "int",
       "rakeDmg": "int",
@@ -6127,9 +6031,7 @@
   },
   "monsters.city.TorchHead": {
     "extends": "monsters.AbstractMonster",
-    "fields": {
-      "fireTimer": "float"
-    }
+    "fields": {}
   },
   "monsters.ending.CorruptHeart": {
     "extends": "monsters.AbstractMonster",
@@ -6157,7 +6059,6 @@
     "extends": "monsters.AbstractMonster",
     "fields": {
       "saveX": "float",
-      "saveY": "float",
       "splitTriggered": "boolean"
     }
   },
@@ -6177,9 +6078,7 @@
     "extends": "monsters.AbstractMonster",
     "fields": {
       "firstMove": "boolean",
-      "ritualAmount": "int",
-      "saidPower": "boolean",
-      "talky": "boolean"
+      "ritualAmount": "int"
     }
   },
   "monsters.exordium.FungiBeast": {
@@ -6229,14 +6128,12 @@
     "extends": "monsters.AbstractMonster",
     "fields": {
       "activated": "boolean",
-      "body": "com.megacrit.cardcrawl.monsters.exordium.HexaghostBody",
       "burnUpgraded": "boolean",
       "fireTackleCount": "int",
       "fireTackleDmg": "int",
       "infernoDmg": "int",
       "infernoHits": "int",
       "orbActiveCount": "int",
-      "orbs": "java.util.ArrayList<com.megacrit.cardcrawl.monsters.exordium.HexaghostOrb>",
       "searBurnCount": "int",
       "searDmg": "int",
       "strAmount": "int",
@@ -6245,26 +6142,11 @@
   },
   "monsters.exordium.HexaghostBody": {
     "extends": null,
-    "fields": {
-      "m": "com.megacrit.cardcrawl.monsters.AbstractMonster",
-      "plasma1Angle": "float",
-      "plasma2Angle": "float",
-      "plasma3Angle": "float",
-      "rotationSpeed": "float",
-      "targetRotationSpeed": "float"
-    }
+    "fields": {}
   },
   "monsters.exordium.HexaghostOrb": {
     "extends": null,
-    "fields": {
-      "activateTimer": "float",
-      "activated": "boolean",
-      "hidden": "boolean",
-      "particleTimer": "float",
-      "playedSfx": "boolean",
-      "x": "float",
-      "y": "float"
-    }
+    "fields": {}
   },
   "monsters.exordium.JawWorm": {
     "extends": "monsters.AbstractMonster",
@@ -6316,15 +6198,13 @@
   "monsters.exordium.LouseDefensive": {
     "extends": "monsters.AbstractMonster",
     "fields": {
-      "biteDamage": "int",
-      "isOpen": "boolean"
+      "biteDamage": "int"
     }
   },
   "monsters.exordium.LouseNormal": {
     "extends": "monsters.AbstractMonster",
     "fields": {
-      "biteDamage": "int",
-      "isOpen": "boolean"
+      "biteDamage": "int"
     }
   },
   "monsters.exordium.Sentry": {
@@ -6365,7 +6245,6 @@
     "extends": "monsters.AbstractMonster",
     "fields": {
       "saveX": "float",
-      "saveY": "float",
       "splitTriggered": "boolean"
     }
   },
@@ -6400,7 +6279,6 @@
     "extends": "events.AbstractEvent",
     "fields": {
       "bossCount": "int",
-      "npc": "com.megacrit.cardcrawl.characters.AnimatedNpc",
       "pickCard": "boolean",
       "rewards": "java.util.ArrayList<com.megacrit.cardcrawl.neow.NeowReward>",
       "screenNum": "int",
@@ -6415,7 +6293,6 @@
       "drawback": "com.megacrit.cardcrawl.neow.NeowReward$NeowRewardDrawback",
       "drawbackDef": "com.megacrit.cardcrawl.neow.NeowReward$NeowRewardDrawbackDef",
       "hp_bonus": "int",
-      "optionLabel": "java.lang.String",
       "type": "com.megacrit.cardcrawl.neow.NeowReward$NeowRewardType"
     }
   },
@@ -6426,14 +6303,12 @@
   "neow.NeowReward$NeowRewardDef": {
     "extends": null,
     "fields": {
-      "desc": "java.lang.String",
       "type": "com.megacrit.cardcrawl.neow.NeowReward$NeowRewardType"
     }
   },
   "neow.NeowReward$NeowRewardDrawbackDef": {
     "extends": null,
     "fields": {
-      "desc": "java.lang.String",
       "type": "com.megacrit.cardcrawl.neow.NeowReward$NeowRewardDrawback"
     }
   },
@@ -6475,10 +6350,7 @@
   },
   "orbs.Frost": {
     "extends": "orbs.AbstractOrb",
-    "fields": {
-      "hFlip1": "boolean",
-      "hFlip2": "boolean"
-    }
+    "fields": {}
   },
   "orbs.Lightning": {
     "extends": "orbs.AbstractOrb",
@@ -6493,10 +6365,8 @@
     "fields": {
       "ID": "java.lang.String",
       "canUse": "boolean",
-      "isThrown": "boolean",
       "potency": "int",
       "rarity": "com.megacrit.cardcrawl.potions.AbstractPotion$PotionRarity",
-      "size": "com.megacrit.cardcrawl.potions.AbstractPotion$PotionSize",
       "slot": "int",
       "targetRequired": "boolean"
     }
@@ -7414,7 +7284,6 @@
     "fields": {
       "cost": "int",
       "counter": "int",
-      "discarded": "boolean",
       "energyBased": "boolean",
       "grayscale": "boolean",
       "isObtained": "boolean",
@@ -8249,7 +8118,6 @@
       "ignoreReward": "boolean",
       "isDone": "boolean",
       "potion": "com.megacrit.cardcrawl.potions.AbstractPotion",
-      "redText": "boolean",
       "relic": "com.megacrit.cardcrawl.relics.AbstractRelic",
       "relicLink": "com.megacrit.cardcrawl.rewards.RewardItem",
       "type": "com.megacrit.cardcrawl.rewards.RewardItem$RewardType"
@@ -8313,7 +8181,6 @@
       "cannotLose": "boolean",
       "combatEvent": "boolean",
       "eliteTrigger": "boolean",
-      "endBattleTimer": "float",
       "event": "com.megacrit.cardcrawl.events.AbstractEvent",
       "isBattleOver": "boolean",
       "monsters": "com.megacrit.cardcrawl.monsters.MonsterGroup",
@@ -8383,16 +8250,14 @@
   "rooms.TreasureRoom": {
     "extends": "rooms.AbstractRoom",
     "fields": {
-      "chest": "com.megacrit.cardcrawl.rewards.chests.AbstractChest",
-      "shinyTimer": "float"
+      "chest": "com.megacrit.cardcrawl.rewards.chests.AbstractChest"
     }
   },
   "rooms.TreasureRoomBoss": {
     "extends": "rooms.AbstractRoom",
     "fields": {
       "chest": "com.megacrit.cardcrawl.rewards.chests.AbstractChest",
-      "choseRelic": "boolean",
-      "shinyTimer": "float"
+      "choseRelic": "boolean"
     }
   },
   "rooms.TrueVictoryRoom": {
@@ -9693,10 +9558,8 @@
       "isJustForConfirming": "boolean",
       "numCards": "int",
       "prevDeckSize": "int",
-      "ritualAnimTimer": "float",
       "selectedCards": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
-      "targetGroup": "com.megacrit.cardcrawl.cards.CardGroup",
-      "upgradePreviewCard": "com.megacrit.cardcrawl.cards.AbstractCard"
+      "targetGroup": "com.megacrit.cardcrawl.cards.CardGroup"
     }
   },
   "screens.select.HandCardSelectScreen": {
@@ -9711,9 +9574,6 @@
       "numSelected": "int",
       "selectedCards": "com.megacrit.cardcrawl.cards.CardGroup",
       "upTo": "boolean",
-      "upgradePreviewCard": "com.megacrit.cardcrawl.cards.AbstractCard",
-      "waitThenClose": "boolean",
-      "waitToCloseTimer": "float",
       "wereCardsRetrieved": "boolean"
     }
   },
@@ -9908,10 +9768,6 @@
     "fields": {
       "cards1": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
       "cards2": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
-      "idleMessages": "java.util.ArrayList<java.lang.String>",
-      "modX": "float",
-      "modY": "float",
-      "saidWelcome": "boolean",
       "shopScreen": "int"
     }
   },
@@ -10228,7 +10084,6 @@
     "extends": null,
     "fields": {
       "isDisabled": "boolean",
-      "msg": "java.lang.String",
       "slot": "int"
     }
   },
@@ -10313,8 +10168,6 @@
   "ui.campfire.AbstractCampfireOption": {
     "extends": null,
     "fields": {
-      "label": "java.lang.String",
-      "scale": "float",
       "usable": "boolean"
     }
   },
@@ -13552,5 +13405,138 @@
       "x": "float",
       "y": "float"
     }
+  },
+  "excluded": {
+    "actions.AbstractGameAction.attackEffect": "Attack artwork and sound selection, not damage calculation.",
+    "actions.AbstractGameAction.duration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.AbstractGameAction.startDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.GameActionManager.previousAction": "Historical action references are assigned or cleared but never read by vanilla rules.",
+    "actions.GameActionManager.turnStartCurrentAction": "Historical action references are assigned or cleared but never read by vanilla rules.",
+    "actions.animations.ShoutAction.bubbleDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.animations.ShoutAction.msg": "Speech presentation and its one-shot display flag.",
+    "actions.animations.ShoutAction.used": "Speech presentation and its one-shot display flag.",
+    "actions.animations.TalkAction.bubbleDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.animations.TalkAction.msg": "Speech presentation and its one-shot display flag.",
+    "actions.animations.TalkAction.player": "Speech presentation and its one-shot display flag.",
+    "actions.animations.TalkAction.used": "Speech presentation and its one-shot display flag.",
+    "actions.animations.VFXAction.isTopLevelEffect": "Chooses a rendering effect list.",
+    "actions.animations.VFXAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.common.ApplyPoisonOnRandomMonsterAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.common.ApplyPowerAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.common.ApplyPowerToRandomEnemyAction.effect": "Attack artwork and effect pacing.",
+    "actions.common.ApplyPowerToRandomEnemyAction.isFast": "Attack artwork and effect pacing.",
+    "actions.common.AttackDamageRandomEnemyAction.effect": "Attack artwork.",
+    "actions.common.DamageAction.muteSfx": "Controls damage sound playback.",
+    "actions.common.DamageAction.skipWait": "Controls action pacing after damage.",
+    "actions.common.DarkOrbEvokeAction.muteSfx": "Controls damage sound playback.",
+    "actions.common.ExhaustSpecificCardAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.common.MakeTempCardInDrawPileAction.autoPosition": "Card flight coordinates; destination pile and insertion choice are separate fields.",
+    "actions.common.MakeTempCardInDrawPileAction.x": "Card flight coordinates; destination pile and insertion choice are separate fields.",
+    "actions.common.MakeTempCardInDrawPileAction.y": "Card flight coordinates; destination pile and insertion choice are separate fields.",
+    "actions.common.ReviveMonsterAction.healingEffect": "Chooses healing artwork.",
+    "actions.common.SetMoveAction.theNextName": "Localized intent label; move byte and damage are separate fields.",
+    "actions.unique.ApplyStasisAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.unique.CalculatedGambleAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.unique.ExhaustAllNonAttackAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.unique.FiendFireAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.unique.IncreaseMaxHpAction.showEffect": "Controls the maximum-HP popup.",
+    "actions.utility.SFXAction.adjust": "Sound identifier and pitch.",
+    "actions.utility.SFXAction.key": "Sound identifier and pitch.",
+    "actions.utility.SFXAction.pitchVar": "Sound identifier and pitch.",
+    "actions.utility.ScryAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.utility.ShakeScreenAction.intensity": "Screen-shake presentation.",
+    "actions.utility.ShakeScreenAction.shakeDur": "Screen-shake presentation.",
+    "actions.utility.ShakeScreenAction.startDur": "Screen-shake presentation.",
+    "actions.watcher.ClarityAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "cards.AbstractCard.isBlockModified": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.isCostModified": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.isCostModifiedForTurn": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.isDamageModified": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.isMagicNumberModified": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.isSelected": "UI selection flags with no vanilla rule reads.",
+    "cards.AbstractCard.isUsed": "UI selection flags with no vanilla rule reads.",
+    "cards.AbstractCard.upgradedBlock": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.upgradedCost": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.upgradedDamage": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.AbstractCard.upgradedMagicNumber": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
+    "cards.CardGroup.queued": "renderHand scratch list controlling draw order, cleared after rendering.",
+    "characters.AbstractPlayer.damagedThisCombat": "Vanilla increments and resets this unused counter but never reads it.",
+    "characters.AbstractPlayer.hoveredCard": "Transient input hover targets; each play action supplies its own card and monster.",
+    "characters.AbstractPlayer.toHoverCard": "Transient input hover targets; each play action supplies its own card and monster.",
+    "events.AbstractEvent.waitTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "events.AbstractImageEvent.title": "Localized event heading.",
+    "events.beyond.SpireHeart.damageDealt": "End-screen statistics and placement, not future game decisions.",
+    "events.beyond.SpireHeart.eventFadeTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "events.beyond.SpireHeart.globalDamageDealt": "End-screen statistics and placement, not future game decisions.",
+    "events.beyond.SpireHeart.npc": "Heart animation object; event stage is separate.",
+    "events.beyond.SpireHeart.totalDamageDealt": "End-screen statistics and placement, not future game decisions.",
+    "events.beyond.SpireHeart.winstreak": "End-screen statistics and placement, not future game decisions.",
+    "events.beyond.SpireHeart.x": "End-screen statistics and placement, not future game decisions.",
+    "events.beyond.SpireHeart.y": "End-screen statistics and placement, not future game decisions.",
+    "events.city.TheJoust.clangCount": "Joust sound count; ownerWins is retained.",
+    "events.city.TheJoust.joustTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "events.exordium.DeadAdventurer.x": "Corpse artwork position.",
+    "events.exordium.DeadAdventurer.y": "Corpse artwork position.",
+    "events.shrines.GremlinMatchGame.hoveredCard": "Cursor target; pair-resolution callbacks finish before the next choice.",
+    "events.shrines.GremlinMatchGame.waitTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "events.shrines.GremlinWheelGame.bounceIn": "Wheel motion; result is selected by miscRng and retained.",
+    "events.shrines.GremlinWheelGame.bounceTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "events.shrines.GremlinWheelGame.resultAngle": "Wheel motion; result is selected by miscRng and retained.",
+    "events.shrines.GremlinWheelGame.spinVelocity": "Wheel motion; result is selected by miscRng and retained.",
+    "events.shrines.GremlinWheelGame.tmpAngle": "Wheel motion; result is selected by miscRng and retained.",
+    "events.shrines.GremlinWheelGame.wheelAngle": "Wheel motion; result is selected by miscRng and retained.",
+    "monsters.beyond.AwakenedOne.fireTimer": "Schedules flame particles in update; no rule reads this clock.",
+    "monsters.beyond.AwakenedOne.saidPower": "Dialogue flag and wing particles only.",
+    "monsters.beyond.AwakenedOne.wParticles": "Dialogue flag and wing particles only.",
+    "monsters.beyond.Nemesis.fireTimer": "Schedules flame particles in update; no rule reads this clock.",
+    "monsters.city.TheCollector.fireTimer": "Schedules flame particles in update; no rule reads this clock.",
+    "monsters.city.TorchHead.fireTimer": "Schedules flame particles in update; no rule reads this clock.",
+    "monsters.exordium.AcidSlime_L.saveY": "Vertical spawn art position; spawn ordering reads X only.",
+    "monsters.exordium.Cultist.saidPower": "Dialogue selection and death-animation pacing only (takeTurn/die).",
+    "monsters.exordium.Cultist.talky": "Dialogue selection and death-animation pacing only (takeTurn/die).",
+    "monsters.exordium.Hexaghost.body": "Body/orb artwork; attack-cycle index orbActiveCount is retained.",
+    "monsters.exordium.Hexaghost.orbs": "Body/orb artwork; attack-cycle index orbActiveCount is retained.",
+    "monsters.exordium.HexaghostBody.m": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostBody.plasma1Angle": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostBody.plasma2Angle": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostBody.plasma3Angle": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostBody.rotationSpeed": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostBody.targetRotationSpeed": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostOrb.activateTimer": "Schedules orb ignition artwork and particles.",
+    "monsters.exordium.HexaghostOrb.activated": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostOrb.hidden": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostOrb.particleTimer": "Schedules orb ignition artwork and particles.",
+    "monsters.exordium.HexaghostOrb.playedSfx": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostOrb.x": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.HexaghostOrb.y": "Hexaghost artwork; these objects do not choose damage or moves.",
+    "monsters.exordium.LouseDefensive.isOpen": "Shell animation state; CurlUpPower owns the block rule.",
+    "monsters.exordium.LouseNormal.isOpen": "Shell animation state; CurlUpPower owns the block rule.",
+    "monsters.exordium.SpikeSlime_L.saveY": "Vertical spawn art position; spawn ordering reads X only.",
+    "neow.NeowEvent.npc": "Neow animation object; rewards and event stage are separate.",
+    "neow.NeowReward$NeowRewardDef.desc": "Localized reward description.",
+    "neow.NeowReward$NeowRewardDrawbackDef.desc": "Localized drawback description.",
+    "neow.NeowReward.optionLabel": "Localized reward label; reward type is retained.",
+    "orbs.Frost.hFlip1": "Ice-sprite horizontal orientation.",
+    "orbs.Frost.hFlip2": "Ice-sprite horizontal orientation.",
+    "potions.AbstractPotion.isThrown": "Bottle artwork and drink/throw tooltip wording; use and target rules are separate.",
+    "potions.AbstractPotion.size": "Bottle artwork and drink/throw tooltip wording; use and target rules are separate.",
+    "relics.AbstractRelic.discarded": "Acquisition/disposal marker with no vanilla rule reads.",
+    "rewards.RewardItem.redText": "Reward label tint.",
+    "rooms.AbstractRoom.endBattleTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "rooms.TreasureRoom.shinyTimer": "Schedules chest shine particles.",
+    "rooms.TreasureRoomBoss.shinyTimer": "Schedules chest shine particles.",
+    "screens.select.GridCardSelectScreen.ritualAnimTimer": "Schedules a disposable transform preview using presentation RNG; confirmation ignores the preview.",
+    "screens.select.GridCardSelectScreen.upgradePreviewCard": "Display copy; confirmation uses hoveredCard, not this copy.",
+    "screens.select.HandCardSelectScreen.upgradePreviewCard": "Display copy and auto-close pacing; auto-close finishes before a decision.",
+    "screens.select.HandCardSelectScreen.waitThenClose": "Display copy and auto-close pacing; auto-close finishes before a decision.",
+    "screens.select.HandCardSelectScreen.waitToCloseTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "shop.Merchant.idleMessages": "Merchant speech and position; shop inventory is separate.",
+    "shop.Merchant.modX": "Merchant speech and position; shop inventory is separate.",
+    "shop.Merchant.modY": "Merchant speech and position; shop inventory is separate.",
+    "shop.Merchant.saidWelcome": "Merchant speech and position; shop inventory is separate.",
+    "ui.buttons.DialogOptionButton.msg": "Localized label; action identity is the original button slot.",
+    "ui.buttons.LargeDialogOptionButton.msg": "Localized label; action identity is the original button slot.",
+    "ui.campfire.AbstractCampfireOption.label": "Campfire button label and draw scale; usable is retained.",
+    "ui.campfire.AbstractCampfireOption.scale": "Campfire button label and draw scale; usable is retained."
   }
 }

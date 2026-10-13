@@ -13,7 +13,7 @@ public final class BuildLogicLauncher {
         pool.insertClassPath(args[0]);
         CtClass loader = pool.get("com.evacipated.cardcrawl.modthespire.Loader");
         loader.getDeclaredMethod("main").setBody("{ ARGS = $1; SKIP_INTRO = true; allowBeta = true; "
-            + "manualModIds = java.util.Arrays.asList(new String[]{\"basemod\", \"CommunicationMod\", \"oracle\"}); "
+            + "manualModIds = java.util.Arrays.asList(new String[]{\"oracle\"}); "
             + "MTS_CONFIG = new com.evacipated.cardcrawl.modthespire.lib.SpireConfig(null, \"ModTheSpire\", new java.util.Properties()); "
             + "WORKSHOP_INFOS = new java.util.ArrayList(); loadMTSVersion(); findGameVersion(); "
             + "ALLMODINFOS = getAllMods(WORKSHOP_INFOS); "
@@ -25,6 +25,11 @@ public final class BuildLogicLauncher {
         loader.getDeclaredMethod("runMods").instrument(new ExprEditor() {
             public void edit(MethodCall call) throws javassist.CannotCompileException {
                 String name = call.getMethodName();
+                if (call.getClassName().equals("com.evacipated.cardcrawl.modthespire.Patcher")
+                        && call.getSignature().contains("[Ljava/net/URL;")) {
+                    if (name.equals("findPatches")) call.replace("{ $_ = new java.util.ArrayList(); }");
+                    else if (name.equals("patchEnums") || name.equals("bustEnums")) call.replace("{}");
+                }
                 if (name.equals("schedule") && call.getClassName().equals("java.util.Timer"))
                     call.replace("{ $0.cancel(); }");
                 if (name.equals("showMessageDialog") && call.getClassName().equals("javax.swing.JOptionPane"))

@@ -2,15 +2,12 @@ package oracle;
 
 import com.google.gson.JsonObject;
 import com.megacrit.cardcrawl.cards.AbstractCard;
-import com.megacrit.cardcrawl.cards.CardQueueItem;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.potions.PotionSlot;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
-import communicationmod.ChoiceScreenUtils;
-import communicationmod.GameStateListener;
 import java.util.ArrayList;
 
 final class Actions {
@@ -24,7 +21,7 @@ final class Actions {
         return result;
     }
 
-    static ArrayList<JsonObject> legal() {
+    static ArrayList<JsonObject> legal() throws Exception {
         ArrayList<JsonObject> result = new ArrayList<JsonObject>();
         if (AbstractDungeon.getCurrRoom().phase == AbstractRoom.RoomPhase.COMBAT && !AbstractDungeon.isScreenUp) {
             for (int i = 0; i < AbstractDungeon.player.hand.size(); i++) {
@@ -51,27 +48,25 @@ final class Actions {
             }
             if (potion.canDiscard()) result.add(action("potion_discard", potion.slot));
         }
-        for (int i = 0; i < ChoiceScreenUtils.getCurrentChoiceList().size(); i++) result.add(action("choose", i));
-        if (ChoiceScreenUtils.isConfirmButtonAvailable()) result.add(action("proceed"));
-        if (ChoiceScreenUtils.isCancelButtonAvailable()) result.add(action("skip"));
+        for (int i = 0; i < Choices.options().size(); i++) result.add(action("choose", i));
+        if (Choices.confirm()) result.add(action("proceed"));
+        if (Choices.cancel()) result.add(action("skip"));
         return result;
     }
 
-    static void apply(JsonObject action) {
-        boolean grid = AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID
-            && AbstractDungeon.getCurrRoom().phase != AbstractRoom.RoomPhase.COMBAT;
+    static void apply(JsonObject action) throws Exception {
         switch (action.get("type").getAsString()) {
             case "play": {
                 int target = action.get("target").getAsInt();
-                AbstractDungeon.actionManager.cardQueue.add(new CardQueueItem(
-                    AbstractDungeon.player.hand.group.get(action.get("card").getAsInt()),
-                    target < 0 ? null : AbstractDungeon.getMonsters().monsters.get(target)));
+                AbstractDungeon.player.hoveredCard = AbstractDungeon.player.hand.group.get(action.get("card").getAsInt());
+                Choices.set(AbstractDungeon.player, "hoveredMonster", target < 0 ? null : AbstractDungeon.getMonsters().monsters.get(target));
+                Choices.call(AbstractDungeon.player, com.megacrit.cardcrawl.characters.AbstractPlayer.class, "playCard");
                 break;
             }
             case "end_turn": AbstractDungeon.overlayMenu.endTurnButton.disable(true); break;
-            case "choose": ChoiceScreenUtils.executeChoice(action.get("option").getAsInt()); break;
-            case "proceed": ChoiceScreenUtils.pressConfirmButton(); break;
-            case "skip": ChoiceScreenUtils.pressCancelButton(); break;
+            case "choose": Choices.choose(action.get("option").getAsInt()); break;
+            case "proceed": Choices.proceed(); break;
+            case "skip": Choices.skip(); break;
             case "potion_use": {
                 AbstractPotion potion = AbstractDungeon.player.potions.get(action.get("slot").getAsInt());
                 int target = action.get("target").getAsInt();
@@ -83,8 +78,5 @@ final class Actions {
             case "potion_discard": AbstractDungeon.topPanel.destroyPotion(action.get("slot").getAsInt()); break;
             default: throw new AssertionError(action);
         }
-        GameStateListener.registerCommandExecution();
-        GameStateListener.registerStateChange();
-        if (grid) GameStateListener.setTimeout(1);
     }
 }
