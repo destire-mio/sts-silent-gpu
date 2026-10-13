@@ -9,12 +9,14 @@ SPIRE_FN inline void reset_attributes(Card& card) {
     card.magic = card.base_magic;
     card.cost_for_turn = card.cost;
 }
-SPIRE_FN inline Card make_card(CardId id, int upgrades, int misc) {
+SPIRE_FN inline Card make_card(CardId id, int upgrades) {
     const CardDef def = card_def(id);
     Card card{};
     card.id = id;
     card_initialize_state(card);
-    card.misc = misc;
+    card.misc = def.misc;
+    card.target = def.target;
+    card.innate = def.innate;
     card.cost = def.cost;
     card.base_damage = def.damage;
     card.base_block = def.block;
@@ -24,6 +26,11 @@ SPIRE_FN inline Card make_card(CardId id, int upgrades, int misc) {
     for (int i = 0; i < upgrades; ++i) card_upgrade(card);
     card.cost_for_turn = card.cost;
     card.magic = card.base_magic;
+    return card;
+}
+SPIRE_FN inline Card make_card(CardId id, int upgrades, int misc) {
+    Card card = make_card(id, upgrades);
+    card.misc = misc;
     return card;
 }
 }

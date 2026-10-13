@@ -8,6 +8,8 @@ struct CardDef {
     int cost, damage, block, magic;
     int upgrade_damage, upgrade_block, upgrade_magic;
     bool exhaust, ethereal;
+    bool innate = false;
+    int misc = 0;
 };
 struct PowerData {
     int priority = 5;

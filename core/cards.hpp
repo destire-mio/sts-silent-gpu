@@ -43,6 +43,7 @@ SPIRE_FN inline bool can_play(const Game& g, int card) {
 SPIRE_FN inline Card stat_equivalent_copy(const Game& g, int card_id) {
     const Card& source = get_card(g, card_id);
     Card copy = make_card(source.id, source.upgrades, source.misc);
+    copy.target = source.target;
     copy.base_damage = source.base_damage;
     copy.base_block = source.base_block;
     copy.base_magic = source.base_magic;

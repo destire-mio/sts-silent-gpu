@@ -550,7 +550,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                     ++g.player.cards_played_this_turn;
                     g.manager.played_cards.record(queued.card);
                 }
-                if (card_def(card.id).target != CardTarget::Enemy ||
+                if (card.target != CardTarget::Enemy ||
                     (queued.target != no_target && !get_creature(g, queued.target).dead && !get_creature(g, queued.target).escaped))
                     use_card(g, queued.card, queued.target);
                 else remove_from_pile(g.limbo, queued.card);
@@ -752,7 +752,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     for (int i = 0; i < g.hand.size; ++i) {
         const Card& card = g.cards[g.hand[i]];
         if (!can_play(g, g.hand[i])) continue;
-        if (card_def(card.id).target == CardTarget::Enemy) {
+        if (card.target == CardTarget::Enemy) {
             for (int j = 0; j < g.monster_order.size; ++j) {
                 if (alive(g.monsters[g.monster_order[j]].creature) && card_canUse(g, g.hand[i], g.monster_order[j])) actions.push_back({ActionKind::Play, i, j});
             }
@@ -816,7 +816,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
             const int card = g.hand[action.index];
             SPIRE_ASSERT(can_play(g, card));
             int target = no_target;
-            if (card_def(g.cards[card].id).target == CardTarget::Enemy) {
+            if (g.cards[card].target == CardTarget::Enemy) {
                 target = g.monster_order[action.target];
                 SPIRE_ASSERT(alive(g.monsters[target].creature));
                 const Powers& powers = g.player.creature.powers;
