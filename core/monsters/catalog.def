@@ -37,4 +37,5 @@ SPIRE_UNIT(BanditPointy, "BanditChild", "core/monsters/bandit_pointy.hpp", Bandi
 SPIRE_UNIT(BookOfStabbing, "BookOfStabbing", "core/monsters/book_of_stabbing.hpp", BookOfStabbing)
 SPIRE_UNIT(BronzeOrb, "BronzeOrb", "core/monsters/bronze_orb.hpp", BronzeOrb)
 SPIRE_UNIT(Byrd, "Byrd", "core/monsters/byrd.hpp", Byrd)
+SPIRE_UNIT(Centurion, "Centurion", "core/monsters/centurion.hpp", Centurion)
 SPIRE_UNIT(Champ, "Champ", "core/monsters/champ.hpp", Champ)
