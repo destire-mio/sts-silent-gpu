@@ -744,6 +744,11 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     enable.kind = EffectKind::EnableEndTurnButton;
     add_bottom(g, enable);
     relics_at_battle_start(g);
+    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStart(g, i);
+    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStartPostDraw(g, i);
+    for (int i = 0; i < g.draw.size; ++i) card_atTurnStart(g, g.draw[i]);
+    Powers& powers = g.player.creature.powers;
+    for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
     run_until_decision(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     refresh_powers(g);

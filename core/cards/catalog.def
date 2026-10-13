@@ -22,3 +22,4 @@ SPIRE_UNIT(Doppelganger, "Doppelganger", "core/cards/doppelganger.hpp", Doppelga
 SPIRE_UNIT(EndlessAgony, "Endless Agony", "core/cards/endless_agony.hpp", EndlessAgony)
 SPIRE_UNIT(Envenom, "Envenom", "core/cards/envenom.hpp", Envenom)
 SPIRE_UNIT(EscapePlan, "Escape Plan", "core/cards/escape_plan.hpp", EscapePlan)
+SPIRE_UNIT(Eviscerate, "Eviscerate", "core/cards/eviscerate.hpp", Eviscerate)
