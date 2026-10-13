@@ -76,6 +76,9 @@ for name in ("onGainGold", "onLoseGold", "onSpendGold", "onEquip", "onUnequip", 
              "onMeditate", "onEnergyRecharge", "onRest", "onRitual", "onEnterRestRoom", "onRefreshHand",
              "onShuffle", "onSmith", "onDrawOrDiscard", "onMasterDeckChange", "onUsePotion"):
     relic(name)
+relic("initialState")
+relic("update")
+relic("setCounter", "int counter", body="g.run.relics[relic].counter = counter;")
 for name in ("onExhaust", "onCardDraw"):
     relic(name, "int card")
 for name in ("onPreviewObtainCard", "onObtainCard"):

@@ -106,3 +106,5 @@ SPIRE_UNIT(RoomEndTurn, "rooms.AbstractRoom$1", "core/actions/end_turn.hpp", Roo
 SPIRE_UNIT(SFX, "actions.utility.SFXAction", "core/actions/intent_flash.hpp", SFX)
 SPIRE_UNIT(VFX, "actions.animations.VFXAction", "core/actions/intent_flash.hpp", VFX)
 SPIRE_UNIT(MayhemPlay, "powers.MayhemPower$1", "core/powers/mayhem.hpp", MayhemPlay)
+SPIRE_UNIT(RelicAboveCreature, "actions.common.RelicAboveCreatureAction", "core/actions/intent_flash.hpp", RelicAboveCreature)
+SPIRE_UNIT(Talk, "actions.animations.TalkAction", "core/actions/intent_flash.hpp", Talk)

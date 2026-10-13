@@ -30,6 +30,9 @@ struct ApplyPower : ActionHooks {
         if (monsters_basically_dead(g)) e.done = true;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
+        if (e.target == player_target)
+            for (int i = 0; i < g.run.relics.size; ++i)
+                if (relic_data(g.run.relics[i].id).blocked_debuff == e.prepared_power.id) return;
         apply_prepared_power(g, e.source, e.target, e.prepared_power, e.amount);
     }
 };
