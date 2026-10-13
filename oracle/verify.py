@@ -34,7 +34,7 @@ def suite(output):
 def check_trace(path):
     with path.open() as stream:
         header = json.loads(next(stream))
-        assert header['schema'] == 1 and header['ascension'] == 20
+        assert header['schema'] == 2 and header['ascension'] == 20
         decisions = 0
         for text in stream:
             row = json.loads(text)
@@ -47,11 +47,17 @@ def check_trace(path):
             assert len(snapshot['rng']) == 15
             assert snapshot['objects'][snapshot['player']['ref']]['class'] == 'characters.TheSilent'
             room = snapshot['objects'][snapshot['room']['ref']]['fields']
+            manager = snapshot['objects'][snapshot['manager']['ref']]['fields']
+            selecting = snapshot['screen']['up'] and snapshot['screen']['type'] in ('GRID', 'HAND_SELECT', 'CARD_REWARD')
+            if not selecting:
+                for queue in ('actions', 'preTurnActions', 'cardQueue', 'monsterQueue'):
+                    assert not manager['GameActionManager.' + queue], (path, decisions, queue)
+                current = manager['GameActionManager.currentAction']
+                assert current is None or snapshot['objects'][current['ref']]['fields']['AbstractGameAction.isDone']
             if room['AbstractRoom.phase'] == 'COMBAT' and not snapshot['screen']['up']:
-                manager = snapshot['objects'][snapshot['manager']['ref']]['fields']
                 assert manager['GameActionManager.phase'] == 'WAITING_ON_USER'
-                for queue in ('actions', 'preTurnActions', 'cardQueue'):
-                    assert not manager['GameActionManager.' + queue]
+                assert current is None and not manager['GameActionManager.turnHasEnded']
+            assert all(not obj['class'].startswith(('oracle.', 'communicationmod.')) for obj in snapshot['objects'])
             decisions += 1
     raise AssertionError(f'Missing terminal snapshot: {path}')
 
