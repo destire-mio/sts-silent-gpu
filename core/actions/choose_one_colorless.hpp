@@ -35,7 +35,7 @@ struct ChooseOneColorless : ActionHooks {
         if (!e.state.ChooseOneColorless.retrieve_card) {
             if (g.discovery_card >= 0) {
                 Card copy = card_makeStatEquivalentCopy(g, g.discovery_card);
-                if (find_power(g.player.creature, "MasterRealityPower") >= 0) card_upgrade(copy);
+                if (find_power(g, g.player.creature, "MasterRealityPower") >= 0) card_upgrade(copy);
                 const int card = g.cards.size;
                 copy.uuid = card + 1;
                 g.cards.push_back(copy);
@@ -44,13 +44,13 @@ struct ChooseOneColorless : ActionHooks {
                     g.hand.size + e.amount <= hand_limit || g.hand.size == 9) {
                     const CardType type = card_def(copy.id).type;
                     if (type != CardType::Curse && type != CardType::Status &&
-                        find_power(g.player.creature, "MasterRealityPower") >= 0) card_upgrade(g.cards[card]);
+                        find_power(g, g.player.creature, "MasterRealityPower") >= 0) card_upgrade(g.cards[card]);
                     g.hand.push_back(card);
                     card_triggerWhenCopied(g, card);
                     refresh_hand(g);
                     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
                     on_draw_or_discard(g);
-                    if (find_power(g.player.creature, "Corruption") >= 0 && type == CardType::Skill)
+                    if (find_power(g, g.player.creature, "Corruption") >= 0 && type == CardType::Skill)
                         g.cards[card].cost_for_turn = -9;
                 } else {
                     g.discard.push_back(card);

@@ -11,7 +11,7 @@ struct MonsterStart : ActionHooks {
             Creature& c = g.monsters[monster].creature;
             if (c.dying || c.escaped) continue;
             if (!keeps_block(g, monster)) c.block = 0;
-            for (int p = 0; p < c.powers.size; ++p) power_atStartOfTurn(g, c.powers[p], monster);
+            for (int p = 0; p < c.powers.size; ++p) power_atStartOfTurn(g, c.powers.at(g.power_objects, p), monster);
         }
     }
 };

@@ -6,7 +6,7 @@ struct Sadistic : PowerHooks {
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void onApplyPower(Game& g, Power& p, int owner, const Power& applied, int target, int source) {
         if (power_isDebuff(applied, target) && applied.id != PowerId::GainStrength && source == owner &&
-            target != owner && !has_power(get_creature(g, target), PowerId::Artifact)) {
+            target != owner && !has_power(g, get_creature(g, target), PowerId::Artifact)) {
             Effect e{};
             e.kind = EffectKind::Damage;
             e.source = owner;

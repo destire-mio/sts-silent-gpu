@@ -2,11 +2,16 @@
 #include "platform.hpp"
 
 namespace spire {
-constexpr int card_capacity = 256;
+constexpr int card_capacity = 128;
+constexpr int master_deck_capacity = 128;
+constexpr int card_pool_capacity = 64;
+constexpr int multi_damage_capacity = 32;
 constexpr int monster_capacity = 8;
-constexpr int power_capacity = 64;
-constexpr int action_capacity = 128;
+constexpr int power_capacity = 32;
+constexpr int power_object_capacity = 128;
+constexpr int action_capacity = 64;
 constexpr int hand_limit = 10;
+static_assert(card_capacity <= 256 && power_object_capacity <= 256 && action_capacity <= 128);
 constexpr int player_target = -1;
 constexpr int no_target = -2;
 

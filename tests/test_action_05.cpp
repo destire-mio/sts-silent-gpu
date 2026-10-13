@@ -45,8 +45,8 @@ static void test_damage_and_x_cost() {
             "Skewer uses energyOnUse for hits and consumes current energy");
     add_bottom(g, MalaiseAction::construct(player_target, 0, true, true, 1));
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Strength) == -2 &&
-            power_amount(g.monsters[0].creature, PowerId::Weak) == 2,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Strength) == -2 &&
+            power_amount(g, g.monsters[0].creature, PowerId::Weak) == 2,
             "Malaise applies Strength and Weak with its upgrade bonus");
     g.player.energy = 3;
     add_bottom(g, SkewerAction::construct(player_target, 0, 4, DamageType::Normal, false, 0));
@@ -63,8 +63,8 @@ static void test_debuff_removal() {
     remove.kind = EffectKind::RemoveDebuffsAction;
     add_bottom(g, remove);
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Strength) == 3 &&
-            !has_power(g.player.creature, PowerId::Dexterity) && !has_power(g.player.creature, PowerId::Weak),
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 3 &&
+            !has_power(g, g.player.creature, PowerId::Dexterity) && !has_power(g, g.player.creature, PowerId::Weak),
             "RemoveDebuffs removes negative-stat powers and preserves positive buffs");
 }
 
@@ -148,7 +148,7 @@ static void test_stasis_selection() {
     add_bottom(g, stasis);
     run_until_decision(g);
     require(g.limbo.empty() && g.retained.empty() && g.draw.size == 1 &&
-            g.monsters[0].creature.powers[find_power(g.monsters[0].creature, PowerId::Stasis)].state.Stasis.card == selected,
+            g.monsters[0].creature.powers.at(g.power_objects, find_power(g, g.monsters[0].creature, PowerId::Stasis)).state.Stasis.card == selected,
             "ApplyStasis sorts the available highest-rarity cards by Java ID before selection");
     require(g.rng.card_random.counter == expected.counter &&
             g.rng.card_random.generator.s0 == expected.generator.s0 &&

@@ -15,14 +15,14 @@ struct DoublePoison : ActionHooks {
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         if (e.target == no_target) return;
         const Creature& target = get_creature(g, e.target);
-        const int index = find_power(target, "Poison");
+        const int index = find_power(g, target, "Poison");
         if (index < 0) return;
         Effect apply{};
         apply.kind = EffectKind::ApplyPower;
         apply.source = e.source;
         apply.target = e.target;
-        apply.power = target.powers[index].id;
-        apply.amount = target.powers[index].amount;
+        apply.power = target.powers.at(g.power_objects, index).id;
+        apply.amount = target.powers.at(g.power_objects, index).amount;
         add_top(g, apply);
     }
 };

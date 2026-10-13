@@ -10,7 +10,7 @@ struct CurlUp : PowerHooks {
         if (!p.triggered && amount < get_creature(g, owner).hp && amount > 0 &&
             info.source != no_target && info.damage_type == DamageType::Normal) {
             p.triggered = true;
-            add_bottom(g, actions::ChangeState::make(owner, "CLOSED"));
+            add_bottom(g, actions::ChangeState::make(g, owner, "CLOSED"));
             queue_block(g, owner, p.amount);
             Effect e{};
             e.kind = EffectKind::RemovePower;

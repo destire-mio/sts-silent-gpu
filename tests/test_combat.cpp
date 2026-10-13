@@ -75,8 +75,8 @@ static void test_default_cultist() {
     require_pile(g.draw, {10}, "second draw pile");
     require_pile(g.discard, {5,3,9,1,0,11,4}, "end turn discards from hand top");
     require(g.turn == 2 && g.player.creature.hp == 59 && g.player.energy == 3, "Cultist ritual turn");
-    require(power_amount(g.monsters[0].creature, PowerId::Ritual) == 5 &&
-            !has_power(g.monsters[0].creature, PowerId::Strength), "Ritual skips first round");
+    require(power_amount(g, g.monsters[0].creature, PowerId::Ritual) == 5 &&
+            !has_power(g, g.monsters[0].creature, PowerId::Strength), "Ritual skips first round");
     require(g.monsters[0].intent_damage == 6, "Cultist next attack before ritual gain");
 
     step(g, {ActionKind::EndTurn});
@@ -85,7 +85,7 @@ static void test_default_cultist() {
     require_pile(g.exhaust, {12}, "Ascenders Bane ethereal exhaust");
     require(g.discard.empty(), "refill clears discard pile");
     require(g.turn == 3 && g.player.creature.hp == 53, "Cultist first attack damage");
-    require(power_amount(g.monsters[0].creature, PowerId::Strength) == 5 && g.monsters[0].intent_damage == 11, "Ritual strengthens next attack");
+    require(power_amount(g, g.monsters[0].creature, PowerId::Strength) == 5 && g.monsters[0].intent_damage == 11, "Ritual strengthens next attack");
     require(g.rng.ai.counter == 3 && g.rng.shuffle.counter == 2, "turn and refill RNG counters");
     require(g.manager.damage_received_this_combat == 6 && g.manager.damage_received_this_turn == 0, "damage history turn reset");
 }
@@ -122,11 +122,11 @@ static void test_neutralize_duration() {
     start_combat(g, deck_setup({CardId::Neutralize,CardId::Neutralize,CardId::Neutralize,CardId::Neutralize,CardId::Neutralize}));
     step(g, {ActionKind::EndTurn});
     play(g, CardId::Neutralize, 0);
-    require(g.monsters[0].creature.hp == 53 && power_amount(g.monsters[0].creature, PowerId::Weak) == 1, "Neutralize damage then Weak");
+    require(g.monsters[0].creature.hp == 53 && power_amount(g, g.monsters[0].creature, PowerId::Weak) == 1, "Neutralize damage then Weak");
     require(g.monsters[0].intent_damage == 4 && g.player.energy == 3, "Weak floors damage and Neutralize costs zero");
     step(g, {ActionKind::EndTurn});
     require(g.player.creature.hp == 66, "Weak applies to current monster attack");
-    require(!has_power(g.monsters[0].creature, PowerId::Weak), "player-applied Weak expires after round");
+    require(!has_power(g, g.monsters[0].creature, PowerId::Weak), "player-applied Weak expires after round");
     require(g.monsters[0].intent_damage == 11, "next intent reflects expired Weak and Ritual");
 }
 
@@ -140,16 +140,16 @@ static void test_power_order_and_damage() {
     apply_power(g, player_target, player_target, PowerId::Dexterity, 4);
     apply_power(g, player_target, 0, PowerId::Vulnerable, 1);
     const Powers& powers = g.player.creature.powers;
-    require(powers.size == 4 && powers[0].id == PowerId::Strength && powers[1].id == PowerId::Dexterity &&
-            powers[2].id == PowerId::Frail && powers[3].id == PowerId::Weak, "stable power priority order");
+    require(powers.size == 4 && powers.at(g.power_objects, 0).id == PowerId::Strength && powers.at(g.power_objects, 1).id == PowerId::Dexterity &&
+            powers.at(g.power_objects, 2).id == PowerId::Frail && powers.at(g.power_objects, 3).id == PowerId::Weak, "stable power priority order");
     play(g, CardId::Strike_G, 0);
     require(g.monsters[0].creature.hp == 46, "damage floors after Strength Weak Vulnerable: floor(9*.75*1.5)");
     play(g, CardId::Defend_G);
     require(g.player.creature.block == 6, "block applies Dexterity before Frail: floor(9*.75)");
     apply_power(g, player_target, player_target, PowerId::Strength, 2000);
-    require(power_amount(g.player.creature, PowerId::Strength) == 999, "Strength upper cap");
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 999, "Strength upper cap");
     apply_power(g, player_target, player_target, PowerId::Dexterity, -2000);
-    require(power_amount(g.player.creature, PowerId::Dexterity) == -999, "Dexterity lower cap");
+    require(power_amount(g, g.player.creature, PowerId::Dexterity) == -999, "Dexterity lower cap");
 }
 
 static void test_retained_ethereal() {
@@ -207,17 +207,17 @@ static void test_damage_hooks() {
     start_combat(g, setup);
     const int hp = g.monsters[0].creature.hp;
     const int other_hp = g.monsters[1].creature.hp;
-    const int curl = power_amount(g.monsters[0].creature, PowerId::CurlUp);
+    const int curl = power_amount(g, g.monsters[0].creature, PowerId::CurlUp);
     require(curl >= 9 && curl <= 12, "A20 louse Curl Up amount");
     g.monsters[0].creature.block = 6;
     play(g, CardId::Strike_G, 0);
-    require(g.monsters[0].creature.hp == hp && has_power(g.monsters[0].creature, PowerId::CurlUp), "blocked attack does not trigger Curl Up");
+    require(g.monsters[0].creature.hp == hp && has_power(g, g.monsters[0].creature, PowerId::CurlUp), "blocked attack does not trigger Curl Up");
     play(g, CardId::Strike_G, 0);
     require(g.monsters[0].creature.hp == hp - 6 && g.monsters[0].creature.block == curl &&
-            !has_power(g.monsters[0].creature, PowerId::CurlUp), "Curl Up gains block after nonlethal HP damage");
+            !has_power(g, g.monsters[0].creature, PowerId::CurlUp), "Curl Up gains block after nonlethal HP damage");
     play(g, CardId::Strike_G, 0);
     require(g.monsters[0].creature.hp == hp - 6 && g.monsters[0].creature.block == curl - 6, "Curl Up block protects later attacks");
-    require(g.monsters[1].creature.hp == other_hp && has_power(g.monsters[1].creature, PowerId::CurlUp), "targeted hits leave second louse unchanged");
+    require(g.monsters[1].creature.hp == other_hp && has_power(g, g.monsters[1].creature, PowerId::CurlUp), "targeted hits leave second louse unchanged");
 
     reset(g, 0);
     setup.encounter = EncounterId::TwoFungiBeasts;
@@ -225,11 +225,11 @@ static void test_damage_hooks() {
     g.monsters[0].creature.hp = 6;
     g.monsters[1].creature.hp = 6;
     play(g, CardId::Strike_G, 0);
-    require(g.screen == Screen::Combat && power_amount(g.player.creature, PowerId::Vulnerable) == 2, "first Fungi death applies Spore Cloud");
-    require(!g.player.creature.powers[0].just_applied, "player-turn Spore Cloud does not skip round decrement");
+    require(g.screen == Screen::Combat && power_amount(g, g.player.creature, PowerId::Vulnerable) == 2, "first Fungi death applies Spore Cloud");
+    require(!g.player.creature.powers.at(g.power_objects, 0).just_applied, "player-turn Spore Cloud does not skip round decrement");
     require(g.monsters[1].creature.hp == 6, "first Fungi death leaves second Fungi alive");
     play(g, CardId::Strike_G, 1);
-    require(g.screen == Screen::Victory && power_amount(g.player.creature, PowerId::Vulnerable) == 2, "last Fungi death suppresses Spore Cloud");
+    require(g.screen == Screen::Victory && power_amount(g, g.player.creature, PowerId::Vulnerable) == 2, "last Fungi death suppresses Spore Cloud");
 }
 
 static void test_artifact() {
@@ -238,12 +238,12 @@ static void test_artifact() {
     start_combat(g, deck_setup({CardId::Neutralize,CardId::Defend_G,CardId::Strike_G,CardId::Defend_G,CardId::Strike_G}));
     apply_power(g, 0, 0, PowerId::Artifact, 1);
     play(g, CardId::Neutralize, 0);
-    require(g.monsters[0].creature.hp == 53 && !has_power(g.monsters[0].creature, PowerId::Weak) &&
-            !has_power(g.monsters[0].creature, PowerId::Artifact), "Artifact blocks Weak and consumes one charge after damage");
+    require(g.monsters[0].creature.hp == 53 && !has_power(g, g.monsters[0].creature, PowerId::Weak) &&
+            !has_power(g, g.monsters[0].creature, PowerId::Artifact), "Artifact blocks Weak and consumes one charge after damage");
     apply_power(g, player_target, player_target, PowerId::Artifact, 1);
     apply_power(g, player_target, player_target, PowerId::Strength, 0);
     play(g, CardId::Defend_G);
-    require(!has_power(g.player.creature, PowerId::Artifact) && !has_power(g.player.creature, PowerId::Strength), "zero Strength application has debuff type");
+    require(!has_power(g, g.player.creature, PowerId::Artifact) && !has_power(g, g.player.creature, PowerId::Strength), "zero Strength application has debuff type");
 }
 
 static void test_terminal_states() {
@@ -253,7 +253,7 @@ static void test_terminal_states() {
     g.monsters[0].creature.hp = 3;
     play(g, CardId::Neutralize, 0);
     require(g.screen == Screen::Victory && g.battle_over, "lethal attack reaches victory");
-    require(g.monsters[0].creature.hp == 0 && !has_power(g.monsters[0].creature, PowerId::Weak), "lethal Neutralize cancels pending Weak");
+    require(g.monsters[0].creature.hp == 0 && !has_power(g, g.monsters[0].creature, PowerId::Weak), "lethal Neutralize cancels pending Weak");
     require_pile(g.discard, {0}, "victory preserves UseCardAction");
     ActionSet actions{};
     legal_actions(g, actions);
@@ -281,20 +281,16 @@ static void test_played_card_history() {
     require(history.size == 2 && history.turn_start == 0 && history.values[0] == 0 && history.values[1] == 1,
             "played history preserves first-turn card identities and order");
     step(g, {ActionKind::EndTurn});
-    require(history.size == 2 && history.turn_start == 2 && history.turn_types[0] == 0 && history.turn_types[1] == 0,
+    require(history.size == 2 && history.turn_start == 2,
             "new turn clears turn history without losing combat history");
     play(g, CardId::Strike_G, 0);
     require(history.size == 3 && history.turn_start == 2 && history.values[2] == history.values[0],
             "replayed card retains the same identity in both histories");
-    require(history.combat_types[0] == 2 && history.combat_types[1] == 1 &&
-            history.turn_types[0] == 1 && history.turn_types[1] == 0,
-            "combat and turn card-type counts have separate boundaries");
     step(g, {ActionKind::EndTurn});
     g.monsters[0].creature.hp = 6;
     play(g, CardId::Strike_G, 0);
-    require(g.screen == Screen::Victory && history.size == 0 && history.turn_start == 0 &&
-            history.combat_types[0] == 0 && history.combat_types[1] == 0 && history.turn_types[0] == 0,
-            "victory clears both played histories and counts");
+    require(g.screen == Screen::Victory && history.size == 0 && history.turn_start == 0,
+            "victory clears both played histories");
     start_combat(g, setup);
     require(history.size == 0 && history.turn_start == 0, "new combat begins with empty played histories");
 }

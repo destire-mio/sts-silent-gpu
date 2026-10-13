@@ -18,7 +18,7 @@ struct GainEnergyAndEnableControls : ActionHooks {
         for (int i = 0; i < g.hand.size; ++i) card_triggerOnGainEnergy(g, g.hand[i], amount, false);
         for (int i = 0; i < g.run.relics.size; ++i) relic_onEnergyRecharge(g, i);
         Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i) power_onEnergyRecharge(g, powers[i], player_target);
+        for (int i = 0; i < powers.size; ++i) power_onEnergyRecharge(g, powers.at(g.power_objects, i), player_target);
         g.manager.turn_has_ended = false;
     }
 };

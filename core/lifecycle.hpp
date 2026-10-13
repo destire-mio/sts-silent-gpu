@@ -51,7 +51,7 @@ SPIRE_FN inline void on_victory(Game& g) {
     if (!g.player.creature.dying) {
         for (int i = 0; i < g.run.relics.size; ++i) relic_onVictory(g, i);
         Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i) power_onVictory(g, powers[i], player_target);
+        for (int i = 0; i < powers.size; ++i) power_onVictory(g, powers.at(g.power_objects, i), player_target);
     }
 }
 SPIRE_FN inline void gain_energy(Game& g, int amount) {

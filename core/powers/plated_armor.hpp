@@ -22,7 +22,7 @@ struct PlatedArmor : PowerHooks {
         queue_block(g, owner, p.amount);
     }
     static SPIRE_FN void onRemove(Game& g, Power&, int owner) {
-        if (owner != player_target) add_bottom(g, actions::ChangeState::make(owner, "ARMOR_BREAK"));
+        if (owner != player_target) add_bottom(g, actions::ChangeState::make(g, owner, "ARMOR_BREAK"));
     }
 };
 }

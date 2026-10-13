@@ -23,17 +23,17 @@ static Game combat(CardId card = CardId::Defend_G) {
 static void test_constructor_state() {
     Game g = combat();
     queue_power(g, 0, player_target, PowerId::Poison, 12000);
-    require(g.manager.actions[0].prepared_power.amount == 9999 &&
-            g.manager.actions[0].prepared_power.state.Poison.source == 0,
+    require(g.action_objects[g.manager.actions[0]].prepared_power.amount == 9999 &&
+            g.action_objects[g.manager.actions[0]].prepared_power.state.Poison.source == 0,
             "Poison retains the source and clamps the constructor amount");
     run_until_decision(g);
     apply_power(g, player_target, player_target, PowerId::Poison, 2);
-    const Power& poison = g.player.creature.powers[find_power(g.player.creature, PowerId::Poison)];
+    const Power& poison = g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::Poison));
     require(poison.amount == 10001 && poison.state.Poison.source == 0,
             "Poison stacking uses the raw amount and keeps the first source");
     apply_power(g, player_target, player_target, PowerId::Panache, 10);
     apply_power(g, player_target, player_target, PowerId::Panache, 14);
-    Power& panache = g.player.creature.powers[find_power(g.player.creature, PowerId::Panache)];
+    Power& panache = g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::Panache));
     require(panache.amount == 5 && panache.state.Panache.damage == 24,
             "Panache stacks damage without stacking its card countdown");
     step(g, {ActionKind::Play, 0, no_target});
@@ -41,13 +41,13 @@ static void test_constructor_state() {
     power_atStartOfTurn(g, panache, player_target);
     require(panache.amount == 5, "Panache resets its countdown at turn start");
     apply_power(g, player_target, player_target, PowerId::PlatedArmor, 1500);
-    require(power_amount(g.player.creature, PowerId::PlatedArmor) == 1500,
+    require(power_amount(g, g.player.creature, PowerId::PlatedArmor) == 1500,
             "Plated Armor constructor does not apply its stack cap");
     apply_power(g, player_target, player_target, PowerId::PlatedArmor, 1);
-    require(power_amount(g.player.creature, PowerId::PlatedArmor) == 999, "Plated Armor caps when stacking");
+    require(power_amount(g, g.player.creature, PowerId::PlatedArmor) == 999, "Plated Armor caps when stacking");
     apply_power(g, player_target, player_target, PowerId::ThousandCuts, -1);
     apply_power(g, player_target, player_target, PowerId::ThousandCuts, 3);
-    require(power_amount(g.player.creature, PowerId::ThousandCuts) == 2,
+    require(power_amount(g, g.player.creature, PowerId::ThousandCuts) == 2,
             "Thousand Cuts stacks even when the previous amount is minus one");
 }
 
@@ -57,14 +57,14 @@ static void test_pen_nib_and_sharp_hide() {
     apply_power(g, player_target, player_target, PowerId::PenNib, 1);
     apply_power(g, 0, 0, PowerId::SharpHide, 4);
     step(g, {ActionKind::Play, 0, no_target});
-    require(has_power(g.player.creature, PowerId::PenNib) && g.player.creature.hp == 70,
+    require(has_power(g, g.player.creature, PowerId::PenNib) && g.player.creature.hp == 70,
             "playing a skill keeps Pen Nib and does not trigger Sharp Hide");
     const int card = g.cards.size;
     g.cards.push_back(make_card(CardId::Strike_G));
     g.hand.push_back(card);
     const int hp = g.monsters[0].creature.hp;
     step(g, {ActionKind::Play, g.hand.size - 1, 0});
-    require(g.monsters[0].creature.hp == hp - 18 && !has_power(g.player.creature, PowerId::PenNib),
+    require(g.monsters[0].creature.hp == hp - 18 && !has_power(g, g.player.creature, PowerId::PenNib),
             "Pen Nib doubles damage after Strength and is removed after the attack");
     require(g.player.creature.hp == 70 && g.player.creature.block == 1,
             "Sharp Hide's attack trigger deals raw thorns damage against existing block");
@@ -83,19 +83,19 @@ static void test_plated_armor_and_thorns() {
     hit.amount = 4;
     damage(g, hit);
     run_until_decision(g);
-    require(g.monsters[0].creature.hp == hp - 3 && power_amount(g.player.creature, PowerId::PlatedArmor) == 2,
+    require(g.monsters[0].creature.hp == hp - 3 && power_amount(g, g.player.creature, PowerId::PlatedArmor) == 2,
             "a blocked attack triggers Thorns without reducing Plated Armor");
     g.player.creature.block = 0;
     damage(g, hit);
     run_until_decision(g);
     require(g.player.creature.hp == 66 && g.monsters[0].creature.hp == hp - 6 &&
-            power_amount(g.player.creature, PowerId::PlatedArmor) == 1 &&
-            power_amount(g.monsters[0].creature, PowerId::PlatedArmor) == 5,
+            power_amount(g, g.player.creature, PowerId::PlatedArmor) == 1 &&
+            power_amount(g, g.monsters[0].creature, PowerId::PlatedArmor) == 5,
             "HP damage reduces only the damaged creature's armor; retaliation does not reduce armor");
     hit.damage_type = DamageType::HpLoss;
     damage(g, hit);
     run_until_decision(g);
-    require(g.monsters[0].creature.hp == hp - 6 && power_amount(g.player.creature, PowerId::PlatedArmor) == 1,
+    require(g.monsters[0].creature.hp == hp - 6 && power_amount(g, g.player.creature, PowerId::PlatedArmor) == 1,
             "HP loss triggers neither Thorns nor armor reduction");
     at_end_of_turn(g, 0);
     run_until_decision(g);
@@ -107,14 +107,14 @@ static void test_slow() {
     apply_power(g, 0, 0, PowerId::Slow, 0);
     const int hp = g.monsters[0].creature.hp;
     step(g, {ActionKind::Play, 0, 0});
-    require(g.monsters[0].creature.hp == hp - 6 && power_amount(g.monsters[0].creature, PowerId::Slow) == 1,
+    require(g.monsters[0].creature.hp == hp - 6 && power_amount(g, g.monsters[0].creature, PowerId::Slow) == 1,
             "Slow increments after the first card's damage");
     step(g, {ActionKind::Play, 0, 0});
     step(g, {ActionKind::Play, 0, 0});
-    require(g.monsters[0].creature.hp == hp - 19 && power_amount(g.monsters[0].creature, PowerId::Slow) == 3,
+    require(g.monsters[0].creature.hp == hp - 19 && power_amount(g, g.monsters[0].creature, PowerId::Slow) == 3,
             "subsequent attacks use the preceding Slow count and Java float arithmetic");
     at_end_of_round(g, 0);
-    require(power_amount(g.monsters[0].creature, PowerId::Slow) == 0, "Slow clears at round end");
+    require(power_amount(g, g.monsters[0].creature, PowerId::Slow) == 0, "Slow clears at round end");
 }
 
 static void test_reactive_rng() {
@@ -147,12 +147,12 @@ static void test_bomb_identity() {
     require(g.bomb_id_offset == 2 && other.bomb_id_offset == 0,
             "bomb IDs allocate during construction and belong to each game");
     run_until_decision(g);
-    require(g.player.creature.powers.size == 2 && g.player.creature.powers[0].id_offset == 0 &&
-            g.player.creature.powers[1].id_offset == 1, "separate bombs do not stack");
+    require(g.player.creature.powers.size == 2 && g.player.creature.powers.at(g.power_objects, 0).id_offset == 0 &&
+            g.player.creature.powers.at(g.power_objects, 1).id_offset == 1, "separate bombs do not stack");
     at_end_of_turn(g, player_target);
     run_until_decision(g);
-    require(g.player.creature.powers.size == 1 && g.player.creature.powers[0].id_offset == 1 &&
-            g.player.creature.powers[0].amount == 2 && g.player.creature.powers[0].state.TheBomb.damage == 50,
+    require(g.player.creature.powers.size == 1 && g.player.creature.powers.at(g.power_objects, 0).id_offset == 1 &&
+            g.player.creature.powers.at(g.power_objects, 0).amount == 2 && g.player.creature.powers.at(g.power_objects, 0).state.TheBomb.damage == 50,
             "removing the first bomb does not redirect the second bomb's queued reduction");
 }
 

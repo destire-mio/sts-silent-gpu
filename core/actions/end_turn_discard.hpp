@@ -13,7 +13,7 @@ struct EndTurnDiscard : ActionHooks {
         Effect restore{};
         restore.kind = EffectKind::RestoreRetained;
         add_top(g, restore);
-        if (!has_relic(g, "Runic Pyramid") && find_power(g.player.creature, "Equilibrium") < 0) {
+        if (!has_relic(g, "Runic Pyramid") && find_power(g, g.player.creature, "Equilibrium") < 0) {
             const int count = g.hand.size;
             for (int i = 0; i < count; ++i) {
                 Effect discard{};

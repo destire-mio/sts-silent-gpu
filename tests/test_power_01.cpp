@@ -22,7 +22,7 @@ static Game combat() {
 
 static void resolve_actions(Game& g) {
     while (!g.manager.actions.empty()) {
-        Effect e = g.manager.actions.pop_front();
+        Effect e = g.action_objects[g.manager.actions.pop_front()];
         execute_effect(g, e);
     }
 }
@@ -31,31 +31,31 @@ static void test_constructors_and_stacking() {
     Game g = combat();
     apply_power(g, player_target, player_target, PowerId::Accuracy, -1);
     apply_power(g, player_target, player_target, PowerId::Accuracy, 5);
-    require(power_amount(g.player.creature, PowerId::Accuracy) == 4, "Accuracy stacks the sentinel value");
+    require(power_amount(g, g.player.creature, PowerId::Accuracy) == 4, "Accuracy stacks the sentinel value");
     apply_power(g, player_target, player_target, PowerId::Buffer, -1);
     apply_power(g, player_target, player_target, PowerId::Buffer, 5);
-    require(power_amount(g.player.creature, PowerId::Buffer) == 4, "Buffer stacks the sentinel value");
+    require(power_amount(g, g.player.creature, PowerId::Buffer) == 4, "Buffer stacks the sentinel value");
     apply_power(g, player_target, 0, PowerId::CorpseExplosion, 99);
     apply_power(g, player_target, 0, PowerId::CorpseExplosion, 2);
-    require(power_amount(g.monsters[0].creature, PowerId::CorpseExplosion) == 3,
+    require(power_amount(g, g.monsters[0].creature, PowerId::CorpseExplosion) == 3,
             "Corpse Explosion constructs one stack, then uses the raw stack input");
     apply_power(g, player_target, player_target, PowerId::Energized, 2000);
-    require(power_amount(g.player.creature, PowerId::Energized) == 999, "Energized constructor cap");
+    require(power_amount(g, g.player.creature, PowerId::Energized) == 999, "Energized constructor cap");
     apply_power(g, player_target, player_target, PowerId::Energized, -1000);
     apply_power(g, player_target, player_target, PowerId::Energized, 5);
-    require(power_amount(g.player.creature, PowerId::Energized) == -1, "Energized inherits sentinel stacking");
+    require(power_amount(g, g.player.creature, PowerId::Energized) == -1, "Energized inherits sentinel stacking");
     apply_power(g, player_target, player_target, PowerId::Dexterity, -2000);
     apply_power(g, player_target, player_target, PowerId::Dexterity, 2000);
-    require(power_amount(g.player.creature, PowerId::Dexterity) == 999, "Dexterity stacks raw input after construction");
+    require(power_amount(g, g.player.creature, PowerId::Dexterity) == 999, "Dexterity stacks raw input after construction");
     apply_power(g, player_target, player_target, PowerId::Dexterity, -999);
     resolve_actions(g);
-    require(!has_power(g.player.creature, PowerId::Dexterity), "zero Dexterity removes itself");
+    require(!has_power(g, g.player.creature, PowerId::Dexterity), "zero Dexterity removes itself");
 }
 
 static void test_confusion_rng() {
     Game g = combat();
     apply_power(g, 0, player_target, PowerId::Confusion, 10);
-    Power& p = g.player.creature.powers[find_power(g.player.creature, PowerId::Confusion)];
+    Power& p = g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::Confusion));
     const int card = g.hand[0];
     Random expected = g.rng.card_random;
     const int new_cost = expected.random(3);
@@ -82,11 +82,11 @@ static void test_damage_hooks() {
     const int hp = g.player.creature.hp;
     queue_damage(g, 0, player_target, 4);
     resolve_actions(g);
-    require(g.player.creature.hp == hp && has_power(g.player.creature, PowerId::Buffer),
+    require(g.player.creature.hp == hp && has_power(g, g.player.creature, PowerId::Buffer),
             "a blocked hit does not consume Buffer");
     queue_damage(g, no_target, player_target, 3, DamageType::HpLoss);
     resolve_actions(g);
-    require(g.player.creature.hp == hp && !has_power(g.player.creature, PowerId::Buffer),
+    require(g.player.creature.hp == hp && !has_power(g, g.player.creature, PowerId::Buffer),
             "Buffer prevents HP loss and removes itself through the queued reduction");
     apply_power(g, player_target, player_target, PowerId::DoubleDamage, 2, true);
     require(calculate_damage(g, player_target, 0, 7) == 14 &&
@@ -94,18 +94,18 @@ static void test_damage_hooks() {
             "Double Damage doubles only normal damage");
     at_end_of_round(g, player_target);
     resolve_actions(g);
-    require(power_amount(g.player.creature, PowerId::DoubleDamage) == 2, "monster-sourced Double Damage skips its first round");
+    require(power_amount(g, g.player.creature, PowerId::DoubleDamage) == 2, "monster-sourced Double Damage skips its first round");
     at_end_of_round(g, player_target);
     resolve_actions(g);
-    require(power_amount(g.player.creature, PowerId::DoubleDamage) == 1, "Double Damage reduces on the next round");
+    require(power_amount(g, g.player.creature, PowerId::DoubleDamage) == 1, "Double Damage reduces on the next round");
     apply_power(g, 0, 0, PowerId::BeatOfDeath, 3);
     apply_power(g, 0, player_target, PowerId::Constricted, 2);
     apply_power(g, player_target, player_target, PowerId::Vulnerable, 1);
-    const int constricted = find_power(g.player.creature, PowerId::Constricted);
-    require(g.player.creature.powers[constricted].state.Constricted.source == 0, "Constricted retains its constructor source");
+    const int constricted = find_power(g, g.player.creature, PowerId::Constricted);
+    require(g.player.creature.powers.at(g.power_objects, constricted).state.Constricted.source == 0, "Constricted retains its constructor source");
     Effect use{};
-    power_onAfterUseCard(g, g.monsters[0].creature.powers[find_power(g.monsters[0].creature, PowerId::BeatOfDeath)], 0, g.hand[0], use);
-    power_atEndOfTurn(g, g.player.creature.powers[constricted], player_target, false);
+    power_onAfterUseCard(g, g.monsters[0].creature.powers.at(g.power_objects, find_power(g, g.monsters[0].creature, PowerId::BeatOfDeath)), 0, g.hand[0], use);
+    power_atEndOfTurn(g, g.player.creature.powers.at(g.power_objects, constricted), player_target, false);
     resolve_actions(g);
     require(g.player.creature.hp == hp - 5, "Beat of Death and Constricted queue raw Thorns damage without applying Vulnerable");
 }
@@ -116,25 +116,25 @@ static void test_turn_hooks() {
     apply_power(g, 0, player_target, PowerId::DrawReduction, 1);
     require(g.player.hand_size == 4, "stacking Draw Reduction changes hand size only on initial application");
     step(g, {ActionKind::EndTurn});
-    require(g.hand.size == 4 && power_amount(g.player.creature, PowerId::DrawReduction) == 2,
+    require(g.hand.size == 4 && power_amount(g, g.player.creature, PowerId::DrawReduction) == 2,
             "Draw Reduction skips its first end-of-round reduction");
     step(g, {ActionKind::EndTurn});
-    require(g.hand.size == 4 && power_amount(g.player.creature, PowerId::DrawReduction) == 1,
+    require(g.hand.size == 4 && power_amount(g, g.player.creature, PowerId::DrawReduction) == 1,
             "queued reduction happens after the next-turn draw count is captured");
     step(g, {ActionKind::EndTurn});
-    require(g.hand.size == 4 && g.player.hand_size == 5 && !has_power(g.player.creature, PowerId::DrawReduction),
+    require(g.hand.size == 4 && g.player.hand_size == 5 && !has_power(g, g.player.creature, PowerId::DrawReduction),
             "Draw Reduction removal restores the future hand size");
     apply_power(g, player_target, player_target, PowerId::DrawCardNextTurn, 2);
     apply_power(g, player_target, player_target, PowerId::Energized, 2);
     step(g, {ActionKind::EndTurn});
     require(g.hand.size == 7 && g.player.energy == 5 &&
-            !has_power(g.player.creature, PowerId::DrawCardNextTurn) && !has_power(g.player.creature, PowerId::Energized),
+            !has_power(g, g.player.creature, PowerId::DrawCardNextTurn) && !has_power(g, g.player.creature, PowerId::Energized),
             "next-turn draw and energy resolve once and remove their powers");
     apply_power(g, player_target, player_target, PowerId::Blur, 1);
     const int attack = g.monsters[0].damage_output[0];
     g.player.creature.block = 100;
     step(g, {ActionKind::EndTurn});
-    require(g.player.creature.block == 100 - attack && !has_power(g.player.creature, PowerId::Blur),
+    require(g.player.creature.block == 100 - attack && !has_power(g, g.player.creature, PowerId::Blur),
             "Blur preserves block before the queued duration removal");
     apply_power(g, player_target, player_target, PowerId::Barricade, -1);
     g.player.creature.block = 100;
@@ -167,7 +167,7 @@ static void test_card_duplication() {
             "copies have distinct card instances and the source UUID");
     require(g.manager.played_cards.values[1] == originals + 1 && g.manager.played_cards.values[2] == originals,
             "front-of-queue copies execute in reverse insertion order");
-    require(!has_power(g.player.creature, PowerId::Burst) && !has_power(g.player.creature, PowerId::Duplication),
+    require(!has_power(g, g.player.creature, PowerId::Burst) && !has_power(g, g.player.creature, PowerId::Duplication),
             "Burst removes at the top, Duplication at the bottom");
 }
 

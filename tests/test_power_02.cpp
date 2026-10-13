@@ -34,26 +34,26 @@ static DamageInfo hit(int source, int target, int amount, DamageType type = Dama
 static void test_focus() {
     Game g = combat();
     apply_power(g, player_target, player_target, PowerId::Focus, 1200);
-    require(power_amount(g.player.creature, PowerId::Focus) == 1200,
+    require(power_amount(g, g.player.creature, PowerId::Focus) == 1200,
             "Focus constructor leaves the supplied amount unclamped");
     apply_power(g, player_target, player_target, PowerId::Focus, 0);
-    require(power_amount(g.player.creature, PowerId::Focus) == 999,
+    require(power_amount(g, g.player.creature, PowerId::Focus) == 999,
             "Focus stacking clamps at 999");
     apply_power(g, player_target, player_target, PowerId::Focus, -999);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Focus), "zero Focus stack removes the power");
+    require(!has_power(g, g.player.creature, PowerId::Focus), "zero Focus stack removes the power");
     apply_power(g, player_target, player_target, PowerId::Focus, -1);
     apply_power(g, player_target, player_target, PowerId::Focus, -1500);
-    require(power_amount(g.player.creature, PowerId::Focus) == -999,
+    require(power_amount(g, g.player.creature, PowerId::Focus) == -999,
             "Focus overrides the inherited nonstacking -1 sentinel");
-    const int index = find_power(g.player.creature, PowerId::Focus);
-    power_reducePower(g, g.player.creature.powers[index], player_target, -999);
+    const int index = find_power(g, g.player.creature, PowerId::Focus);
+    power_reducePower(g, g.player.creature.powers.at(g.power_objects, index), player_target, -999);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Focus), "zero Focus reduction removes the power");
+    require(!has_power(g, g.player.creature, PowerId::Focus), "zero Focus reduction removes the power");
     apply_power(g, player_target, player_target, PowerId::Artifact, 1);
     apply_power(g, player_target, player_target, PowerId::Focus, 0);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Focus) && !has_power(g.player.creature, PowerId::Artifact),
+    require(!has_power(g, g.player.creature, PowerId::Focus) && !has_power(g, g.player.creature, PowerId::Artifact),
             "zero Focus has DEBUFF type and consumes Artifact");
 }
 
@@ -79,26 +79,26 @@ static void test_intangible() {
     apply_power(g, player_target, 0, PowerId::Intangible, 2);
     at_end_of_turn(g, 0);
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Intangible) == 2,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Intangible) == 2,
             "Intangible skips its first end-turn hook");
     at_end_of_turn(g, 0);
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Intangible) == 1,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Intangible) == 1,
             "Intangible decays on later end-turn hooks");
     at_end_of_round(g, 0);
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Intangible) == 1,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Intangible) == 1,
             "Intangible does not decay at end of round");
     at_end_of_turn(g, 0);
     run_until_decision(g);
-    require(!has_power(g.monsters[0].creature, PowerId::Intangible), "Intangible removes its last stack");
+    require(!has_power(g, g.monsters[0].creature, PowerId::Intangible), "Intangible removes its last stack");
     apply_power(g, player_target, player_target, PowerId::IntangiblePlayer, 1);
     at_end_of_turn(g, player_target);
     run_until_decision(g);
-    require(has_power(g.player.creature, PowerId::IntangiblePlayer), "player Intangible persists through player end-turn");
+    require(has_power(g, g.player.creature, PowerId::IntangiblePlayer), "player Intangible persists through player end-turn");
     at_end_of_round(g, player_target);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::IntangiblePlayer), "player Intangible decays at end of round");
+    require(!has_power(g, g.player.creature, PowerId::IntangiblePlayer), "player Intangible decays at end of round");
 }
 
 static void test_flight() {
@@ -112,17 +112,17 @@ static void test_flight() {
     DamageInfo info = hit(player_target, 0, 3);
     damage(g, info);
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Flight) == 1,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Flight) == 1,
             "surviving unblocked normal hit consumes one Flight stack");
     apply_power(g, player_target, 0, PowerId::Flight, 6);
-    Power& p = g.monsters[0].creature.powers[find_power(g.monsters[0].creature, PowerId::Flight)];
+    Power& p = g.monsters[0].creature.powers.at(g.power_objects, find_power(g, g.monsters[0].creature, PowerId::Flight));
     power_atStartOfTurn(g, p, 0);
-    require(p.amount == 2 && power_amount(g.player.creature, PowerId::Flight) == 4,
+    require(p.amount == 2 && power_amount(g, g.player.creature, PowerId::Flight) == 4,
             "Flight restores its constructor amount without sharing state across owners");
     g.monsters[0].creature.hp = 5;
     info.amount = 8;
     power_onAttacked(g, p, 0, info, 8);
-    require(g.manager.actions.size == 1 && g.manager.actions[0].power == PowerId::Flight,
+    require(g.manager.actions.size == 1 && g.action_objects[g.manager.actions[0]].power == PowerId::Flight,
             "Flight willLive uses half of the post-block hit, even when the hit is lethal");
 }
 
@@ -136,13 +136,13 @@ static void test_invincible() {
     damage(g, info);
     info.damage_type = DamageType::HpLoss;
     damage(g, info);
-    require(g.monsters[0].creature.hp == hp - 5 && power_amount(g.monsters[0].creature, PowerId::Invincible) == 0,
+    require(g.monsters[0].creature.hp == hp - 5 && power_amount(g, g.monsters[0].creature, PowerId::Invincible) == 0,
             "Invincible limits cumulative post-block damage across damage types");
     apply_power(g, player_target, 0, PowerId::Invincible, 3);
-    Power& p = g.monsters[0].creature.powers[find_power(g.monsters[0].creature, PowerId::Invincible)];
+    Power& p = g.monsters[0].creature.powers.at(g.power_objects, find_power(g, g.monsters[0].creature, PowerId::Invincible));
     power_atStartOfTurn(g, p, 0);
     require(p.amount == 5 && p.state.Invincible.maxAmt == 5 &&
-            power_amount(g.player.creature, PowerId::Invincible) == 11,
+            power_amount(g, g.player.creature, PowerId::Invincible) == 11,
             "Invincible restores each owner's constructor cap, not a later stack amount");
 }
 
@@ -160,12 +160,12 @@ static void test_malleable() {
         run_until_decision(g);
         require(c.hp == hp - (owner == player_target ? 2 : 4) &&
                 c.block == (owner == player_target ? 1 : 7) &&
-                power_amount(c, PowerId::Malleable) == (owner == player_target ? 4 : 5),
+                power_amount(g, c, PowerId::Malleable) == (owner == player_target ? 4 : 5),
                 "Malleable queues player block before the next hit, and monster block after it");
         apply_power(g, source, owner, PowerId::Malleable, 2);
         if (owner == player_target) at_end_of_round(g, owner);
         else at_end_of_turn(g, owner);
-        require(power_amount(c, PowerId::Malleable) == 5,
+        require(power_amount(g, c, PowerId::Malleable) == 5,
                 "Malleable resets at the owner's Java boundary and includes stacked base block");
     }
     Game g = combat();
@@ -183,27 +183,27 @@ static void test_block_and_constructor_time() {
     Game g = combat();
     queue_power(g, 0, player_target, PowerId::NoBlock, 2, true);
     g.manager.turn_has_ended = true;
-    Effect e = g.manager.actions.pop_front();
+    Effect e = g.action_objects[g.manager.actions.pop_front()];
     execute_effect(g, e);
     g.manager.turn_has_ended = false;
     at_end_of_round(g, player_target);
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::NoBlock) == 1,
+    require(power_amount(g, g.player.creature, PowerId::NoBlock) == 1,
             "NoBlock constructor sees turnHasEnded before the action is resolved");
     require(calculate_block(g, 12) == 0, "NoBlock is the final card block modifier");
     apply_power(g, player_target, player_target, PowerId::NextTurnBlock, 8);
-    Power& p = g.player.creature.powers[find_power(g.player.creature, PowerId::NextTurnBlock)];
+    Power& p = g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::NextTurnBlock));
     power_atStartOfTurn(g, p, player_target);
     run_until_decision(g);
-    require(g.player.creature.block == 8 && !has_power(g.player.creature, PowerId::NextTurnBlock),
+    require(g.player.creature.block == 8 && !has_power(g, g.player.creature, PowerId::NextTurnBlock),
             "NextTurnBlock grants raw block before removing itself and bypasses card-only NoBlock");
     g.manager.turn_has_ended = true;
     queue_power(g, 0, player_target, PowerId::NoBlock, 3, true);
-    e = g.manager.actions.pop_front();
+    e = g.action_objects[g.manager.actions.pop_front()];
     require(e.prepared_power.just_applied, "monster NoBlock captures an ended turn in its constructor");
     apply_power(g, player_target, 0, PowerId::Metallicize, 4);
     at_end_of_turn(g, 0);
-    e = g.manager.actions.pop_front();
+    e = g.action_objects[g.manager.actions.pop_front()];
     execute_effect(g, e);
     require(g.monsters[0].creature.block == 4, "monster Metallicize receives the pre-end-turn-cards hook");
 }
@@ -227,9 +227,9 @@ static void test_nightmare_copies() {
     card.base_block = 2;
     apply_prepared_power(g, player_target, player_target, first, 3);
     apply_prepared_power(g, player_target, player_target, second, 2);
-    const Power& stored = g.player.creature.powers[find_power(g.player.creature, PowerId::Nightmare)];
+    const Power& stored = g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::Nightmare));
     require(stored.amount == 3 && stored.state.Nightmare.card == copy && g.cards[copy].base_block == 13 &&
-            g.player.creature.powers[find_power(g.player.creature, PowerId::Nightmare) + 1].amount == 2,
+            g.player.creature.powers.at(g.power_objects, find_power(g, g.player.creature, PowerId::Nightmare) + 1).amount == 2,
             "Nightmare applications retain separate powers and independent card objects");
 
 }

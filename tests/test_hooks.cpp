@@ -26,27 +26,27 @@ static void test_constructor_and_stack() {
     apply_power(g, player_target, player_target, PowerId::NoDraw, 5, true);
     apply_power(g, player_target, player_target, PowerId::Artifact, 1);
     apply_power(g, player_target, player_target, PowerId::NoDraw, 3);
-    require(power_amount(g.player.creature, PowerId::NoDraw) == -1, "NoDraw constructor sets sentinel amount");
-    require(power_amount(g.player.creature, PowerId::Artifact) == 1 && g.manager.actions.empty(),
+    require(power_amount(g, g.player.creature, PowerId::NoDraw) == -1, "NoDraw constructor sets sentinel amount");
+    require(power_amount(g, g.player.creature, PowerId::Artifact) == 1 && g.manager.actions.empty(),
             "duplicate NoDraw returns before Artifact consumes a charge");
     apply_power(g, player_target, player_target, PowerId::Strength, -900);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Strength) && !has_power(g.player.creature, PowerId::Artifact),
+    require(!has_power(g, g.player.creature, PowerId::Strength) && !has_power(g, g.player.creature, PowerId::Artifact),
             "negative Strength is a debuff at initial application");
     apply_power(g, player_target, player_target, PowerId::Strength, -900);
     apply_power(g, player_target, player_target, PowerId::Strength, 2000);
-    require(power_amount(g.player.creature, PowerId::Strength) == 999,
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 999,
             "ApplyPowerAction stacks the raw amount rather than the constructor-clamped amount");
     apply_power(g, player_target, player_target, PowerId::Strength, -999);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Strength), "zero Strength stack removes the power");
+    require(!has_power(g, g.player.creature, PowerId::Strength), "zero Strength stack removes the power");
     apply_power(g, player_target, player_target, PowerId::Artifact, 0);
     apply_power(g, player_target, player_target, PowerId::Weak, 1);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Artifact) && !has_power(g.player.creature, PowerId::Weak),
+    require(!has_power(g, g.player.creature, PowerId::Artifact) && !has_power(g, g.player.creature, PowerId::Weak),
             "zero Artifact blocks a debuff and then removes itself");
     step(g, {ActionKind::EndTurn});
-    require(!has_power(g.player.creature, PowerId::NoDraw) && g.hand.size == 5,
+    require(!has_power(g, g.player.creature, PowerId::NoDraw) && g.hand.size == 5,
             "NoDraw end-turn removal precedes next-turn draw");
 }
 
@@ -54,18 +54,18 @@ static void test_power_preparation() {
     Game g = combat();
     apply_power(g, player_target, player_target, PowerId::Strength, -900);
     queue_power(g, player_target, player_target, PowerId::Strength, 2000);
-    require(g.manager.actions[0].amount == 2000 && g.manager.actions[0].prepared_power.amount == 999,
+    require(g.action_objects[g.manager.actions[0]].amount == 2000 && g.action_objects[g.manager.actions[0]].prepared_power.amount == 999,
             "Power construction precedes queue resolution and preserves the raw stack amount");
     Effect no_draw{};
     no_draw.kind = EffectKind::ApplyPower;
     no_draw.power = PowerId::NoDraw;
     no_draw.amount = 7;
     add_top(g, no_draw);
-    require(g.manager.actions[0].prepared_power.amount == -1,
+    require(g.action_objects[g.manager.actions[0]].prepared_power.amount == -1,
             "direct ApplyPower enqueue runs the same constructor preparation");
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Strength) == 999 &&
-            power_amount(g.player.creature, PowerId::NoDraw) == -1,
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 999 &&
+            power_amount(g, g.player.creature, PowerId::NoDraw) == -1,
             "prepared power execution uses the constructor object and raw stack amount");
 }
 
@@ -76,21 +76,21 @@ static void test_constructor_time() {
     queue_power(g, 0, player_target, PowerId::Frail, 3, true);
     g.manager.turn_has_ended = true;
     while (!g.manager.actions.empty()) {
-        Effect next = g.manager.actions.pop_front();
+        Effect next = g.action_objects[g.manager.actions.pop_front()];
         execute_effect(g, next);
     }
     g.manager.turn_has_ended = false;
     at_end_of_round(g, player_target);
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Weak) == 3 &&
-            power_amount(g.player.creature, PowerId::Frail) == 3 &&
-            power_amount(g.player.creature, PowerId::Vulnerable) == 1,
+    require(power_amount(g, g.player.creature, PowerId::Weak) == 3 &&
+            power_amount(g, g.player.creature, PowerId::Frail) == 3 &&
+            power_amount(g, g.player.creature, PowerId::Vulnerable) == 1,
             "Vulnerable constructor sees the pre-queue turn flag; Weak and Frail skip the first round");
     at_end_of_round(g, player_target);
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Weak) == 2 &&
-            power_amount(g.player.creature, PowerId::Frail) == 2 &&
-            !has_power(g.player.creature, PowerId::Vulnerable), "duration hooks run in later rounds");
+    require(power_amount(g, g.player.creature, PowerId::Weak) == 2 &&
+            power_amount(g, g.player.creature, PowerId::Frail) == 2 &&
+            !has_power(g, g.player.creature, PowerId::Vulnerable), "duration hooks run in later rounds");
 }
 
 static void test_attacked_hook_order() {
@@ -110,13 +110,13 @@ static void test_attacked_hook_order() {
     require(g.manager.actions.empty(), "fully blocked normal damage does not trigger Angry or Curl Up");
     hit.amount = 9;
     damage(g, hit);
-    require(g.manager.actions.size == 4 && g.manager.actions[0].kind == EffectKind::ApplyPower &&
-            g.manager.actions[0].power == PowerId::Strength && g.manager.actions[1].kind == EffectKind::ChangeState && g.manager.actions[2].kind == EffectKind::Block && g.manager.actions[3].kind == EffectKind::RemovePower,
+    require(g.manager.actions.size == 4 && g.action_objects[g.manager.actions[0]].kind == EffectKind::ApplyPower &&
+            g.action_objects[g.manager.actions[0]].power == PowerId::Strength && g.action_objects[g.manager.actions[1]].kind == EffectKind::ChangeState && g.action_objects[g.manager.actions[2]].kind == EffectKind::Block && g.action_objects[g.manager.actions[3]].kind == EffectKind::RemovePower,
             "Angry adds Strength before Curl Up gains block and removes itself");
     run_until_decision(g);
     require(g.monsters[0].creature.hp == 47 && g.monsters[0].creature.block == 7 &&
-            power_amount(g.monsters[0].creature, PowerId::Strength) == 2 &&
-            !has_power(g.monsters[0].creature, PowerId::CurlUp), "attacked hooks resolve before the next decision");
+            power_amount(g, g.monsters[0].creature, PowerId::Strength) == 2 &&
+            !has_power(g, g.monsters[0].creature, PowerId::CurlUp), "attacked hooks resolve before the next decision");
 }
 
 static void test_lifecycle() {

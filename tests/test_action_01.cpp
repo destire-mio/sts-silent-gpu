@@ -175,10 +175,10 @@ static void damage_and_power() {
     power_initialPower(g, power, player_target);
     add_bottom(g, ApplyPower::make(player_target, player_target, power, 2));
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Strength) == 4, "initial power uses constructed amount");
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 4, "initial power uses constructed amount");
     add_bottom(g, ApplyPower::make(player_target, player_target, power, 2));
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Strength) == 6, "existing power uses raw stack amount");
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 6, "existing power uses raw stack amount");
 }
 
 static void temporary_cards_and_queue() {
@@ -218,8 +218,8 @@ static void temporary_cards_and_queue() {
     e.kind = EffectKind::LoseHP;
     add_bottom(g, e);
     clear_post_combat_actions(g);
-    require(g.manager.actions.size == 2 && g.manager.actions[0].kind == EffectKind::Heal &&
-            g.manager.actions[1].kind == EffectKind::LoseHP, "post-combat cleanup preserves healing and damage actions");
+    require(g.manager.actions.size == 2 && g.action_objects[g.manager.actions[0]].kind == EffectKind::Heal &&
+            g.action_objects[g.manager.actions[1]].kind == EffectKind::LoseHP, "post-combat cleanup preserves healing and damage actions");
 }
 
 int main() {

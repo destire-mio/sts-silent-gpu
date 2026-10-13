@@ -19,7 +19,7 @@ struct HeelHookAction : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (e.target != no_target && find_power(get_creature(g, e.target), "Weakened") >= 0) {
+        if (e.target != no_target && find_power(g, get_creature(g, e.target), "Weakened") >= 0) {
             Effect draw{};
             draw.kind = EffectKind::Draw;
             draw.source = player_target;

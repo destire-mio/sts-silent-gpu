@@ -31,7 +31,7 @@ struct Flight : PowerHooks {
         return amount;
     }
     static SPIRE_FN void onRemove(Game& g, Power&, int owner) {
-        add_bottom(g, actions::ChangeState::make(owner, "GROUNDED"));
+        add_bottom(g, actions::ChangeState::make(g, owner, "GROUNDED"));
     }
 };
 }

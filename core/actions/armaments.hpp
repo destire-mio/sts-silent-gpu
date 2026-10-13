@@ -8,7 +8,7 @@ struct Armaments : ActionHooks {
     SPIRE_SNAPSHOT("ArmamentsAction.p", player)
     SPIRE_SNAPSHOT("ArmamentsAction.cannotUpgrade", card_array, effect.state.Armaments.cannot_upgrade, effect.state.Armaments.cannot_upgrade_count)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
-    SPIRE_STATE(Armaments, uint16_t cannot_upgrade[card_capacity]; int cannot_upgrade_count; bool upgraded; bool selecting;)
+    SPIRE_STATE(Armaments, uint16_t cannot_upgrade[hand_limit]; uint8_t cannot_upgrade_count; bool upgraded; bool selecting;)
     SPIRE_FN static void return_cards(Game& g, const Effect& e) {
         for (int i = 0; i < e.state.Armaments.cannot_upgrade_count; ++i)
             g.hand.push_back(e.state.Armaments.cannot_upgrade[i]);
@@ -26,8 +26,10 @@ struct Armaments : ActionHooks {
                 return;
             }
             for (int i = 0; i < g.hand.size; ++i)
-                if (!card_canUpgrade(g, g.hand[i]))
+                if (!card_canUpgrade(g, g.hand[i])) {
+                    SPIRE_ASSERT(e.state.Armaments.cannot_upgrade_count < hand_limit);
                     e.state.Armaments.cannot_upgrade[e.state.Armaments.cannot_upgrade_count++] = g.hand[i];
+                }
             const int count = g.hand.size - e.state.Armaments.cannot_upgrade_count;
             if (count == 0) return;
             if (count == 1) {

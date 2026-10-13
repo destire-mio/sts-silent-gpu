@@ -20,10 +20,10 @@ SPIRE_FN inline CardId card_id(const char* name) {
     SPIRE_ASSERT(false);
     __builtin_unreachable();
 }
-SPIRE_FN inline int find_power(const Creature& c, const char* name) {
+SPIRE_FN inline int find_power(const Game& g, const Creature& c, const char* name) {
     for (int i = 0; i < c.powers.size; ++i) {
         const char* game_id = nullptr;
-        switch (c.powers[i].id) {
+        switch (c.powers.at(g.power_objects, i).id) {
 #define SPIRE_UNIT(id, java_name, header, type) case PowerId::id: game_id = java_name; break;
 #include "powers/catalog.def"
 #undef SPIRE_UNIT
@@ -32,7 +32,7 @@ SPIRE_FN inline int find_power(const Creature& c, const char* name) {
     }
     return -1;
 }
-SPIRE_FN inline bool has_power(const Creature& c, const char* name) { return find_power(c, name) >= 0; }
+SPIRE_FN inline bool has_power(const Game& g, const Creature& c, const char* name) { return find_power(g, c, name) >= 0; }
 SPIRE_FN inline Card& get_card(Game& g, int index) {
     return index <= -2 ? g.run.master_deck[-index - 2] : g.cards[index];
 }
@@ -46,15 +46,15 @@ SPIRE_FN inline const Creature& get_creature(const Game& g, int target) {
     return target == player_target ? g.player.creature : g.monsters[target].creature;
 }
 SPIRE_FN inline bool alive(const Creature& c) { return !c.dead && !c.dying && !c.escaped && !c.half_dead; }
-SPIRE_FN inline int find_power(const Creature& c, PowerId id, int offset) {
+SPIRE_FN inline int find_power(const Game& g, const Creature& c, PowerId id, int offset) {
     for (int i = 0; i < c.powers.size; ++i)
-        if (c.powers[i].id == id && c.powers[i].id_offset == offset) return i;
+        if (c.powers.at(g.power_objects, i).id == id && c.powers.at(g.power_objects, i).id_offset == offset) return i;
     return -1;
 }
-SPIRE_FN inline bool has_power(const Creature& c, PowerId id) { return find_power(c, id) >= 0; }
-SPIRE_FN inline int power_amount(const Creature& c, PowerId id) {
-    const int index = find_power(c, id);
-    return index < 0 ? 0 : c.powers[index].amount;
+SPIRE_FN inline bool has_power(const Game& g, const Creature& c, PowerId id) { return find_power(g, c, id) >= 0; }
+SPIRE_FN inline int power_amount(const Game& g, const Creature& c, PowerId id) {
+    const int index = find_power(g, c, id);
+    return index < 0 ? 0 : c.powers.at(g.power_objects, index).amount;
 }
 SPIRE_FN inline bool monsters_basically_dead(const Game& g) {
     for (int i = 0; i < g.monster_order.size; ++i) {
@@ -104,19 +104,18 @@ SPIRE_FN inline int random_living_monster(Game& g) {
 SPIRE_FN inline int hold_action(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
-    const int index = g.action_objects.size;
-    g.action_objects.push_back(prepared);
-    return index;
+    prepared.held = true;
+    return g.action_objects.add(prepared);
 }
 SPIRE_FN inline void add_bottom(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
-    g.manager.actions.push_back(prepared);
+    g.manager.actions.push_back(g.action_objects.add(prepared));
 }
 SPIRE_FN inline void add_top(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
-    g.manager.actions.push_front(prepared);
+    g.manager.actions.push_front(g.action_objects.add(prepared));
 }
 SPIRE_FN inline float rear_damage_multiplier(const Game& g, int monster) {
     const Creature& player = g.player.creature;
@@ -124,19 +123,19 @@ SPIRE_FN inline float rear_damage_multiplier(const Game& g, int monster) {
           (!player.flip_horizontal && player.draw_x > g.monsters[monster].creature.draw_x))) return 1.0f;
     float multiplier = 1.0f;
     for (int i = 0; i < player.powers.size; ++i)
-        multiplier *= power_data(player.powers[i].id).rear_damage_multiplier;
+        multiplier *= power_data(player.powers.at(g.power_objects, i).id).rear_damage_multiplier;
     return multiplier;
 }
 SPIRE_FN inline int calculate_intent_damage(const Game& g, int monster, int base) {
     float value = static_cast<float>(base);
     const Powers& source = g.monsters[monster].creature.powers;
     const Powers& target = g.player.creature.powers;
-    for (int i = 0; i < source.size; ++i) value = power_atDamageGive(g, source[i], monster, value, DamageType::Normal);
-    for (int i = 0; i < target.size; ++i) value = power_atDamageReceive(g, target[i], player_target, value, DamageType::Normal);
+    for (int i = 0; i < source.size; ++i) value = power_atDamageGive(g, source.at(g.power_objects, i), monster, value, DamageType::Normal);
+    for (int i = 0; i < target.size; ++i) value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, DamageType::Normal);
     const float multiplier = rear_damage_multiplier(g, monster);
     if (multiplier != 1.0f) value = static_cast<int>(value * multiplier);
-    for (int i = 0; i < source.size; ++i) value = power_atDamageFinalGive(g, source[i], monster, value, DamageType::Normal);
-    for (int i = 0; i < target.size; ++i) value = power_atDamageFinalReceive(g, target[i], player_target, value, DamageType::Normal);
+    for (int i = 0; i < source.size; ++i) value = power_atDamageFinalGive(g, source.at(g.power_objects, i), monster, value, DamageType::Normal);
+    for (int i = 0; i < target.size; ++i) value = power_atDamageFinalReceive(g, target.at(g.power_objects, i), player_target, value, DamageType::Normal);
     return max(0, floor_int(value));
 }
 SPIRE_FN inline int calculate_damage(const Game& g, int source, int target, int base, DamageType type, int card) {
@@ -146,35 +145,35 @@ SPIRE_FN inline int calculate_damage(const Game& g, int source, int target, int 
     }
     if (source != no_target) {
         const Powers& powers = get_creature(g, source).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageGive(g, powers[i], source, value, type, card);
+        for (int i = 0; i < powers.size; ++i) value = power_atDamageGive(g, powers.at(g.power_objects, i), source, value, type, card);
     }
     if (target != no_target) {
         const Powers& powers = get_creature(g, target).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageReceive(g, powers[i], target, value, type, card);
+        for (int i = 0; i < powers.size; ++i) value = power_atDamageReceive(g, powers.at(g.power_objects, i), target, value, type, card);
     }
     if (source != no_target) {
         const Powers& powers = get_creature(g, source).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageFinalGive(g, powers[i], source, value, type, card);
+        for (int i = 0; i < powers.size; ++i) value = power_atDamageFinalGive(g, powers.at(g.power_objects, i), source, value, type, card);
     }
     if (target != no_target) {
         const Powers& powers = get_creature(g, target).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageFinalReceive(g, powers[i], target, value, type, card);
+        for (int i = 0; i < powers.size; ++i) value = power_atDamageFinalReceive(g, powers.at(g.power_objects, i), target, value, type, card);
     }
     return max(0, floor_int(value));
 }
 SPIRE_FN inline int calculate_block(const Game& g, int base, int card) {
     float value = static_cast<float>(base);
     const Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers[i], player_target, value, card);
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers[i], player_target, value);
+    for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers.at(g.power_objects, i), player_target, value, card);
+    for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers.at(g.power_objects, i), player_target, value);
     return max(0, floor_int(value));
 }
 SPIRE_FN inline void apply_card_block(Game& g, int card) {
     Card& c = get_card(g, card);
     float value = static_cast<float>(c.base_block);
     const Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers[i], player_target, value, card);
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers[i], player_target, value);
+    for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers.at(g.power_objects, i), player_target, value, card);
+    for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers.at(g.power_objects, i), player_target, value);
     // AbstractCard.applyPowersToBlock compares before clamping negative block.
     c.block = max(0, floor_int(value));
 }
@@ -227,51 +226,47 @@ SPIRE_FN inline void gain_block(Game& g, int target, int amount) {
     if (target == player_target) {
         for (int i = 0; i < g.run.relics.size; ++i) value = static_cast<float>(relic_onPlayerGainedBlock(g, i, value));
         if (value > 0.0f) {
-            for (int i = 0; i < c.powers.size; ++i) power_onGainedBlock(g, c.powers[i], target, value);
+            for (int i = 0; i < c.powers.size; ++i) power_onGainedBlock(g, c.powers.at(g.power_objects, i), target, value);
         }
     }
     for (int i = 0; i < g.monster_order.size; ++i) {
         const int owner = g.monster_order[i];
         Powers& powers = g.monsters[owner].creature.powers;
-        for (int j = 0; j < powers.size; ++j) value = static_cast<float>(power_onPlayerGainedBlock(g, powers[j], owner, value));
+        for (int j = 0; j < powers.size; ++j) value = static_cast<float>(power_onPlayerGainedBlock(g, powers.at(g.power_objects, j), owner, value));
     }
     c.block = min(999, c.block + floor_int(value));
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
-SPIRE_FN inline Power& power_instance(Game& g, int owner, uint32_t instance) {
-    Powers& powers = get_creature(g, owner).powers;
-    for (int i = 0; i < powers.size; ++i) if (powers[i].instance == instance) return powers[i];
-    for (int i = 0; i < g.detached_powers.size; ++i)
-        if (g.detached_powers[i].instance == instance) return g.detached_powers[i];
+SPIRE_FN inline Power& power_instance(Game& g, uint32_t instance) {
+    for (int i = 0; i < power_object_capacity; ++i)
+        if (g.power_objects.contains(i) && g.power_objects[i].instance == instance) return g.power_objects[i];
     SPIRE_ASSERT(false);
     __builtin_unreachable();
 }
-SPIRE_FN inline const Power& power_instance(const Game& g, int owner, uint32_t instance) {
-    const Powers& powers = get_creature(g, owner).powers;
-    for (int i = 0; i < powers.size; ++i) if (powers[i].instance == instance) return powers[i];
-    for (int i = 0; i < g.detached_powers.size; ++i)
-        if (g.detached_powers[i].instance == instance) return g.detached_powers[i];
+SPIRE_FN inline const Power& power_instance(const Game& g, uint32_t instance) {
+    for (int i = 0; i < power_object_capacity; ++i)
+        if (g.power_objects.contains(i) && g.power_objects[i].instance == instance) return g.power_objects[i];
     SPIRE_ASSERT(false);
     __builtin_unreachable();
 }
 SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t instance) {
     Creature& c = get_creature(g, target);
     if (c.dying || c.half_dead || (target != player_target && c.escaped)) return;
-    int index = find_power(c, id);
+    int index = find_power(g, c, id);
     if (instance != 0) {
         index = -1;
-        for (int i = 0; i < c.powers.size; ++i) if (c.powers[i].instance == instance) { index = i; break; }
+        for (int i = 0; i < c.powers.size; ++i) if (c.powers.at(g.power_objects, i).instance == instance) { index = i; break; }
     }
     if (index >= 0) {
-        power_onRemove(g, c.powers[index], target);
-        g.detached_powers.push_back(c.powers.erase(index));
+        power_onRemove(g, c.powers.at(g.power_objects, index), target);
+        c.powers.erase(index);
         refresh_powers(g);
     }
 }
 SPIRE_FN inline bool keeps_block(const Game& g, int owner) {
     const Powers& powers = get_creature(g, owner).powers;
     for (int i = 0; i < powers.size; ++i) {
-        const PowerData data = power_data(powers[i].id);
+        const PowerData data = power_data(powers.at(g.power_objects, i).id);
         if (owner == player_target ? data.keep_player_block : data.keep_monster_block) return true;
     }
     return false;
@@ -281,33 +276,33 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
     const PowerId id = incoming.id;
     Creature& c = get_creature(g, target);
     if (c.dying || c.half_dead || (target != player_target && c.escaped)) return;
-    const int existing = find_power(c, id, incoming.id_offset);
+    const int existing = find_power(g, c, id, incoming.id_offset);
     if (!power_data(id).can_stack && existing >= 0) return;
     if (source != no_target) {
         Powers& powers = get_creature(g, source).powers;
-        for (int i = 0; i < powers.size; ++i) power_onApplyPower(g, powers[i], source, incoming, target, source);
+        for (int i = 0; i < powers.size; ++i) power_onApplyPower(g, powers.at(g.power_objects, i), source, incoming, target, source);
     }
     if (target != player_target && (c.dying || c.half_dead || c.escaped)) return;
     if (power_isDebuff(incoming, target)) {
         for (int i = 0; i < c.powers.size; ++i) {
-            if (!power_data(c.powers[i].id).blocks_debuffs) continue;
-            power_onSpecificTrigger(g, c.powers[i], target);
+            if (!power_data(c.powers.at(g.power_objects, i).id).blocks_debuffs) continue;
+            power_onSpecificTrigger(g, c.powers.at(g.power_objects, i), target);
             return;
         }
     }
     bool stacked = false;
     for (int i = 0; i < c.powers.size; ++i) {
-        if (c.powers[i].id != id || c.powers[i].id_offset != incoming.id_offset || power_data(id).stacks_separately) continue;
-        power_stackPower(g, c.powers[i], target, amount);
+        if (c.powers.at(g.power_objects, i).id != id || c.powers.at(g.power_objects, i).id_offset != incoming.id_offset || power_data(id).stacks_separately) continue;
+        power_stackPower(g, c.powers.at(g.power_objects, i), target, amount);
         stacked = true;
         refresh_powers(g);
     }
     if (!stacked) {
         if (incoming.instance == 0) incoming.instance = g.next_power_instance++;
         int index = c.powers.size;
-        while (index > 0 && power_data(c.powers[index - 1].id).priority > power_data(id).priority) --index;
-        c.powers.insert(index, incoming);
-        power_onInitialApplication(g, c.powers[index], target);
+        while (index > 0 && power_data(c.powers.at(g.power_objects, index - 1).id).priority > power_data(id).priority) --index;
+        c.powers.insert(index, g.power_objects.add(incoming));
+        power_onInitialApplication(g, c.powers.at(g.power_objects, index), target);
         refresh_powers(g);
     }
 }
@@ -322,30 +317,30 @@ SPIRE_FN inline void apply_power(Game& g, int source, int target, PowerId id, in
 }
 SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, int source) {
     Creature& c = get_creature(g, target);
-    const int index = find_power(c, id);
+    const int index = find_power(g, c, id);
     if (index < 0) return;
-    if (amount >= c.powers[index].amount) {
+    if (amount >= c.powers.at(g.power_objects, index).amount) {
         Effect e{};
         e.kind = EffectKind::RemovePower;
         e.source = source;
         e.target = target;
         e.power = id;
-        e.power_instance = c.powers[index].instance;
+        e.power_instance = c.powers.at(g.power_objects, index).instance;
         add_top(g, e);
     } else {
-        power_reducePower(g, c.powers[index], target, amount);
+        power_reducePower(g, c.powers.at(g.power_objects, index), target, amount);
         refresh_powers(g);
     }
 }
 SPIRE_FN inline void at_end_of_round(Game& g, int target) {
     Powers& powers = get_creature(g, target).powers;
-    for (int i = 0; i < powers.size; ++i) power_atEndOfRound(g, powers[i], target);
+    for (int i = 0; i < powers.size; ++i) power_atEndOfRound(g, powers.at(g.power_objects, i), target);
 }
 SPIRE_FN inline void at_end_of_turn(Game& g, int target) {
     Powers& powers = get_creature(g, target).powers;
     for (int i = 0; i < powers.size; ++i) {
-        if (target != player_target) power_atEndOfTurnPreEndTurnCards(g, powers[i], target, false);
-        power_atEndOfTurn(g, powers[i], target, target == player_target);
+        if (target != player_target) power_atEndOfTurnPreEndTurnCards(g, powers.at(g.power_objects, i), target, false);
+        power_atEndOfTurn(g, powers.at(g.power_objects, i), target, target == player_target);
     }
 }
 }

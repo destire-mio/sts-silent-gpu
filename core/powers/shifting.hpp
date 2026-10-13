@@ -14,7 +14,7 @@ struct Shifting : PowerHooks {
             strength.power = PowerId::Strength;
             strength.amount = -amount;
             add_top(g, strength);
-            if (!has_power(get_creature(g, owner), PowerId::Artifact)) {
+            if (!has_power(g, get_creature(g, owner), PowerId::Artifact)) {
                 Effect gain{};
                 gain.kind = EffectKind::ApplyPower;
                 gain.source = owner;

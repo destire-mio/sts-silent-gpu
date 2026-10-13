@@ -173,7 +173,7 @@ static void armaments() {
     add_bottom(g, e);
     run_until_decision(g);
     require(g.screen == Screen::Discard && g.selection_for_upgrade && g.hand.size == 2 &&
-            g.manager.current_action.state.Armaments.cannot_upgrade[0] == curse,
+            g.action_objects[g.manager.current_action].state.Armaments.cannot_upgrade[0] == curse,
             "Armaments stores excluded cards on its own suspended action");
     step(g, {ActionKind::Choose, 0});
     step(g, {ActionKind::Proceed});
@@ -226,8 +226,7 @@ static void moves_and_removal() {
     set.extra = static_cast<int>(Intent::Attack);
     set.state.SetMove.the_multiplier = 1;
     set.state.SetMove.is_multiplier = true;
-    std::strcpy(set.state.SetMove.the_next_name, "test move");
-    set.state.SetMove.has_name = true;
+    set.state.SetMove.the_next_name = g.text.intern("test move");
     execute_effect(g, set);
     create_monster_intent(g, 0);
     require(g.monsters[0].pending_hits == 1 && g.monsters[0].intent_hits == 1 && g.monsters[0].intent_multi,
@@ -235,28 +234,28 @@ static void moves_and_removal() {
     Effect show = effect(EffectKind::ShowMoveName);
     show.source = 0;
     add_bottom(g, show);
-    require(!g.monsters[0].move_name_present && g.manager.actions[0].state.ShowMoveName.has_msg &&
-            std::strcmp(g.manager.actions[0].state.ShowMoveName.msg, "test move") == 0,
+    require(!g.monsters[0].move_name && g.action_objects[g.manager.actions[0]].state.ShowMoveName.msg &&
+            std::strcmp(g.text[g.action_objects[g.manager.actions[0]].state.ShowMoveName.msg], "test move") == 0,
             "default ShowMoveName captures and clears the monster name during construction");
     g.manager.actions.clear();
     apply_power(g, player_target, player_target, PowerId::Strength, 2);
-    const Power old = g.player.creature.powers[0];
+    const Power old = g.player.creature.powers.at(g.power_objects, 0);
     const Effect remove = units::actions::RemovePower::from_instance(player_target, player_target, old);
     add_bottom(g, remove);
     apply_power(g, player_target, player_target, PowerId::Strength, 4);
     remove_power(g, player_target, PowerId::Strength);
-    require(power_instance(g, player_target, g.manager.actions[0].power_instance).amount == 6,
+    require(power_instance(g, g.action_objects[g.manager.actions[0]].power_instance).amount == 6,
             "queued power references retain the object's final amount after removal");
     g.manager.actions.clear();
     apply_power(g, player_target, player_target, PowerId::Strength, 3);
     Effect queued = remove;
     execute_effect(g, queued);
-    require(power_amount(g.player.creature, PowerId::Strength) == 3,
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 3,
             "removing a stale power instance leaves a replacement with the same ID");
-    queued = units::actions::RemovePower::from_instance(player_target, player_target, g.player.creature.powers[0]);
+    queued = units::actions::RemovePower::from_instance(player_target, player_target, g.player.creature.powers.at(g.power_objects, 0));
     apply_power(g, player_target, player_target, PowerId::Dexterity, 2);
     execute_effect(g, queued);
-    require(!has_power(g.player.creature, PowerId::Strength) && has_power(g.player.creature, PowerId::Dexterity),
+    require(!has_power(g, g.player.creature, PowerId::Strength) && has_power(g, g.player.creature, PowerId::Dexterity),
             "instance removal keeps other powers after list insertion");
 }
 

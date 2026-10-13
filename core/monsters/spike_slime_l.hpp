@@ -6,7 +6,7 @@ struct SpikeSlime_L : MonsterHooks {
     SPIRE_FN static constexpr MonsterData data() { return {67, 73, {18, 0}, 0, 3}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         Monster m = make_monster(g, MonsterId::SpikeSlime_L, data(), hp_override);
-        m.creature.powers.push_back(Power{PowerId::Split, -1});
+        m.creature.powers.push_back(g.power_objects.add(Power{PowerId::Split, -1}));
         return m;
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {

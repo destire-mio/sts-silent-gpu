@@ -40,21 +40,21 @@ struct Card {
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false) {}
 };
-using Pile = List<uint16_t, card_capacity>;
+using Pile = List<uint8_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
 struct Power {
     uint32_t instance = 0;
     int amount;
-    PowerId id;
     int id_offset = -1;
+    PowerState state{};
+    PowerId id;
     bool just_applied : 1;
     bool triggered : 1;
     bool skip_first : 1;
-    PowerState state{};
     SPIRE_FN constexpr Power(PowerId id = PowerId::Strength, int amount = 0)
         : amount(amount), id(id), just_applied(false), triggered(false), skip_first(true) {}
 };
-using Powers = List<Power, power_capacity>;
+using Powers = List<uint8_t, power_capacity>;
 struct Creature {
     float draw_x = 0.0f;
     int hp = 0;
@@ -84,8 +84,7 @@ struct Monster {
     int16_t pending_hits = 0;
     bool pending_multi = false;
     bool intent_multi = false;
-    char move_name[128]{};
-    bool move_name_present = false;
+    uint16_t move_name = 0;
     List<int8_t, 256> move_history{};
     int16_t damage[3]{};
     uint8_t damage_count = 1;
@@ -116,21 +115,22 @@ struct Action {
 };
 using ActionSet = List<Action, 128>;
 struct Effect {
-    bool done = false;
+    int amount = 0;
+    int info_base = 0;
+    int extra = 0;
+    uint32_t power_instance = 0;
+    Power prepared_power{};
+    EffectState state{};
+    int16_t card = -1;
+    PowerId power = PowerId::Strength;
     EffectKind kind = EffectKind::Draw;
     int8_t source = player_target;
     int8_t target = player_target;
-    int amount = 0;
-    int info_base = 0;
-    int16_t card = -1;
-    PowerId power = PowerId::Strength;
-    int extra = 0;
     DamageType damage_type = DamageType::Normal;
+    bool done = false;
+    bool held = false;
     bool flag = false;
-    EffectState state{};
-    uint32_t power_instance = 0;
     bool end_turn_draw = false;
-    Power prepared_power{};
     PotionState prepared_potion_state{};
 };
 using DamageInfo = Effect;
@@ -144,34 +144,28 @@ struct CardQueueItem {
     bool is_end_turn_auto_play = false;
 };
 struct PlayedCards {
-    uint16_t values[1024]{};
+    uint8_t values[1024]{};
     uint16_t size = 0;
     uint16_t turn_start = 0;
-    uint32_t combat_types[5]{};
-    uint32_t turn_types[5]{};
-    SPIRE_FN void record(int card, CardType type) {
+    SPIRE_FN void record(int card) {
         SPIRE_ASSERT(size < 1024);
-        values[size++] = static_cast<uint16_t>(card);
-        ++combat_types[static_cast<int>(type)];
-        ++turn_types[static_cast<int>(type)];
+        values[size++] = static_cast<uint8_t>(card);
     }
     SPIRE_FN void begin_turn() {
         turn_start = size;
-        for (int i = 0; i < 5; ++i) turn_types[i] = 0;
     }
     SPIRE_FN void clear() {
         size = 0;
         begin_turn();
-        for (int i = 0; i < 5; ++i) combat_types[i] = 0;
     }
 };
 struct ActionManager {
-    Effect current_action{};
+    int8_t current_action = -1;
     bool has_current_action = false;
-    Queue<Effect, action_capacity> actions{};
-    Queue<Effect, action_capacity> pre_turn_actions{};
+    Queue<uint8_t, action_capacity> actions{};
+    Queue<uint8_t, action_capacity> pre_turn_actions{};
     Queue<CardQueueItem, 32> card_queue{};
-    Queue<int, monster_capacity> monster_queue{};
+    Queue<uint8_t, monster_capacity> monster_queue{};
     PlayedCards played_cards{};
     Phase phase = Phase::WaitingOnUser;
     bool turn_has_ended = false;
@@ -192,28 +186,51 @@ struct Run {
     bool ruby_key = false;
     bool emerald_key = false;
     bool sapphire_key = false;
-    List<Card, card_capacity> master_deck{};
-    List<uint16_t, card_capacity> source_card_pools[4]{};
+    List<Card, master_deck_capacity> master_deck{};
+    List<uint8_t, card_pool_capacity> source_card_pools[4]{};
     List<Relic, 64> relics{};
     PotionId potions[2] = {PotionId::Empty, PotionId::Empty};
     PotionState potion_state[2]{};
 };
+struct CardDamage {
+    int values[multi_damage_capacity][monster_capacity]{};
+    uint8_t slots[card_capacity]{};
+    uint8_t size = 0;
+    SPIRE_FN int* operator[](int card) {
+        SPIRE_ASSERT(card >= 0 && card < card_capacity);
+        if (slots[card] == 0) {
+            SPIRE_ASSERT(size < multi_damage_capacity);
+            slots[card] = ++size;
+            for (int& value : values[size - 1]) value = 0;
+        }
+        return values[slots[card] - 1];
+    }
+    SPIRE_FN const int* operator[](int card) const {
+        SPIRE_ASSERT(card >= 0 && card < card_capacity && slots[card] != 0);
+        return values[slots[card] - 1];
+    }
+    SPIRE_FN void clear() {
+        for (auto& slot : slots) slot = 0;
+        size = 0;
+    }
+};
 struct Game {
+    TextStore text{};
     Run run{};
     RngStreams rng{};
     UnseededRandom unseeded{0};
     Player player{};
     List<Card, card_capacity> cards{};
-    int multi_damage[card_capacity][monster_capacity]{};
+    CardDamage multi_damage{};
     Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
-    List<Effect, action_capacity> action_objects{};
-    List<Power, action_capacity> detached_powers{};
+    Pool<Effect, action_capacity> action_objects{};
+    Pool<Power, power_object_capacity> power_objects{};
     bool player_turn_effect_pending = false;
     Pile drawn_cards{};
     Pile reward_cards{};
     int discovery_card = -1;
     List<Monster, monster_capacity> monsters{};
-    List<int, monster_capacity> monster_order{};
+    List<uint8_t, monster_capacity> monster_order{};
     ActionManager manager{};
     Screen screen = Screen::None;
     EncounterId encounter = EncounterId::Cultist;
@@ -245,7 +262,7 @@ struct CombatSetup {
     int hp = 70;
     int max_hp = 70;
     int gold = 99;
-    List<Card, card_capacity> deck{};
+    List<Card, master_deck_capacity> deck{};
     List<Relic, 64> relics{};
     PotionId potions[2] = {PotionId::Empty, PotionId::Empty};
 };

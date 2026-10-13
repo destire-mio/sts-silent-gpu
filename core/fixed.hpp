@@ -12,6 +12,10 @@ struct List {
     uint16_t size = 0;
     SPIRE_FN T& operator[](int index) { SPIRE_ASSERT(index >= 0 && index < size); return values[index]; }
     SPIRE_FN const T& operator[](int index) const { SPIRE_ASSERT(index >= 0 && index < size); return values[index]; }
+    template<class Pool>
+    SPIRE_FN auto& at(Pool& pool, int index) { return pool[(*this)[index]]; }
+    template<class Pool>
+    SPIRE_FN const auto& at(const Pool& pool, int index) const { return pool[(*this)[index]]; }
     SPIRE_FN void clear() { size = 0; }
     SPIRE_FN bool empty() const { return size == 0; }
     SPIRE_FN void push_back(const T& value) { SPIRE_ASSERT(size < Capacity); values[size++] = value; }
@@ -29,6 +33,33 @@ struct List {
         --size;
         return value;
     }
+};
+
+template<class T, int Capacity>
+struct Pool {
+    T values[Capacity]{};
+    uint64_t used[(Capacity + 63) / 64]{};
+    SPIRE_FN bool contains(int index) const {
+        return (used[index / 64] & (uint64_t{1} << (index % 64))) != 0;
+    }
+    SPIRE_FN T& operator[](int index) {
+        SPIRE_ASSERT(index >= 0 && index < Capacity && contains(index));
+        return values[index];
+    }
+    SPIRE_FN const T& operator[](int index) const {
+        SPIRE_ASSERT(index >= 0 && index < Capacity && contains(index));
+        return values[index];
+    }
+    SPIRE_FN uint16_t add(const T& value) {
+        int index = 0;
+        while (index < Capacity && contains(index)) ++index;
+        SPIRE_ASSERT(index < Capacity);
+        used[index / 64] |= uint64_t{1} << (index % 64);
+        values[index] = value;
+        return static_cast<uint16_t>(index);
+    }
+    SPIRE_FN void release(int index) { used[index / 64] &= ~(uint64_t{1} << (index % 64)); }
+    SPIRE_FN void clear() { for (auto& word : used) word = 0; }
 };
 
 template<class T, int Capacity>
@@ -77,5 +108,27 @@ struct Queue {
         --size;
         return value;
     }
+};
+
+struct TextStore {
+    char values[1024]{};
+    uint16_t size = 1;
+    SPIRE_FN uint16_t intern(const char* text) {
+        for (int i = 1; i < size;) {
+            if (same_text(values + i, text)) return static_cast<uint16_t>(i);
+            while (values[i++]) {}
+        }
+        const uint16_t offset = size;
+        do {
+            SPIRE_ASSERT(size < sizeof(values));
+            values[size++] = *text;
+        } while (*text++);
+        return offset;
+    }
+    SPIRE_FN const char* operator[](uint16_t offset) const {
+        SPIRE_ASSERT(offset < size);
+        return offset ? values + offset : nullptr;
+    }
+    SPIRE_FN void clear() { size = 1; }
 };
 }

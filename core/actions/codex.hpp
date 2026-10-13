@@ -31,7 +31,7 @@ struct Codex : ActionHooks {
             if (g.discovery_card >= 0) {
                 Card card = card_makeStatEquivalentCopy(g, g.discovery_card);
                 const CardType type = card_data(card.id).type;
-                if (type != CardType::Curse && type != CardType::Status && has_power(g.player.creature, "MasterRealityPower"))
+                if (type != CardType::Curse && type != CardType::Status && has_power(g, g.player.creature, "MasterRealityPower"))
                     card_upgrade(card);
                 const int index = create_card(g, card);
                 if (g.draw.empty()) g.draw.push_back(index);

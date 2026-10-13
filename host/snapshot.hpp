@@ -217,7 +217,7 @@ struct SnapshotGraph {
     }
 
     py::object power(int owner, int index) {
-        return power_value(get_creature(game, owner).powers[index], owner, {6, owner, index});
+        return power_value(get_creature(game, owner).powers.at(game.power_objects, index), owner, {6, owner, index});
     }
 
     py::object creature_field(int owner, const std::string& key) {
@@ -483,7 +483,7 @@ struct SnapshotGraph {
     }
     py::object power_reference(int owner, uint32_t instance) {
         if (instance == 0) return py::none();
-        return power_value(power_instance(game, owner, instance), owner, {6, static_cast<int>(instance), 0});
+        return power_value(power_instance(game, instance), owner, {6, static_cast<int>(instance), 0});
     }
     py::object action_reference(int index) {
         return index < 0 ? py::object(py::none()) : effect(game.action_objects[index], 3, index);
@@ -542,10 +542,10 @@ struct SnapshotGraph {
         __builtin_unreachable();
     }
 
-    py::object effects(const Queue<Effect, action_capacity>& queue, int identity) {
+    py::object effects(const Queue<uint8_t, action_capacity>& queue) {
         py::list result;
         for (int i = 0; i < queue.size; ++i) {
-            py::object item = effect(queue[i], identity, i);
+            py::object item = effect(game.action_objects[queue[i]], 3, queue[i]);
             if (!item) return {};
             result.append(item);
         }
@@ -556,8 +556,8 @@ struct SnapshotGraph {
         const ActionManager& manager = game.manager;
         return object({14, 0, 0}, "actions.GameActionManager", [&](const std::string& key) -> py::object {
             const std::string field = key.substr(key.find('.') + 1);
-            if (field == "actions") return effects(manager.actions, 0);
-            if (field == "preTurnActions") return effects(manager.pre_turn_actions, 1);
+            if (field == "actions") return effects(manager.actions);
+            if (field == "preTurnActions") return effects(manager.pre_turn_actions);
             if (field == "cardQueue") {
                 py::list result;
                 for (int i = 0; i < manager.card_queue.size; ++i) {
@@ -591,7 +591,7 @@ struct SnapshotGraph {
                 for (int i = first; i < manager.played_cards.size; ++i) result.append(card(manager.played_cards.values[i]));
                 return result;
             }
-            if (field == "currentAction") return manager.has_current_action ? effect(manager.current_action, 2, 0) : py::object(py::none());
+            if (field == "currentAction") return manager.has_current_action ? effect(game.action_objects[manager.current_action], 3, manager.current_action) : py::object(py::none());
             if (field == "hasControl") return py::bool_(manager.has_current_action);
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
             if (field == "usingCard") return py::bool_(false);

@@ -110,17 +110,52 @@ including ordered histories. The catalog's `excluded` entries are outside the co
 add timers, animation queues or other presentation state to match them. Creature positions used
 for spawn ordering and other rule-read fields remain part of the engine.
 
-The current budgets are 256 card instances, 8 monster instances, 64 powers per creature and
-128 actions in each queue. They cover the current content and tested workloads. Card creation
-and action queues have no finite Java-wide bound; these are asserted execution budgets, not
-proof that every future deck or encounter fits. Card damage/block/magic and power amounts
-remain 32-bit. Pile indices and container counts are 16-bit; monster moves are signed bytes.
+## Storage and capacities
 
-Runtime card multi-target damage is stored at `game.multi_damage[card_index]`; master-deck
-cards have no calculated target array. `manager.played_cards` stores each play once in order.
-The combat history is `[0, size)`, the current-turn history is `[turn_start, size)`, and repeated
-plays retain the same card index. `combat_types` and `turn_types` hold the corresponding type
-counts. Preserve these shared identities when adding a rule that reads play history.
+`Game` owns its storage and remains relocatable by a byte copy. Keep object identity separate
+from an object's current position in an ordered list:
+
+- Master-deck and combat cards are different objects with matching UUIDs
+  (`AbstractCard.makeSameInstanceOf`). Both stores hold 128 cards; piles and played histories
+  hold byte indices into combat cards. Do not put `Card` values in another pile or queue.
+- Each creature holds up to 32 byte indices into the shared 128-object power arena. Use
+  `creature.powers.at(game.power_objects, index)` and pass `game` to power queries. Removing a
+  power removes its list entry, retaining the object until combat reset so queued Java object
+  references still observe it. These 128 slots include detached powers, not just active powers.
+- The 64 action slots are shared by the current action, both queues and held follow-ups.
+  Queues hold byte indices. Completed ordinary actions release their slot. `hold_action` pins
+  an object until combat reset; queue its index to preserve identity. Java
+  `GameActionManager.update` skips an already completed action, including a reused follow-up.
+- `game.multi_damage[card_index]` allocates one of 32 eight-target rows on first use. Ordinary
+  cards and master-deck cards reserve no damage row. The per-card count preserves the array's
+  length when the monster group changes. Rows reset at combat start.
+- `manager.played_cards` stores each play once, including repeated references to the same card.
+  Combat history is `[0, size)`; turn history is `[turn_start, size)`. Compute type counts from
+  these references as `DamagePerAttackPlayedAction.update` does, without duplicate counters.
+- Text needed by action state uses offsets into a 1,024-byte per-combat interned buffer, with
+  offset zero representing Java null. No process pointers or per-action character buffers.
+  Constant facts and derivable snapshot fields belong in unit data and host projections.
+
+The hand limit of 10 comes from `DrawCardAction.update` and card-generation actions; Armaments'
+`cannotUpgrade` list only collects that hand (`ArmamentsAction.update`). Source card pool
+indices use bytes: the current Silent pools contain 19 common, 33 uncommon, 19 rare and 35
+colorless templates. Each source pool reserves 64 entries and preserves Java list order,
+including the remove-and-append behavior of `AbstractDungeon.srcTransformCard`.
+
+The remaining budgets are 8 monster objects, 32 card-queue entries, 64 relics, 256 moves per
+monster and 1,024 played-card references per combat. The master deck starts with 13 cards at
+A20 (`TheSilent.getStartingDeck` plus the ascension curse); its 128 slots leave room for rewards
+and events, and the combat copy has the same capacity plus whatever unused slots remain for
+created cards. **128 cards, 64 actions and 128 powers are execution budgets, not Java limits.**
+Java uses growing lists; card-creation loops and repeated turns have no finite bound. Histories,
+held actions, detached powers, text and damage rows can also exhaust their budgets. A valid Java
+sequence can exceed these budgets and trigger `SPIRE_ASSERT`. Never silently truncate, overwrite
+live slots, or shrink an amount to fit a capacity.
+
+Card damage/block/magic, power amounts, energy and rule counters keep Java's 32-bit range.
+Poison's constructor cap, for example, is not its stacking limit. Only bounded indices use
+bytes; signed card references and costs retain 16 bits, and monster moves use Java signed bytes.
+The index-width assertions in `types.hpp` must hold when changing capacities.
 
 ## Hook call sites still absent
 

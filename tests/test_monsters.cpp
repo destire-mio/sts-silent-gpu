@@ -13,7 +13,7 @@ void require(bool condition, const char* expression, int line) {
 #define CHECK(condition) require((condition), #condition, __LINE__)
 
 void execute_next(Game& game) {
-    Effect effect = game.manager.actions.pop_front();
+    Effect effect = game.action_objects[game.manager.actions.pop_front()];
     execute_effect(game, effect);
 }
 
@@ -102,14 +102,14 @@ void deterministic_turns() {
     CHECK(g.monsters[0].pending_move == 2);
     create_monster_intent(g, 0);
     monster_take_turn(g, 0);
-    const Effect change = g.manager.actions.pop_front();
+    const Effect change = g.action_objects[g.manager.actions.pop_front()];
     CHECK(change.kind == EffectKind::SetMove && change.amount == 1);
     set_monster_move(g, 0, change.amount, static_cast<Intent>(change.extra), change.card);
     create_monster_intent(g, 0);
     monster_take_turn(g, 0);
     CHECK(g.monsters[0].pending_move == 1);
-    CHECK(g.manager.actions[0].kind == EffectKind::Damage);
-    CHECK(g.manager.actions[0].amount == 30);
+    CHECK(g.action_objects[g.manager.actions[0]].kind == EffectKind::Damage);
+    CHECK(g.action_objects[g.manager.actions[0]].amount == 30);
     CHECK(g.rng.ai.counter == 2);
 }
 
@@ -174,7 +174,7 @@ void lethal_attack_keeps_published_intent() {
     CHECK(g.monsters[0].pending_move == 2);
     CHECK(g.monsters[0].pending_intent == Intent::Debuff);
     CHECK(g.monsters[0].move_history[g.monsters[0].move_history.size - 1] == 2);
-    CHECK(g.manager.actions[0].kind == EffectKind::Damage);
+    CHECK(g.action_objects[g.manager.actions[0]].kind == EffectKind::Damage);
     execute_next(g);
     CHECK(g.screen == Screen::Death);
     CHECK(g.monsters[0].move == 1);

@@ -14,7 +14,7 @@ struct Greed : ActionHooks {
         if (e.target == no_target) return;
         creature_damage(g, e);
         const Creature& target = get_creature(g, e.target);
-        if ((target.dying || target.hp <= 0) && !target.half_dead && !has_power(target, "Minion"))
+        if ((target.dying || target.hp <= 0) && !target.half_dead && !has_power(g, target, "Minion"))
             gain_gold(g, e.state.Greed.increaseGold);
         if (monsters_basically_dead(g)) clear_post_combat_actions(g);
     }

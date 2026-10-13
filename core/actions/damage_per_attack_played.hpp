@@ -14,7 +14,10 @@ struct DamagePerAttackPlayed : ActionHooks {
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         if (e.target == no_target || get_creature(g, e.target).hp <= 0) return;
-        const int count = static_cast<int>(g.manager.played_cards.turn_types[static_cast<int>(CardType::Attack)]) - 1;
+        int count = -1;
+        const PlayedCards& played = g.manager.played_cards;
+        for (int i = played.turn_start; i < played.size; ++i)
+            if (card_def(g.cards[played.values[i]].id).type == CardType::Attack) ++count;
         for (int i = 0; i < count; ++i) {
             Effect hit = e;
             hit.kind = EffectKind::Damage;

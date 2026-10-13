@@ -56,7 +56,7 @@ struct Discovery : ActionHooks {
             if (g.discovery_card >= 0) {
                 Card first = card_makeStatEquivalentCopy(g, g.discovery_card);
                 Card second = card_makeStatEquivalentCopy(g, g.discovery_card);
-                if (has_power(g.player.creature, "MasterRealityPower")) {
+                if (has_power(g, g.player.creature, "MasterRealityPower")) {
                     card_upgrade(first);
                     card_upgrade(second);
                 }

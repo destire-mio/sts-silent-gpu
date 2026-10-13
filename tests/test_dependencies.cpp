@@ -22,10 +22,10 @@ static void poison_chain() {
     apply_power(g, player_target, player_target, PowerId::Envenom, 2);
     apply_power(g, player_target, player_target, PowerId::NoxiousFumes, 3);
     step(g, {ActionKind::Play, 0, 0});
-    require(g.monsters[0].creature.hp == 194 && power_amount(g.monsters[0].creature, PowerId::Poison) == 2,
+    require(g.monsters[0].creature.hp == 194 && power_amount(g, g.monsters[0].creature, PowerId::Poison) == 2,
             "Envenom applies Poison after unblocked normal damage");
     step(g, {ActionKind::EndTurn, -1, -1});
-    require(g.monsters[0].creature.hp == 192 && power_amount(g.monsters[0].creature, PowerId::Poison) == 4,
+    require(g.monsters[0].creature.hp == 192 && power_amount(g, g.monsters[0].creature, PowerId::Poison) == 4,
             "Poison ticks and loses one stack before Noxious Fumes reapplies it after draw");
 }
 static void stasis_returns_identity() {
@@ -62,7 +62,7 @@ static void time_warp_and_heal() {
         while (g.hand[hand] != card) ++hand;
         step(g, {ActionKind::Play, hand, -1});
     }
-    require(g.turn == 2 && power_amount(g.monsters[0].creature, PowerId::Strength) == 2,
+    require(g.turn == 2 && power_amount(g, g.monsters[0].creature, PowerId::Strength) == 2,
             "The twelfth play forces the monster turn and grants Time Warp Strength");
     g = combat();
     g.player.creature.hp = 20;
@@ -81,7 +81,7 @@ static void rear_attack_order() {
     apply_power(g, player_target, player_target, PowerId::IntangiblePlayer, 1);
     monster_apply_powers(g, 0);
     run_until_decision(g);
-    require(has_power(g.monsters[0].creature, PowerId::BackAttack), "Surrounded attaches the rear attacker power");
+    require(has_power(g, g.monsters[0].creature, PowerId::BackAttack), "Surrounded attaches the rear attacker power");
     require(calculate_intent_damage(g, 0, 10) == 1, "Intent applies the rear bonus before final damage reductions");
     step(g, {ActionKind::Play, 0, 0});
     require(g.player.creature.flip_horizontal && rear_damage_multiplier(g, 0) == 1.0f,

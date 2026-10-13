@@ -33,13 +33,13 @@ static void test_vigor_and_anger() {
     apply_power(g, 0, 0, PowerId::Anger, 3);
     const int hp = g.monsters[0].creature.hp;
     step(g, {ActionKind::Play, hand_card(g, CardId::Defend_G), -1});
-    require(has_power(g.player.creature, PowerId::Vigor) && power_amount(g.monsters[0].creature, PowerId::Strength) == 3,
+    require(has_power(g, g.player.creature, PowerId::Vigor) && power_amount(g, g.monsters[0].creature, PowerId::Strength) == 3,
             "a skill retains Vigor and gives Anger Strength");
     step(g, {ActionKind::Play, hand_card(g, CardId::Strike_G), 0});
-    require(g.monsters[0].creature.hp == hp - 10 && !has_power(g.player.creature, PowerId::Vigor),
+    require(g.monsters[0].creature.hp == hp - 10 && !has_power(g, g.player.creature, PowerId::Vigor),
             "the first attack receives Vigor before its queued removal");
     step(g, {ActionKind::Play, hand_card(g, CardId::Strike_G), 0});
-    require(g.monsters[0].creature.hp == hp - 16 && power_amount(g.monsters[0].creature, PowerId::Strength) == 3,
+    require(g.monsters[0].creature.hp == hp - 16 && power_amount(g, g.monsters[0].creature, PowerId::Strength) == 3,
             "the second attack uses base damage and does not trigger Anger");
 }
 
@@ -56,24 +56,24 @@ static void test_shifting_and_artifact() {
     hit.amount = 7;
     hit.damage_type = DamageType::Thorns;
     damage(g, hit);
-    require(g.manager.actions.size == 2 && g.manager.actions[0].power == PowerId::GainStrength &&
-            g.manager.actions[1].power == PowerId::Strength, "Shifting queues its Strength restoration before its loss");
+    require(g.manager.actions.size == 2 && g.action_objects[g.manager.actions[0]].power == PowerId::GainStrength &&
+            g.action_objects[g.manager.actions[1]].power == PowerId::Strength, "Shifting queues its Strength restoration before its loss");
     run_until_decision(g);
     hit.target = 1;
     damage(g, hit);
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Strength) == 13 &&
-            power_amount(g.monsters[0].creature, PowerId::GainStrength) == 7 &&
-            power_amount(g.monsters[0].creature, PowerId::Shifting) == -1,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Strength) == 13 &&
+            power_amount(g, g.monsters[0].creature, PowerId::GainStrength) == 7 &&
+            power_amount(g, g.monsters[0].creature, PowerId::Shifting) == -1,
             "Shifting applies to source-less Thorns and keeps its sentinel");
-    require(power_amount(g.monsters[1].creature, PowerId::Strength) == 20 &&
-            !has_power(g.monsters[1].creature, PowerId::GainStrength) &&
-            !has_power(g.monsters[1].creature, PowerId::Artifact), "Artifact prevents loss without adding restoration");
+    require(power_amount(g, g.monsters[1].creature, PowerId::Strength) == 20 &&
+            !has_power(g, g.monsters[1].creature, PowerId::GainStrength) &&
+            !has_power(g, g.monsters[1].creature, PowerId::Artifact), "Artifact prevents loss without adding restoration");
     at_end_of_turn(g, 0);
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Strength) == 20 &&
-            !has_power(g.monsters[0].creature, PowerId::GainStrength) &&
-            power_amount(g.monsters[1].creature, PowerId::Strength) == 20, "turn end restores only the affected monster");
+    require(power_amount(g, g.monsters[0].creature, PowerId::Strength) == 20 &&
+            !has_power(g, g.monsters[0].creature, PowerId::GainStrength) &&
+            power_amount(g, g.monsters[1].creature, PowerId::Strength) == 20, "turn end restores only the affected monster");
 }
 
 static void test_sadistic() {
@@ -91,7 +91,7 @@ static void test_sadistic() {
     run_until_decision(g);
     require(g.monsters[0].creature.hp == first_hp - 5 && g.monsters[1].creature.hp == second_hp,
             "Sadistic deals raw Thorns only for its owner's unblocked enemy debuff, excluding Shackled");
-    require(!has_power(g.monsters[1].creature, PowerId::Weak) && !has_power(g.monsters[1].creature, PowerId::Artifact),
+    require(!has_power(g, g.monsters[1].creature, PowerId::Weak) && !has_power(g, g.monsters[1].creature, PowerId::Artifact),
             "Artifact blocks the debuff without triggering Sadistic");
 }
 
@@ -105,40 +105,40 @@ static void test_temporary_stats() {
     apply_power(g, player_target, player_target, PowerId::WraithForm, -1);
     at_end_of_turn(g, player_target);
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Strength) == 7 &&
-            power_amount(g.player.creature, PowerId::Dexterity) == 2 &&
-            !has_power(g.player.creature, PowerId::LoseStrength) &&
-            !has_power(g.player.creature, PowerId::LoseDexterity), "temporary stat powers apply their losses and remove themselves");
-    require(power_amount(g.player.creature, PowerId::WraithForm) == -2,
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 7 &&
+            power_amount(g, g.player.creature, PowerId::Dexterity) == 2 &&
+            !has_power(g, g.player.creature, PowerId::LoseStrength) &&
+            !has_power(g, g.player.creature, PowerId::LoseDexterity), "temporary stat powers apply their losses and remove themselves");
+    require(power_amount(g, g.player.creature, PowerId::WraithForm) == -2,
             "WraithForm stacks from minus one without the base sentinel restriction");
     at_end_of_turn(g, player_target);
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Dexterity) && power_amount(g.player.creature, PowerId::Strength) == 7,
+    require(!has_power(g, g.player.creature, PowerId::Dexterity) && power_amount(g, g.player.creature, PowerId::Strength) == 7,
             "WraithForm persists for another turn while temporary losses do not repeat");
 }
 
 static void test_gain_strength_and_generic() {
     Game g = combat();
     apply_power(g, 0, 0, PowerId::GainStrength, -2000);
-    require(power_amount(g.monsters[0].creature, PowerId::GainStrength) == -999, "Shackled construction clamps at minus 999");
+    require(power_amount(g, g.monsters[0].creature, PowerId::GainStrength) == -999, "Shackled construction clamps at minus 999");
     apply_power(g, 0, 0, PowerId::GainStrength, 2000);
-    require(power_amount(g.monsters[0].creature, PowerId::GainStrength) == 999, "Shackled stacks the raw incoming amount");
+    require(power_amount(g, g.monsters[0].creature, PowerId::GainStrength) == 999, "Shackled stacks the raw incoming amount");
     apply_power(g, 0, 0, PowerId::GainStrength, -999);
     run_until_decision(g);
-    require(!has_power(g.monsters[0].creature, PowerId::GainStrength), "zero Shackled stack removes it");
+    require(!has_power(g, g.monsters[0].creature, PowerId::GainStrength), "zero Shackled stack removes it");
     apply_power(g, 0, 0, PowerId::GainStrength, -1);
     apply_power(g, 0, 0, PowerId::GainStrength, 4);
-    Power& p = g.monsters[0].creature.powers[find_power(g.monsters[0].creature, PowerId::GainStrength)];
+    Power& p = g.monsters[0].creature.powers.at(g.power_objects, find_power(g, g.monsters[0].creature, PowerId::GainStrength));
     power_reducePower(g, p, 0, 3);
     run_until_decision(g);
-    require(!has_power(g.monsters[0].creature, PowerId::GainStrength), "Shackled reduction to zero queues removal");
+    require(!has_power(g, g.monsters[0].creature, PowerId::GainStrength), "Shackled reduction to zero queues removal");
     apply_power(g, 0, 0, PowerId::GenericStrengthUp, 3);
     at_end_of_round(g, 0);
     run_until_decision(g);
     at_end_of_round(g, 0);
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Strength) == 6 &&
-            !has_power(g.monsters[1].creature, PowerId::Strength), "GenericStrengthUp increases its owner's Strength each round");
+    require(power_amount(g, g.monsters[0].creature, PowerId::Strength) == 6 &&
+            !has_power(g, g.monsters[1].creature, PowerId::Strength), "GenericStrengthUp increases its owner's Strength each round");
 }
 
 int main() {

@@ -42,7 +42,7 @@ SPIRE_FN inline bool last_two_moves(const Monster& m, int move) {
 SPIRE_FN inline void set_monster_move(Game& g, int index, int move, Intent intent, int base_damage, int hits) {
     Monster& m = g.monsters[index];
     m.pending_move = move;
-    m.move_name_present = false;
+    m.move_name = 0;
     m.pending_intent = intent;
     m.pending_base_damage = base_damage;
     m.pending_hits = hits > 1 ? hits : 0;

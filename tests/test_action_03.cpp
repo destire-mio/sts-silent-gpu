@@ -115,7 +115,7 @@ static void selections() {
     run_until_decision(g);
     ActionSet legal{};
     legal_actions(g, legal);
-    require(g.screen == Screen::Discard && !g.manager.current_action.done &&
+    require(g.screen == Screen::Discard && !g.action_objects[g.manager.current_action].done &&
             legal[legal.size - 1].kind == ActionKind::Proceed, "upgraded Forethought permits zero selections");
     step(g, {ActionKind::Choose, 0});
     step(g, {ActionKind::Choose, 0});

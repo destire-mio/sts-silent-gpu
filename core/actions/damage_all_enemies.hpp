@@ -43,7 +43,7 @@ struct DamageAllEnemies : ActionHooks {
         }
         int* amounts = e.card >= 0 ? g.multi_damage[e.card] : state.damage;
         Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i) power_onDamageAllEnemies(g, powers[i], player_target, amounts);
+        for (int i = 0; i < powers.size; ++i) power_onDamageAllEnemies(g, powers.at(g.power_objects, i), player_target, amounts);
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int owner = g.monster_order[i];
             const Creature& monster = g.monsters[owner].creature;

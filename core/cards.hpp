@@ -6,7 +6,7 @@ SPIRE_FN inline bool card_free_to_play_base(const Game& g, int card) {
     if (g.cards[card].free_to_play_once) return true;
     if (card_data(g.cards[card].id).type == CardType::Attack) {
         const Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i) if (power_data(powers[i].id).free_attacks) return true;
+        for (int i = 0; i < powers.size; ++i) if (power_data(powers.at(g.power_objects, i).id).free_attacks) return true;
     }
     return false;
 }
@@ -15,9 +15,9 @@ SPIRE_FN inline bool card_has_enough_energy_base(const Game& g, int card_id) {
     const Card& card = g.cards[card_id];
     const Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i)
-        if (!power_canPlayCard(g, powers[i], player_target, card_id)) return false;
+        if (!power_canPlayCard(g, powers.at(g.power_objects, i), player_target, card_id)) return false;
     if (card_def(card.id).type == CardType::Attack)
-        for (int i = 0; i < powers.size; ++i) if (power_data(powers[i].id).prevents_attacks) return false;
+        for (int i = 0; i < powers.size; ++i) if (power_data(powers.at(g.power_objects, i).id).prevents_attacks) return false;
     for (int i = 0; i < g.run.relics.size; ++i)
         if (!relic_canPlay(g, i, card_id)) return false;
     for (int i = 0; i < g.hand.size; ++i)
@@ -59,18 +59,18 @@ SPIRE_FN inline int card_damage_value(Game& g, int card_id, int target) {
     }
     const Powers& source = g.player.creature.powers;
     for (int i = 0; i < source.size; ++i)
-        value = power_atDamageGive(g, source[i], player_target, value, DamageType::Normal, card_id);
+        value = power_atDamageGive(g, source.at(g.power_objects, i), player_target, value, DamageType::Normal, card_id);
     if (target != no_target) {
         const Powers& receive = g.monsters[target].creature.powers;
         for (int i = 0; i < receive.size; ++i)
-            value = power_atDamageReceive(g, receive[i], target, value, DamageType::Normal, card_id);
+            value = power_atDamageReceive(g, receive.at(g.power_objects, i), target, value, DamageType::Normal, card_id);
     }
     for (int i = 0; i < source.size; ++i)
-        value = power_atDamageFinalGive(g, source[i], player_target, value, DamageType::Normal, card_id);
+        value = power_atDamageFinalGive(g, source.at(g.power_objects, i), player_target, value, DamageType::Normal, card_id);
     if (target != no_target) {
         const Powers& receive = g.monsters[target].creature.powers;
         for (int i = 0; i < receive.size; ++i)
-            value = power_atDamageFinalReceive(g, receive[i], target, value, DamageType::Normal, card_id);
+            value = power_atDamageFinalReceive(g, receive.at(g.power_objects, i), target, value, DamageType::Normal, card_id);
     }
     const int damage = max(0, floor_int(value));
     return damage;
@@ -115,11 +115,11 @@ SPIRE_FN inline void queue_card_copy(Game& g, int card, int target) {
 }
 SPIRE_FN inline void play_card_hooks(Game& g, int card, int target) {
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onPlayCard(g, powers[i], player_target, card, target);
+    for (int i = 0; i < powers.size; ++i) power_onPlayCard(g, powers.at(g.power_objects, i), player_target, card, target);
     for (int m = 0; m < g.monster_order.size; ++m) {
         const int owner = g.monster_order[m];
         Powers& others = g.monsters[owner].creature.powers;
-        for (int i = 0; i < others.size; ++i) power_onPlayCard(g, others[i], owner, card, target);
+        for (int i = 0; i < others.size; ++i) power_onPlayCard(g, others.at(g.power_objects, i), owner, card, target);
     }
     for (int i = 0; i < g.run.relics.size; ++i) relic_onPlayCard(g, i, card, target);
     for (int i = 0; i < g.hand.size; ++i) card_onPlayCard(g, g.hand[i], card, target);
@@ -139,7 +139,7 @@ SPIRE_FN inline void use_card(Game& g, int card_id, int target) {
         Powers& powers = g.player.creature.powers;
         for (int i = 0; i < g.hand.size; ++i)
             if (g.hand[i] != card_id) card_triggerOnOtherCardPlayed(g, g.hand[i], card_id);
-        for (int i = 0; i < powers.size; ++i) power_onAfterCardPlayed(g, powers[i], player_target, card_id);
+        for (int i = 0; i < powers.size; ++i) power_onAfterCardPlayed(g, powers.at(g.power_objects, i), player_target, card_id);
     }
     for (int i = 0; i < g.hand.size; ++i)
         if (g.hand[i] == card_id) { g.hand.erase(i); break; }

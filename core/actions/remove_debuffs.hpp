@@ -10,11 +10,11 @@ struct RemoveDebuffsAction : ActionHooks {
     SPIRE_FN static void execute(Game& g, Effect& e) {
         const Powers& powers = get_creature(g, e.target).powers;
         for (int i = 0; i < powers.size; ++i) {
-            if (!power_isDebuff(powers[i], e.target)) continue;
+            if (!power_isDebuff(powers.at(g.power_objects, i), e.target)) continue;
             Effect remove{};
             remove.kind = EffectKind::RemovePower;
             remove.source = remove.target = e.target;
-            remove.power = powers[i].id;
+            remove.power = powers.at(g.power_objects, i).id;
             add_top(g, remove);
         }
         e.done = true;

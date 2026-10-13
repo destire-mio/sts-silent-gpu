@@ -85,7 +85,7 @@ int main() {
     start.kind = EffectKind::MonsterStart;
     execute_effect(g, start);
     if (g.run.gold != 35) return 3;
-    const auto& power_state = g.monsters[0].creature.powers[0].state.CatalogProbe;
+    const auto& power_state = g.monsters[0].creature.powers.at(g.power_objects, 0).state.CatalogProbe;
     if (power_state.counter != 1 || !power_state.active) return 16;
     g.run.relics.push_back({RelicId::CatalogProbe, -1});
     relics_at_battle_start(g);
@@ -124,7 +124,7 @@ int main() {
     g.run.gold = 0;
     add_bottom(g, shuffle);
     if (g.run.gold != 100) return 19;
-    shuffle = g.manager.actions.pop_front();
+    shuffle = g.action_objects[g.manager.actions.pop_front()];
     execute_effect(g, shuffle);
     if (g.run.gold != 100) return 20;
     g.multi_damage[0][0] = 1;
@@ -132,7 +132,7 @@ int main() {
     Effect all = DamageAllEnemies::from_card(g, 0);
     execute_effect(g, all);
     if (g.monsters[0].creature.hp != 2 || g.multi_damage[0][0] != 3) return 21;
-    Effect change = ChangeState::make(0, "TEST");
+    Effect change = ChangeState::make(g, 0, "TEST");
     execute_effect(g, change);
     if (g.monsters[0].creature.block != 7 || !change.state.ChangeState.called) return 22;
     std::puts("all seven catalog extensions dispatched");

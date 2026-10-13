@@ -20,7 +20,7 @@ struct RitualDagger : ActionHooks {
         if (e.target == no_target) return;
         creature_damage(g, e);
         const Creature& target = get_creature(g, e.target);
-        if ((target.dying || target.hp <= 0) && !target.half_dead && !has_power(target, "Minion")) {
+        if ((target.dying || target.hp <= 0) && !target.half_dead && !has_power(g, target, "Minion")) {
             for (int i = 0; i < g.run.master_deck.size; ++i) {
                 Card& card = g.run.master_deck[i];
                 if (card.uuid != e.state.RitualDagger.uuid) continue;

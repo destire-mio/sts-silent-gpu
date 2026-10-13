@@ -100,8 +100,12 @@ static void test_draw_follow_up() {
     apply_power(g, player_target, player_target, PowerId::NoDraw, -1);
     add_bottom(g, Draw::construct(4, true, follow));
     run_until_decision(g);
+    require(g.drawn_cards.empty() && g.player.creature.block == 3 && g.hand.size == 3,
+            "GameActionManager skips the same completed follow-up object");
+    add_bottom(g, Draw::construct(g, 4, LoseBlock::construct(player_target, player_target, 2)));
+    run_until_decision(g);
     require(g.drawn_cards.empty() && g.player.creature.block == 1 && g.hand.size == 3,
-            "No Draw clears history and still executes the follow-up");
+            "No Draw clears history and still executes a fresh follow-up");
     add_bottom(g, LoseBlock::construct(player_target, player_target, -4));
     run_until_decision(g);
     require(g.player.creature.block == 5, "negative LoseBlock increases block as Java does");
@@ -147,34 +151,34 @@ static void test_damage_and_power() {
     require(g.monsters[0].creature.hp == hp - 4 && g.rng.card_random.counter == 1,
             "random hit uses precomputed damage and consumes RNG even for one enemy");
     const int attack = card(g, CardId::Strike_G, g.hand);
-    g.manager.played_cards.record(attack, CardType::Attack);
-    g.manager.played_cards.record(attack, CardType::Attack);
-    g.manager.played_cards.record(attack, CardType::Attack);
+    g.manager.played_cards.record(attack);
+    g.manager.played_cards.record(attack);
+    g.manager.played_cards.record(attack);
     add_bottom(g, DamagePerAttackPlayed::construct(0, info));
     run_until_decision(g);
     require(g.monsters[0].creature.hp == hp - 12, "Finisher counts repeated attack instances and subtracts its own play");
     Power incoming(PowerId::Strength, 3);
     add_bottom(g, ApplyPowerToRandomEnemy::construct(player_target, incoming, 8));
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Strength) == 3,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Strength) == 3,
             "random power preserves constructed amount separately from raw stack amount");
     add_bottom(g, ApplyPowerToRandomEnemy::construct(player_target, incoming, 8));
     run_until_decision(g);
-    require(power_amount(g.monsters[0].creature, PowerId::Strength) == 11,
+    require(power_amount(g, g.monsters[0].creature, PowerId::Strength) == 11,
             "random power uses raw amount when stacking");
     apply_power(g, player_target, player_target, PowerId::Strength, 3);
-    const Power old = g.player.creature.powers[0];
+    const Power old = g.player.creature.powers.at(g.power_objects, 0);
     const Effect reduce_old = ReducePower::construct(player_target, 0, old, 1);
     remove_power(g, player_target, PowerId::Strength);
     apply_power(g, player_target, player_target, PowerId::Strength, 10);
     add_bottom(g, reduce_old);
     run_until_decision(g);
-    require(power_amount(g.player.creature, PowerId::Strength) == 10 &&
-            power_instance(g, player_target, old.instance).amount == 2,
+    require(power_amount(g, g.player.creature, PowerId::Strength) == 10 &&
+            power_instance(g, old.instance).amount == 2,
             "instance reduction changes removed original power without touching its replacement");
     add_bottom(g, ReducePower::construct(player_target, 0, PowerId::Strength, 10));
     run_until_decision(g);
-    require(!has_power(g.player.creature, PowerId::Strength), "ID reduction schedules removal of the resolved instance");
+    require(!has_power(g, g.player.creature, PowerId::Strength), "ID reduction schedules removal of the resolved instance");
 }
 
 static void test_empty_targets_and_failed_autoplay() {

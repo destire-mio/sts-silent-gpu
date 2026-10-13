@@ -26,7 +26,7 @@ struct UseCard : ActionHooks {
         e.flag = card.exhaust_on_use_once || card.exhaust;
         Powers& powers = g.player.creature.powers;
         for (int i = 0; i < powers.size; ++i)
-            if (!card.dont_trigger_on_use_card) power_onUseCard(g, powers[i], player_target, e.card, e);
+            if (!card.dont_trigger_on_use_card) power_onUseCard(g, powers.at(g.power_objects, i), player_target, e.card, e);
         for (int i = 0; i < g.run.relics.size; ++i)
             if (!card.dont_trigger_on_use_card) relic_onUseCard(g, i, e.card, e);
         for (int i = 0; i < g.hand.size; ++i)
@@ -39,7 +39,7 @@ struct UseCard : ActionHooks {
             const int owner = g.monster_order[m];
             Powers& other = g.monsters[owner].creature.powers;
             for (int i = 0; i < other.size; ++i)
-                if (!card.dont_trigger_on_use_card) power_onUseCard(g, other[i], owner, e.card, e);
+                if (!card.dont_trigger_on_use_card) power_onUseCard(g, other.at(g.power_objects, i), owner, e.card, e);
         }
         return e;
     }
@@ -47,12 +47,12 @@ struct UseCard : ActionHooks {
         Card& card = g.cards[e.card];
         Powers& powers = g.player.creature.powers;
         for (int i = 0; i < powers.size; ++i)
-            if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, powers[i], player_target, e.card, e);
+            if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, powers.at(g.power_objects, i), player_target, e.card, e);
         for (int m = 0; m < g.monster_order.size; ++m) {
             const int owner = g.monster_order[m];
             Powers& other = g.monsters[owner].creature.powers;
             for (int i = 0; i < other.size; ++i)
-                if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, other[i], owner, e.card, e);
+                if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, other.at(g.power_objects, i), owner, e.card, e);
         }
         card.free_to_play_once = false;
         card.in_autoplay = false;
