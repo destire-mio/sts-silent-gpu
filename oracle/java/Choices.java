@@ -153,8 +153,17 @@ final class Choices {
             case "EVENT":
                 if (choice instanceof LargeDialogOptionButton) ((LargeDialogOptionButton)choice).pressed = true;
                 else if (choice instanceof AbstractCard) {
+                    CardGroup matchCards = get(AbstractDungeon.getCurrRoom().event, "cards");
+                    boolean matchCardsMoving;
+                    do {
+                        matchCards.update();
+                        matchCardsMoving = false;
+                        for (AbstractCard card : matchCards.group)
+                            matchCardsMoving |= card.current_x != card.target_x || card.current_y != card.target_y;
+                    } while (matchCardsMoving);
                     point(((AbstractCard)choice).hb); InputHelper.justClickedLeft = true;
                     call(AbstractDungeon.getCurrRoom().event, GremlinMatchGame.class, "updateMatchGameLogic");
+                    if (((AbstractCard)choice).isFlipped) throw new AssertionError("Match card input was not accepted");
                 } else set(AbstractDungeon.getCurrRoom().event, "buttonPressed", true);
                 break;
             case "CHEST": chest().isOpen = true; chest().open(false); break;
@@ -215,7 +224,12 @@ final class Choices {
                 break;
             case "COMBAT_REWARD": ((RewardItem)choice).isDone = true; break;
             case "BOSS_REWARD":
-                point(((AbstractRelic)choice).hb); InputHelper.justClickedLeft = true; AbstractDungeon.bossRelicScreen.update(); break;
+                // AbstractRelic.update obtains on a completed click, not mouse-down.
+                AbstractRelic bossRelic = (AbstractRelic)choice;
+                click(bossRelic.hb);
+                AbstractDungeon.bossRelicScreen.update();
+                if (!bossRelic.isObtained) throw new AssertionError("Boss relic input was not accepted");
+                break;
             case "SHOP":
                 if (choice instanceof AbstractCard) {
                     Method method = ShopScreen.class.getDeclaredMethod("purchaseCard", AbstractCard.class);

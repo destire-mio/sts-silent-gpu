@@ -129,6 +129,7 @@ public final class Platform {
                     || effect instanceof com.megacrit.cardcrawl.vfx.ObtainKeyEffect
                     || effect instanceof com.megacrit.cardcrawl.vfx.NecronomicurseEffect
                     || effect instanceof com.megacrit.cardcrawl.vfx.FastCardObtainEffect
+                    || effect instanceof com.megacrit.cardcrawl.vfx.GainPennyEffect
                     || effect instanceof com.megacrit.cardcrawl.vfx.ObtainPotionEffect)) return true;
         }
         return false;
