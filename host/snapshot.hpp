@@ -262,14 +262,13 @@ struct SnapshotGraph {
 
     py::object potion(int index) {
         const PotionId id = game.run.potions[index];
-        SPIRE_ASSERT(id == PotionId::Empty);
         return object({10, index, 0}, class_name("potions", static_cast<int>(id)), [&](const std::string& key) -> py::object {
-            if (key == "AbstractPotion.ID") return py::str("Potion Slot");
-            if (key == "AbstractPotion.potency") return py::int_(0);
-            if (key == "AbstractPotion.slot") return py::int_(-1);
-            if (key == "AbstractPotion.rarity") return py::str("PLACEHOLDER");
-            if (key == "AbstractPotion.size") return py::str("T");
-            if (key == "AbstractPotion.canUse" || key == "AbstractPotion.isThrown" || key == "AbstractPotion.targetRequired") return py::bool_(false);
+            if (key == "AbstractPotion.ID") return py::str(potion_names[static_cast<int>(id)]);
+            if (key == "AbstractPotion.potency") return py::int_(potion_potency(game, index));
+            if (key == "AbstractPotion.slot") return py::int_(id == PotionId::Empty ? -1 : index);
+            if (key == "AbstractPotion.rarity") return id == PotionId::Empty ? py::object(py::str("PLACEHOLDER")) : py::reinterpret_borrow<py::object>(metadata("potions", static_cast<int>(id))["rarity"]);
+            if (key == "AbstractPotion.canUse") return py::bool_(false);
+            if (key == "AbstractPotion.targetRequired") return py::bool_(potion_data(id).target == CardTarget::Enemy);
             return {};
         });
     }

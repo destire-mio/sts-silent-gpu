@@ -43,6 +43,36 @@ SPIRE_FN inline const char* random_card_in_combat(Game& g, int type, bool colorl
     }
     return candidates[g.rng.card_random.random(candidates.size - 1)];
 }
+SPIRE_FN inline PotionState construct_potion(const Game& g, PotionId id) {
+    PotionState state{};
+    potion_constructPotion(g, state, id);
+    return state;
+}
+SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
+    const int roll = g.rng.potion.random(0, 99);
+    const int rarity = roll < 65 ? 0 : roll < 90 ? 1 : 2;
+    int index = g.rng.potion.random(32);
+    bool spam_check = limited;
+    while (silent_potion_pool[index].rarity != rarity || spam_check) {
+        spam_check = limited;
+        index = g.rng.potion.random(32);
+        if (same_id(silent_potion_pool[index].id, "Fruit Juice")) continue;
+        spam_check = false;
+    }
+    for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
+        if (potion_matches_id(static_cast<PotionId>(i), silent_potion_pool[index].id)) return static_cast<PotionId>(i);
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
+}
+SPIRE_FN inline void obtain_potion(Game& g, PotionId id, const PotionState& state) {
+    if (has_relic(g, "Sozu")) return;
+    for (int i = 0; i < 2; ++i) {
+        if (g.run.potions[i] != PotionId::Empty) continue;
+        g.run.potions[i] = id;
+        g.run.potion_state[i] = state;
+        return;
+    }
+}
 SPIRE_FN inline void move_to_bottom_of_deck(Game& g, int card) {
     for (int i = 0; i < g.manager.card_queue.size; ++i) {
         if (g.manager.card_queue[i].card != card) continue;
@@ -282,6 +312,14 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
             for (int i = 0; i < g.run.relics.size; ++i) relic_onBloodied(g, i);
         }
         if (target.hp == 0) {
+            if (!has_relic(g, "Mark of the Bloom")) {
+                for (int slot = 0; slot < 2; ++slot) {
+                    if (!potion_data(g.run.potions[slot]).revives_player) continue;
+                    potion_use(g, slot, player_target);
+                    g.run.potions[slot] = PotionId::Empty;
+                    return;
+                }
+            }
             target.dead = true;
             target.block = 0;
             g.screen = Screen::Death;
@@ -570,6 +608,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.manager.turn_has_ended = false;
             g.manager.total_discarded_this_turn = 0;
             g.turn = 1;
+            g.room_in_combat = false;
             g.screen = Screen::Victory;
             g.manager.phase = Phase::WaitingOnUser;
             break;
@@ -648,6 +687,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     for (int i = 0; i < 2; ++i) {
         g.run.potions[i] = setup.potions[i];
         potion_initialize_state(g, i);
+        g.run.potion_state[i] = construct_potion(g, setup.potions[i]);
     }
     g.rng.reseed_floor(g.run.seed, setup.floor);
     g.player = Player{};
@@ -676,6 +716,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.manager.player_hp_last_turn = setup.hp;
     g.turn = 1;
     g.battle_over = false;
+    g.room_in_combat = true;
     g.cannot_lose = false;
     g.mugged = false;
     g.discard_remaining = 0;
@@ -729,36 +770,19 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
 SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     actions.clear();
     if (g.fault != 0) return;
-    if (g.screen == Screen::Discard) {
-        if (g.selected_cards.size < g.selection_amount)
-            for (int i = 0; i < g.hand.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
-        if ((g.selection_can_pick_zero && g.selected_cards.empty()) ||
-            ((!g.selected_cards.empty() || g.selection_can_pick_zero) &&
-                (g.selection_any_number || g.selection_up_to || g.selected_cards.size == g.selection_amount)))
-            actions.push_back({ActionKind::Proceed, -1, -1});
-        return;
+    if (g.screen == Screen::Death || g.screen == Screen::Victory || g.screen == Screen::None) return;
+    if (g.screen == Screen::Combat) {
+        for (int i = 0; i < g.hand.size; ++i) {
+            const Card& card = g.cards[g.hand[i]];
+            if (!can_play(g, g.hand[i])) continue;
+            if (card_def(card.id).target == CardTarget::Enemy) {
+                for (int j = 0; j < g.monster_order.size; ++j) {
+                    if (alive(g.monsters[g.monster_order[j]].creature) && card_canUse(g, g.hand[i], g.monster_order[j])) actions.push_back({ActionKind::Play, i, j});
+                }
+            } else actions.push_back({ActionKind::Play, i, -1});
+        }
+        if (g.end_turn_enabled) actions.push_back({ActionKind::EndTurn, -1, -1});
     }
-    if (g.screen == Screen::CardReward) {
-        for (int i = 0; i < g.reward_cards.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
-        if (g.reward_skippable) actions.push_back({ActionKind::Skip, -1, -1});
-        return;
-    }
-    if (g.screen == Screen::Grid) {
-        for (int i = 0; i < get_pile(g, g.grid_source).size; ++i) actions.push_back({ActionKind::Choose, i, -1});
-        if (g.selection_any_number) actions.push_back({ActionKind::Proceed, -1, -1});
-        return;
-    }
-    if (g.screen != Screen::Combat) return;
-    for (int i = 0; i < g.hand.size; ++i) {
-        const Card& card = g.cards[g.hand[i]];
-        if (!can_play(g, g.hand[i])) continue;
-        if (card_def(card.id).target == CardTarget::Enemy) {
-            for (int j = 0; j < g.monster_order.size; ++j) {
-                if (alive(g.monsters[g.monster_order[j]].creature) && card_canUse(g, g.hand[i], g.monster_order[j])) actions.push_back({ActionKind::Play, i, j});
-            }
-        } else actions.push_back({ActionKind::Play, i, -1});
-    }
-    if (g.end_turn_enabled) actions.push_back({ActionKind::EndTurn, -1, -1});
     for (int slot = 0; slot < 2; ++slot) {
         const PotionData data = potion_data(g.run.potions[slot]);
         if (!data.usable) continue;
@@ -770,10 +794,35 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
         }
         actions.push_back({ActionKind::PotionDiscard, slot, -1});
     }
+    if (g.screen == Screen::Discard) {
+        if (g.selected_cards.size < g.selection_amount)
+            for (int i = 0; i < g.hand.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
+        if ((g.selection_can_pick_zero && g.selected_cards.empty()) ||
+            ((!g.selected_cards.empty() || g.selection_can_pick_zero) &&
+                (g.selection_any_number || g.selection_up_to || g.selected_cards.size == g.selection_amount)))
+            actions.push_back({ActionKind::Proceed, -1, -1});
+    } else if (g.screen == Screen::CardReward) {
+        for (int i = 0; i < g.reward_cards.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
+        if (g.reward_skippable) actions.push_back({ActionKind::Skip, -1, -1});
+    } else if (g.screen == Screen::Grid) {
+        for (int i = 0; i < get_pile(g, g.grid_source).size; ++i) actions.push_back({ActionKind::Choose, i, -1});
+        if (g.selection_any_number) actions.push_back({ActionKind::Proceed, -1, -1});
+    }
 }
 SPIRE_FN inline void step(Game& g, Action action) {
     if (g.fault != 0) return;
     bind_fault(g);
+    if (action.kind == ActionKind::PotionUse || action.kind == ActionKind::PotionDiscard) {
+        if (action.kind == ActionKind::PotionUse) {
+            SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable && potion_canUse(g, action.index));
+            const int target = action.target >= 0 ? g.monster_order[action.target] : player_target;
+            potion_use(g, action.index, target);
+            for (int i = 0; i < g.run.relics.size; ++i) relic_onUsePotion(g, i);
+        }
+        g.run.potions[action.index] = PotionId::Empty;
+        run_until_decision(g);
+        return;
+    }
     if (g.screen == Screen::Discard) {
         if (action.kind == ActionKind::Choose) {
             SPIRE_ASSERT(g.selected_cards.size < g.selection_amount);
@@ -803,14 +852,6 @@ SPIRE_FN inline void step(Game& g, Action action) {
         SPIRE_ASSERT(g.screen == Screen::Combat);
         if (action.kind == ActionKind::EndTurn) {
             g.manager.card_queue.push_back({-1, -1});
-        } else if (action.kind == ActionKind::PotionUse) {
-            SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable && potion_canUse(g, action.index));
-            const int target = action.target >= 0 ? g.monster_order[action.target] : player_target;
-            potion_use(g, action.index, target);
-            for (int i = 0; i < g.run.relics.size; ++i) relic_onUsePotion(g, i);
-            g.run.potions[action.index] = PotionId::Empty;
-        } else if (action.kind == ActionKind::PotionDiscard) {
-            g.run.potions[action.index] = PotionId::Empty;
         } else {
             SPIRE_ASSERT(action.kind == ActionKind::Play);
             const int card = g.hand[action.index];

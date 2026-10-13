@@ -381,49 +381,13 @@ inline void settle_combat_rewards(Game& game, FreshRunState& run) {
         run.rewardGold = game.rng.treasure.random(10, 20);
         run.rewardTypes.push_back("GOLD");
     }
-    struct Potion { const char* id; int rarity; };
-    constexpr Potion potions[] = {
-        {"Poison Potion", 0},
-        {"CunningPotion", 1},
-        {"GhostInAJar", 2},
-        {"Block Potion", 0},
-        {"Dexterity Potion", 0},
-        {"Energy Potion", 0},
-        {"Explosive Potion", 0},
-        {"Fire Potion", 0},
-        {"Strength Potion", 0},
-        {"Swift Potion", 0},
-        {"Weak Potion", 0},
-        {"FearPotion", 0},
-        {"AttackPotion", 0},
-        {"SkillPotion", 0},
-        {"PowerPotion", 0},
-        {"ColorlessPotion", 0},
-        {"SteroidPotion", 0},
-        {"SpeedPotion", 0},
-        {"BlessingOfTheForge", 0},
-        {"Regen Potion", 1},
-        {"Ancient Potion", 1},
-        {"LiquidBronze", 1},
-        {"GamblersBrew", 1},
-        {"EssenceOfSteel", 1},
-        {"DuplicationPotion", 1},
-        {"DistilledChaos", 1},
-        {"LiquidMemories", 1},
-        {"CultistPotion", 2},
-        {"Fruit Juice", 2},
-        {"SneckoOil", 2},
-        {"FairyPotion", 2},
-        {"SmokeBomb", 2},
-        {"EntropicBrew", 2},
-    };
     const int chance = escaped ? 0 : 40 + run.blizzardPotionMod;
     if (game.rng.potion.random(0, 99) < chance) {
         const int roll = game.rng.potion.random(0, 99);
         const int rarity = roll < 65 ? 0 : roll < 90 ? 1 : 2;
         int index;
-        do { index = game.rng.potion.random(32); } while (potions[index].rarity != rarity);
-        run.rewardPotion = potions[index].id;
+        do { index = game.rng.potion.random(32); } while (silent_potion_pool[index].rarity != rarity);
+        run.rewardPotion = silent_potion_pool[index].id;
         run.rewardTypes.push_back("POTION");
         run.blizzardPotionMod -= 10;
     } else run.blizzardPotionMod += 10;

@@ -149,7 +149,9 @@ card("makeCopy", result="Card", body="return make_card(g.cards[card].id);", cons
 
 for name in ("use",):
     hook("potions", name, "Game& g, int slot, int target")
-hook("potions", "canUse", "const Game& g, int slot", "bool", "return true;")
+hook("potions", "canUse", "const Game& g, int slot", "bool", "return g.room_in_combat && !g.manager.turn_has_ended && !monsters_basically_dead(g);")
+hook("potions", "constructPotion", "const Game& g, PotionState& state, PotionId id", selector="id")
+hook("potions", "potency", "const Game& g, int slot", "int", "return potion_data(g.run.potions[slot]).potency;")
 for name in ("takeTurn", "usePreBattleAction", "useUniversalPreBattleAction", "onDamage", "deathReact",
              "escapeNext", "escape", "init", "applyPowers", "createIntent", "rollMove",
              "onBossVictoryLogic", "onFinalBossVictoryLogic"):
@@ -212,7 +214,15 @@ def generate(root, output):
             value = ('CardRarity::' + card_facts[game_id]['rarity'].title()) if name == 'card_rarity' else str(ranks[game_id])
             content.append(f'case CardId::{unit}: return {value};')
         content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
-    for kind in ('powers', 'relics'):
+    potion_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'potion'}
+    potion_pool = next(unit['facts']['silent_pool'] for unit in inventory if unit['key'] == 'rule:helpers.PotionHelper')
+    content.append('struct PotionPoolEntry { const char* id; int rarity; };')
+    content.append('constexpr PotionPoolEntry silent_potion_pool[] = {')
+    for game_id in potion_pool:
+        rarity = {'COMMON': 0, 'UNCOMMON': 1, 'RARE': 2}[potion_facts[game_id]['rarity']]
+        content.append('{' + json.dumps(game_id) + ', ' + str(rarity) + '},')
+    content.append('};')
+    for kind in ('powers', 'relics', 'potions'):
         enum, _, prefix, _ = KINDS[kind]
         declarations.append(f'SPIRE_FN inline bool {prefix}_matches_id({enum} id, const char* java_id);')
         content.append(f'SPIRE_FN inline bool {prefix}_matches_id({enum} id, const char* java_id) {{ switch (id) {{')

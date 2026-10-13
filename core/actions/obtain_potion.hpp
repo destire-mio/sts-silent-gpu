@@ -17,12 +17,7 @@ struct ObtainPotion : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
-        for (int i = 0; i < 2; ++i) {
-            if (g.run.potions[i] != PotionId::Empty) continue;
-            g.run.potions[i] = e.state.ObtainPotion.potion;
-            g.run.potion_state[i] = e.prepared_potion_state;
-            return;
-        }
+        obtain_potion(g, e.state.ObtainPotion.potion, e.prepared_potion_state);
     }
 };
 }

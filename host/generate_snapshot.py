@@ -94,6 +94,8 @@ def generate(root, output):
                 continue
             unit = next(unit for unit in units if unit["kind"] == kind and unit["game_id"] == game_id)
             entry = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."), "id": game_id}
+            if kind == "potion":
+                entry["rarity"] = unit["facts"]["rarity"]
             if kind == "card":
                 entry.update({key: unit["facts"][key] for key in ("color", "rarity", "target", "type", "tags")})
             if kind == "relic":

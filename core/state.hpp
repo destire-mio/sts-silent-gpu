@@ -253,6 +253,7 @@ struct Game {
     bool selection_up_to = false;
     bool reward_skippable = false;
     bool battle_over = false;
+    bool room_in_combat = false;
     bool cannot_lose = false;
     bool mugged = false;
     int bomb_id_offset = 0;
