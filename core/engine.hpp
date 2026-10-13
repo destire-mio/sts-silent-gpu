@@ -56,6 +56,7 @@ SPIRE_FN inline void move_to_bottom_of_deck(Game& g, int card) {
     for (int i = 0; i < g.hand.size; ++i)
         if (g.hand[i] == card) { g.hand.erase(i); break; }
     g.draw.insert(0, card);
+    card_clearPowers(g, card);
 }
 SPIRE_FN inline void add_created_card_to_hand(Game& g, int card) {
     g.hand.push_back(card);

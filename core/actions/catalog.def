@@ -105,3 +105,4 @@ SPIRE_UNIT(HeelHookAction, "actions.unique.HeelHookAction", "core/actions/heel_h
 SPIRE_UNIT(RoomEndTurn, "rooms.AbstractRoom$1", "core/actions/end_turn.hpp", RoomEndTurn)
 SPIRE_UNIT(SFX, "actions.utility.SFXAction", "core/actions/intent_flash.hpp", SFX)
 SPIRE_UNIT(VFX, "actions.animations.VFXAction", "core/actions/intent_flash.hpp", VFX)
+SPIRE_UNIT(MayhemPlay, "powers.MayhemPower$1", "core/powers/mayhem.hpp", MayhemPlay)

@@ -1,0 +1,54 @@
+{
+  "deck": [
+    {
+      "id": "Flash of Steel",
+      "upgrades": 0
+    },
+    {
+      "id": "Flash of Steel",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 45,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

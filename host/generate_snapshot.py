@@ -63,8 +63,10 @@ def unit_snapshot_dispatch(root, units):
         lines.append('const Game& game = graph.game; (void)game;')
         lines.append(f'switch ({selector}) {{')
         rows = re.findall(r'SPIRE_UNIT\((\w+), "([^\"]+)", "([^\"]+)", (\w+)\)', (root / "core" / kind / "catalog.def").read_text())
-        for unit, _, header, _ in rows:
-            fields = re.findall(r'^\s*SPIRE_SNAPSHOT\("([^\"]+)",\s*(\w+)(?:, (.*))?\)\s*$', (root / header).read_text(), re.M)
+        for unit, _, header, typename in rows:
+            source = (root / header).read_text()
+            body = re.search(r'\bstruct\s+' + typename + r'\s*:[^{]+\{(.*?)^\};', source, re.M | re.S)[1]
+            fields = re.findall(r'^\s*SPIRE_SNAPSHOT\("([^\"]+)",\s*(\w+)(?:, (.*))?\)\s*$', body, re.M)
             if not fields:
                 continue
             lines.append(f'case {enum}::{unit}:')
