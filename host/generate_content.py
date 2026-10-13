@@ -11,6 +11,7 @@ KINDS = {
     "potions": ("PotionId", "PotionHooks", "potion", "g.run.potions[slot]"),
     "monsters": ("MonsterId", "MonsterHooks", "monster", "g.monsters[owner].id"),
     "encounters": ("EncounterId", None, "encounter", "id"),
+    "events": ("EventId", "EventHooks", "event", "g.event.id"),
     "actions": ("EffectKind", "ActionHooks", "action", "e.kind"),
 }
 HOOKS = {kind: [] for kind in KINDS}
@@ -175,6 +176,9 @@ hook("monsters", "die", "Game& g, int owner, bool trigger_relics = true", body="
 hook("monsters", "setMove", "Game& g, int owner, int move, Intent intent, int damage, int hits", body="set_monster_move(g, owner, move, intent, damage, hits);")
 hook("monsters", "construct", "Game& g, MonsterId id, int hp_override", "Monster", selector="id")
 hook("encounters", "build", "Game& g, EncounterId id")
+hook("events", "enter", "Game& g")
+hook("events", "choose", "Game& g, int option")
+hook("events", "update", "Game& g")
 hook("actions", "prepare", "Game& g, Effect& e")
 hook("actions", "execute", "Game& g, Effect& e")
 hook("actions", "release", "Game& g, Effect& e")
@@ -305,9 +309,9 @@ def generate(root, output):
             ids.append(f'    static_assert(__is_trivially_constructible(decltype({typename})), "Unit state fields need trivial default construction");')
         ids.append(f'    SPIRE_FN constexpr {state_type}() : empty{{}} {{}}')
         ids.append('};')
-        budget = {"cards": 8, "powers": 8, "relics": 8, "potions": 8, "monsters": 32, "encounters": 16, "actions": 48}[kind]
+        budget = {"cards": 8, "powers": 8, "relics": 8, "potions": 8, "monsters": 32, "encounters": 16, "events": 64, "actions": 48}[kind]
         ids.append(f'static_assert(sizeof({state_type}) <= {budget}, "{state_type} exceeds its payload budget; use an arena index for larger state (docs/porting.md)");')
-        if kind in ("cards", "powers", "relics", "monsters", "actions"):
+        if kind in ("cards", "powers", "relics", "monsters", "actions", "events"):
             entity = {"actions": "Effect"}.get(kind, prefix.capitalize())
             discriminator = "value.kind" if kind == "actions" else "value.id"
             declarations.append(f'SPIRE_FN inline void {prefix}_initialize_state({entity}& value);')
@@ -317,7 +321,7 @@ def generate(root, output):
                 assign = f'{state_path}.{typename} = {{}};' if unit in states[kind] else ''
                 content.append(f'case {enum}::{unit}: {assign} ' + ('relic_initializeState(value); ' if kind == 'relics' else '') + 'return;')
             content.append('default: SPIRE_ASSERT(false); } }')
-        if kind in ("cards", "powers", "relics", "monsters", "actions"):
+        if kind in ("cards", "powers", "relics", "monsters", "actions", "events"):
             content.append(f'template<class Visitor> SPIRE_FN inline void {prefix}_visit_state(const {entity}& value, Visitor& visitor) {{ (void)visitor; switch ({discriminator}) {{')
             for unit, _, _, typename in entries:
                 content.append(f'case {enum}::{unit}:')
@@ -353,8 +357,8 @@ def generate(root, output):
                         content.append(f'visitor("{member}", {value_state}.{typename}.{member});')
                 content.append('return;')
             content.append('default: SPIRE_ASSERT(false); } }')
-        if kind in ("cards", "powers", "relics", "potions", "monsters", "actions"):
-            datatype = {"cards": "CardDef", "powers": "PowerData", "relics": "RelicData", "potions": "PotionData", "monsters": "MonsterData", "actions": "ActionData"}[kind]
+        if kind in ("cards", "powers", "relics", "potions", "monsters", "actions", "events"):
+            datatype = {"cards": "CardDef", "powers": "PowerData", "relics": "RelicData", "potions": "PotionData", "monsters": "MonsterData", "actions": "ActionData", "events": "EventData"}[kind]
             if kind == "cards":
                 declarations.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id);')
                 content.append(f'constexpr {datatype} {prefix}_definitions[] = {{')

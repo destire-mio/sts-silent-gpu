@@ -8,6 +8,10 @@ SPIRE_FN inline const int16_t& monster_base_damage(const Game&, const Monster&, 
 SPIRE_FN inline int16_t& monster_output_damage(Game&, Monster&, int);
 SPIRE_FN inline const int16_t& monster_output_damage(const Game&, const Monster&, int);
 SPIRE_FN inline PotionId potion_from_pool(Random&);
+SPIRE_FN inline void open_map(Game&);
+SPIRE_FN inline void update_event(Game&);
+SPIRE_FN inline int create_card_reward(Game&);
+SPIRE_FN inline int create_reward(Game&, RoomReward);
 SPIRE_FN inline void add_gold_reward(Game&, int);
 SPIRE_FN inline void add_potion_reward(Game&, PotionId);
 SPIRE_FN inline bool keeps_block(const Game&, int);

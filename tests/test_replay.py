@@ -343,22 +343,23 @@ class OracleFormat(unittest.TestCase):
             self.assertEqual(1, main([str(self.path)]))
         self.assertIn("combat: 1/1 traces passed, 1/1 matched decisions; run: 0/1 traces passed, 0/1 matched decisions", output.getvalue())
 
-    def test_known_full_run_failure_is_separate_and_unexpected_success_fails(self):
-        write_trace(self.path, records())
-        with patch("replay.EXPECTED_FULL_RUN", self.path), patch("replay.importlib.import_module", return_value=ENGINE):
+    def test_full_run_filename_has_no_failure_exemption(self):
+        path = self.root / "full-run-1.jsonl.gz"
+        write_trace(path, records())
+        with patch("replay.importlib.import_module", return_value=ENGINE):
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
-                self.assertEqual(1, main([str(self.path)]))
-            self.assertIn("XPASS", output.getvalue())
+                self.assertEqual(0, main([str(path)]))
+            self.assertIn("combat: 1/1 traces passed", output.getvalue())
+            self.assertIn("run: 1/1 traces passed", output.getvalue())
             rows = records()
             rows[1]["action"] = {"type": "choose", "option": 0}
-            write_trace(self.path, rows)
+            write_trace(path, rows)
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
-                self.assertEqual(0, main([str(self.path)]))
-            self.assertIn("XFAIL", output.getvalue())
-            self.assertIn("0/0 traces passed", output.getvalue())
-            self.assertIn("expected full-run failures: 1", output.getvalue())
+                self.assertEqual(1, main([str(path)]))
+            self.assertIn("combat: 0/1 traces passed", output.getvalue())
+            self.assertNotIn("XFAIL", output.getvalue())
 
     def test_full_run_requires_both_scopes(self):
         class FullRun(Game):

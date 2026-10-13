@@ -47,7 +47,7 @@ int main() {
     RoomReward reward{};
     reward.cards.push_back(attack);
     reward.cards.push_back(skill);
-    g.room_rewards.push_back(reward);
+    g.screen_rewards.push_back(create_reward(g, reward));
     g.reward_cards.push_back(selection);
     equip_relic(g, RelicId::MoltenEgg2);
     require(g.cards[attack].upgrades == 1 && g.cards[attack].base_damage == 9, "Molten Egg upgrades an existing attack reward");

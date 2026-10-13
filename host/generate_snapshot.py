@@ -64,6 +64,7 @@ def unit_snapshot_dispatch(root, units):
         ("powers", "PowerId", "Power", "power", "power.id", "int owner"),
         ("monsters", "MonsterId", "Monster", "monster", "monster.id", "int owner"),
         ("actions", "EffectKind", "Effect", "effect", "effect.kind", "int queue, int index"),
+        ("events", "EventId", "Event", "event", "event.id", "int index"),
         ("relics", "RelicId", "Relic", "relic", "relic.id", "int index"),
     ):
         lines.append(f'template<class Graph> auto {kind}_snapshot(Graph& graph, const {entity}& {variable}, {context}, const std::string& key) -> decltype(graph.scalar(0)) {{')

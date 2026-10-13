@@ -5,8 +5,8 @@ namespace spire::units::relics {
 struct MoltenEgg2 : RelicHooks {
     static SPIRE_FN constexpr RelicData data() { return {-1, 250}; }
     static SPIRE_FN void onEquip(Game& g, int relic) {
-        for (int r = 0; r < g.room_rewards.size; ++r)
-            for (int i = 0; i < g.room_rewards[r].cards.size; ++i) onPreviewObtainCard(g, relic, g.cards[g.room_rewards[r].cards[i]]);
+        for (int r = 0; r < g.screen_rewards.size; ++r)
+            for (int i = 0; i < g.reward_objects[g.screen_rewards[r]].cards.size; ++i) onPreviewObtainCard(g, relic, g.cards[g.reward_objects[g.screen_rewards[r]].cards[i]]);
     }
     static SPIRE_FN void onPreviewObtainCard(Game& g, int relic, Card& card) { onObtainCard(g, relic, card); }
     static SPIRE_FN void onObtainCard(Game&, int, Card& card) {

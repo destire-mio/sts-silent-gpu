@@ -89,6 +89,7 @@ SPIRE_FN inline void obtain_potion(Game& g, PotionId id, const PotionState& stat
     for (int i = 0; i < g.run.potion_slots; ++i) {
         if (g.run.potions[i] != PotionId::Empty) continue;
         g.run.potions[i] = id;
+        g.run.potion_identity[i] = 0;
         g.run.potion_state[i] = state;
         return;
     }
@@ -763,69 +764,22 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         }
     }
 }
-SPIRE_FN inline void reset(Game& g, uint64_t seed) {
-    bind_fault(g);
-    g = Game{};
-    g.run.seed = seed;
-    g.unseeded.reset(seed);
-    g.rng.generate_seeds(seed);
-    g.rng.reseed_map(seed, 1);
-    g.player.creature.max_hp = 66;
-    g.player.creature.hp = 59;
-    starter_deck(g.run);
-    const int pool_sizes[] = {
-        static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
-        static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
-        static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool)),
-        static_cast<int>(sizeof(colorless_card_pool) / sizeof(*colorless_card_pool))};
-    // AbstractDungeon.initializeCardPools copies each pool to its source pool with addToBottom.
-    for (int p = 0; p < 4; ++p)
-        for (int i = pool_sizes[p] - 1; i >= 0; --i) g.run.source_card_pools[p].push_back(i);
-    initialize_dungeon(g);
-}
-SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
-    if (g.fault != 0) return;
-    bind_fault(g);
-    g.run.floor = 0;
-    g.run.gold = setup.gold;
-    g.run.monster_list[0] = setup.encounter;
-    g.run.master_deck = setup.deck;
+SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
+    Card retained[64]{};
+    for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
     g.cards.clear();
-    g.detached_master_cards.clear();
-    g.run.relics.clear();
-    g.run.potion_slots = 2;
-    g.room_in_combat = false;
-    g.player = Player{};
-    g.player.creature.hp = 59;
-    g.player.creature.max_hp = 66;
-    g.next_card_uuid = 1;
-    for (int i = 0; i < g.run.master_deck.size; ++i) g.run.master_deck[i].uuid = g.next_card_uuid++;
-    RandomXS128 acquisition(g.run.seed);
-    g.screen = Screen::None;
-    for (int i = 0; i < setup.relics.size; ++i) {
-        equip_relic(g, setup.relics[i].id);
-        settle_relic_acquisition(g, acquisition);
-    }
-    for (int i = 0; i < g.run.potion_slots; ++i) {
-        g.run.potions[i] = setup.potions[i];
-        potion_initialize_state(g, i);
-        g.run.potion_state[i] = construct_potion(g, setup.potions[i]);
-    }
-    g.room_rewards.clear();
-    g.run.floor = setup.floor;
-    g.player.energy_per_turn = g.player.energy_master;
-    g.rng.reseed_floor(g.run.seed, setup.floor);
-    g.player.creature.draw_x = 1280.0f * 0.25f;
-    g.player.creature.hp = setup.hp;
-    g.player.creature.max_hp = setup.max_hp;
-    g.player.bloodied = setup.hp <= setup.max_hp / 2;
+    for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
+    g.event = Event{};
+    g.room_dialog.clear();
+    g.image_dialog.clear();
+    g.previous_screen = Screen::None;
     g.text.clear();
     g.room_event_class = 0;
     g.multi_damage.clear();
     g.damage_exceptions.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
-    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.room_rewards.clear();
+    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();
     g.grid_source = PileId::Grid;
     g.discovery_card = -1;
     g.action_objects.clear();
@@ -841,12 +795,12 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.monster_damage_extra.clear();
     g.monster_order.clear();
     g.manager = ActionManager{};
-    g.manager.player_hp_last_turn = setup.hp;
+    g.manager.player_hp_last_turn = g.player.creature.hp;
     g.turn = 1;
     g.battle_over = false;
     g.room_in_combat = true;
-    g.room_kind = RoomKind::Monster;
     g.room_phase = RoomPhase::Combat;
+    g.room_reward_time = false;
     g.cannot_lose = false;
     g.mugged = false;
     g.room_stolen_gold = 0;
@@ -855,13 +809,13 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     g.selection_any_number = g.selection_can_pick_zero = false;
     g.end_turn_enabled = true;
     g.screen = Screen::Combat;
-    g.encounter = setup.encounter;
+    g.encounter = encounter;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onEnterRoom(g, i, static_cast<int>(g.room_kind));
     for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(g.room_kind));
     encounter_initialize_state(g);
     g.player.hand_size = g.player.master_hand_size;
     g.player.max_orbs = g.player.master_max_orbs;
-    build_encounter(g, setup.encounter);
+    build_encounter(g, encounter);
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
     for (int i = 0; i < g.run.master_deck.size; ++i) {
@@ -910,6 +864,119 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
     refresh_hand(g);
 }
+SPIRE_FN inline void reset(Game& g, uint64_t seed) {
+    bind_fault(g);
+    g = Game{};
+    g.run.seed = seed;
+    g.unseeded.reset(seed);
+    g.rng.generate_seeds(seed);
+    g.rng.reseed_map(seed, 1);
+    g.player.creature.max_hp = 66;
+    g.player.creature.hp = 59;
+    g.player.energy_per_turn = 0;
+    starter_deck(g.run);
+    const int pool_sizes[] = {
+        static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
+        static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
+        static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool)),
+        static_cast<int>(sizeof(colorless_card_pool) / sizeof(*colorless_card_pool))};
+    // AbstractDungeon.initializeCardPools copies each pool to its source pool with addToBottom.
+    for (int p = 0; p < 4; ++p)
+        for (int i = pool_sizes[p] - 1; i >= 0; --i) g.run.source_card_pools[p].push_back(i);
+    initialize_dungeon(g);
+    for (int i = 0; i < g.run.master_deck.size; ++i) g.run.master_deck[i].uuid = g.next_card_uuid++;
+    g.player.creature.draw_x = 320.0f;
+    g.turn = 0;
+    g.encounter = EncounterId::Count;
+    g.room_kind = RoomKind::Neow;
+    g.event.id = EventId::Neow;
+    event_initialize_state(g.event);
+    event_enter(g);
+}
+SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
+    if (g.fault != 0) return;
+    bind_fault(g);
+    g.run.floor = 0;
+    g.event = Event{};
+    g.run.gold = setup.gold;
+    g.run.monster_list[0] = setup.encounter;
+    g.run.master_deck = setup.deck;
+    g.cards.clear();
+    g.detached_master_cards.clear();
+    g.run.relics.clear();
+    g.run.potion_slots = 2;
+    g.room_in_combat = false;
+    g.player = Player{};
+    g.player.creature.hp = 59;
+    g.player.creature.max_hp = 66;
+    g.next_card_uuid = 1;
+    for (int i = 0; i < g.run.master_deck.size; ++i) g.run.master_deck[i].uuid = g.next_card_uuid++;
+    RandomXS128 acquisition(g.run.seed);
+    g.screen = Screen::None;
+    for (int i = 0; i < setup.relics.size; ++i) {
+        equip_relic(g, setup.relics[i].id);
+        settle_relic_acquisition(g, acquisition);
+    }
+    for (int i = 0; i < g.run.potion_slots; ++i) {
+        g.run.potions[i] = setup.potions[i];
+        potion_initialize_state(g, i);
+        g.run.potion_state[i] = construct_potion(g, setup.potions[i]);
+    }
+    g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();
+    g.run.floor = setup.floor;
+    g.player.energy_per_turn = g.player.energy_master;
+    g.rng.reseed_floor(g.run.seed, setup.floor);
+    g.player.creature.draw_x = 1280.0f * 0.25f;
+    g.player.creature.hp = setup.hp;
+    g.player.creature.max_hp = setup.max_hp;
+    g.player.bloodied = setup.hp <= setup.max_hp / 2;
+    g.room_kind = RoomKind::Monster;
+    g.run.node_x = g.run.node_y = g.run.next_x = g.run.next_y = 0;
+    enter_combat(g, setup.encounter);
+}
+SPIRE_FN inline void open_map(Game& g) {
+    g.previous_screen = g.screen;
+    g.screen = Screen::Map;
+    g.room_phase = RoomPhase::Complete;
+}
+SPIRE_FN inline void update_event(Game& g) {
+    if (g.event.id != EventId::Count) event_update(g);
+    settle_card_obtains(g);
+}
+SPIRE_FN inline void complete_master_selection(Game& g) {
+    g.screen = Screen::None;
+    for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
+    update_event(g);
+    if (g.event.id != EventId::Count && g.screen == Screen::None) g.screen = Screen::Event;
+    settle_card_obtains(g);
+    g.grid_source = PileId::Grid;
+    g.grid_for_purge = g.grid_for_upgrade = g.grid_for_transform = false;
+    g.grid_can_cancel = true;
+}
+SPIRE_FN inline void map_choices(const Game& g, List<uint8_t, 8>& choices) {
+    choices.clear();
+    if (g.run.node_y == 14) { choices.push_back(105); return; }
+    const int y = g.run.first_room_chosen ? g.run.node_y + 1 : 0;
+    for (int x = 0; x < 7; ++x) {
+        if (!g.run.map[y][x].edges) continue;
+        if (!g.run.first_room_chosen || (g.run.map[g.run.node_y][g.run.node_x].edges & (1 << x)))
+            choices.push_back(y * 7 + x);
+    }
+}
+SPIRE_FN inline void enter_map_node(Game& g, int index) {
+    SPIRE_ASSERT(index < 105);
+    const int x = index % 7, y = index / 7;
+    const auto& node = g.run.map[y][x];
+    g.run.next_x = g.run.node_x = x;
+    g.run.next_y = g.run.node_y = y;
+    g.run.first_room_chosen = true;
+    g.run.path_x.push_back(x); g.run.path_y.push_back(y);
+    ++g.run.floor;
+    g.rng.reseed_floor(g.run.seed, g.run.floor);
+    g.room_kind = node.room;
+    SPIRE_ASSERT(g.room_kind == RoomKind::Monster);
+    enter_combat(g, g.run.monster_list[0]);
+}
 SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     actions.clear();
     if (g.fault != 0) return;
@@ -937,7 +1004,15 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
         }
         if (potion_canDiscard(g, slot)) actions.push_back({ActionKind::PotionDiscard, slot, -1});
     }
-    if (g.screen == Screen::Discard) {
+    if (g.screen == Screen::Event) {
+        const auto& buttons = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
+        int option = 0;
+        for (int i = 0; i < buttons.size; ++i) if (!buttons[i]) actions.push_back({ActionKind::Choose, option++, -1});
+    } else if (g.screen == Screen::Map) {
+        List<uint8_t, 8> choices{}; map_choices(g, choices);
+        for (int i = 0; i < choices.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
+        actions.push_back({ActionKind::Skip, -1, -1});
+    } else if (g.screen == Screen::Discard) {
         if (g.selected_cards.size < g.selection_amount)
             for (int i = 0; i < g.hand.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
         if ((g.selection_can_pick_zero && g.selected_cards.empty()) ||
@@ -948,14 +1023,14 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
         for (int i = 0; i < g.reward_cards.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
         if (g.reward_skippable) actions.push_back({ActionKind::Skip, -1, -1});
     } else if (g.screen == Screen::Grid) {
-        if (g.selection_confirmation) {
+        if (g.selection_confirmation || g.grid_confirm_screen) {
             actions.push_back({ActionKind::Proceed, -1, -1});
             return;
         }
         for (int i = 0; i < get_pile(g, g.grid_source).size; ++i) actions.push_back({ActionKind::Choose, i, -1});
         if (g.selection_any_number) actions.push_back({ActionKind::Proceed, -1, -1});
     } else if (g.screen == Screen::CombatReward) {
-        for (int i = 0; i < g.room_rewards.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
+        for (int i = 0; i < g.screen_rewards.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
         if (g.reward_proceed_visible) actions.push_back({ActionKind::Proceed, -1, -1});
         if (g.reward_skippable) actions.push_back({ActionKind::Skip, -1, -1});
     }
@@ -963,65 +1038,6 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
 SPIRE_FN inline void step(Game& g, Action action) {
     if (g.fault != 0) return;
     bind_fault(g);
-    if (!g.room_in_combat && g.screen == Screen::CombatReward) {
-        if (action.kind == ActionKind::Choose) {
-            const RoomReward& reward = g.room_rewards[action.index];
-            if (reward.kind == RewardKind::Gold) {
-                gain_gold(g, reward.amount);
-                g.room_rewards.erase(action.index);
-                return;
-            }
-            if (reward.kind == RewardKind::Potion) {
-                bool empty = false;
-                for (int i = 0; i < g.run.potion_slots; ++i) empty |= g.run.potions[i] == PotionId::Empty;
-                if (empty) {
-                    obtain_potion(g, reward.potion, construct_potion(g, reward.potion));
-                    g.room_rewards.erase(action.index);
-                }
-                return;
-            }
-            if (reward.kind == RewardKind::Relic) {
-                equip_relic(g, reward.relic);
-                g.room_rewards.erase(action.index);
-                return;
-            }
-            SPIRE_ASSERT(reward.kind == RewardKind::Card);
-            g.acquisition_reward = action.index;
-            g.reward_cards.clear();
-            const auto& cards = g.room_rewards[action.index].cards;
-            for (int i = 0; i < cards.size; ++i) g.reward_cards.push_back(cards[i]);
-            g.reward_skippable = true;
-            g.screen = Screen::CardReward;
-        } else {
-            SPIRE_ASSERT(action.kind == ActionKind::Proceed || action.kind == ActionKind::Skip);
-            int relic_count = 0;
-            for (int i = 0; i < g.room_rewards.size; ++i) relic_count += g.room_rewards[i].kind == RewardKind::Relic;
-            // ProceedButton.update consumes the first attempt to leave three relic rewards with an FTUE.
-            if (action.kind == ActionKind::Proceed && relic_count == 3 && !g.reward_relic_warning_seen) {
-                g.reward_relic_warning_seen = true;
-                return;
-            }
-            g.screen = Screen::None;
-        }
-        return;
-    }
-    if (!g.room_in_combat && g.screen == Screen::CardReward) {
-        if (action.kind == ActionKind::Choose) {
-            obtain_card(g, g.cards[g.reward_cards[action.index]]);
-            g.room_rewards.erase(g.acquisition_reward);
-            g.reward_proceed_visible = g.room_rewards.empty();
-        } else SPIRE_ASSERT(action.kind == ActionKind::Skip);
-        g.screen = Screen::CombatReward;
-        return;
-    }
-    if (g.screen == Screen::Grid && g.selection_confirmation) {
-        if (action.kind == ActionKind::Choose) return;
-        SPIRE_ASSERT(action.kind == ActionKind::Proceed);
-        for (int i = 0; i < g.grid_cards.size; ++i) obtain_card(g, g.cards[g.grid_cards[i]]);
-        g.selection_confirmation = false;
-        g.screen = Screen::None;
-        return;
-    }
     if (action.kind == ActionKind::PotionUse || action.kind == ActionKind::PotionDiscard) {
         SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable);
         SPIRE_ASSERT(action.kind != ActionKind::PotionDiscard || potion_canDiscard(g, action.index));
@@ -1032,7 +1048,109 @@ SPIRE_FN inline void step(Game& g, Action action) {
             for (int i = 0; i < g.run.relics.size; ++i) relic_onUsePotion(g, i);
         }
         g.run.potions[action.index] = PotionId::Empty;
+        g.run.potion_identity[action.index] = 0;
         if (g.screen == Screen::Combat) run_until_decision(g);
+        return;
+    }
+    if (g.screen == Screen::Event) {
+        SPIRE_ASSERT(action.kind == ActionKind::Choose);
+        const auto& buttons = event_data(g.event.id).image ? g.image_dialog : g.room_dialog;
+        int option = action.index;
+        for (int i = 0; i < buttons.size; ++i) if (!buttons[i] && option-- == 0) {
+            if (event_data(g.event.id).image) g.image_selected_option = i;
+            else g.room_selected_option = i;
+            event_choose(g, i);
+            update_event(g);
+            return;
+        }
+        SPIRE_ASSERT(false);
+    }
+    if (g.screen == Screen::Map) {
+        if (action.kind == ActionKind::Skip) g.screen = g.previous_screen;
+        else {
+            SPIRE_ASSERT(action.kind == ActionKind::Choose);
+            List<uint8_t, 8> choices{}; map_choices(g, choices);
+            enter_map_node(g, choices[action.index]);
+        }
+        return;
+    }
+    if (!g.room_in_combat && g.screen == Screen::CombatReward) {
+        if (action.kind == ActionKind::Choose) {
+            RoomReward& reward = g.reward_objects[g.screen_rewards[action.index]];
+            if (reward.kind == RewardKind::Gold) {
+                gain_gold(g, reward.amount);
+                reward.done = true;
+                g.screen_rewards.erase(action.index);
+                return;
+            }
+            if (reward.kind == RewardKind::Potion) {
+                bool empty = false;
+                for (int i = 0; i < g.run.potion_slots; ++i) empty |= g.run.potions[i] == PotionId::Empty;
+                if (empty) {
+                    for (int slot = 0; slot < g.run.potion_slots; ++slot) {
+                        if (g.run.potions[slot] != PotionId::Empty) continue;
+                        reward.potion_slot = slot;
+                        break;
+                    }
+                    obtain_potion(g, reward.potion, reward.potion_state);
+                    g.run.potion_identity[reward.potion_slot] = reward.identity;
+                    reward.done = true;
+                    g.screen_rewards.erase(action.index);
+                }
+                return;
+            }
+            if (reward.kind == RewardKind::Relic) {
+                equip_relic(g, reward.relic);
+                reward.done = true;
+                g.screen_rewards.erase(action.index);
+                return;
+            }
+            SPIRE_ASSERT(reward.kind == RewardKind::Card);
+            g.acquisition_reward = g.screen_rewards[action.index];
+            g.reward_cards.clear();
+            const auto& cards = reward.cards;
+            for (int i = 0; i < cards.size; ++i) g.reward_cards.push_back(cards[i]);
+            g.reward_skippable = true;
+            g.screen = Screen::CardReward;
+        } else {
+            SPIRE_ASSERT(action.kind == ActionKind::Proceed || action.kind == ActionKind::Skip);
+            int relic_count = 0;
+            for (int i = 0; i < g.screen_rewards.size; ++i) relic_count += g.reward_objects[g.screen_rewards[i]].kind == RewardKind::Relic;
+            // ProceedButton.update consumes the first attempt to leave three relic rewards with an FTUE.
+            if (action.kind == ActionKind::Proceed && relic_count == 3 && !g.reward_relic_warning_seen) {
+                g.reward_relic_warning_seen = true;
+                return;
+            }
+            if (g.event.id != EventId::Count) open_map(g);
+            else g.screen = Screen::None;
+        }
+        return;
+    }
+    if (!g.room_in_combat && g.screen == Screen::CardReward) {
+        if (action.kind == ActionKind::Choose) {
+            obtain_card(g, g.cards[g.reward_cards[action.index]]);
+            if (g.acquisition_reward >= 0) g.reward_objects[g.acquisition_reward].done = true;
+            for (int i = 0; i < g.screen_rewards.size; ++i)
+                if (g.screen_rewards[i] == g.acquisition_reward) { g.screen_rewards.erase(i); break; }
+            g.reward_proceed_visible = g.screen_rewards.empty();
+        } else SPIRE_ASSERT(action.kind == ActionKind::Skip);
+        g.screen = g.acquisition_reward >= 0 ? Screen::CombatReward : Screen::Event;
+        return;
+    }
+    if (g.screen == Screen::Grid && g.grid_confirm_screen) {
+        SPIRE_ASSERT(action.kind == ActionKind::Proceed);
+        g.selected_cards.push_back(g.grid_hovered_card);
+        g.grid_confirm_screen = false;
+        g.grid_hovered_card = -1;
+        complete_master_selection(g);
+        return;
+    }
+    if (g.screen == Screen::Grid && g.selection_confirmation) {
+        if (action.kind == ActionKind::Choose) return;
+        SPIRE_ASSERT(action.kind == ActionKind::Proceed);
+        for (int i = 0; i < g.grid_cards.size; ++i) obtain_card(g, g.cards[g.grid_cards[i]]);
+        g.selection_confirmation = false;
+        g.screen = Screen::None;
         return;
     }
     if (g.screen == Screen::Discard) {
@@ -1054,18 +1172,14 @@ SPIRE_FN inline void step(Game& g, Action action) {
     } else if (g.screen == Screen::Grid) {
         if (action.kind == ActionKind::Choose) {
             const int card = get_pile(g, g.grid_source)[action.index];
+            if (g.grid_for_upgrade || g.grid_for_transform) { g.grid_hovered_card = card; g.grid_confirm_screen = true; return; }
             if (!remove_from_pile(g.selected_cards, card) && g.selected_cards.size < g.selection_amount)
                 g.selected_cards.push_back(card);
             if (g.selected_cards.size != g.selection_amount ||
                 (g.selection_any_number && g.selected_cards.size == get_pile(g, g.grid_source).size)) return;
         } else SPIRE_ASSERT(action.kind == ActionKind::Proceed && g.selection_any_number);
         if (g.grid_source == PileId::MasterDeck) {
-            g.screen = Screen::None;
-            for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
-            settle_card_obtains(g);
-            g.grid_source = PileId::Grid;
-            g.grid_for_purge = false;
-            g.grid_can_cancel = true;
+            complete_master_selection(g);
             return;
         }
         g.screen = Screen::Combat;

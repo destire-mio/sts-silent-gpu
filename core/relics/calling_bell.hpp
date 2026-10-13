@@ -21,14 +21,13 @@ struct CallingBell : RelicHooks {
     }
     static SPIRE_FN void update(Game& g, int relic) {
         if (!g.run.relics[relic].state.CallingBell.cardsReceived && g.screen == Screen::None) {
-            add_room_card_reward(g);
-            g.room_rewards.clear();
+            create_card_reward(g);
+            g.screen_rewards.clear();
             for (int tier = 0; tier < 3; ++tier) {
                 RoomReward reward{};
                 reward.kind = RewardKind::Relic;
                 reward.relic = relic_id(relic_key_name(screenlessRelic(g, tier)));
-                reward.identity = g.next_reward_identity++;
-                g.room_rewards.push_back(reward);
+                g.screen_rewards.push_back(create_reward(g, reward));
             }
             g.reward_proceed_visible = true;
             g.reward_skippable = false;

@@ -8,8 +8,6 @@ from pathlib import Path
 
 GAME_SHA256 = "dd60a613a6178e08f1a57bcb8d5747e33c21fd49e743b88d76e9d74042803b2a"
 
-EXPECTED_FULL_RUN = Path(__file__).parent / "traces/full-run-1.jsonl.gz"
-
 
 class Difference(AssertionError):
     pass
@@ -228,27 +226,12 @@ def main(argv=None):
     decisions = 0
     scope_passed = {name: 0 for name in ("combat", "run")}
     scope_decisions = {name: 0 for name in scope_passed}
-    expected_failures = 0
-    unexpected_passes = 0
     for trace in trace_paths(args.traces):
-        expected_failure = trace.resolve() == EXPECTED_FULL_RUN.resolve()
-        if not expected_failure:
-            total += 1
+        total += 1
         try:
             result = replay(trace, engine)
         except (Difference, ValueError, KeyError, StopIteration) as error:
             print(f"FAIL {trace}: {error}")
-            continue
-        if expected_failure:
-            if result.passed:
-                unexpected_passes += 1
-                print(f"XPASS {trace}: remove the Neow/map/room-flow expected failure before accepting this trace")
-            else:
-                expected_failures += 1
-                print(f"XFAIL {trace}: Neow, map and room flow are not ported; excluded from pass totals")
-                for scope, status in result.scopes.items():
-                    print(f"  {scope}: {status.matched_decisions}/{result.decisions} decisions; "
-                          f"{status.differences[0] if status.differences else result.stopped}")
             continue
         passed += result.passed
         decisions += result.decisions
@@ -260,12 +243,11 @@ def main(argv=None):
                   f"{status.matched_decisions}/{result.decisions} decisions{detail}")
         if result.stopped:
             print(f"STOP {trace}: {result.stopped}")
-    if not total and not expected_failures and not unexpected_passes:
+    if not total:
         raise ValueError("No combat JSONL traces found")
     print("; ".join(f"{scope}: {scope_passed[scope]}/{total} traces passed, "
                     f"{scope_decisions[scope]}/{decisions} matched decisions" for scope in scope_passed))
-    print(f"expected full-run failures: {expected_failures}; unexpected passes: {unexpected_passes}")
-    return int(passed != total or unexpected_passes != 0)
+    return int(passed != total)
 
 
 if __name__ == "__main__":

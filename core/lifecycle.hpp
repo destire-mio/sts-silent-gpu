@@ -118,9 +118,14 @@ SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_
         choices.push_back(id);
     }
  }
-SPIRE_FN inline void add_room_card_reward(Game& g) {
-    RoomReward reward{};
+SPIRE_FN inline int create_reward(Game& g, RoomReward reward) {
     reward.identity = g.next_reward_identity++;
+    const int index = g.reward_objects.size;
+    g.reward_objects.push_back(reward);
+    return index;
+}
+SPIRE_FN inline int create_card_reward(Game& g) {
+    RoomReward reward{};
     List<const char*, reward_card_capacity> choices{};
     reward_card_choices(g, choices);
     for (int i = 0; i < choices.size; ++i) reward.cards.push_back(create_card(g, make_card(card_id(choices[i]))));
@@ -130,40 +135,45 @@ SPIRE_FN inline void add_room_card_reward(Game& g) {
             card_canUpgrade(g, reward.cards[i])) card_upgrade(card);
         else preview_card_obtain(g, card);
     }
-    if (!reward.cards.empty()) g.room_rewards.push_back(reward);
+    return reward.cards.empty() ? -1 : create_reward(g, reward);
+}
+SPIRE_FN inline void add_room_card_reward(Game& g) {
+    const int index = create_card_reward(g);
+    if (index >= 0) g.room_rewards.push_back(index);
 }
 SPIRE_FN inline void add_gold_reward(Game& g, int amount) {
     for (int i = 0; i < g.room_rewards.size; ++i) {
-        if (g.room_rewards[i].kind != RewardKind::Gold) continue;
-        g.room_rewards[i].amount += amount;
+        if (g.reward_objects[g.room_rewards[i]].kind != RewardKind::Gold) continue;
+        g.reward_objects[g.room_rewards[i]].amount += amount;
         return;
     }
     RoomReward reward{};
     reward.kind = RewardKind::Gold;
     reward.amount = amount;
-    reward.identity = g.next_reward_identity++;
-    g.room_rewards.push_back(reward);
+    g.room_rewards.push_back(create_reward(g, reward));
 }
 SPIRE_FN inline void add_potion_reward(Game& g, PotionId potion) {
     RoomReward reward{};
     reward.kind = RewardKind::Potion;
     reward.potion = potion;
-    reward.identity = g.next_reward_identity++;
-    g.room_rewards.push_back(reward);
+    reward.potion_state = construct_potion(g, potion);
+    g.room_rewards.push_back(create_reward(g, reward));
 }
 SPIRE_FN inline void open_room_card_rewards(Game& g) {
-    add_room_card_reward(g);
+    g.screen_rewards = g.room_rewards;
+    const int card = create_card_reward(g);
+    if (card >= 0) g.screen_rewards.push_back(card);
     g.reward_proceed_visible = false;
     g.reward_skippable = true;
     g.screen = Screen::CombatReward;
 }
 SPIRE_FN inline void remove_room_relic_reward(Game& g) {
     for (int i = 0; i < g.room_rewards.size; ++i) {
-        const RoomReward& reward = g.room_rewards[i];
+        const RoomReward& reward = g.reward_objects[g.room_rewards[i]];
         if (reward.relic == RelicId::Count) continue;
         const int link = reward.relic_link;
         g.room_rewards.erase(i);
-        if (i < g.room_rewards.size && link == g.room_rewards[i].identity) g.room_rewards.erase(i);
+        if (i < g.room_rewards.size && link == g.reward_objects[g.room_rewards[i]].identity) g.room_rewards.erase(i);
         break;
     }
 }
@@ -265,10 +275,9 @@ SPIRE_FN inline RelicKey random_relic_key(Game& g, int tier, bool from_end) {
 }
 SPIRE_FN inline void add_relic_reward(Game& g, RelicTier tier) {
     RoomReward reward{};
-    reward.identity = g.next_reward_identity++;
     reward.kind = RewardKind::Relic;
     reward.relic = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier))));
-    g.room_rewards.push_back(reward);
+    g.room_rewards.push_back(create_reward(g, reward));
 }
 SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);

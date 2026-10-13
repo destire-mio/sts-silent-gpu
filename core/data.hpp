@@ -2,6 +2,7 @@
 #include "state.hpp"
 
 namespace spire {
+struct EventData { const char* java_class; bool image; };
 struct CardDef {
     CardType type;
     CardTarget target;

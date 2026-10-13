@@ -244,6 +244,13 @@ struct ActionManager {
     int player_hp_last_turn = 0;
     int energy_gained_this_combat = 0;
 };
+struct Event {
+    EventId id = EventId::Count;
+    EventState state{};
+    int screen = 0;
+    bool has_focus = true;
+    bool no_cards = false;
+};
 struct MapNode {
     uint8_t edges = 0;
     RoomKind room : 4;
@@ -257,6 +264,10 @@ struct Run {
     int act = 1;
     int ascension = 20;
     int boss_count = 0;
+    int8_t node_x = 0, node_y = -1;
+    int8_t next_x = -1, next_y = -1;
+    bool first_room_chosen = false;
+    List<int8_t, 64> path_x{}, path_y{};
     int gold = 99;
     int card_blizz_randomizer = 5;
     float card_upgraded_chance = 0.0f;
@@ -278,12 +289,16 @@ struct Run {
     int potion_slots = 2;
     PotionId potions[potion_capacity]{};
     PotionState potion_state[potion_capacity]{};
+    int potion_identity[potion_capacity]{};
 };
 enum class RewardKind : uint8_t { Card, Gold, Potion, Relic };
 struct RoomReward {
     RewardKind kind = RewardKind::Card;
     int amount = 0;
     PotionId potion = PotionId::Empty;
+    PotionState potion_state{};
+    int8_t potion_slot = -1;
+    bool done = false;
     List<uint8_t, reward_card_capacity> cards{};
     RelicId relic = RelicId::Count;
     int relic_link = -1;
@@ -318,7 +333,9 @@ struct Game {
     Pile pending_obtains{};
     Pile reward_cards{};
     List<PotionId, 5> acquisition_potions{};
-    List<RoomReward, room_reward_capacity> room_rewards{};
+    List<RoomReward, room_reward_capacity> reward_objects{};
+    List<uint8_t, room_reward_capacity> room_rewards{};
+    List<uint8_t, room_reward_capacity> screen_rewards{};
     int next_reward_identity = 1;
     int acquisition_reward = -1;
     int discovery_card = -1;
@@ -328,6 +345,10 @@ struct Game {
     List<uint8_t, monster_capacity> monster_order{};
     ActionManager manager{};
     Screen screen = Screen::None;
+    Screen previous_screen = Screen::None;
+    Event event{};
+    List<bool, 8> room_dialog{}, image_dialog{};
+    int room_selected_option = -1, image_selected_option = -1;
     EncounterId encounter = EncounterId::Cultist;
     EncounterState encounter_state{};
     int turn = 1;
@@ -344,6 +365,10 @@ struct Game {
     int obtained_cards[static_cast<int>(CardId::Count)]{};
     bool selection_for_upgrade = false;
     bool grid_for_purge = false;
+    bool grid_for_upgrade = false;
+    bool grid_for_transform = false;
+    bool grid_confirm_screen = false;
+    int grid_hovered_card = -1;
     bool grid_can_cancel = true;
     bool selection_confirmation = false;
     bool selected_cards_retrieved = false;
@@ -354,6 +379,7 @@ struct Game {
     bool reward_relic_warning_seen = false;
     bool battle_over = false;
     bool room_in_combat = false;
+    bool room_reward_time = false;
     RoomKind room_kind = RoomKind::Monster;
     RoomPhase room_phase = RoomPhase::Incomplete;
     bool room_elite_trigger = false;

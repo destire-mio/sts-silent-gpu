@@ -34,6 +34,7 @@ Every function, including `data()`, carries `SPIRE_FN`.
 | Relics | `RelicHooks`, `RelicData` | Java overrides such as `atBattleStart(Game&, int relic)` |
 | Potions | `PotionHooks`, `PotionData` | `use(Game&, int slot, int target)`; metadata gives potency, target and usability |
 | Monsters | `MonsterHooks`, `MonsterData` | `construct(Game&, int hp_override)`, `getMove(Game&, int owner, int roll)`, `takeTurn(Game&, int owner)` |
+| Events | `EventHooks`, `EventData` | `enter(Game&)`, `choose(Game&, int button_slot)`, `update(Game&)` |
 | Encounters | No base or metadata type | `build(Game&)` |
 | Actions | `ActionHooks`, `ActionData` | `prepare(Game&, Effect&)` for constructor behavior, `execute(Game&, Effect&)` for queued behavior |
 
@@ -87,6 +88,7 @@ payload in that category rather than every unit's payload.
 | Relics | `relic.state.Type` | `relic_initialize_state(relic)` |
 | Potions | `game.run.potion_state[slot].Type` | `potion_initialize_state(game, slot)` |
 | Monsters | `monster.state.Type` | `monster_initialize_state(monster)` |
+| Events | `game.event.state.Type` | `event_initialize_state(game.event)` |
 | Encounters | `game.encounter_state.Type` | `encounter_initialize_state(game)` |
 | Actions | `effect.payload.state.Type` | `action_initialize_state(effect)` |
 
@@ -117,6 +119,38 @@ including ordered histories. The catalog's `excluded` entries are outside the co
 add timers, animation queues or other presentation state to match them. Creature positions used
 for spawn ordering and other rule-read fields remain part of the engine.
 
+## How to add an event
+
+Add one header under `core/events/` and append its `SPIRE_UNIT` row to
+`core/events/catalog.def`. Use `EventHooks` in `spire::units::events`; `EventData` names the
+original Java class relative to `com.megacrit.cardcrawl.` and whether it uses the image dialog.
+Keep the constructor, choices, delayed selection handling and snapshot expressions in that
+header. The event payload lives at `game.event.state.Type` through `SPIRE_STATE`; its budget
+is 64 bytes. `game.event.screen`, `has_focus` and `no_cards` hold the included AbstractEvent
+base fields. A private subclass screen or enum belongs in the tagged payload.
+
+`enter` performs constructor and room-entry behavior. `choose` receives the original enabled
+button's slot, not its position after disabled buttons are filtered out. The shared action
+enumerator retains button order, and the driver maps that action back to its Java slot.
+`room_dialog` and `image_dialog` store disabled bits in slot order; their selected-option
+values survive screen closure. `update` consumes an original delayed card-selection callback.
+Read which Java update method owns that callback before using it; a relic's callback must not
+be claimed by an event. `open_map` implements the event's departure after its final choice.
+
+Map each subclass field with `SPIRE_SNAPSHOT` in the event header. `event_children` serializes
+an ordered list of event-owned objects using a field namespace and child index, preserving
+identity between references. Its field callback is snapshot metadata removed from device
+compilation; it must only read state. Do not implement a choice, consume RNG, or repair state
+in a snapshot expression. GenericEventDialog and RoomEventDialog base objects are emitted by
+the shared serializer. Match the inventory's class and declaring-field names exactly.
+
+Neow is the first event unit. General question-mark room selection, eligibility and event-list
+removal are not yet connected; adding a catalog row currently supplies dispatch and state,
+not an appearance path. When connecting an event, follow the original event/shrine/one-time
+selection call site and record a run that reaches it. Check both comparison scopes, each
+choice and its follow-up screen, and a terminal snapshot. Do not mark the event complete on
+compilation or a unit-only assertion.
+
 ## Device memory budget
 
 The integration target is **32 KiB per Game**. `state.hpp` enforces a **48 KiB hard ceiling**
@@ -126,7 +160,7 @@ fields and prints every `Game` member, its element size/capacity, the element ty
 fields, and every generated unit payload. There is no handwritten member list to keep in sync.
 
 The generator also enforces the largest payload in each category: cards, powers, relics and
-potions 8 bytes each; monsters 32; encounters 16; actions 48. Current maxima are cards 1,
+potions 8 bytes each; monsters 32; encounters 16; actions 48; events 64. Current maxima are cards 1,
 powers 4, relics 4, potions 4, monsters 8 and actions 16 bytes. A field added to one union member
 is paid for by every object of that category. Read the build breakdown before adding state.
 For a larger payload, put bounded storage in a shared Game-owned arena and keep an index in the
@@ -141,6 +175,9 @@ Do not store a host pointer, vector, string, whole card or large per-unit array 
 `Game` owns its storage and remains relocatable by a byte copy. Keep object identity separate
 from an object's current position in an ordered list:
 
+- Reward objects have fixed storage separate from the room and screen index lists. Claiming
+  a reward removes its screen reference and retains the room object, including `isDone` and
+  potion identity. Removing a chest relic changes the room list; it does not shift objects.
 - Dungeon maps store 15 by 7 two-byte nodes: a destination-column bitset plus room kind,
   emerald and taken bits. Edges are enumerated in ascending column order; row 14 points to
   boss row 16. The Ending uses five rows with its original rest/shop/elite/boss/victory layout.

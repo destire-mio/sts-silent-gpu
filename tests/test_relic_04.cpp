@@ -58,27 +58,27 @@ static void chest_rewards() {
     RoomReward last{};
     last.identity = 40;
     last.relic = RelicId::Pear;
-    g.room_rewards.push_back(card);
-    g.room_rewards.push_back(first);
-    g.room_rewards.push_back(link);
-    g.room_rewards.push_back(last);
+    g.reward_objects.push_back(card);
+    g.reward_objects.push_back(first);
+    g.reward_objects.push_back(link);
+    g.reward_objects.push_back(last);
+    for (int i = 0; i < 4; ++i) g.room_rewards.push_back(i);
     relic_onChestOpenAfter(g, 0, true);
     require(g.room_rewards.size == 4 && g.run.relics[0].counter == 1,
         "Nloth's Mask leaves a boss chest untouched");
     relic_onChestOpenAfter(g, 0, false);
-    require(g.room_rewards.size == 2 && g.room_rewards[0].identity == 10 &&
-        g.room_rewards[1].identity == 40 && g.run.relics[0].counter == -2,
+    require(g.room_rewards.size == 2 && g.reward_objects[g.room_rewards[0]].identity == 10 &&
+        g.reward_objects[g.room_rewards[1]].identity == 40 && g.run.relics[0].counter == -2,
         "Nloth's Mask removes the first relic and its adjacent linked reward");
     relic_onChestOpenAfter(g, 0, false);
     require(g.room_rewards.size == 2 && g.run.relics[0].used_up && g.run.relics[0].grayscale,
         "Nloth's Mask consumes one chest and preserves subsequent rewards");
     g.room_rewards.clear();
     first.relic_link = 40;
-    g.room_rewards.push_back(first);
-    g.room_rewards.push_back(link);
-    g.room_rewards.push_back(last);
+    g.reward_objects[1] = first;
+    for (int i = 1; i < 4; ++i) g.room_rewards.push_back(i);
     remove_room_relic_reward(g);
-    require(g.room_rewards.size == 2 && g.room_rewards[0].identity == 30 && g.room_rewards[1].identity == 40,
+    require(g.room_rewards.size == 2 && g.reward_objects[g.room_rewards[0]].identity == 30 && g.reward_objects[g.room_rewards[1]].identity == 40,
         "a nonadjacent linked reward is retained by AbstractRoom.removeOneRelicFromRewards");
 }
 
@@ -152,7 +152,7 @@ static void reward_upgrades() {
     reset(g, 101);
     g.run.card_upgraded_chance = 1.0f;
     add_room_card_reward(g);
-    const RoomReward& reward = g.room_rewards[0];
+    const RoomReward& reward = g.reward_objects[g.room_rewards[0]];
     require(reward.cards.size == 3, "the base card reward contains three choices");
     bool upgraded = false;
     for (int i = 0; i < reward.cards.size; ++i) {
