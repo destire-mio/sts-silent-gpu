@@ -1,0 +1,38 @@
+{
+  "deck": [
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 0
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Deadly Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Poisoned Stab",
+      "upgrades": 0
+    },
+    {
+      "id": "Poisoned Stab",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "The Specimen"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Small Slimes"
+}

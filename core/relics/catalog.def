@@ -21,3 +21,4 @@ SPIRE_UNIT(StrangeSpoon, "Strange Spoon", "core/relics/strange_spoon.hpp", Stran
 SPIRE_UNIT(Strawberry, "Strawberry", "core/relics/strawberry.hpp", Strawberry)
 SPIRE_UNIT(StrikeDummy, "StrikeDummy", "core/relics/strike_dummy.hpp", StrikeDummy)
 SPIRE_UNIT(Sundial, "Sundial", "core/relics/sundial.hpp", Sundial)
+SPIRE_UNIT(TheSpecimen, "The Specimen", "core/relics/the_specimen.hpp", TheSpecimen)
