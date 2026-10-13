@@ -6,3 +6,4 @@ SPIRE_UNIT(AscendersBane, "AscendersBane", "core/cards/ascenders_bane.hpp", Asce
 SPIRE_UNIT(Slimed, "Slimed", "core/cards/slimed.hpp", Slimed)
 SPIRE_UNIT(Dazed, "Dazed", "core/cards/dazed.hpp", Dazed)
 SPIRE_UNIT(Apotheosis, "Apotheosis", "core/cards/apotheosis.hpp", Apotheosis)
+SPIRE_UNIT(Apparition, "Ghostly", "core/cards/apparition.hpp", Apparition)
