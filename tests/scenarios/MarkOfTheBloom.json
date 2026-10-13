@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Bandage Up",
+      "upgrades": 0
+    },
+    {
+      "id": "Bandage Up",
+      "upgrades": 0
+    },
+    {
+      "id": "Bandage Up",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Mark of the Bloom"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 20,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}
