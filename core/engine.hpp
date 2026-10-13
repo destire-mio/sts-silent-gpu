@@ -75,7 +75,7 @@ SPIRE_FN inline void on_draw_or_discard(Game& g) {
 }
 SPIRE_FN inline void move_to_discard(Game& g, int card) {
     remove_queued_card(g, card);
-    card_resetAttributes(g, card);
+    g.cards[card].pending_clear = true;
     card_onMoveToDiscard(g, card);
     g.discard.push_back(card);
     on_draw_or_discard(g);
@@ -357,7 +357,17 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     }
     if (m.pending_base_damage >= 0) m.intent_damage = calculate_intent_damage(g, owner, m.pending_base_damage);
 }
+SPIRE_FN inline void settle_card_moves(Game& g) {
+    // Soul.update clears card powers when its move completes.
+    for (int i = 0; i < g.cards.size; ++i) {
+        if (!g.cards[i].pending_clear) continue;
+        card_clearPowers(g, i);
+        g.cards[i].pending_clear = false;
+    }
+}
 SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
+    // DrawCardAction.update waits for SoulGroup.isActive to become false.
+    settle_card_moves(g);
     if (!effect.flag) { g.drawn_cards.clear(); effect.flag = true; }
     bool blocked = false;
     for (int i = 0; i < g.player.creature.powers.size; ++i)
@@ -464,6 +474,7 @@ SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atStartOfTurnPostDraw(g, powers.at(g.power_objects, i), player_target);
 }
 SPIRE_FN inline void begin_player_turn(Game& g) {
+    settle_card_moves(g);
     for (int i = 0; i < g.monster_order.size; ++i) {
         const int id = g.monster_order[i];
         if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_turn(g, id);
@@ -618,6 +629,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             break;
         }
     }
+    settle_card_moves(g);
     for (int i = 0; i < g.monster_order.size; ++i) {
         Creature& creature = g.monsters[g.monster_order[i]].creature;
         if (creature.dead) {
