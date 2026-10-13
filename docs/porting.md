@@ -103,6 +103,12 @@ and action queues have no finite Java-wide bound; these are asserted execution b
 proof that every future deck or encounter fits. Card damage/block/magic and power amounts
 remain 32-bit. Pile indices and container counts are 16-bit; monster moves are signed bytes.
 
+Runtime card multi-target damage is stored at `game.multi_damage[card_index]`; master-deck
+cards have no calculated target array. `manager.played_cards` stores each play once in order.
+The combat history is `[0, size)`, the current-turn history is `[turn_start, size)`, and repeated
+plays retain the same card index. `combat_types` and `turn_types` hold the corresponding type
+counts. Preserve these shared identities when adding a rule that reads play history.
+
 ## Hook call sites still absent
 
 All gameplay hook names from the four Java base classes have generated declarations and static
@@ -157,8 +163,10 @@ PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py /tmp/spire-n
 
 `SPIRE_PYTHON` and build configuration are described in the root README. The build checks source
 and generated headers against the same device restrictions. Native and host tests establish
-only their covered behavior. A unit is accepted when its original-game traces replay with zero
-differences, including legal actions, card/monster state, queue state and RNG state/counters.
+only their covered behavior. A combat unit is accepted when its original-game scenario traces have zero combat-scope
+differences through the terminal record, including legal actions, every included player/card/
+monster/action field, selection state and all six combat RNG counters/state words. Full-run
+acceptance requires both scopes.
 
 Run all native tests, host tests and the committed combat fixtures with one command:
 
@@ -169,16 +177,30 @@ ctest --test-dir /private/tmp/spire-build --output-on-failure
 The `combat_replay` test compares every committed scenario trace. Add `-V -R '^combat_replay$'`
 to the CTest command to show per-trace results on success as well. The replayer requires schema 2
 and accepts `.jsonl` and `.jsonl.gz` files and directories. Directory discovery selects scenario
-traces; a full-run trace requires an explicit file argument. Each result prints `PASS`
-and its decision count, or `FAIL` with the first differing JSON path and both values. The final
-line counts passing traces and matched decisions, including matching prefixes of failed traces;
-any failure returns exit status 1. A terminal snapshot is compared even when no decisions remain.
+traces; a full-run trace requires an explicit file argument. Each trace prints separate `combat`
+and `run` results, their matching/total decision counts, and the first differing JSON path with
+both values in each failed scope. Both scopes are checked at every decision, including after a
+difference when the recorded action remains legal. The final line counts passing traces and
+matching decision records per scope. Terminal snapshots and reasons must match for a trace to
+pass but do not add a decision to the count. Scenario failures in combat return status 1; run
+scope differences are reported without failing a scenario. Full-run traces require both scopes.
+
+Comparison resolves object references from roots and checks identity with bijective mappings;
+renumbering the object table does not create a difference. Combat includes the whole player,
+monster and manager subtrees, the combat block, screen controls/options, selection state and
+`aiRng`, `shuffleRng`, `cardRandomRng`, `monsterHpRng`, `miscRng`, `unseeded`. Run includes all
+other roots/streams, room reward state, dialogs and reward/shop screen state. Reward-screen
+option identifiers remain combat state. See `docs/design.md` for the exact partition; do not
+move a field between scopes to make a trace pass.
 
 Keep generated batches outside the repository. Add a small representative fixture by lossless
 compression, for example `gzip -n -c /tmp/spire-neutralize/101.jsonl > tests/traces/Neutralize-seed101.jsonl.gz`.
 Keep the original header, scenario, actions and snapshots unchanged.
 
 Never edit a recorded trace, filter comparison fields, relax types or add numeric tolerances to
-make a port pass. Report an apparent oracle error with the first differing JSON path and the
-Java evidence. If required engine state is missing, report the field and implement its source
-behavior; do not substitute a trace value or invent a default.
+make a port pass. An observation omission is fixed in `oracle/java/Snapshot.java` and the field
+catalog by rebuilding with `python3 oracle/build.py`, then re-recording affected scenarios.
+Keep the audited game patches and rule/presentation RNG split unchanged. Report any suspected
+problem in those contracts with the JSON path and Java evidence while continuing other work.
+If engine state is missing, implement its source behavior; do not substitute a trace value or
+invent a default.

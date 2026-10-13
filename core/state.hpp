@@ -6,30 +6,32 @@
 
 namespace spire {
 struct Card {
-    CardId id = CardId::Strike_G;
     uint32_t uuid = 0;
-    int16_t upgrades = 0;
     int misc = 0;
-    int16_t cost = 0;
-    int16_t cost_for_turn = 0;
-    int16_t energy_on_use = 0;
     int base_damage = -1;
     int damage = -1;
     int base_block = -1;
     int block = -1;
     int base_magic = -1;
     int magic = -1;
-    int multi_damage[monster_capacity]{};
+    CardId id = CardId::Strike_G;
+    int16_t upgrades = 0;
+    int16_t cost = 0;
+    int16_t cost_for_turn = 0;
+    int16_t energy_on_use = 0;
     uint8_t multi_damage_count = 0;
-    bool ignore_energy_on_use = false;
-    bool exhaust = false;
-    bool ethereal = false;
-    bool retain = false;
-    bool self_retain = false;
-    bool innate = false;
-    bool free_to_play_once = false;
-    bool exhaust_on_use_once = false;
+    bool ignore_energy_on_use : 1;
+    bool exhaust : 1;
+    bool ethereal : 1;
+    bool retain : 1;
+    bool self_retain : 1;
+    bool innate : 1;
+    bool free_to_play_once : 1;
+    bool exhaust_on_use_once : 1;
     CardState state{};
+    SPIRE_FN constexpr Card()
+        : ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
+          self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false) {}
 };
 using Pile = List<uint16_t, card_capacity>;
 struct Relic { RelicId id = RelicId::SnakeRing; int counter = -1; RelicState state{}; };
@@ -50,10 +52,12 @@ struct Creature {
     int max_hp = 0;
     int block = 0;
     int last_damage_taken = 0;
+    int gold = 0;
     Powers powers{};
     bool dead = false;
     bool dying = false;
     bool escaped = false;
+    bool flip_horizontal = false;
     bool half_dead = false;
 };
 struct Monster {
@@ -73,6 +77,7 @@ struct Monster {
     int16_t damage[3]{};
     uint8_t damage_count = 1;
     int16_t damage_output[3]{};
+    bool damage_modified[3]{};
     int16_t block_amount = 0;
     int16_t magic = 0;
     bool split_triggered = false;
@@ -113,28 +118,26 @@ struct Effect {
 };
 using DamageInfo = Effect;
 struct CardQueueItem { int card = -1; int target = -1; int energy_on_use = 0; };
-struct CardHistory {
+struct PlayedCards {
     uint16_t values[1024]{};
-    int size = 0;
-    uint32_t types[5]{};
-    SPIRE_FN bool empty() const { return size == 0; }
-    SPIRE_FN int first_index() const { return 0; }
-    SPIRE_FN uint16_t operator[](int index) const {
-        SPIRE_ASSERT(index >= first_index() && index < size);
-        return values[index];
-    }
-    SPIRE_FN void push_back(uint16_t card) {
-        SPIRE_ASSERT(size < 1024);
-        values[size++] = card;
-    }
+    uint16_t size = 0;
+    uint16_t turn_start = 0;
+    uint32_t combat_types[5]{};
+    uint32_t turn_types[5]{};
     SPIRE_FN void record(int card, CardType type) {
-        push_back(static_cast<uint16_t>(card));
-        ++types[static_cast<int>(type)];
+        SPIRE_ASSERT(size < 1024);
+        values[size++] = static_cast<uint16_t>(card);
+        ++combat_types[static_cast<int>(type)];
+        ++turn_types[static_cast<int>(type)];
     }
-    SPIRE_FN uint32_t count(CardType type) const { return types[static_cast<int>(type)]; }
+    SPIRE_FN void begin_turn() {
+        turn_start = size;
+        for (int i = 0; i < 5; ++i) turn_types[i] = 0;
+    }
     SPIRE_FN void clear() {
         size = 0;
-        for (int i = 0; i < 5; ++i) types[i] = 0;
+        begin_turn();
+        for (int i = 0; i < 5; ++i) combat_types[i] = 0;
     }
 };
 struct ActionManager {
@@ -144,8 +147,7 @@ struct ActionManager {
     Queue<Effect, action_capacity> pre_turn_actions{};
     Queue<CardQueueItem, 32> card_queue{};
     Queue<int, monster_capacity> monster_queue{};
-    CardHistory cards_played_this_turn{};
-    CardHistory cards_played_this_combat{};
+    PlayedCards played_cards{};
     Phase phase = Phase::WaitingOnUser;
     bool turn_has_ended = false;
     bool monster_attacks_queued = true;
@@ -176,6 +178,7 @@ struct Game {
     UnseededRandom unseeded{0};
     Player player{};
     List<Card, card_capacity> cards{};
+    int multi_damage[card_capacity][monster_capacity]{};
     Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{};
     Pile drawn_cards{};
     List<Monster, monster_capacity> monsters{};

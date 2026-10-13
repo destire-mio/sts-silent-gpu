@@ -26,6 +26,7 @@ def check(path):
         snapshot = row['snapshot']
         objects = snapshot['objects']
         for obj in objects:
+            assert obj['class'] != 'actions.utility.WaitAction', path
             assert set(obj['fields']) == fields(obj['class']), (path, obj['class'])
         if 'action' in row:
             assert row['action'] in row['legal'] and len(row['legal']) > 0
@@ -56,6 +57,6 @@ def check(path):
 
 if __name__ == '__main__':
     paths = sorted((ROOT / 'traces').glob('*.jsonl.gz'))
-    assert len(paths) == 7
+    assert len(paths) == 8
     decisions = sum(check(path) for path in paths)
     print(f'{len(paths)} fixtures, {decisions} decisions: schema, legal membership, terminal and scenario setup passed')

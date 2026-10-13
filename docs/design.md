@@ -129,7 +129,11 @@ can exist. Captured fields of anonymous actions retain their owner references. O
 in the catalog are emitted. Java arrays and lists preserve order;
 Java maps have stringified keys sorted lexicographically. Card UUIDs are replaced by sequential
 integers on first UUID encounter *within that snapshot*, preserving equality between copies.
-Object references and UUID equality are distinct relationships. There are no adapter-owned
+Object references and UUID equality are distinct relationships. A replayer resolves references
+from the roots and compares the resulting graphs; table indices are serialization labels, not
+game state. It maintains forward and reverse identity maps, including across roots, so shared
+objects cannot become copies and distinct objects cannot collapse into one. UUID labels use a
+separate bijection that preserves equality between card copies. There are no adapter-owned
 game objects or queue markers.
 
 Pile `CardGroup.group` order is Java list order: index 0 is the bottom, the last element is the
@@ -142,8 +146,11 @@ animation and sound state are excluded. `AbstractRelic.grayscale` remains: Capta
 Horn Cleat read it. Creature `drawX`/`flipHorizontal`, slime `saveX`, and Hexaghost's attack-cycle
 index remain because spawn ordering, back attacks, splitting and move selection read them.
 Power, relic and monster fields include private subclass counters/references as well as
-base state. `manager.currentAction` and all queues are recorded even at interrupted card-selection
-decisions. Graph references retain the identity of their cards, powers and creatures.
+base state. `manager.currentAction` and all rule actions in queues are recorded even at interrupted
+card-selection decisions. The observer omits exact `WaitAction` queue entries and projects an
+exact `WaitAction` current action to null: its update only advances a presentation timer and has
+no rule callback. Other action classes and their included fields remain in the graph. Graph
+references retain the identity of their cards, powers and creatures.
 
 `RunState` has the following exact keys (Java `AbstractDungeon` names except the final two):
 
@@ -253,9 +260,38 @@ gzip is only a lossless storage envelope; replay compares the decompressed JSONL
 
 ## Tests
 `tests/` replays a trace through the engine: `reset` (or apply scenario setup), then for each line
-compare snapshot and legal actions, then `step` with the recorded action. The first difference is
-reported with its JSON path and both values. One metric tracks the whole project: the share of
-traces that replay with zero differences, split by unit in `inventory/`.
+compare both scopes and legal actions before `step` with the recorded action. Every included
+field belongs to a scope; comparisons within each scope are exact, including types, array order,
+reference identity and all RNG state words. Root traversal avoids unrelated object-table index
+shifts. Identity maps are shared between the two scope comparisons at each snapshot.
+
+- **Combat:** the complete `player` graph, `room.AbstractRoom.monsters` graph, complete `manager`
+  graph, the `combat` block, legal actions, and `aiRng`, `shuffleRng`, `cardRandomRng`,
+  `monsterHpRng`, `miscRng`, `unseeded`. Screen fields belong here except the dialog objects and
+  reward/shop state described below. This includes `type`, `up`, `previous`, `choice`, `options`
+  and the complete active selection graph (`HAND_SELECT`, `GRID`, `CARD_REWARD`). No card,
+  relic, potion, power, monster or action field inside these subtrees is filtered out.
+- **Run:** all other snapshot roots and RNG streams, the room graph excluding only its monster
+  field, `screen.room_dialog`, `screen.image_dialog`, and `screen.state` when the screen type is
+  `COMBAT_REWARD`, `BOSS_REWARD` or `SHOP`. In particular, reward contents are run state while
+  the screen's type and available option identifiers remain combat state at `combat_end`.
+  `globals` belongs to run scope even when it contains references to combat cards; reference
+  identity with the combat graph is checked. New top-level roots belong to run scope until the
+  contract explicitly assigns them elsewhere; new fields under a combat root remain combat.
+
+Both scopes are checked at every decision and terminal record even after earlier differences.
+A recorded action is applied only when it is legal in the engine; otherwise the trace reports
+where replay stopped. A scenario passes when combat matches at every decision and the terminal
+snapshot/reason matches. An explicit full-run trace requires both scopes. Run differences never
+hide a combat result or fail a combat scenario. Each trace prints both scope results and its
+first difference per scope, including the JSON path and both values. Summary counts report
+passing traces and matching decision records per scope; terminal snapshots affect trace success
+but are not counted as decisions. Matching later decisions are counted after an earlier failure.
+
+Observation omissions belong to the oracle implementation: correct the observation code and
+field catalog, rebuild and record fresh traces. Never hand-edit records. Changes to audited game
+patches or the rule/presentation RNG split require an explicit contract change, and suspected
+problems there are reported while independent porting continues.
 
 ## Oracle (`oracle/`)
 Drives the original game logic headless and writes traces; deterministic environment patches are listed in the unseeded inventory. Two kinds:

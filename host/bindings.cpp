@@ -104,7 +104,10 @@ struct Environment {
         return py::cast(std::vector<std::string>(graph.gaps.begin(), graph.gaps.end()));
     }
     py::list legal_actions() const { return legal_snapshot(game); }
-    void step(const py::dict& action) { spire::step(game, parse_action(action)); }
+    void step(const py::dict& action) {
+        spire::step(game, parse_action(action));
+        if (game.screen == Screen::Victory) settle_combat_rewards(game, fresh);
+    }
 };
 
 struct EnvironmentBatch {

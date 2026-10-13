@@ -5,6 +5,65 @@ import re
 from pathlib import Path
 
 
+
+def reward_templates(units, schema):
+    # AbstractCard field initializers and constructor; per-card writes come from the inventory.
+    card_base = {
+        "baseBlock": -1, "baseDamage": -1, "baseDiscard": -1, "baseDraw": -1,
+        "baseHeal": -1, "baseMagicNumber": -1, "block": -1, "damage": -1,
+        "damageType": "NORMAL", "damageTypeForTurn": "NORMAL", "discard": -1,
+        "draw": -1, "heal": -1, "magicNumber": -1, "energyOnUse": 0,
+        "misc": 0, "multiDamage": None, "price": 0, "timesUpgraded": 0,
+        "dontTriggerOnUseCard": False, "exhaust": False, "exhaustOnFire": False,
+        "exhaustOnUseOnce": False, "freeToPlayOnce": False, "ignoreEnergyOnUse": False,
+        "inBottleFlame": False, "inBottleLightning": False, "inBottleTornado": False,
+        "isEthereal": False, "isFlipped": False, "isInAutoplay": False,
+        "isInnate": False, "isMultiDamage": False, "purgeOnUse": False,
+        "retain": False, "returnToHand": False, "selfRetain": False,
+        "shuffleBackIntoDrawPile": False, "upgraded": False,
+    }
+    cards = {}
+    for unit in units:
+        facts = unit["facts"]
+        if unit["kind"] != "card" or facts.get("color") != "GREEN" or facts["rarity"] not in ("COMMON", "UNCOMMON", "RARE"):
+            continue
+        fields = dict(card_base, cardID=unit["game_id"], cost=facts["cost"], costForTurn=facts["cost"])
+        fields.update({key: facts[key] for key in ("color", "rarity", "target", "type", "tags")})
+        fields.update(facts["flags"])
+        constructor = unit["java_class"].rsplit(".", 1)[1]
+        for change in unit["sizing"]["state_changes"]:
+            field = change["field"].removeprefix("this.")
+            if change.get("method") == constructor and field in schema["cards.AbstractCard"]["fields"]:
+                assert change["operation"] == "=" and not change["conditions"]
+                assert isinstance(change["value"], (int, bool, str))
+                fields[field] = change["value"]
+        assert set(fields) | {"uuid"} == set(schema["cards.AbstractCard"]["fields"])
+        cards[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
+                                  "fields": {"AbstractCard." + key: value for key, value in fields.items()}}
+    # Potion getPotency(int) methods; EntropicBrew uses the player's potionSlots.
+    potency = {
+        "Ancient Potion": 1, "AttackPotion": 1, "BlessingOfTheForge": 0, "Block Potion": 12,
+        "ColorlessPotion": 1, "CultistPotion": 1, "CunningPotion": 3, "Dexterity Potion": 2,
+        "DistilledChaos": 3, "DuplicationPotion": 1, "Energy Potion": 2, "EntropicBrew": None,
+        "EssenceOfSteel": 4, "Explosive Potion": 10, "FairyPotion": 30, "FearPotion": 3,
+        "Fire Potion": 20, "Fruit Juice": 5, "GamblersBrew": 0, "GhostInAJar": 1,
+        "LiquidBronze": 3, "LiquidMemories": 1, "Poison Potion": 6, "PowerPotion": 1,
+        "Regen Potion": 5, "SkillPotion": 1, "SmokeBomb": 0, "SneckoOil": 5,
+        "SpeedPotion": 5, "SteroidPotion": 5, "Strength Potion": 2, "Swift Potion": 3,
+        "Weak Potion": 3,
+    }
+    potions = {}
+    for unit in units:
+        if unit["kind"] != "potion":
+            continue
+        fields = {"ID": unit["game_id"], "canUse": False, "potency": potency[unit["game_id"]],
+                  "rarity": unit["facts"]["rarity"], "slot": -1,
+                  "targetRequired": unit["game_id"] in {"FearPotion", "Fire Potion", "Poison Potion", "Weak Potion"}}
+        assert set(fields) == set(schema["potions.AbstractPotion"]["fields"])
+        potions[unit["game_id"]] = {"class": unit["java_class"].removeprefix("com.megacrit.cardcrawl."),
+                                    "fields": {"AbstractPotion." + key: value for key, value in fields.items()}}
+    return {"cards": cards, "potions": potions}
+
 def generate(root, output):
     schema = json.loads((root / "inventory/snapshot-fields.json").read_text())
     units = json.loads((root / "inventory/units.json").read_text())["units"]
@@ -27,7 +86,7 @@ def generate(root, output):
             entries.append(entry)
         metadata[directory] = entries
     output.parent.mkdir(parents=True, exist_ok=True)
-    payload = json.dumps({"schema": schema, "units": metadata}, separators=(",", ":"))
+    payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_templates(units, schema)}, separators=(",", ":"))
     output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n}\n')
 
 

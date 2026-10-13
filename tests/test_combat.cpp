@@ -270,6 +270,35 @@ static void test_terminal_states() {
     require(actions.empty(), "death has no decisions");
 }
 
+static void test_played_card_history() {
+    Game g{};
+    reset(g, 0);
+    auto setup = deck_setup({CardId::Strike_G,CardId::Defend_G});
+    start_combat(g, setup);
+    play(g, CardId::Strike_G, 0);
+    play(g, CardId::Defend_G);
+    const PlayedCards& history = g.manager.played_cards;
+    require(history.size == 2 && history.turn_start == 0 && history.values[0] == 0 && history.values[1] == 1,
+            "played history preserves first-turn card identities and order");
+    step(g, {ActionKind::EndTurn});
+    require(history.size == 2 && history.turn_start == 2 && history.turn_types[0] == 0 && history.turn_types[1] == 0,
+            "new turn clears turn history without losing combat history");
+    play(g, CardId::Strike_G, 0);
+    require(history.size == 3 && history.turn_start == 2 && history.values[2] == history.values[0],
+            "replayed card retains the same identity in both histories");
+    require(history.combat_types[0] == 2 && history.combat_types[1] == 1 &&
+            history.turn_types[0] == 1 && history.turn_types[1] == 0,
+            "combat and turn card-type counts have separate boundaries");
+    step(g, {ActionKind::EndTurn});
+    g.monsters[0].creature.hp = 6;
+    play(g, CardId::Strike_G, 0);
+    require(g.screen == Screen::Victory && history.size == 0 && history.turn_start == 0 &&
+            history.combat_types[0] == 0 && history.combat_types[1] == 0 && history.turn_types[0] == 0,
+            "victory clears both played histories and counts");
+    start_combat(g, setup);
+    require(history.size == 0 && history.turn_start == 0, "new combat begins with empty played histories");
+}
+
 int main() {
     test_default_cultist();
     test_survivor_and_slimed();
@@ -282,5 +311,6 @@ int main() {
     test_damage_hooks();
     test_artifact();
     test_terminal_states();
+    test_played_card_history();
     std::puts("Java-derived combat cases passed (not oracle trace acceptance)");
 }

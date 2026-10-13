@@ -8115,6 +8115,7 @@
     "fields": {
       "bonusGold": "int",
       "cards": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
+      "goldAmt": "int",
       "ignoreReward": "boolean",
       "isDone": "boolean",
       "potion": "com.megacrit.cardcrawl.potions.AbstractPotion",

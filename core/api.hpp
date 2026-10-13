@@ -33,7 +33,7 @@ SPIRE_FN inline Card make_card(CardId, int upgrades = 0, int misc = 0);
 SPIRE_FN inline CardDef card_def(CardId);
 SPIRE_FN inline void apply_card_powers(Game&, int);
 SPIRE_FN inline void calculate_card_damage(Game&, int, int);
-SPIRE_FN inline bool can_play(const Game&, const Card&);
+SPIRE_FN inline bool can_play(const Game&, int);
 SPIRE_FN inline bool card_has_enough_energy_base(const Game&, int);
 SPIRE_FN inline bool card_free_to_play_base(const Game&, int);
 SPIRE_FN inline bool card_can_use_base(const Game&, int, int);

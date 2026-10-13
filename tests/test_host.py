@@ -54,6 +54,32 @@ class HostInterface(unittest.TestCase):
         self.assertEqual([], pile(game.snapshot(), "hand"))
         self.assertEqual([{"type": "end_turn"}], game.legal_actions())
 
+    def test_hand_selection_preserves_card_and_group_identity(self):
+        game = spire.start_combat(11, {
+            "encounter": "Cultist", "relics": [],
+            "deck": [{"id": "Survivor", "upgrades": 0}] * 4,
+        })
+        game.step({"type": "play", "card": 0, "target": -1})
+        state = game.snapshot()
+        self.assertEqual("HAND_SELECT", state["screen"]["type"])
+        self.assertEqual(["Survivor"] * 3, state["screen"]["options"])
+        selection = fields(state, state["screen"]["state"])
+        self.assertEqual(player(state)["AbstractPlayer.hand"], selection["HandCardSelectScreen.hand"])
+        self.assertFalse(selection["HandCardSelectScreen.wereCardsRetrieved"])
+        chosen = fields(state, selection["HandCardSelectScreen.hand"])["CardGroup.group"][0]
+        chosen_uuid = fields(state, chosen)["AbstractCard.uuid"]
+        master_index = [card["AbstractCard.uuid"] for card in pile(state, "masterDeck")].index(chosen_uuid)
+        game.step({"type": "choose", "option": 0})
+        state = game.snapshot()
+        self.assertEqual([], state["screen"]["options"])
+        selection = fields(state, state["screen"]["state"])
+        selected = fields(state, selection["HandCardSelectScreen.selectedCards"])["CardGroup.group"]
+        self.assertEqual([pile(state, "masterDeck")[master_index]["AbstractCard.uuid"]],
+                         [fields(state, card)["AbstractCard.uuid"] for card in selected])
+        self.assertEqual([{"type": "proceed"}], game.legal_actions())
+        game.step({"type": "proceed"})
+        self.assertEqual("NONE", game.snapshot()["screen"]["type"])
+
     def test_signed_java_seed(self):
         game = spire.start_combat(-1, {"encounter": "Cultist"})
         self.assertEqual(-1, game.snapshot()["run"]["seed"])
@@ -86,10 +112,14 @@ class HostInterface(unittest.TestCase):
             self.assertLess(decisions, 10)
         records.append({"snapshot": game.snapshot(), "terminal": "death"})
         self.assertEqual("DEATH", game.snapshot()["screen"]["type"])
+        self.assertEqual("DEATH", game.snapshot()["screen"]["choice"])
         with tempfile.TemporaryDirectory() as temporary:
             trace = Path(temporary) / "self_trace.jsonl"
             trace.write_text("".join(json.dumps(record) + "\n" for record in records))
-            self.assertEqual(decisions, replay(trace, spire))
+            result = replay(trace, spire)
+            self.assertTrue(result.passed)
+            self.assertEqual(decisions, result.decisions)
+            self.assertEqual(decisions, result.scopes["combat"].matched_decisions)
 
     def test_all_encounters_reach_terminal(self):
         policy = random.Random(12)

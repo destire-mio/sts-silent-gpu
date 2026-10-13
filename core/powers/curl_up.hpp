@@ -12,6 +12,7 @@ struct CurlUp : PowerHooks {
             Effect e{};
             e.kind = EffectKind::RemovePower;
             e.target = owner;
+            e.source = owner;
             e.power = PowerId::CurlUp;
             add_bottom(g, e);
         }

@@ -41,7 +41,7 @@ int main() {
         require(run.monsterList == std::vector<std::string>{"Cultist", "Jaw Worm", "Small Slimes", "Exordium Wildlife", "2 Fungi Beasts", "3 Louse", "Looter", "Exordium Thugs", "Lots of Slimes", "3 Louse", "Blue Slaver", "Red Slaver", "2 Fungi Beasts", "Looter", "Exordium Wildlife", "Blue Slaver"}, "weak/strong weighted roll order");
         require(run.eliteMonsterList == std::vector<std::string>{"Gremlin Nob", "3 Sentries", "Lagavulin", "3 Sentries", "Gremlin Nob", "Lagavulin", "Gremlin Nob", "Lagavulin", "Gremlin Nob", "3 Sentries"}, "elite repeat rejection");
         require(run.bossList == std::vector<std::string>{"The Guardian", "The Guardian"}, "fresh boss profile");
-        require(run.relicsToRemoveOnStart == std::vector<std::string>{"Burning Blood", "Burning Blood", "Ring of the Snake", "Ring of the Snake", "Cracked Core", "Cracked Core", "PureWater", "PureWater", "Burning Blood", "Burning Blood", "Ring of the Snake", "Ring of the Snake", "Cracked Core", "Cracked Core", "PureWater", "PureWater", "Ring of the Snake", "Ring of the Snake"}, "cold-menu relic exclusion order");
+        require(run.relicsToRemoveOnStart == std::vector<std::string>{"Burning Blood", "Ring of the Snake", "Cracked Core", "PureWater", "Burning Blood", "Ring of the Snake", "Cracked Core", "PureWater", "Ring of the Snake"}, "cold-menu relic exclusion order");
         const auto& emerald = run.map[12][1];
         require(emerald.room == "MonsterRoomElite" && emerald.emerald && emerald.edges == std::vector<std::array<int, 2>>{{1, 13}, {2, 13}}, "emerald elite and ordered outgoing edges");
         require(run.map[4][3].room.empty() && run.map[4][3].edges.empty(), "unconnected map room stays null");

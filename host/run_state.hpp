@@ -1,5 +1,6 @@
 #pragma once
 #include "core/state.hpp"
+#include "card_pool_data.hpp"
 #include <algorithm>
 #include <array>
 #include <string>
@@ -21,6 +22,12 @@ struct FreshRunState {
     std::vector<std::string> eventList, shrineList, specialOneTimeEventList;
     std::vector<std::string> commonRelicPool, uncommonRelicPool, rareRelicPool;
     std::vector<std::string> shopRelicPool, bossRelicPool, relicsToRemoveOnStart;
+    std::vector<std::string> rewardTypes, rewardCards;
+    std::string rewardPotion;
+    int rewardGold = 0;
+    int stolenGold = 0;
+    int blizzardPotionMod = 0;
+    int cardBlizzRandomizer = 5;
 };
 
 inline void initialize_monster_lists(Random& rng, FreshRunState& run) {
@@ -362,20 +369,95 @@ inline void initialize_relic_pools(Random& rng, FreshRunState& run) {
     }
 }
 
+inline void settle_combat_rewards(Game& game, FreshRunState& run) {
+    bool escaped = true;
+    for (int i = 0; i < game.monster_order.size; ++i) {
+        const Monster& monster = game.monsters[game.monster_order[i]];
+        escaped &= monster.creature.escaped;
+        if (monster.id == MonsterId::Looter && monster.creature.dead)
+            run.stolenGold += monster.state.Looter.stolenGold;
+    }
+    if (run.stolenGold > 0) run.rewardTypes.push_back("STOLEN_GOLD");
+    if (!escaped) {
+        run.rewardGold = game.rng.treasure.random(10, 20);
+        run.rewardTypes.push_back("GOLD");
+    }
+    struct Potion { const char* id; int rarity; };
+    constexpr Potion potions[] = {
+        {"Poison Potion", 0},
+        {"CunningPotion", 1},
+        {"GhostInAJar", 2},
+        {"Block Potion", 0},
+        {"Dexterity Potion", 0},
+        {"Energy Potion", 0},
+        {"Explosive Potion", 0},
+        {"Fire Potion", 0},
+        {"Strength Potion", 0},
+        {"Swift Potion", 0},
+        {"Weak Potion", 0},
+        {"FearPotion", 0},
+        {"AttackPotion", 0},
+        {"SkillPotion", 0},
+        {"PowerPotion", 0},
+        {"ColorlessPotion", 0},
+        {"SteroidPotion", 0},
+        {"SpeedPotion", 0},
+        {"BlessingOfTheForge", 0},
+        {"Regen Potion", 1},
+        {"Ancient Potion", 1},
+        {"LiquidBronze", 1},
+        {"GamblersBrew", 1},
+        {"EssenceOfSteel", 1},
+        {"DuplicationPotion", 1},
+        {"DistilledChaos", 1},
+        {"LiquidMemories", 1},
+        {"CultistPotion", 2},
+        {"Fruit Juice", 2},
+        {"SneckoOil", 2},
+        {"FairyPotion", 2},
+        {"SmokeBomb", 2},
+        {"EntropicBrew", 2},
+    };
+    const int chance = escaped ? 0 : 40 + run.blizzardPotionMod;
+    if (game.rng.potion.random(0, 99) < chance) {
+        const int roll = game.rng.potion.random(0, 99);
+        const int rarity = roll < 65 ? 0 : roll < 90 ? 1 : 2;
+        int index;
+        do { index = game.rng.potion.random(32); } while (potions[index].rarity != rarity);
+        run.rewardPotion = potions[index].id;
+        run.rewardTypes.push_back("POTION");
+        run.blizzardPotionMod -= 10;
+    } else run.blizzardPotionMod += 10;
+    const char* const* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
+    const int pool_sizes[] = {static_cast<int>(std::size(common_card_pool)), static_cast<int>(std::size(uncommon_card_pool)), static_cast<int>(std::size(rare_card_pool))};
+    std::array<int, 3> rarities{};
+    for (int i = 0; i < 3; ++i) {
+        const int roll = game.rng.card.random(99) + run.cardBlizzRandomizer;
+        const int rarity = roll < 3 ? 2 : roll < 40 ? 1 : 0;
+        rarities[i] = rarity;
+        if (rarity == 2) run.cardBlizzRandomizer = 5;
+        if (rarity == 0) run.cardBlizzRandomizer = std::max(-40, run.cardBlizzRandomizer - 1);
+        std::string card;
+        do { card = pools[rarity][game.rng.card.random(pool_sizes[rarity] - 1)]; }
+        while (std::find(run.rewardCards.begin(), run.rewardCards.end(), card) != run.rewardCards.end());
+        run.rewardCards.push_back(card);
+    }
+    for (const int rarity : rarities) if (rarity != 2) game.rng.card.randomBoolean(0.0f);
+    run.rewardTypes.push_back("CARD");
+}
+
 inline void initialize_fresh_run(Game& game, FreshRunState& run) {
     run = FreshRunState{};
     initialize_monster_lists(game.rng.monster, run);
     run.eventList = {"Big Fish", "The Cleric", "Dead Adventurer", "Golden Idol", "Golden Wing", "World of Goop", "Liars Game", "Living Wall", "Mushrooms", "Scrap Ooze", "Shining Light"};
     run.shrineList = {"Match and Keep!", "Golden Shrine", "Transmorgrifier", "Purifier", "Upgrade Shrine", "Wheel of Change"};
     run.specialOneTimeEventList = {"Accursed Blacksmith", "Bonfire Elementals", "Designer", "Duplicator", "FaceTrader", "Fountain of Cleansing", "Knowing Skull", "Lab", "N'loth", "SecretPortal", "The Joust", "WeMeetAgain", "The Woman in Blue"};
-    // BaseMod.publishPostCreateStartingRelics and AbstractPlayer.initializeStarterRelics both append.
+    // CharacterManager and CharacterSelectScreen each construct the four characters.
     for (int creation = 0; creation < 2; ++creation) {
         for (const char* relic : {"Burning Blood", "Ring of the Snake", "Cracked Core", "PureWater"}) {
             run.relicsToRemoveOnStart.push_back(relic);
-            run.relicsToRemoveOnStart.push_back(relic);
         }
     }
-    run.relicsToRemoveOnStart.push_back("Ring of the Snake");
     run.relicsToRemoveOnStart.push_back("Ring of the Snake");
     initialize_relic_pools(game.rng.relic, run);
     game.rng.reseed_map(game.run.seed, 1);

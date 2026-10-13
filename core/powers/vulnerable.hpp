@@ -12,6 +12,7 @@ struct Vulnerable : PowerHooks {
         Effect e{};
         e.kind = p.amount == 0 ? EffectKind::RemovePower : EffectKind::ReducePower;
         e.target = owner;
+        e.source = owner;
         e.power = PowerId::Vulnerable;
         e.amount = 1;
         add_bottom(g, e);

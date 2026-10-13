@@ -41,7 +41,7 @@ final class Snapshot {
         fields("screens.CombatRewardScreen", "rewards hasTakenAll mug smoke");
         fields("screens.select.BossRelicSelectScreen", "isDone relics blights");
         fields("shop.ShopScreen", "isActive coloredCards colorlessCards relics potions purgeAvailable");
-        fields("rewards.RewardItem", "type gold bonusGold relic potion cards isDone ignoreReward relicLink redText");
+        fields("rewards.RewardItem", "type goldAmt bonusGold relic potion cards isDone ignoreReward relicLink redText");
     }
 
     static final Map<String, String> EXCLUDED = new TreeMap<String, String>();
@@ -305,6 +305,8 @@ final class Snapshot {
 
     JsonElement value(Object value) throws Exception {
         if (value == null) return JsonNull.INSTANCE;
+        // WaitAction.update only ticks duration; subclasses may have rule callbacks.
+        if (value.getClass() == com.megacrit.cardcrawl.actions.utility.WaitAction.class) return JsonNull.INSTANCE;
         if (value instanceof Number) return new JsonPrimitive((Number)value);
         if (value instanceof Boolean) return new JsonPrimitive((Boolean)value);
         if (value instanceof Character || value instanceof String || value instanceof Enum<?>) return new JsonPrimitive(value.toString());
@@ -321,7 +323,10 @@ final class Snapshot {
         }
         if (value instanceof Collection<?>) {
             JsonArray array = new JsonArray();
-            for (Object item : (Collection<?>)value) array.add(value(item));
+            for (Object item : (Collection<?>)value) {
+                if (item != null && item.getClass() == com.megacrit.cardcrawl.actions.utility.WaitAction.class) continue;
+                array.add(value(item));
+            }
             return array;
         }
         if (value instanceof Map<?, ?>) {

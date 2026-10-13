@@ -10,6 +10,7 @@ struct Entangled : PowerHooks {
         Effect e{};
         e.kind = EffectKind::RemovePower;
         e.target = owner;
+        e.source = owner;
         e.power = PowerId::Entangled;
         add_bottom(g, e);
     }

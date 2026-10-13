@@ -79,7 +79,9 @@ SPIRE_FN inline void queue_monster_roll(Game& g, int index) {
 SPIRE_FN inline void queue_slimed(Game& g, int amount) {
     Effect e{};
     e.kind = EffectKind::AddCardDiscard;
-    e.card = static_cast<int>(CardId::Slimed);
+    e.card = g.cards.size;
+    g.cards.push_back(make_card(CardId::Slimed));
+    g.cards[e.card].uuid = e.card + 1;
     e.amount = amount;
     add_bottom(g, e);
 }

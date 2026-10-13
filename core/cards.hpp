@@ -37,8 +37,8 @@ SPIRE_FN inline bool card_can_use_base(const Game& g, int card_id, int target) {
     }
     return card_cardPlayable(g, card_id, target) && card_hasEnoughEnergy(g, card_id);
 }
-SPIRE_FN inline bool can_play(const Game& g, const Card& card) {
-    return card_canUse(g, static_cast<int>(&card - g.cards.values), no_target);
+SPIRE_FN inline bool can_play(const Game& g, int card) {
+    return card_canUse(g, card, no_target);
 }
 SPIRE_FN inline Card stat_equivalent_copy(const Game& g, int card_id) {
     const Card& source = g.cards[card_id];
@@ -90,9 +90,9 @@ SPIRE_FN inline void calculate_card_damage(Game& g, int card_id, int target) {
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int owner = g.monster_order[i];
             const Creature& monster = g.monsters[owner].creature;
-            c.multi_damage[i] = card_damage_value(g, card_id, monster.dying || monster.escaped ? no_target : owner);
+            g.multi_damage[card_id][i] = card_damage_value(g, card_id, monster.dying || monster.escaped ? no_target : owner);
         }
-        c.damage = c.multi_damage[0];
+        c.damage = g.multi_damage[card_id][0];
     }
 }
 SPIRE_FN inline void queue_card_damage(Game& g, int card, int target) {

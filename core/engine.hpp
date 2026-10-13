@@ -175,7 +175,11 @@ SPIRE_FN inline void damage(Game& g, const Effect& e) {
     Creature& target = get_creature(g, e.target);
     if (!alive(target)) return;
     if (e.damage_type != DamageType::Thorns && e.source != no_target && !alive(get_creature(g, e.source))) return;
-    if (e.extra != 0) g.run.gold -= min(g.run.gold, e.extra);
+    if (e.extra != 0) {
+        const int stolen = min(g.run.gold, e.extra);
+        g.run.gold -= stolen;
+        if (e.source >= 0) get_creature(g, e.source).gold += stolen;
+    }
     if (e.target == player_target) player_damage(g, e);
     else {
         monster_damage(g, e.target, e);
@@ -204,19 +208,25 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     const Powers& target = g.player.creature.powers;
     for (int d = 0; d < m.damage_count; ++d) {
         float value = static_cast<float>(m.damage[d]);
+        bool modified = false;
         for (int i = 0; i < source.size; ++i) {
             value = power_atDamageGive(g, source[i], owner, value, DamageType::Normal, -1);
+            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
             value = power_atDamageReceive(g, target[i], player_target, value, DamageType::Normal, -1);
+            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < source.size; ++i) {
             value = power_atDamageFinalGive(g, source[i], owner, value, DamageType::Normal, -1);
+            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         for (int i = 0; i < target.size; ++i) {
             value = power_atDamageFinalReceive(g, target[i], player_target, value, DamageType::Normal, -1);
+            if (m.damage[d] != static_cast<int>(value)) modified = true;
         }
         m.damage_output[d] = max(0, floor_int(value));
+        m.damage_modified[d] = modified;
     }
     if (m.pending_base_damage >= 0) m.intent_damage = calculate_damage(g, owner, player_target, m.pending_base_damage);
 }
@@ -344,7 +354,7 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     ++g.turn;
     g.manager.turn_has_ended = false;
     g.manager.total_discarded_this_turn = 0;
-    g.manager.cards_played_this_turn.clear();
+    g.manager.played_cards.begin_turn();
     g.manager.damage_received_this_turn = 0;
     g.player.creature.block = 0;
     recharge_energy(g);
@@ -378,12 +388,23 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 g.cards[queued.card].energy_on_use = queued.energy_on_use;
                 play_card_hooks(g, queued.card, queued.target);
                 ++g.player.cards_played_this_turn;
-                g.manager.cards_played_this_turn.record(queued.card, card_def(g.cards[queued.card].id).type);
-                g.manager.cards_played_this_combat.record(queued.card, card_def(g.cards[queued.card].id).type);
+                g.manager.played_cards.record(queued.card, card_def(g.cards[queued.card].id).type);
                 use_card(g, queued.card, queued.target);
             }
         } else if (g.battle_over) {
             on_victory(g);
+            g.manager.actions.clear();
+            g.manager.pre_turn_actions.clear();
+            g.manager.has_current_action = false;
+            g.manager.card_queue.clear();
+            g.manager.played_cards.clear();
+            g.manager.energy_gained_this_combat = 0;
+            g.manager.damage_received_this_combat = 0;
+            g.manager.damage_received_this_turn = 0;
+            g.manager.hp_loss_this_combat = 0;
+            g.manager.turn_has_ended = false;
+            g.manager.total_discarded_this_turn = 0;
+            g.turn = 1;
             g.screen = Screen::Victory;
             g.manager.phase = Phase::WaitingOnUser;
             break;
@@ -509,7 +530,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     if (g.screen != Screen::Combat) return;
     for (int i = 0; i < g.hand.size; ++i) {
         const Card& card = g.cards[g.hand[i]];
-        if (!can_play(g, card)) continue;
+        if (!can_play(g, g.hand[i])) continue;
         if (card_def(card.id).target == CardTarget::Enemy) {
             for (int j = 0; j < g.monster_order.size; ++j) {
                 if (alive(g.monsters[g.monster_order[j]].creature) && card_canUse(g, g.hand[i], g.monster_order[j])) actions.push_back({ActionKind::Play, i, j});
@@ -554,7 +575,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
         } else {
             SPIRE_ASSERT(action.kind == ActionKind::Play);
             const int card = g.hand[action.index];
-            SPIRE_ASSERT(can_play(g, g.cards[card]));
+            SPIRE_ASSERT(can_play(g, card));
             int target = no_target;
             if (card_def(g.cards[card].id).target == CardTarget::Enemy) {
                 target = g.monster_order[action.target];

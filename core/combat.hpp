@@ -92,6 +92,7 @@ SPIRE_FN inline void queue_damage(Game& g, int source, int target, int base, Dam
 SPIRE_FN inline void queue_block(Game& g, int target, int amount) {
     Effect e{};
     e.kind = EffectKind::Block;
+    e.source = target;
     e.target = target;
     e.amount = amount;
     add_bottom(g, e);
