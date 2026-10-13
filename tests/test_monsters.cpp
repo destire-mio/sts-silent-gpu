@@ -211,6 +211,20 @@ void looter_bookkeeping() {
     CHECK(g.monsters[0].creature.escaped);
 }
 
+void suicide_preserves_boss_progress() {
+    constexpr bool triggers[]{false, true};
+    for (bool trigger_relics : triggers) {
+        Game g{};
+        g.rng.generate_seeds(42);
+        append_monster(g, construct_monster(g, MonsterId::Hexaghost));
+        queue_suicide(g, 0, trigger_relics);
+        execute_next(g);
+        CHECK(g.monsters[0].creature.hp == 0);
+        CHECK(g.monsters[0].creature.dying);
+        CHECK(g.run.boss_count == 0);
+    }
+}
+
 int main() {
     encounter_construction();
     forced_move_history();
@@ -219,5 +233,6 @@ int main() {
     shield_targeting();
     lethal_attack_keeps_published_intent();
     looter_bookkeeping();
+    suicide_preserves_boss_progress();
     std::puts("monster checks passed");
 }
