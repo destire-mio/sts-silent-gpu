@@ -19,3 +19,4 @@ SPIRE_UNIT(Enlightenment, "Enlightenment", "core/cards/enlightenment.hpp", Enlig
 SPIRE_UNIT(Finesse, "Finesse", "core/cards/finesse.hpp", Finesse)
 SPIRE_UNIT(FlashOfSteel, "Flash of Steel", "core/cards/flash_of_steel.hpp", FlashOfSteel)
 SPIRE_UNIT(Forethought, "Forethought", "core/cards/forethought.hpp", Forethought)
+SPIRE_UNIT(GoodInstincts, "Good Instincts", "core/cards/good_instincts.hpp", GoodInstincts)
