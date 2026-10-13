@@ -6,7 +6,10 @@ struct SlaverRed : MonsterHooks {
     SPIRE_STATE(SlaverRed, int16_t VULN_AMT; int16_t scrapeDmg; int16_t stabDmg; bool firstTurn; bool usedEntangle;)
     SPIRE_FN static constexpr MonsterData data() { return {48, 52, {14, 9}, 0, 2, 2}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
-        Monster m = make_monster(g, MonsterId::SlaverRed, data(), hp_override);
+        MonsterData stats = data();
+        if (g.run.ascension < 7) { stats.hp_min = 46; stats.hp_max = 50; }
+        if (g.run.ascension < 2) { stats.damage[0] = 13; stats.damage[1] = 8; }
+        Monster m = make_monster(g, MonsterId::SlaverRed, stats, hp_override);
         m.state.SlaverRed.VULN_AMT = 1;
         m.state.SlaverRed.scrapeDmg = m.damage[1];
         m.state.SlaverRed.stabDmg = m.damage[0];
@@ -19,7 +22,7 @@ struct SlaverRed : MonsterHooks {
             m.state.SlaverRed.firstTurn = false;
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         } else if (num >= 75 && !m.state.SlaverRed.usedEntangle) set_monster_move(g, index, 2, Intent::StrongDebuff);
-        else if ((num >= 55 && m.state.SlaverRed.usedEntangle && !last_two_moves(m, 1)) || last_move(m, 3))
+        else if ((num >= 55 && m.state.SlaverRed.usedEntangle && !last_two_moves(m, 1)) || (g.run.ascension >= 17 ? last_move(m, 3) : last_two_moves(m, 3)))
             set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         else set_monster_move(g, index, 3, Intent::AttackDebuff, m.damage[1]);
     }
@@ -30,7 +33,7 @@ struct SlaverRed : MonsterHooks {
             m.state.SlaverRed.usedEntangle = true;
         } else {
             queue_damage(g, index, player_target, m.damage[m.move == 1 ? 0 : 1]);
-            if (m.move == 3) queue_power(g, index, player_target, PowerId::Vulnerable, m.state.SlaverRed.VULN_AMT + 1, true);
+            if (m.move == 3) queue_power(g, index, player_target, PowerId::Vulnerable, m.state.SlaverRed.VULN_AMT + (g.run.ascension >= 17 ? 1 : 0), true);
         }
         queue_monster_roll(g, index);
     }
