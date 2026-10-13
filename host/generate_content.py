@@ -121,7 +121,7 @@ for name in ("tookDamage", "didDiscard", "onMoveToDiscard", "triggerWhenDrawn",
              "triggerAtStartOfTurn", "atTurnStart", "atTurnStartPreDraw", "onChoseThisOption", "onRetained",
              "triggerOnExhaust"):
     card(name)
-card("triggerOnEndOfPlayerTurn", body="if (g.cards[card].ethereal) { Effect e{}; e.kind = EffectKind::ExhaustCard; e.card = card; add_top(g, e); }")
+card("triggerOnEndOfPlayerTurn", body="if (g.cards[card].ethereal) { Effect e{}; e.kind = EffectKind::ExhaustCard; action_initialize_state(e); e.card = card; add_top(g, e); }")
 for name in ("triggerOnOtherCardPlayed", "triggerOnCardPlayed"):
     card(name, "int other_card")
 card("switchedStance")
@@ -157,7 +157,7 @@ for name in ("takeTurn", "usePreBattleAction", "useUniversalPreBattleAction", "o
     hook("monsters", name, "Game& g, int owner", body=body)
 hook("monsters", "split", "Game& g, int owner", body="SPIRE_ASSERT(false);")
 hook("monsters", "getMove", "Game& g, int owner, int num")
-hook("monsters", "changeState", "Game& g, int owner, int state")
+hook("monsters", "changeState", "Game& g, int owner, const char* state")
 hook("monsters", "heal", "Game& g, int owner, int amount", body="heal_creature(g, owner, amount);")
 hook("monsters", "damage", "Game& g, int owner, const DamageInfo& info", body="monster_damage_base(g, owner, info);")
 hook("monsters", "die", "Game& g, int owner, bool trigger_relics = true", body="monster_die_base(g, owner, trigger_relics);")

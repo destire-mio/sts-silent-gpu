@@ -98,13 +98,13 @@ SPIRE_FN inline void queue_block(Game& g, int target, int amount) {
     add_bottom(g, e);
 }
 SPIRE_FN inline void queue_power(Game& g, int source, int target, PowerId id, int amount, bool monster_source) {
-    if (monsters_basically_dead(g)) return;
     Power power{};
     power.id = id;
     power.amount = amount;
     power_initFromSource(g, power, target, monster_source);
     Effect e{};
     e.kind = EffectKind::ApplyPower;
+    action_initialize_state(e);
     e.source = source;
     e.target = target;
     e.power = id;
@@ -141,6 +141,7 @@ SPIRE_FN inline void remove_power(Game& g, int target, PowerId id) {
     }
 }
 SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power incoming, int amount) {
+    if (target == no_target) return;
     const PowerId id = incoming.id;
     Creature& c = get_creature(g, target);
     if (c.dying || c.half_dead || (target != player_target && c.escaped)) return;
@@ -150,20 +151,26 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
         Powers& powers = get_creature(g, source).powers;
         for (int i = 0; i < powers.size; ++i) power_onApplyPower(g, powers[i], source, incoming, target, source);
     }
+    if (target != player_target && (c.dying || c.half_dead || c.escaped)) return;
     const int artifact = find_power(c, PowerId::Artifact);
     if (artifact >= 0 && power_isDebuff(incoming, target)) {
         power_onSpecificTrigger(g, c.powers[artifact], target);
         return;
     }
-    if (existing >= 0) {
-        power_stackPower(g, c.powers[existing], target, amount);
-    } else {
+    bool stacked = false;
+    for (int i = 0; i < c.powers.size; ++i) {
+        if (c.powers[i].id != id) continue;
+        power_stackPower(g, c.powers[i], target, amount);
+        stacked = true;
+        refresh_powers(g);
+    }
+    if (!stacked) {
         int index = c.powers.size;
         while (index > 0 && power_data(c.powers[index - 1].id).priority > power_data(id).priority) --index;
         c.powers.insert(index, incoming);
         power_onInitialApplication(g, c.powers[index], target);
+        refresh_powers(g);
     }
-    refresh_powers(g);
 }
 SPIRE_FN inline void apply_power(Game& g, int source, int target, PowerId id, int amount, bool just_applied) {
     Power incoming{};

@@ -179,7 +179,7 @@ struct Game {
     Player player{};
     List<Card, card_capacity> cards{};
     int multi_damage[card_capacity][monster_capacity]{};
-    Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{};
+    Pile hand{}, draw{}, discard{}, exhaust{}, limbo{}, retained{}, selected_cards{};
     Pile drawn_cards{};
     List<Monster, monster_capacity> monsters{};
     List<int, monster_capacity> monster_order{};
@@ -190,8 +190,12 @@ struct Game {
     int turn = 1;
     int discard_remaining = 0;
     int discard_action_num = 0;
+    int exhaust_action_num = 0;
     int selection_amount = 0;
+    bool selection_any_number = false;
+    bool selection_can_pick_zero = false;
     bool selected_cards_retrieved = false;
+    bool end_turn_enabled = true;
     bool battle_over = false;
     bool mugged = false;
 };
