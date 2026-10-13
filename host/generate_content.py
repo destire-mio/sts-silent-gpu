@@ -219,6 +219,14 @@ def generate(root, output):
         content += [f'#include "{path}"' for _, _, path, _ in entries]
     content.append('namespace spire {')
     inventory = json.loads((root / 'inventory/units.json').read_text())['units']
+    events = [unit for unit in inventory if unit['kind'] == 'event']
+    ids.append('enum class EventKey : uint8_t { ' + ', '.join(unit['java_class'].rsplit('.', 1)[1] for unit in events) + ', Count };')
+    declarations.append('SPIRE_FN inline const char* event_key_name(EventKey key);')
+    content.append('SPIRE_FN inline const char* event_key_name(EventKey key) { switch (key) {')
+    for unit in events:
+        name = unit['java_class'].rsplit('.', 1)[1]
+        content.append(f'case EventKey::{name}: return ' + json.dumps(unit['game_id']) + ';')
+    content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
     declarations += ['SPIRE_FN inline CardRarity card_rarity(CardId id);',
                      'SPIRE_FN inline int card_sort_order(CardId id);']
     card_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'card'}
@@ -253,11 +261,23 @@ def generate(root, output):
     for unit, _, _, typename in catalogs['relics']:
         content.append(f'case RelicId::{unit}: return units::relics::{typename}::canSpawn(g, -1);')
     content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
-    content.append('struct RelicLibraryEntry { const char* id; const char* tier; };')
+    ordered_relics = []
     for pool in ('shared', 'green'):
-        content.append(f'constexpr RelicLibraryEntry {pool}_relic_library[] = {{')
-        for unit in sorted((u for u in relic_inventory if u['facts']['pool'] == pool), key=lambda u: u['facts']['library_order']):
-            content.append('{' + json.dumps(unit['game_id']) + ', ' + json.dumps(unit['facts']['tier']) + '},')
+        entries = sorted((u for u in relic_inventory if u['facts']['pool'] == pool), key=lambda u: u['facts']['library_order'])
+        capacity = 16
+        while len(entries) > capacity * 3 // 4:
+            capacity *= 2
+        def bucket(unit):
+            value = 0
+            for char in unit['game_id']:
+                value = (value * 31 + ord(char)) & 0xffffffff
+            return (value ^ (value >> 16)) & (capacity - 1)
+        ordered_relics.extend(sorted(entries, key=bucket))
+    for tier in ('COMMON', 'UNCOMMON', 'RARE', 'SHOP', 'BOSS'):
+        content.append(f'constexpr RelicKey initial_{tier.lower()}_relic_pool[] = {{')
+        for unit in ordered_relics:
+            if unit['facts']['tier'] == tier:
+                content.append('RelicKey::' + unit['java_class'].rsplit('.', 1)[1] + ',')
         content.append('};')
     potion_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'potion'}
     potion_pool = next(unit['facts']['silent_pool'] for unit in inventory if unit['key'] == 'rule:helpers.PotionHelper')

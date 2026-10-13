@@ -90,12 +90,11 @@ struct Environment {
     void reset(std::int64_t seed) {
         spire::reset(game, seed);
         fresh = FreshRunState{};
-        initialize_fresh_run(game, fresh);
+        initialize_fresh_run(fresh);
     }
     void start_combat(std::int64_t seed, const py::dict& scenario) {
         reset(seed);
         const auto setup = parse_setup(game, scenario);
-        fresh.monsterList[0] = encounter_names[static_cast<int>(setup.encounter)];
         spire::start_combat(game, setup);
     }
     py::dict snapshot() const { return SnapshotGraph{game}.capture(fresh); }

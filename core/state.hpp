@@ -244,6 +244,13 @@ struct ActionManager {
     int player_hp_last_turn = 0;
     int energy_gained_this_combat = 0;
 };
+struct MapNode {
+    uint8_t edges = 0;
+    RoomKind room : 4;
+    bool emerald : 1;
+    bool taken : 1;
+    SPIRE_FN constexpr MapNode() : room(RoomKind::Empty), emerald(false), taken(false) {}
+};
 struct Run {
     uint64_t seed = 0;
     int floor = 0;
@@ -256,6 +263,14 @@ struct Run {
     bool ruby_key = false;
     bool emerald_key = false;
     bool sapphire_key = false;
+    MapNode map[15][7]{};
+    List<EncounterId, 16> monster_list{};
+    List<EncounterId, 10> elite_list{};
+    List<EncounterId, 3> boss_list{};
+    EncounterId boss_key = EncounterId::TheGuardian;
+    List<EventKey, 16> event_list{};
+    List<EventKey, 8> shrine_list{};
+    List<EventKey, 16> special_events{};
     List<Card, master_deck_capacity> master_deck{};
     List<uint8_t, card_pool_capacity> source_card_pools[4]{};
     List<Relic, 64> relics{};

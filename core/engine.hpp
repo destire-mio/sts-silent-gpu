@@ -3,6 +3,7 @@
 #include "monsters.hpp"
 #include "lifecycle.hpp"
 #include "card_pool.hpp"
+#include "dungeon.hpp"
 
 namespace spire {
 SPIRE_FN inline bool potion_can_discard_base(const Game& g, int) {
@@ -780,12 +781,14 @@ SPIRE_FN inline void reset(Game& g, uint64_t seed) {
     // AbstractDungeon.initializeCardPools copies each pool to its source pool with addToBottom.
     for (int p = 0; p < 4; ++p)
         for (int i = pool_sizes[p] - 1; i >= 0; --i) g.run.source_card_pools[p].push_back(i);
+    initialize_dungeon(g);
 }
 SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     if (g.fault != 0) return;
     bind_fault(g);
     g.run.floor = 0;
     g.run.gold = setup.gold;
+    g.run.monster_list[0] = setup.encounter;
     g.run.master_deck = setup.deck;
     g.cards.clear();
     g.detached_master_cards.clear();

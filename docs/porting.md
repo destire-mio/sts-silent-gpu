@@ -141,6 +141,14 @@ Do not store a host pointer, vector, string, whole card or large per-unit array 
 `Game` owns its storage and remains relocatable by a byte copy. Keep object identity separate
 from an object's current position in an ordered list:
 
+- Dungeon maps store 15 by 7 two-byte nodes: a destination-column bitset plus room kind,
+  emerald and taken bits. Edges are enumerated in ascending column order; row 14 points to
+  boss row 16. The Ending uses five rows with its original rest/shop/elite/boss/victory layout.
+  Generation uses temporary six-entry ordered parent lists, including duplicate parents:
+  `MapGenerator.createPaths` creates six paths and `addParent` does not deduplicate them.
+  Those parent lists are not retained in `Game`. Monster/elite/boss lists reserve 16/10/3
+  byte IDs, the maxima produced by the four dungeon generators. Event/shrine/one-time
+  lists reserve 16/8/16 byte inventory keys and retain Java order.
 - Master-deck cards removed while a relic references them stay in the existing 160-card arena.
   A 64-byte index list covers the 64 relic instances; these retained master objects consume
   the same execution budget as combat cards and keep a distinct snapshot identity.

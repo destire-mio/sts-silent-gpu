@@ -29,7 +29,7 @@ enum class PileId : uint8_t { Hand, Draw, Discard, Exhaust, Limbo, Grid, MasterD
 enum class RoomPhase : uint8_t { Incomplete, Combat, Complete };
 enum class CampfireOption : uint8_t { Rest, Smith, Lift, Toke, Dig };
 enum class Phase : uint8_t { WaitingOnUser, ExecutingActions };
-enum class RoomKind : uint8_t { Monster, Elite, Boss, Shop, Rest, Treasure, Event };
+enum class RoomKind : uint8_t { Monster, Elite, Boss, Shop, Rest, Treasure, Event, Empty, Neow, BossTreasure, Victory };
 enum class RelicTier : uint8_t { Common, Uncommon, Rare, Shop, Boss };
 
 }

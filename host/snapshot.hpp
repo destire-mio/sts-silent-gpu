@@ -814,7 +814,7 @@ struct SnapshotGraph {
         py::dict result("id"_a="Exordium", "floorNum"_a=game.run.floor, "actNum"_a=game.run.act,
             "ascensionLevel"_a=game.run.ascension, "isAscensionMode"_a=true,
             "isDungeonBeaten"_a=false, "is_victory"_a=false, "ascensionCheck"_a=true,
-            "bossKey"_a=fresh.bossKey, "bossCount"_a=game.run.boss_count, "firstRoomChosen"_a=false,
+            "bossKey"_a=encounter_names[static_cast<int>(game.run.boss_key)], "bossCount"_a=game.run.boss_count, "firstRoomChosen"_a=false,
             "cardBlizzRandomizer"_a=game.run.card_blizz_randomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
             "shrineChance"_a=0.25, "cardUpgradedChance"_a=java_float(game.run.card_upgraded_chance), "colorlessRareChance"_a=0.3,
             "shopRoomChance"_a=0.05, "restRoomChance"_a=0.12, "eventRoomChance"_a=0.22,
@@ -824,17 +824,22 @@ struct SnapshotGraph {
             "pathX"_a=py::list(), "pathY"_a=py::list(), "seed"_a=signed_long(game.run.seed),
             "lastCombatMetricKey"_a=encounter_names[static_cast<int>(game.encounter)]);
         result["keys"] = py::cast(std::array<bool, 3>{game.run.ruby_key, game.run.emerald_key, game.run.sapphire_key});
-        result["monsterList"] = py::cast(fresh.monsterList);
-        result["eliteMonsterList"] = py::cast(fresh.eliteMonsterList);
-        result["bossList"] = py::cast(fresh.bossList);
-        result["eventList"] = py::cast(fresh.eventList);
-        result["shrineList"] = py::cast(fresh.shrineList);
-        result["specialOneTimeEventList"] = py::cast(fresh.specialOneTimeEventList);
-        result["commonRelicPool"] = py::cast(fresh.commonRelicPool);
-        result["uncommonRelicPool"] = py::cast(fresh.uncommonRelicPool);
-        result["rareRelicPool"] = py::cast(fresh.rareRelicPool);
-        result["shopRelicPool"] = py::cast(fresh.shopRelicPool);
-        result["bossRelicPool"] = py::cast(fresh.bossRelicPool);
+        const auto encounters = [](const auto& values) {
+            py::list list;
+            for (int i = 0; i < values.size; ++i) list.append(encounter_names[static_cast<int>(values[i])]);
+            return list;
+        };
+        const auto events = [](const auto& values) {
+            py::list list;
+            for (int i = 0; i < values.size; ++i) list.append(event_key_name(values[i]));
+            return list;
+        };
+        result["monsterList"] = encounters(game.run.monster_list);
+        result["eliteMonsterList"] = encounters(game.run.elite_list);
+        result["bossList"] = encounters(game.run.boss_list);
+        result["eventList"] = events(game.run.event_list);
+        result["shrineList"] = events(game.run.shrine_list);
+        result["specialOneTimeEventList"] = events(game.run.special_events);
         const char* pool_names[] = {"commonRelicPool", "uncommonRelicPool", "rareRelicPool", "shopRelicPool", "bossRelicPool"};
         for (int p = 0; p < 5; ++p) {
             py::list pool;
@@ -847,13 +852,17 @@ struct SnapshotGraph {
 
     py::list map(const FreshRunState& fresh) const {
         py::list result;
-        for (int y = 0; y < 15; ++y) {
+        for (int y = 0; y < (game.run.act == 4 ? 5 : 15); ++y) {
             py::list row;
             for (int x = 0; x < 7; ++x) {
-                const auto& node = fresh.map[y][x];
+                const auto& node = game.run.map[y][x];
+                const char* room_names[] = {"MonsterRoom", "MonsterRoomElite", "MonsterRoomBoss", "ShopRoom", "RestRoom", "TreasureRoom", "EventRoom", "", "NeowRoom", "TreasureRoomBoss", "TrueVictoryRoom"};
+                py::list edges;
+                for (int edge = 0; edge < 7; ++edge) if (node.edges & (1 << edge))
+                    edges.append(py::cast(std::array<int, 2>{edge, y == 14 ? 16 : y + 1}));
                 row.append(py::dict("position"_a=py::cast(std::array<int, 2>{x, y}),
-                    "room"_a=(node.room.empty() ? py::object(py::none()) : py::object(py::str(node.room))),
-                    "emerald"_a=node.emerald, "taken"_a=node.taken, "edges"_a=node.edges));
+                    "room"_a=(node.room == RoomKind::Empty ? py::object(py::none()) : py::object(py::str(room_names[static_cast<int>(node.room)]))),
+                    "emerald"_a=node.emerald, "taken"_a=node.taken, "edges"_a=edges));
             }
             result.append(row);
         }
