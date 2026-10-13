@@ -20,3 +20,4 @@ SPIRE_UNIT(GremlinWizard, "GremlinWizard", "core/monsters/gremlin_wizard.hpp", G
 SPIRE_UNIT(Chosen, "Chosen", "core/monsters/chosen.hpp", Chosen)
 SPIRE_UNIT(SnakePlant, "SnakePlant", "core/monsters/snake_plant.hpp", SnakePlant)
 SPIRE_UNIT(Snecko, "Snecko", "core/monsters/snecko.hpp", Snecko)
+SPIRE_UNIT(SphericGuardian, "SphericGuardian", "core/monsters/spheric_guardian.hpp", SphericGuardian)
