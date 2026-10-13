@@ -829,10 +829,12 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 target = g.monster_order[action.target];
                 SPIRE_ASSERT(alive(g.monsters[target].creature));
                 const Powers& powers = g.player.creature.powers;
-                for (int i = 0; i < powers.size; ++i)
-                    if (power_data(powers.at(g.power_objects, i).id).rear_attack_power != PowerId::Count)
+                for (int i = 0; i < powers.size; ++i) {
+                    if (power_data(powers.at(g.power_objects, i).id).rear_attack_power != PowerId::Count) {
                         g.player.creature.flip_horizontal = g.monsters[target].creature.draw_x < g.player.creature.draw_x;
-                refresh_powers(g);
+                        refresh_powers(g);
+                    }
+                }
             }
             g.manager.card_queue.push_back({card, target, g.player.energy});
         }
