@@ -36,7 +36,7 @@ final class Snapshot {
         fields("characters.AnimatedNpc", "");
         fields("events.shrines.GremlinMatchGame", "chosenCard hoveredCard cardFlipped gameDone cleanUpCalled attemptCount cards waitTimer cardsMatched screen matchedCards");
         fields("rooms.CampfireUI", "somethingSelected buttons");
-        fields("screens.select.GridCardSelectScreen", "selectedCards targetGroup upgradePreviewCard numCards cardSelectAmount canCancel forUpgrade forTransform forPurge confirmScreenUp isJustForConfirming prevDeckSize cancelWasOn anyNumber forClarity");
+        fields("screens.select.GridCardSelectScreen", "selectedCards targetGroup hoveredCard upgradePreviewCard ritualAnimTimer numCards cardSelectAmount canCancel forUpgrade forTransform forPurge confirmScreenUp isJustForConfirming prevDeckSize cancelWasOn anyNumber forClarity");
         fields("screens.select.HandCardSelectScreen", "numCardsToSelect selectedCards upgradePreviewCard wereCardsRetrieved canPickZero upTo anyNumber forTransform forUpgrade numSelected waitThenClose waitToCloseTimer hand");
         fields("screens.CardRewardScreen", "rewardGroup discoveryCard hasTakenAll cardOnly rItem draft discovery chooseOne skippable draftCount codex codexCard");
         fields("screens.CombatRewardScreen", "rewards hasTakenAll mug smoke");
@@ -69,6 +69,7 @@ final class Snapshot {
         AbstractDungeon.nextRoom = null;
         AbstractDungeon.lastCombatMetricKey = null;
         AbstractDungeon.is_victory = false;
+        AbstractDungeon.gridSelectScreen = new com.megacrit.cardcrawl.screens.select.GridCardSelectScreen();
         for (String[] spec : STATICS) for (String name : spec[1].split(" ")) {
             Field field = Class.forName("com.megacrit.cardcrawl." + spec[0]).getDeclaredField(name);
             field.setAccessible(true);
@@ -113,6 +114,8 @@ final class Snapshot {
         screen.addProperty("previous", AbstractDungeon.previousScreen == null ? null : AbstractDungeon.previousScreen.name());
         screen.addProperty("choice", ChoiceScreenUtils.getCurrentChoiceType().name());
         screen.add("options", Recorder.JSON.toJsonTree(ChoiceScreenUtils.getCurrentChoiceList()));
+        screen.add("grid", s.pick(AbstractDungeon.gridSelectScreen,
+            com.megacrit.cardcrawl.screens.select.GridCardSelectScreen.class, "ritualAnimTimer"));
         switch (AbstractDungeon.screen) {
             case GRID: screen.add("state", s.value(AbstractDungeon.gridSelectScreen)); break;
             case HAND_SELECT: screen.add("state", s.value(AbstractDungeon.handCardSelectScreen)); break;

@@ -94,6 +94,7 @@ public final class Recorder {
         boolean isScenario = !job.get("scenario").isJsonNull();
         Unseeded.rng = new Unseeded.Stream(seed);
         MathUtils.random = new RandomXS128(seed);
+        CardCrawlGame.tips = new com.megacrit.cardcrawl.helpers.GameTips();
         Snapshot.resetStatics();
         AbstractDungeon.relicsToRemoveOnStart.clear();
         AbstractDungeon.relicsToRemoveOnStart.addAll(initialRelicExclusions);

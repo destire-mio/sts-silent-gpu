@@ -29,8 +29,6 @@ bounds, boolean implementation and long-via-double implementation.
 | `actions/common/DiscardAtEndOfTurnAction.java:42`, `update()` | `Collections.shuffle(cards)` | `Collections.shuffle(cards, new java.util.Random(rule.nextLong()))`; preserve hook order after shuffling. |
 | `dungeons/AbstractDungeon.java:1096`, `returnColorlessCard()` | `Collections.shuffle(colorlessCardPool.group)` | Seed a Java Random from one rule-stream long; preserve the mutation of pool order. |
 | `relics/Test5.java:36`, `onEquip()` | `Collections.shuffle(upgradableCards)` | Same seeded Java shuffle. This relic is unreachable in the standard Silent pool. |
-| `helpers/GameTips.java:27`, constructor | `Collections.shuffle(tips)` | Same seeded Java shuffle. Outside run decisions; the rule stream resets before starting a run. |
-| `helpers/GameTips.java:31`, `getTip()` | `MathUtils.random` | Rule stream; loading-screen tips do not share presentation randomness. |
 | `helpers/MonsterHelper.java:460,463,481`, `getEncounter(String)` | `MathUtils.random` for Byrd offsets | Rule-stream float calls in original left-to-right construction order. |
 | `helpers/MonsterHelper.java:600,604`, `randomYOffset` / `randomXOffset` | `MathUtils.random` for monster offsets | Rule-stream float calls. X positions can determine insertion order in `SpawnMonsterAction.update`. |
 | `blights/Accursed.java:46`, `onEquip()` | Default `Random()` | Covered by the patched default constructor; endless blights are outside the standard-run target. |
@@ -48,6 +46,7 @@ does not advance.
 | Java location | Pin |
 | --- | --- |
 | `cards/AbstractCard.java:319`, constructor | Replace `UUID.randomUUID()` with `new UUID(0, ++allocator)`. Keep `makeSameInstanceOf` UUID sharing. Export UUID equality as encounter-order integers, independent of allocator offset between runs. |
+| `helpers/GameTips.java:27,31`, `initialize()` / `getTip()` | Recreate the hint deck after seeding the presentation stream at run start. Shuffle with a Java Random seeded from one presentation-stream long; `getTip` uses that stream. Hint text and its refill cycle cannot consume rule RNG. |
 | `com/badlogic/gdx/graphics/Texture.load`, hash used by `com/badlogic/gdx/utils/ObjectSet.push` | Texture receives a sequential identity hash while retaining reference equality. ObjectSet hash collisions otherwise consume presentation randomness according to JVM identity hashes. |
 | `com/badlogic/gdx/utils/{ObjectSet,ObjectMap,IntMap,LongMap,IntIntMap,IntFloatMap,ObjectIntMap,ObjectFloatMap}.push` | Random cache eviction uses a separate device-only XS128 stream. Cold and warm resource caches cannot spend presentation or rule RNG. |
 | `com/badlogic/gdx/math/MathUtils.random` | Separate `RandomXS128(0)` during bootstrap, `RandomXS128(seed)` at run start. Fixed 1/60 updates and retained rendering make presentation calls reproducible; rule sites above no longer draw from it. |
@@ -72,3 +71,10 @@ Batch initialization also restores the fresh-menu `relicsToRemoveOnStart` list, 
 selection, turn/energy counters, `nextRoom` and `lastCombatMetricKey`. `AbstractDungeon.reset`
 leaves some of these at their previous-run values; the cold-menu list is captured before the
 first job rather than guessed or de-duplicated. Every snapshot still records the real values.
+
+`screens/select/GridCardSelectScreen.java:258-263`, `update()`, generates a transform preview
+every 0.1 seconds by calling `AbstractDungeon.returnTrulyRandomCardFromAvailable`, whose default
+`Random()` consumes two rule draws. `callOnOpen()` does not reset `ritualAnimTimer`. Snapshots
+retain this timer even when GRID is inactive, and retain `hoveredCard` during confirmation.
+The grid screen is recreated at run start to restore its cold-process state; the timer is
+never reset between selections or rooms within a run.

@@ -9689,9 +9689,11 @@
       "forPurge": "boolean",
       "forTransform": "boolean",
       "forUpgrade": "boolean",
+      "hoveredCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "isJustForConfirming": "boolean",
       "numCards": "int",
       "prevDeckSize": "int",
+      "ritualAnimTimer": "float",
       "selectedCards": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
       "targetGroup": "com.megacrit.cardcrawl.cards.CardGroup",
       "upgradePreviewCard": "com.megacrit.cardcrawl.cards.AbstractCard"

@@ -62,7 +62,7 @@ public final class Patches {
             ClassPool pool = method.getDeclaringClass().getClassPool();
             for (String name : new String[]{"cards.CardGroup", "monsters.MonsterGroup", "random.Random",
                     "characters.AbstractPlayer", "dungeons.AbstractDungeon", "relics.Test5",
-                    "actions.common.DiscardAtEndOfTurnAction", "helpers.GameTips", "helpers.MonsterHelper", "cards.AbstractCard"}) {
+                    "actions.common.DiscardAtEndOfTurnAction", "helpers.MonsterHelper", "cards.AbstractCard"}) {
                 CtClass cls = pool.get("com.megacrit.cardcrawl." + name);
                 cls.instrument(new ExprEditor() {
                     public void edit(MethodCall call) throws CannotCompileException {
@@ -77,6 +77,12 @@ public final class Patches {
                     }
                 });
             }
+            pool.get("com.megacrit.cardcrawl.helpers.GameTips").instrument(new ExprEditor() {
+                public void edit(MethodCall call) throws CannotCompileException {
+                    if (call.getClassName().equals("java.util.Collections") && call.getMethodName().equals("shuffle"))
+                        call.replace("{ java.util.Collections.shuffle($1, new java.util.Random(com.badlogic.gdx.math.MathUtils.random.nextLong())); }");
+                }
+            });
             pool.get("com.megacrit.cardcrawl.monsters.exordium.Cultist").getDeclaredMethod("takeTurn").instrument(new ExprEditor() {
                 public void edit(MethodCall call) throws CannotCompileException {
                     if (call.getClassName().equals("com.badlogic.gdx.math.MathUtils") && call.getMethodName().equals("random"))

@@ -94,6 +94,7 @@ type Snapshot = {
     type: string, up: boolean, previous: string | null, choice: string, options: string[], state: Ref | null,
     room_dialog: {optionList: Ref[], selectedOption: number, waitForInput: boolean},
     image_dialog: {selectedOption: number, waitForInput: boolean}
+    grid: {ritualAnimTimer: number}
   },
   globals: Globals,
   pools: {[pool: string]: [cardId: string, upgrades: number, misc: number][]},
@@ -180,6 +181,9 @@ These library-derived template pools contain `[id, timesUpgraded, misc]` entries
 `screen.state` points to the active GRID, HAND_SELECT, CARD_REWARD, COMBAT_REWARD, BOSS_REWARD or
 SHOP object, otherwise null; an event's private state is under `room.event`. `screen.options`
 are CommunicationMod's ordered canonical choice names; `choose.option` indexes this list.
+`screen.grid.ritualAnimTimer` is present even outside GRID: Java retains the transform-preview
+timer between openings, and preview refreshes consume the default `Random()` rule draws.
+The active GRID object also includes that timer and `hoveredCard`, the card to confirm.
 Map rows, columns and destination edges retain Java order. Historical rooms on the map are
 represented by their room type; the live room is the separate `room` graph root.
 
@@ -191,6 +195,8 @@ The policy is a separate libGDX `RandomXS128(seed)`, drawing `nextInt(legal.size
 per decision; it never consumes a game RNG. A full run begins at the first Neow prompt and ends
 on death or the victory screen. A scenario starts at the first combat input after the specified
 setup and ends on death or combat completion, after original room updates have settled.
+The initial profile sets `THE_SILENT_SPIRITS=1`, giving Neow's four-reward opening; fresh isolated
+preferences retain the game's default normal animation speed (`FAST_MODE=false`).
 
 Scenario setup starts a fresh A20 Silent run, replaces the master deck and ordered relics,
 applies original relic `onEquip` hooks, fills potion slots (null means empty), then assigns HP.
@@ -212,7 +218,7 @@ Combat input with no selection screen additionally requires `WAITING_ON_USER`, e
 pre-turn and card queues, and no queued end turn. A GRID notification timeout is used only
 outside combat; closing a combat selection never bypasses action settlement.
 Card, relic and ascension unlock queries are fixed to unlocked, and Act 4 availability is true.
-The publisher adapter uses the game's no-op GOG implementation;
+The launcher loads local mods without Workshop discovery. The publisher adapter uses the game's no-op GOG implementation;
 it never initializes Steam, and metrics upload is disabled.
 Only rendering/device state and persistent profile/score/unlock metrics are outside the snapshot.
 Gameplay-affecting unseeded calls are isolated as specified in `inventory/unseeded.md`. The
@@ -220,6 +226,7 @@ presentation RNG is separate and cannot supply the listed rule calls. Batches re
 to their fresh-process values before each seed; this includes The Bomb's id allocator, turn/energy
 counters, dialog selections, stale next-room/encounter references, and the captured cold-menu
 relic exclusion list. Device-cache RNG is isolated from both presentation and rule streams.
+The grid screen is recreated between runs; its transform timer persists within a run.
 
 Each UTF-8 JSONL file is `Header`, followed by zero or more `Decision` records, then one `Terminal`.
 Every line ends with LF. Recorded data is never edited. Committed fixtures may use `.jsonl.gz`:
