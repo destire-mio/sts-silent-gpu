@@ -26,3 +26,4 @@ SPIRE_UNIT(ColosseumNobs, "Colosseum Nobs", "core/encounters/colosseum_nobs.hpp"
 SPIRE_UNIT(Slavers, "Slavers", "core/encounters/slavers.hpp", Slavers)
 SPIRE_UNIT(ShellParasite, "Shell Parasite", "core/encounters/shell_parasite.hpp", ShellParasite)
 SPIRE_UNIT(ShelledParasiteAndFungi, "Shelled Parasite and Fungi", "core/encounters/shelled_parasite_and_fungi.hpp", ShelledParasiteAndFungi)
+SPIRE_UNIT(TwoThieves, "2 Thieves", "core/encounters/two_thieves.hpp", TwoThieves)

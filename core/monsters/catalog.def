@@ -26,3 +26,4 @@ SPIRE_UNIT(GremlinNob, "GremlinNob", "core/monsters/gremlin_nob.hpp", GremlinNob
 SPIRE_UNIT(Taskmaster, "SlaverBoss", "core/monsters/taskmaster.hpp", Taskmaster)
 SPIRE_UNIT(TorchHead, "TorchHead", "core/monsters/torch_head.hpp", TorchHead)
 SPIRE_UNIT(ShelledParasite, "Shelled Parasite", "core/monsters/shelled_parasite.hpp", ShelledParasite)
+SPIRE_UNIT(Mugger, "Mugger", "core/monsters/mugger.hpp", Mugger)
