@@ -21,3 +21,5 @@ SPIRE_UNIT(CultistAndChosen, "Cultist and Chosen", "core/encounters/cultist_and_
 SPIRE_UNIT(SnakePlant, "Snake Plant", "core/encounters/snake_plant.hpp", SnakePlant)
 SPIRE_UNIT(Snecko, "Snecko", "core/encounters/snecko.hpp", Snecko)
 SPIRE_UNIT(SphericGuardian, "Spheric Guardian", "core/encounters/spheric_guardian.hpp", SphericGuardian)
+SPIRE_UNIT(GremlinNob, "Gremlin Nob", "core/encounters/gremlin_nob.hpp", GremlinNob)
+SPIRE_UNIT(ColosseumNobs, "Colosseum Nobs", "core/encounters/colosseum_nobs.hpp", ColosseumNobs)
