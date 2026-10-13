@@ -32,6 +32,10 @@ struct JawWorm : MonsterHooks {
         else if (g.rng.ai.randomBoolean(0.416f)) set_monster_move(g, index, 1, Intent::Attack, m.damage[0]);
         else set_monster_move(g, index, 3, Intent::AttackDefend, m.damage[1]);
     }
+    SPIRE_FN static void usePreBattleAction(Game& g, int owner) {
+        const auto& s = g.monsters[owner].state.JawWorm;
+        if (s.hardMode) { queue_power(g, owner, owner, PowerId::Strength, s.bellowStr); queue_block(g, owner, s.bellowBlock); }
+    }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 1) queue_damage(g, index, player_target, m.damage[0]);
