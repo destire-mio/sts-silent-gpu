@@ -14,6 +14,15 @@ SPIRE_FN inline bool card_is(CardId id, const char* name) {
     default: SPIRE_ASSERT(false); }
     __builtin_unreachable();
 }
+SPIRE_FN inline bool monster_is(MonsterId id, const char* name) {
+    switch (id) {
+#define SPIRE_UNIT(id, java_name, header, type) case MonsterId::id: return same_id(java_name, name);
+#include "monsters/catalog.def"
+#undef SPIRE_UNIT
+    default: SPIRE_ASSERT(false);
+    }
+    __builtin_unreachable();
+}
 SPIRE_FN inline CardId card_id(const char* name) {
     for (int i = 0; i < static_cast<int>(CardId::Count); ++i)
         if (card_is(static_cast<CardId>(i), name)) return static_cast<CardId>(i);

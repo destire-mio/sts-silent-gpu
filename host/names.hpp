@@ -27,7 +27,7 @@ constexpr const char* effect_names[] = {
 #include "core/actions/catalog.def"
 };
 #undef SPIRE_UNIT
-constexpr const char* intent_names[] = {"NONE", "ATTACK", "ATTACK_BUFF", "ATTACK_DEBUFF", "ATTACK_DEFEND", "BUFF", "DEBUFF", "STRONG_DEBUFF", "DEFEND", "DEFEND_BUFF", "ESCAPE", "MAGIC", "SLEEP", "STUN", "UNKNOWN", "DEBUG"};
+constexpr const char* intent_names[] = {"NONE", "ATTACK", "ATTACK_BUFF", "ATTACK_DEBUFF", "ATTACK_DEFEND", "BUFF", "DEBUFF", "STRONG_DEBUFF", "DEFEND", "DEFEND_BUFF", "DEFEND_DEBUFF", "ESCAPE", "MAGIC", "SLEEP", "STUN", "UNKNOWN", "DEBUG"};
 constexpr const char* screen_names[] = {"combat", "discard", "victory", "death", "none", "grid", "card_reward"};
 constexpr const char* card_type_names[] = {"ATTACK", "SKILL", "POWER", "STATUS", "CURSE"};
 constexpr const char* damage_type_names[] = {"NORMAL", "THORNS", "HP_LOSS"};

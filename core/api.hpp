@@ -118,6 +118,7 @@ SPIRE_FN inline void on_victory(Game&);
 SPIRE_FN inline void gain_energy(Game&, int);
 SPIRE_FN inline bool same_id(const char*, const char*);
 SPIRE_FN inline bool card_is(CardId, const char*);
+SPIRE_FN inline bool monster_is(MonsterId, const char*);
 SPIRE_FN inline bool has_power(const Game& g, const Creature&, const char*);
 SPIRE_FN inline void creature_damage(Game&, const DamageInfo&);
 SPIRE_FN inline void move_to_bottom_of_deck(Game&, int);

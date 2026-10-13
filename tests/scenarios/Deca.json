@@ -1,0 +1,50 @@
+{
+  "deck": [
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Block Potion",
+    "FairyPotion"
+  ],
+  "hp": 3000,
+  "max_hp": 3000,
+  "encounter": "Donu and Deca"
+}

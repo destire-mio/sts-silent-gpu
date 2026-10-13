@@ -93,10 +93,10 @@ struct Monster {
     bool intent_multi = false;
     uint16_t move_name = 0;
     List<int8_t, 256> move_history{};
-    int16_t damage[3]{};
+    int16_t damage[8]{};
     uint8_t damage_count = 1;
-    int16_t damage_output[3]{};
-    bool damage_modified[3]{};
+    int16_t damage_output[8]{};
+    bool damage_modified[8]{};
     int16_t block_amount = 0;
     int16_t magic = 0;
     bool split_triggered = false;
@@ -195,6 +195,7 @@ struct Run {
     int floor = 0;
     int act = 1;
     int ascension = 20;
+    int boss_count = 0;
     int gold = 99;
     int card_blizz_randomizer = 5;
     float card_upgraded_chance = 0.0f;

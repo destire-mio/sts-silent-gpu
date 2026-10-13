@@ -15,6 +15,13 @@ struct JawWorm : MonsterHooks {
         m.state.JawWorm.firstMove = true;
         return m;
     }
+    SPIRE_FN static void usePreBattleAction(Game& g, int owner) {
+        const auto& s = g.monsters[owner].state.JawWorm;
+        if (s.hardMode) {
+            queue_power(g, owner, owner, PowerId::Strength, s.bellowStr);
+            queue_block(g, owner, s.bellowBlock);
+        }
+    }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
         Monster& m = g.monsters[index];
         if (m.state.JawWorm.firstMove) {

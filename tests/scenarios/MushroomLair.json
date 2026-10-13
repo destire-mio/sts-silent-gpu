@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Block Potion",
+    "FairyPotion"
+  ],
+  "hp": 900,
+  "max_hp": 900,
+  "encounter": "The Mushroom Lair"
+}

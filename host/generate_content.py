@@ -164,6 +164,7 @@ for name in ("takeTurn", "usePreBattleAction", "useUniversalPreBattleAction", "o
              "onBossVictoryLogic", "onFinalBossVictoryLogic"):
     body = {"applyPowers": "monster_apply_powers(g, owner);", "createIntent": "create_monster_intent(g, owner);",
             "rollMove": "get_monster_move(g, owner, g.rng.ai.random(99));", "init": "monster_rollMove(g, owner);",
+            "onBossVictoryLogic": "if (g.room_event_class == 0) ++g.run.boss_count;",
             "escape": "g.monsters[owner].creature.escaped = true; g.monsters[owner].creature.flip_horizontal = true;", "escapeNext": "g.monsters[owner].escape_next = true;"}.get(name, "")
     hook("monsters", name, "Game& g, int owner", body=body)
 hook("monsters", "stolenGold", "const Game& g, int owner", "int", body="return 0;")

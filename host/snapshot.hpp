@@ -422,8 +422,6 @@ struct SnapshotGraph {
             });
             if (field == "splitTriggered") return py::bool_(monster.split_triggered);
             if (field == "saveX") return java_float(monster.offset_x);
-            if (key == "Cultist.ritualAmount") return py::int_(4);
-            if (key == "Cultist.talky") return py::bool_(true);
             return {};
         });
     }
@@ -547,7 +545,7 @@ struct SnapshotGraph {
             if (field == "DamageInfo.output") return py::int_(monster.damage_output[index]);
             if (field == "DamageInfo.isModified") return py::bool_(monster.damage_modified[index]);
             if (field == "DamageInfo.owner") return creature(owner);
-            if (field == "DamageInfo.type") return py::str("NORMAL");
+            if (field == "DamageInfo.type") return damage_type(monster_data(monster.id).damage_types[index]);
             return {};
         });
     }
@@ -800,7 +798,7 @@ struct SnapshotGraph {
         py::dict result("id"_a="Exordium", "floorNum"_a=game.run.floor, "actNum"_a=game.run.act,
             "ascensionLevel"_a=game.run.ascension, "isAscensionMode"_a=true,
             "isDungeonBeaten"_a=false, "is_victory"_a=false, "ascensionCheck"_a=true,
-            "bossKey"_a=fresh.bossKey, "bossCount"_a=0, "firstRoomChosen"_a=false,
+            "bossKey"_a=fresh.bossKey, "bossCount"_a=game.run.boss_count, "firstRoomChosen"_a=false,
             "cardBlizzRandomizer"_a=game.run.card_blizz_randomizer, "cardBlizzStartOffset"_a=5, "cardBlizzGrowth"_a=1, "cardBlizzMaxOffset"_a=-40,
             "shrineChance"_a=0.25, "cardUpgradedChance"_a=java_float(game.run.card_upgraded_chance), "colorlessRareChance"_a=0.3,
             "shopRoomChance"_a=0.05, "restRoomChance"_a=0.12, "eventRoomChance"_a=0.22,

@@ -1,0 +1,34 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Block Potion",
+    "FairyPotion"
+  ],
+  "hp": 900,
+  "max_hp": 900,
+  "encounter": "2 Orb Walkers"
+}

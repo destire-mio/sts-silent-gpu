@@ -8,10 +8,6 @@ struct RelicAboveCreature : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
     SPIRE_FN static void execute(Game&, Effect& e) { e.state.RelicAboveCreature.used = true; }
 };
-struct Talk : ActionHooks {
-    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
-    SPIRE_FN static void execute(Game&, const Effect&) {}
-};
 struct SFX : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_FN static void prepare(Game&, Effect& e) { e.source = e.target = no_target; }
@@ -26,6 +22,67 @@ struct VFX : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game&, const Effect&) {}
+};
+struct Talk : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::Talk; e.source = e.target = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, const Effect&) {}
+};
+struct Shout : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::Shout; e.source = e.target = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, const Effect&) {}
+};
+struct TextAboveCreature : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "TEXT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::TextAboveCreature; e.source = e.target = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, const Effect&) {}
+};
+struct AnimateFastAttack : ActionHooks {
+    SPIRE_STATE(AnimateFastAttack, bool called;)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::AnimateFastAttack; action_initialize_state(e); e.source = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, Effect& e) { e.state.AnimateFastAttack.called = true; }
+};
+struct AnimateSlowAttack : ActionHooks {
+    SPIRE_STATE(AnimateSlowAttack, bool called;)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::AnimateSlowAttack; action_initialize_state(e); e.source = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, Effect& e) { e.state.AnimateSlowAttack.called = true; }
+};
+struct AnimateJump : ActionHooks {
+    SPIRE_STATE(AnimateJump, bool called;)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::AnimateJump; action_initialize_state(e); e.source = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, Effect& e) { e.state.AnimateJump.called = true; }
+};
+struct SetAnimation : ActionHooks {
+    SPIRE_STATE(SetAnimation, bool called;)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::SetAnimation; action_initialize_state(e); e.source = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, Effect& e) { e.state.SetAnimation.called = true; }
+};
+struct FastShake : ActionHooks {
+    SPIRE_STATE(FastShake, bool called;)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::FastShake; action_initialize_state(e); e.source = owner; return e;
+    }
+    static SPIRE_FN void execute(Game&, Effect& e) { e.state.FastShake.called = true; }
 };
 struct IntentFlash : ActionHooks {
     SPIRE_SNAPSHOT("IntentFlashAction.m", monster, effect.extra)

@@ -62,7 +62,7 @@ SPIRE_FN inline void create_monster_intent(Game& g, int index) {
     }
 }
 
-SPIRE_FN inline void queue_monster_move(Game& g, int index, int move, Intent intent, int damage = -1) {
+SPIRE_FN inline void queue_monster_move(Game& g, int index, int move, Intent intent, int damage = -1, int hits = 0) {
     Effect e{};
     e.kind = EffectKind::SetMove;
     action_initialize_state(e);
@@ -70,6 +70,8 @@ SPIRE_FN inline void queue_monster_move(Game& g, int index, int move, Intent int
     e.amount = move;
     e.extra = static_cast<int>(intent);
     e.card = damage;
+    e.state.SetMove.the_multiplier = hits;
+    e.state.SetMove.is_multiplier = hits > 0;
     add_bottom(g, e);
 }
 
@@ -87,6 +89,16 @@ SPIRE_FN inline void queue_slimed(Game& g, int amount) {
     g.cards.push_back(make_card(CardId::Slimed));
     g.cards[e.card].uuid = g.next_card_uuid++;
     e.amount = amount;
+    add_bottom(g, e);
+}
+
+SPIRE_FN inline void queue_monster_card(Game& g, CardId card, EffectKind kind, int amount) {
+    Effect e{};
+    e.kind = kind;
+    action_initialize_state(e);
+    e.card = create_card(g, make_card(card));
+    e.amount = kind == EffectKind::MakeTempCardInDiscardAndDeck ? 0 : amount;
+    if (kind == EffectKind::MakeTempCardInDrawPile) e.state.MakeTempCardInDrawPile.random_spot = true;
     add_bottom(g, e);
 }
 
