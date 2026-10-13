@@ -1,0 +1,8 @@
+build/
+__pycache__/
+*.so
+*.o
+.venv/
+/oracle/instance/
+/traces/
+*.log
