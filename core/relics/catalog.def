@@ -3,3 +3,4 @@ SPIRE_UNIT(Necronomicon, "Necronomicon", "core/relics/necronomicon.hpp", Necrono
 SPIRE_UNIT(NeowsLament, "NeowsBlessing", "core/relics/neows_lament.hpp", NeowsLament)
 SPIRE_UNIT(NilrysCodex, "Nilry's Codex", "core/relics/nilrys_codex.hpp", NilrysCodex)
 SPIRE_UNIT(NinjaScroll, "Ninja Scroll", "core/relics/ninja_scroll.hpp", NinjaScroll)
+SPIRE_UNIT(NlothsGift, "Nloth's Gift", "core/relics/nloths_gift.hpp", NlothsGift)
