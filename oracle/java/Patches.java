@@ -8,7 +8,6 @@ import com.megacrit.cardcrawl.unlock.UnlockTracker;
 import com.megacrit.cardcrawl.integrations.DistributorFactory;
 import com.megacrit.cardcrawl.integrations.PublisherIntegration;
 import com.megacrit.cardcrawl.integrations.gog.GogIntegration;
-import communicationmod.CommunicationMod;
 import javassist.*;
 import javassist.expr.*;
 
@@ -29,13 +28,6 @@ public final class Patches {
                         expression.replace("{ $_ = null; }");
                 }
             };
-        }
-    }
-
-    @SpirePatch(clz=CommunicationMod.class, method="sendGameState")
-    public static class NoTransport {
-        @SpirePrefixPatch public static SpireReturn<Void> before() {
-            return SpireReturn.Return(null);
         }
     }
 
@@ -72,7 +64,8 @@ public final class Patches {
                             call.replace("{ java.util.Collections.shuffle($1, new java.util.Random(oracle.Unseeded.rng.nextLong())); }");
                         if (owner.equals("java.util.UUID") && name.equals("randomUUID"))
                             call.replace("{ $_ = new java.util.UUID(0L, ++oracle.Unseeded.uuid); }");
-                        if (owner.equals("com.badlogic.gdx.math.MathUtils") && name.startsWith("random"))
+                        if (owner.equals("com.badlogic.gdx.math.MathUtils") && name.startsWith("random")
+                                && (!call.where().getDeclaringClass().getName().endsWith("MonsterHelper") || call.where().getName().equals("randomXOffset")))
                             call.replace("{ $_ = oracle.Unseeded." + name + "($$); }");
                     }
                 });
@@ -83,10 +76,11 @@ public final class Patches {
                         call.replace("{ java.util.Collections.shuffle($1, new java.util.Random(com.badlogic.gdx.math.MathUtils.random.nextLong())); }");
                 }
             });
-            pool.get("com.megacrit.cardcrawl.monsters.exordium.Cultist").getDeclaredMethod("takeTurn").instrument(new ExprEditor() {
+            pool.get("com.megacrit.cardcrawl.screens.select.GridCardSelectScreen").getDeclaredMethod("update").instrument(new ExprEditor() {
                 public void edit(MethodCall call) throws CannotCompileException {
-                    if (call.getClassName().equals("com.badlogic.gdx.math.MathUtils") && call.getMethodName().equals("random"))
-                        call.replace("{ $_ = oracle.Unseeded.random($$); }");
+                    if (call.getClassName().equals("com.megacrit.cardcrawl.dungeons.AbstractDungeon")
+                            && call.getMethodName().equals("returnTrulyRandomCardFromAvailable"))
+                        call.replace("{ $_ = com.megacrit.cardcrawl.dungeons.AbstractDungeon.returnTrulyRandomCardFromAvailable($1, new com.megacrit.cardcrawl.random.Random(java.lang.Long.valueOf(com.badlogic.gdx.math.MathUtils.random(9999L)), com.badlogic.gdx.math.MathUtils.random(99))); }");
                 }
             });
             for (String name : new String[]{"ObjectSet", "ObjectMap", "IntMap", "LongMap", "IntIntMap", "IntFloatMap", "ObjectIntMap", "ObjectFloatMap"}) {

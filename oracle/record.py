@@ -21,13 +21,18 @@ def run_jobs(jobs):
     (job_dir / 'jobs.json').write_text(json.dumps(jobs))
     command = [str(instance / 'jre/bin/java'), '-Xmx1G', '-Djava.awt.headless=true',
                '-Duser.home=' + str(job_dir / 'home'), '-Djava.io.tmpdir=' + str(job_dir / 'tmp'),
-               '-Doracle.jobs=' + str(job_dir / 'jobs.json'),
+               '-Doracle.jobs=' + str(job_dir / 'jobs.json'), '-javaagent:launcher.jar',
                '-cp', 'launcher.jar:ModTheSpire.jar',
                'com.evacipated.cardcrawl.modthespire.Loader', '--mods',
-               'basemod,CommunicationMod,oracle', '--skip-intro']
+               'oracle', '--skip-intro']
     print('JVM log:', job_dir / 'game.log', flush=True)
     with (job_dir / 'game.log').open('w') as log:
         subprocess.run(command, cwd=job_dir, stdout=log, stderr=subprocess.STDOUT, check=True)
+    audit = (job_dir / 'bytecode-audit.txt').read_text().splitlines()
+    assert audit[0] == 'loaded 2306 original 2306', audit[0]
+    changed = {line.split()[0].removeprefix('com.megacrit.cardcrawl.') for line in audit[1:]}
+    expected = json.loads((ROOT.parent / 'inventory/runtime-patches.json').read_text())
+    assert changed == expected.keys(), (changed - expected.keys(), expected.keys() - changed)
     result = json.loads((job_dir / 'result.json').read_text())
     print(json.dumps(result), flush=True)
     return result

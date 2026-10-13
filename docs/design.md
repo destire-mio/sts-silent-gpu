@@ -48,10 +48,12 @@ live in constant tables. Behaviour is a `switch` on the id that follows the Java
 A snapshot is the canonical JSON picture of one decision point. The oracle defines it; the engine
 emits the same shape; tests compare them key by key with no tolerance.
 
-Schema version **1** is defined here and in `inventory/snapshot-fields.json`. Java names in
+Schema version **2** is defined here and in `inventory/snapshot-fields.json`. Java names in
 that inventory are data identifiers, not copied implementation. `oracle/build.py` regenerates
 it from the pinned JAR and `Snapshot.included`; the recorder loads the resulting catalog from
-its own mod. The engine must use the same field membership, including private subclass fields.
+its own mod. The inventory root maps Java class names to `{extends, fields}` and has an
+`excluded` section mapping each removed `package.Class.field` to its reason. Exclusion changes
+the observation only, never the original field or update method. The engine must use the same field membership, including private subclass fields.
 No value is rounded or omitted because it is zero, false, empty or null.
 
 ```typescript
@@ -69,7 +71,7 @@ type Scenario = {
   hp: number, max_hp: number, encounter: string
 };
 type Header = {
-  schema: 1, game_sha256: string, seed: number,
+  schema: 2, game_sha256: string, seed: number,
   character: "THE_SILENT", ascension: 20, scenario: Scenario | null
 };
 type Ref = {ref: number};
@@ -94,7 +96,6 @@ type Snapshot = {
     type: string, up: boolean, previous: string | null, choice: string, options: string[], state: Ref | null,
     room_dialog: {optionList: Ref[], selectedOption: number, waitForInput: boolean},
     image_dialog: {selectedOption: number, waitForInput: boolean}
-    grid: {ritualAnimTimer: number}
   },
   globals: Globals,
   pools: {[pool: string]: [cardId: string, upgrades: number, misc: number][]},
@@ -128,18 +129,19 @@ can exist. Captured fields of anonymous actions retain their owner references. O
 in the catalog are emitted. Java arrays and lists preserve order;
 Java maps have stringified keys sorted lexicographically. Card UUIDs are replaced by sequential
 integers on first UUID encounter *within that snapshot*, preserving equality between copies.
-Object references and UUID equality are distinct relationships. The one adapter-owned class
-`communicationmod.EndOfTurnAction` keeps its full name and inherits `AbstractGameAction` fields.
-It is an observer marker appended by CommunicationMod at the end of a player turn; updating it
-marks it done and changes the listener's turn flag, with no game-rule side effect. It remains
-in snapshots when a retain selection interrupts the queue.
+Object references and UUID equality are distinct relationships. There are no adapter-owned
+game objects or queue markers.
 
 Pile `CardGroup.group` order is Java list order: index 0 is the bottom, the last element is the
 top for draw/discard/exhaust groups; hand indices are its list indices. Master deck, relics,
 powers, monsters, moves, card queues, pre-turn queues, pending actions and played-card histories
 retain their original order. Card fields include costs, damage/block/magic values, upgrade and
-bottle flags, retain/exhaust/autoplay flags, misc, multiDamage, flip/selection state and subclass
-state. Power, relic and monster fields include private subclass counters/references as well as
+bottle flags, retain/exhaust/autoplay flags, misc, multiDamage, rule-read flip state and subclass
+state. Card text-color flags, preview copies, cursor hover targets, timers, action durations,
+animation and sound state are excluded. `AbstractRelic.grayscale` remains: Captain's Wheel and
+Horn Cleat read it. Creature `drawX`/`flipHorizontal`, slime `saveX`, and Hexaghost's attack-cycle
+index remain because spawn ordering, back attacks, splitting and move selection read them.
+Power, relic and monster fields include private subclass counters/references as well as
 base state. `manager.currentAction` and all queues are recorded even at interrupted card-selection
 decisions. Graph references retain the identity of their cards, powers and creatures.
 
@@ -180,10 +182,12 @@ The exact pool keys are `colorlessCardPool`, `curseCardPool`, `commonCardPool`, 
 These library-derived template pools contain `[id, timesUpgraded, misc]` entries in pool order.
 `screen.state` points to the active GRID, HAND_SELECT, CARD_REWARD, COMBAT_REWARD, BOSS_REWARD or
 SHOP object, otherwise null; an event's private state is under `room.event`. `screen.options`
-are CommunicationMod's ordered canonical choice names; `choose.option` indexes this list.
-`screen.grid.ritualAnimTimer` is present even outside GRID: Java retains the transform-preview
-timer between openings, and preview refreshes consume the default `Random()` rule draws.
-The active GRID object also includes that timer and `hoveredCard`, the card to confirm.
+are ordered identifiers produced from vanilla objects: card/relic/potion IDs, reward-type enum
+names, `option:<button slot>` for event buttons, `x=<column>`/`boss` for map nodes, campfire
+option class names, and `open`, `shop`, `purge`, `bowl`, `spin` for those controls.
+`choose.option` indexes this array. GRID `hoveredCard` is a pending confirmation target, so it
+is included during confirmation and projected to null otherwise; its preview card and refresh
+timer are excluded. All other values in catalog fields are the original game values.
 Map rows, columns and destination edges retain Java order. Historical rooms on the map are
 represented by their room type; the live room is the separate `room` graph root.
 
@@ -211,22 +215,36 @@ not apply burning-elite modifiers or boss-room rewards. Piles, energy, monsters 
 hooks are initialized by the game.
 
 The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio
-output. Original update/render callbacks execute. Decisions wait for the communication listener,
-Soul settlement, monster death/intent settlement, card-manipulation callbacks, turn/battle-start
-callbacks, key acquisition, and campfire callbacks unless a selection screen needs input.
-Combat input with no selection screen additionally requires `WAITING_ON_USER`, empty action,
-pre-turn and card queues, and no queued end turn. A GRID notification timeout is used only
-outside combat; closing a combat selection never bypasses action settlement.
+output. Original update/render callbacks execute. Decisions wait for Soul settlement, monster
+death/intent settlement, card-manipulation callbacks, turn/battle-start callbacks, key acquisition,
+and campfire callbacks unless a selection needs input. No oracle object enters any game queue.
+`AbstractPlayer.playCard`, original screen update/selection methods and original button handlers
+apply inputs. Combat input requires `WAITING_ON_USER`, empty action/pre-turn/card/monster queues,
+no current action, no ended/ending/queued turn, and the original end-turn button enabled.
+Outside combat, pending actions also block a decision. The sole exception is an original
+GRID/HAND_SELECT/CARD_REWARD input blocking the current action; that action and its queues are
+recorded. A completed current-action object is not pending. Terminal death can preserve queues
+that the dead game's own update loop no longer executes. Map transitions, automatic hand-select
+closure, event-dialog entrance/pressed-button callbacks, consumption of closed GRID selections,
+and delayed room controls finish before the next decision. Timers are not inputs to the
+engine: queue location and the active selection encode the action's semantic stage.
 Card, relic and ascension unlock queries are fixed to unlocked, and Act 4 availability is true.
-The launcher loads local mods without Workshop discovery. The publisher adapter uses the game's no-op GOG implementation;
+The runtime loads ModTheSpire plus `Oracle.jar` only. BaseMod and CommunicationMod are absent.
+The launcher disables ModTheSpire's bundled game patches and loads Oracle without Workshop discovery. The publisher adapter uses the game's no-op GOG implementation;
 it never initializes Steam, and metrics upload is disabled.
-Only rendering/device state and persistent profile/score/unlock metrics are outside the snapshot.
+The exact runtime game-class patch allowlist and reasons are in `inventory/runtime-patches.json`.
+A read-only Java instrumentation agent in the launcher compares all 2,306 game classes as they
+load with their bytes in the original JAR; every recording checks the complete changed-class set.
+No game bytecode is written to the repository. Rendering/device state and persistent
+profile/score/unlock metrics are outside the snapshot.
 Gameplay-affecting unseeded calls are isolated as specified in `inventory/unseeded.md`. The
 presentation RNG is separate and cannot supply the listed rule calls. Batches reset rule statics
 to their fresh-process values before each seed; this includes The Bomb's id allocator, turn/energy
 counters, dialog selections, stale next-room/encounter references, and the captured cold-menu
 relic exclusion list. Device-cache RNG is isolated from both presentation and rule streams.
-The grid screen is recreated between runs; its transform timer persists within a run.
+The grid screen is recreated between runs; its transform timer remains original game state but
+is outside the rule snapshot. Transform-preview randomness uses the presentation stream,
+including the otherwise implicit default-Random constructor draws.
 
 Each UTF-8 JSONL file is `Header`, followed by zero or more `Decision` records, then one `Terminal`.
 Every line ends with LF. Recorded data is never edited. Committed fixtures may use `.jsonl.gz`:
@@ -260,3 +278,7 @@ original callbacks, snapshot construction and JSONL writes.
 Regenerate the seven committed fixtures with
 `python3 tests/record_oracle_fixtures.py --output /tmp/oracle-fixtures`, then check their schema,
 scenario initialization and terminal records with `python3 tests/check_oracle.py`.
+
+`python3 tests/check_oracle_frames.py` compares a full run containing a transform-preview screen
+and three scenarios against the same recordings with 13 extra original game frames at each
+nonterminal decision. Its test agent changes the recorder only, not any game class.
