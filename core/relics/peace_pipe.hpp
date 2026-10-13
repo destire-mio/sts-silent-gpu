@@ -1,0 +1,27 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::relics {
+struct PeacePipe : RelicHooks {
+    static SPIRE_FN constexpr RelicData data() { return {-1, 300}; }
+    static SPIRE_FN bool canSpawn(const Game& g, int) {
+        if (g.run.floor >= 48) return false;
+        int count = 0;
+        for (int i = 0; i < g.run.relics.size; ++i) {
+            const RelicId id = g.run.relics[i].id;
+            if (id == RelicId::PeacePipe || id == RelicId::Shovel || id == RelicId::Girya) ++count;
+        }
+        return count < 2;
+    }
+    static SPIRE_FN void addCampfireOption(Game& g, int, CampfireOptions& options) {
+        bool usable = false;
+        for (int i = 0; i < g.run.master_deck.size; ++i) {
+            const Card& card = g.run.master_deck[i];
+            if (card_is(card.id, "Necronomicurse") || card_is(card.id, "CurseOfTheBell") ||
+                card_is(card.id, "AscendersBane") || card.in_bottle_flame || card.in_bottle_lightning || card.in_bottle_tornado) continue;
+            usable = true;
+        }
+        options.push_back({CampfireOptionKind::Toke, usable});
+    }
+};
+}

@@ -20,3 +20,6 @@ SPIRE_UNIT(WhiteBeast, "White Beast Statue", "core/relics/white_beast.hpp", Whit
 SPIRE_UNIT(WingBoots, "WingedGreaves", "core/relics/wing_boots.hpp", WingBoots)
 SPIRE_UNIT(WristBlade, "WristBlade", "core/relics/wrist_blade.hpp", WristBlade)
 SPIRE_UNIT(RingOfTheSerpent, "Ring of the Serpent", "core/relics/ring_of_the_serpent.hpp", RingOfTheSerpent)
+SPIRE_UNIT(Girya, "Girya", "core/relics/girya.hpp", Girya)
+SPIRE_UNIT(PeacePipe, "Peace Pipe", "core/relics/peace_pipe.hpp", PeacePipe)
+SPIRE_UNIT(Shovel, "Shovel", "core/relics/shovel.hpp", Shovel)
