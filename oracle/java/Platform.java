@@ -119,7 +119,9 @@ public final class Platform {
             if (!effect.isDone && (name.startsWith("com.megacrit.cardcrawl.vfx.cardManip.")
                     || name.startsWith("com.megacrit.cardcrawl.vfx.campfire.") && !AbstractDungeon.isScreenUp
                     || effect instanceof PlayerTurnEffect || effect instanceof BattleStartEffect
-                    || effect instanceof com.megacrit.cardcrawl.vfx.ObtainKeyEffect)) return true;
+                    || effect instanceof com.megacrit.cardcrawl.vfx.ObtainKeyEffect
+                    || effect instanceof com.megacrit.cardcrawl.vfx.FastCardObtainEffect
+                    || effect instanceof com.megacrit.cardcrawl.vfx.ObtainPotionEffect)) return true;
         }
         return false;
     }

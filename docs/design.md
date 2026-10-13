@@ -216,7 +216,8 @@ hooks are initialized by the game.
 
 The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio
 output. Original update/render callbacks execute. Decisions wait for Soul settlement, monster
-death/intent settlement, card-manipulation callbacks, turn/battle-start callbacks, key acquisition,
+death/intent settlement, card-manipulation and `FastCardObtainEffect` callbacks,
+`ObtainPotionEffect`, turn/battle-start callbacks, key acquisition,
 and campfire callbacks unless a selection needs input. No oracle object enters any game queue.
 `AbstractPlayer.playCard`, original screen update/selection methods and original button handlers
 apply inputs. Combat input requires `WAITING_ON_USER`, empty action/pre-turn/card/monster queues,

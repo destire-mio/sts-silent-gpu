@@ -36,6 +36,11 @@ classes (including overloads), and every one-argument `Collections.shuffle` in t
 Within `MonsterHelper` only `randomXOffset` is instrumented; Y offsets stay on the presentation
 stream. Vanilla `DiscardAtEndOfTurnAction` runs: no BaseMod patch redirects its shuffle to
 `shuffleRng`. Empty and singleton shuffles still consume the one seed draw specified above.
+A one-card deck can still advance `shuffleRng` twice per turn in vanilla:
+`DrawCardAction.update` queues another `EmptyDeckShuffleAction` when its requested count exceeds
+the replenished one-card draw pile, even though that second shuffle has no discard cards.
+The distinguishing end-turn draw is now in `rng.unseeded`, not in `shuffleRng`;
+`DrawCardAction` and `EmptyDeckShuffleAction` have original JAR bytecode.
 The already seeded Java shuffles are untouched. A seeded `java.util.Random` used for a shuffle
 is temporary; its seed is accounted for in its originating stream. All 13 dungeon RNG objects
 and `NeowEvent.rng` retain their original counters and both XS128 state words. `RoomTypeAssigner`

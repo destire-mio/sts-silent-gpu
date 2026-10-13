@@ -193,7 +193,19 @@ final class Choices {
                 call(AbstractDungeon.handCardSelectScreen, AbstractDungeon.handCardSelectScreen.getClass(), "selectHoveredCard"); break;
             case "CARD_REWARD":
                 if (choice instanceof AbstractCard) {
-                    click(((AbstractCard)choice).hb); AbstractDungeon.cardRewardScreen.update();
+                    AbstractCard reward = (AbstractCard)choice;
+                    boolean cardsMoving;
+                    do {
+                        cardsMoving = false;
+                        for (AbstractCard card : AbstractDungeon.cardRewardScreen.rewardGroup) {
+                            card.update();
+                            cardsMoving |= card.current_x != card.target_x || card.current_y != card.target_y;
+                        }
+                    } while (cardsMoving);
+                    click(reward.hb);
+                    call(AbstractDungeon.cardRewardScreen, AbstractDungeon.cardRewardScreen.getClass(), "cardSelectUpdate");
+                    if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.CARD_REWARD)
+                        throw new AssertionError("Card reward input was not accepted");
                 } else {
                     com.megacrit.cardcrawl.ui.buttons.SingingBowlButton button = get(AbstractDungeon.cardRewardScreen, "bowlButton");
                     button.onClick(); AbstractDungeon.cardRewardScreen.closeFromBowlButton(); AbstractDungeon.closeCurrentScreen();
