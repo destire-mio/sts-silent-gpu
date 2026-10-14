@@ -73,7 +73,8 @@ struct AwakenedOne : MonsterHooks {
             Effect e{}; e.kind = EffectKind::ClearCardQueue; add_top(g, e);
             for (int i = 0; i < c.powers.size;) {
                 const Power& p = c.powers.at(g.power_objects, i);
-                if (power_data(p.id).debuff || p.id == PowerId::Curiosity || p.id == PowerId::Unawakened || power_matches_id(p.id, "Shackled")) c.powers.erase(g.power_objects, i);
+                // AwakenedOne.damage reads the instance type; negative Strength is a debuff.
+                if (power_isDebuff(p, owner) || p.id == PowerId::Curiosity || p.id == PowerId::Unawakened || power_matches_id(p.id, "Shackled")) c.powers.erase(g.power_objects, i);
                 else ++i;
             }
             set_monster_move(g, owner, 3, Intent::Unknown);
