@@ -1562,7 +1562,11 @@ SPIRE_FN inline void step(Game& g, Action action) {
     }
     if (g.screen == Screen::Grid && action.kind == ActionKind::Skip) {
         SPIRE_ASSERT((g.room_kind == RoomKind::Rest || g.room_kind == RoomKind::Shop) && g.grid_can_cancel);
-        if (g.room_kind == RoomKind::Shop) { g.screen = Screen::Shop; return; }
+        if (g.room_kind == RoomKind::Shop) {
+            g.previous_screen = g.room_reward_time ? Screen::CombatReward : Screen::None;
+            g.screen = Screen::Shop;
+            return;
+        }
         g.campfire.something_selected = false;
         g.room_phase = RoomPhase::Incomplete;
         g.screen = Screen::Room;
