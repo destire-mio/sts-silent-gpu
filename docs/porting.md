@@ -282,12 +282,13 @@ The remaining budgets are 32 card-queue entries, 64 relics and 1,024 played-card
 per combat. The master deck starts with 13 cards at
 A20 (`TheSilent.getStartingDeck` plus the ascension curse); its 128 slots leave room for rewards
 and events. The combat arena has 184 slots including copies, templates and created cards.
-**These capacities are execution budgets, not Java limits.**
-Java uses growing lists; card-creation loops and repeated turns have no finite bound. Histories,
-held actions, detached powers, text and damage rows can also exhaust their budgets. A valid Java
-sequence can therefore fault an environment; count this separately from losses and reset it.
-A Neow game on seed 202610141141 reaches 162 resident objects by decision 1522 through Cloak
-and Dagger. The former 160 slots were insufficient. The arena now holds 184 cards; DrawCardAction's
+Java uses growing lists; card-creation loops and repeated turns have no finite bound. A
+capacity fault from a legal Java game is an engine bug: preserve its action sequence and
+compact or enlarge storage within the Game budget. It is not a game loss or an accepted
+search cutoff. This also applies to histories, held actions, detached powers, text and damage rows.
+A Neow game on seed 202610141141 reaches 169 resident objects by decision 1522 through Cloak
+and Dagger, including seven objects retained by the preceding battle's draw history. The former
+160 slots were insufficient. The arena now holds 184 cards; DrawCardAction's
 history uses ten indices (the hand limit, including split draws across a shuffle), and card-reward
 selection uses eight indices (the reward-card limit), rather than full combat piles. These two
 lists do not truncate: recursive draw parts share a hand-limited amount, and reward selections

@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tests'))
 sys.path.insert(0, str(ROOT / 'oracle'))
 from record import run_jobs
-from replay import replay
+from replay import replay, open_trace
 from check_oracle_frames import check_recordings
 
 
@@ -168,7 +168,7 @@ def combat_score(game):
         - len(enemies) * 80 + poison * 2.5 + scaling
 
 
-def fight(game, rng, prefix):
+def fight(game, rng, prefix, counts):
     beam = [(game, [])]
     finished = []
     for _ in range(60):
@@ -179,9 +179,9 @@ def fight(game, rng, prefix):
                 trial = parent.copy()
                 actions = []
                 state = trial.search_state()
+                peak = state["card_slots"]
+                counts["branches"] += 1
                 for _ in range(120):
-                    if state['card_slots'] >= 128:
-                        break
                     legal = trial.legal_actions()
                     assert legal, json.dumps(dict(seed=trial.snapshot()['run']['seed'],
                         actions=prefix + previous + actions, snapshot=trial.snapshot()))
@@ -189,17 +189,20 @@ def fight(game, rng, prefix):
                     trial.step(action)
                     actions.append(action)
                     state = trial.search_state()
+                    counts['steps'] += 1
+                    peak = max(peak, state['card_slots'])
                     if state['dead'] or not state['combat'] or state['turn'] != turn:
                         break
-                assert state['dead'] or not state['combat'] or state['turn'] != turn or state['card_slots'] >= 128, state
+                counts['peak_cards'] = max(counts['peak_cards'], peak)
+                counts['branches_128'] += peak >= 128
+                counts['branches_160'] += peak >= 160
                 candidate = trial, previous + actions
                 if state['dead'] or not state['combat']:
                     finished.append(candidate)
-                elif state['card_slots'] < 128:
+                elif state['turn'] != turn:
                     children.append(candidate)
                 else:
-                    print(f'prune card budget seed={trial.snapshot()["run"]["seed"]} '
-                          f'floor={state["floor"]} slots={state["card_slots"]}', flush=True)
+                    counts['turn_cutoffs'] += 1
         if not children:
             break
         children.sort(key=lambda candidate: combat_score(candidate[0]), reverse=True)
@@ -244,6 +247,7 @@ def floor_score(candidate):
 
 
 def find(seed):
+    counts = dict(steps=0, branches=0, branches_128=0, branches_160=0, peak_cards=0, turn_cutoffs=0)
     rng = random.Random(seed)
     game = spire.reset(seed)
     beam = [Candidate(game, [])]
@@ -256,7 +260,7 @@ def find(seed):
             base = parent.game
             prefix = []
             if base.search_state()['combat']:
-                outcome = fight(base, rng, parent.actions)
+                outcome = fight(base, rng, parent.actions, counts)
                 if outcome is None:
                     continue
                 base, prefix = outcome
@@ -272,7 +276,7 @@ def find(seed):
                         children.append(Candidate(trial, parent.actions + actions))
                         break
                     if state['combat']:
-                        outcome = fight(trial, rng, parent.actions + actions)
+                        outcome = fight(trial, rng, parent.actions + actions, counts)
                         if outcome is None:
                             break
                         trial, inputs = outcome
@@ -326,10 +330,10 @@ def find(seed):
         print(f'seed={seed} floor={beam[0].game.search_state()["floor"]} '
               f'candidates={len(beam)} hp={beam[0].game.search_state()["hp"]}', flush=True)
     if not terminal:
-        return None
+        return None, counts
     return max(terminal, key=lambda c: (c.game.search_state()['act'], c.game.search_state()['floor'],
                                       c.game.search_state()['victory'],
-                                      c.game.search_state()['hp']))
+                                      c.game.search_state()['hp'])), counts
 
 
 def main():
@@ -344,21 +348,9 @@ def main():
     seed = args.seed
     while len(jobs) < args.count:
         start = time.monotonic()
-        opening = spire.reset(seed)
-        opening.step({'type': 'choose', 'option': 0})
-        opening.step({'type': 'choose', 'option': 3})
-        snapshot = opening.snapshot()
-        player = fields(snapshot, snapshot['player'])
-        if not any(fields(snapshot, ref)['AbstractRelic.relicId'] == "Pandora's Box"
-                   for ref in player['AbstractPlayer.relics']):
-            predictions.append(dict(seed=seed, opening_rejected=True, selected=False,
-                                    search_seconds=time.monotonic() - start))
-            (args.output / 'predictions.json').write_text(json.dumps(predictions, indent=2))
-            seed += 1
-            continue
-        candidate = find(seed)
+        candidate, counts = find(seed)
         if candidate is None:
-            predictions.append(dict(seed=seed, selected=False, search_cutoff=True,
+            predictions.append(dict(seed=seed, search=counts, selected=False, search_cutoff=True,
                                     search_seconds=time.monotonic() - start))
             (args.output / 'predictions.json').write_text(json.dumps(predictions, indent=2))
             seed += 1
@@ -369,8 +361,8 @@ def main():
         (args.output / f'{seed}.scenario.json').write_text(json.dumps(scenario))
         selected = state['act'] >= 3 and state['floor'] >= 50
         if selected:
-            jobs.append(dict(seed=seed, scenario=scenario, output=str(args.output.resolve() / f'{seed}.jsonl')))
-        predictions.append(dict(seed=seed, act=state['act'], floor=state['floor'],
+            jobs.append(dict(seed=seed, scenario=scenario, output=str(args.output.resolve() / f'{seed}.jsonl.gz')))
+        predictions.append(dict(seed=seed, search=counts, act=state['act'], floor=state['floor'],
                                 victory=state['victory'], selected=selected,
                                 decisions=len(candidate.actions), search_seconds=seconds))
         print(json.dumps(predictions[-1]), flush=True)
@@ -383,7 +375,7 @@ def main():
     results = []
     for job in jobs:
         result = replay(job['output'], spire)
-        with Path(job['output']).open() as stream:
+        with open_trace(job['output']) as stream:
             next(stream)
             rows = [json.loads(line) for line in stream]
         snapshots = [row['snapshot'] for row in rows]
@@ -407,7 +399,7 @@ def main():
     frames.mkdir()
     with (ROOT / 'oracle/instance/deep-runs.lock').open('w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
-        check_recordings(frames, jobs[:10])
+        check_recordings(frames, jobs)
     return int(any(not row['scopes'][name]['passed'] for row in results for name in ('combat', 'run')))
 
 

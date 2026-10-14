@@ -208,6 +208,17 @@ exact `WaitAction` current action to null: its update only advances a presentati
 no rule callback. Other action classes and their included fields remain in the graph. Graph
 references retain the identity of their cards, powers and creatures.
 
+GridCardSelectScreen.prevDeckSize is excluded as a scroll-bound cache. The source-wide read
+audit finds its sole reader in updateScrolling: a size change calls calculateScrollBounds,
+which derives scrollUpperBound from targetGroup.size and stores that size. The resulting
+values only position the scrollbar and card artwork. Selection, confirmation and cancellation
+read targetGroup and selectedCards, never this cache or the scroll bounds. Thus no game rule
+can consume the cached size. Seed 202610160005 reaches Pandora's confirmation on floor 34
+with a cached 32 from the preceding grid, while the new target group contains nine cards;
+the next layout update can change it without any player action.
+An original recording with 13 extra idle frames changes only this field at decision line
+1204, from 32 to 9; the complete target group, selected cards, legal actions and RNGs agree.
+
 Monster death state remains rule state. `AbstractMonster.die` sets isDying; its death animation
 later sets isDead and clears powers. GRID/CARD_REWARD freeze that update, so a just-killed
 monster retains its powers and isDead=false there (202610141115, decision 202). Deaths preceding
@@ -217,12 +228,42 @@ flash, then Healer's ApplyPowerAction refreshes the dead Centurion's outputs to 
 than 18/11. Spawn/channel waits also precede the next intent calculation. The engine keeps
 DamageInfo output/isModified and both death flags in the observation.
 
+The final monster's queued 1.5-second WaitAction and attack/debuff actions also precede the
+next turn's power refreshes. Deaths caused by reflected damage during that turn must be
+cleared there, not only deaths preceding the turn: SlaverRed retains temporary Strength -6
+in 202610140974, floor 29, unless this cleanup runs; Byrd retains Strength/Weak modifications
+in 202610141366, floor 18. EscapeAction starts a three-second escape animation. Its following
+SetMoveAction still executes before escape completion triggers endBattle (202610140955,
+floor 18); collapsing the escape cannot discard that queued move.
+
 `AbstractRoom.endBattle` runs victory callbacks and `GameActionManager.clear` when the final
 death settles; it does not wait for the remaining monster queue. Clear removes current/pending
 actions and combat counters, but preserves the monster queue. A half-dead Darkling queued
 before the final poison kill can therefore lose its pending RollMoveAction while the following
 Darkling still takes its queued turn (202610142024, floor 36). The engine distinguishes this
 callback boundary from the later transition to the reward screen.
+
+DrawCardAction.drawnCards is a Java static, cleared by DrawCardAction.update, not by
+preBattlePrep. Toolbox can open its battle-start choice before that update. The engine
+retains the previous draw's card objects, including multiDamage, across combat setup until
+the next draw replaces the history (202610141141, floor 50). These remain distinct from the
+new combat copies with the same UUIDs.
+
+CardGroup.initializeDeck constructs makeSameInstanceOf copies, whose makeStatEquivalentCopy
+copies base stats but leaves damage/block caches at their constructor or upgrade values.
+Copying the whole master-card struct incorrectly carries Ritual Dagger's computed block 18
+into an undrawn card in the next battle (202610160016, decision line 428). The engine uses
+the card-copy hook for deck initialization. RitualDaggerAction also calls applyPowers on the
+master card before writing its increased baseDamage; relic damage hooks must resolve that
+master-card reference rather than indexing the combat arena (202610160040, action 386).
+
+GameActionManager.addToTop/addToBottom/addToTurnStart accept actions only during COMBAT,
+after the action constructor has run. Colosseum.reopen calls preBattlePrep while the room is
+COMPLETE, then enterImageFromCombat changes it to EVENT. Preparing the player does not enter
+COMBAT: Snecko Eye's atPreBattle constructs its ApplyPowerAction there, but the manager does
+not enqueue it (202610160012, decision line 683). CultistPotion.use queues SFXAction and
+TalkAction before ApplyPowerAction; all three remain observable if a hand selection is open
+(202610160016, decision line 88).
 
 `GameActionManager.hasControl` and `phase` remain exact during COMBAT. Outside COMBAT the
 observer projects both to null. `GameActionManager.update` resets these only in its COMBAT
@@ -439,9 +480,9 @@ confirmation and the terminal observation of escaped monsters.
 `tools/deep_runs.py` searches copies of the exact host engine, retaining eight candidates per
 floor and six candidates per combat turn. It preserves alternative floor branches and
 backtracks when the current beam dies, within a 256-floor expansion budget per seed.
-Combat branches stop at 128 resident card slots, leaving room for the next decision's
-card creation under the engine's 160-card execution budget. Pruned branches are search
-cutoffs, not deaths; the engine's capacities and assertions stay unchanged.
+Searches use the engine's resident-card capacity without pruning at 128. They count searched
+branches reaching 128 and 160 cards, record the maximum residency, and distinguish the
+120-actions-per-turn search cutoff from deaths. Capacity failures remain engine bugs.
 A seeded Python policy samples legal choices and
 scores HP, deck strength and keys; it does not consume game RNG streams. `Game.copy()` copies
 the complete engine and host observation state. Canonical snapshots deduplicate floor states,
@@ -451,19 +492,20 @@ canonical snapshot at every combat input.
 With the build directory on `PYTHONPATH`, run:
 
 ```sh
-PYTHONPATH=/private/tmp/spire-deep-final-build "$SPIRE_PYTHON" tools/deep_runs.py 202610150000 40 /private/tmp/spire-deep-games
+PYTHONPATH=build "$SPIRE_PYTHON" tools/deep_runs.py 202610150000 40 /private/tmp/spire-deep-games
 ```
 
 The three positional arguments are the first seed, deep-game count and a fresh output directory.
-It probes consecutive seeds for a Neow boss-swap offering Pandora's Box, then searches those
-seeds until that many games reach the Act 3 boss or Act 4. This targets acceptance depth rather
-than measuring a policy win rate. The predictions retain every probed seed, including rejected
-openings and shallow searched games. The tool writes
+It searches consecutive seeds from Neow without filtering for Pandora's Box, until that many
+games reach the Act 3 boss or Act 4. This targets acceptance depth rather than measuring a
+policy win rate. The predictions retain every searched seed, including shallow games. The tool writes
 action-only scenarios and search timings outside the repository, records the selected
-jobs in one original-game JVM, replays both scopes and terminal records, and checks the first
-ten recordings with 13 extra idle frames per observation. `predictions.json`, `jobs.json` and
+jobs in one original-game JVM, replays both scopes and terminal records, and checks every
+recording with 13 extra idle frames per observation. `predictions.json`, `jobs.json` and
 `replay.json` preserve the inputs, depth counts, per-scope differences and recording timings.
 An original-game divergence is reported and yields a nonzero exit; the searched action list is never adjusted to
-match the recorder. Use lossless gzip for the three representative fixtures under `tests/traces/`.
+match the recorder. The recorder streams gzip files, including the idle-frame recordings.
+Deep acceptance is retained as the tool and a small manifest; the generated traces stay outside
+the repository. Committed representative deep traces must total at most 3 MiB.
 The new `tools/` directory holds host search and acceptance orchestration, separate from game
 rules and the original-game observer.
