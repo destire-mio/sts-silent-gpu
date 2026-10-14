@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "Mayhem",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 0
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 0
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 0
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian"
+}

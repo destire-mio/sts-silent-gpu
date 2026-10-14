@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Chemical X"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}
