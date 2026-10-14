@@ -362,6 +362,11 @@ Java hooks without gameplay callers (`onGainCharge`, `onMeditate`, `onRitual`, `
 have defaults but no invented events. Copy/upgrade/query methods are callable by their consumers.
 ## Cross-colour card authoring
 
+Zap and Dualcast are additional BASIC proof cards. Standard Silent acquisition does not yield
+them: CardLibrary reward selection filters by the requested non-basic rarity. Their scenarios
+supply them in the starting deck to exercise the original orb calls. The inventory contains
+225 foreign library cards plus these two proof cards.
+
 Adding a red, blue or purple card changes only its header and `core/cards/catalog.def`;
 generation discovers hooks, state, metadata and snapshots from those files. Inventory already
 contains the original foreign library. Add oracle scenarios and evidence separately; do not
