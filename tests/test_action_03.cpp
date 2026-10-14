@@ -253,6 +253,20 @@ static void card_rewards_and_uuid_growth() {
             g.run.master_deck[uuid - 1].misc == 3, "Ritual Dagger grows each matching battle instance once and the master card");
     require(g.run.master_deck[uuid - 1].damage == 6 && g.run.master_deck[uuid - 1].base_damage == 3,
             "Ritual Dagger applies powers before writing the new base damage");
+
+    g = combat();
+    CombatSetup setup{};
+    setup.deck.push_back(make_card(CardId::RitualDagger));
+    setup.relics.push_back({RelicId::StrikeDummy});
+    setup.relics.push_back({RelicId::WristBlade});
+    start_combat(g, setup);
+    g.run.master_deck[0].cost_for_turn = 0;
+    e = units::actions::RitualDagger::construct(0, info, 3, g.run.master_deck[0].uuid);
+    add_bottom(g, e);
+    run_until_decision(g);
+    require(g.run.master_deck[0].misc == 18 && g.run.master_deck[0].base_damage == 18 &&
+            g.run.master_deck[0].damage == 19,
+            "Ritual Dagger's master card receives relic damage hooks before its base damage grows");
 }
 
 static void source_pools() {
