@@ -173,7 +173,7 @@ policy still draws once per decision, and supplies actions after the prefix.
 
 ## Device memory budget
 
-The integration target is **35 KiB per Game**; the current layout is 35,552 bytes.
+The integration target is **35 KiB per Game**; the current layout is 35,592 bytes.
 `state.hpp` retains the **48 KiB hard budget** for subsequent content and rules. Do not raise
 that assertion to land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
 fields and prints every `Game` member, its element size/capacity, the element types and their
