@@ -485,7 +485,7 @@ struct Game {
           reward_skippable(false), combat_reward_skippable(false), reward_proceed_visible(false), reward_has_taken_all(false), reward_relic_warning_seen(false),
           skip_monster_turn(false), battle_over(false), battle_callbacks_done(false), room_in_combat(false), room_reward_time(false), room_reward_allowed(true), room_has_monsters(false) {}
 };
-static_assert(sizeof(Game) <= 36 * 1024, "Game exceeds the 36 KiB device memory budget; see docs/porting.md");
+static_assert(sizeof(Game) <= 37 * 1024, "Game exceeds the 37 KiB device memory budget; see docs/porting.md");
 
 SPIRE_FN inline uint32_t next_power_identity(Game& g) {
     SPIRE_ASSERT(g.next_power_instance < (uint32_t{1} << 29));

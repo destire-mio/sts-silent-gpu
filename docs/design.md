@@ -13,7 +13,7 @@ Exactness: same seed + same actions => same snapshot as the original at every de
 ## Engine (`core/`)
 One `Game` struct holds a whole run: run state, combat state and every RNG stream. It is plain
 data with fixed capacities, so a batch is an array of `Game` and a GPU thread owns one element.
-The size limit is 36 KiB per `Game`, enforced at compile time. Per-unit payload budgets
+The size limit is 37 KiB per `Game`, enforced at compile time. Per-unit payload budgets
 and the build-time member breakdown are described in `porting.md`.
 
 Entry points, all deterministic and free of global state:
