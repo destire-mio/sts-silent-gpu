@@ -167,8 +167,8 @@ requires resolving that input boundary; do not substitute a floor count or fixed
 
 ## Device memory budget
 
-The run-loop acceptance ceiling is **40 KiB per Game**. `state.hpp` enforces a **48 KiB hard ceiling**
-with `static_assert`, leaving space for the remaining content. Do not raise this ceiling to
+The cross-colour foundation acceptance ceiling is **38 KiB per Game**. `state.hpp` enforces
+the same ceiling with `static_assert`. Do not raise this ceiling to
 land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
 fields and prints every `Game` member, its element size/capacity, the element types and their
 fields, and every generated unit payload. There is no handwritten member list to keep in sync.
@@ -328,12 +328,107 @@ Adding a queued action or content unit can call the existing dispatcher from its
 
 | Missing caller | Hooks awaiting that caller |
 | --- | --- |
-| Actions not in the current catalog | Power `onScry`, `triggerMarks`; card `triggerOnScry`, `onChoseThisOption` |
-| Stance and orb mechanics | Power `onChannel`, `onChangeStance`; relic `onChangeStance`; card `switchedStance`, `triggerExhaustedCardsOnStanceChange` |
+| Cards not yet ported | Individual power/action `SPIRE_WAITING_RULE` declarations name units awaiting three-seed caller evidence |
 
 Java hooks without gameplay callers (`onGainCharge`, `onMeditate`, `onRitual`, `onPlayerGainBlock`,
 `onEvokeOrb`, `triggerAtStartOfTurn`, `escapeNext`, and the integer `onPlayerGainedBlock` overload)
 have defaults but no invented events. Copy/upgrade/query methods are callable by their consumers.
+## Cross-colour card authoring
+
+Read the matching Java card, action and power together. `core/orbs/` and `core/stances/`
+contain one header for each foreign rule unit; shared dispatch is in `orbs.hpp` and
+`stances.hpp`. The action and power catalogs include the cross-colour batches. A header's
+`SPIRE_WAITING_RULE` marks missing caller evidence, not a passing port. Remove it only after
+recording the caller on three seeds and replaying both scopes through the terminal record.
+`hasEmptyOrb` waits for the Defect-only Frozen Core caller; `evokeNewestOrb` has no gameplay
+caller in the Java tree. Neither counts as matched through a different orb method.
+
+### Orbs and stances
+
+- `Game::orbs` owns 128 twelve-byte orb objects, ten two-byte active slot references and a
+  256-entry channel history. Slots and histories refer to the same orb objects. Evoking removes
+  a slot reference, not the historical object; later Focus changes affect active orbs only.
+  The object and history capacities are execution budgets and assert on exhaustion.
+- Ten slots cover the Silent's original callers: `IncreaseMaxOrbAction.update` calls
+  `increaseMaxOrbSlots(1)` repeatedly and stops at ten. The lower-level Java method checks
+  equality with ten, not `>= 10`; do not replace the action's loop with one multi-slot call.
+  `DecreaseMaxOrbAction` also loops one slot at a time. The lower-level decrease removes one
+  slot even when its amount exceeds one. The Capacitor-slots scenario exercises the action cap.
+- Empty slots have two source-defined forms: the default constructor has null ID; the positioned
+  constructor used by `removeNextOrb` has ID `Empty`. Keep the `-1`/`-2` slot distinction.
+- Construct the orb when Java constructs it, then pass its index to `Channel::make`. A full
+  channel queues Animate, Evoke and Channel at the top in Java order. Orb action factories
+  store their private orb count in `Effect::extra`; Java's inherited `amount` stays zero.
+- Lightning target selection uses the existing monster-selection RNG path; Focus, Lock-On,
+  Electrodynamics and Dark's minimum-HP target selection remain at their Java call sites.
+  Plasma ignores Focus. Dark accumulates its evoke amount rather than recomputing it from Focus.
+  Spire Shield checks whether slots exist (including empty slots), then consumes aiRng to
+  choose Focus or Strength loss. This changes monster RNG even before the first channel.
+- Use `ChangeStance::make` instead of assigning `player.stance`. Hooks run before exit/entry,
+  Calm exit grants energy, Divinity entry grants energy, and card hooks follow the change.
+  Damage multipliers are applied in AbstractCard, DamageInfo and creature damage order, not
+  inside individual attacks. Mantra construction updates `manager.mantra_gained`, including
+  applications that later stack; its Java stack hook performs the Divinity transition.
+
+### Cards, costs, selections and queues
+
+- Java IDs differ from class names: Tranquility is `ClearTheMind`, Recursion is `Redo`,
+  Cold Snap and several red powers contain spaces. Catalog IDs must match Java.
+  `CardTarget::All` represents Java `ALL` (Vault); `AllEnemies` represents `ALL_ENEMY`.
+- `CardDef::self_retain` initializes innate retention. Keep `retain`, `self_retain`,
+  Equilibrium and Well-Laid Plans separate. Establishment reads the retained cards at its
+  queued action, and retained-card hooks run in the existing restoration path.
+- `base_block_adjust` preserves mutable base block without replacing upgrade formulas.
+  `base_magic` and `magic` are signed 16-bit fields for generated Expunger counts.
+  `CardDef::initial_block` covers constructor-time `block` assignments such as Prostrate's.
+  Card authors must inspect `makeStatEquivalentCopy`, `applyPowers` and `canUpgrade` overrides;
+  the current one-bit `upgrades` representation needs expansion for Searing Blow.
+- `modify_cost_for_combat` follows Java's interaction between `cost` and `costForTurn`.
+  Corruption changes existing skills when ApplyPowerAction is constructed, not when the
+  power enters the player's list. Draw and hand refresh have separate cost-update call sites.
+  X-cost actions retain `energyOnUse`, `freeToPlayOnce` and upgrade state in their payload.
+- `sort_selection_cards` follows the grid's name, rarity and status ordering. Name ranks are
+  ordinal metadata derived by `inventory/build.py` from the isolated oracle's English JAR;
+  no localization strings or assets are copied. Build the local oracle before regenerating
+  the inventory. Scry preserves top-to-bottom draw order instead of sorting the grid.
+- Scry's discard hooks run on the original action's fixed ticks, including the pre-selection
+  tick. Card movement sets `pending_card_moves`; settlement clears powers in card-index order
+  and then refreshes the hand. Do not bypass this when moving between draw and discard piles.
+- `manager.played_cards` supplies turn/combat histories. Exhaust pile size and strike tags
+  supply counts at the Java query sites; do not add per-card or per-monster counters for them.
+  HP-loss/exhaust triggers use the shared creature, relic, power and card hook paths.
+- Vault skips MonsterStart, monster actions and end-of-round power callbacks, then clears
+  `skip_monster_turn` at the new player turn. Blasphemy remains an HP-loss action; its interaction
+  with prevention powers is not an unconditional native death assignment.
+- Omniscience preserves the selected card's identity and exhaust flag, creates purge-on-use
+  copies and queues random targets through NewQueueCard. Wish uses ChooseOne (not Discovery)
+  and the three option-card `onChoseThisOption` hooks. Conjure Blade constructs Expunger's
+  count before its MakeTempCardInDrawPile action. Keep the temporary/option cards in the catalog.
+- Use an action's `make`/`construct` helper when present. Otherwise initialize its payload,
+  set Java's source/target (often `no_target`), and assign the fields shown by its
+  `SPIRE_SNAPSHOT` declarations. `Effect{}` defaults source/target to the player; Java's base
+  action defaults them to null. `amount`, `info_base`, `extra` and `card` are not interchangeable.
+  Actions with Java type DAMAGE survive post-combat queue cleanup even when their name is not
+  DamageAction. Held follow-ups must preserve the same action object rather than copy it.
+
+### Foreign pools and validation boundaries
+
+Prismatic Shard expands combat rewards through CardLibrary and gives the Silent one master
+orb slot. It does not expand ShopScreen's coloured-card pool: the shop still requests the
+Silent's attack/skill/power pools. Preserve the discarded shuffle RNG draw and the later sorted
+card selection in CardLibrary. Foreign Influence uses cardRandomRng for rarity and shuffle,
+then cardRng for the filtered attack choice; it excludes HEALING-tagged attacks. Discovery's
+ordinary combat pools remain separate. A generated offer of an unported playable card is a
+waiting dependency, not permission to substitute a Silent card or omit an option.
+
+Keep full recordings outside the repository and commit a losslessly compressed representative
+fixture. The current scenarios cover the listed inputs, not all cross-colour combinations.
+In particular, an unobserved power/action remains waiting even when its header compiles or a
+nearby card scenario passes. Review death-trigger ordering when adding retaliatory damage:
+AbstractMonster clears dead powers during death settlement, and a refresh between retaliation
+and settlement can retain a dead monster's modified DamageInfo. Compare those dead objects,
+not only the living enemies' HP.
+
 ## Checking a port
 
 Add `tests/scenarios/<unit>.json` using the original Java IDs. All six keys are required:
