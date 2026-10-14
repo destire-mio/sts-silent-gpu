@@ -1,0 +1,56 @@
+{
+  "deck": [
+    {
+      "id": "Crescendo",
+      "upgrades": 0
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 0
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 0
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}

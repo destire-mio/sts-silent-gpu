@@ -8,6 +8,7 @@ namespace spire {
 struct Card {
     int misc = 0;
     int base_damage = -1;
+    int base_block_adjust = 0;
     int damage = -1;
     int block = -1;
     int16_t cost = 0;
@@ -15,12 +16,12 @@ struct Card {
     int16_t energy_on_use = 0;
     uint16_t uuid = 0;
     int16_t price = 0;
+    int16_t base_magic = -1;
+    int16_t magic = -1;
     CardId id = CardId::Strike_G;
-    int8_t base_magic = -1;
-    int8_t magic = -1;
     uint8_t multi_damage_count : 7;
     bool upgraded_cost : 1;
-    CardTarget target : 2;
+    CardTarget target : 3;
     uint8_t upgrades : 1;
     bool ignore_energy_on_use : 1;
     bool exhaust : 1;
@@ -35,7 +36,6 @@ struct Card {
     bool purge_on_use : 1;
     bool shuffle_back_into_draw_pile : 1;
     bool return_to_hand : 1;
-    bool pending_clear : 1;
     bool bottle_flame : 1;
     bool bottle_lightning : 1;
     bool bottle_tornado : 1;
@@ -45,7 +45,7 @@ struct Card {
         : multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), upgrades(0), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
-          shuffle_back_into_draw_pile(false), return_to_hand(false), pending_clear(false),
+          shuffle_back_into_draw_pile(false), return_to_hand(false),
           bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
@@ -169,6 +169,17 @@ struct Monster {
     bool cannot_escape = false;
     bool escape_next = false;
 };
+struct Orb {
+    int passive = 0;
+    int evoke = 0;
+    OrbKind kind = OrbKind::Lightning;
+};
+struct OrbState {
+    List<Orb, 128> objects{};
+    List<int16_t, 10> slots{};
+    List<uint8_t, 256> channeled{};
+    uint16_t turn_start = 0;
+};
 struct Player {
     Creature creature{};
     int energy = 0;
@@ -180,7 +191,7 @@ struct Player {
     int max_orbs = 0;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
-    uint8_t orb_count = 0;
+    Stance stance = Stance::Neutral;
     bool bloodied = false;
     bool end_turn_queued = false;
     bool escaping = false;
@@ -270,6 +281,7 @@ struct ActionManager {
     int hp_loss_this_combat = 0;
     int player_hp_last_turn = 0;
     int energy_gained_this_combat = 0;
+    int mantra_gained = 0;
 };
 struct DialogOption { uint8_t slot; bool disabled; };
 struct Event {
@@ -366,15 +378,20 @@ struct Game {
     RngStreams rng{};
     UnseededRandom unseeded{0};
     Player player{};
+    OrbState orbs{};
+    int stance_changes[4]{};
     List<Card, card_capacity> cards{};
     List<ForeignRewardCard, 256 - card_capacity> foreign_reward_cards{};
     List<uint8_t, 64> detached_master_cards{};
+    uint64_t pending_card_moves[(card_capacity + 63) / 64]{};
     CardDamage multi_damage{};
     DamageExceptions damage_exceptions{};
     Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
     Pool<Effect, action_capacity> action_objects{};
     Pool<Power, power_object_capacity> power_objects{};
+    uint64_t deaths_before_monster_turn = 0;
     bool player_turn_effect_pending = false;
+    Pile selection_excluded{};
     Pile drawn_cards{};
     Pile pending_obtains{};
     Pile reward_cards{};
@@ -431,6 +448,7 @@ struct Game {
     bool combat_reward_skippable = false;
     bool reward_proceed_visible = false;
     bool reward_relic_warning_seen = false;
+    bool skip_monster_turn = false;
     bool battle_over = false;
     bool room_in_combat = false;
     bool room_reward_time = false;
@@ -448,7 +466,7 @@ struct Game {
     bool smoked = false;
     int bomb_id_offset = 0;
 };
-static_assert(sizeof(Game) <= 48 * 1024, "Game exceeds the 48 KiB device memory budget; see docs/porting.md");
+static_assert(sizeof(Game) <= 38 * 1024, "Game exceeds the 38 KiB device memory budget; see docs/porting.md");
 
 SPIRE_FN inline void bind_fault(Game& g) {
 #if defined(__CUDA_ARCH__)

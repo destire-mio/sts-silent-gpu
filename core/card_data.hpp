@@ -3,6 +3,10 @@
 
 namespace spire {
 SPIRE_FN inline const CardDef& card_def(CardId id) { return card_data(id); }
+SPIRE_FN inline void modify_cost_for_combat(Card& card, int amount) {
+    if (card.cost_for_turn > 0) { card.cost_for_turn = max(0, card.cost_for_turn + amount); card.cost = card.cost_for_turn; }
+    else if (card.cost >= 0) { card.cost = max(0, card.cost + amount); card.cost_for_turn = 0; }
+}
 SPIRE_FN inline void reset_attributes(Card& card) {
     card.damage = card.base_damage;
     card.block = card_baseBlock(card);
@@ -20,6 +24,8 @@ SPIRE_FN inline Card make_card(CardId id, int upgrades) {
     card.cost = def.cost;
     card.base_damage = def.damage;
     card.base_magic = def.magic;
+    card.self_retain = def.self_retain;
+    card.block = def.initial_block;
     card.exhaust = def.exhaust;
     card.ethereal = def.ethereal;
     for (int i = 0; i < upgrades; ++i) card_upgrade(card);

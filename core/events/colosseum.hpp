@@ -28,7 +28,7 @@ struct Colosseum : EventHooks {
     }
     static SPIRE_FN void reopen(Game& g) {
         if (g.event.state.Colosseum.screen == 2) return;
-        g.player.orb_count = 0; g.player.creature.block = 0; g.player.creature.powers.clear();
+        g.orbs.slots.clear(); g.player.creature.block = 0; g.player.creature.powers.clear();
         g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
         g.player.creature.draw_x = 320.0f;
         prepare_player_battle(g);

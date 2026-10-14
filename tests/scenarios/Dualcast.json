@@ -1,0 +1,47 @@
+{
+  "deck": [
+    {
+      "id": "Dualcast",
+      "upgrades": 0
+    },
+    {
+      "id": "Dualcast",
+      "upgrades": 1
+    },
+    {
+      "id": "Zap",
+      "upgrades": 1
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 1
+    },
+    {
+      "id": "Cold Snap",
+      "upgrades": 1
+    },
+    {
+      "id": "Dualcast",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}

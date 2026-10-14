@@ -36,6 +36,13 @@ struct ApplyPower : ActionHooks {
                 e.amount += bonus;
             }
         }
+        if (power.id == PowerId::Corruption) {
+            const Pile* piles[] = {&g.hand, &g.draw, &g.discard, &g.exhaust};
+            for (const auto* pile : piles) for (int i = 0; i < pile->size; ++i) {
+                Card& card = g.cards[(*pile)[i]];
+                if (card_data(card.id).type == CardType::Skill) modify_cost_for_combat(card, -9);
+            }
+        }
         if (monsters_basically_dead(g)) e.done = true;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {

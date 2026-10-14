@@ -124,7 +124,7 @@ def card(name, suffix="", result="void", body="", const=False):
 
 
 hook("cards", "upgrade", "Card& card", selector="card.id")
-hook("cards", "baseBlock", "const Card& card", "int", "const CardDef& d = card_def(card.id); return d.block + card.upgrades * d.upgrade_block;", selector="card.id")
+hook("cards", "baseBlock", "const Card& card", "int", "const CardDef& d = card_def(card.id); return d.block + card.upgrades * d.upgrade_block + card.base_block_adjust;", selector="card.id")
 card("use", "int target")
 for name in ("tookDamage", "didDiscard", "onMoveToDiscard", "triggerWhenDrawn",
              "triggerWhenCopied", "triggerOnEndOfTurnForPlayingCard", "triggerOnManualDiscard", "triggerOnScry",
@@ -244,12 +244,12 @@ def generate(root, output):
     declarations += ['SPIRE_FN inline CardRarity card_rarity(CardId id);',
                      'SPIRE_FN inline int card_sort_order(CardId id);']
     card_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'card'}
-    content.append('struct RewardCardPoolEntry { const char* id; CardRarity rarity; CardId native; };')
+    content.append('struct RewardCardPoolEntry { const char* id; CardRarity rarity; CardId native; CardType type; bool healing; };')
     content.append('constexpr RewardCardPoolEntry library_reward_cards[] = {')
     native_cards = {row[1]: row[0] for row in catalogs['cards']}
     for game_id, facts in sorted(card_facts.items()):
         if facts['rarity'] in ('COMMON', 'UNCOMMON', 'RARE') and facts['type'] not in ('CURSE', 'STATUS'):
-            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards.get(game_id, 'Count') + '},')
+            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards.get(game_id, 'Count') + ', CardType::' + facts['type'].title() + ', ' + str('HEALING' in facts['tags']).lower() + '},')
     content.append('};')
     ranks = {game_id: rank for rank, game_id in enumerate(sorted(row[1] for row in catalogs['cards']))}
     for name, result in [('card_rarity', 'CardRarity'), ('card_sort_order', 'int')]:
@@ -262,6 +262,12 @@ def generate(root, output):
     content.append('SPIRE_FN inline bool card_colorless(CardId id) { switch (id) {')
     for unit, game_id, _, _ in catalogs['cards']:
         content.append(f'case CardId::{unit}: return ' + ('true' if card_facts[game_id]['color'] == 'COLORLESS' else 'false') + ';')
+    content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
+    declarations.append('SPIRE_FN inline int card_name_order(const Card& card);')
+    content.append('SPIRE_FN inline int card_name_order(const Card& card) { switch (card.id) {')
+    for unit, game_id, _, _ in catalogs['cards']:
+        first, second = card_facts[game_id]['name_order']
+        content.append(f'case CardId::{unit}: return card.upgrades ? {second} : {first};')
     content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
     relic_inventory = [unit for unit in inventory if unit['kind'] == 'relic']
     ids.append('enum class RelicKey : uint8_t { ' + ', '.join(unit['java_class'].rsplit('.', 1)[1] for unit in relic_inventory) + ', Count };')

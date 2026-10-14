@@ -18,7 +18,7 @@ struct RoomEndTurn : ActionHooks {
         add_bottom(g, end);
         Effect start{};
         start.kind = EffectKind::MonsterStart;
-        add_bottom(g, start);
+        if (!g.skip_monster_turn) add_bottom(g, start);
         g.manager.monster_attacks_queued = false;
     }
 };

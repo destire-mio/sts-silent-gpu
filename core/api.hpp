@@ -3,6 +3,34 @@
 #include "spire_generated/declarations.hpp"
 
 namespace spire {
+SPIRE_FN inline void upgrade_created_card(Game&, int);
+SPIRE_FN inline CardId foreign_attack_card(Game&);
+SPIRE_FN inline void sort_selection_cards(Game&);
+SPIRE_FN inline void modify_cost_for_combat(Card&, int);
+SPIRE_FN inline CardId random_common_card(Game&);
+SPIRE_FN inline int make_orb(Game&, OrbKind);
+SPIRE_FN inline void apply_orb_focus(Game&, int);
+SPIRE_FN inline void orb_start_turn(Game&, int);
+SPIRE_FN inline void orb_end_turn(Game&, int);
+SPIRE_FN inline void orb_evoke(Game&, int);
+SPIRE_FN inline void channel_orb(Game&, int);
+SPIRE_FN inline void evoke_orb(Game&);
+SPIRE_FN inline void evoke_newest_orb(Game&);
+SPIRE_FN inline void evoke_without_losing_orb(Game&);
+SPIRE_FN inline void remove_next_orb(Game&);
+SPIRE_FN inline bool has_orb(const Game&);
+SPIRE_FN inline bool has_empty_orb(const Game&);
+SPIRE_FN inline int filled_orb_count(const Game&);
+SPIRE_FN inline void increase_max_orb_slots(Game&, int);
+SPIRE_FN inline void decrease_max_orb_slots(Game&, int);
+SPIRE_FN inline void start_turn_orbs(Game&);
+SPIRE_FN inline void end_turn_orbs(Game&);
+SPIRE_FN inline void lightning_damage(Game&, const Effect&);
+SPIRE_FN inline float stance_damage_give(const Game&, float, DamageType);
+SPIRE_FN inline float stance_damage_receive(const Game&, float, DamageType);
+SPIRE_FN inline void stance_start_turn(Game&);
+SPIRE_FN inline void change_stance(Game&, Stance);
+
 SPIRE_FN inline int16_t& monster_base_damage(Game&, Monster&, int);
 SPIRE_FN inline const int16_t& monster_base_damage(const Game&, const Monster&, int);
 SPIRE_FN inline int16_t& monster_output_damage(Game&, Monster&, int);
@@ -110,6 +138,7 @@ SPIRE_FN inline void open_hand_selection(Game&, int, bool any_number = false, bo
 SPIRE_FN inline void exhaust_card(Game&, int);
 SPIRE_FN inline void move_to_discard(Game&, int);
 SPIRE_FN inline void settle_card_moves(Game&);
+SPIRE_FN inline void mark_card_move(Game&, int);
 SPIRE_FN inline void damage(Game&, const Effect&);
 SPIRE_FN inline void player_damage(Game&, const DamageInfo&);
 SPIRE_FN inline void monster_damage_base(Game&, int, const DamageInfo&);

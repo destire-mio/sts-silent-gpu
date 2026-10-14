@@ -5,7 +5,7 @@
 namespace spire::units::cards {
 struct RitualDagger : CardHooks {
     SPIRE_STATE(RitualDagger, bool block_from_misc;)
-    static SPIRE_FN int baseBlock(const Card& card) { return card.state.RitualDagger.block_from_misc ? card.misc : -1; }
+    static SPIRE_FN int baseBlock(const Card& card) { return (card.state.RitualDagger.block_from_misc ? card.misc : -1) + card.base_block_adjust; }
     static SPIRE_FN constexpr CardDef data() {
         return {CardType::Attack, CardTarget::Enemy, 1, 15, -1, 3, 0, 0, 2, true, false, false, false, 15};
     }
