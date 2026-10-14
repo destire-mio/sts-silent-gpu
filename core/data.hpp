@@ -10,7 +10,7 @@ SPIRE_FN constexpr float victory_switch_timer() {
     while (alpha >= 0.0f) { alpha -= 1.0f / 60.0f; timer -= 1.0f / 60.0f; }
     return timer;
 }
-struct EventData { const char* java_class; bool image; bool reward_opens_map = false; const char* control_name = nullptr; };
+struct EventData { const char* java_class; bool image; bool reward_opens_map = false; const char* control_name = nullptr; bool blocks_potions = false; };
 struct CardDef {
     CardType type;
     CardTarget target;
@@ -79,6 +79,7 @@ struct RelicData {
     const char* empty_orb_class = nullptr;
     bool prevents_revival = false;
     int potion_reward_chance = -1;
+    bool stacks_on_obtain = false;
 };
 struct PotionData { int potency = 0; CardTarget target = CardTarget::Self; bool usable = true; bool revives_player = false; bool limited_exclusion = false; };
 struct ActionData { bool survives_combat_end = false; const char* type = nullptr; bool multi_step = false; };

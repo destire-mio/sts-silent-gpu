@@ -173,8 +173,10 @@ SPIRE_FN inline void purchase_shop(Game& g, int choice) {
         const auto& data = relic_data(id);
         if (data.discounts_existing_stock) shop_discount(g, data.shop_multiplier, true);
         if (data.purge_cost >= 0) g.run.actual_purge_cost = data.purge_cost;
-        for (int i = 0; i < g.shop.colored.size; ++i) relic_onPreviewObtainCard(g, acquired, g.cards[g.shop.colored[i]]);
-        for (int i = 0; i < g.shop.colorless.size; ++i) relic_onPreviewObtainCard(g, acquired, g.cards[g.shop.colorless[i]]);
+        if (g.run.relics.size > acquired) {
+            for (int i = 0; i < g.shop.colored.size; ++i) relic_onPreviewObtainCard(g, acquired, g.cards[g.shop.colored[i]]);
+            for (int i = 0; i < g.shop.colorless.size; ++i) relic_onPreviewObtainCard(g, acquired, g.cards[g.shop.colorless[i]]);
+        }
         if (shop_restock(g)) {
             RelicId replacement;
             do { replacement = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(shop_relic_tier(g)), true))); }

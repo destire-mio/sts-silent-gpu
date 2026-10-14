@@ -10,7 +10,7 @@
 
 namespace spire {
 SPIRE_FN inline bool potion_can_discard_base(const Game& g, int) {
-    return g.room_event_class == 0 || !same_text(g.text[g.room_event_class], "events.shrines.WeMeetAgain");
+    return g.event.id == EventId::Count || !event_data(g.event.id).blocks_potions;
 }
 SPIRE_FN inline bool potion_can_use_base(const Game& g, int slot) {
     return potion_canDiscard(g, slot) && g.room_in_combat && !monsters_basically_dead(g) && !g.manager.turn_has_ended;
@@ -1357,8 +1357,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 if (reward.kind == RewardKind::SapphireKey) g.run.sapphire_key = true;
                 else if (reward.kind == RewardKind::EmeraldKey) g.run.emerald_key = true;
                 else {
-                reward.relic_slot = g.run.relics.size;
-                equip_relic(g, reward.relic.id);
+                obtain_relic_object(g, g.screen_rewards[action.index]);
                 }
                 if (reward.relic_link >= 0) {
                     reward.ignored = true;

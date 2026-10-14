@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Anchor"
+  ],
+  "potions": [
+    "Strength Potion",
+    "Block Potion"
+  ],
+  "hp": 6,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 2,
+    "floor": 33,
+    "node": [
+      3,
+      14
+    ],
+    "room": "EventRoom",
+    "gold": 150,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}
