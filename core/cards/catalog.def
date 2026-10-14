@@ -181,3 +181,4 @@ SPIRE_UNIT(Bloodletting, "Bloodletting", "core/cards/bloodletting.hpp", Bloodlet
 SPIRE_UNIT(Bludgeon, "Bludgeon", "core/cards/bludgeon.hpp", Bludgeon)
 SPIRE_UNIT(BodySlam, "Body Slam", "core/cards/body_slam.hpp", BodySlam)
 SPIRE_UNIT(Brutality, "Brutality", "core/cards/brutality.hpp", Brutality)
+SPIRE_UNIT(BurningPact, "Burning Pact", "core/cards/burning_pact.hpp", BurningPact)
