@@ -918,7 +918,7 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     Pile copy{};
     for (int i = 0; i < g.run.master_deck.size; ++i) {
         const int index = g.cards.size;
-        g.cards.push_back(g.run.master_deck[i]);
+        g.cards.push_back(card_makeSameInstanceOf(g, -i - 2));
         g.cards[index].energy_on_use = 0; g.cards[index].priced = false;
         copy.push_back(index);
     }

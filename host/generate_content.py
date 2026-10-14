@@ -153,7 +153,7 @@ card("cardPlayable", "int target", "bool", "return !((g.cards[card].target == Ca
 card("canPlay", "int other_card", "bool", "return true;", True)
 card("canUse", "int target", "bool", "return card_can_use_base(g, card, target);", True)
 card("makeStatEquivalentCopy", result="Card", body="return stat_equivalent_copy(g, card);")
-card("makeSameInstanceOf", result="Card", body="Card copy = card_makeStatEquivalentCopy(g, card); copy.uuid = g.cards[card].uuid; return copy;")
+card("makeSameInstanceOf", result="Card", body="Card copy = card_makeStatEquivalentCopy(g, card); copy.uuid = get_card(g, card).uuid; return copy;")
 card("makeCopy", result="Card", body="return make_card(g, get_card(g, card).id);")
 
 for name in ("use",):
