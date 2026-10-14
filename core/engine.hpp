@@ -515,7 +515,7 @@ SPIRE_FN inline void settle_card_moves(Game& g) {
             moved = true;
         }
     }
-    if (moved && g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward)
+    if (moved && g.room_in_combat)
         for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
 SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {

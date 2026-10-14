@@ -36,6 +36,8 @@ struct Codex : ActionHooks {
                 const int index = create_card(g, card);
                 if (g.draw.empty()) g.draw.push_back(index);
                 else g.draw.insert(g.rng.card_random.random(g.draw.size - 1), index);
+                // ShowCardAndAddToDrawPileEffect.update starts a Soul, including during hand selection.
+                mark_card_move(g, index);
                 g.discovery_card = -1;
             }
             e.payload.state.Codex.retrieveCard = true;
