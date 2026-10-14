@@ -173,3 +173,4 @@ SPIRE_UNIT(AutoShields, "Auto Shields", "core/cards/auto_shields.hpp", AutoShiel
 SPIRE_UNIT(BallLightning, "Ball Lightning", "core/cards/ball_lightning.hpp", BallLightning)
 SPIRE_UNIT(Barrage, "Barrage", "core/cards/barrage.hpp", Barrage)
 SPIRE_UNIT(BeamCell, "Beam Cell", "core/cards/beam_cell.hpp", BeamCell)
+SPIRE_UNIT(BiasedCognition, "Biased Cognition", "core/cards/biased_cognition.hpp", BiasedCognition)
