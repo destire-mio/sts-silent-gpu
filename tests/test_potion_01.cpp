@@ -27,6 +27,8 @@ int main() {
                 "blocked potions produce no input actions");
     g.event.id = EventId::Lab;
     g.room_in_combat = false;
+    g.room_phase = RoomPhase::Event;
+    g.screen = Screen::Event;
     require(potion_canUse(g, 0) && !potion_canUse(g, 1) && potion_canDiscard(g, 0) && potion_canDiscard(g, 1),
             "Entropic Brew remains usable in other event rooms");
     g.manager.turn_has_ended = true;
@@ -38,6 +40,8 @@ int main() {
             "outside combat, Brew fills the consumed slot and preserves the occupied slot");
     g.run.potions[0] = PotionId::EntropicBrew;
     g.room_in_combat = true;
+    g.room_phase = RoomPhase::Combat;
+    g.screen = Screen::Combat;
     require(!potion_canUse(g, 0), "an ended turn blocks Entropic Brew in combat");
     start_combat(g, setup);
     require(g.room_event_class == 0 && potion_canUse(g, 0) && potion_canUse(g, 1),
