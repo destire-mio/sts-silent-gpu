@@ -250,7 +250,7 @@ def generate(root, output):
     native_cards = {row[1]: row[0] for row in catalogs['cards']}
     for game_id, facts in sorted(card_facts.items()):
         if facts['rarity'] in ('COMMON', 'UNCOMMON', 'RARE') and facts['type'] not in ('CURSE', 'STATUS'):
-            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards.get(game_id, 'Count') + ', CardType::' + facts['type'].title() + ', ' + str('HEALING' in facts['tags']).lower() + '},')
+            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards[game_id] + ', CardType::' + facts['type'].title() + ', ' + str('HEALING' in facts['tags']).lower() + '},')
     content.append('};')
     ranks = {game_id: rank for rank, game_id in enumerate(sorted(row[1] for row in catalogs['cards']))}
     for name, result in [('card_rarity', 'CardRarity'), ('card_sort_order', 'int')]:
@@ -397,7 +397,7 @@ def generate(root, output):
                 unused = ' '.join(f'(void){arg};' for arg in args if not re.search(r'\b' + arg + r'\b', body))
                 bases.append(f'    static SPIRE_FN {result} {name}({signature}) {{ {unused} {body} }}')
             discriminator = custom_selector or selector
-            content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ SPIRE_ASSERT({discriminator} < {enum}::Count); switch ({discriminator}) {{')
+            dispatch = []
             call_args = list(args)
             if name == 'construct' or kind == 'encounters':
                 call_args.remove('id')
@@ -408,7 +408,12 @@ def generate(root, output):
                     inherited.append(unit)
                     continue
                 invocation = f'units::{kind}::{typename}::{name}({", ".join(call_args)})'
-                content.append(f'case {enum}::{unit}: return {invocation};')
+                dispatch.append(f'case {enum}::{unit}: return {invocation};')
+            if len(inherited) == len(entries):
+                content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ return {base}::{name}({", ".join(call_args)}); }}')
+                continue
+            content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ SPIRE_ASSERT({discriminator} < {enum}::Count); switch ({discriminator}) {{')
+            content.extend(dispatch)
             if inherited:
                 content.append(f'default: return {base}::{name}({", ".join(call_args)}); }} }}')
             else:

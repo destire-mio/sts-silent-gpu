@@ -22,7 +22,11 @@ struct AddCardDiscard : ActionHooks {
     SPIRE_FN static Effect make(int card, bool same_uuid) {
         Effect e = make(card, 1);
         e.flag = same_uuid;
+        e.extra = 1;
         return e;
+    }
+    SPIRE_FN static void prepare(Game& g, Effect& e) {
+        if (e.extra == 1 && !e.flag) upgrade_created_card(g, e.card);
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         // MakeTempCardInDiscardAction.update has no creation branch for six or more cards.
@@ -31,7 +35,9 @@ struct AddCardDiscard : ActionHooks {
             const int card = g.cards.size;
             g.cards.push_back(e.flag ? card_makeSameInstanceOf(g, e.card) : card_makeStatEquivalentCopy(g, e.card));
             g.cards[card].uuid = e.flag ? g.cards[e.card].uuid : g.next_card_uuid++;
+            upgrade_created_card(g, card);
             g.discard.push_back(card);
+            mark_card_move(g, card);
         }
     }
 };

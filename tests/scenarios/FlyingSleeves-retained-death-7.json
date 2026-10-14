@@ -1,15 +1,7 @@
 {
   "deck": [
     {
-      "id": "Strike_G",
-      "upgrades": 0
-    },
-    {
-      "id": "Strike_G",
-      "upgrades": 0
-    },
-    {
-      "id": "Strike_G",
+      "id": "FlyingSleeves",
       "upgrades": 0
     },
     {
@@ -21,22 +13,40 @@
       "upgrades": 0
     },
     {
-      "id": "Neutralize",
+      "id": "Defend_G",
       "upgrades": 0
     },
     {
-      "id": "Survivor",
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
       "upgrades": 0
     }
   ],
   "relics": [
-    "Pantograph"
+    "Ring of the Snake",
+    "Bottled Flame"
   ],
   "potions": [
     null,
     null
   ],
-  "hp": 30,
-  "max_hp": 66,
-  "encounter": "Hexaghost"
+  "hp": 1,
+  "max_hp": 60,
+  "encounter": "Jaw Worm",
+  "actions": [
+    {
+      "type": "end_turn"
+    }
+  ]
 }

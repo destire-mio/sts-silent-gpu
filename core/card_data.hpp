@@ -15,6 +15,15 @@ SPIRE_FN inline void upgrade_base_cost(Card& card, int cost) {
     card.cost_for_turn = max(0, card.cost_for_turn);
     card.upgraded_cost = true;
 }
+SPIRE_FN inline void update_card_cost(Card& card, int amount) {
+    if (!card_data(card.id).updates_cost) return;
+    const int cost = max(0, card.cost + amount);
+    if (cost != card.cost) {
+        const int diff = card.cost - card.cost_for_turn;
+        card.cost = cost;
+        card.cost_for_turn = max(0, cost - diff);
+    }
+}
 SPIRE_FN inline void reset_attributes(Card& card) {
     card.damage = card.base_damage;
     card.block = card_baseBlock(card);

@@ -173,7 +173,7 @@ policy still draws once per decision, and supplies actions after the prefix.
 
 ## Device memory budget
 
-The integration target is **35 KiB per Game**; the current layout is 35,552 bytes.
+The integration target is **36 KiB per Game**; the current layout is 35,560 bytes.
 `state.hpp` retains the **48 KiB hard budget** for subsequent content and rules. Do not raise
 that assertion to land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
 fields and prints every `Game` member, its element size/capacity, the element types and their
@@ -264,7 +264,10 @@ including the remove-and-append behavior of `AbstractDungeon.srcTransformCard`.
 The mutable colorless-card pool retains its 35 library indices: Java
 `AbstractDungeon.returnColorlessCard(rarity)` shuffles that pool in place, independently of its
 source pool. Knowing Skull retains 16 reward-history entries in its 64-byte event payload.
-The choice tags use two bits; granted card IDs use 16 bits so the foreign catalog can grow.
+The choice tags use two bits; granted card IDs use 16 bits. Card objects pack IDs into nine bits
+for the complete 360-card catalog, guarded by a 512-ID assertion. Their 40-byte layout keeps
+the unit payload byte beside the flags. All reward cards use the same arena as combat cards;
+there is no foreign-card placeholder store.
 The Java event can repeat without a finite bound; 16 is an execution budget constrained by the
 64-byte payload, and the next reward faults before its history entry is written.
 
@@ -287,6 +290,8 @@ sequence can therefore fault an environment; count this separately from losses a
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
 Card damage/block, power amounts, orb amounts and player energy keep Java's 32-bit range.
+Immutable CardDef constructor values and upgrade deltas use 8 bits in a 20-byte table row;
+these are constructor constants, not limits on a mutable card's combat stats.
 Card upgrade counts use 16 bits for repeated upgrades; the unit implements its own Java
 `upgrade` and `canUpgrade`. Costs use signed 16 bits: Masterful Stab increases its cost on
 HP loss, so constructor costs do not bound it. Magic fields use signed 16 bits, including
@@ -350,7 +355,7 @@ Adding a queued action or content unit can call the existing dispatcher from its
 
 | Missing caller | Hooks awaiting that caller |
 | --- | --- |
-| Cards not yet ported | Individual power/action `SPIRE_WAITING_RULE` declarations name units awaiting three-seed caller evidence |
+| No Silent gameplay caller | `hasEmptyOrb` is called only by Defect-only Frozen Core; `evokeNewestOrb` has no original gameplay caller |
 
 Java hooks without gameplay callers (`onGainCharge`, `onMeditate`, `onRitual`, `onPlayerGainBlock`,
 `onEvokeOrb`, `triggerAtStartOfTurn`, `escapeNext`, and the integer `onPlayerGainedBlock` overload)
@@ -364,7 +369,7 @@ add an ID branch to dispatch, snapshots, pools or the run loop.
 
 Read the matching Java card, action and power together. `core/orbs/` and `core/stances/`
 contain one header for each foreign rule unit; shared dispatch is in `orbs.hpp` and
-`stances.hpp`. The action and power catalogs include the cross-colour batches. A header's
+`stances.hpp`. The action and power catalogs include the completed cross-colour batches. A header's
 `SPIRE_WAITING_RULE` marks missing caller evidence, not a passing port. Remove it only after
 recording the caller on three seeds and replaying both scopes through the terminal record.
 `tests/content.py` generates status from replay outcomes. `matched` requires a scenario or
@@ -418,7 +423,9 @@ caller in the Java tree. Neither counts as matched through a different orb metho
   `upgrades` supports repeated upgrades such as Searing Blow; preserve the Java constructor
   and stat-equivalent-copy distinction in its own hooks. Grid name sorting compares repeated
   upgrade suffixes as decimal strings (`+10` sorts before `+2`), matching Java names.
-- `modify_cost_for_combat` follows Java's interaction between `cost` and `costForTurn`.
+- `upgrade_base_cost` preserves the temporary cost difference; `update_card_cost` changes the
+  base cost while preserving that difference. `CardDef::updates_cost` carries the status/curse
+  eligibility exception. `modify_cost_for_combat` follows its separate Java cost rules.
   Corruption changes existing skills when ApplyPowerAction is constructed, not when the
   power enters the player's list. Draw and hand refresh have separate cost-update call sites.
   X-cost actions retain `energyOnUse`, `freeToPlayOnce` and upgrade state in their payload.
@@ -426,9 +433,17 @@ caller in the Java tree. Neither counts as matched through a different orb metho
   ordinal metadata derived by `inventory/build.py` from the isolated oracle's English JAR;
   no localization strings or assets are copied. Build the local oracle before regenerating
   the inventory. Scry preserves top-to-bottom draw order instead of sorting the grid.
+- Repeated hits sharing one Java DamageInfo use `queue_card_damage` with a shared identity;
+  do not create one damage object per hit when Java reuses the same object.
 - Scry's discard hooks run on the original action's fixed ticks, including the pre-selection
   tick. Card movement sets `pending_card_moves`; settlement clears powers in card-index order
-  and then refreshes the hand. Do not bypass this when moving between draw and discard piles.
+  and then refreshes the hand. RestoreRetainedCards refreshes layout only. The observer projects
+  unused damage/block caches as documented in design.md; do not schedule presentation flights
+  or add card-specific serializer cases to reproduce their timing.
+- MakeTempCardInHand upgrades its prototype at construction. MakeTempCardInDiscard
+  distinguishes the integer-count constructor from the same-UUID constructor. Its one-argument
+  display effect upgrades the inserted object; the positioned effect used for a full hand
+  upgrades a display copy. Preserve that distinction for repeated upgrades.
 - `manager.played_cards` supplies turn/combat histories. Exhaust pile size and strike tags
   supply counts at the Java query sites; do not add per-card or per-monster counters for them.
   HP-loss/exhaust triggers use the shared creature, relic, power and card hook paths.
@@ -453,14 +468,14 @@ orb slot. It does not expand ShopScreen's coloured-card pool: the shop still req
 Silent's attack/skill/power pools. Preserve the discarded shuffle RNG draw and the later sorted
 card selection in CardLibrary. Foreign Influence uses cardRandomRng for rarity and shuffle,
 then cardRng for the filtered attack choice; it excludes HEALING-tagged attacks. Discovery's
-ordinary combat pools remain separate. Foreign reward templates cover unupgraded offers; an
-upgraded offer or an acquired unported card remains blocked on that card unit. A generated offer of an unported playable card is a
-waiting dependency, not permission to substitute a Silent card or omit an option.
+ordinary combat pools remain separate. Every library reward entry binds to its implemented
+CardId at generation time. Offers, upgrades and acquisition use normal card objects and retain
+their identities; no template-only reward representation remains.
 
 Keep full recordings outside the repository and commit a losslessly compressed representative
 fixture. The current scenarios cover the listed inputs, not all cross-colour combinations.
-In particular, an unobserved power/action remains waiting even when its header compiles or a
-nearby card scenario passes. Review death-trigger ordering when adding retaliatory damage:
+An instant action can execute between observations without leaving a snapshot object; report
+that unit as unobserved, distinct from a missing caller or a matched observation. Review death-trigger ordering when adding retaliatory damage:
 AbstractMonster clears dead powers during death settlement, and a refresh between retaliation
 and settlement can retain a dead monster's modified DamageInfo. Compare those dead objects,
 not only the living enemies' HP.
@@ -561,12 +576,16 @@ original seed/scenario inputs, so generated run-start batches can use the same c
 the requested outputs and the second pass compares their idle-frame counterparts. A direct
 map-node start must have an outgoing edge for that seed, or the original has no route onward.
 
-For the implemented content set, `tests/content.py record /tmp/spire-content` records every
-scenario on seeds 101, 102 and 103 in one JVM. Each job restores the initial Boss-seen
+For ordinary scenarios, `tests/content.py record /tmp/spire-content` uses seeds 101, 102 and 103.
+A fixed-index action prefix can require different seeds to preserve its card and target choices.
+`tests/scenario-seeds.json` preserves those original recorded inputs; the recorder uses them in
+place of the default seeds. Keep every replay difference, and never select seeds by the replay
+outcome. `check_oracle_frames.py --jobs` accepts the same seed/scenario inputs. Inventory replay
+reads each scenario directory's recorded seeds and requires at least three. Each job restores the initial Boss-seen
 preferences, so an earlier Boss encounter cannot change a later job's run initialization. After building the engine, run
-`PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/content.py replay /tmp/spire-content --runs /tmp/spire-runs`.
-The run directory contains full-run and run-start recordings; it contributes per-event
-observations and run-hook consumers to the same generated inventory.
+`PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/content.py replay /tmp/spire-content --traces /tmp/spire-runs tests/traces`.
+Additional recordings can be full runs, run starts or committed content fixtures. They contribute
+observations and encounter coverage to the same generated inventory.
 This generates `inventory/status.json` from strict replay results, including source/scenario/trace
 hashes, per-scope counts, terminal results and first differences. Do not edit that file. A unit's
 `matched` status requires its primary scenario and all runnable supplements to match; the separate

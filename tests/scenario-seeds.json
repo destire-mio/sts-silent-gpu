@@ -1,0 +1,87 @@
+{
+  "Amplify-stacked": [
+    101,
+    127,
+    131
+  ],
+  "Barrage-retaliation": [
+    101,
+    135,
+    143
+  ],
+  "CompileDriver-same-orbs": [
+    101,
+    200,
+    222
+  ],
+  "CoreSurge-prevent-bias": [
+    101,
+    102,
+    105
+  ],
+  "FiendFire-shared-info-retaliation": [
+    101,
+    113,
+    117
+  ],
+  "Finisher-shared-info-retaliation": [
+    101,
+    111,
+    132
+  ],
+  "Flechettes-shared-info-retaliation": [
+    101,
+    113,
+    117
+  ],
+  "FlurryOfBlows-recovery-full-hand": [
+    3,
+    4,
+    7
+  ],
+  "ForeignInfluence": [
+    14,
+    16,
+    43
+  ],
+  "ForeignInfluence-full-hand": [
+    4,
+    6,
+    14
+  ],
+  "ForeignInfluence-full-hand-random": [
+    4,
+    6,
+    14
+  ],
+  "ForeignInfluence-generated": [
+    14,
+    16,
+    43
+  ],
+  "ForeignInfluence-upgrade": [
+    14,
+    16,
+    43
+  ],
+  "ForeignInfluence-upgrade-generated": [
+    14,
+    16,
+    43
+  ],
+  "ForeignInfluence-x-cost": [
+    23,
+    123,
+    138
+  ],
+  "ForeignInfluence-x-cost-upgrade": [
+    23,
+    123,
+    138
+  ],
+  "PrismaticShard-upgraded-reward": [
+    101,
+    102,
+    104
+  ]
+}

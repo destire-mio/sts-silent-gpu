@@ -14,7 +14,7 @@ def main():
     flags = [args.compiler, "-std=c++17", "-I", str(args.root), "-I", str(args.generated.parent)]
     with tempfile.TemporaryDirectory(prefix="spire-layout-") as temporary:
         source = Path(temporary) / "layout.cpp"
-        source.write_text('#include "core/state.hpp"\n')
+        source.write_text('#include "core/data.hpp"\n')
         ast = json.loads(subprocess.check_output(
             [*flags, "-fsyntax-only", "-Xclang", "-ast-dump=json", str(source)], text=True))
         records = {}
@@ -29,7 +29,7 @@ def main():
                 visit(child)
 
         visit(ast)
-        lines = ['#include "core/state.hpp"', '#include <cstdio>', 'using namespace spire;',
+        lines = ['#include "core/data.hpp"', '#include <cstdio>', 'using namespace spire;',
                  'template<class T> struct Element { using Type = T; static constexpr int capacity = 1; };',
                  'template<class T, int N> struct Element<T[N]> { using Type = T; static constexpr int capacity = N; };']
         for container in ('List', 'Queue', 'Pool'):

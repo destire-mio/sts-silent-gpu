@@ -1,0 +1,58 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Pantograph"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 30,
+  "max_hp": 66,
+  "encounter": "Hexaghost",
+  "start": {
+    "act": 1,
+    "floor": 17,
+    "node": [
+      3,
+      14
+    ],
+    "room": "MonsterRoomBoss",
+    "gold": 0,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}

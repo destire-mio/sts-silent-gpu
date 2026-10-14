@@ -1,27 +1,23 @@
 {
   "deck": [
     {
-      "id": "Strike_G",
+      "id": "WindmillStrike",
       "upgrades": 0
     },
     {
-      "id": "Strike_G",
+      "id": "WindmillStrike",
+      "upgrades": 1
+    },
+    {
+      "id": "Night Terror",
       "upgrades": 0
     },
     {
-      "id": "Strike_G",
-      "upgrades": 0
+      "id": "Night Terror",
+      "upgrades": 1
     },
     {
-      "id": "Strike_G",
-      "upgrades": 0
-    },
-    {
-      "id": "Defend_G",
-      "upgrades": 0
-    },
-    {
-      "id": "Defend_G",
+      "id": "Establishment",
       "upgrades": 0
     },
     {
@@ -33,22 +29,29 @@
       "upgrades": 0
     },
     {
-      "id": "Neutralize",
+      "id": "Defend_G",
       "upgrades": 0
     },
     {
-      "id": "Survivor",
+      "id": "Strike_G",
       "upgrades": 0
     }
   ],
   "relics": [
-    "SlaversCollar"
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
   ],
   "potions": [
     null,
     null
   ],
-  "hp": 59,
-  "max_hp": 66,
-  "encounter": "The Guardian"
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian",
+  "actions": [
+    {
+      "type": "end_turn"
+    }
+  ]
 }

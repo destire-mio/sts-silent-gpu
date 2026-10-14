@@ -13,8 +13,7 @@ struct ForeignInfluence : ActionHooks {
                 bool duplicate = false;
                 for (int i = 0; i < g.reward_cards.size; ++i) {
                     const int card = g.reward_cards[i];
-                    if (card < card_capacity ? g.cards[card].id == library_card_native(library) :
-                        g.foreign_reward_cards[card - card_capacity].library_index == library)
+                    if (g.cards[card].id == library_card_native(library))
                         duplicate = true;
                 }
                 if (!duplicate)

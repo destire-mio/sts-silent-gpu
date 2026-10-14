@@ -167,11 +167,7 @@ SPIRE_FN inline int create_reward(Game& g, RoomReward reward) {
     return index;
 }
 SPIRE_FN inline int create_library_card(Game& g, int library) {
-    const CardId native = library_card_native(library);
-    if (native != CardId::Count) return create_card(g, make_card(g, native));
-    const int card = card_capacity + g.foreign_reward_cards.size;
-    g.foreign_reward_cards.push_back({static_cast<uint16_t>(library), static_cast<uint16_t>(g.next_card_uuid++)});
-    return card;
+    return create_card(g, make_card(g, library_card_native(library)));
 }
 SPIRE_FN inline int create_card_reward(Game& g) {
     RoomReward reward{};
@@ -183,11 +179,6 @@ SPIRE_FN inline int create_card_reward(Game& g) {
         reward.cards.push_back(create_library_card(g, library));
     }
     for (int i = 0; i < reward.cards.size; ++i) {
-        if (reward.cards[i] >= card_capacity) {
-            const auto& card = library_reward_cards[g.foreign_reward_cards[reward.cards[i] - card_capacity].library_index];
-            if (card.rarity != CardRarity::Rare) SPIRE_ASSERT(!g.rng.card.randomBoolean(g.run.card_upgraded_chance));
-            continue;
-        }
         Card& card = g.cards[reward.cards[i]];
         if (card_rarity(card.id) != CardRarity::Rare && g.rng.card.randomBoolean(g.run.card_upgraded_chance) &&
             card_canUpgrade(g, reward.cards[i])) card_upgrade(card);
@@ -307,6 +298,7 @@ SPIRE_FN inline void on_victory(Game& g) {
         Powers& powers = g.player.creature.powers;
         for (int i = 0; i < powers.size; ++i) power_onVictory(g, powers.at(g.power_objects, i), player_target);
     }
+    g.player.damaged_this_combat = 0;
 }
 SPIRE_FN inline void gain_energy(Game& g, int amount) {
     g.player.energy = min(999, g.player.energy + amount);

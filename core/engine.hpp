@@ -393,10 +393,11 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
         g.manager.damage_received_this_combat += amount;
         if (info.damage_type == DamageType::HpLoss) g.manager.hp_loss_this_combat += amount;
         target.hp -= amount;
-        if (amount > 0) {
+        if (amount > 0 && g.room_phase == RoomPhase::Combat) {
             for (int i = 0; i < g.hand.size; ++i) card_tookDamage(g, g.hand[i]);
             for (int i = 0; i < g.discard.size; ++i) card_tookDamage(g, g.discard[i]);
             for (int i = 0; i < g.draw.size; ++i) card_tookDamage(g, g.draw[i]);
+            ++g.player.damaged_this_combat;
         }
         target.hp = max(0, target.hp);
         if (target.hp <= target.max_hp / 2 && !g.player.bloodied) {
@@ -875,6 +876,7 @@ SPIRE_FN inline void construct_encounter(Game& g, EncounterId encounter) {
     g.encounter = previous;
 }
 SPIRE_FN inline void prepare_player_battle(Game& g) {
+    g.player.damaged_this_combat = 0;
     g.manager.player_hp_last_turn = g.player.creature.hp;
     g.player.bloodied = g.player.creature.hp <= g.player.creature.max_hp / 2;
     g.turn = 1;
@@ -946,7 +948,6 @@ SPIRE_FN inline void enter_combat(Game& g) {
     for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
     g.cards.clear();
     for (auto& word : g.pending_card_moves) word = 0;
-    g.foreign_reward_cards.clear();
     for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
     g.previous_screen = Screen::None;
     g.multi_damage.clear();

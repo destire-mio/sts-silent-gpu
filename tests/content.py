@@ -12,6 +12,7 @@ import replay
 
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = (101, 102, 103)
+SCENARIO_SEEDS = json.loads((ROOT / "tests/scenario-seeds.json").read_text())
 
 
 def catalogs():
@@ -146,7 +147,7 @@ def record_content(output, cases):
     from record import run_jobs
     jobs = [dict(seed=seed, scenario=json.loads(path.read_text()),
                  output=str(output.resolve() / name / f"{seed}.jsonl"))
-            for name, (path, _) in cases.items() for seed in SEEDS]
+            for name, (path, _) in cases.items() for seed in SCENARIO_SEEDS.get(name, SEEDS)]
     run_jobs(jobs)
 
 
@@ -231,9 +232,9 @@ def trace_evidence(path, units):
     return header, observed, missing, decisions, invoked - observed
 
 
-def replay_content(output, units, cases, run_paths=()):
+def replay_content(output, units, cases, trace_paths=()):
     import spire
-    document = dict(schema=2, source_sha256=source_digest(), seeds=list(SEEDS),
+    document = dict(schema=2, source_sha256=source_digest(), minimum_seeds_per_scenario=3,
                     scope="Both scopes and terminal snapshots; missing units and rules-only hooks are separate",
                     units={}, scenarios={})
     inventory = json.loads((ROOT / "inventory/units.json").read_text())["units"]
@@ -250,8 +251,10 @@ def replay_content(output, units, cases, run_paths=()):
         missing = missing_content(scenario)
         rules = [dict(kind="rule", id=name.split("--")[1].removeprefix("rule-"))] if name.startswith("blocked--rule-") else []
         rows = []
-        for seed in SEEDS:
-            path = output / name / f"{seed}.jsonl"
+        paths = sorted((output / name).glob("*.jsonl"), key=lambda path: int(path.stem))
+        assert len(paths) >= 3, (name, len(paths))
+        for path in paths:
+            seed = int(path.stem)
             header, observed, generated_missing, decisions, invoked = trace_evidence(path, units)
             assert header["seed"] == seed and header["scenario"] == scenario, path
             dependencies = missing + generated_missing
@@ -277,10 +280,13 @@ def replay_content(output, units, cases, run_paths=()):
         document["scenarios"][name] = dict(units=owners,
             scenario_sha256=hashlib.sha256(scenario_path.read_bytes()).hexdigest(),
             waiting_for=missing + rules, results=rows)
-    for path in run_paths:
+    for path in trace_paths:
         header, observed, missing, decisions, invoked = trace_evidence(path, units)
-        assert header["scenario"] is None or "start" in header["scenario"], path
-        name = "run:" + path.name.removesuffix(".gz").removesuffix(".jsonl")
+        scenario = header["scenario"]
+        if scenario is not None and "start" not in scenario:
+            observed.update(key for key, unit in units.items()
+                            if unit["kind"] == "encounter" and unit["game_id"] == scenario["encounter"])
+        name = ("fixture:" if scenario is not None and "start" not in scenario else "run:") + path.parent.name + "/" + path.name.removesuffix(".gz").removesuffix(".jsonl")
         assert name not in document["scenarios"], name
         row = dict(status="blocked", decisions=decisions, waiting_for=missing) if missing else replay_trace(path, spire)
         row.update(seed=header["seed"], trace_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
@@ -331,10 +337,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("record", "replay"))
     parser.add_argument("output", type=Path)
-    parser.add_argument("--runs", nargs="*", type=Path, default=[])
+    parser.add_argument("--traces", nargs="*", type=Path, default=[], help="Additional full-run, run-start or content recordings")
     args = parser.parse_args()
     units, cases = content_cases()
     if args.command == "record":
         record_content(args.output, cases)
     else:
-        raise SystemExit(replay_content(args.output, units, cases, replay.trace_paths(args.runs)))
+        raise SystemExit(replay_content(args.output, units, cases, replay.trace_paths(args.traces)))
