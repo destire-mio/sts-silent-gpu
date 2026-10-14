@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct NotStanceCheck : ActionHooks {
-    SPIRE_WAITING_RULE("NotStanceCheckAction: waiting for a ported caller with three-seed oracle replay")
     SPIRE_STATE(NotStanceCheck, int action; Stance stance;)
     SPIRE_SNAPSHOT("NotStanceCheckAction.actionToBuffer", action_reference, effect.payload.state.NotStanceCheck.action)
     SPIRE_SNAPSHOT("NotStanceCheckAction.stanceToCheck", stance_name, effect.payload.state.NotStanceCheck.stance)
