@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct ShuffleAll : ActionHooks {
-    SPIRE_WAITING_RULE("ShuffleAllAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "SHUFFLE"}; }
     SPIRE_STATE(ShuffleAll, bool shuffled; bool vfxDone; int count;)
     static SPIRE_FN void prepare(Game& g, Effect& e) {
