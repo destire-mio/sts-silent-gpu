@@ -4,7 +4,6 @@
 
 namespace spire::units::actions {
 struct Tempest : ActionHooks {
-    SPIRE_WAITING_RULE("TempestAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(Tempest, int energyOnUse; bool freeToPlayOnce; bool upgraded;)
     SPIRE_SNAPSHOT("TempestAction.p", player)
