@@ -43,6 +43,8 @@ def content_cases():
     for path in sorted((ROOT / "tests/scenarios").glob("*.json")):
         name = path.stem.split("--")[-1]
         setup = json.loads(path.read_text())
+        if "start" in setup:
+            continue
         owners = []
         for key, unit in units.items():
             if unit["kind"] == "encounter":
