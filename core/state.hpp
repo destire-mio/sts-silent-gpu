@@ -442,6 +442,7 @@ struct Game {
     bool selection_can_pick_zero = false;
     int put_on_deck_num = 0;
     uint32_t next_power_instance = 1;
+    uint32_t next_damage_info_instance = 1;
     uint32_t next_card_uuid = 1;
     uint16_t obtained_cards[static_cast<int>(CardId::Count)]{};
     bool selection_for_upgrade = false;

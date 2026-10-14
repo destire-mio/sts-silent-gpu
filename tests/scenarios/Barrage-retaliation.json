@@ -1,0 +1,64 @@
+{
+  "deck": [
+    {
+      "id": "Capacitor",
+      "upgrades": 1
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 1
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 1
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 1
+    },
+    {
+      "id": "Barrage",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Lantern",
+    "Cursed Key"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 1,
+  "encounter": "4 Shapes",
+  "actions": [
+    {
+      "type": "play",
+      "card": 4,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 2
+    }
+  ]
+}

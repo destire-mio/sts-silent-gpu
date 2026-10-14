@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Auto Shields",
+      "upgrades": 0
+    },
+    {
+      "id": "Auto Shields",
+      "upgrades": 0
+    },
+    {
+      "id": "Auto Shields",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Anchor"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 36,
+  "max_hp": 36,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Chill",
+      "upgrades": 0
+    },
+    {
+      "id": "Chill",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 80,
+  "max_hp": 80,
+  "encounter": "3 Louse"
+}

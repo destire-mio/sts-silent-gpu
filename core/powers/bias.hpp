@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Bias : PowerHooks {
-    SPIRE_WAITING_RULE("BiasPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {5, true}; }
     static SPIRE_FN void atStartOfTurn(Game& g, Power& p, int owner) {
         queue_power(g, owner, owner, PowerId::Focus, -p.amount);

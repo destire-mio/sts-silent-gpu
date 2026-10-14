@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct Gash : ActionHooks {
-    SPIRE_WAITING_RULE("GashAction: waiting for a ported caller with three-seed oracle replay")
     SPIRE_SNAPSHOT("GashAction.card", card, effect.card)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         g.cards[e.card].base_damage += e.amount;

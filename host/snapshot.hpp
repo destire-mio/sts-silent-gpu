@@ -774,13 +774,15 @@ struct SnapshotGraph {
             return py::reinterpret_borrow<py::object>(data["fields"].cast<py::dict>()[py::str(key)]);
         });
     }
-    py::object damage_info(const Effect& effect, int queue, int index) {
+    py::object damage_info(const Effect& effect, int queue, int index, uint32_t instance = 0) {
         if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
             const Monster& owner = game.monsters[effect.source];
             for (int i = 0; i < owner.damage_count; ++i)
                 if (monster_base_damage(game, owner, i) == effect.info_base) return monster_damage(effect.source, i);
         }
-        return object({16, queue, index}, "cards.DamageInfo", [&](const std::string& name) -> py::object {
+        const std::array<int, 3> identity = instance == 0 ? std::array<int, 3>{16, queue, index}
+                                                       : std::array<int, 3>{47, static_cast<int>(instance), 0};
+        return object(identity, "cards.DamageInfo", [&](const std::string& name) -> py::object {
             if (name == "DamageInfo.base") return py::int_(effect.info_base);
             if (name == "DamageInfo.output") return py::int_(effect.amount);
             if (name == "DamageInfo.isModified") return py::bool_(false);
