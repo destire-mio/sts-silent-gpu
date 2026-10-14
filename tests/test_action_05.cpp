@@ -204,6 +204,36 @@ static void test_summon_construction() {
             "SummonGremlin rolls its move and inserts the new identity in drawX order");
 }
 
+static void test_memories_after_cancelled_purge() {
+    const bool cases[]{false, true};
+    for (bool cancel_purge : cases) {
+        Game g{}; reset(g, 101);
+        if (cancel_purge) {
+            g.run.gold = 200;
+            enter_room(g, RoomKind::Shop);
+            step(g, {ActionKind::Choose, 0});
+            step(g, {ActionKind::Choose, 0});
+            step(g, {ActionKind::Skip});
+        }
+        enter_room(g, RoomKind::Monster);
+        g.run.potions[0] = PotionId::LiquidMemories;
+        g.run.potion_state[0] = construct_potion(g, PotionId::LiquidMemories);
+        step(g, {ActionKind::EndTurn});
+        require(g.discard.size > 1, "Memories fixture has several discarded cards");
+        const int card = g.discard[0], hand_size = g.hand.size, deck_size = g.run.master_deck.size;
+        step(g, {ActionKind::PotionUse, 0, -1});
+        require(g.screen == Screen::Grid, "Memories opens the discard selection");
+        step(g, {ActionKind::Choose, 0});
+        require(g.screen == Screen::Combat && g.hand.size == hand_size + 1 &&
+                g.cards[card].cost_for_turn == 0 && g.run.master_deck.size == deck_size,
+                "Memories returns its chosen card without a purge confirmation or master-deck removal");
+        ActionSet legal{}; legal_actions(g, legal);
+        bool end_turn = false;
+        for (int i = 0; i < legal.size; ++i) end_turn |= legal[i].kind == ActionKind::EndTurn;
+        require(end_turn, "combat input resumes after Memories");
+    }
+}
+
 int main() {
     test_damage_and_x_cost();
     test_debuff_removal();
@@ -213,5 +243,6 @@ int main() {
     test_stasis_selection();
     test_use_card_movement();
     test_summon_construction();
+    test_memories_after_cancelled_purge();
     std::puts("action:05 behavior checks passed");
 }

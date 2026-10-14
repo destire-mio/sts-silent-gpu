@@ -89,7 +89,7 @@ SPIRE_FN inline void settle_card_obtains(Game& g) {
     g.pending_obtains.clear();
 }
 SPIRE_FN inline void open_grid_selection(Game& g, PileId source, int amount, bool for_purge) {
-    g.grid_previous_deck_size = g.grid_cards.size;
+    g.grid_previous_deck_size = get_pile(g, source).size;
     g.screen = Screen::Grid;
     g.grid_source = source;
     g.selection_amount = amount;

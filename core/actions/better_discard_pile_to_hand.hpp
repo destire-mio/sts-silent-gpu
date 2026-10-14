@@ -39,14 +39,11 @@ struct BetterDiscardPileToHand : ActionHooks {
                 for (int i = 0; i < cards.size; ++i) move(g, e, cards[i]);
                 return;
             }
-            g.grid_source = PileId::Discard;
-            g.selected_cards.clear();
-            g.selection_amount = count;
+            // BetterDiscardPileToHandAction.update opens through GridCardSelectScreen.callOnOpen.
+            open_grid_selection(g, PileId::Discard, count, false);
             g.selection_any_number = e.payload.state.BetterDiscardPileToHand.optional;
             g.selection_can_pick_zero = e.payload.state.BetterDiscardPileToHand.optional;
             e.payload.state.BetterDiscardPileToHand.selecting = true;
-            g.grid_previous_deck_size = get_pile(g, g.grid_source).size;
-            g.screen = Screen::Grid;
             return;
         }
         for (int i = 0; i < g.selected_cards.size; ++i) move(g, e, g.selected_cards[i]);

@@ -59,9 +59,7 @@ def pick(rng, actions, weights):
     return rng.choices(actions, weights=weights)[0]
 
 
-def combat_action(game, state, rng):
-    actions = game.legal_actions()
-    assert actions, (state, game.snapshot())
+def combat_action(game, state, rng, actions):
     if any(action['type'] == 'choose' for action in actions):
         weights = []
         for action in actions:
@@ -170,7 +168,7 @@ def combat_score(game):
         - len(enemies) * 80 + poison * 2.5 + scaling
 
 
-def fight(game, rng):
+def fight(game, rng, prefix):
     beam = [(game, [])]
     finished = []
     for _ in range(60):
@@ -182,7 +180,10 @@ def fight(game, rng):
                 actions = []
                 state = trial.search_state()
                 for _ in range(120):
-                    action = combat_action(trial, state, rng)
+                    legal = trial.legal_actions()
+                    assert legal, json.dumps(dict(seed=trial.snapshot()['run']['seed'],
+                        actions=prefix + previous + actions, snapshot=trial.snapshot()))
+                    action = combat_action(trial, state, rng, legal)
                     trial.step(action)
                     actions.append(action)
                     state = trial.search_state()
@@ -249,7 +250,7 @@ def find(seed):
             base = parent.game
             prefix = []
             if base.search_state()['combat']:
-                base, prefix = fight(base, rng)
+                base, prefix = fight(base, rng, parent.actions)
             for _ in range(32 if floor == 0 else 4):
                 trial = base.copy()
                 actions = list(prefix)
@@ -262,7 +263,7 @@ def find(seed):
                         children.append(Candidate(trial, parent.actions + actions))
                         break
                     if state['combat']:
-                        trial, inputs = fight(trial, rng)
+                        trial, inputs = fight(trial, rng, parent.actions + actions)
                         actions.extend(inputs)
                     else:
                         assert trial.legal_actions(), json.dumps(dict(seed=seed,
