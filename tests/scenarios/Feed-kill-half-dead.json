@@ -1,0 +1,47 @@
+{
+  "deck": [
+    {
+      "id": "Feed",
+      "upgrades": 0
+    },
+    {
+      "id": "Feed",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Vajra",
+    "Akabeko",
+    "Bag of Marbles"
+  ],
+  "potions": [
+    "SteroidPotion",
+    "SteroidPotion"
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Darklings",
+  "actions": [
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    },
+    {
+      "type": "potion_use",
+      "slot": 1,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

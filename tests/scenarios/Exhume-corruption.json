@@ -1,0 +1,42 @@
+{
+  "deck": [
+    {
+      "id": "Exhume",
+      "upgrades": 0
+    },
+    {
+      "id": "Exhume",
+      "upgrades": 1
+    },
+    {
+      "id": "Corruption",
+      "upgrades": 1
+    },
+    {
+      "id": "Impervious",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly Armor",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Offering",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}
