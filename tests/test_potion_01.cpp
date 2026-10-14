@@ -17,7 +17,7 @@ int main() {
     setup.potions[1] = PotionId::BlockPotion;
     start_combat(g, setup);
     require(potion_canUse(g, 0) && potion_canUse(g, 1), "combat permits both potions");
-    g.room_event_class = g.text.intern("events.shrines.WeMeetAgain");
+    g.event.id = EventId::WeMeetAgain;
     require(!potion_canUse(g, 0) && !potion_canUse(g, 1) && !potion_canDiscard(g, 0) && !potion_canDiscard(g, 1),
             "We Meet Again blocks potion use and discard");
     ActionSet legal{};
@@ -25,7 +25,7 @@ int main() {
     for (int i = 0; i < legal.size; ++i)
         require(legal[i].kind != ActionKind::PotionUse && legal[i].kind != ActionKind::PotionDiscard,
                 "blocked potions produce no input actions");
-    g.room_event_class = g.text.intern("events.shrines.Lab");
+    g.event.id = EventId::Lab;
     g.room_in_combat = false;
     require(potion_canUse(g, 0) && !potion_canUse(g, 1) && potion_canDiscard(g, 0) && potion_canDiscard(g, 1),
             "Entropic Brew remains usable in other event rooms");

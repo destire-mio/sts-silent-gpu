@@ -61,10 +61,10 @@ static void potion_availability() {
     g.monsters[0].creature.dying = true;
     require(!potion_canUse(g, 0), "Smoke Bomb inspects dying enemies for Back Attack");
     g = combat(PotionId::FruitJuice);
-    g.room_event_class = g.text.intern("events.shrines.WeMeetAgain");
+    g.event.id = EventId::WeMeetAgain;
     require(!potion_canUse(g, 0) && !potion_canDiscard(g, 0),
             "We Meet Again prevents Fruit Juice use and discard");
-    g.room_event_class = 0;
+    g.event.id = EventId::Count;
     g.screen = Screen::None;
     g.room_in_combat = false;
     g.manager.turn_has_ended = true;

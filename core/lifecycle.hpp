@@ -23,11 +23,8 @@ SPIRE_FN inline void lose_gold(Game& g, int amount) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onLoseGold(g, i);
 }
 SPIRE_FN inline void equip_relic(Game& g, RelicId id) {
-    if (id == RelicId::Circlet) {
-        for (int i = 0; i < g.run.relics.size; ++i) if (g.run.relics[i].id == id) {
-            ++g.run.relics[i].counter; return;
-        }
-    }
+    if (relic_data(id).stacks_on_obtain)
+        for (int i = 0; i < g.run.relics.size; ++i) if (g.run.relics[i].id == id) { ++g.run.relics[i].counter; return; }
     const int index = g.run.relics.size;
     g.run.relics.push_back({id, relic_data(id).counter});
     relic_initialize_state(g.run.relics[index]);
@@ -42,11 +39,21 @@ SPIRE_FN inline bool unequip_relic(Game& g, RelicId id) {
         }
     }
     if (remove_index < 0) return false;
+    for (int i = 0; i < g.reward_objects.size; ++i) {
+        auto& object = g.reward_objects[i];
+        if (object.relic_slot == remove_index) { object.relic = g.run.relics[remove_index]; object.relic_slot = -1; }
+        else if (object.relic_slot > remove_index) --object.relic_slot;
+    }
     g.run.relics.erase(remove_index);
     return true;
 }
 SPIRE_FN inline void preview_card_obtain(Game& g, Card& card) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onPreviewObtainCard(g, i, card);
+}
+SPIRE_FN inline void obtain_relic_object(Game& g, int reference) {
+    const int size = g.run.relics.size;
+    equip_relic(g, g.reward_objects[reference].relic.id);
+    if (g.run.relics.size != size) g.reward_objects[reference].relic_slot = size;
 }
 SPIRE_FN inline void obtain_card(Game& g, Card card) {
     const CardRarity rarity = card_rarity(card.id);
@@ -261,8 +268,7 @@ SPIRE_FN inline void remove_room_relic_reward(Game& g) {
 }
 SPIRE_FN inline void remove_master_card(Game& g, int index) {
     Card removed = g.run.master_deck.erase(index);
-    bool referenced = false;
-    if (g.event.id != EventId::Count) referenced = event_referencesMasterCard(g, removed.uuid);
+    bool referenced = g.event.id != EventId::Count && event_referencesMasterCard(g, removed.uuid);
     for (int i = 0; i < g.run.relics.size; ++i) referenced |= relic_referencesMasterCard(g, i, removed.uuid);
     if (referenced) {
         g.detached_master_cards.push_back(g.cards.size);

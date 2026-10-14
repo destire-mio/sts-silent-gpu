@@ -318,6 +318,12 @@ struct SnapshotGraph {
 
     py::object relic(int index) { return relic_value(game.run.relics[index], index, true, {9, index, 0}); }
 
+    py::object retained_relic(int index, bool obtained) {
+        const RoomReward& object = game.reward_objects[index];
+        if (object.relic_slot >= 0) return relic(object.relic_slot);
+        return relic_value(object.relic, -1, obtained, {36, object.identity, 0});
+    }
+
     py::object potion(int index) {
         const PotionId id = game.run.potions[index];
         if (game.run.potion_identity[index] != 0) for (int r = 0; r < game.reward_objects.size; ++r)

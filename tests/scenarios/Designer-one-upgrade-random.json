@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Anchor"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 6,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 2,
+    "floor": 33,
+    "node": [
+      3,
+      14
+    ],
+    "room": "EventRoom",
+    "gold": 200,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}
