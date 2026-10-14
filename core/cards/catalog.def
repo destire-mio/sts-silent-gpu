@@ -171,3 +171,4 @@ SPIRE_UNIT(ReinforcedBody, "Reinforced Body", "core/cards/reinforced_body.hpp", 
 SPIRE_UNIT(Reprogram, "Reprogram", "core/cards/reprogram.hpp", Reprogram)
 SPIRE_UNIT(RipAndTear, "Rip and Tear", "core/cards/rip_and_tear.hpp", RipAndTear)
 SPIRE_UNIT(Scrape, "Scrape", "core/cards/scrape.hpp", Scrape)
+SPIRE_UNIT(Seek, "Seek", "core/cards/seek.hpp", Seek)
