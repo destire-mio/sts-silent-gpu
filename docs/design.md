@@ -514,6 +514,8 @@ recording with 13 extra idle frames per observation. `predictions.json`, `jobs.j
 An original-game divergence is reported and yields a nonzero exit; the searched action list is never adjusted to
 match the recorder. The recorder streams gzip files, including the idle-frame recordings.
 Deep acceptance is retained as the tool and a small manifest; the generated traces stay outside
-the repository. Committed representative deep traces must total at most 3 MiB.
+the repository. [The acceptance manifest](../inventory/deep-neow.json) records the inputs,
+recording checksums, both replay scopes, terminal results, idle-frame pairs and capacity measurements.
+Its trace and scenario paths point to generated files outside the repository. Committed representative deep traces must total at most 3 MiB.
 The new `tools/` directory holds host search and acceptance orchestration, separate from game
 rules and the original-game observer.

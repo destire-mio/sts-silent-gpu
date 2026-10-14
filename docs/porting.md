@@ -294,10 +294,11 @@ selection uses eight indices (the reward-card limit), rather than full combat pi
 lists do not truncate: recursive draw parts share a hand-limited amount, and reward selections
 come from bounded reward lists or three-card Discovery/Codex/ChooseOne choices. The resulting
 Game is 36,848 bytes. Search telemetry records branch counts at 128 and 160 and peak residency.
-Dead Branch on seed 202610160050 exceeded 184 slots at action 1430. Eight additional slots
-fit by packing the room/selection booleans and bounding pending event obtains at eight indices.
-The source-wide queue_card_obtain audit finds at most five pending cards (Vampires); Neow
-and the two-card transforms queue at most three, and other callers queue one or two.
+Dead Branch on seed 202610160050 exceeded 184 slots at action 1430; the same seeded search
+with 192 slots reaches a peak of 188. Eight additional slots fit by packing the room/selection
+booleans and bounding pending event obtains at eight indices.
+The source-wide queue_card_obtain audit finds at most five pending cards (Vampires); Ghosts
+and Neow queue at most three, Drug Dealer queues two, and other callers queue one or two.
 Pandora and Astrolabe use their separate grid/selection paths. Pending obtains settle before
 the next player decision; no card amount is truncated.
 

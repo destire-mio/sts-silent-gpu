@@ -1,0 +1,3451 @@
+{
+  "schema_version": 1,
+  "validated_engine_commit": "546d4df2b56d57a378e1f99092be11e35f962dde",
+  "merged_main": "5164ccb",
+  "game_sha256": "dd60a613a6178e08f1a57bcb8d5747e33c21fd49e743b88d76e9d74042803b2a",
+  "java_source_root": "/Users/destire/Documents/Codex/2026-09-10/new-chat-2/work/native-complete-source/source",
+  "acceptance": {
+    "summary": {
+      "old": {
+        "games": 40,
+        "decisions": 44251,
+        "depth": {
+          "act2": 40,
+          "act3": 40,
+          "act3_boss": 40,
+          "act4": 4,
+          "heart": 1,
+          "win": 0
+        },
+        "without_pandora": 0,
+        "peak_resident_cards": 146,
+        "gzip_bytes": 406406289,
+        "scopes": {
+          "combat": {
+            "traces": 40,
+            "decisions": 44251,
+            "terminal": 40
+          },
+          "run": {
+            "traces": 40,
+            "decisions": 44251,
+            "terminal": 40
+          }
+        }
+      },
+      "fresh": {
+        "games": 40,
+        "decisions": 49303,
+        "depth": {
+          "act2": 40,
+          "act3": 40,
+          "act3_boss": 40,
+          "act4": 5,
+          "heart": 3,
+          "win": 1
+        },
+        "without_pandora": 35,
+        "peak_resident_cards": 168,
+        "gzip_bytes": 451293999,
+        "scopes": {
+          "combat": {
+            "traces": 40,
+            "decisions": 49303,
+            "terminal": 40
+          },
+          "run": {
+            "traces": 40,
+            "decisions": 49303,
+            "terminal": 40
+          }
+        }
+      },
+      "regression": {
+        "games": 11,
+        "decisions": 7597,
+        "depth": {
+          "act2": 8,
+          "act3": 4,
+          "act3_boss": 4,
+          "act4": 0,
+          "heart": 0,
+          "win": 0
+        },
+        "without_pandora": 7,
+        "peak_resident_cards": 186,
+        "gzip_bytes": 69065986,
+        "scopes": {
+          "combat": {
+            "traces": 11,
+            "decisions": 7597,
+            "terminal": 11
+          },
+          "run": {
+            "traces": 11,
+            "decisions": 7597,
+            "terminal": 11
+          }
+        }
+      }
+    },
+    "total_recordings": 91,
+    "total_decisions": 101151,
+    "both_scopes": true,
+    "all_terminals": true,
+    "fresh_idle_games": 40,
+    "idle_extra_frames": 13,
+    "fresh_without_pandora": 35,
+    "actions_unchanged": true,
+    "unresolved_differences": []
+  },
+  "tests": {
+    "ctest_passed": 37,
+    "ctest_total": 37,
+    "committed_traces": 838,
+    "committed_decisions_per_scope": 19206,
+    "all_terminals": true,
+    "log": "/private/tmp/spire-deep-round2/final-ctest.log",
+    "details": "/private/tmp/spire-deep-round2/final-ctest-details.log"
+  },
+  "history": {
+    "branch": "deep-runs",
+    "merged_main": "5164ccb",
+    "committed_deep_fixture_count": 0,
+    "committed_deep_fixture_gzip_bytes": 0,
+    "removed_fixture_commit": "966c7e5c27970c41c1194617e98b9b1ac806237c",
+    "round1_backup": "/private/tmp/spire-deep-round2/round1-branch.bundle",
+    "pushed": false
+  },
+  "capacity": {
+    "cards": 192,
+    "game_bytes": 36848,
+    "budget_bytes": 36864,
+    "search_telemetry": {
+      "completed_searches": 85,
+      "selected_deep_games": 40,
+      "branches": 22581348,
+      "steps": 139838206,
+      "branches_128": 2833,
+      "branches_160": 252,
+      "seeds_128": 8,
+      "seeds_160": 3,
+      "peak_cards": 188,
+      "turn_cutoffs": 0,
+      "unfinished_search": "202610180031 stopped after 40 candidates were complete; not included in completed-search totals"
+    },
+    "details": "/private/tmp/spire-deep-round2/search-telemetry-final.json",
+    "original_cloak_and_dagger_peak": 169,
+    "dead_branch_fault_prefix_peak": 186,
+    "dead_branch_search_peak": 188,
+    "capacity_failures_pruned": false,
+    "card_scalar_values_unchanged": true
+  },
+  "performance": {
+    "machine": "Apple M4, 10 CPU cores",
+    "threads": 1,
+    "steps_per_run": 5000000,
+    "games_per_run": 284785,
+    "alternating_pairs": 7,
+    "baseline": {
+      "steps_per_second": 1013123.298533,
+      "seconds": 4.935233,
+      "game_bytes": 35552
+    },
+    "current": {
+      "steps_per_second": 1023328.626632,
+      "seconds": 4.886016,
+      "game_bytes": 36848
+    },
+    "ratio": 1.0100731353368115,
+    "details": "/private/tmp/spire-deep-round2/performance-final.json"
+  },
+  "timing": {
+    "search_seed": 202610160050,
+    "search_seconds": 47.91257454099832,
+    "search_cpu_seconds": 47.9098,
+    "search_depth": "Act 4 Heart",
+    "search_details": "/private/tmp/spire-deep-round2/capacity050-search-repeat.json",
+    "recording_heart": {
+      "games": 1,
+      "decisions": 1612,
+      "seconds": 53.085251541,
+      "decisions_per_second": 30.36624963065276,
+      "seed": 202610160050,
+      "original": "/private/tmp/spire-deep-round2/fresh-recordings/202610160050.jsonl.gz",
+      "jsonl_sha256": "40dc9691562465e68f9a9ce8d6bc3f255767e7be975cca050e80d9a0974d87c2",
+      "byte_identical": true,
+      "repeat_removed_after_hash_check": true
+    },
+    "recording_timed_games": 10,
+    "recording_mean_seconds": 35.1640846624,
+    "recording_batches": [
+      {
+        "games": 8,
+        "decisions": 9379,
+        "seconds": 271.128971083,
+        "decisions_per_second": 34.59239328994035
+      },
+      {
+        "games": 2,
+        "decisions": 2789,
+        "seconds": 80.511875541,
+        "decisions_per_second": 34.6408524364797
+      }
+    ],
+    "recording_includes": "original reset, callbacks, observation and streamed gzip; excludes JVM startup and idle check"
+  },
+  "seed_audit": {
+    "prior_headers": 13071,
+    "prior_unique_seeds": 121,
+    "fresh_candidate_seeds": [
+      202610160000,
+      202610160001,
+      202610160005,
+      202610160006,
+      202610160007,
+      202610160008,
+      202610160010,
+      202610160012,
+      202610160015,
+      202610160016,
+      202610160017,
+      202610160020,
+      202610160028,
+      202610160029,
+      202610160031,
+      202610160033,
+      202610160034,
+      202610160035,
+      202610160037,
+      202610160044,
+      202610160047,
+      202610160050,
+      202610160051,
+      202610160053,
+      202610180000,
+      202610180001,
+      202610180004,
+      202610180006,
+      202610180007,
+      202610180008,
+      202610180010,
+      202610180013,
+      202610180017,
+      202610180018,
+      202610180019,
+      202610180021,
+      202610180022,
+      202610180025,
+      202610180026,
+      202610180030
+    ],
+    "collisions": [],
+    "baseline_audit": "/private/tmp/spire-deep-delivery/seed-audit.json"
+  },
+  "oracle_contract": {
+    "original_classes_audited": 2306,
+    "patched_classes": 18,
+    "patches_unchanged": true,
+    "rule_rng_split_unchanged": true,
+    "comparison_unchanged": true,
+    "scenario_bootstrap_classification_fixed": true,
+    "observation_proofs": "docs/design.md"
+  },
+  "logic_fixes": {
+    "Entropic Brew": {
+      "java": [
+        "potions.EntropicBrew.use",
+        "vfx.ObtainPotionEffect.update",
+        "ui.panels.TopPanel.updatePotions"
+      ],
+      "change": "Queue fills until after potion use, relic callbacks and removal of the consumed slot; preserve Sozu checks at effect execution.",
+      "repro": "202610141609 line 757; rejected-inputs/202610141609.jsonl.gz, 890 matching decisions before the same illegal legacy input",
+      "commits": [
+        "f00fa54",
+        "c75be58"
+      ]
+    },
+    "Shuriken queue": {
+      "java": [
+        "relics.Shuriken.onUseCard"
+      ],
+      "change": "Queue RelicAboveCreatureAction before Strength on each third attack.",
+      "repro": "202610141115 line 687",
+      "commits": [
+        "152e731"
+      ]
+    },
+    "Slime split queue": {
+      "java": [
+        "monsters.exordium.AcidSlime_L.damage",
+        "monsters.exordium.SpikeSlime_L.damage",
+        "monsters.exordium.SlimeBoss.damage"
+      ],
+      "change": "Queue TextAboveCreatureAction before SetMoveAction.",
+      "repro": "LiquidMemories lines 245-246",
+      "commits": [
+        "53664e2"
+      ]
+    },
+    "Shop cancellation": {
+      "java": [
+        "ui.buttons.CancelButton.update",
+        "dungeons.AbstractDungeon.closeCurrentScreen"
+      ],
+      "change": "Restore previous screen NONE or COMBAT_REWARD on shop cancellation.",
+      "repro": "202610140955 line 444",
+      "commits": [
+        "4fb16dc"
+      ]
+    },
+    "Codex hand caches": {
+      "java": [
+        "vfx.cardManip.ShowCardAndAddToDrawPileEffect.update",
+        "cards.Soul.update"
+      ],
+      "change": "Refresh the hand when the card-add Soul settles, preserving real block and damage caches.",
+      "repro": "202610141365 lines 752 and 794, block 7/5 and 9/11",
+      "commits": [
+        "85a94fe"
+      ]
+    },
+    "Explosive Potion queue": {
+      "java": [
+        "potions.ExplosivePotion.use"
+      ],
+      "change": "Preserve one VFX action for each living monster before DamageAllEnemiesAction.",
+      "repro": "202610140955 line 503, actions length 5/2 during discard selection",
+      "commits": [
+        "e1dddf3"
+      ]
+    },
+    "Death flags and damage caches": {
+      "java": [
+        "monsters.AbstractMonster.die",
+        "monsters.AbstractMonster.updateDeathAnimation",
+        "rooms.AbstractRoom.update",
+        "actions.GameActionManager.getNextAction"
+      ],
+      "change": "Separate dying and dead; freeze death settlement under GRID/CARD_REWARD; settle dead powers before later intent/turn refreshes.",
+      "repro": "202610141115 decision 202 GremlinWizard; 202610140424 Centurion outputs 14/7 vs 18/11; 202610140974 floor29; 202610141366 floor18",
+      "commits": [
+        "45e65b1",
+        "d52fcce"
+      ]
+    },
+    "Victory and escape queue boundaries": {
+      "java": [
+        "rooms.AbstractRoom.endBattle",
+        "actions.GameActionManager.clear",
+        "actions.common.EscapeAction.update"
+      ],
+      "change": "Run victory callbacks at final death settlement, preserve the monster queue when clearing pending actions, and execute the queued SetMove after EscapeAction before escape completion.",
+      "repro": "202610142024 floor36 Darklings; 202610140955 floor18 Mugger",
+      "commits": [
+        "45e65b1",
+        "d52fcce"
+      ]
+    },
+    "Draw history lifetime": {
+      "java": [
+        "actions.common.DrawCardAction.update",
+        "characters.AbstractPlayer.preBattlePrep",
+        "relics.Toolbox.atBattleStartPreDraw"
+      ],
+      "change": "Retain the previous draw objects and their multiDamage across combat setup until DrawCardAction replaces its static history.",
+      "repro": "202610141141 line1310, Toolbox before initial draw",
+      "commits": [
+        "152c23f",
+        "c3e664d"
+      ]
+    },
+    "Dying target predicates and victory refresh": {
+      "java": [
+        "actions.common.DarkOrbEvokeAction.update",
+        "orbs.Dark.onEvoke",
+        "core.AbstractCreature.isDeadOrEscaped",
+        "cards.Soul.update",
+        "rooms.AbstractRoom.endBattle"
+      ],
+      "change": "Exclude dying/half-dead/escaping targets where Java does; finish Soul cache refresh before victory clears Mantra and orb counters.",
+      "repro": "Darkness-seed101 line7; Zap-seed101 terminal; Brilliance-seed103 and ThunderStrike-seed102",
+      "commits": [
+        "5333f54"
+      ]
+    },
+    "Ritual Dagger master references": {
+      "java": [
+        "actions.unique.RitualDaggerAction.update",
+        "relics.StrikeDummy.atDamageModify",
+        "relics.WristBlade.atDamageModify"
+      ],
+      "change": "Resolve the master-deck card in both relic hooks when RitualDaggerAction applies powers before updating baseDamage.",
+      "repro": "202610160040 action386; extra-new/RitualDagger-master-reference.jsonl.gz; tests/traces/RitualDagger-relics.jsonl.gz",
+      "commits": [
+        "b3b8c63",
+        "347814e"
+      ]
+    },
+    "Cultist Potion queue": {
+      "java": [
+        "potions.CultistPotion.use"
+      ],
+      "change": "Queue SFXAction and TalkAction before ApplyPowerAction.",
+      "repro": "202610160016 line88 during HAND_SELECT",
+      "commits": [
+        "f9d6098"
+      ]
+    },
+    "Colosseum room phase": {
+      "java": [
+        "events.city.Colosseum.reopen",
+        "characters.AbstractPlayer.preBattlePrep",
+        "actions.GameActionManager.addToBottom",
+        "actions.GameActionManager.addToTop",
+        "actions.GameActionManager.addToTurnStart"
+      ],
+      "change": "Preserve COMPLETE/EVENT during preBattlePrep; construct actions but admit them only in COMBAT.",
+      "repro": "202610160012 line683, Snecko Eye ApplyPowerAction outside combat",
+      "commits": [
+        "b880cd0"
+      ]
+    },
+    "Combat deck copies": {
+      "java": [
+        "cards.CardGroup.initializeDeck",
+        "cards.AbstractCard.makeSameInstanceOf",
+        "cards.AbstractCard.makeStatEquivalentCopy"
+      ],
+      "change": "Construct combat copies through the Java copy hook; preserve bases without carrying master damage/block caches.",
+      "repro": "202610160016 line428, undrawn Ritual Dagger block 18 vs -1",
+      "commits": [
+        "16e55cc"
+      ]
+    },
+    "Resident card storage": {
+      "java": [
+        "cards.green.CloakAndDagger.use",
+        "relics.DeadBranch.onExhaust",
+        "actions.utility.UseCardAction.update"
+      ],
+      "change": "Expand 160 to 192 resident slots within 36 KiB by compacting bounded reference lists and boolean storage; preserve original card values and object lifetime.",
+      "repro": "202610141141 action1522, 169 objects; assert050-184-reproduction.json action1430, 186 objects; same search peak188",
+      "commits": [
+        "e9ce229",
+        "fe52cd2"
+      ]
+    },
+    "Sundial queue": {
+      "java": [
+        "relics.Sundial.onShuffle",
+        "actions.common.EmptyDeckShuffleAction.<init>"
+      ],
+      "change": "Queue RelicAboveCreatureAction before GainEnergyAction on the third shuffle and preserve COMBAT-only admission. GainEnergy has no constructor callbacks; enqueue the prepared action without recursive dispatch from the shuffle constructor.",
+      "repro": "202610160051 line256, 12 HAND_SELECT queue-length differences",
+      "commits": [
+        "6fde0fa"
+      ]
+    },
+    "Grid selection count ownership": {
+      "java": [
+        "screens.select.GridCardSelectScreen.open",
+        "screens.select.GridCardSelectScreen.openConfirmationGrid",
+        "screens.select.HandCardSelectScreen.open"
+      ],
+      "change": "Store grid numCards separately from the hand selection count. Normal grid opening assigns it; Pandora confirmation preserves the previous grid value.",
+      "repro": "202610160053 line403: expected1, got2 after Prepared selected two hand cards; original1,232-decision game and its 13-idle-frame recording unchanged",
+      "commits": [
+        "546d4df"
+      ]
+    }
+  },
+  "presentation_decisions": [
+    {
+      "fields": [
+        "AbstractCard.block/damage when template base and current base are both -1"
+      ],
+      "decision": "presentation cache",
+      "proof": "Soul.discard/updateMovement uses presentation RNG, positions and frame time; its completion refresh changes unset caches. The 360-card read audit finds no use of these stats except SpiritShield, which assigns baseBlock and applies powers before reading. AbstractPlayer.useCard and AttackDamageRandomEnemyAction recalculate before damage consumption. Real COMBAT cache values remain exact.",
+      "evidence": [
+        "/private/tmp/spire-deep-replacements/202610142024.jsonl.gz",
+        "/private/tmp/spire-deep-replacements/idle-frames/delayed/0.jsonl.gz"
+      ],
+      "design_line": 170
+    },
+    {
+      "fields": [
+        "AbstractCard.block/damage outside COMBAT"
+      ],
+      "decision": "presentation cache",
+      "proof": "No event, shop, Neow, relic or potion rule consumes these combat caches outside COMBAT. preBattlePrep clears piles; initializeDeck constructs copies from bases, not caches; DrawCardAction replaces its history before EscapePlan/Scrape use; useCard recalculates before use. Soul completion versus retained-card restoration can change these unused post-victory remnants.",
+      "evidence": [
+        "/private/tmp/spire-deep-round2/cache-probe/202610142024.jsonl.gz"
+      ],
+      "design_line": 189
+    },
+    {
+      "fields": [
+        "GameActionManager.hasControl/phase outside COMBAT"
+      ],
+      "decision": "presentation dispatcher remnants",
+      "proof": "The only external hasControl reader is AbstractPlayer.updateInput, called in COMBAT. preBattlePrep and combat setup queue initial actions; getNextAction writes EXECUTING_ACTIONS and hasControl=true before next-battle input or a selection; draining the queue writes WAITING_ON_USER and false. No subsequent rule consumes the outside-COMBAT remnants first. Both fields remain exact inside COMBAT.",
+      "evidence": [
+        "202610140424 line828; 267 hasControl differences in round1"
+      ],
+      "design_line": 276
+    },
+    {
+      "fields": [
+        "TextAboveCreatureAction.msg/used"
+      ],
+      "decision": "presentation text",
+      "proof": "update creates TextAboveCreatureEffect and ticks its duration. No game rule reads the text or the rendering flag. The action object, order, source and target remain in snapshots.",
+      "evidence": [
+        "LiquidMemories lines245-246"
+      ],
+      "design_line": 288
+    },
+    {
+      "fields": [
+        "GridCardSelectScreen.prevDeckSize"
+      ],
+      "decision": "presentation layout cache",
+      "proof": "The only reader is updateScrolling, which recomputes scroll bounds from targetGroup.size. Bounds affect scrollbar/artwork positioning. Selection, confirmation and cancellation read targetGroup and selectedCards. A complete recursive comparison of seed202610160005 with 13 extra idle frames changes only prevDeckSize 32 to 9 at line1204.",
+      "evidence": [
+        "/private/tmp/spire-deep-round2/grid-idle-proof/all-field-differences.json",
+        "/private/tmp/spire-deep-round2/grid-idle-proof/original.jsonl.gz",
+        "/private/tmp/spire-deep-round2/grid-idle-proof/delayed.jsonl.gz"
+      ],
+      "design_line": 211
+    }
+  ],
+  "rejected_legacy_inputs": [
+    {
+      "seed": 202610141392,
+      "records": 241,
+      "scopes": {
+        "combat": true,
+        "run": true
+      },
+      "refusal_snapshot": true,
+      "refused_action": {
+        "type": "play",
+        "card": 3,
+        "target": 0
+      },
+      "source": "/private/tmp/spire-deep-corpus-final14/202610141392.jsonl.gz",
+      "output": "/private/tmp/spire-deep-round2/rejected-inputs/202610141392.jsonl.gz",
+      "jvm_log": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/deep-runs/oracle/instance/job-1791984408584673000/game.log",
+      "audit_classes": 2306,
+      "audit_patches": 18,
+      "validated_engine_commit": "546d4df2b56d57a378e1f99092be11e35f962dde"
+    },
+    {
+      "seed": 202610141609,
+      "records": 890,
+      "scopes": {
+        "combat": true,
+        "run": true
+      },
+      "refusal_snapshot": true,
+      "refused_action": {
+        "type": "play",
+        "card": 3,
+        "target": -1
+      },
+      "source": "/private/tmp/spire-deep-final-recordings-extra13/202610141609.jsonl.gz",
+      "output": "/private/tmp/spire-deep-round2/rejected-inputs/202610141609.jsonl.gz",
+      "jvm_log": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/deep-runs/oracle/instance/job-1791984429320348000/game.log",
+      "audit_classes": 2306,
+      "audit_patches": 18,
+      "validated_engine_commit": "546d4df2b56d57a378e1f99092be11e35f962dde"
+    }
+  ],
+  "external_artifacts": {
+    "root": "/private/tmp/spire-deep-round2",
+    "replay": "/private/tmp/spire-deep-round2/final91-replay.json",
+    "accepted_inputs": "/private/tmp/spire-deep-round2/accepted-inputs",
+    "full_result": "/private/tmp/spire-deep-round2/accepted-games.json"
+  },
+  "games": [
+    {
+      "group": "old",
+      "seed": 202610140416,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140416.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140416.json",
+      "scenario_sha256": "1be55df5ea89fab0e7d2f0e7916ec1312696accce6640b384c3b7af37dce7f58",
+      "jsonl_sha256": "c15914d4db42db1a9c7b3810d50093e2d3bdbf796e8550dd66a76b3d80bd6005",
+      "gzip_sha256": "f369a53757666b5f4eebeda32e2e3954989c9cf44baf0c358bd04e041d5e36a5",
+      "gzip_bytes": 12154008,
+      "decisions": 1390,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 58,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140424,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140424.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140424.json",
+      "scenario_sha256": "837a61e2ee3cb28cdb227b8a951a5796d681a3396de044e88dd85e509022461e",
+      "jsonl_sha256": "c50b122d94c10742fd19d10f993734681cc1a51137e1cf918601952c169bc064",
+      "gzip_sha256": "f45625c3d83348a7a9e26741f31d05387747d96708dc8659072c088ecac6a93a",
+      "gzip_bytes": 14620094,
+      "decisions": 1509,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 54,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 111,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140439,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140439.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140439.json",
+      "scenario_sha256": "27677894081d3e0540bf706ceb814fa37f6e74bbcfb84e064b35e550b0fb0d0b",
+      "jsonl_sha256": "75441172169d6b6c17e491aec7943a367b0e3a5f2acf55d78afc40423ce69ca0",
+      "gzip_sha256": "9b2ad86fa385e86040641eb2d11a04af5f1ba8d08379347d07fea9db87331a97",
+      "gzip_bytes": 8554505,
+      "decisions": 937,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 77,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140462,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140462.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140462.json",
+      "scenario_sha256": "250edf58078b7cf54746f1872885a763cc1da1118f5129253fef787111ffac54",
+      "jsonl_sha256": "534ee54640b19a4bc60f052d97ab30bac5341448fd54eefa4954808dbe5bd7dc",
+      "gzip_sha256": "50498f704c371fc90fde1a756cee6764fd9d68860a6294ef01924f31dfbcfa9a",
+      "gzip_bytes": 7234701,
+      "decisions": 821,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 62,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140528,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140528.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140528.json",
+      "scenario_sha256": "f2c3e9fe8e4a0ffd96995f45f69a53982c1719f95cc1ea2f9f5bba653d38e25d",
+      "jsonl_sha256": "0ff14f61119cbe99cdcbfb5c1a4b87b2a63a3d5e0440a4b603b4fa08b2b69f99",
+      "gzip_sha256": "755039f0341a9745a02a9d938ac4875b6a5b3f9481a3121e3969192999b0f7b5",
+      "gzip_bytes": 7897685,
+      "decisions": 880,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 57,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140741,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140741.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140741.json",
+      "scenario_sha256": "310e9eaedbf0990c73025881bf6e0dc6d15c5e654eda736ac992bcddb535e4cc",
+      "jsonl_sha256": "0e7b47f429fbdf427911c47a84ee2b5722af9a6161554bea6331cc9d30690678",
+      "gzip_sha256": "0dcb7ab0b48828c90b8803f31fe9772a036841d010d15fa6be5aab63a4247f39",
+      "gzip_bytes": 9964107,
+      "decisions": 1084,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 54,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 73,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140755,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140755.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140755.json",
+      "scenario_sha256": "7196e068b24df92fe1ae0633df68ac9d73f30a30853f72931809385b64b04e73",
+      "jsonl_sha256": "61dc4714ede84c1335bf6804740b335483881cc1c906052ec680926fe8e3111d",
+      "gzip_sha256": "da08454fdf1be423275cb5f2d62ea7c5f46dd2faf55544593ebc6556435cfadd",
+      "gzip_bytes": 12054911,
+      "decisions": 1271,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 68,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140773,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140773.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140773.json",
+      "scenario_sha256": "0c46364897cef5c37f868b98ad13291dcf0a33b7247082af664dc963d0dff0cd",
+      "jsonl_sha256": "b5121c285669e60daed022106532783f52c797f31d6fbf7bb0de8e5755efe15a",
+      "gzip_sha256": "a080854e69a0b0659ee3a3415a1f3814d8da879364585ff0984a4de94054ceee",
+      "gzip_bytes": 10654445,
+      "decisions": 1117,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 66,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140803,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140803.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140803.json",
+      "scenario_sha256": "d9fdbc884bac7ea4a8c4d08b2c064d5a60936a93d9daab2829a241c814ee5abe",
+      "jsonl_sha256": "67605ce6deab927a5951ce7ac789619782545435eb181017813b354e5c9433f7",
+      "gzip_sha256": "92c9821698d03ebe9a6e1d2b68889207284aa09d622ed2d5d8826a07710697cd",
+      "gzip_bytes": 8203986,
+      "decisions": 892,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 91,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140817,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140817.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140817.json",
+      "scenario_sha256": "3e8d62d847645fc7fdeaa991c480561aa2ac4d3d806ee1316911d1ef8d2ff05d",
+      "jsonl_sha256": "e94e72de3cfd6ba9d84b83e7ed2bff42bb9bb2256698f1b88aaad797343c66c7",
+      "gzip_sha256": "335f273cf301ae528bca821e409833a882ac32caaa4383864779d155e997a388",
+      "gzip_bytes": 9266592,
+      "decisions": 985,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 65,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140861,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140861.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140861.json",
+      "scenario_sha256": "2040abf4ef587c129753ba47dcc9c2ac7601c5daecb574af231ac2672470fc41",
+      "jsonl_sha256": "a882c809d1a1b494e5faed4902080cad9cc8081a4aa1cda424d68886e2dc7e16",
+      "gzip_sha256": "b87feec644d35e45a457ab5e9eda1517027c006d006e9cb5beb1502f272966f6",
+      "gzip_bytes": 10420317,
+      "decisions": 1139,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 69,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140870,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140870.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140870.json",
+      "scenario_sha256": "c5bba50b5ce36a8f292cc845a769aa6ca08cfd5a326cb06967f6d566ec7f1c7e",
+      "jsonl_sha256": "710d0d2deddff61ab92db9f8101ad81ed7ca78b9fc2dee628e7504a19a96ca24",
+      "gzip_sha256": "8c4d512f35b6a221301b8b9a3e2287939ec3c02ab9b95eb74efe2e20ee078c30",
+      "gzip_bytes": 7535943,
+      "decisions": 859,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 49,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140873,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140873.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140873.json",
+      "scenario_sha256": "99cbb6031459f61b4dd78c1aa7016ac69e6a75df5d9ff40f8921b80d43e99115",
+      "jsonl_sha256": "37fb90c139bff358eeedf3313cfb97541780e1474269476641090dd0ac865583",
+      "gzip_sha256": "9818928d44d5a36b69c15220592c2ef50cc8bd55c9c2cd5bc8bf855fc904eaa2",
+      "gzip_bytes": 9915716,
+      "decisions": 1086,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 71,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140910,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140910.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140910.json",
+      "scenario_sha256": "46086db6741754d1d67aab3c869388fbd55feb6b22492a03d5a5786db914ce60",
+      "jsonl_sha256": "54a6bee34b5a0d6e6c80b74efd44bca6c6a6378a76b503c9083115aeaa622414",
+      "gzip_sha256": "2a06f69ecf3798c5d438d9f9eb81e7a067d60fe8ef594ba2b9cb7b4513c75425",
+      "gzip_bytes": 10183113,
+      "decisions": 1107,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 76,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140936,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140936.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140936.json",
+      "scenario_sha256": "1b499507c5d7b4a094748e6506e11d36dc93b9cf2a692c961f9461f1a5504fc9",
+      "jsonl_sha256": "f09f5807e5a262fdb7e59f7b02b8f8fdfcc9b09abb68a60a0bd797bb4cd925a5",
+      "gzip_sha256": "5ff68f39d7997899e4316e02294d3eeb7f5a1ea3ec09de167f54fa0911a95c73",
+      "gzip_bytes": 8722615,
+      "decisions": 935,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 68,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140955,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140955.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140955.json",
+      "scenario_sha256": "c18cde5c229c977a79149ad8bd40a730856329fe7d6d6b0dbcb17e87bd4e9fc8",
+      "jsonl_sha256": "a6cd4ec290e80be772319e7af27ab5fbb4bace7f01448ded79a97be5607fbe0e",
+      "gzip_sha256": "1c90d52fe83a7a0af103ad618ede8f2b7eeed85543ebb93d42085d3594cfdeb8",
+      "gzip_bytes": 9765595,
+      "decisions": 1063,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 78,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140965,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140965.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140965.json",
+      "scenario_sha256": "ae4d526040f68b419188b545f9ce189b3b3a16314337840a283a19d8eda00c1d",
+      "jsonl_sha256": "0d0ab971440e29f82f19734b776002bf008ed26ccebed043ebbb9fd55e1f16ad",
+      "gzip_sha256": "91f3ce2a299e8bb13193944cf016990c210e824d3f15921d78056f463135d66c",
+      "gzip_bytes": 11392564,
+      "decisions": 1192,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 85,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140974,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140974.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140974.json",
+      "scenario_sha256": "e9f50479f6c7c111fb81919971d1ab644759b2819cf5203f60a7df941ff2ce15",
+      "jsonl_sha256": "0c1151ac9407d7ac0057979f1ca3851ab4b8d2ffa34857b6c2594870eda5bbce",
+      "gzip_sha256": "1fbebec70ec7c95e181d46d60bbe5fa9fbdd5bbe5fa52eb56b2fb7e1bbdb42d8",
+      "gzip_bytes": 10564891,
+      "decisions": 1169,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 70,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610140992,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610140992.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610140992.json",
+      "scenario_sha256": "c1743c3b65da8b4e752532da8487e9942bcbfbf528125ff332af1be0ca91008c",
+      "jsonl_sha256": "8d985be40478bb30dc6b8e3c47d05ab86d0dde38a95295fb9087aea392bac9ed",
+      "gzip_sha256": "d4d04d684d73f6c0c1ece4e1c0e2679ea0af498b2b1701e5d0af3325923a61fd",
+      "gzip_bytes": 8023768,
+      "decisions": 878,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 61,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141003,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141003.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141003.json",
+      "scenario_sha256": "9f001f12d0de3217065a3064834ec8bff85391a33a55901854cee003259c4829",
+      "jsonl_sha256": "0f6dfbb2d6648dbfbdbec4412a28361ddd72f7ac7cc988f26f8edab8a92fd30a",
+      "gzip_sha256": "ba3f23dd7a3885723109feacf1148282e9a4721ecb2528f64a5cca27d3b954aa",
+      "gzip_bytes": 9453656,
+      "decisions": 1028,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 70,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141049,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141049.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141049.json",
+      "scenario_sha256": "6803bcbc392ac2ebb9c0ea4d6cb7eeef5009ec0f70b3f8fd3bcc125a80b8ff50",
+      "jsonl_sha256": "ae08420729e215a227129507fa9cef57b2dfbc404ec56c2182f2026de9ab3e38",
+      "gzip_sha256": "74f3963980f3676e95c1b3526785b903a265fca2cb24dd88a6ef044a693e4a53",
+      "gzip_bytes": 8970066,
+      "decisions": 978,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 68,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141061,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141061.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141061.json",
+      "scenario_sha256": "6f0e5da553761179715733b81f2761aa1b737b65ed7759e9c2d0afa1424dbb63",
+      "jsonl_sha256": "7324d15b324ae739e087efc034910afe20cdc289e769f5f3038407067ece3212",
+      "gzip_sha256": "cb6eb1e21dc00c99f150101d2a784687f1032d464b5534d8dd93fb7ce8b43dac",
+      "gzip_bytes": 11356024,
+      "decisions": 1207,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 74,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141064,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141064.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141064.json",
+      "scenario_sha256": "282957be5424b375922191cca4b1afcc0a3ceb07448f2437ee833122fa673bd2",
+      "jsonl_sha256": "bd10a7779b58bc868bde5f9274f8e08a2c6f5219166d5c13338d6c2b8fa01e66",
+      "gzip_sha256": "2878aa913926fe8d8b22022197ad6d692155e08c793fcf8b4eb260a024dd93d5",
+      "gzip_bytes": 9297894,
+      "decisions": 1031,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 59,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141074,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141074.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141074.json",
+      "scenario_sha256": "1f12f7670e3ed4dc16300f0537cf3940160db54fbbf5540e03de788d3e99cfdd",
+      "jsonl_sha256": "ca7be63aebb9b81d96de42c74c5cc0c3a065a269edbc0c2a9fb136be4fd9e406",
+      "gzip_sha256": "738dd5287067454666c41c29ccda65f8614c144f8287e233a18c8151d20957ff",
+      "gzip_bytes": 11275651,
+      "decisions": 1198,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 93,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141099,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141099.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141099.json",
+      "scenario_sha256": "a1f21cf39125d73426121c3bcb7d664518e398b5e5440c63f7ab7938ca8e3041",
+      "jsonl_sha256": "b863da9acf0eb5cd2f816a8765313e94144b80165d8c0fbaa00d6e09a84568af",
+      "gzip_sha256": "0ef68014e84d7cfb0a7dd490e6ebc8be9616b8e300c5e4d7d307cf8117c18506",
+      "gzip_bytes": 7514161,
+      "decisions": 850,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 61,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141115,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141115.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141115.json",
+      "scenario_sha256": "268260d60cd4f9165ad8c5f5fd8b03a1b776983fd01d8f517ea394ea7113dbc5",
+      "jsonl_sha256": "da8e5c5c8fd0e9d45d6c460b677e1540d881d45d9b479ef5fbdede1ced106e6c",
+      "gzip_sha256": "6a01c48afee601c814ae76bcea9feb534f25aee03389286e2420034a4cb4a869",
+      "gzip_bytes": 11410518,
+      "decisions": 1236,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 54,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 90,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141192,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141192.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141192.json",
+      "scenario_sha256": "164fb294644c71254b6e27f7410fecc273670cf0f6a1a157985122a45adc2f71",
+      "jsonl_sha256": "7082cfeb6c444642bff663385bc6bfa55d1429b01aa76bad803ebb53089cffc9",
+      "gzip_sha256": "7d0d82e77181cad210b0b41d49f4d6123c483c4f8f3bb0d0bcad918d2094610a",
+      "gzip_bytes": 11889891,
+      "decisions": 1258,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": true,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 55,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 98,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141242,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141242.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141242.json",
+      "scenario_sha256": "d7df37c30e0bd111f865928d230709e8975eb2d822e83b8d2c920fc0c8f55dac",
+      "jsonl_sha256": "2b36765b8596fa796d57584295a0570ce9c6568462679b5c2ba4f3eae582c773",
+      "gzip_sha256": "8d2f46d6df41dfa36a6f0cc654572f258fc79d09481da35c1526b4dca2d10f20",
+      "gzip_bytes": 12586938,
+      "decisions": 1343,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 83,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141281,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141281.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141281.json",
+      "scenario_sha256": "312c872f09a84fdcd22ebd1017f884d18488f6a8fa07616b630fe1c15acbc7ab",
+      "jsonl_sha256": "f2c9c5bb1bd7208cd09c83282f664bb75345bedc2b9b9e584ce14bfbe7518449",
+      "gzip_sha256": "9457dc979c1da40b8315f5a6edf4641d7aeebf8158b562a03b551f5f8d800c4b",
+      "gzip_bytes": 7911311,
+      "decisions": 901,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 59,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141329,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141329.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141329.json",
+      "scenario_sha256": "4b6d5b1d40a795eed452831a5e80c57ecc697e2d0b4557ee684f01bcd12df18c",
+      "jsonl_sha256": "9759b0516d45eff22bad22a07976dccab697187c1f9d6070afa8d2777ed0b7b8",
+      "gzip_sha256": "8b8e9471a3426995e16bf3bf1e39fea3f92628a37ff7e43029675e48c6af5196",
+      "gzip_bytes": 10714709,
+      "decisions": 1199,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 68,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141365,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141365.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141365.json",
+      "scenario_sha256": "7d5073d05a340773286335dd64b8a6aa03e56e6bd1743e9e6228f710907c1314",
+      "jsonl_sha256": "e50ef96d3f6ef43c3f71a8509fe04b816e2307a016b362e321df4a64b43a1701",
+      "gzip_sha256": "385e35fe73f1de879551e2e51050925ddfbf4c5ade96406a08f8c9bfb120c7f1",
+      "gzip_bytes": 14073360,
+      "decisions": 1453,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 146,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141366,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141366.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141366.json",
+      "scenario_sha256": "27dc57636961c8c56d36d3dd8faf470afdfbbd9154fad7927d49d08615a73642",
+      "jsonl_sha256": "f7fe61567ea2f78466e59faa19eb7e5682fda2acc9ed557d5dafd0413aea85f9",
+      "gzip_sha256": "462cf75a7af1d5543e97058b657afac37747d9efc1b84e0fa7bf6bde9dd1e059",
+      "gzip_bytes": 8681620,
+      "decisions": 988,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 69,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141367,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141367.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141367.json",
+      "scenario_sha256": "c60e209b81cfd075283ee0afb788c98f97a0778a79835d1d10a03f212feb009f",
+      "jsonl_sha256": "4ad076723b7cdb7a9d726781820209a1ed70b32a18e6641c3e06161467dd8be1",
+      "gzip_sha256": "20852b4c9109d476c7db478faded7846220ef35f7c73e45c97b8c5c2564e9966",
+      "gzip_bytes": 13963462,
+      "decisions": 1476,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 61,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141412,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141412.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141412.json",
+      "scenario_sha256": "eb6f9f037f7d886d473ffdf3755eeb23702f78799f57e631d6ddb3ca75f69c58",
+      "jsonl_sha256": "5199f3c2dbf9c7f406ad3eca4aeaa5fd584ad2406c2ee5e5a43fde7a3ff10bc8",
+      "gzip_sha256": "22babbe982c2a7175f07a6f009c2a1565bdee57f4c47dbae7cfb576ba9bca413",
+      "gzip_bytes": 9365379,
+      "decisions": 1065,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 66,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141526,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141526.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141526.json",
+      "scenario_sha256": "b21830f6e8e589002c47630c4d8fba4d3699ad10ec2a4b51e2983cab9dcb1722",
+      "jsonl_sha256": "09d9787c109b417f2b2c1a020ca02235169725a5962a9684c372fa2df8339d3e",
+      "gzip_sha256": "39e324db9da9cb77f3db7acc35e41994607471341a3315505aee0e80202bad1e",
+      "gzip_bytes": 8876768,
+      "decisions": 981,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 68,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141625,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141625.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141625.json",
+      "scenario_sha256": "99731f5ffb78564b4b72271e3cd94b1475ab603816823f79ce0281d3c875a315",
+      "jsonl_sha256": "0910d696cb4df9b3b9202eda1fa1e3e0a63a69207fae0ea777f9b167be4049e1",
+      "gzip_sha256": "72c0ab0b67231252ae8ae798ff3030c9edc2244e7fd40ab073e2db69398aab98",
+      "gzip_bytes": 11628436,
+      "decisions": 1275,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 62,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141640,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141640.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141640.json",
+      "scenario_sha256": "c4417f03b354afb4c924bb8a320223ffe4bdd3fb6dd33bd5c65a26ada7fb093c",
+      "jsonl_sha256": "542cc419b68e1faa6e7ebecf4bbe14d627b16c42b8d8e9fcd625a0423860dd64",
+      "gzip_sha256": "21049874b2c610a6d6fbd1f84819df3e82973245c25b36b708709fe39b0d42d7",
+      "gzip_bytes": 7895463,
+      "decisions": 917,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 69,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610141755,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610141755.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610141755.json",
+      "scenario_sha256": "b8dc8cc1e9ec320406b1a790dacd4118e98e2470a25a96121e07e0738d202159",
+      "jsonl_sha256": "3e7ec369f85b3de50ccd612661e48ddc8da50832e3416abfde4b139d7116f054",
+      "gzip_sha256": "7178b0dcf465b8cc6cd34d7d793dc267474412169c0418c5bb170d3f2d834179",
+      "gzip_bytes": 9662889,
+      "decisions": 1068,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 68,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610142024,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610142024.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610142024.json",
+      "scenario_sha256": "3cec6172547605ed619386c6176d54d0b00bee537f150adbf088dfc0151f4d7c",
+      "jsonl_sha256": "720a3091a2e7d4eb1779e6c49c1e6b6f30beaee09a9421adafd1619fb3f85ffb",
+      "gzip_sha256": "907af34c0ad0b47e22a3f7fbb9db1f6f71d19cdd346da65fff076ccbfae16c50",
+      "gzip_bytes": 15181787,
+      "decisions": 1625,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 88,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "old",
+      "seed": 202610142055,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/202610142055.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/old-202610142055.json",
+      "scenario_sha256": "ca3e8e9367e848f53aad19c03577fd05abb6559d10281ee7d6c7a3ebd5a63512",
+      "jsonl_sha256": "6b184341214c0776a81be610cca88299062884d34d5c4391eba665ec78a2ab86",
+      "gzip_sha256": "86872a2aed0121cf9a649a2b149b7f30ab000955763d8b3920ae1433f3e0c5c9",
+      "gzip_bytes": 7566750,
+      "decisions": 860,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 62,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610140004,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/Beggar.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-Beggar.json",
+      "scenario_sha256": "cab1d28cd8d96be17820259470942ddd44626e22d98179f0b2f4c9914f48aee4",
+      "jsonl_sha256": "278fa498227270dcf77fa80a8e6e7481f659daf9abab47bbecec2d0e6f02355d",
+      "gzip_sha256": "aa924e35f88c6da587824e7e324382391637b6b2838999f164f2ed44f577f5cf",
+      "gzip_bytes": 3137649,
+      "decisions": 393,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 2,
+      "final_floor": 22,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 44,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610140005,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/Bottle.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-Bottle.json",
+      "scenario_sha256": "bc86f7de15e4ffc47542098ce6afab20244fd169dccfd73ae23c80db453fc4fe",
+      "jsonl_sha256": "52571fbb1b8b4291374f54dabcab9158c1d97ec235c7746e63b194719e6250ed",
+      "gzip_sha256": "51f4884ebc5d191e33ea70206b5be5358cd9039977e8a0e85a5a4791692fb274",
+      "gzip_bytes": 1395647,
+      "decisions": 180,
+      "terminal": "death",
+      "depth": {
+        "act2": false,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 1,
+      "final_floor": 10,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 63,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610141141,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/CardCapacity.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-CardCapacity.json",
+      "scenario_sha256": "56d23795ab1933dcb15b123561e29454f67fbc164a0d8db34e6a7af9eb1eed83",
+      "jsonl_sha256": "64b5a4189a84a75d8db3ff1387eb6172d5f3e99f419e70eb381c69ab3daf30dc",
+      "gzip_sha256": "0a168becf331e19b83303a18195e43431426eaa45f5029d248d4506218114776",
+      "gzip_bytes": 15128368,
+      "decisions": 1535,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 174,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610140200,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/Cauldron.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-Cauldron.json",
+      "scenario_sha256": "02e2c2c523ba31769758697222c56f8a912dab4ea4b4b42a8b062113464af220",
+      "jsonl_sha256": "396c9b1dd1108d0d477a8618698d5f49e57c6991de0ae12e76c330b269fded31",
+      "gzip_sha256": "9893d6ed5152f09c119c617b7ee75f268a3a47ddf7e4892aa104e532cce6104e",
+      "gzip_bytes": 4296728,
+      "decisions": 532,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 2,
+      "final_floor": 21,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 54,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610141067,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/LiquidMemories.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-LiquidMemories.json",
+      "scenario_sha256": "8d9469d58b024ae67440abef840b80906fb76708d142f90f3262ef28cf9ff18c",
+      "jsonl_sha256": "3ad0e10b44457b8cbfaeebfc7825ec7abf7080c43a7c1a61de47bcd89d0461fe",
+      "gzip_sha256": "5bc34c09121224f40727e00560d8280445f3c71516faca4fee63c394ce901693",
+      "gzip_bytes": 13630182,
+      "decisions": 1488,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 73,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610140309,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/Pandora-Awakened.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-Pandora-Awakened.json",
+      "scenario_sha256": "9c9ed1eb2b7fadb2e414cb69fca1619137af85cdd6ac9f9705b2767f528d0114",
+      "jsonl_sha256": "331e8ac070c29f545dec3b75763a6fc015bf1f25759b67acf65200720c85648a",
+      "gzip_sha256": "6ca323c1237e60c856c4e548a4026697496e369fd290048de11bf50411f80936",
+      "gzip_bytes": 9309850,
+      "decisions": 998,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 51,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 69,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610140005,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/old/Pilot-005.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-Pilot-005.json",
+      "scenario_sha256": "164e2b534671620c687e317388afaf41cd0f88048fca6a65193de8be9059a15e",
+      "jsonl_sha256": "997a52445653378dc8571b94fcd9ab27084dab8ea22cf44a98e3849244645365",
+      "gzip_sha256": "2d65eb9a96f367eec98ac8dac0ffc24c8016fa7bf4fb3f42545c3720170ca268",
+      "gzip_bytes": 4826287,
+      "decisions": 586,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 2,
+      "final_floor": 33,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 44,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160000,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160000.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160000.json",
+      "scenario_sha256": "62b925d6926cf1f8072a1dab58a9fcb4f8da4fc98e09dfd92d4733bb1c1d5b46",
+      "jsonl_sha256": "00a9c9887848fa3b1285a1a27f8a570b1db29632f9dcf723186295a0dc78cd89",
+      "gzip_sha256": "3b60cc1a3bc1757d3867d9efc6c497b5d2e390fe3b8dc07ac28f20c47af5afa2",
+      "gzip_bytes": 11129671,
+      "decisions": 1221,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 84,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/0.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160001,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160001.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160001.json",
+      "scenario_sha256": "6779e4ebb6eb3c31002650262244d330c49e589c904ddda1e2ec539c6fb74e30",
+      "jsonl_sha256": "5d5e0342c8fd4c87bb51aeafc78822c67728e373bce0661d69c5c68aa0315f3b",
+      "gzip_sha256": "711ea77709040521aa629dd2e6b327638cff084bd318607c47677e30962bd3d9",
+      "gzip_bytes": 12527899,
+      "decisions": 1294,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 79,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/1.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160005,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160005.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160005.json",
+      "scenario_sha256": "5caf1ecd595deac2ea999edca2babc881257c696896f090850f2d657d9ee525a",
+      "jsonl_sha256": "2a94d1a0dd9ed6356f952f4d4d767da8d3f78ba3c0760c4b3d32a4051e8f940f",
+      "gzip_sha256": "e9b8beba0de1cfa9eb153efbb1bae1db24ede6cfde47d8f81aff7ed913c0a7fc",
+      "gzip_bytes": 14121437,
+      "decisions": 1546,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 103,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/2.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160006,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160006.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160006.json",
+      "scenario_sha256": "af14ce3a2450e0e4a3662e255f52c1daf25584a9eae3ba2a569d74a81a82531a",
+      "jsonl_sha256": "c7be992c1947346386011f79196b6a02c9c3293c5d1543fd3f2d62c243964b38",
+      "gzip_sha256": "5e3fad5656855ee10e32e571937ab03cb09624ef4149b20b06d657f451f8b3b3",
+      "gzip_bytes": 7628401,
+      "decisions": 856,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 68,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/3.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160007,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160007.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160007.json",
+      "scenario_sha256": "29dcfcc620fdab575cbb69263c99efe7b7844b82e336692bb089edccd1d0c939",
+      "jsonl_sha256": "4280c720a21f8e63b79b21fa266baa6c8d1306ef97865e54fdee2bda4d7701f4",
+      "gzip_sha256": "1dbcaa4e8553bf80ff17f56f453c615f33c31360304dc1a059ca4c4deb667fb6",
+      "gzip_bytes": 14142890,
+      "decisions": 1521,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 54,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 118,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/4.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160008,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160008.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160008.json",
+      "scenario_sha256": "e483e80978b3888e02b66b986d6b2e7701a96632d4873444562f7e1d56713fbd",
+      "jsonl_sha256": "77987bb2ceb69f8afa6960ad341312d1409afa83c0a7406f904194e4c1d74fde",
+      "gzip_sha256": "186491b29c81f80f9c6428c4b4c8c1a0c5b54072a4df027343e265d5e3ec51e2",
+      "gzip_bytes": 10475391,
+      "decisions": 1152,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 73,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/5.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160010,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160010.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160010.json",
+      "scenario_sha256": "d4815286e2d1b56771eb453dbd94f625de67813e8c0b54c8f6c76bc0952313b5",
+      "jsonl_sha256": "3ecc6d85b48bc6bea102288be123d3f3e2f8b9b8a61de72ea7b2e2bc914def32",
+      "gzip_sha256": "1a0f037f2e1dac417521f38404f9db8795f130a817cd38c3f74efeccabf9a216",
+      "gzip_bytes": 15423766,
+      "decisions": 1637,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 107,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/6.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160012,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160012.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160012.json",
+      "scenario_sha256": "776573636aec64125d8451b07d1cd55916f4e35af39eba4dda8858b58fc13ee8",
+      "jsonl_sha256": "a80c1ac9c47b47a7d551637f109484a995f5c3f89593401d253f77e20542e263",
+      "gzip_sha256": "3cc448506e8bcec23954af817dfc8a158af8f4c8cf0cdc6d3682bef89fdb0fd8",
+      "gzip_bytes": 10882955,
+      "decisions": 1185,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 86,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/7.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160015,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160015.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160015.json",
+      "scenario_sha256": "4270ccdae64f5d106c93c717175fc69dd5918650e72ea521145753ccb4b85375",
+      "jsonl_sha256": "7a6561cba5ff7c8ad38072412366e7b78e6262cf621e36ba59f4031623bf280c",
+      "gzip_sha256": "d4963f7bb0bbd697b245821d6012a70caa7fbd4e661dd2af1c3588c753d2c808",
+      "gzip_bytes": 12459932,
+      "decisions": 1305,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 51,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 71,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/8.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160016,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160016.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160016.json",
+      "scenario_sha256": "bcfa070a7ec1d44cc15d2f4aaa8c25efd51722ee3d620b959fef2a1b9779adf6",
+      "jsonl_sha256": "f0a5ba92fa7ec4ae4e5dd73f8cd8f732e3617e8deb772e1a25bd780a8bc63004",
+      "gzip_sha256": "318e799498e870d7d0cd94b45f8222e34592ddbdcee08b9d7c637b6d57327d13",
+      "gzip_bytes": 7603935,
+      "decisions": 878,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 57,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/9.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160017,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160017.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160017.json",
+      "scenario_sha256": "54a3f5f8f005e2131bed6c3491ac8ec65277bfa65e1543ad24501185d921a5e0",
+      "jsonl_sha256": "c71b5f85f7bc57a0c7efe779d47f677fdcf2dbbecd42126fb8a558ac84d82ca9",
+      "gzip_sha256": "c7c877c5101a20c8b45dcbf0739066c78cfd6da3629cc5438da39d6d17630f88",
+      "gzip_bytes": 20318444,
+      "decisions": 2027,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 54,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 152,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/10.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160020,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160020.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160020.json",
+      "scenario_sha256": "4a0130e1e88e571c32812f2faffaf1819b165f2a85ef4378012cdceb769ac40d",
+      "jsonl_sha256": "777bbe5367c2128ba9bdeec4f2dd8be2dd9e7f1a4f36d840c6025d506eb7fae1",
+      "gzip_sha256": "80fc4970b5bfca064892c37c65e3976780aec121ff206622fa6c5f3e41acaf56",
+      "gzip_bytes": 8606592,
+      "decisions": 983,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 62,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/11.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160028,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160028.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160028.json",
+      "scenario_sha256": "852795d45f853fc87f8b6f8ce3631630bd101586711fff8a3892939b0c9ee432",
+      "jsonl_sha256": "a10435afebeee4937b710c09d9ec7716e1c5e3dc2b9b764ad6b1a039b386b739",
+      "gzip_sha256": "52cc5784d4d5988ed67b8a8d3651174eacfd03e7091c3783a4d30fe43bc18014",
+      "gzip_bytes": 10332501,
+      "decisions": 1182,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 96,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/12.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160029,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160029.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160029.json",
+      "scenario_sha256": "b343b35d80f35e36c268f6c4d32c5b749d50b753ed87b7e6b3787f3ea6576dcf",
+      "jsonl_sha256": "1f9bde803a8015c5f28b9ac6dc2531832d42c5a4e3cfbd7ec0acd617b7ebc7bc",
+      "gzip_sha256": "643b26f438a6dc40f6246cecc48cc0903d68ecb09736dda72801a076dc1d77d5",
+      "gzip_bytes": 12235480,
+      "decisions": 1383,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 61,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/13.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160031,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160031.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160031.json",
+      "scenario_sha256": "71bde35ee3bacb9d27105b426b1b1a924d1b70d345cc97d6447d8e4722cbf712",
+      "jsonl_sha256": "8531836ddfebc271e156481ef7ea3d68f73e46cfc046f57ad1d2891b34661c95",
+      "gzip_sha256": "c9d21913c60861449b4a53da5a466b0974fc0d272fbda3e8aa86a7d6bfd9d754",
+      "gzip_bytes": 8995975,
+      "decisions": 1027,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 94,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/14.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160033,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160033.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160033.json",
+      "scenario_sha256": "b14263fe8f88bcfeceb59ec6840c4934d1381b6720772c88d3304cece8b683fb",
+      "jsonl_sha256": "e22791b76610f17e8407967107d89fb7f608d3e1282280e9a8ca246074010768",
+      "gzip_sha256": "26e2abef3a82af966d9c74c91260c5e31750ddd2c920e67c6c2fee385fbb8892",
+      "gzip_bytes": 7698526,
+      "decisions": 904,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 57,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/15.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160034,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160034.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160034.json",
+      "scenario_sha256": "1bd7d979d2cd6e05e5f370ea01a1ed576aa291a6bae5938977244c79ac20dafd",
+      "jsonl_sha256": "30e94dacafcef612564dd9d8a025640fc51775e25968d1827a548676b716d846",
+      "gzip_sha256": "e68e4c67568af9370c485be90fbab181cedea1c5c88ce559016ce2cbabba25b9",
+      "gzip_bytes": 11040090,
+      "decisions": 1251,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 74,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/16.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160035,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160035.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160035.json",
+      "scenario_sha256": "40ce9189a10720ce3e4d6341ad18786ca779140ad41853906c5bbf8ba67d1c5b",
+      "jsonl_sha256": "62288e5df98fa5ad6a4ac317b350df066889fcc405d3cd7af0e3a3ae562de6f5",
+      "gzip_sha256": "584b0cc6d5a493ba62bca44b580b411d3f2b315887741ed2a55a449f970d2b9b",
+      "gzip_bytes": 9262340,
+      "decisions": 1035,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 58,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/17.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160037,
+      "trace": "/private/tmp/spire-deep-round2/grid-recordings/fresh/202610160037.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160037.json",
+      "scenario_sha256": "c5800ac2e90f97c13322c797c954e26ac522b4f5622250e01555056135b69c77",
+      "jsonl_sha256": "7ab66e787b36f26a8608df402fef15dac7fe6f6acebab06895676724ef2e23a0",
+      "gzip_sha256": "2d1575907f9395894b8b38aa951806545ade991796751ffcdc6ea9a4e98f6995",
+      "gzip_bytes": 10248622,
+      "decisions": 1149,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 75,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/idle19/delayed/18.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/idle19-result.json"
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610160040,
+      "trace": "/private/tmp/spire-deep-round2/extra-new/RitualDagger-master-reference.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-RitualDagger-master-reference.json",
+      "scenario_sha256": "fd8e9f7d447d7572e8743ab7ee72b1bf6a3d56924a4eabc2654f7fad6e59228c",
+      "jsonl_sha256": "0786b9086526c2b24927be843883396572f374dc268ca802ce72d3e63f343872",
+      "gzip_sha256": "dd16b8fdb1b98983c24193006545ca5a7d3bc40dfa9d972d70c5f90f32ebcb8a",
+      "gzip_bytes": 3302409,
+      "decisions": 410,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 2,
+      "final_floor": 24,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 83,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610190001,
+      "trace": "/private/tmp/spire-deep-round2/extra-new/RitualDagger-relics.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-RitualDagger-relics.json",
+      "scenario_sha256": "d2e95049cfe09c26bf4b22322e49e54a1ecf9e207ba73cb1dde2212fc3d3205b",
+      "jsonl_sha256": "64a229a34a47c21254c6eed05e7086cfdb3953435e646d51b12650315e7e5400",
+      "gzip_sha256": "a35e947a2c3970867b788b24b4f096a09cc59b872a4332a44242666afc0ced7b",
+      "gzip_bytes": 80008,
+      "decisions": 11,
+      "terminal": "combat_end",
+      "depth": {
+        "act2": false,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 1,
+      "final_floor": 1,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 11,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160044,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610160044.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160044.json",
+      "scenario_sha256": "bdd64a6603bf0c959feaf038dd27dcdf320510258f6b73a786b085d8771de31c",
+      "jsonl_sha256": "8635ab61c88538beff1aca35710636984cc763219d2543ac188d61a293b35cc2",
+      "gzip_sha256": "291df15b10515c6803dba275329f448915e3960f87e1fc73d2f4539bfe44a8b1",
+      "gzip_bytes": 10344091,
+      "decisions": 1126,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 90,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/0.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160047,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610160047.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160047.json",
+      "scenario_sha256": "b9d5996e9b7bf2aa5bbf9c198aae9d21a69f8eeb665891c6768370247270f216",
+      "jsonl_sha256": "71b01d04380d6a9c85f6e9f435926921e474097b4473c07c4a885856a38d4270",
+      "gzip_sha256": "fe42715e31d28679cd8cd97abd4eadc148c33e8b6d8f75ce58790e73e5e6d63b",
+      "gzip_bytes": 10157187,
+      "decisions": 1164,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 72,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/1.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180000,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180000.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180000.json",
+      "scenario_sha256": "b13b9b8cc580946ba5744fc1c25632a61b158a97545fd6ebfa7fead98831a9eb",
+      "jsonl_sha256": "aa95777f5b6f196ed36c8aa0178ccebb6a6aa53e3ed9fa2045365371568dbb68",
+      "gzip_sha256": "fc470c753dc61e9b35b66a9778f24d1d1c8a4cfd8dd592a119c1e44082b52492",
+      "gzip_bytes": 15445897,
+      "decisions": 1595,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": true,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 55,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 168,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/2.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180001,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180001.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180001.json",
+      "scenario_sha256": "beac7431f7430b18d8716058788aed366fb0417bcb5e8836bf5406bf700376ef",
+      "jsonl_sha256": "f6726f6371450637f9eb568f872e867bda8addbfd296656f9fd47a62454099bb",
+      "gzip_sha256": "ae65abae19a06b05f83a96c0bb81feb8b5f7294a2ab085da918a55b0f245caf7",
+      "gzip_bytes": 11029732,
+      "decisions": 1217,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 72,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/3.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180004,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180004.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180004.json",
+      "scenario_sha256": "fd84bba1abe8ad51921ef4f47c34d026c4917daf2f2ab4bd5f84d7e06dcf8dc7",
+      "jsonl_sha256": "e4b6fc3b37d49d4a7772dd34d9875da69d10cb6a7bb4a16a7657c0903feff3c5",
+      "gzip_sha256": "3307b736a4cc9cb38cd5727c145e67247746481849b2b60b4b0e03b870c5a972",
+      "gzip_bytes": 9325811,
+      "decisions": 1034,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 74,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/4.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180006,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180006.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180006.json",
+      "scenario_sha256": "2aa8747f0a7de7a1336b7315fd391c0c098087f12452601e20a595c350a44fb9",
+      "jsonl_sha256": "a49de1e97c62287d7499d1c913a341069b340733abb398370b81deb05784f097",
+      "gzip_sha256": "b3e4d3a0189c8c15c7247606383847b4d6fe2360032b688202cffdaf7a56f3cd",
+      "gzip_bytes": 10672702,
+      "decisions": 1211,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 70,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/5.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180007,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180007.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180007.json",
+      "scenario_sha256": "97403b50603781d3ff2c049a856e4a271dd4c40c2b3179b4de9c1108d4372313",
+      "jsonl_sha256": "78480e37b5cef45b005cc6952c8db844c3c9ece8f3b1fef7055954f58e9d63af",
+      "gzip_sha256": "d0ec5e70014c794835321f6c9694541bd0dbc693e994b0ae9b4b588f905c256f",
+      "gzip_bytes": 9397641,
+      "decisions": 1055,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 59,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/6.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180008,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180008.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180008.json",
+      "scenario_sha256": "5d9b6bd7adecae880115e26c7f96c532b66da22d39843a250e03fec0a07830d7",
+      "jsonl_sha256": "43f0153d067e4cea3ea4415924b4b5ea0a28d1bfb011d7b9e8cdd39cc5d59138",
+      "gzip_sha256": "88f7ea4d3cc8375b9c2eaf31d279cfb6acc2c814d663dea7bb769fb32f0cfd1f",
+      "gzip_bytes": 8692275,
+      "decisions": 977,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 85,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch1-idle/delayed/7.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch1-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160050,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610160050.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160050.json",
+      "scenario_sha256": "fe8605a893e818a3d02b00d2d0a92cc96221e2af8e55c01484ab5256333c8522",
+      "jsonl_sha256": "40dc9691562465e68f9a9ce8d6bc3f255767e7be975cca050e80d9a0974d87c2",
+      "gzip_sha256": "84464ec8bdad56c23224dc2f0cede71fb90ebbbf9f76bc530a2387eff8dcc595",
+      "gzip_bytes": 15428861,
+      "decisions": 1612,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": true,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 55,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 153,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/0.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160051,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610160051.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160051.json",
+      "scenario_sha256": "39a2be7d8836f7c505635db46fe481a638e3bf2add857cb62b45153e1b780879",
+      "jsonl_sha256": "21cdf2b4d68e240ad49e7ff9ee14e9f9955d4d22e7bbedcec98edca82b0115a0",
+      "gzip_sha256": "c4bbb2a3da9f4172460910b093323705485eeb22721f1d147b378d6b402eda45",
+      "gzip_bytes": 10379202,
+      "decisions": 1168,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 74,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/1.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180010,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180010.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180010.json",
+      "scenario_sha256": "1db39315235da75e2c0723fb426b1725c667eb8cfba704f2d78635bac1096bfa",
+      "jsonl_sha256": "81d747760c8d889a1d34117c3846da70dee4b4ef348b0ce8cbf7526e32379437",
+      "gzip_sha256": "2498920de89d24d77802de144389c83443e58325a52cc2d0dfce6a096dd44b7b",
+      "gzip_bytes": 8022447,
+      "decisions": 891,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 60,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/2.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180013,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180013.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180013.json",
+      "scenario_sha256": "06c64d9203d34c6fd21659bf7f42616c34432e01d2efb98a561bff31b99c5704",
+      "jsonl_sha256": "2c39f3ddff2894cfee8cabe44b18fac919798c13697e4adca7bb7d42bb88bc68",
+      "gzip_sha256": "23e852d86b99c1246700dd6029065ff560c6fa916ba0e47421ff3d072eac1919",
+      "gzip_bytes": 13643971,
+      "decisions": 1475,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 93,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/3.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180017,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180017.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180017.json",
+      "scenario_sha256": "66c0e298cf5dc4e512db6f4c09dad422b2e79db040f11b95860a5e81cc96d3e1",
+      "jsonl_sha256": "d3f07f20948a15a23386f59606a76d3c0005a759d3805ad9da94ef1bcd9d9385",
+      "gzip_sha256": "2e1b2c716b0c9e992fb70fbde3911e9ec03119d769d1b3632d5d776d17f73911",
+      "gzip_bytes": 14091638,
+      "decisions": 1477,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 80,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/4.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180018,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180018.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180018.json",
+      "scenario_sha256": "d5a41b65d21761e84b128de4a630a1bbc05386ac3e0834a96ffc7f0c31ba5bbf",
+      "jsonl_sha256": "55d3fc6337d4c7415dd3ca292dd0e4d5abe5b1e276e9a725a4b776ea83293480",
+      "gzip_sha256": "c19a1011f3f340235bbddd37cc5d77f0287e3d21846ec9307341edd27de7f336",
+      "gzip_bytes": 13249883,
+      "decisions": 1421,
+      "terminal": "victory",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": true,
+        "win": true
+      },
+      "final_act": 4,
+      "final_floor": 56,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 74,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/5.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180019,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180019.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180019.json",
+      "scenario_sha256": "63ef7a70c07042d9acbdaeea7fe24e290d4bd8b805ac95c130fa8b53dd72e6aa",
+      "jsonl_sha256": "445f573e95131ed28b3fa60963423c9c1ea8c74a5b546ae27481f6e3585de5ec",
+      "gzip_sha256": "62f3e9853261a13e684642a45ee50c1b70087626bc9615dc7d796d179afed2d1",
+      "gzip_bytes": 11911954,
+      "decisions": 1310,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 81,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/6.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180021,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180021.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180021.json",
+      "scenario_sha256": "e3401fe50db6b2f81acb0ed2a7958c1b08068304efd5f7812cafb343543f1dd0",
+      "jsonl_sha256": "bcf7048d15edb6299eaddcf39a988f44ba5963c22a8134059d188e0e810e62a2",
+      "gzip_sha256": "4305c3ad14806cf4491055b1c9b3861bc83ef72c7b3ab6775e26592c1857ba1e",
+      "gzip_bytes": 10025899,
+      "decisions": 1131,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 82,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/7.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180022,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180022.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180022.json",
+      "scenario_sha256": "39974c76a50cd15152a1daf24cbf1da019a8ddd5176362fa7c85fcdc368690a6",
+      "jsonl_sha256": "70950077206829717a3c7a43f7da7e376b3e3c42a70de76960316226b8ba2fae",
+      "gzip_sha256": "074bf1a155f69dcfd3239998d8ab0d8ea623d2bd9e8396a271e8ab8619188594",
+      "gzip_bytes": 9329279,
+      "decisions": 984,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 72,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch2-idle/delayed/8.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch2-idle-result.json"
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 202610160050,
+      "trace": "/private/tmp/spire-deep-round2/regressions/DeadBranchCapacity-prefix.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-DeadBranchCapacity-prefix.json",
+      "scenario_sha256": "026e4a142998f37f8ff76471afe5045cb86f2feec6e8972aa82209dde610ec85",
+      "jsonl_sha256": "e64a5253729849479a273eadf638ee7ece0d4900c24b4611d34fe1774ec7bfa3",
+      "gzip_sha256": "9ff1f02300fc08989f96640a185d346269203b754be41b6633f43dd321c190a2",
+      "gzip_bytes": 13751882,
+      "decisions": 1433,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 186,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180025,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180025.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180025.json",
+      "scenario_sha256": "681b7f79986292c1c4550a96a8b0b09f015ccc275d5a75240afbdcaae14463f8",
+      "jsonl_sha256": "289e9d73d6ea3202c0a50ab4095764c8a4c1fa0db210971f21c89bdc2fa29667",
+      "gzip_sha256": "33e3b6e7fe0e56cece66d83b6eb8b448b582f8120c31674cf5e74deb5c6a0146",
+      "gzip_bytes": 9822135,
+      "decisions": 1067,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 150,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch3-idle/delayed/0.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch3-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180026,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180026.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180026.json",
+      "scenario_sha256": "75df7a741c939eabcc20050e8a771f6d8bb098e7f1a246d462097cc29a7d30e6",
+      "jsonl_sha256": "38b41d9301fd6cd5a3d7b864d5a637225bad0f0228824cec76d9f246526ccc00",
+      "gzip_sha256": "775d2757d68c930adb2653f4a96ddbc54a963f1458ad0ef07e8189ae1655a4b2",
+      "gzip_bytes": 9596708,
+      "decisions": 1063,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 76,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch3-idle/delayed/1.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch3-idle-result.json"
+      }
+    },
+    {
+      "group": "regression",
+      "seed": 101,
+      "trace": "/private/tmp/spire-deep-round2/extra-new/Sundial-selection.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/regression-Sundial-selection.json",
+      "scenario_sha256": "63b33440a4b4985adc56be6e2df34488e5a88dee6e449cd16ddc7192b2c94df4",
+      "jsonl_sha256": "1dfdc53d795cdec817f106bfb8d0260d0e1f260dd23297303be1cf36184791bf",
+      "gzip_sha256": "302bcd0e215fecac6982d4aff772f6d8325e377f90177ed09ca64c9efafb2ba9",
+      "gzip_bytes": 206976,
+      "decisions": 31,
+      "terminal": "death",
+      "depth": {
+        "act2": false,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 1,
+      "final_floor": 1,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 5,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610160053,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610160053.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610160053.json",
+      "scenario_sha256": "d30dec73f1d99c95feb84f995990ae64af23fc1336edc980ec8943825cb4b59f",
+      "jsonl_sha256": "e1835bca99dc273b7039c1ab51c27434744abe88f6c8df46ff91e364d11d668b",
+      "gzip_sha256": "dffdabce47132dcdd832e46cc8e482b6804f5062ebeabe1e8e169cfeb1455021",
+      "gzip_bytes": 11444831,
+      "decisions": 1232,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 97,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch4-idle/delayed/0.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch4-idle-result.json"
+      }
+    },
+    {
+      "group": "fresh",
+      "seed": 202610180030,
+      "trace": "/private/tmp/spire-deep-round2/fresh-recordings/202610180030.jsonl.gz",
+      "scenario": "/private/tmp/spire-deep-round2/accepted-inputs/fresh-202610180030.json",
+      "scenario_sha256": "b2783b1f37ffbebf97ec9444ad81362639f9775715bc10e243ff03bff5edca67",
+      "jsonl_sha256": "a2618f93a42803c8bbee9ac0abfc0f4aa29883976a37a517023da94763b547c7",
+      "gzip_sha256": "00aa5eb3ffa25e792bb52bd910af70b05f3212dd3021ce6ef18697ed773abb27",
+      "gzip_bytes": 14147008,
+      "decisions": 1557,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 95,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/spire-deep-round2/fresh-batch4-idle/delayed/1.jsonl.gz",
+        "verification": "/private/tmp/spire-deep-round2/fresh-batch4-idle-result.json"
+      }
+    }
+  ]
+}
