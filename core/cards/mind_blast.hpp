@@ -12,8 +12,7 @@ struct MindBlast : CardHooks {
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {
             ++card.upgrades;
-            card.cost = card.cost_for_turn = 1;
-            card.upgraded_cost = true;
+            upgrade_base_cost(card, 1);
         }
     }
     static SPIRE_FN void applyPowers(Game& g, int card) {
