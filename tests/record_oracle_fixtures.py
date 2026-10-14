@@ -1,6 +1,7 @@
 import argparse
 import gzip
 import json
+import shutil
 from pathlib import Path
 import sys
 
@@ -19,9 +20,9 @@ if __name__ == '__main__':
         with gzip.open(path, 'rt') as stream:
             header = json.loads(next(stream))
         jobs.append(dict(seed=header['seed'], scenario=header['scenario'],
-                         output=str(output / path.name.removesuffix('.gz'))))
+                         output=str(output / path.name)))
     run_jobs(jobs)
     for job in jobs:
         raw = Path(job['output'])
         check_trace(raw)
-        (ROOT / 'traces' / (raw.name + '.gz')).write_bytes(gzip.compress(raw.read_bytes(), mtime=0))
+        shutil.copyfile(raw, ROOT / 'traces' / raw.name)

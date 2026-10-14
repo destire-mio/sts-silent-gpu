@@ -1,4 +1,5 @@
 import argparse
+import gzip
 import json
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
@@ -32,7 +33,7 @@ def suite(output):
 
 
 def check_trace(path):
-    with path.open() as stream:
+    with (gzip.open(path, 'rt') if path.suffix == '.gz' else path.open()) as stream:
         header = json.loads(next(stream))
         assert header['schema'] == 2 and header['ascension'] == 20
         decisions = 0
@@ -84,7 +85,8 @@ def difference(left, right, path='$'):
 
 
 def compare(left, right):
-    a, b = left.read_bytes(), right.read_bytes()
+    a, b = [gzip.decompress(path.read_bytes()) if path.suffix == '.gz' else path.read_bytes()
+            for path in (left, right)]
     if a == b:
         return
     for line, (x, y) in enumerate(zip(a.splitlines(), b.splitlines()), 1):

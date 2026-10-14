@@ -23,6 +23,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
 public final class Recorder {
     static final Gson JSON = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
@@ -226,7 +227,10 @@ public final class Recorder {
         settle();
         if (setupScenario) { scenario(job.getAsJsonObject("scenario"), seed); settle(); }
         RandomXS128 policy = new RandomXS128(seed);
-        try (BufferedWriter out = Files.newBufferedWriter(Paths.get(job.get("output").getAsString()), StandardCharsets.UTF_8)) {
+        Path output = Paths.get(job.get("output").getAsString());
+        OutputStream bytes = Files.newOutputStream(output);
+        if (output.toString().endsWith(".gz")) bytes = new GZIPOutputStream(bytes, 65536);
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(bytes, StandardCharsets.UTF_8))) {
             JsonObject header = new JsonObject();
             header.addProperty("schema", 2);
             header.addProperty("game_sha256", "dd60a613a6178e08f1a57bcb8d5747e33c21fd49e743b88d76e9d74042803b2a");

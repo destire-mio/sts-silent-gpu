@@ -61,7 +61,7 @@ def idle_agent(output):
 
 def check_recordings(output, recordings):
     agent = idle_agent(output)
-    delayed = [dict(job, output=str(output / 'delayed' / f'{index}.jsonl'))
+    delayed = [dict(job, output=str(output / 'delayed' / f'{index}.jsonl.gz'))
                for index, job in enumerate(recordings)]
     marker = output / 'probe-active'
     os.environ['JAVA_TOOL_OPTIONS'] = '-javaagent:' + str(agent) + '=' + str(marker)
