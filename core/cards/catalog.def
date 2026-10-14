@@ -175,3 +175,4 @@ SPIRE_UNIT(WreathOfFlame, "WreathOfFlame", "core/cards/wreath_of_flame.hpp", Wre
 SPIRE_UNIT(Anger, "Anger", "core/cards/anger.hpp", Anger)
 SPIRE_UNIT(Barricade, "Barricade", "core/cards/barricade.hpp", Barricade)
 SPIRE_UNIT(BattleTrance, "Battle Trance", "core/cards/battle_trance.hpp", BattleTrance)
+SPIRE_UNIT(Berserk, "Berserk", "core/cards/berserk.hpp", Berserk)
