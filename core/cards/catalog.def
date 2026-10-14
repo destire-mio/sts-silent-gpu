@@ -179,3 +179,4 @@ SPIRE_UNIT(BootSequence, "BootSequence", "core/cards/boot_sequence.hpp", BootSeq
 SPIRE_UNIT(Buffer, "Buffer", "core/cards/buffer.hpp", Buffer)
 SPIRE_UNIT(Chaos, "Chaos", "core/cards/chaos.hpp", Chaos)
 SPIRE_UNIT(Chill, "Chill", "core/cards/chill.hpp", Chill)
+SPIRE_UNIT(Claw, "Gash", "core/cards/claw.hpp", Claw)
