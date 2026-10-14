@@ -175,3 +175,4 @@ SPIRE_UNIT(PressurePoints, "PathToVictory", "core/cards/pressure_points.hpp", Pr
 SPIRE_UNIT(Protect, "Protect", "core/cards/protect.hpp", Protect)
 SPIRE_UNIT(Ragnarok, "Ragnarok", "core/cards/ragnarok.hpp", Ragnarok)
 SPIRE_UNIT(Rushdown, "Adaptation", "core/cards/rushdown.hpp", Rushdown)
+SPIRE_UNIT(Sanctity, "Sanctity", "core/cards/sanctity.hpp", Sanctity)
