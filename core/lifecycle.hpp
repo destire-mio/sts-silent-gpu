@@ -246,6 +246,10 @@ SPIRE_FN inline void add_potion_reward(Game& g, PotionId potion) {
     reward.potion_state = construct_potion(g, potion);
     g.room_rewards.push_back(create_reward(g, reward));
 }
+SPIRE_FN inline void position_rewards(Game& g) {
+    // CombatRewardScreen.positionRewards only sets the cached flag when the list is empty.
+    if (g.screen_rewards.empty()) g.reward_has_taken_all = true;
+}
 SPIRE_FN inline void open_room_card_rewards(Game& g) {
     g.room_reward_time = true;
     g.screen_rewards = g.room_rewards;
@@ -262,6 +266,8 @@ SPIRE_FN inline void open_room_card_rewards(Game& g) {
     g.reward_proceed_visible = false;
     g.combat_reward_skippable = true;
     g.reward_skippable = true;
+    g.reward_has_taken_all = false;
+    position_rewards(g);
     g.screen = Screen::CombatReward;
 }
 SPIRE_FN inline void open_combat_rewards(Game& g) {

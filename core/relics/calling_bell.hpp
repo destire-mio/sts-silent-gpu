@@ -23,6 +23,7 @@ struct CallingBell : RelicHooks {
     static SPIRE_FN void update(Game& g, int relic) {
         if (!g.run.relics[relic].state.CallingBell.cardsReceived && g.screen == Screen::None) {
             create_card_reward(g);
+            g.reward_has_taken_all = false;
             g.screen_rewards.clear();
             for (int tier = 0; tier < 3; ++tier) {
                 RoomReward reward{};

@@ -543,7 +543,7 @@ struct SnapshotGraph {
         return object({24, 0, 0}, "screens.CombatRewardScreen", [&](const std::string& key) -> py::object {
             if (key == "CombatRewardScreen.mug") return py::bool_(game.mugged);
             if (key == "CombatRewardScreen.smoke") return py::bool_(game.smoked);
-            if (key == "CombatRewardScreen.hasTakenAll") return py::bool_(!game.smoked && game.screen_rewards.empty());
+            if (key == "CombatRewardScreen.hasTakenAll") return py::bool_(game.reward_has_taken_all);
             if (key == "CombatRewardScreen.rewards") {
                 py::list result; for (int i = 0; i < game.screen_rewards.size; ++i) result.append(core_reward(game.screen_rewards[i])); return result;
             }

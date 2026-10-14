@@ -458,6 +458,7 @@ struct Game {
     bool reward_skippable = false;
     bool combat_reward_skippable = false;
     bool reward_proceed_visible = false;
+    bool reward_has_taken_all = false;
     bool reward_relic_warning_seen = false;
     bool skip_monster_turn = false;
     bool battle_over = false;

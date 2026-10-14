@@ -1438,11 +1438,12 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 gain_gold(g, reward.amount + reward.bonus_gold);
                 reward.done = true;
                 g.screen_rewards.erase(action.index);
+                position_rewards(g);
                 return;
             }
             if (reward.kind == RewardKind::Potion) {
                 for (int i = 0; i < g.run.relics.size; ++i) if (relic_data(g.run.relics[i].id).blocks_potions) {
-                    reward.done = true; g.screen_rewards.erase(action.index); return;
+                    reward.done = true; g.screen_rewards.erase(action.index); position_rewards(g); return;
                 }
                 bool empty = false;
                 for (int i = 0; i < g.run.potion_slots; ++i) empty |= g.run.potions[i] == PotionId::Empty;
@@ -1456,6 +1457,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
                     g.run.potion_identity[reward.potion_slot] = reward.identity;
                     reward.done = true;
                     g.screen_rewards.erase(action.index);
+                    position_rewards(g);
                 }
                 return;
             }
@@ -1475,6 +1477,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 reward.done = true;
                 for (int i = g.screen_rewards.size - 1; i >= 0; --i)
                     if (g.reward_objects[g.screen_rewards[i]].done) g.screen_rewards.erase(i);
+                position_rewards(g);
                 settle_card_obtains(g);
                 return;
             }
@@ -1516,6 +1519,8 @@ SPIRE_FN inline void step(Game& g, Action action) {
             else obtain_card_object(g, g.reward_cards[action.index]);
             for (int i = 0; i < g.screen_rewards.size; ++i)
                 if (g.screen_rewards[i] == g.acquisition_reward) { g.screen_rewards.erase(i); break; }
+            // CardRewardScreen.takeReward repositions rewards; SingingBowlButton.onClick does not.
+            if (action.index != g.reward_cards.size) position_rewards(g);
             g.reward_proceed_visible = !g.combat_reward_skippable || g.screen_rewards.empty();
         } else SPIRE_ASSERT(action.kind == ActionKind::Skip);
         g.screen = g.acquisition_reward >= 0 ? Screen::CombatReward : g.room_kind == RoomKind::Rest ? Screen::Room : Screen::Event;

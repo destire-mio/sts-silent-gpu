@@ -61,6 +61,7 @@ SPIRE_FN inline int create_reward(Game&, RoomReward);
 SPIRE_FN inline void add_gold_reward(Game&, int);
 SPIRE_FN inline void add_stolen_gold_reward(Game&, int);
 SPIRE_FN inline void add_potion_reward(Game&, PotionId);
+SPIRE_FN inline void position_rewards(Game&);
 SPIRE_FN inline bool keeps_block(const Game&, int);
 SPIRE_FN inline int relic_block_loss(const Game&);
 SPIRE_FN inline float rear_damage_multiplier(const Game&, int);
