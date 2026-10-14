@@ -1,0 +1,32 @@
+{
+  "deck": [
+    {
+      "id": "Nirvana",
+      "upgrades": 0
+    },
+    {
+      "id": "Nirvana",
+      "upgrades": 1
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 0
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 80,
+  "max_hp": 80,
+  "encounter": "Cultist"
+}
