@@ -186,3 +186,4 @@ SPIRE_UNIT(ThunderClap, "Thunderclap", "core/cards/thunder_clap.hpp", ThunderCla
 SPIRE_UNIT(TrueGrit, "True Grit", "core/cards/true_grit.hpp", TrueGrit)
 SPIRE_UNIT(TwinStrike, "Twin Strike", "core/cards/twin_strike.hpp", TwinStrike)
 SPIRE_UNIT(Uppercut, "Uppercut", "core/cards/uppercut.hpp", Uppercut)
+SPIRE_UNIT(Warcry, "Warcry", "core/cards/warcry.hpp", Warcry)
