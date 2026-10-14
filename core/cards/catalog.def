@@ -178,3 +178,4 @@ SPIRE_UNIT(BattleTrance, "Battle Trance", "core/cards/battle_trance.hpp", Battle
 SPIRE_UNIT(Berserk, "Berserk", "core/cards/berserk.hpp", Berserk)
 SPIRE_UNIT(BloodForBlood, "Blood for Blood", "core/cards/blood_for_blood.hpp", BloodForBlood)
 SPIRE_UNIT(Bloodletting, "Bloodletting", "core/cards/bloodletting.hpp", Bloodletting)
+SPIRE_UNIT(Bludgeon, "Bludgeon", "core/cards/bludgeon.hpp", Bludgeon)
