@@ -1,0 +1,61 @@
+{
+  "deck": [
+    {
+      "id": "Force Field",
+      "upgrades": 0
+    },
+    {
+      "id": "Force Field",
+      "upgrades": 1
+    },
+    {
+      "id": "Heatsinks",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Zap",
+      "upgrades": 1
+    },
+    {
+      "id": "Loop",
+      "upgrades": 0
+    },
+    {
+      "id": "Machine Learning",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Cursed Key",
+    "Sozu"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 100,
+  "encounter": "Cultist"
+}

@@ -1,0 +1,71 @@
+{
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 60,
+  "encounter": "Cultist",
+  "deck": [
+    {
+      "id": "Zap",
+      "upgrades": 1
+    },
+    {
+      "id": "Multi-Cast",
+      "upgrades": 0
+    },
+    {
+      "id": "Multi-Cast",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 4,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Draw : PowerHooks {
-    SPIRE_WAITING_RULE("DrawPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     SPIRE_STATE(Draw, bool debuff;)
     static SPIRE_FN void initialPower(Game& g, Power& p, int) {

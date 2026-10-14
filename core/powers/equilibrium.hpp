@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Equilibrium : PowerHooks {
-    SPIRE_WAITING_RULE("EquilibriumPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() {
         PowerData d{};
         d.turn_based = true;

@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Echo : PowerHooks {
-    SPIRE_WAITING_RULE("EchoPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     SPIRE_STATE(Echo, int cardsDoubledThisTurn;)
     static SPIRE_FN void atStartOfTurn(Game &, Power& p, int) { p.state.Echo.cardsDoubledThisTurn = 0; }

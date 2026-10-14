@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Hyperbeam",
+      "upgrades": 0
+    },
+    {
+      "id": "Hyperbeam",
+      "upgrades": 1
+    },
+    {
+      "id": "Capacitor",
+      "upgrades": 1
+    },
+    {
+      "id": "Zap",
+      "upgrades": 1
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 1
+    },
+    {
+      "id": "Cold Snap",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Cursed Key",
+    "Sozu"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Cultist"
+}

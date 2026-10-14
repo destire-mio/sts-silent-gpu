@@ -1,0 +1,76 @@
+{
+  "deck": [
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Cursed Key",
+    "Sozu"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 100,
+  "encounter": "Giant Head",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}
