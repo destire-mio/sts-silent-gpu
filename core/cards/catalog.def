@@ -168,3 +168,4 @@ SPIRE_UNIT(FameAndFortune, "FameAndFortune", "core/cards/fame_and_fortune.hpp", 
 SPIRE_UNIT(Fission, "Fission", "core/cards/fission.hpp", Fission)
 SPIRE_UNIT(MasterReality, "MasterReality", "core/cards/master_reality.hpp", MasterReality)
 SPIRE_UNIT(Meditate, "Meditate", "core/cards/meditate.hpp", Meditate)
+SPIRE_UNIT(MentalFortress, "MentalFortress", "core/cards/mental_fortress.hpp", MentalFortress)
