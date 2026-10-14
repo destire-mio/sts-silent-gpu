@@ -1,0 +1,43 @@
+{
+  "deck": [
+    {
+      "id": "ReachHeaven",
+      "upgrades": 0
+    },
+    {
+      "id": "ReachHeaven",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 0
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 0
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Pray",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Giant Head"
+}

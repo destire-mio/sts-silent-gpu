@@ -1,0 +1,31 @@
+{
+  "deck": [
+    {
+      "id": "Sanctity",
+      "upgrades": 0
+    },
+    {
+      "id": "Sanctity",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 80,
+  "max_hp": 80,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

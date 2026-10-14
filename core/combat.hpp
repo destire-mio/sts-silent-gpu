@@ -224,16 +224,10 @@ SPIRE_FN inline void refresh_powers(Game& g) {
         for (int i = 0; i < g.orbs.slots.size; ++i) if (g.orbs.slots[i] >= 0) apply_orb_focus(g, g.orbs.slots[i]);
     for (int i = 0; i < g.monster_order.size; ++i) monster_applyPowers(g, g.monster_order[i]);
 }
-SPIRE_FN inline void queue_damage(Game& g, int source, int target, int base, DamageType type, int steal) {
-    Effect e{};
-    e.kind = EffectKind::Damage;
-    e.source = source;
-    e.target = target;
-    e.amount = calculate_damage(g, source, target, base, type);
-    if (source >= 0 && target == player_target && type == DamageType::Normal)
-        e.amount = static_cast<int>(e.amount * rear_damage_multiplier(g, source));
-    e.info_base = base;
-    e.damage_type = type;
+SPIRE_FN inline void queue_monster_damage(Game& g, int source, int target, int slot, int steal, bool skip_wait) {
+    Effect e = units::actions::Damage::from_shared_info(
+        units::actions::Damage::monster_info(g, source, slot), target,
+        units::actions::Damage::monster_identity(slot), skip_wait);
     e.extra = steal;
     add_bottom(g, e);
 }

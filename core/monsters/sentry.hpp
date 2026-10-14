@@ -30,7 +30,7 @@ struct Sentry : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         if (g.monsters[owner].move == 3) queue_monster_card(g, CardId::Dazed, EffectKind::AddCardDiscard, g.run.ascension >= 18 ? 3 : 2);
-        else queue_damage(g, owner, player_target, monster_base_damage(g, g.monsters[owner], 0));
+        else queue_monster_damage(g, owner, player_target, 0);
         queue_monster_roll(g, owner);
     }
 };

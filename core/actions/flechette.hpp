@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "damage.hpp"
 
 namespace spire::units::actions {
 struct FlechetteAction : ActionHooks {
@@ -19,17 +20,16 @@ struct FlechetteAction : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
+        const uint32_t identity = Damage::info_identity(g);
         for (int i = 0; i < g.hand.size; ++i) {
             if (card_data(g.cards[g.hand[i]].id).type != CardType::Skill) continue;
-            Effect hit{};
-            hit.kind = EffectKind::Damage;
-            hit.source = e.source;
-            hit.target = e.target;
-            hit.amount = e.amount;
-            hit.info_base = e.info_base;
-            hit.damage_type = e.damage_type;
-            hit.flag = true;
-            add_top(g, hit);
+            add_top(g, Damage::from_shared_info(e, e.target, identity, true));
+            if (e.target != no_target) {
+                Effect visual{};
+                visual.kind = EffectKind::VFX;
+                visual.source = visual.target = no_target;
+                add_top(g, visual);
+            }
         }
         e.done = true;
     }

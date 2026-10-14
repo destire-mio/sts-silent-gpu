@@ -44,7 +44,7 @@ struct AcidSlime_L : MonsterHooks {
         }
         if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, data().magic, true);
         else {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, m.move == 2 ? 1 : 0));
+            queue_monster_damage(g, index, player_target, m.move == 2 ? 1 : 0);
             if (m.move == 1) queue_slimed(g, 2);
         }
         queue_monster_roll(g, index);

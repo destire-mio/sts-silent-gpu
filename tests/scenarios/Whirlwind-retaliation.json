@@ -1,0 +1,34 @@
+{
+  "deck": [
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 120,
+  "encounter": "4 Shapes",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

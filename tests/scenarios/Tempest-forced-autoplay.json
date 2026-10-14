@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Mayhem",
+      "upgrades": 1
+    },
+    {
+      "id": "Tempest",
+      "upgrades": 0
+    },
+    {
+      "id": "Tempest",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Bottled Tornado"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "Lagavulin",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

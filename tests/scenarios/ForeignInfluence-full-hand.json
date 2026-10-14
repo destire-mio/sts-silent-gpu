@@ -1,0 +1,101 @@
+{
+  "deck": [
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Ninja Scroll"
+  ],
+  "potions": [
+    "DistilledChaos",
+    null
+  ],
+  "hp": 60,
+  "max_hp": 60,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "skip"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

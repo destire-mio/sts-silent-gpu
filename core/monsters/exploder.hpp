@@ -26,7 +26,7 @@ struct Exploder : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         ++m.state.Exploder.turnCount;
-        if (m.move == 1) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_damage(g, owner, player_target, monster_base_damage(g, m, 0)); }
+        if (m.move == 1) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_monster_damage(g, owner, player_target, 0); }
         queue_monster_roll(g, owner);
     }
 };

@@ -62,7 +62,7 @@ struct WrithingMass : MonsterHooks {
             if (m.move == 0) add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
             else if (m.move == 1) add_bottom(g, actions::AnimateSlowAttack::make(owner));
             else if (m.move == 2) add_bottom(g, actions::AnimateFastAttack::make(owner));
-            for (int i = 0; i < (m.move == 1 ? 3 : 1); ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move));
+            for (int i = 0; i < (m.move == 1 ? 3 : 1); ++i) queue_monster_damage(g, owner, player_target, m.move);
             if (m.move == 2) queue_block(g, owner, monster_base_damage(g, m, 2));
             else if (m.move == 3) {
                 queue_power(g, owner, player_target, PowerId::Weak, m.state.WrithingMass.normalDebuffAmt, true);

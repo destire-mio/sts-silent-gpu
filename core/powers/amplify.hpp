@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Amplify : PowerHooks {
-    SPIRE_WAITING_RULE("AmplifyPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void onUseCard(Game& g, Power& p, int owner, int card, Effect& use) {
         if (!g.cards[card].purge_on_use && card_data(g.cards[card].id).type == CardType::Power && p.amount > 0) {

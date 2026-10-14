@@ -13,7 +13,7 @@ Exactness: same seed + same actions => same snapshot as the original at every de
 ## Engine (`core/`)
 One `Game` struct holds a whole run: run state, combat state and every RNG stream. It is plain
 data with fixed capacities, so a batch is an array of `Game` and a GPU thread owns one element.
-The integration size target is 35 KiB per `Game`, with a 48 KiB compile-time budget for later
+The integration size target is 36 KiB per `Game`, with a 48 KiB compile-time budget for later
 content and rules. Per-unit payload budgets
 and the build-time member breakdown are described in `porting.md`.
 
@@ -168,6 +168,25 @@ index remain because spawn ordering, back attacks, splitting and move selection 
 For an escaping or escaped monster, `drawX` is projected to null: `updateEscapeAnimation` moves
 it on every frame, and no encounter combines an escaper with a `SpawnMonsterAction` user, so
 no subsequent rule reads that position. The conditional exclusion is recorded in the catalog.
+The observer projects a card's `block` or `damage` to null only when both its CardLibrary
+constructor template and its current corresponding base stat equal -1. `Soul.discard` seeds
+speed with presentation RNG and starts at the card's screen position; `Soul.updateMovement`
+integrates frame time. `Soul.update` clears powers and refreshes the hand when that flight
+finishes, so restoration of a retained card can precede or follow that refresh. The resulting
+unused -1/0 cache is presentation-dependent, even though action durations are fixed.
+
+The gameplay read audit covers the 360 in-scope card classes and external card-stat readers.
+Cards with an unset constructor block/damage do not consume that stat, except Spirit Shield:
+its `use` calls `applyPowers`, which assigns `baseBlock` from hand count before reading `block`.
+The current-base condition therefore preserves its computed value. `AbstractPlayer.useCard`
+calls `calculateCardDamage` before `use`; `AttackDamageRandomEnemyAction.update` recalculates
+before reading the card's damage. `makeStatEquivalentCopy` copies base stats, not these caches.
+The template condition preserves real stats even if arithmetic makes a current base negative.
+An original-game reproduction delaying Soul flight by 120 frames in the recorder changed only
+these unset caches in all 22 reported terminal failures; actions, legal actions, RNG streams
+and all other recorded fields were identical. The observer never changes the Java card, flight,
+rule RNG, patched game classes or comparison. Fresh recordings use the same scenario and seed.
+
 Power, relic and monster fields include private subclass counters/references as well as
 base state. `manager.currentAction` and all rule actions in queues are recorded even at interrupted
 card-selection decisions. The observer omits exact `WaitAction` queue entries and projects an
@@ -384,7 +403,7 @@ canonical snapshot at every combat input.
 With the build directory on `PYTHONPATH`, run:
 
 ```sh
-PYTHONPATH=/private/tmp/spire-deep-build "$SPIRE_PYTHON" tools/deep_runs.py 202610140100 40 /private/tmp/spire-deep-games
+PYTHONPATH=/private/tmp/spire-deep-final-build "$SPIRE_PYTHON" tools/deep_runs.py 202610150000 40 /private/tmp/spire-deep-games
 ```
 
 The three positional arguments are the first seed, deep-game count and a fresh output directory.

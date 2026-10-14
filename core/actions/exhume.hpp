@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct Exhume : ActionHooks {
-    SPIRE_WAITING_RULE("ExhumeAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(Exhume, bool selecting;)
     SPIRE_SNAPSHOT("ExhumeAction.p", player)
@@ -41,12 +40,9 @@ struct Exhume : ActionHooks {
                 g.selection_excluded.clear();
                 return;
             }
-            g.grid_source = PileId::Exhaust;
-            g.selected_cards.clear();
-            g.selection_amount = 1;
-            g.selection_any_number = g.selection_can_pick_zero = false;
-            g.grid_previous_deck_size = g.exhaust.size;
-            g.screen = Screen::Grid;
+            open_grid_selection(g, PileId::Exhaust, 1, false);
+            g.grid_can_cancel = true;
+            g.selection_can_pick_zero = false;
             e.payload.state.Exhume.selecting = true;
             return;
         }

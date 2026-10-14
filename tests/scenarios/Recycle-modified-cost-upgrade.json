@@ -1,0 +1,89 @@
+{
+  "deck": [
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Apotheosis",
+      "upgrades": 1
+    },
+    {
+      "id": "Recycle",
+      "upgrades": 0
+    },
+    {
+      "id": "Recycle",
+      "upgrades": 0
+    },
+    {
+      "id": "White Noise",
+      "upgrades": 0
+    },
+    {
+      "id": "White Noise",
+      "upgrades": 0
+    },
+    {
+      "id": "Zap",
+      "upgrades": 0
+    },
+    {
+      "id": "Dualcast",
+      "upgrades": 0
+    },
+    {
+      "id": "Redo",
+      "upgrades": 0
+    },
+    {
+      "id": "Fusion",
+      "upgrades": 0
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 0
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 0
+    },
+    {
+      "id": "Corruption",
+      "upgrades": 0
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Snecko Eye"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 180,
+  "max_hp": 180,
+  "encounter": "Lagavulin"
+}

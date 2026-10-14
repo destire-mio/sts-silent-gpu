@@ -2,6 +2,8 @@ package oracle;
 
 import com.google.gson.*;
 import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.random.Random;
@@ -47,9 +49,9 @@ final class Snapshot {
     static final Map<String, String> EXCLUDED = new TreeMap<String, String>();
     static {
         exclude("core.AbstractCreature", "drawX[escaping-or-escaped]", "Projected to null for escaping or escaped monsters: AbstractMonster.updateEscapeAnimation moves drawX each frame; no encounter combines an escaper with a SpawnMonsterAction user, so no subsequent rule reads it.");
+        exclude("cards.AbstractCard", "block[unset-base] damage[unset-base]", "Projected to null when both the CardLibrary template and current base stat are -1: Soul flight uses presentation RNG, positions and frame time, so its hand refresh changes unused caches between -1 and 0. No gameplay caller consumes these unset stats; useCard and AttackDamageRandomEnemyAction recalculate before use, and SpiritShield assigns baseBlock before its block read.");
         exclude("cards.CardGroup", "queued", "renderHand scratch list controlling draw order, cleared after rendering.");
         exclude("potions.AbstractPotion", "size isThrown", "Bottle artwork and drink/throw tooltip wording; use and target rules are separate.");
-        exclude("characters.AbstractPlayer", "damagedThisCombat", "Vanilla increments and resets this unused counter but never reads it.");
         exclude("relics.AbstractRelic", "discarded", "Acquisition/disposal marker with no vanilla rule reads.");
         exclude("orbs.Frost", "hFlip1 hFlip2", "Ice-sprite horizontal orientation.");
         exclude("neow.NeowEvent", "npc", "Neow animation object; rewards and event stage are separate.");
@@ -352,6 +354,8 @@ final class Snapshot {
                 }
             JsonObject data = new JsonObject();
             object.add("fields", data);
+            AbstractCard card = value instanceof AbstractCard ? (AbstractCard)value : null;
+            AbstractCard template = card == null ? null : CardLibrary.getCard(card.cardID);
             for (Map.Entry<String, Field> entry : fields.entrySet()) {
                 entry.getValue().setAccessible(true);
                 if (entry.getKey().equals("GridCardSelectScreen.hoveredCard") && !AbstractDungeon.gridSelectScreen.confirmScreenUp)
@@ -360,6 +364,9 @@ final class Snapshot {
                         && value instanceof com.megacrit.cardcrawl.monsters.AbstractMonster
                         && (((com.megacrit.cardcrawl.monsters.AbstractMonster)value).isEscaping
                             || ((com.megacrit.cardcrawl.monsters.AbstractMonster)value).escaped))
+                    data.add(entry.getKey(), JsonNull.INSTANCE);
+                else if (entry.getKey().equals("AbstractCard.block") && template.baseBlock == -1 && card.baseBlock == -1
+                        || entry.getKey().equals("AbstractCard.damage") && template.baseDamage == -1 && card.baseDamage == -1)
                     data.add(entry.getKey(), JsonNull.INSTANCE);
                 else data.add(entry.getKey(), value(entry.getValue().get(value)));
             }

@@ -37,13 +37,13 @@ struct Maw : MonsterHooks {
             queue_power(g, owner, player_target, PowerId::Weak, (g.run.ascension >= 17 ? 5 : 3), true);
             queue_power(g, owner, player_target, PowerId::Frail, (g.run.ascension >= 17 ? 5 : 3), true);
             s.roared = true;
-        } else if (m.move == 3) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_damage(g, owner, player_target, monster_base_damage(g, m, 0)); }
+        } else if (m.move == 3) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_monster_damage(g, owner, player_target, 0); }
         else if (m.move == 4) queue_power(g, owner, owner, PowerId::Strength, (g.run.ascension >= 17 ? 5 : 3));
         else {
             add_bottom(g, actions::AnimateSlowAttack::make(owner));
             for (int i = 0; i < s.turnCount / 2; ++i) {
                 add_bottom(g, actions::VFX::make());
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+                queue_monster_damage(g, owner, player_target, 1);
             }
         }
         queue_monster_roll(g, owner);

@@ -33,7 +33,7 @@ struct Mugger : MonsterHooks {
             if (move == 1 && s.slashCount == 1) g.rng.ai.randomBoolean(0.6f);
             if (move == 4) ++s.slashCount;
             Effect e{}; e.kind = move == 1 ? EffectKind::MuggerStealGold : EffectKind::MuggerBigStealGold; e.target = owner; add_bottom(g, e);
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, move == 1 ? 0 : 1), DamageType::Normal, units::monsters::Mugger::gold_amount(g));
+            queue_monster_damage(g, owner, player_target, move == 1 ? 0 : 1, units::monsters::Mugger::gold_amount(g));
             if (move == 4) set_monster_move(g, owner, 2, Intent::Defend);
             else {
                 ++s.slashCount;

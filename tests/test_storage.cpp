@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <new>
 #include <sys/resource.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -52,6 +53,35 @@ static void compact_storage() {
     require(game.multi_damage.get(card_capacity - 1).at(game.damage_exceptions, 0) == 1 && power_amount(game, game.player.creature, PowerId::Strength) == 4 &&
             power_amount(copy, copy.player.creature, PowerId::Strength) == 6 &&
             std::strcmp(copy.text[text], "CLOSED") == 0, "a relocated Game owns independent arena and text storage");
+}
+
+static void damage_info_lifetimes() {
+    Game game{};
+    reset(game, 3);
+    CombatSetup setup{};
+    setup.deck = game.run.master_deck;
+    start_combat(game, setup);
+    alignas(Effect) unsigned char storage[sizeof(Effect)];
+    std::memset(storage, 0xa5, sizeof(storage));
+    Effect& hit = *new (storage) Effect{};
+    hit.kind = EffectKind::Damage;
+    hit.target = 0;
+    hit.amount = hit.info_base = 9;
+    const int enemy_hp = game.monsters[0].creature.hp;
+    add_bottom(game, hit);
+    run_until_decision(game);
+    require(game.monsters[0].creature.hp == enemy_hp - 9,
+            "a fresh damage action must not inherit a reference from reused storage");
+
+    Effect attack = units::actions::Damage::from_shared_info(
+        units::actions::Damage::monster_info(game, 0, 0), player_target,
+        units::actions::Damage::monster_identity(0));
+    const int original_amount = attack.amount;
+    apply_power(game, 0, 0, PowerId::Strength, 3);
+    const int hp = game.player.creature.hp;
+    units::actions::Damage::execute(game, attack);
+    require(game.player.creature.hp == hp - original_amount - 3 && attack.amount == original_amount,
+            "DamageAction reads its live DamageInfo while retaining its constructor amount");
 }
 
 static void interleaved_histories() {
@@ -147,6 +177,7 @@ static void host_overflow_aborts() {
 
 int main() {
     compact_storage();
+    damage_info_lifetimes();
     interleaved_histories();
     relocated_orbs();
     fault_isolation();

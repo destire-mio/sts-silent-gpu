@@ -49,11 +49,11 @@ struct Byrd : MonsterHooks {
             add_bottom(g, actions::AnimateFastAttack::make(owner));
             for (int i = 0; i < (g.run.ascension >= 2 ? 6 : 5); ++i) {
                 Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+                queue_monster_damage(g, owner, player_target, 0);
             }
         } else if (m.move == 5) {
             add_bottom(g, actions::AnimateSlowAttack::make(owner));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 2)); set_monster_move(g, owner, 2, Intent::Unknown); return;
+            queue_monster_damage(g, owner, player_target, 2); set_monster_move(g, owner, 2, Intent::Unknown); return;
         } else if (m.move == 2) {
             s.isFlying = true; add_bottom(g, actions::ChangeState::make(g, owner, "FLYING"));
             queue_power(g, owner, owner, PowerId::Flight, (g.run.ascension >= 17 ? 4 : 3));
@@ -61,7 +61,7 @@ struct Byrd : MonsterHooks {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
             add_bottom(g, actions::Talk::make(owner)); queue_power(g, owner, owner, PowerId::Strength, 1);
         }
-        else if (m.move == 3) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_damage(g, owner, player_target, monster_base_damage(g, m, 1)); }
+        else if (m.move == 3) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_monster_damage(g, owner, player_target, 1); }
         else if (m.move == 4) { add_bottom(g, actions::SetAnimation::make(owner)); add_bottom(g, actions::TextAboveCreature::make(owner)); }
         queue_monster_roll(g, owner);
     }

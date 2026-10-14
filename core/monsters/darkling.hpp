@@ -48,9 +48,9 @@ struct Darkling : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         const Monster& m = g.monsters[owner];
-        if (m.move == 1) { add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK")); queue_damage(g, owner, player_target, monster_base_damage(g, m, 0)); queue_damage(g, owner, player_target, monster_base_damage(g, m, 0)); }
+        if (m.move == 1) { add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK")); queue_monster_damage(g, owner, player_target, 0); queue_monster_damage(g, owner, player_target, 0); }
         else if (m.move == 2) { queue_block(g, owner, 12); if (g.run.ascension >= 17) queue_power(g, owner, owner, PowerId::Strength, 2); }
-        else if (m.move == 3) { add_bottom(g, actions::AnimateFastAttack::make(owner)); queue_damage(g, owner, player_target, monster_base_damage(g, m, 1)); }
+        else if (m.move == 3) { add_bottom(g, actions::AnimateFastAttack::make(owner)); queue_monster_damage(g, owner, player_target, 1); }
         else if (m.move == 4) add_bottom(g, actions::TextAboveCreature::make(owner));
         else if (m.move == 5) {
             Effect sfx{}; sfx.kind = EffectKind::SFX; add_bottom(g, sfx);

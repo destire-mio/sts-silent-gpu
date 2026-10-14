@@ -66,14 +66,17 @@ SPIRE_FN inline void sort_selection_cards(Game& g) {
         g.grid_cards[j] = card;
     }
 }
-SPIRE_FN inline CardId foreign_attack_card(Game& g) {
+SPIRE_FN inline CardId library_card_native(int library) {
+    return library_reward_cards[library].native;
+}
+SPIRE_FN inline int foreign_attack_card(Game& g) {
     const int roll = g.rng.card_random.random(99);
     const CardRarity rarity = roll < 55 ? CardRarity::Common : roll < 85 ? CardRarity::Uncommon : CardRarity::Rare;
     List<uint16_t, 384> cards{};
     for (int i = 0; i < static_cast<int>(sizeof(library_reward_cards) / sizeof(*library_reward_cards)); ++i)
         if (library_reward_cards[i].type == CardType::Attack && library_reward_cards[i].rarity == rarity && !library_reward_cards[i].healing) cards.push_back(i);
     g.rng.card_random.randomLong();
-    return card_id(library_reward_cards[cards[g.rng.card.random(cards.size - 1)]].id);
+    return cards[g.rng.card.random(cards.size - 1)];
 }
 SPIRE_FN inline CardId random_common_card(Game& g) {
     return card_id(common_card_pool[g.rng.card_random.random(static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)) - 1)].id);
@@ -336,6 +339,17 @@ SPIRE_FN inline void monster_damage_base(Game& g, int owner, const DamageInfo& i
     if (amount > 0) target.hp = max(0, target.hp - amount);
     if (target.hp <= 0) {
         monster_die(g, owner, true);
+        if (monsters_basically_dead(g)) {
+            // AbstractMonster.damage calls GameActionManager.cleanCardQueue, retaining limbo copies.
+            const int count = g.manager.card_queue.size;
+            for (int i = 0; i < count; ++i) {
+                const CardQueueItem item = g.manager.card_queue.pop_front();
+                bool in_hand = false;
+                for (int j = 0; j < g.hand.size; ++j)
+                    if (g.hand[j] == item.card) in_hand = true;
+                if (!in_hand) g.manager.card_queue.push_back(item);
+            }
+        }
         target.block = 0;
     }
 }
@@ -379,10 +393,11 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
         g.manager.damage_received_this_combat += amount;
         if (info.damage_type == DamageType::HpLoss) g.manager.hp_loss_this_combat += amount;
         target.hp -= amount;
-        if (amount > 0) {
+        if (amount > 0 && g.room_phase == RoomPhase::Combat) {
             for (int i = 0; i < g.hand.size; ++i) card_tookDamage(g, g.hand[i]);
             for (int i = 0; i < g.discard.size; ++i) card_tookDamage(g, g.discard[i]);
             for (int i = 0; i < g.draw.size; ++i) card_tookDamage(g, g.draw[i]);
+            ++g.player.damaged_this_combat;
         }
         target.hp = max(0, target.hp);
         if (target.hp <= target.max_hp / 2 && !g.player.bloodied) {
@@ -421,7 +436,6 @@ SPIRE_FN inline void creature_damage(Game& g, const DamageInfo& e) {
         monster_damage(g, e.target, e);
         if (monsters_basically_dead(g)) {
             if (!g.cannot_lose) g.battle_over = true;
-            g.manager.card_queue.clear();
         }
     }
 }
@@ -795,6 +809,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             }
             g.manager.using_card = false;
         } else if (g.battle_over) {
+            settle_card_moves(g);
             on_victory(g);
             clear_actions(g, g.manager.actions);
             clear_actions(g, g.manager.pre_turn_actions);
@@ -854,13 +869,14 @@ SPIRE_FN inline void construct_encounter(Game& g, EncounterId encounter) {
     g.prepared_encounter = encounter;
     g.room_has_monsters = true;
     encounter_initialize_state(g);
-    g.power_objects.clear(); g.next_power_instance = 1;
+    g.power_objects.clear(); g.next_power_instance = 1; g.next_damage_info_instance = 1;
     g.move_histories.size = 0;
     g.monsters.clear(); g.monster_damage_extra.clear(); g.monster_order.clear();
     build_encounter(g, encounter);
     g.encounter = previous;
 }
 SPIRE_FN inline void prepare_player_battle(Game& g) {
+    g.player.damaged_this_combat = 0;
     g.manager.player_hp_last_turn = g.player.creature.hp;
     g.player.bloodied = g.player.creature.hp <= g.player.creature.max_hp / 2;
     g.turn = 1;
@@ -932,7 +948,6 @@ SPIRE_FN inline void enter_combat(Game& g) {
     for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
     g.cards.clear();
     for (auto& word : g.pending_card_moves) word = 0;
-    g.foreign_reward_cards.clear();
     for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
     g.previous_screen = Screen::None;
     g.multi_damage.clear();
@@ -1024,7 +1039,7 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.orbs.slots.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
     g.player.creature.powers.clear();
-    g.power_objects.clear(); g.next_power_instance = 1;
+    g.power_objects.clear(); g.next_power_instance = 1; g.next_damage_info_instance = 1;
     g.player.creature.block = 0;
     g.turn = 1;
     g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();

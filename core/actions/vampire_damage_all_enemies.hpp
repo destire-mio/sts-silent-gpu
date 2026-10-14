@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct VampireDamageAllEnemies : ActionHooks {
-    SPIRE_WAITING_RULE("VampireDamageAllEnemiesAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_SNAPSHOT("VampireDamageAllEnemiesAction.damage", damage_array, game.multi_damage.get(effect.card), game.cards[effect.card].multi_damage_count, effect.card, true)
     static SPIRE_FN void execute(Game& g, Effect& e) {

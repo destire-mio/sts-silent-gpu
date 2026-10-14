@@ -28,7 +28,7 @@ struct Donu : MonsterHooks {
         Monster& m = g.monsters[owner];
         if (m.move == 0) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-            for (int i = 0; i < 2; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            for (int i = 0; i < 2; ++i) queue_monster_damage(g, owner, player_target, 0);
             m.state.Donu.isAttacking = false;
         } else {
             for (int i = 0; i < g.monster_order.size; ++i) {

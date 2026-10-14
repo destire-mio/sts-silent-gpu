@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Loop",
+      "upgrades": 0
+    },
+    {
+      "id": "Loop",
+      "upgrades": 1
+    },
+    {
+      "id": "Fusion",
+      "upgrades": 1
+    },
+    {
+      "id": "Capacitor",
+      "upgrades": 1
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Cursed Key",
+    "Sozu"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 100,
+  "encounter": "Cultist"
+}

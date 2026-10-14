@@ -1,0 +1,38 @@
+{
+  "deck": [
+    {
+      "id": "Dropkick",
+      "upgrades": 0
+    },
+    {
+      "id": "Dropkick",
+      "upgrades": 1
+    },
+    {
+      "id": "Trip",
+      "upgrades": 0
+    },
+    {
+      "id": "Trip",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "2 Louse"
+}

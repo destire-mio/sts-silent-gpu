@@ -26,7 +26,7 @@ struct LouseDefensive : MonsterHooks {
         Monster& m = g.monsters[index];
         if (m.move == 3) {
             if (!m.state.LouseDefensive.isOpen) add_bottom(g, units::actions::ChangeState::make(g, index, "OPEN"));
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, index, player_target, 0);
         } else {
             add_bottom(g, units::actions::ChangeState::make(g, index, m.state.LouseDefensive.isOpen ? "REAR_IDLE" : "REAR"));
             queue_power(g, index, player_target, PowerId::Weak, data().magic, true);

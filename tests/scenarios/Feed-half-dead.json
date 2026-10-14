@@ -1,0 +1,25 @@
+{
+  "deck": [
+    {
+      "id": "Feed",
+      "upgrades": 0
+    },
+    {
+      "id": "Feed",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Akabeko",
+    "Vajra",
+    "Bag of Marbles"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Darklings"
+}

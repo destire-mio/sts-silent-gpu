@@ -3,11 +3,10 @@
 
 namespace spire::units::actions {
 struct ForTheEyes : ActionHooks {
-    SPIRE_WAITING_RULE("ForTheEyesAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_SNAPSHOT("ForTheEyesAction.m", creature, effect.extra)
     static SPIRE_FN void execute(Game& g, Effect& e) {
-        if (g.monsters[e.extra].intent_base_damage >= 0) {
+        if (e.extra != no_target && g.monsters[e.extra].intent_base_damage >= 0) {
             Effect a{};
             a.kind = EffectKind::ApplyPower;
             a.source = player_target;

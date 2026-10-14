@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "damage.hpp"
 
 namespace spire::units::actions {
 struct DamagePerAttackPlayed : ActionHooks {
@@ -18,11 +19,9 @@ struct DamagePerAttackPlayed : ActionHooks {
         const PlayedCards& played = g.manager.played_cards;
         for (int i = played.turn_start; i < played.size; ++i)
             if (card_def(g.cards[played.values[i]].id).type == CardType::Attack) ++count;
+        const uint32_t identity = Damage::info_identity(g);
         for (int i = 0; i < count; ++i) {
-            Effect hit = e;
-            hit.kind = EffectKind::Damage;
-            action_initialize_state(hit);
-            add_top(g, hit);
+            add_top(g, Damage::from_shared_info(e, e.target, identity));
         }
     }
 };

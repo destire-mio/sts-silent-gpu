@@ -32,7 +32,7 @@ struct SlaverRed : MonsterHooks {
             queue_power(g, index, player_target, PowerId::Entangled, 1, true);
             m.state.SlaverRed.usedEntangle = true;
         } else {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : 1));
+            queue_monster_damage(g, index, player_target, m.move == 1 ? 0 : 1);
             if (m.move == 3) queue_power(g, index, player_target, PowerId::Vulnerable, m.state.SlaverRed.VULN_AMT + (g.run.ascension >= 17 ? 1 : 0), true);
         }
         queue_monster_roll(g, index);

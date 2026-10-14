@@ -1,0 +1,76 @@
+{
+  "deck": [
+    {
+      "id": "Skim",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Bottled Lightning"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "Lagavulin",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

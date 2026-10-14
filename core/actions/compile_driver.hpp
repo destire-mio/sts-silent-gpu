@@ -4,7 +4,6 @@
 
 namespace spire::units::actions {
 struct CompileDriver : ActionHooks {
-    SPIRE_WAITING_RULE("CompileDriverAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     static SPIRE_FN void execute(Game& g, Effect& e) {
         bool present[4]{};
@@ -15,7 +14,8 @@ struct CompileDriver : ActionHooks {
         for (bool value : present)
             if (value)
                 ++count;
-        add_top(g, units::actions::Draw::construct(e.amount * count, true, -1, e.source));
+        if (e.amount * count > 0)
+            add_top(g, units::actions::Draw::construct(e.amount * count, true, -1, e.source));
     }
 };
 }

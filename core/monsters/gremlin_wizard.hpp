@@ -32,7 +32,7 @@ struct GremlinWizard : MonsterHooks {
             else set_monster_move(g, index, 2, Intent::Unknown);
         } else if (m.move == 1) {
             m.state.GremlinWizard.currentCharge = 0;
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, index, player_target, 0);
             if (m.escape_next) queue_monster_move(g, index, 99, Intent::Escape);
             else if (g.run.ascension >= 17) set_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
             else set_monster_move(g, index, 2, Intent::Unknown);

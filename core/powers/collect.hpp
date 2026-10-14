@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Collect : PowerHooks {
-    SPIRE_WAITING_RULE("CollectPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() {
         PowerData d{};
         d.turn_based = true;

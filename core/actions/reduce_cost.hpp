@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct ReduceCost : ActionHooks {
-    SPIRE_WAITING_RULE("ReduceCostAction: waiting for a ported caller with three-seed oracle replay")
     SPIRE_SNAPSHOT("ReduceCostAction.card", card, effect.card)
     SPIRE_STATE(ReduceCost, uint32_t uuid;)
     SPIRE_SNAPSHOT("ReduceCostAction.uuid", uuid, effect.payload.state.ReduceCost.uuid)

@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct LessonLearned : ActionHooks {
-    SPIRE_WAITING_RULE("LessonLearnedAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_SNAPSHOT("LessonLearnedAction.theCard", card, effect.card)
     SPIRE_SNAPSHOT("LessonLearnedAction.info", damage_info, effect, queue, index)

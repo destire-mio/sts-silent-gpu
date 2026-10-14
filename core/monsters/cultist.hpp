@@ -27,7 +27,7 @@ struct Cultist : MonsterHooks {
         if (m.move == 3) {
             queue_power(g, index, index, PowerId::Ritual, m.state.Cultist.ritualAmount + (g.run.ascension >= 17 ? 1 : 0));
         } else {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, index, player_target, 0);
         }
         queue_monster_roll(g, index);
     }

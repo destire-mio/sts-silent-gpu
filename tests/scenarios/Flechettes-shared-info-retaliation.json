@@ -1,0 +1,42 @@
+{
+  "deck": [
+    {
+      "id": "Flechettes",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Lantern"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 1,
+  "encounter": "4 Shapes",
+  "actions": [
+    {
+      "type": "play",
+      "card": 4,
+      "target": 2
+    }
+  ]
+}

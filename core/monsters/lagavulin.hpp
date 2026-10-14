@@ -43,7 +43,7 @@ struct Lagavulin : MonsterHooks {
         case 3:
             ++state.debuffTurnCount;
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             queue_monster_roll(g, owner);
             break;
         case 5:

@@ -42,7 +42,7 @@ struct TheCollector : MonsterHooks {
         if (m.move == 1) {
             for (int i = 0; i < 2; ++i) state.enemySlots[i] = queue_spawn_monster(g, monster_id("TorchHead"), -100.0f - 185.0f * static_cast<float>(i + 1), true);
             state.initialSpawn = false;
-        } else if (m.move == 2) queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+        } else if (m.move == 2) queue_monster_damage(g, owner, player_target, 0);
         else if (m.move == 3) {
             queue_block(g, owner, (g.run.ascension >= 9 ? 18 : 15) + (g.run.ascension >= 19 ? 5 : 0));
             for (int i = 0; i < g.monster_order.size; ++i) {

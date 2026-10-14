@@ -28,10 +28,10 @@ struct BookOfStabbing : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         const Monster& m = g.monsters[owner];
         add_bottom(g, actions::ChangeState::make(g, owner, m.move == 1 ? "ATTACK" : "ATTACK_2"));
-        if (m.move == 2) queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+        if (m.move == 2) queue_monster_damage(g, owner, player_target, 1);
         else for (int i = 0; i < m.state.BookOfStabbing.stabCount; ++i) {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
         }
         queue_monster_roll(g, owner);
     }

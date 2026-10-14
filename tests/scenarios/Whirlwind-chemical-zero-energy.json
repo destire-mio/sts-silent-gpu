@@ -1,0 +1,36 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Chemical X"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian",
+  "deck": [
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

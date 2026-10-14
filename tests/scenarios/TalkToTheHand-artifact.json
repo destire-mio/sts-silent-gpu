@@ -1,0 +1,36 @@
+{
+  "deck": [
+    {
+      "id": "TalkToTheHand",
+      "upgrades": 0
+    },
+    {
+      "id": "TalkToTheHand",
+      "upgrades": 1
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Tantrum",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 240,
+  "max_hp": 240,
+  "encounter": "3 Sentries"
+}

@@ -5,6 +5,7 @@
 #include "spire_generated/ids.hpp"
 
 namespace spire {
+static_assert(static_cast<int>(CardId::Count) <= 512, "Card IDs exceed their 9-bit storage budget");
 struct Card {
     int misc = 0;
     int base_damage = -1;
@@ -18,7 +19,7 @@ struct Card {
     uint16_t upgrades = 0;
     int16_t base_magic = -1;
     int16_t magic = -1;
-    CardId id = CardId::Strike_G;
+    CardId id : 9;
     uint8_t multi_damage_count : 7;
     bool upgraded_cost : 1;
     CardTarget target : 3;
@@ -43,7 +44,7 @@ struct Card {
     bool master_reference : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
-        : multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
+        : id(CardId::Strike_G), multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false),
@@ -74,7 +75,6 @@ struct ShopState {
     List<StoreItem, 3> relics{}, potions{};
     bool purge_available = true;
 };
-struct ForeignRewardCard { uint16_t library_index; uint16_t uuid; };
 struct Relic {
     RelicId id;
     bool grayscale = false;
@@ -202,6 +202,7 @@ struct Player {
     int max_orbs = 0;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
+    int damaged_this_combat = 0;
     Stance stance = Stance::Neutral;
     bool bloodied = false;
     bool end_turn_queued = false;
@@ -393,7 +394,6 @@ struct Game {
     OrbState orbs{};
     int stance_changes[4]{};
     List<Card, card_capacity> cards{};
-    List<ForeignRewardCard, 256 - card_capacity> foreign_reward_cards{};
     List<uint8_t, 64> detached_master_cards{};
     uint64_t pending_card_moves[(card_capacity + 63) / 64]{};
     CardDamage multi_damage{};
@@ -441,6 +441,7 @@ struct Game {
     bool selection_can_pick_zero = false;
     int put_on_deck_num = 0;
     uint32_t next_power_instance = 1;
+    uint32_t next_damage_info_instance = 1;
     uint32_t next_card_uuid = 1;
     uint16_t obtained_cards[static_cast<int>(CardId::Count)]{};
     bool selection_for_upgrade = false;

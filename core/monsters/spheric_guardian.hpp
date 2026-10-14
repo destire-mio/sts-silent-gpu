@@ -31,16 +31,16 @@ struct SphericGuardian : MonsterHooks {
         Monster& m = g.monsters[owner];
         switch (m.move) {
         case 1:
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
+            queue_monster_damage(g, owner, player_target, 0);
             break;
         case 2: queue_block(g, owner, g.run.ascension >= 17 ? 35 : 25); break;
         case 3:
             queue_block(g, owner, 15);
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             break;
         case 4:
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             queue_power(g, owner, player_target, PowerId::Frail, 5, true);
             break;
         }

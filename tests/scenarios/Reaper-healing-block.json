@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 1
+    },
+    {
+      "id": "Uppercut",
+      "upgrades": 0
+    },
+    {
+      "id": "Twin Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Shrug It Off",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 30,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian"
+}

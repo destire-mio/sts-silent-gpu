@@ -40,7 +40,7 @@ struct GremlinTsundere : MonsterHooks {
             else if (alive > 1) set_monster_move(g, index, 1, Intent::Defend);
             else set_monster_move(g, index, 2, Intent::Attack, monster_base_damage(g, m, 0));
         } else {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, index, player_target, 0);
             if (m.escape_next) queue_monster_move(g, index, 99, Intent::Escape);
             else queue_monster_move(g, index, 2, Intent::Attack, monster_base_damage(g, m, 0));
         }

@@ -5,8 +5,9 @@
 
 namespace spire::units::actions {
 struct Dropkick : ActionHooks {
-    SPIRE_WAITING_RULE("DropkickAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "BLOCK"}; }
+    SPIRE_SNAPSHOT("AbstractGameAction.source", scalar, nullptr)
+    SPIRE_SNAPSHOT("AbstractGameAction.amount", scalar, 0)
     SPIRE_SNAPSHOT("DropkickAction.info", damage_info, effect, queue, index)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (e.target != no_target && has_power(g, get_creature(g, e.target), PowerId::Vulnerable)) {

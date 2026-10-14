@@ -1,0 +1,38 @@
+{
+  "deck": [
+    {
+      "id": "Echo Form",
+      "upgrades": 0
+    },
+    {
+      "id": "Echo Form",
+      "upgrades": 1
+    },
+    {
+      "id": "Dazed",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Cursed Key",
+    "Sozu"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 80,
+  "max_hp": 80,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "end_turn"
+    }
+  ]
+}

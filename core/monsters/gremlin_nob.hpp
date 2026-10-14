@@ -31,7 +31,7 @@ struct GremlinNob : MonsterHooks {
         Monster& m = g.monsters[owner];
         if (m.move == 3) queue_power(g, owner, owner, PowerId::Anger, g.run.ascension >= 18 ? 3 : 2);
         else {
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 2 ? 1 : 0));
+            queue_monster_damage(g, owner, player_target, m.move == 2 ? 1 : 0);
             if (m.move == 2 && m.state.GremlinNob.canVuln) queue_power(g, owner, player_target, PowerId::Vulnerable, 2, true);
         }
         queue_monster_roll(g, owner);

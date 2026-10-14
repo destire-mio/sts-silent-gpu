@@ -1,0 +1,25 @@
+{
+  "deck": [
+    {
+      "id": "Entrench",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

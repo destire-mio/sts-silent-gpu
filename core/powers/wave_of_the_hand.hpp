@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct WaveOfTheHand : PowerHooks {
-    SPIRE_WAITING_RULE("WaveOfTheHandPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void onGainedBlock(Game& g, Power& p, int, float amount) {
         if (amount > 0.0f)

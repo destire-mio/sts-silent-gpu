@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct ExhaustAllNonAttack : ActionHooks {
-    SPIRE_WAITING_RULE("ExhaustAllNonAttackAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     static SPIRE_FN void execute(Game& g, Effect &) {
         for (int i = 0; i < g.hand.size; ++i)

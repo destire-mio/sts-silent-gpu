@@ -15,7 +15,7 @@ struct TorchHead : MonsterHooks {
     }
     SPIRE_FN static void getMove(Game& g, int owner, int num) { (void)num; set_monster_move(g, owner, 1, Intent::Attack, 7); }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
-        queue_damage(g, owner, player_target, 7);
+        queue_monster_damage(g, owner, player_target, 0);
         queue_monster_move(g, owner, 1, Intent::Attack, 7);
     }
 };

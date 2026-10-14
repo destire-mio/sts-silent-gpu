@@ -1,0 +1,32 @@
+{
+  "deck": [
+    {
+      "id": "Blizzard",
+      "upgrades": 0
+    },
+    {
+      "id": "Blizzard",
+      "upgrades": 1
+    },
+    {
+      "id": "Blizzard",
+      "upgrades": 0
+    },
+    {
+      "id": "Blizzard",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Vajra"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 36,
+  "max_hp": 36,
+  "encounter": "Cultist"
+}

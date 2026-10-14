@@ -30,7 +30,7 @@ struct Healer : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
         } else for (int i = 0; i < g.monster_order.size; ++i) {
             const int target = g.monster_order[i];

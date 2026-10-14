@@ -1,0 +1,40 @@
+{
+  "deck": [
+    {
+      "id": "Miracle",
+      "upgrades": 0
+    },
+    {
+      "id": "Miracle",
+      "upgrades": 1
+    },
+    {
+      "id": "Establishment",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "end_turn"
+    }
+  ]
+}

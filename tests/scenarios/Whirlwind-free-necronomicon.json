@@ -1,0 +1,20 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Necronomicon"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian",
+  "deck": [
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    }
+  ]
+}

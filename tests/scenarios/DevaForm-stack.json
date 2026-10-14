@@ -1,0 +1,32 @@
+{
+  "deck": [
+    {
+      "id": "DevaForm",
+      "upgrades": 0
+    },
+    {
+      "id": "DevaForm",
+      "upgrades": 1
+    },
+    {
+      "id": "DevaForm",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper",
+    "Fusion Hammer"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}

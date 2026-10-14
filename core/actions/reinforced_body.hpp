@@ -3,11 +3,9 @@
 
 namespace spire::units::actions {
 struct ReinforcedBody : ActionHooks {
-    SPIRE_WAITING_RULE("ReinforcedBodyAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
-    SPIRE_STATE(ReinforcedBody, int energyOnUse; bool freeToPlayOnce; bool upgraded;)
+    SPIRE_STATE(ReinforcedBody, int energyOnUse; bool freeToPlayOnce;)
     SPIRE_SNAPSHOT("ReinforcedBodyAction.multiDamage", scalar, nullptr)
-    SPIRE_SNAPSHOT("ReinforcedBodyAction.block", scalar, effect.extra)
     SPIRE_SNAPSHOT("ReinforcedBodyAction.p", player)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         int count = e.payload.state.ReinforcedBody.energyOnUse < 0 ? g.player.energy
@@ -19,7 +17,7 @@ struct ReinforcedBody : ActionHooks {
                 Effect a{};
                 a.kind = EffectKind::Block;
                 a.source = a.target = player_target;
-                a.amount = e.extra;
+                a.amount = e.amount;
                 add_bottom(g, a);
             }
             if (!e.payload.state.ReinforcedBody.freeToPlayOnce)

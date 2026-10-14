@@ -3,8 +3,8 @@
 
 namespace spire::units::actions {
 struct HeadStomp : ActionHooks {
-    SPIRE_WAITING_RULE("HeadStompAction: waiting for a ported caller with three-seed oracle replay")
     SPIRE_SNAPSHOT("HeadStompAction.m", creature, effect.target)
+    SPIRE_SNAPSHOT("AbstractGameAction.target", scalar, nullptr)
     SPIRE_SNAPSHOT("HeadStompAction.magicNumber", scalar, effect.extra)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (g.manager.played_cards.size >= 2 &&

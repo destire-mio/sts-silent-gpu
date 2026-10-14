@@ -1,0 +1,52 @@
+{
+  "deck": [
+    {
+      "id": "WreathOfFlame",
+      "upgrades": 0
+    },
+    {
+      "id": "WreathOfFlame",
+      "upgrades": 1
+    },
+    {
+      "id": "WreathOfFlame",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Riddle With Holes",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}

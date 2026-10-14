@@ -116,8 +116,14 @@ struct SnapshotGraph {
             if (field == "baseBlock") return py::int_(card_baseBlock(card));
             if (field == "baseDamage") return py::int_(card.base_damage);
             if (field == "baseMagicNumber") return py::int_(card.base_magic);
-            if (field == "block") return py::int_(card.block);
-            if (field == "damage") return py::int_(card.damage);
+            if (field == "block") {
+                if (definition.block == -1 && card_baseBlock(card) == -1) return py::none();
+                return py::int_(card.block);
+            }
+            if (field == "damage") {
+                if (definition.damage == -1 && card.base_damage == -1) return py::none();
+                return py::int_(card.damage);
+            }
             if (field == "magicNumber") return py::int_(card.magic);
             if (field == "cardID") return py::str(card_names[id]);
             if (field == "color" || field == "rarity" || field == "type" || field == "tags")
@@ -136,7 +142,7 @@ struct SnapshotGraph {
             if (field == "ignoreEnergyOnUse") return py::bool_(card.ignore_energy_on_use);
             if (field == "timesUpgraded") return py::int_(card.upgrades);
             if (field == "upgraded") return py::bool_(card.upgrades > 0);
-            if (field == "upgradedDamage") return py::bool_(card.upgrades > 0 && definition.upgrade_damage != 0);
+            if (field == "upgradedDamage") return py::bool_((card.upgrades > 0 && definition.upgrade_damage != 0));
             if (field == "upgradedBlock") return py::bool_(card.upgrades > 0 && definition.upgrade_block != 0);
             if (field == "upgradedMagicNumber") return py::bool_(card.upgrades > 0 && definition.upgrade_magic != 0);
             if (field == "isMultiDamage") return py::bool_(definition.multi_damage);
@@ -193,21 +199,8 @@ struct SnapshotGraph {
 
     py::object card(int index) {
         if (index < 0) return py::none();
-        if (index < card_capacity) {
-            if (game.cards[index].master_reference) return master_card_uuid(game.cards[index].uuid);
-            return card_value(game.cards[index], false, index);
-        }
-        const auto& card = game.foreign_reward_cards[index - card_capacity];
-        const auto& entry = library_reward_cards[card.library_index];
-        const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(entry.id)].cast<py::dict>();
-        const py::dict fields = data["fields"].cast<py::dict>();
-        return object({21, index, 0}, data["class"].cast<std::string>(), [&](const std::string& key) -> py::object {
-            if (key == "AbstractCard.uuid") {
-                const auto inserted = uuids.emplace(card.uuid, static_cast<int>(uuids.size()));
-                return py::int_(inserted.first->second);
-            }
-            return py::reinterpret_borrow<py::object>(fields[py::str(key)]);
-        });
+        if (game.cards[index].master_reference) return master_card_uuid(game.cards[index].uuid);
+        return card_value(game.cards[index], false, index);
     }
 
     template<class Cards>
@@ -384,6 +377,7 @@ struct SnapshotGraph {
             });
             if (field == "exhaustPile") return group(2, "EXHAUST_PILE", &game.exhaust);
             if (field == "gameHandSize") return py::int_(game.player.hand_size);
+            if (field == "damagedThisCombat") return py::int_(game.player.damaged_this_combat);
             if (field == "masterHandSize") return py::int_(game.player.master_hand_size);
             if (field == "hand") return group(3, "HAND", &game.hand);
             if (field == "hoveredCard") return py::none();
@@ -774,13 +768,12 @@ struct SnapshotGraph {
             return py::reinterpret_borrow<py::object>(data["fields"].cast<py::dict>()[py::str(key)]);
         });
     }
-    py::object damage_info(const Effect& effect, int queue, int index) {
-        if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
-            const Monster& owner = game.monsters[effect.source];
-            for (int i = 0; i < owner.damage_count; ++i)
-                if (monster_base_damage(game, owner, i) == effect.info_base) return monster_damage(effect.source, i);
-        }
-        return object({16, queue, index}, "cards.DamageInfo", [&](const std::string& name) -> py::object {
+    py::object damage_info(const Effect& effect, int queue, int index, uint32_t instance = 0) {
+        if (instance & (uint32_t{1} << 31))
+            return monster_damage(effect.source, instance & ~(uint32_t{1} << 31));
+        const std::array<int, 3> identity = instance == 0 ? std::array<int, 3>{16, queue, index}
+                                                       : std::array<int, 3>{47, static_cast<int>(instance), 0};
+        return object(identity, "cards.DamageInfo", [&](const std::string& name) -> py::object {
             if (name == "DamageInfo.base") return py::int_(effect.info_base);
             if (name == "DamageInfo.output") return py::int_(effect.amount);
             if (name == "DamageInfo.isModified") return py::bool_(false);
@@ -948,7 +941,7 @@ struct SnapshotGraph {
         } else if (card_reward) {
             py::list options;
             for (int i = 0; i < game.reward_cards.size; ++i)
-                options.append(game.reward_cards[i] >= card_capacity ? library_reward_cards[game.foreign_reward_cards[game.reward_cards[i] - card_capacity].library_index].id : card_names[static_cast<int>(game.cards[game.reward_cards[i]].id)]);
+                options.append(card_names[static_cast<int>(game.cards[game.reward_cards[i]].id)]);
             if (!game.room_in_combat)
                 for (int i = 0; i < game.run.relics.size; ++i)
                     if (relic_data(game.run.relics[i].id).bowl_hp) { options.append("bowl"); break; }

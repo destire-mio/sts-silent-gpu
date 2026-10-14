@@ -38,7 +38,7 @@ struct GiantHead : MonsterHooks {
         const Monster& m = g.monsters[owner];
         Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e); add_bottom(g, actions::Shout::make(owner));
         if (m.move == 1) queue_power(g, owner, player_target, PowerId::Weak, 1, true);
-        else queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 3 ? 0 : min(7, 1 - m.state.GiantHead.count)));
+        else queue_monster_damage(g, owner, player_target, m.move == 3 ? 0 : min(7, 1 - m.state.GiantHead.count));
         queue_monster_roll(g, owner);
     }
 };

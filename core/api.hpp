@@ -4,9 +4,12 @@
 
 namespace spire {
 SPIRE_FN inline void upgrade_created_card(Game&, int);
-SPIRE_FN inline CardId foreign_attack_card(Game&);
+SPIRE_FN inline int foreign_attack_card(Game&);
+SPIRE_FN inline int create_library_card(Game&, int);
+SPIRE_FN inline CardId library_card_native(int);
 SPIRE_FN inline void sort_selection_cards(Game&);
 SPIRE_FN inline void modify_cost_for_combat(Card&, int);
+SPIRE_FN inline void update_card_cost(Card&, int);
 SPIRE_FN inline CardId random_common_card(Game&);
 SPIRE_FN inline int make_orb(Game&, OrbKind);
 SPIRE_FN inline void apply_orb_focus(Game&, int);
@@ -105,7 +108,7 @@ SPIRE_FN inline int calculate_block(const Game&, int, int card = -1);
 SPIRE_FN inline void apply_card_block(Game&, int);
 SPIRE_FN inline void refresh_powers(Game&);
 SPIRE_FN inline void monster_apply_powers(Game&, int);
-SPIRE_FN inline void queue_damage(Game&, int, int, int, DamageType = DamageType::Normal, int steal = 0);
+SPIRE_FN inline void queue_monster_damage(Game&, int, int, int, int steal = 0, bool skip_wait = false);
 SPIRE_FN inline void queue_block(Game&, int, int);
 SPIRE_FN inline void queue_card_damage(Game&, int, int);
 SPIRE_FN inline void queue_card_copy(Game&, int, int);
@@ -120,8 +123,10 @@ SPIRE_FN inline void reduce_power(Game&, int, PowerId, int, int source = no_targ
 SPIRE_FN inline void at_end_of_round(Game&, int);
 SPIRE_FN inline void at_end_of_turn(Game&, int);
 SPIRE_FN inline void reset_attributes(Card&);
+SPIRE_FN inline void upgrade_base_cost(Card&, int);
 SPIRE_FN inline Card make_card(CardId, int upgrades = 0);
 SPIRE_FN inline Card make_card(CardId, int upgrades, int misc);
+SPIRE_FN inline Card make_card(const Game&, CardId, int upgrades = 0);
 SPIRE_FN inline const CardDef& card_def(CardId);
 SPIRE_FN inline void apply_card_powers(Game&, int);
 SPIRE_FN inline void calculate_card_damage(Game&, int, int);

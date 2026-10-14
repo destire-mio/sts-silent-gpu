@@ -26,9 +26,9 @@ struct Snecko : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) queue_power(g, owner, player_target, PowerId::Confusion, -1);
-        else if (m.move == 2) queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+        else if (m.move == 2) queue_monster_damage(g, owner, player_target, 0);
         else {
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
             if (g.run.ascension >= 17) queue_power(g, owner, player_target, PowerId::Weak, 2, true);
             queue_power(g, owner, player_target, PowerId::Vulnerable, 2, true);
         }

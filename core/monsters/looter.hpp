@@ -33,7 +33,7 @@ struct Looter : MonsterHooks {
             steal.target = index;
             steal.amount = gold_amount(g);
             add_bottom(g, steal);
-            queue_damage(g, index, player_target, monster_base_damage(g, m, move == 1 ? 0 : 1), DamageType::Normal, gold_amount(g));
+            queue_monster_damage(g, index, player_target, move == 1 ? 0 : 1, gold_amount(g));
             ++m.state.Looter.slashCount;
             if (move == 4) set_monster_move(g, index, 2, Intent::Defend);
             else if (m.state.Looter.slashCount == 2) {

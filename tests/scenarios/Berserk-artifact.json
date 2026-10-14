@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Berserk",
+      "upgrades": 0
+    },
+    {
+      "id": "Berserk",
+      "upgrades": 1
+    },
+    {
+      "id": "Panacea",
+      "upgrades": 0
+    },
+    {
+      "id": "Panacea",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "ClockworkSouvenir"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}

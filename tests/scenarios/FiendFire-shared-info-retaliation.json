@@ -1,0 +1,42 @@
+{
+  "deck": [
+    {
+      "id": "Fiend Fire",
+      "upgrades": 1
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Lantern"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 1,
+  "encounter": "4 Shapes",
+  "actions": [
+    {
+      "type": "play",
+      "card": 4,
+      "target": 2
+    }
+  ]
+}

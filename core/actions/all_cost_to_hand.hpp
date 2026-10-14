@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct AllCostToHand : ActionHooks {
-    SPIRE_WAITING_RULE("AllCostToHandAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_SNAPSHOT("AllCostToHandAction.p", player)
     SPIRE_SNAPSHOT("AllCostToHandAction.costTarget", scalar, effect.extra)

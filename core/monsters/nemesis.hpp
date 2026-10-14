@@ -41,9 +41,9 @@ struct Nemesis : MonsterHooks {
         if (m.move == 3) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
         }
-        else if (m.move == 2) for (int i = 0; i < 3; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+        else if (m.move == 2) for (int i = 0; i < 3; ++i) queue_monster_damage(g, owner, player_target, 1);
         else {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
             add_bottom(g, actions::VFX::make(owner));

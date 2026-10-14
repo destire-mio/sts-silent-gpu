@@ -1,0 +1,93 @@
+{
+  "deck": [
+    {
+      "id": "Steam",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 300,
+  "max_hp": 300,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

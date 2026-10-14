@@ -26,13 +26,13 @@ struct SpireShield : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             const PowerId debuff = !g.orbs.slots.empty() && g.rng.ai.randomBoolean() ? PowerId::Focus : PowerId::Strength;
             queue_power(g, owner, player_target, debuff, -1);
         } else if (m.move == 2) {
             for (int i = 0; i < g.monster_order.size; ++i) queue_block(g, g.monster_order[i], 30);
         } else {
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
             queue_block(g, owner, g.run.ascension >= 18 ? 99 : monster_output_damage(g, m, 1));
         }
         queue_monster_roll(g, owner);

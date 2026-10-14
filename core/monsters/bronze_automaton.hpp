@@ -38,12 +38,12 @@ struct BronzeAutomaton : MonsterHooks {
             const int right = queue_spawn_monster(g, MonsterId::BronzeOrb, 200.0f, true);
             g.monsters[right].state.BronzeOrb.count = 1;
         } else if (m.move == 1) {
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
+            queue_monster_damage(g, owner, player_target, 0);
         } else if (m.move == 5) {
             queue_block(g, owner, g.run.ascension >= 9 ? 12 : 9);
             queue_power(g, owner, owner, PowerId::Strength, g.run.ascension >= 4 ? 4 : 3);
-        } else if (m.move == 2) queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+        } else if (m.move == 2) queue_monster_damage(g, owner, player_target, 1);
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {

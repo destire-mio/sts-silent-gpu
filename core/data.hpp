@@ -11,19 +11,21 @@ SPIRE_FN constexpr float victory_switch_timer() {
     return timer;
 }
 struct EventData { const char* java_class; bool image; bool reward_opens_map = false; const char* control_name = nullptr; const char* combat_metric = nullptr; bool blocks_potions = false; };
-struct CardDef {
+struct alignas(4) CardDef {
     CardType type;
     CardTarget target;
-    int cost, damage, block, magic;
-    int upgrade_damage, upgrade_block, upgrade_magic;
+    int8_t cost, damage, block, magic;
+    int8_t upgrade_damage, upgrade_block, upgrade_magic;
     bool exhaust, ethereal;
     bool innate = false;
     bool multi_damage = false;
-    int misc = 0;
+    int8_t misc = 0;
     bool purgeable = true;
     bool strike = false;
     bool self_retain = false;
-    int initial_block = -1;
+    int8_t initial_block = -1;
+    bool shuffle_back_into_draw_pile = false;
+    bool updates_cost = type != CardType::Curse && type != CardType::Status;
 };
 struct PowerData {
     int priority = 5;

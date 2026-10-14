@@ -22,6 +22,7 @@ struct RestoreRetained : ActionHooks {
             g.cards[card].retain = false;
             g.limbo.erase(i);
         }
+        refresh_hand(g);
     }
 };
 }

@@ -1,0 +1,56 @@
+{
+  "deck": [
+    {
+      "id": "Blood for Blood",
+      "upgrades": 0
+    },
+    {
+      "id": "Blood for Blood",
+      "upgrades": 1
+    },
+    {
+      "id": "Bloodletting",
+      "upgrades": 0
+    },
+    {
+      "id": "Brutality",
+      "upgrades": 0
+    },
+    {
+      "id": "Rupture",
+      "upgrades": 0
+    },
+    {
+      "id": "Combust",
+      "upgrades": 0
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Night Terror",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian"
+}

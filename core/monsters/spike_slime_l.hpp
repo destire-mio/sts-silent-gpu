@@ -30,7 +30,7 @@ struct SpikeSlime_L : MonsterHooks {
             set_monster_move(g, index, 3, Intent::Unknown);
         } else if (m.move == 4) queue_power(g, index, player_target, PowerId::Frail, g.run.ascension >= 17 ? 3 : 2, true);
         else {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, index, player_target, 0);
             queue_slimed(g, 2);
         }
         // SpikeSlime_L.takeTurn rolls even after splitting; AcidSlime_L does not.

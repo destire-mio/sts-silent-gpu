@@ -124,6 +124,7 @@ def card(name, suffix="", result="void", body="", const=False):
 
 
 hook("cards", "upgrade", "Card& card", selector="card.id")
+hook("cards", "constructCard", "const Game& g, Card& card", selector="card.id")
 hook("cards", "baseBlock", "const Card& card", "int", "const CardDef& d = card_def(card.id); return d.block + card.upgrades * d.upgrade_block + card.base_block_adjust;", selector="card.id")
 card("use", "int target")
 for name in ("tookDamage", "didDiscard", "onMoveToDiscard", "triggerWhenDrawn",
@@ -153,7 +154,7 @@ card("canPlay", "int other_card", "bool", "return true;", True)
 card("canUse", "int target", "bool", "return card_can_use_base(g, card, target);", True)
 card("makeStatEquivalentCopy", result="Card", body="return stat_equivalent_copy(g, card);")
 card("makeSameInstanceOf", result="Card", body="Card copy = card_makeStatEquivalentCopy(g, card); copy.uuid = g.cards[card].uuid; return copy;")
-card("makeCopy", result="Card", body="return make_card(get_card(g, card).id);")
+card("makeCopy", result="Card", body="return make_card(g, get_card(g, card).id);")
 
 for name in ("use",):
     hook("potions", name, "Game& g, int slot, int target")
@@ -249,7 +250,7 @@ def generate(root, output):
     native_cards = {row[1]: row[0] for row in catalogs['cards']}
     for game_id, facts in sorted(card_facts.items()):
         if facts['rarity'] in ('COMMON', 'UNCOMMON', 'RARE') and facts['type'] not in ('CURSE', 'STATUS'):
-            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards.get(game_id, 'Count') + ', CardType::' + facts['type'].title() + ', ' + str('HEALING' in facts['tags']).lower() + '},')
+            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards[game_id] + ', CardType::' + facts['type'].title() + ', ' + str('HEALING' in facts['tags']).lower() + '},')
     content.append('};')
     ranks = {game_id: rank for rank, game_id in enumerate(sorted(row[1] for row in catalogs['cards']))}
     for name, result in [('card_rarity', 'CardRarity'), ('card_sort_order', 'int')]:
@@ -320,10 +321,13 @@ def generate(root, output):
         entries = catalogs[kind]
         state_type = {"actions": "Effect", "encounters": "Encounter"}.get(kind, prefix.capitalize()) + "State"
         ids.append(f'union {state_type} {{')
-        ids.append('    uint8_t empty;')
         for typename, fields in states[kind].values():
             ids.append(f'    struct {{ {fields} }} {typename};')
             ids.append(f'    static_assert(__is_trivially_constructible(decltype({typename})), "Unit state fields need trivial default construction");')
+        size = '1'
+        for typename, _ in states[kind].values():
+            size = f'max({size}, sizeof(decltype({typename})))'
+        ids.append(f'    uint8_t empty[{size}];')
         ids.append(f'    SPIRE_FN constexpr {state_type}() : empty{{}} {{}}')
         ids.append('};')
         budget = {"cards": 8, "powers": 8, "relics": 8, "potions": 8, "monsters": 32, "encounters": 16, "events": 64, "actions": 48}[kind]
@@ -396,7 +400,7 @@ def generate(root, output):
                 unused = ' '.join(f'(void){arg};' for arg in args if not re.search(r'\b' + arg + r'\b', body))
                 bases.append(f'    static SPIRE_FN {result} {name}({signature}) {{ {unused} {body} }}')
             discriminator = custom_selector or selector
-            content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ SPIRE_ASSERT({discriminator} < {enum}::Count); switch ({discriminator}) {{')
+            dispatch = []
             call_args = list(args)
             if name == 'construct' or kind == 'encounters':
                 call_args.remove('id')
@@ -407,7 +411,12 @@ def generate(root, output):
                     inherited.append(unit)
                     continue
                 invocation = f'units::{kind}::{typename}::{name}({", ".join(call_args)})'
-                content.append(f'case {enum}::{unit}: return {invocation};')
+                dispatch.append(f'case {enum}::{unit}: return {invocation};')
+            if len(inherited) == len(entries):
+                content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ return {base}::{name}({", ".join(call_args)}); }}')
+                continue
+            content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ SPIRE_ASSERT({discriminator} < {enum}::Count); switch ({discriminator}) {{')
+            content.extend(dispatch)
             if inherited:
                 content.append(f'default: return {base}::{name}({", ".join(call_args)}); }} }}')
             else:

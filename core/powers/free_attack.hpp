@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct FreeAttack : PowerHooks {
-    SPIRE_WAITING_RULE("FreeAttackPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() {
         PowerData d{};
         d.free_attacks = true;

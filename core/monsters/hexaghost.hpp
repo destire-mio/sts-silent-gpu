@@ -53,7 +53,7 @@ struct Hexaghost : MonsterHooks {
             return;
         }
         if (m.move == 1 || m.move == 6) {
-            for (int i = 0; i < 6; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 2 : 3));
+            for (int i = 0; i < 6; ++i) queue_monster_damage(g, owner, player_target, m.move == 1 ? 2 : 3, 0, m.move == 1);
             if (m.move == 6) {
                 Effect e{}; e.kind = EffectKind::BurnIncrease; add_bottom(g, e);
                 m.state.Hexaghost.burnUpgraded = true;
@@ -61,10 +61,10 @@ struct Hexaghost : MonsterHooks {
             add_bottom(g, actions::ChangeState::make(g, owner, "Deactivate"));
         } else {
             if (m.move == 2) {
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+                queue_monster_damage(g, owner, player_target, 0);
+                queue_monster_damage(g, owner, player_target, 0);
             } else if (m.move == 4) {
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+                queue_monster_damage(g, owner, player_target, 1);
                 queue_monster_card(g, CardId::Burn, EffectKind::AddCardDiscard, g.run.ascension >= 19 ? 2 : 1, m.state.Hexaghost.burnUpgraded ? 1 : 0);
             } else if (m.move == 3) {
                 queue_block(g, owner, 12);

@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct LimitBreak : ActionHooks {
-    SPIRE_WAITING_RULE("LimitBreakAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_SNAPSHOT("LimitBreakAction.p", player)
     static SPIRE_FN void execute(Game& g, Effect &) {

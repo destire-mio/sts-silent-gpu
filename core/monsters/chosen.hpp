@@ -35,16 +35,16 @@ struct Chosen : MonsterHooks {
         Monster& m = g.monsters[owner];
         switch (m.move) {
         case 5:
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 2));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 2));
+            queue_monster_damage(g, owner, player_target, 2);
+            queue_monster_damage(g, owner, player_target, 2);
             break;
-        case 1: queue_damage(g, owner, player_target, monster_base_damage(g, m, 0)); break;
+        case 1: queue_monster_damage(g, owner, player_target, 0); break;
         case 2:
             queue_power(g, owner, player_target, PowerId::Weak, 3, true);
             queue_power(g, owner, owner, PowerId::Strength, 3);
             break;
         case 3:
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
             queue_power(g, owner, player_target, PowerId::Vulnerable, 2, true);
             break;
         case 4: queue_power(g, owner, player_target, PowerId::Hex, 1); break;

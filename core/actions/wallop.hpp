@@ -3,12 +3,12 @@
 
 namespace spire::units::actions {
 struct Wallop : ActionHooks {
-    SPIRE_WAITING_RULE("WallopAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_SNAPSHOT("WallopAction.info", damage_info, effect, queue, index)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (e.target == no_target || get_creature(g, e.target).dying || get_creature(g, e.target).half_dead ||
-            (e.source != no_target && (get_creature(g, e.source).dying || get_creature(g, e.source).half_dead)))
+            (e.target != player_target && get_creature(g, e.target).escaped) ||
+            (e.source != no_target && get_creature(g, e.source).dying))
             return;
         creature_damage(g, e);
         if (get_creature(g, e.target).last_damage_taken > 0) {

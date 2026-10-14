@@ -1,0 +1,60 @@
+{
+  "deck": [
+    {
+      "id": "Bullet Time",
+      "upgrades": 1
+    },
+    {
+      "id": "Bullet Time",
+      "upgrades": 1
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Omniscience",
+      "upgrades": 0
+    },
+    {
+      "id": "Vault",
+      "upgrades": 0
+    },
+    {
+      "id": "Fusion",
+      "upgrades": 0
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 0
+    },
+    {
+      "id": "Corruption",
+      "upgrades": 0
+    },
+    {
+      "id": "Mind Blast",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 180,
+  "max_hp": 180,
+  "encounter": "Maw"
+}

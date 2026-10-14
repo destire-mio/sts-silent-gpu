@@ -1,0 +1,38 @@
+{
+  "deck": [
+    {
+      "id": "Echo Form",
+      "upgrades": 0
+    },
+    {
+      "id": "Echo Form",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Cursed Key",
+    "Sozu",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 60,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

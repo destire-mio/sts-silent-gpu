@@ -1,0 +1,34 @@
+{
+  "deck": [
+    {
+      "id": "Barrage",
+      "upgrades": 0
+    },
+    {
+      "id": "Barrage",
+      "upgrades": 0
+    },
+    {
+      "id": "Barrage",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 36,
+  "max_hp": 36,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

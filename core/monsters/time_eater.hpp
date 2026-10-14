@@ -42,7 +42,7 @@ struct TimeEater : MonsterHooks {
         if (m.state.TimeEater.firstTurn) { add_bottom(g, actions::Talk::make(owner)); m.state.TimeEater.firstTurn = false; }
         if (m.move == 2) for (int i = 0; i < 3; ++i) {
             add_bottom(g, actions::VFX::make(owner));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
         }
         else if (m.move == 3) {
             queue_block(g, owner, 20);
@@ -51,7 +51,7 @@ struct TimeEater : MonsterHooks {
             if (g.run.ascension >= 19) queue_power(g, owner, player_target, PowerId::Frail, 1, true);
         } else if (m.move == 4) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
             queue_power(g, owner, player_target, PowerId::DrawReduction, 1);
             if (g.run.ascension >= 19) queue_monster_card(g, CardId::Slimed, EffectKind::AddCardDiscard, 2);
         } else {
