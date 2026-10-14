@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Hello : PowerHooks {
-    SPIRE_WAITING_RULE("HelloPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void atStartOfTurn(Game& g, Power& p, int) {
         if (monsters_basically_dead(g))

@@ -175,3 +175,4 @@ SPIRE_UNIT(GeneticAlgorithm, "Genetic Algorithm", "core/cards/genetic_algorithm.
 SPIRE_UNIT(Glacier, "Glacier", "core/cards/glacier.hpp", Glacier)
 SPIRE_UNIT(GoForTheEyes, "Go for the Eyes", "core/cards/go_for_the_eyes.hpp", GoForTheEyes)
 SPIRE_UNIT(Heatsinks, "Heatsinks", "core/cards/heatsinks.hpp", Heatsinks)
+SPIRE_UNIT(HelloWorld, "Hello World", "core/cards/hello_world.hpp", HelloWorld)
