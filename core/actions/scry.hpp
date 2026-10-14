@@ -29,7 +29,6 @@ struct Scry : ActionHooks {
             g.selection_amount = e.amount;
             g.selection_any_number = true;
             g.selection_can_pick_zero = true;
-            g.grid_previous_deck_size = g.grid_cards.size;
             g.screen = Screen::Grid;
             e.payload.state.Scry.selecting = true;
             for (int i = 0; i < g.discard.size; ++i)

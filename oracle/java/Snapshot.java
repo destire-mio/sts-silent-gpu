@@ -84,6 +84,7 @@ final class Snapshot {
         exclude("rooms.TreasureRoom", "shinyTimer", "Schedules chest shine particles.");
         exclude("rooms.TreasureRoomBoss", "shinyTimer", "Schedules chest shine particles.");
         exclude("screens.select.GridCardSelectScreen", "ritualAnimTimer", "Schedules a disposable transform preview using presentation RNG; confirmation ignores the preview.");
+        exclude("screens.select.GridCardSelectScreen", "prevDeckSize", "Scroll-bound cache: only updateScrolling reads it to call calculateScrollBounds, which derives layout from targetGroup.size. No card-selection or game rule reads it.");
         exclude("screens.select.HandCardSelectScreen", "waitToCloseTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
         exclude("actions.AbstractGameAction", "attackEffect", "Attack artwork and sound selection, not damage calculation.");
         exclude("actions.GameActionManager", "hasControl[outside-combat] phase[outside-combat]", "Projected to null outside COMBAT: a final WaitAction can leave the dispatcher executing after rewards freeze it. The only external hasControl reader is AbstractPlayer.updateInput in COMBAT; preBattlePrep queues actions, and getNextAction overwrites both fields before any next-battle input or selection.");

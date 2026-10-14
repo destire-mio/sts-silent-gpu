@@ -33,7 +33,6 @@ struct BetterDrawPileToHand : ActionHooks {
             g.selected_cards.clear();
             g.selection_amount = state.numberOfCards;
             g.selection_any_number = g.selection_can_pick_zero = state.optional;
-            g.grid_previous_deck_size = g.grid_cards.size;
             g.screen = Screen::Grid;
             state.selecting = true;
             return;

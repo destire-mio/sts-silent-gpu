@@ -22,8 +22,6 @@ struct PandorasBox : RelicHooks {
             preview_card_obtain(g, c);
             g.grid_cards.insert(0, create_card(g, c));
         }
-        // GridCardSelectScreen.calculateScrollBounds runs before the confirmation input.
-        g.grid_previous_deck_size = g.grid_cards.size;
         g.selection_confirmation = true;
         g.grid_can_cancel = false;
         g.screen = Screen::Grid;

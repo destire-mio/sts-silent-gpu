@@ -31,7 +31,6 @@ struct Meditate : ActionHooks {
             g.selected_cards.clear();
             g.selection_amount = e.extra;
             g.selection_any_number = g.selection_can_pick_zero = false;
-            g.grid_previous_deck_size = g.discard.size;
             g.screen = Screen::Grid;
             e.payload.state.Meditate.selecting = true;
             return;

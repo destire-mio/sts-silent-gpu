@@ -18,7 +18,6 @@ struct Omniscience : ActionHooks {
             g.selected_cards.clear();
             g.selection_amount = 1;
             g.selection_any_number = g.selection_can_pick_zero = false;
-            g.grid_previous_deck_size = g.grid_cards.size;
             g.screen = Screen::Grid;
             e.payload.state.Omniscience.selecting = true;
             return;

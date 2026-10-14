@@ -9556,7 +9556,6 @@
       "hoveredCard": "com.megacrit.cardcrawl.cards.AbstractCard",
       "isJustForConfirming": "boolean",
       "numCards": "int",
-      "prevDeckSize": "int",
       "selectedCards": "java.util.ArrayList<com.megacrit.cardcrawl.cards.AbstractCard>",
       "targetGroup": "com.megacrit.cardcrawl.cards.CardGroup"
     }
@@ -13532,6 +13531,7 @@
     "rooms.AbstractRoom.endBattleTimer": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
     "rooms.TreasureRoom.shinyTimer": "Schedules chest shine particles.",
     "rooms.TreasureRoomBoss.shinyTimer": "Schedules chest shine particles.",
+    "screens.select.GridCardSelectScreen.prevDeckSize": "Scroll-bound cache: only updateScrolling reads it to call calculateScrollBounds, which derives layout from targetGroup.size. No card-selection or game rule reads it.",
     "screens.select.GridCardSelectScreen.ritualAnimTimer": "Schedules a disposable transform preview using presentation RNG; confirmation ignores the preview.",
     "screens.select.GridCardSelectScreen.upgradePreviewCard": "Display copy; confirmation uses hoveredCard, not this copy.",
     "screens.select.HandCardSelectScreen.upgradePreviewCard": "Display copy and auto-close pacing; auto-close finishes before a decision.",
