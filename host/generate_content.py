@@ -124,6 +124,7 @@ def card(name, suffix="", result="void", body="", const=False):
 
 
 hook("cards", "upgrade", "Card& card", selector="card.id")
+hook("cards", "constructCard", "const Game& g, Card& card", selector="card.id")
 hook("cards", "baseBlock", "const Card& card", "int", "const CardDef& d = card_def(card.id); return d.block + card.upgrades * d.upgrade_block + card.base_block_adjust;", selector="card.id")
 card("use", "int target")
 for name in ("tookDamage", "didDiscard", "onMoveToDiscard", "triggerWhenDrawn",
@@ -153,7 +154,7 @@ card("canPlay", "int other_card", "bool", "return true;", True)
 card("canUse", "int target", "bool", "return card_can_use_base(g, card, target);", True)
 card("makeStatEquivalentCopy", result="Card", body="return stat_equivalent_copy(g, card);")
 card("makeSameInstanceOf", result="Card", body="Card copy = card_makeStatEquivalentCopy(g, card); copy.uuid = g.cards[card].uuid; return copy;")
-card("makeCopy", result="Card", body="return make_card(get_card(g, card).id);")
+card("makeCopy", result="Card", body="return make_card(g, get_card(g, card).id);")
 
 for name in ("use",):
     hook("potions", name, "Game& g, int slot, int target")

@@ -41,6 +41,11 @@ SPIRE_FN inline Card make_card(CardId id, int upgrades) {
     card.magic = card.base_magic;
     return card;
 }
+SPIRE_FN inline Card make_card(const Game& g, CardId id, int upgrades) {
+    Card card = make_card(id, upgrades);
+    card_constructCard(g, card);
+    return card;
+}
 SPIRE_FN inline Card make_card(CardId id, int upgrades, int misc) {
     Card card = make_card(id, upgrades);
     card.misc = misc;

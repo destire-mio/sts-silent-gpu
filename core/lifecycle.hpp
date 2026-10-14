@@ -174,7 +174,7 @@ SPIRE_FN inline int create_card_reward(Game& g) {
         int library = 0;
         while (!same_id(library_reward_cards[library].id, choices[i])) ++library;
         const auto& entry = library_reward_cards[library];
-        if (entry.native != CardId::Count) reward.cards.push_back(create_card(g, make_card(entry.native)));
+        if (entry.native != CardId::Count) reward.cards.push_back(create_card(g, make_card(g, entry.native)));
         else {
             reward.cards.push_back(card_capacity + g.foreign_reward_cards.size);
             g.foreign_reward_cards.push_back({static_cast<uint16_t>(library), static_cast<uint16_t>(g.next_card_uuid++)});

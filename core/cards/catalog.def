@@ -170,3 +170,4 @@ SPIRE_UNIT(DoubleEnergy, "Double Energy", "core/cards/double_energy.hpp", Double
 SPIRE_UNIT(EchoForm, "Echo Form", "core/cards/echo_form.hpp", EchoForm)
 SPIRE_UNIT(Equilibrium, "Undo", "core/cards/equilibrium.hpp", Equilibrium)
 SPIRE_UNIT(FTL, "FTL", "core/cards/f_t_l.hpp", FTL)
+SPIRE_UNIT(ForceField, "Force Field", "core/cards/force_field.hpp", ForceField)

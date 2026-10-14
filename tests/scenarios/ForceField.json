@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Force Field",
+      "upgrades": 0
+    },
+    {
+      "id": "Force Field",
+      "upgrades": 1
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Outmaneuver",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Cursed Key",
+    "Sozu"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Cultist"
+}
