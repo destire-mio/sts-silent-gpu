@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Carnage",
+      "upgrades": 0
+    },
+    {
+      "id": "Carnage",
+      "upgrades": 1
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 0
+    },
+    {
+      "id": "Feel No Pain",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian",
+  "actions": [
+    {
+      "type": "end_turn"
+    }
+  ]
+}
