@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct IncreaseMisc : ActionHooks {
-    SPIRE_WAITING_RULE("IncreaseMiscAction: waiting for a ported caller with three-seed oracle replay")
     SPIRE_STATE(IncreaseMisc, uint32_t uuid;)
     SPIRE_SNAPSHOT("IncreaseMiscAction.uuid", uuid, effect.payload.state.IncreaseMisc.uuid)
     SPIRE_SNAPSHOT("IncreaseMiscAction.miscIncrease", scalar, effect.extra)
