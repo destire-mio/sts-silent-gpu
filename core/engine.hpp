@@ -957,14 +957,39 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_atPreBattle(g, i);
 }
 SPIRE_FN inline void enter_combat(Game& g) {
-    Card retained[64]{};
-    for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
+    // DrawCardAction.drawnCards survives preBattlePrep until the first DrawCardAction.update.
+    List<uint8_t, 64 + hand_limit> retained_indices{};
+    for (int i = 0; i < g.detached_master_cards.size; ++i) {
+        retained_indices.push_back(g.detached_master_cards[i]);
+        g.detached_master_cards[i] = i;
+    }
+    for (int i = 0; i < g.drawn_cards.size; ++i) {
+        const int old = g.drawn_cards[i];
+        int index = 0;
+        while (index < retained_indices.size && retained_indices[index] != old) ++index;
+        if (index == retained_indices.size) retained_indices.push_back(old);
+        g.drawn_cards[i] = index;
+    }
+    Card retained[64 + hand_limit];
+    DamageArray retained_damage[64 + hand_limit];
+    const DamageExceptions previous_damage = g.damage_exceptions;
+    for (int i = 0; i < retained_indices.size; ++i) {
+        retained[i] = g.cards[retained_indices[i]];
+        retained_damage[i] = g.multi_damage.get(retained_indices[i]);
+    }
     g.cards.clear();
     for (auto& word : g.pending_card_moves) word = 0;
-    for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
     g.previous_screen = Screen::None;
     g.multi_damage.clear();
     g.damage_exceptions.clear();
+    for (int i = 0; i < retained_indices.size; ++i) {
+        g.cards.push_back(retained[i]);
+        int amounts[monster_capacity];
+        for (int j = 0; j < retained[i].multi_damage_count; ++j) amounts[j] = retained_damage[i].at(previous_damage, j);
+        DamageArray damage{};
+        damage.assign(g.damage_exceptions, amounts, retained[i].multi_damage_count);
+        g.multi_damage.set(i, damage);
+    }
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
     g.selected_cards.clear();
     g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
@@ -973,7 +998,6 @@ SPIRE_FN inline void enter_combat(Game& g) {
     g.action_objects.clear();
     g.player_turn_effect_pending = false;
     g.selection_for_upgrade = false;
-    g.drawn_cards.clear();
     g.selection_any_number = false;
     g.selection_can_pick_zero = false;
     g.manager = ActionManager{};
