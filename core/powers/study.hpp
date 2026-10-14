@@ -1,0 +1,18 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::powers {
+struct Study : PowerHooks {
+    SPIRE_WAITING_RULE("StudyPower: waiting for a ported caller with three-seed oracle replay")
+    static SPIRE_FN constexpr PowerData data() { return {}; }
+    static SPIRE_FN void atEndOfTurn(Game& g, Power& p, int, bool) {
+        Effect e{};
+        e.kind = EffectKind::MakeTempCardInDrawPile;
+        action_initialize_state(e);
+        e.card = create_card(g, make_card(card_id("Insight"), 0));
+        e.amount = p.amount;
+        e.payload.state.MakeTempCardInDrawPile.random_spot = true;
+        add_bottom(g, e);
+    }
+};
+}
