@@ -19,6 +19,8 @@ void execute_next(Game& game) {
 
 void forced_move_history() {
     Game g{};
+    g.room_phase = RoomPhase::Combat;
+    g.room_in_combat = true;
     g.rng.generate_seeds(123);
     append_monster(g, construct_monster(g, MonsterId::LouseNormal));
     get_monster_move(g, 0, 0);
@@ -50,6 +52,8 @@ void forced_move_history() {
 
 void deterministic_turns() {
     Game g{};
+    g.room_phase = RoomPhase::Combat;
+    g.room_in_combat = true;
     g.rng.generate_seeds(321);
     append_monster(g, construct_monster(g, MonsterId::AcidSlime_S));
     roll_monster_move(g, 0);
@@ -84,6 +88,8 @@ void deterministic_turns() {
 
 void split_and_target_identity() {
     Game g{};
+    g.room_phase = RoomPhase::Combat;
+    g.room_in_combat = true;
     g.rng.generate_seeds(42);
     append_monster(g, construct_monster(g, MonsterId::SpikeSlime_L));
     append_monster(g, construct_monster(g, MonsterId::Cultist));
@@ -116,6 +122,8 @@ void split_and_target_identity() {
 
 void shield_targeting() {
     Game g{};
+    g.room_phase = RoomPhase::Combat;
+    g.room_in_combat = true;
     g.rng.generate_seeds(1);
     append_monster(g, construct_monster(g, MonsterId::GremlinTsundere));
     Effect e{};
@@ -134,6 +142,8 @@ void shield_targeting() {
 
 void lethal_attack_keeps_published_intent() {
     Game g{};
+    g.room_phase = RoomPhase::Combat;
+    g.room_in_combat = true;
     g.rng.generate_seeds(1);
     g.screen = Screen::Combat;
     g.player.creature.hp = 1;
@@ -155,6 +165,8 @@ void lethal_attack_keeps_published_intent() {
 
 void looter_bookkeeping() {
     Game g{};
+    g.room_phase = RoomPhase::Combat;
+    g.room_in_combat = true;
     g.rng.generate_seeds(1);
     g.run.gold = 3;
     g.player.creature.hp = 70;
@@ -184,6 +196,8 @@ void suicide_preserves_boss_progress() {
     constexpr bool triggers[]{false, true};
     for (bool trigger_relics : triggers) {
         Game g{};
+        g.room_phase = RoomPhase::Combat;
+        g.room_in_combat = true;
         g.rng.generate_seeds(42);
         append_monster(g, construct_monster(g, MonsterId::Hexaghost));
         queue_suicide(g, 0, trigger_relics);

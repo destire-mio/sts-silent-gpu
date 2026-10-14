@@ -179,7 +179,7 @@ static void test_innate_draw_order() {
     Game g{};
     reset(g, 0);
     auto setup = default_setup(g);
-    for (int i = 0; i < 8; ++i) setup.deck[i].innate = true;
+    for (int i = 0; i < 8; ++i) setup.deck[i] = make_card(CardId::Backstab);
     start_combat(g, setup);
     // CardGroup.initializeDeck pre-turn extras drain before AbstractRoom queues Draw5 and SnakeRing Draw2.
     require_pile(g.hand, {4,0,1,3,5,6,7,2,11,9}, "innate extras precede opening and relic draws");

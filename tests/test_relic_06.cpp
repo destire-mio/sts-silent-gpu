@@ -101,6 +101,7 @@ static void test_egg_and_lifted_strength() {
     g.monsters.push_back(construct_monster(g, MonsterId::Cultist));
     g.monster_order.push_back(0);
     g.room_in_combat = true;
+    g.room_phase = RoomPhase::Combat;
     g.screen = Screen::Combat;
     relic_atBattleStart(g, 1);
     run_until_decision(g);

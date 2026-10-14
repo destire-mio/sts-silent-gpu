@@ -70,6 +70,8 @@ PROGRAM = r"""
 using namespace spire;
 int main() {
     Game g{};
+    g.room_phase = RoomPhase::Combat;
+    g.room_in_combat = true;
     g.run.gold = 0;
     g.rng.generate_seeds(42);
     build_encounter(g, EncounterId::CatalogProbe);
