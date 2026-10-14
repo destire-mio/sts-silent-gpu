@@ -405,7 +405,7 @@ struct Game {
     bool player_turn_effect_pending = false;
     Pile selection_excluded{};
     List<uint8_t, hand_limit> drawn_cards{};
-    Pile pending_obtains{};
+    List<uint8_t, 8> pending_obtains{};
     List<PreparedPotion, potion_capacity> potion_effects{};
     List<uint8_t, reward_card_capacity> reward_cards{};
     List<RoomReward, room_reward_capacity> reward_objects{};
@@ -451,23 +451,23 @@ struct Game {
     bool grid_is_master_deck = false;
     bool grid_confirm_screen = false;
     int grid_hovered_card = -1;
-    bool grid_can_cancel = true;
-    bool selection_confirmation = false;
-    bool selected_cards_retrieved = false;
-    bool end_turn_enabled = true;
-    bool selection_up_to = false;
-    bool reward_skippable = false;
-    bool combat_reward_skippable = false;
-    bool reward_proceed_visible = false;
-    bool reward_has_taken_all = false;
-    bool reward_relic_warning_seen = false;
-    bool skip_monster_turn = false;
-    bool battle_over = false;
-    bool battle_callbacks_done = false;
-    bool room_in_combat = false;
-    bool room_reward_time = false;
-    bool room_reward_allowed = true;
-    bool room_has_monsters = false;
+    bool grid_can_cancel : 1;
+    bool selection_confirmation : 1;
+    bool selected_cards_retrieved : 1;
+    bool end_turn_enabled : 1;
+    bool selection_up_to : 1;
+    bool reward_skippable : 1;
+    bool combat_reward_skippable : 1;
+    bool reward_proceed_visible : 1;
+    bool reward_has_taken_all : 1;
+    bool reward_relic_warning_seen : 1;
+    bool skip_monster_turn : 1;
+    bool battle_over : 1;
+    bool battle_callbacks_done : 1;
+    bool room_in_combat : 1;
+    bool room_reward_time : 1;
+    bool room_reward_allowed : 1;
+    bool room_has_monsters : 1;
     RoomKind room_kind = RoomKind::Monster;
     RoomPhase room_phase = RoomPhase::Incomplete;
     bool room_elite_trigger = false;
@@ -479,6 +479,10 @@ struct Game {
     bool mugged = false;
     bool smoked = false;
     int bomb_id_offset = 0;
+    SPIRE_FN constexpr Game()
+        : grid_can_cancel(true), selection_confirmation(false), selected_cards_retrieved(false), end_turn_enabled(true), selection_up_to(false),
+          reward_skippable(false), combat_reward_skippable(false), reward_proceed_visible(false), reward_has_taken_all(false), reward_relic_warning_seen(false),
+          skip_monster_turn(false), battle_over(false), battle_callbacks_done(false), room_in_combat(false), room_reward_time(false), room_reward_allowed(true), room_has_monsters(false) {}
 };
 static_assert(sizeof(Game) <= 36 * 1024, "Game exceeds the 36 KiB device memory budget; see docs/porting.md");
 

@@ -281,19 +281,25 @@ generation uses a 128-card temporary list, an execution budget for Java
 The remaining budgets are 32 card-queue entries, 64 relics and 1,024 played-card references
 per combat. The master deck starts with 13 cards at
 A20 (`TheSilent.getStartingDeck` plus the ascension curse); its 128 slots leave room for rewards
-and events. The combat arena has 184 slots including copies, templates and created cards.
+and events. The combat arena has 192 slots including copies, templates and created cards.
 Java uses growing lists; card-creation loops and repeated turns have no finite bound. A
 capacity fault from a legal Java game is an engine bug: preserve its action sequence and
 compact or enlarge storage within the Game budget. It is not a game loss or an accepted
 search cutoff. This also applies to histories, held actions, detached powers, text and damage rows.
 A Neow game on seed 202610141141 reaches 169 resident objects by decision 1522 through Cloak
 and Dagger, including seven objects retained by the preceding battle's draw history. The former
-160 slots were insufficient. The arena now holds 184 cards; DrawCardAction's
+160 slots were insufficient. The arena now holds 192 cards; DrawCardAction's
 history uses ten indices (the hand limit, including split draws across a shuffle), and card-reward
 selection uses eight indices (the reward-card limit), rather than full combat piles. These two
 lists do not truncate: recursive draw parts share a hand-limited amount, and reward selections
 come from bounded reward lists or three-card Discovery/Codex/ChooseOne choices. The resulting
-Game is 36,616 bytes. Search telemetry records branch counts at 128 and 160 and peak residency.
+Game is 36,848 bytes. Search telemetry records branch counts at 128 and 160 and peak residency.
+Dead Branch on seed 202610160050 exceeded 184 slots at action 1430. Eight additional slots
+fit by packing the room/selection booleans and bounding pending event obtains at eight indices.
+The source-wide queue_card_obtain audit finds at most five pending cards (Vampires); Neow
+and the two-card transforms queue at most three, and other callers queue one or two.
+Pandora and Astrolabe use their separate grid/selection paths. Pending obtains settle before
+the next player decision; no card amount is truncated.
 
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
