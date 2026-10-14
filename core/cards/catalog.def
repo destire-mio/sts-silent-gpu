@@ -185,3 +185,4 @@ SPIRE_UNIT(SpiritShield, "SpiritShield", "core/cards/spirit_shield.hpp", SpiritS
 SPIRE_UNIT(Swivel, "Swivel", "core/cards/swivel.hpp", Swivel)
 SPIRE_UNIT(TalkToTheHand, "TalkToTheHand", "core/cards/talk_to_the_hand.hpp", TalkToTheHand)
 SPIRE_UNIT(Tantrum, "Tantrum", "core/cards/tantrum.hpp", Tantrum)
+SPIRE_UNIT(Wallop, "Wallop", "core/cards/wallop.hpp", Wallop)
