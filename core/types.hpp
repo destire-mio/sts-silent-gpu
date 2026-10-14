@@ -2,7 +2,7 @@
 #include "platform.hpp"
 
 namespace spire {
-constexpr int card_capacity = 208;
+constexpr int card_capacity = 224;
 constexpr int master_deck_capacity = 128;
 constexpr int card_pool_capacity = 64;
 constexpr int monster_capacity = 64;

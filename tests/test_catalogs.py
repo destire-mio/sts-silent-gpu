@@ -1,4 +1,5 @@
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -153,6 +154,23 @@ class CatalogExtension(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True)
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         return result.stdout
+
+    def test_room_text_budget_covers_content(self):
+        headers = {path: path.read_text() for path in (ROOT / "core").rglob("*.hpp")}
+        writers = {str(path.relative_to(ROOT)) for path, source in headers.items()
+                   if ".text.intern(" in source}
+        self.assertEqual({"core/actions/change_state.hpp", "core/event_room.hpp", "core/engine.hpp"}, writers)
+        states = set()
+        for source in headers.values():
+            for call in re.findall(r"ChangeState::make\(([^;]+)\);", source):
+                literals = re.findall(r'"([^"\n]+)"', call)
+                self.assertTrue(literals, call)
+                states.update(literals)
+        event_names = [name for path, source in headers.items() if path.parent.name == "events"
+                       for name in re.findall(r'"((?:events|neow)\.[^" ]+)"', source)]
+        required = 1 + sum(len(state.encode()) + 1 for state in states) + max(len(name.encode()) + 1 for name in event_names)
+        capacity = int(re.search(r"struct TextStore \{\s*char values\[(\d+)\]", headers[ROOT / "core/fixed.hpp"]).group(1))
+        self.assertLessEqual(required, capacity)
 
     def test_header_and_catalog_are_sufficient(self):
         with tempfile.TemporaryDirectory() as temporary:

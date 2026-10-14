@@ -185,7 +185,7 @@ struct DamageArray {
 };
 
 struct TextStore {
-    char values[1024]{};
+    char values[320]{};
     uint16_t size = 1;
     SPIRE_FN uint16_t intern(const char* text) {
         for (int i = 1; i < size;) {

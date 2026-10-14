@@ -205,11 +205,11 @@ from an object's current position in an ordered list:
   Those parent lists are not retained in `Game`. Monster/elite/boss lists reserve 16/10/3
   byte IDs, the maxima produced by the four dungeon generators. Event/shrine/one-time
   lists reserve 16/8/16 byte inventory keys and retain Java order.
-- Master-deck cards removed while a relic or event references them stay in the existing 208-card arena.
+- Master-deck cards removed while a relic or event references them stay in the existing 224-card arena.
   A 64-byte index list supplies a shared execution budget for these references; retained master objects consume
   the same execution budget as combat cards and keep a distinct snapshot identity.
 - Master-deck and combat cards are different objects with matching UUIDs
-  (`AbstractCard.makeSameInstanceOf`). The master deck holds 128 cards and the combat arena holds 208; piles and played histories
+  (`AbstractCard.makeSameInstanceOf`). The master deck holds 128 cards and the combat arena holds 224; piles and played histories
   hold byte indices into combat cards. The Reptomancer high-health recordings exceed 128
   combat card objects through Wound generation. These capacities are execution budgets.
   Do not put `Card` values in another pile or queue.
@@ -248,8 +248,11 @@ from an object's current position in an ordered list:
 - `manager.played_cards` stores each play once, including repeated references to the same card.
   Combat history is `[0, size)`; turn history is `[turn_start, size)`. Compute type counts from
   these references as `DamagePerAttackPlayedAction.update` does, without duplicate counters.
-- Text needed by action state uses offsets into a 1,024-byte per-combat interned buffer, with
-  offset zero representing Java null. No process pointers or per-action character buffers.
+- Text needed by action state uses offsets into a 320-byte interned buffer cleared on room entry,
+  with offset zero representing Java null. The 25 distinct ChangeState strings need 221 bytes
+  including terminators; the longest event class needs 38. Even their combined 260-byte bound
+  fits. `test_room_text_budget_covers_content` checks all current writers and string literals.
+  No process pointers or per-action character buffers.
   Constant facts and derivable snapshot fields belong in unit data and host projections.
 - Pending card acquisition effects hold byte indices in an eight-entry list into the same card
   arena. Their callbacks settle before a decision; they do not enter the Java action queue.
@@ -281,7 +284,7 @@ generation uses a 128-card temporary list, an execution budget for Java
 The remaining budgets are 32 card-queue entries, 64 relics and 1,024 played-card references
 per combat. The master deck starts with 13 cards at
 A20 (`TheSilent.getStartingDeck` plus the ascension curse); its 128 slots leave room for rewards
-and events. The combat arena has 208 slots including copies, templates and created cards.
+and events. The combat arena has 224 slots including copies, templates and created cards.
 Java uses growing lists; card-creation loops and repeated turns have no finite bound. A
 capacity fault from a legal Java game is an engine bug: preserve its action sequence and
 compact or enlarge storage within the Game budget. It is not a game loss or an accepted
@@ -305,11 +308,20 @@ the next player decision; no card amount is truncated.
 Seed 202610209004 exhausts 192 slots at floor 50, Awakened One turn 22. BladeDance.use
 constructs a Shiv prototype, and MakeTempCardInHandAction.makeNewCard creates each of its
 four upgraded-card copies; the searched action prefix reaches 196 resident objects. The full
-search peaks at 202. The arena reserves 208 slots, producing a 37,704-byte Game within the
+search peaks at 202. The first expansion to 208 slots produced a 37,704-byte Game within the
 37 KiB budget. `tests/test_card_capacity.cpp` preserves the 1,561-action failing prefix.
 The original recordings of that branch and the selected game match both scopes through
 1,570 and 1,283 decisions and their terminal states. Their compressed sizes exceed the
 committed deep-trace budget, so the native action prefix is the committed regression.
+
+Seed 202610210030 exhausts 208 slots at floor 50, Awakened One turn 11. Exhausting a Shiv
+triggers DeadBranch.onExhaust: its random-card prototype and MakeTempCardInHandAction copy
+need separate objects. The searched prefix creates Finisher as object 209. Instrumenting every
+container insertion across the full search observes 216 resident cards, including intermediate
+and out-of-combat states. The arena reserves 224 slots; reducing the text store using the
+source bound above keeps Game at 37,848 bytes. `tests/test_dead_branch_capacity.cpp` preserves
+the 1,537-action prefix. Original recordings of that branch and the selected game match both
+scopes through 1,541 and 1,687 decisions and their terminal states.
 
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
@@ -326,7 +338,7 @@ A card's shop price and combat `energyOnUse` share two bytes, distinguished by `
 Shop cards retain their price when acquired; combat copies and stat-equivalent copies start
 with zero price (`AbstractCard.makeStatEquivalentCopy`). Do not play a master-deck object.
 Card UUIDs use 16 bits: combat setup renumbers the master deck, and subsequent creation
-consumes the 208-card arena. Bottled references use the same width. Catalog enum widths are
+consumes the 224-card arena. Bottled references use the same width. Catalog enum widths are
 generated from catalog size; do not narrow a CardId to a byte in unit state. Byte pile indices
 name arena slots, not card kinds.
 
