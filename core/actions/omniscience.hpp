@@ -16,7 +16,7 @@ struct Omniscience : ActionHooks {
             sort_selection_cards(g);
             g.grid_source = PileId::Grid;
             g.selected_cards.clear();
-            g.selection_amount = 1;
+            g.grid_num_cards = 1;
             g.selection_any_number = g.selection_can_pick_zero = false;
             g.screen = Screen::Grid;
             e.payload.state.Omniscience.selecting = true;

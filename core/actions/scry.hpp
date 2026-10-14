@@ -26,7 +26,7 @@ struct Scry : ActionHooks {
                 g.grid_cards.push_back(g.draw[g.draw.size - i - 1]);
             g.grid_source = PileId::Grid;
             g.selected_cards.clear();
-            g.selection_amount = e.amount;
+            g.grid_num_cards = e.amount;
             g.selection_any_number = true;
             g.selection_can_pick_zero = true;
             g.screen = Screen::Grid;

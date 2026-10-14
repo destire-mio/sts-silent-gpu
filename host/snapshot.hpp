@@ -981,8 +981,8 @@ struct SnapshotGraph {
                         }
                         return selected;
                     }
-                    if (field == "numCards") return py::int_(game.selection_amount);
-                    if (field == "cardSelectAmount") return py::int_(game.grid_confirm_screen ? game.selection_amount : game.selected_cards.size);
+                    if (field == "numCards") return py::int_(game.grid_num_cards);
+                    if (field == "cardSelectAmount") return py::int_(game.grid_confirm_screen ? game.grid_num_cards : game.selected_cards.size);
                     if (field == "hoveredCard") return game.grid_confirm_screen ? card_value(game.run.master_deck[game.grid_hovered_card], true, game.grid_hovered_card) : py::object(py::none());
                     if (field == "forUpgrade") return py::bool_(game.grid_for_upgrade);
                     if (field == "forTransform") return py::bool_(game.grid_for_transform);

@@ -91,7 +91,7 @@ SPIRE_FN inline void settle_card_obtains(Game& g) {
 SPIRE_FN inline void open_grid_selection(Game& g, PileId source, int amount, bool for_purge) {
     g.screen = Screen::Grid;
     g.grid_source = source;
-    g.selection_amount = amount;
+    g.grid_num_cards = amount;
     g.selection_any_number = false;
     g.grid_for_purge = for_purge;
     g.grid_for_upgrade = g.grid_for_transform = g.grid_is_master_deck = false;

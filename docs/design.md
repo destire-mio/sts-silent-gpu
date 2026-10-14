@@ -216,6 +216,11 @@ read targetGroup and selectedCards, never this cache or the scroll bounds. Thus 
 can consume the cached size. Seed 202610160005 reaches Pandora's confirmation on floor 34
 with a cached 32 from the preceding grid, while the new target group contains nine cards;
 the next layout update can change it without any player action.
+GridCardSelectScreen.numCards remains rule state. Normal open assigns it, while
+openConfirmationGrid preserves the previous grid value; HandCardSelectScreen.numCardsToSelect
+belongs to a different object. The engine keeps separate counts, so Prepared selecting two
+hand cards cannot overwrite an earlier one-card grid before Pandora confirmation
+(202610160053, decision line 403).
 An original recording with 13 extra idle frames changes only this field at decision line
 1204, from 32 to 9; the complete target group, selected cards, legal actions and RNGs agree.
 

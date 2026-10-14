@@ -31,7 +31,7 @@ struct BetterDrawPileToHand : ActionHooks {
             sort_selection_cards(g);
             g.grid_source = PileId::Grid;
             g.selected_cards.clear();
-            g.selection_amount = state.numberOfCards;
+            g.grid_num_cards = state.numberOfCards;
             g.selection_any_number = g.selection_can_pick_zero = state.optional;
             g.screen = Screen::Grid;
             state.selecting = true;

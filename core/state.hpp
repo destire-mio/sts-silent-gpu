@@ -437,6 +437,7 @@ struct Game {
     int exhaust_action_num = 0;
     PileId grid_source = PileId::Grid;
     int selection_amount = 0;
+    int grid_num_cards = 0;
     bool selection_any_number = false;
     bool selection_can_pick_zero = false;
     int put_on_deck_num = 0;

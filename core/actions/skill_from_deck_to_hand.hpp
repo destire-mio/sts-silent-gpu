@@ -37,7 +37,7 @@ struct SkillFromDeckToHand : ActionHooks {
             }
             g.grid_source = PileId::Grid;
             g.selection_any_number = false;
-            g.selection_amount = e.amount;
+            g.grid_num_cards = e.amount;
             g.selected_cards.clear();
             e.payload.state.SkillFromDeckToHand.selecting = true;
             g.screen = Screen::Grid;

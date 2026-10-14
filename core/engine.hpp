@@ -1638,12 +1638,12 @@ SPIRE_FN inline void step(Game& g, Action action) {
     } else if (g.screen == Screen::Grid) {
         if (action.kind == ActionKind::Choose) {
             const int card = get_pile(g, g.grid_source)[action.index];
-            if (g.grid_for_upgrade || g.grid_for_transform || (g.grid_for_purge && g.selection_amount == 1)) {
+            if (g.grid_for_upgrade || g.grid_for_transform || (g.grid_for_purge && g.grid_num_cards == 1)) {
                 g.grid_hovered_card = card; g.grid_confirm_screen = true; return;
             }
-            if (!remove_from_pile(g.selected_cards, card) && g.selected_cards.size < g.selection_amount)
+            if (!remove_from_pile(g.selected_cards, card) && g.selected_cards.size < g.grid_num_cards)
                 g.selected_cards.push_back(card);
-            if (g.selected_cards.size != g.selection_amount ||
+            if (g.selected_cards.size != g.grid_num_cards ||
                 (g.selection_any_number && g.selected_cards.size == get_pile(g, g.grid_source).size)) return;
         } else SPIRE_ASSERT(action.kind == ActionKind::Proceed && g.selection_any_number);
         if (!g.room_in_combat) {
