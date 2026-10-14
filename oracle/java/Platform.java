@@ -95,7 +95,9 @@ public final class Platform {
         GameActionManager manager = AbstractDungeon.actionManager;
         boolean selecting = AbstractDungeon.isScreenUp && (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID
             || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.HAND_SELECT || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.CARD_REWARD);
+        // AbstractRoom.update freezes the manager after combat; WaitAction.update has no rule callback.
         if (!selecting && !AbstractDungeon.player.isDead && (manager.currentAction != null && !manager.currentAction.isDone
+                && (room.phase == AbstractRoom.RoomPhase.COMBAT || manager.currentAction.getClass() != com.megacrit.cardcrawl.actions.utility.WaitAction.class)
                 || !manager.actions.isEmpty() || !manager.preTurnActions.isEmpty() || !manager.cardQueue.isEmpty())) return false;
         if (room.phase == AbstractRoom.RoomPhase.COMBAT) {
             if (room.monsters == null) return false;
