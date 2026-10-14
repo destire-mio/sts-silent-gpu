@@ -66,4 +66,56 @@ static void references() {
     require(other.player.energy_master == 3 && other.reward_objects.empty(), "another game owns independent relic references");
 }
 
-int main() { appearance(); references(); }
+static void selection_handoffs() {
+    Game g{}; reset(g, 11);
+    CombatSetup setup{}; setup.hp = setup.max_hp = 500;
+    setup.deck.clear();
+    for (CardId id : {CardId::Survivor, CardId::GlassKnife, CardId::Strike_G, CardId::Strike_G})
+        setup.deck.push_back(make_card(id));
+    start_combat(g, setup);
+    while (!g.battle_over) {
+        ActionSet legal{}; legal_actions(g, legal);
+        Action action = legal[0];
+        if (g.screen == Screen::Combat) {
+            for (int i = 0; i < legal.size; ++i)
+                if (legal[i].kind == ActionKind::Play && g.cards[g.hand[legal[i].index]].id == CardId::Survivor)
+                    action = legal[i];
+        } else if (g.screen == Screen::Discard) {
+            for (int i = 0; i < legal.size; ++i)
+                if (legal[i].kind == ActionKind::Choose && g.cards[g.hand[legal[i].index]].id == CardId::Strike_G)
+                    action = legal[i];
+        }
+        step(g, action);
+    }
+    require(!g.selected_cards.empty(), "the completed HAND_SELECT retains its discarded card");
+    Game other = g;
+    g.run.act = 2; g.run.gold = 200;
+    g.run.event_list.clear(); g.run.event_list.push_back(EventKey::Beggar);
+    g.run.shrine_list.clear(); g.run.special_events.clear();
+    const int deck_size = g.run.master_deck.size;
+    enter_room(g, RoomKind::Event);
+    step(g, {ActionKind::Choose, 0});
+    require(g.event.id == EventId::Beggar && g.event.state.Beggar.screen == 2 && g.screen == Screen::Event,
+            "paying the Beggar reaches GAVE_MONEY before the GRID removal prompt");
+    require(g.run.gold == 125 && g.run.master_deck.size == deck_size,
+            "the previous combat discard cannot remove a master-deck card");
+    require(!other.selected_cards.empty() && other.run.master_deck.size == deck_size,
+            "a different Game retains its own selection and deck");
+
+    reset(g, 11); enter_room(g, RoomKind::Treasure);
+    RoomReward reward{}; reward.kind = RewardKind::Relic; reward.relic.id = RelicId::BottledLightning;
+    g.room_rewards.clear(); g.room_rewards.push_back(create_reward(g, reward));
+    g.screen_rewards = g.room_rewards;
+    g.room_reward_time = true; g.reward_proceed_visible = true; g.screen = Screen::CombatReward;
+    step(g, {ActionKind::Choose, 0});
+    require(g.screen == Screen::Grid, "a chest bottle opens its card selection");
+    step(g, {ActionKind::Choose, 0});
+    require(g.screen == Screen::CombatReward && g.room_phase == RoomPhase::Complete,
+            "the bottle selection returns to the chest rewards");
+    ActionSet legal{}; legal_actions(g, legal);
+    bool proceed = false;
+    for (int i = 0; i < legal.size; ++i) proceed |= legal[i].kind == ActionKind::Proceed;
+    require(proceed, "the chest can be left after choosing the bottled card");
+}
+
+int main() { appearance(); references(); selection_handoffs(); }

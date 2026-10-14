@@ -1054,6 +1054,8 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.event = Event{};
     g.text.clear();
     g.room_event_class = 0;
+    // DiscardAction.update retains HAND_SELECT cards; Beggar.update reads a separate GRID list.
+    g.selected_cards.clear();
     g.monster_order.clear();
     for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(room));
     g.player.creature.draw_x = room == RoomKind::Elite && g.run.act == 4 ? 640.0f : 320.0f;
@@ -1165,7 +1167,8 @@ SPIRE_FN inline void update_event(Game& g) {
     settle_card_obtains(g);
 }
 SPIRE_FN inline void complete_master_selection(Game& g) {
-    g.screen = Screen::None;
+    // AbstractDungeon.closeCurrentScreen reopens a reward screen saved by BottledLightning.onEquip.
+    g.screen = g.previous_screen == Screen::CombatReward ? Screen::CombatReward : Screen::None;
     for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
     if (g.room_kind == RoomKind::Rest) finish_campfire_selection(g);
     if (g.room_kind == RoomKind::BossTreasure && g.screen == Screen::None) g.screen = Screen::Room;
