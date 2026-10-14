@@ -167,3 +167,4 @@ SPIRE_UNIT(LiveForever, "LiveForever", "core/cards/live_forever.hpp", LiveForeve
 SPIRE_UNIT(FameAndFortune, "FameAndFortune", "core/cards/fame_and_fortune.hpp", FameAndFortune)
 SPIRE_UNIT(Fission, "Fission", "core/cards/fission.hpp", Fission)
 SPIRE_UNIT(Aggregate, "Aggregate", "core/cards/aggregate.hpp", Aggregate)
+SPIRE_UNIT(AllForOne, "All For One", "core/cards/all_for_one.hpp", AllForOne)
