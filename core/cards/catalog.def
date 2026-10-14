@@ -168,3 +168,4 @@ SPIRE_UNIT(FameAndFortune, "FameAndFortune", "core/cards/fame_and_fortune.hpp", 
 SPIRE_UNIT(Fission, "Fission", "core/cards/fission.hpp", Fission)
 SPIRE_UNIT(Conclude, "Conclude", "core/cards/conclude.hpp", Conclude)
 SPIRE_UNIT(Consecrate, "Consecrate", "core/cards/consecrate.hpp", Consecrate)
+SPIRE_UNIT(CrushJoints, "CrushJoints", "core/cards/crush_joints.hpp", CrushJoints)
