@@ -9,7 +9,7 @@ struct AnimateOrb : ActionHooks {
         Effect e{}; e.kind = EffectKind::AnimateOrb; e.source = e.target = no_target; e.extra = count; return e;
     }
     static SPIRE_FN void execute(Game& , const Effect& ) {
-        
+
     }
 };
 }
