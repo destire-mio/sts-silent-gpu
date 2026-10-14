@@ -4,7 +4,9 @@
 namespace spire::units::cards {
 struct SneakyStrike : CardHooks {
     static SPIRE_FN constexpr CardDef data() {
-        return {CardType::Attack, CardTarget::Enemy, 2, 12, -1, -1, 4, 0, 0, false, false};
+        CardDef d{CardType::Attack, CardTarget::Enemy, 2, 12, -1, -1, 4, 0, 0, false, false};
+        d.strike = true;
+        return d;
     }
     static SPIRE_FN void use(Game& g, int card, int target) {
         queue_card_damage(g, card, target);

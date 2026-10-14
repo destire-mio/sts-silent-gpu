@@ -213,6 +213,16 @@ static void budget_faults() {
     }
 }
 
+static void strike_tags() {
+    Game g = combat(RelicId::StrikeDummy);
+    const int strike = create_card(g, make_card(CardId::SneakyStrike));
+    const int slice = create_card(g, make_card(CardId::Slice));
+    card_applyPowers(g, strike);
+    card_applyPowers(g, slice);
+    require(g.cards[strike].damage == 15 && g.cards[slice].damage == 6,
+        "Strike Dummy adds damage to Sneaky Strike and leaves an untagged attack untouched");
+}
+
 int main() {
     acquisition_order();
     chest_rewards();
@@ -222,4 +232,5 @@ int main() {
     reward_upgrades();
     acquisition_and_spawn_queries();
     budget_faults();
+    strike_tags();
 }
