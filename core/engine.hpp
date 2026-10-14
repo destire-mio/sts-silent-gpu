@@ -1368,7 +1368,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
                 if (reward.kind == RewardKind::SapphireKey) g.run.sapphire_key = true;
                 else if (reward.kind == RewardKind::EmeraldKey) g.run.emerald_key = true;
                 else {
-                reward.relic_slot = g.run.relics.size;
+                if (reward.relic.id != RelicId::Circlet || !has_relic(g, "Circlet")) reward.relic_slot = g.run.relics.size;
                 equip_relic(g, reward.relic.id);
                 }
                 if (reward.relic_link >= 0) {

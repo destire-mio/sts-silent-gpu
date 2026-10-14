@@ -3,10 +3,10 @@
 #include "card_pool.hpp"
 
 namespace spire {
+// CardLibrary.getCurse iterates its curse-only HashMap, not curseCardPool.
+constexpr CardId library_curses[] = {CardId::Regret, CardId::Injury, CardId::Shame, CardId::Parasite, CardId::Normality, CardId::Doubt, CardId::Writhe, CardId::Pain, CardId::Decay, CardId::Clumsy};
 SPIRE_FN inline CardId random_curse(Game& g) {
-    // CardLibrary.getCurse iterates its curse-only HashMap, not curseCardPool.
-    constexpr CardId curses[] = {CardId::Regret, CardId::Injury, CardId::Shame, CardId::Parasite, CardId::Normality, CardId::Doubt, CardId::Writhe, CardId::Pain, CardId::Decay, CardId::Clumsy};
-    return curses[g.rng.card.random(9)];
+    return library_curses[g.rng.card.random(9)];
 }
 SPIRE_FN inline void gain_gold(Game& g, int amount) {
     for (int i = 0; i < g.run.relics.size; ++i)
@@ -23,6 +23,11 @@ SPIRE_FN inline void lose_gold(Game& g, int amount) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_onLoseGold(g, i);
 }
 SPIRE_FN inline void equip_relic(Game& g, RelicId id) {
+    if (id == RelicId::Circlet) {
+        for (int i = 0; i < g.run.relics.size; ++i) if (g.run.relics[i].id == id) {
+            ++g.run.relics[i].counter; return;
+        }
+    }
     const int index = g.run.relics.size;
     g.run.relics.push_back({id, relic_data(id).counter});
     relic_initialize_state(g.run.relics[index]);
@@ -284,20 +289,16 @@ SPIRE_FN inline void master_selection_cards(Game& g, int type) {
 }
 SPIRE_FN inline void master_selection_cards(Game& g, CardType type) { master_selection_cards(g, static_cast<int>(type)); }
 SPIRE_FN inline Card transform_card(Game& g, const Card& original, bool upgrade, Random& rng) {
-    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool, colorless_card_pool, curse_card_pool};
+    const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool, colorless_card_pool};
     const int sizes[] = {static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)),
                          static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
                          static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool)),
-                         static_cast<int>(sizeof(colorless_card_pool) / sizeof(*colorless_card_pool)),
-                         static_cast<int>(sizeof(curse_card_pool) / sizeof(*curse_card_pool))};
+                         static_cast<int>(sizeof(colorless_card_pool) / sizeof(*colorless_card_pool))};
     List<CardId, 128> candidates{};
     const CardRarity rarity = card_rarity(original.id);
     const bool colorless = card_colorless(original.id);
     if (rarity == CardRarity::Curse) {
-        for (int i = 0; i < sizes[4]; ++i) {
-            const CardId id = card_id(pools[4][i].id);
-            if (id != original.id) candidates.push_back(id);
-        }
+        for (const CardId id : library_curses) if (id != original.id) candidates.push_back(id);
     } else if (colorless) {
         for (int i = 0; i < g.run.source_card_pools[3].size; ++i) {
             const CardId id = card_id(pools[3][g.run.source_card_pools[3][i]].id);
