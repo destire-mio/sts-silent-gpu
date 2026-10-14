@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct Feed : ActionHooks {
-    SPIRE_WAITING_RULE("FeedAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_SNAPSHOT("FeedAction.info", damage_info, effect, queue, index)
     SPIRE_SNAPSHOT("FeedAction.increaseHpAmount", scalar, effect.extra)

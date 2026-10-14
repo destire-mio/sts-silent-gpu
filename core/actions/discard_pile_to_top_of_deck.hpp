@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct DiscardPileToTopOfDeck : ActionHooks {
-    SPIRE_WAITING_RULE("DiscardPileToTopOfDeckAction: waiting for a ported caller with three-seed oracle replay")
     SPIRE_SNAPSHOT("DiscardPileToTopOfDeckAction.p", player)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(DiscardPileToTopOfDeck, bool selecting;)
@@ -22,12 +21,8 @@ struct DiscardPileToTopOfDeck : ActionHooks {
                 move(g, g.discard[0]);
                 return;
             }
-            g.grid_source = PileId::Discard;
-            g.selected_cards.clear();
-            g.selection_amount = 1;
-            g.selection_any_number = g.selection_can_pick_zero = false;
-            g.grid_previous_deck_size = g.discard.size;
-            g.screen = Screen::Grid;
+            open_grid_selection(g, PileId::Discard, 1, false);
+            g.selection_can_pick_zero = false;
             e.payload.state.DiscardPileToTopOfDeck.selecting = true;
             return;
         }
