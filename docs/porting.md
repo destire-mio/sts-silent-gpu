@@ -164,10 +164,12 @@ reaches it. Check both comparison scopes, each
 choice and its follow-up screen, and a terminal snapshot. Do not mark the event complete on
 compilation or a unit-only assertion.
 
-`SecretPortal.canSpawn` reads the original run clock at 800 seconds. The action contract
-contains no elapsed-time input, and the engine does not advance `RunState.playtime`.
-Recordings below that threshold cannot establish its timed eligibility. Porting this event
-requires resolving that input boundary; do not substitute a floor count or fixed frame count.
+`SecretPortal.canSpawn` reads `RunProfile.playtime_at_least_800`, supplied at reset: the run's
+clock threshold fact when the Act 3 special-event list is filtered. The recorder pins
+`CardCrawlGame.playtime` below or at 800 seconds from the scenario's `playtime_at_least_800`
+input and writes that fact into the trace header. It does not advance an engine clock.
+Optional scenario `actions` supplies a legal action prefix for branch coverage. The independent
+policy still draws once per decision, and supplies actions after the prefix.
 
 ## Device memory budget
 
@@ -204,8 +206,8 @@ from an object's current position in an ordered list:
   Those parent lists are not retained in `Game`. Monster/elite/boss lists reserve 16/10/3
   byte IDs, the maxima produced by the four dungeon generators. Event/shrine/one-time
   lists reserve 16/8/16 byte inventory keys and retain Java order.
-- Master-deck cards removed while a relic references them stay in the existing 160-card arena.
-  A 64-byte index list covers the 64 relic instances; these retained master objects consume
+- Master-deck cards removed while a relic or event references them stay in the existing 160-card arena.
+  A 64-byte index list supplies a shared execution budget for these references; retained master objects consume
   the same execution budget as combat cards and keep a distinct snapshot identity.
 - Master-deck and combat cards are different objects with matching UUIDs
   (`AbstractCard.makeSameInstanceOf`). The master deck holds 128 cards and the combat arena holds 160; piles and played histories

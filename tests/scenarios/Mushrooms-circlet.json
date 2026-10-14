@@ -1,0 +1,99 @@
+{
+  "deck": [
+    {
+      "id": "Grand Finale",
+      "upgrades": 1
+    },
+    {
+      "id": "Grand Finale",
+      "upgrades": 1
+    },
+    {
+      "id": "Grand Finale",
+      "upgrades": 1
+    },
+    {
+      "id": "Grand Finale",
+      "upgrades": 1
+    },
+    {
+      "id": "Grand Finale",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Odd Mushroom"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 20,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 1,
+    "floor": 15,
+    "node": [
+      3,
+      14
+    ],
+    "room": "EventRoom",
+    "gold": 0,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "playtime_at_least_800": false,
+  "actions": [
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

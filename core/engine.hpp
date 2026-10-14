@@ -361,6 +361,7 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
             target.dead = true;
             target.block = 0;
             g.screen = Screen::Death;
+            // DeathScreen.<init> clears event dialogs inside the damage callback.
             if (g.event.id != EventId::Count) { g.image_dialog.clear(); g.room_dialog.clear(); }
         }
     }
@@ -873,6 +874,7 @@ SPIRE_FN inline void enter_combat(Game& g) {
     g.selection_can_pick_zero = false;
     g.manager = ActionManager{};
     g.encounter = g.prepared_encounter;
+    g.combat_metric_event = EventId::Count;
     if (g.event.id != EventId::Count) {
         g.event.has_focus = false;
         if (!event_data(g.event.id).image) g.room_dialog.clear();
@@ -1013,7 +1015,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
         initialize_dungeon(g);
     }
     g.run.floor = setup.first_room_chosen ? setup.floor - 1 : 0;
-    if (!setup.first_room_chosen) { g.room_dialog.clear(); g.image_dialog.clear(); }
+    g.room_dialog.clear(); g.image_dialog.clear();
     g.event = Event{};
     g.run.gold = setup.gold;
     if (setup.room == RoomKind::Elite) g.run.elite_list[0] = setup.encounter;

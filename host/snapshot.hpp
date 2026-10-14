@@ -1056,7 +1056,7 @@ struct SnapshotGraph {
             "smallChestChance"_a=(game.run.act == 4 ? 0 : 50), "mediumChestChance"_a=(game.run.act == 4 ? 100 : 33), "largeChestChance"_a=(game.run.act == 4 ? 0 : 17),
             "commonRelicChance"_a=(game.run.act == 4 ? 0 : 50), "uncommonRelicChance"_a=(game.run.act == 4 ? 100 : 33), "rareRelicChance"_a=(game.run.act == 4 ? 0 : 17),
             "pathX"_a=py::list(), "pathY"_a=py::list(), "seed"_a=signed_long(game.run.seed),
-            "lastCombatMetricKey"_a=(game.encounter == EncounterId::Count ? py::object(py::none()) : py::object(py::str(encounter_names[static_cast<int>(game.encounter)]))));
+            "lastCombatMetricKey"_a=(game.combat_metric_event != EventId::Count ? py::object(py::str(event_data(game.combat_metric_event).combat_metric)) : game.encounter == EncounterId::Count ? py::object(py::none()) : py::object(py::str(encounter_names[static_cast<int>(game.encounter)]))));
         py::list path_x, path_y;
         for (int i = 0; i < game.run.path_x.size; ++i) { path_x.append(game.run.path_x[i]); path_y.append(game.run.path_y[i]); }
         result["pathX"] = path_x; result["pathY"] = path_y;

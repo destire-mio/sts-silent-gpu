@@ -22,6 +22,7 @@ SPIRE_FN inline void event_damage(Game&, int amount, int source = no_target, Dam
 SPIRE_FN inline void construct_encounter(Game&, EncounterId);
 SPIRE_FN inline void prepare_player_battle(Game&);
 SPIRE_FN inline void enter_combat(Game&);
+SPIRE_FN inline void enter_room(Game&, RoomKind);
 SPIRE_FN inline RelicTier random_relic_tier(Game&);
 SPIRE_FN inline RelicId random_screenless_relic(Game&, RelicTier);
 SPIRE_FN inline CardId random_curse(Game&);

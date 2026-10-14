@@ -10,7 +10,7 @@ SPIRE_FN constexpr float victory_switch_timer() {
     while (alpha >= 0.0f) { alpha -= 1.0f / 60.0f; timer -= 1.0f / 60.0f; }
     return timer;
 }
-struct EventData { const char* java_class; bool image; bool reward_opens_map = false; const char* control_name = nullptr; };
+struct EventData { const char* java_class; bool image; bool reward_opens_map = false; const char* control_name = nullptr; const char* combat_metric = nullptr; };
 struct CardDef {
     CardType type;
     CardTarget target;

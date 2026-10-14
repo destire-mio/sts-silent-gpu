@@ -39,7 +39,7 @@ ACTION = {"type": "play", "card": 0, "target": 0}
 
 
 class Game:
-    def reset(self, seed):
+    def reset(self, seed, playtime_at_least_800=False):
         self.value = seed
 
     def start_combat(self, seed, scenario):
@@ -286,8 +286,9 @@ class OracleFormat(unittest.TestCase):
         seed = -9223372036854775808
 
         class FullRun(Game):
-            def reset(self, actual):
+            def reset(self, actual, playtime_at_least_800=False):
                 compare(seed, actual)
+                compare(True, playtime_at_least_800)
                 self.value = 7
 
             def snapshot(self):
@@ -297,7 +298,7 @@ class OracleFormat(unittest.TestCase):
                 return result
 
         rows = records()
-        rows[0].update(seed=seed, scenario=None)
+        rows[0].update(seed=seed, scenario=None, playtime_at_least_800=True)
         rows[-1]["snapshot"]["screen"]["type"] = "VICTORY"
         rows[-1]["terminal"] = "victory"
         write_trace(self.path, rows)

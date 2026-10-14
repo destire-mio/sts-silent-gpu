@@ -29,12 +29,14 @@ public final class Recorder {
     static long decisions;
     static ArrayList<String> initialRelicExclusions;
     static Map<String, String> initialBossSeen;
+    static boolean playtimeAtLeast800;
 
     static void tick() {
         if (!Platform.running) throw new AssertionError("Game requested exit");
         Runnable job;
         while ((job = Platform.jobs.poll()) != null) job.run();
         Platform.frame++;
+        CardCrawlGame.playtime = playtimeAtLeast800 ? 800.0f : 799.0f;
         Platform.listener.render();
     }
 
@@ -97,6 +99,8 @@ public final class Recorder {
     static void scenario(JsonObject setup, long seed) throws Exception {
         JsonObject start = setup.has("start") ? setup.getAsJsonObject("start") : null;
         if (start != null) {
+            // AbstractDungeon.setCurrMapNode disposes the departing room; direct run starts skip that transition.
+            AbstractDungeon.getCurrRoom().dispose();
             int act = start.get("act").getAsInt();
             AbstractDungeon.floorNum = start.get("floor").getAsInt() - 1;
             JsonArray keys = start.getAsJsonArray("keys");
@@ -186,6 +190,10 @@ public final class Recorder {
         long seed = job.get("seed").getAsLong();
         boolean isScenario = !job.get("scenario").isJsonNull();
         boolean combatScenario = isScenario && !job.getAsJsonObject("scenario").has("start");
+        playtimeAtLeast800 = isScenario && job.getAsJsonObject("scenario").has("playtime_at_least_800")
+            && job.getAsJsonObject("scenario").get("playtime_at_least_800").getAsBoolean();
+        JsonArray inputs = isScenario && job.getAsJsonObject("scenario").has("actions")
+            ? job.getAsJsonObject("scenario").getAsJsonArray("actions") : new JsonArray();
         Unseeded.rng = new Unseeded.Stream(seed);
         MathUtils.random = new RandomXS128(seed);
         CardCrawlGame.tips = new com.megacrit.cardcrawl.helpers.GameTips();
@@ -222,6 +230,7 @@ public final class Recorder {
             header.addProperty("seed", seed);
             header.addProperty("character", "THE_SILENT");
             header.addProperty("ascension", 20);
+            header.addProperty("playtime_at_least_800", playtimeAtLeast800);
             header.add("scenario", job.get("scenario"));
             out.write(JSON.toJson(header)); out.newLine();
             int count = 0;
@@ -229,6 +238,10 @@ public final class Recorder {
                 ArrayList<JsonObject> legal = Actions.legal();
                 if (legal.isEmpty()) throw new AssertionError("Empty actions: " + AbstractDungeon.screen);
                 JsonObject action = legal.get(policy.nextInt(legal.size()));
+                if (count < inputs.size()) {
+                    action = inputs.get(count).getAsJsonObject();
+                    if (!legal.contains(action)) throw new AssertionError("Illegal scenario input: " + action + " legal=" + legal);
+                }
                 JsonObject line = new JsonObject();
                 line.add("snapshot", Snapshot.capture());
                 line.add("legal", JSON.toJsonTree(legal));
