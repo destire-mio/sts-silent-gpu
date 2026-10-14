@@ -27,7 +27,8 @@ struct SpireShield : MonsterHooks {
         Monster& m = g.monsters[owner];
         if (m.move == 1) {
             queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
-            queue_power(g, owner, player_target, PowerId::Strength, -1);
+            const PowerId debuff = !g.orbs.slots.empty() && g.rng.ai.randomBoolean() ? PowerId::Focus : PowerId::Strength;
+            queue_power(g, owner, player_target, debuff, -1);
         } else if (m.move == 2) {
             for (int i = 0; i < g.monster_order.size; ++i) queue_block(g, g.monster_order[i], 30);
         } else {

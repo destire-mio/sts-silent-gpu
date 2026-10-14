@@ -1,0 +1,54 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 4,
+    "floor": 53,
+    "node": [
+      3,
+      1
+    ],
+    "room": "ShopRoom",
+    "gold": 0,
+    "keys": [
+      true,
+      true,
+      true
+    ],
+    "emerald": false
+  }
+}
