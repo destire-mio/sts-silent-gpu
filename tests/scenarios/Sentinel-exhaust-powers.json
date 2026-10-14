@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "Second Wind",
+      "upgrades": 0
+    },
+    {
+      "id": "Sever Soul",
+      "upgrades": 0
+    },
+    {
+      "id": "Sentinel",
+      "upgrades": 0
+    },
+    {
+      "id": "Sentinel",
+      "upgrades": 1
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 1
+    },
+    {
+      "id": "Feel No Pain",
+      "upgrades": 0
+    },
+    {
+      "id": "True Grit",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 180,
+  "max_hp": 180,
+  "encounter": "Cultist"
+}

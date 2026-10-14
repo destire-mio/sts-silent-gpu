@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct BlockPerNonAttack : ActionHooks {
-    SPIRE_WAITING_RULE("BlockPerNonAttackAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "BLOCK"}; }
     SPIRE_SNAPSHOT("BlockPerNonAttackAction.blockPerCard", scalar, effect.extra)
     static SPIRE_FN void execute(Game& g, Effect& e) {

@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct PummelDamage : ActionHooks {
-    SPIRE_WAITING_RULE("PummelDamageAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {true, "DAMAGE"}; }
     SPIRE_SNAPSHOT("PummelDamageAction.info", damage_info, effect, queue, index)
     static SPIRE_FN void execute(Game& g, Effect& e) {

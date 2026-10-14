@@ -1,0 +1,35 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist",
+  "deck": [
+    {
+      "id": "Spot Weakness",
+      "upgrades": 0
+    },
+    {
+      "id": "Spot Weakness",
+      "upgrades": 1
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

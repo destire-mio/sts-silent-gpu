@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "Rage",
+      "upgrades": 0
+    },
+    {
+      "id": "Rage",
+      "upgrades": 1
+    },
+    {
+      "id": "Twin Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Pommel Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Shrug It Off",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}
