@@ -193,7 +193,10 @@ struct SnapshotGraph {
 
     py::object card(int index) {
         if (index < 0) return py::none();
-        if (index < card_capacity) return card_value(game.cards[index], false, index);
+        if (index < card_capacity) {
+            if (game.cards[index].master_reference) return master_card_uuid(game.cards[index].uuid);
+            return card_value(game.cards[index], false, index);
+        }
         const auto& card = game.foreign_reward_cards[index - card_capacity];
         const auto& entry = library_reward_cards[card.library_index];
         const py::dict data = inventory["rewards"].cast<py::dict>()["cards"].cast<py::dict>()[py::str(entry.id)].cast<py::dict>();

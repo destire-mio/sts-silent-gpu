@@ -40,13 +40,14 @@ struct Card {
     bool bottle_lightning : 1;
     bool bottle_tornado : 1;
     bool is_flipped : 1;
+    bool master_reference : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), upgrades(0), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false),
-          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false) {}
+          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), master_reference(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
 struct CampfireChoice { CampfireOption kind; bool usable; };

@@ -55,15 +55,21 @@ SPIRE_FN inline void obtain_relic_object(Game& g, int reference) {
     equip_relic(g, g.reward_objects[reference].relic.id);
     if (g.run.relics.size != size) g.reward_objects[reference].relic_slot = size;
 }
-SPIRE_FN inline void obtain_card(Game& g, Card card) {
+SPIRE_FN inline int obtain_card(Game& g, Card card) {
     const CardRarity rarity = card_rarity(card.id);
     if (rarity != CardRarity::Basic && rarity != CardRarity::Special && rarity != CardRarity::Curse)
         ++g.obtained_cards[static_cast<int>(card.id)];
     if (card_data(card.id).type == CardType::Curse)
-        for (int i = 0; i < g.run.relics.size; ++i) if (relic_onCurseObtain(g, i)) return;
+        for (int i = 0; i < g.run.relics.size; ++i) if (relic_onCurseObtain(g, i)) return -1;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onObtainCard(g, i, card);
+    const int index = g.run.master_deck.size;
     g.run.master_deck.push_back(card);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);
+    return index;
+}
+SPIRE_FN inline void obtain_card_object(Game& g, int card) {
+    const int master = obtain_card(g, g.cards[card]);
+    if (master >= 0) g.cards[card].master_reference = true;
 }
 SPIRE_FN inline void increase_max_hp(Game& g, int amount) {
     g.player.creature.max_hp += amount;
@@ -77,7 +83,7 @@ SPIRE_FN inline void queue_card_obtain(Game& g, Card card) {
     g.pending_obtains.push_back(create_card(g, card));
 }
 SPIRE_FN inline void settle_card_obtains(Game& g) {
-    for (int i = 0; i < g.pending_obtains.size; ++i) obtain_card(g, g.cards[g.pending_obtains[i]]);
+    for (int i = 0; i < g.pending_obtains.size; ++i) obtain_card_object(g, g.pending_obtains[i]);
     g.pending_obtains.clear();
 }
 SPIRE_FN inline void open_grid_selection(Game& g, PileId source, int amount, bool for_purge) {
@@ -274,7 +280,14 @@ SPIRE_FN inline void remove_master_card(Game& g, int index) {
     Card removed = g.run.master_deck.erase(index);
     bool referenced = g.event.id != EventId::Count && event_referencesMasterCard(g, removed.uuid);
     for (int i = 0; i < g.run.relics.size; ++i) referenced |= relic_referencesMasterCard(g, i, removed.uuid);
-    if (referenced) {
+    int retained = -1;
+    for (int i = 0; i < g.cards.size; ++i)
+        if (g.cards[i].master_reference && g.cards[i].uuid == removed.uuid) { retained = i; break; }
+    if (retained >= 0) {
+        g.cards[retained] = removed;
+        g.cards[retained].master_reference = true;
+        g.detached_master_cards.push_back(retained);
+    } else if (referenced) {
         g.detached_master_cards.push_back(g.cards.size);
         g.cards.push_back(removed);
     }

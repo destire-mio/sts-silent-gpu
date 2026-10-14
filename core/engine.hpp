@@ -1502,7 +1502,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
     if (!g.room_in_combat && g.screen == Screen::CardReward) {
         if (action.kind == ActionKind::Choose) {
             if (action.index == g.reward_cards.size) increase_max_hp(g, 2);
-            else obtain_card(g, g.cards[g.reward_cards[action.index]]);
+            else obtain_card_object(g, g.reward_cards[action.index]);
             for (int i = 0; i < g.screen_rewards.size; ++i)
                 if (g.screen_rewards[i] == g.acquisition_reward) { g.screen_rewards.erase(i); break; }
             g.reward_proceed_visible = !g.combat_reward_skippable || g.screen_rewards.empty();
@@ -1534,7 +1534,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
     if (g.screen == Screen::Grid && g.selection_confirmation) {
         if (action.kind == ActionKind::Choose) return;
         SPIRE_ASSERT(action.kind == ActionKind::Proceed);
-        for (int i = 0; i < g.grid_cards.size; ++i) obtain_card(g, g.cards[g.grid_cards[i]]);
+        for (int i = 0; i < g.grid_cards.size; ++i) obtain_card_object(g, g.grid_cards[i]);
         g.selection_confirmation = false;
         complete_master_selection(g);
         return;
