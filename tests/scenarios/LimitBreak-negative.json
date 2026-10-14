@@ -1,0 +1,30 @@
+{
+  "deck": [
+    {
+      "id": "Limit Break",
+      "upgrades": 0
+    },
+    {
+      "id": "Limit Break",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Heavy Blade",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Lagavulin"
+}
