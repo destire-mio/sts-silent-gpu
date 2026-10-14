@@ -11,9 +11,11 @@ struct Sundial : RelicHooks {
         ++counter;
         if (counter == 3) {
             counter = 0;
-            // EmptyDeckShuffleAction's constructor invokes onShuffle before entering the queue.
+            queue_relic_above(g, relic, player_target, false);
+            // EmptyDeckShuffleAction's constructor calls onShuffle; GainEnergyAction has no constructor callbacks.
             const Effect e = actions::GainEnergy::make(2);
-            g.manager.actions.push_back(g.action_objects.add(e));
+            if (g.room_phase == RoomPhase::Combat)
+                g.manager.actions.push_back(g.action_objects.add(e));
         }
     }
 };

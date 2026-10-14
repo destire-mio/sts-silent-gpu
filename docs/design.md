@@ -263,7 +263,10 @@ COMPLETE, then enterImageFromCombat changes it to EVENT. Preparing the player do
 COMBAT: Snecko Eye's atPreBattle constructs its ApplyPowerAction there, but the manager does
 not enqueue it (202610160012, decision line 683). CultistPotion.use queues SFXAction and
 TalkAction before ApplyPowerAction; all three remain observable if a hand selection is open
-(202610160016, decision line 88).
+(202610160016, decision line 88). Sundial.onShuffle likewise queues RelicAboveCreatureAction
+before GainEnergyAction on the third shuffle. EmptyDeckShuffleAction invokes the hook from
+its constructor; both queued actions must remain visible during a later discard selection
+(202610160051, decision line 256).
 
 `GameActionManager.hasControl` and `phase` remain exact during COMBAT. Outside COMBAT the
 observer projects both to null. `GameActionManager.update` resets these only in its COMBAT
