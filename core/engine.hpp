@@ -1155,6 +1155,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     else if (setup.room == RoomKind::Monster) g.run.monster_list[0] = setup.encounter;
     g.run.master_deck = setup.deck;
     g.cards.clear();
+    g.drawn_cards.clear();
     g.detached_master_cards.clear();
     g.run.relics.clear();
     g.run.potion_slots = 2;
