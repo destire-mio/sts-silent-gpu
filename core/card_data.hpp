@@ -7,6 +7,28 @@ SPIRE_FN inline void modify_cost_for_combat(Card& card, int amount) {
     if (card.cost_for_turn > 0) { card.cost_for_turn = max(0, card.cost_for_turn + amount); card.cost = card.cost_for_turn; }
     else if (card.cost >= 0) { card.cost = max(0, card.cost + amount); card.cost_for_turn = 0; }
 }
+SPIRE_FN inline void update_card_cost(Card& card, int amount) {
+    const CardType type = card_data(card.id).type;
+    if ((type == CardType::Curse && !card_is(card.id, "Pride")) ||
+        (type == CardType::Status && !card_is(card.id, "Slimed"))) return;
+    const int cost = max(0, card.cost + amount);
+    if (cost != card.cost) {
+        const int diff = card.cost - card.cost_for_turn;
+        card.cost = cost;
+        card.cost_for_turn = max(0, cost - diff);
+    }
+}
+SPIRE_FN inline void upgrade_card_base_cost(Card& card, int cost) {
+    const int diff = card.cost_for_turn - card.cost;
+    card.cost = cost;
+    if (card.cost_for_turn > 0) card.cost_for_turn = card.cost + diff;
+    card.cost_for_turn = max(0, card.cost_for_turn);
+    card.upgraded_cost = true;
+}
+SPIRE_FN inline void upgrade_card_damage(Card& card, int amount) {
+    card.base_damage += amount;
+    card.upgraded_damage = true;
+}
 SPIRE_FN inline void reset_attributes(Card& card) {
     card.damage = card.base_damage;
     card.block = card_baseBlock(card);

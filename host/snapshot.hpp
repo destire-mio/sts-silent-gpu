@@ -136,7 +136,7 @@ struct SnapshotGraph {
             if (field == "ignoreEnergyOnUse") return py::bool_(card.ignore_energy_on_use);
             if (field == "timesUpgraded") return py::int_(card.upgrades);
             if (field == "upgraded") return py::bool_(card.upgrades > 0);
-            if (field == "upgradedDamage") return py::bool_(card.upgrades > 0 && definition.upgrade_damage != 0);
+            if (field == "upgradedDamage") return py::bool_(card.upgraded_damage || (card.upgrades > 0 && definition.upgrade_damage != 0));
             if (field == "upgradedBlock") return py::bool_(card.upgrades > 0 && definition.upgrade_block != 0);
             if (field == "upgradedMagicNumber") return py::bool_(card.upgrades > 0 && definition.upgrade_magic != 0);
             if (field == "isMultiDamage") return py::bool_(definition.multi_damage);

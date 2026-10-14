@@ -10,10 +10,7 @@ struct MasterfulStab : CardHooks {
         queue_card_damage(g, card, target);
     }
     static SPIRE_FN void tookDamage(Game& g, int card) {
-        Card& c = g.cards[card];
-        const int diff = c.cost - c.cost_for_turn;
-        ++c.cost;
-        c.cost_for_turn = max(0, c.cost - diff);
+        update_card_cost(g.cards[card], 1);
     }
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {
