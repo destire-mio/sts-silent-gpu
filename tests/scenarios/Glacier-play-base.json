@@ -1,0 +1,26 @@
+{
+  "deck": [
+    {
+      "id": "Glacier",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 60,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}
