@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "NeowsBlessing",
+    "Mark of the Bloom",
+    "Coffee Dripper",
+    "Fusion Hammer",
+    "Busted Crown"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 70,
+  "encounter": "Maw",
+  "start": {
+    "act": 3,
+    "floor": 48,
+    "node": [
+      1,
+      13
+    ],
+    "room": "MonsterRoom",
+    "gold": 0,
+    "keys": [
+      true,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}

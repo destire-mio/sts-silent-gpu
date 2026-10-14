@@ -173,9 +173,9 @@ policy still draws once per decision, and supplies actions after the prefix.
 
 ## Device memory budget
 
-The cross-colour foundation acceptance ceiling is **38 KiB per Game**. `state.hpp` enforces
-the same ceiling with `static_assert`. Do not raise this ceiling to
-land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
+The integration target is **35 KiB per Game**; the current layout is 35,552 bytes.
+`state.hpp` retains the **48 KiB hard budget** for subsequent content and rules. Do not raise
+that assertion to land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
 fields and prints every `Game` member, its element size/capacity, the element types and their
 fields, and every generated unit payload. There is no handwritten member list to keep in sync.
 
@@ -263,7 +263,8 @@ including the remove-and-append behavior of `AbstractDungeon.srcTransformCard`.
 
 The mutable colorless-card pool retains its 35 library indices: Java
 `AbstractDungeon.returnColorlessCard(rarity)` shuffles that pool in place, independently of its
-source pool. Knowing Skull retains 16 reward-history entries in its 60-byte event payload.
+source pool. Knowing Skull retains 16 reward-history entries in its 64-byte event payload.
+The choice tags use two bits; granted card IDs use 16 bits so the foreign catalog can grow.
 The Java event can repeat without a finite bound; 16 is an execution budget constrained by the
 64-byte payload, and the next reward faults before its history entry is written.
 
@@ -285,18 +286,27 @@ held actions, detached powers, text and damage rows can also exhaust their budge
 sequence can therefore fault an environment; count this separately from losses and reset it.
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
-Card damage/block, power amounts and player energy keep Java's 32-bit range. The 133
-standard cards have at most one upgrade; their upgrade counts use one bit. Card UUIDs use
-16 bits: combat setup renumbers the master deck, and subsequent UUID creation consumes the
-160-card arena (including retained acquisition objects). Rules that extend that lifetime must
-preserve this bound or widen the identity. Bottled-card references use the same width.
-Base block derives from card metadata and upgrade count. RitualDagger keeps its Java
-`applyPowers` baseBlock/misc behavior in its own state; stat-equivalent copies preserve this
-state. Do not introduce mutable base block without updating this representation. Magic numbers
-come from constructor/upgrade constants (at most 60) or Regret's hand count, so magic fields
-use signed bytes. Content with different ranges must widen these fields before porting it.
-Poison's constructor cap, for example, is not its stacking limit. Catalog IDs and bounded indices use
-bytes; signed card references and costs retain 16 bits, and monster moves use Java signed bytes.
+Card damage/block, power amounts, orb amounts and player energy keep Java's 32-bit range.
+Card upgrade counts use 16 bits for repeated upgrades; the unit implements its own Java
+`upgrade` and `canUpgrade`. Costs use signed 16 bits: Masterful Stab increases its cost on
+HP loss, so constructor costs do not bound it. Magic fields use signed 16 bits, including
+Expunger's generated hit count. Base block combines unit metadata with `base_block_adjust`;
+RitualDagger keeps its Java `applyPowers` baseBlock/misc behavior in its own state.
+
+A card's shop price and combat `energyOnUse` share two bytes, distinguished by `priced`.
+Shop cards retain their price when acquired; combat copies and stat-equivalent copies start
+with zero price (`AbstractCard.makeStatEquivalentCopy`). Do not play a master-deck object.
+Card UUIDs use 16 bits: combat setup renumbers the master deck, and subsequent creation
+consumes the 160-card arena. Bottled references use the same width. Catalog enum widths are
+generated from catalog size; do not narrow a CardId to a byte in unit state. Byte pile indices
+name arena slots, not card kinds.
+
+Power objects use 16 bytes and prepared-action objects use 36. Power identities reserve 29
+bits; The Bomb's identity suffix reserves 15 positive bits. Reward identities and per-card
+obtain counts reserve 16 bits. These are execution budgets checked before increment/assignment,
+not clamps on Java values. Reward objects use 44 bytes; monster objects use 76, with immutable
+block/magic constructor facts derived by their unit. End-of-turn retained cards use `limbo`,
+as both DiscardAtEndOfTurnAction and RestoreRetainedCardsAction reference `player.limbo`.
 The index-width assertions in `types.hpp` must hold when changing capacities.
 
 ## Device faults
@@ -347,17 +357,26 @@ Java hooks without gameplay callers (`onGainCharge`, `onMeditate`, `onRitual`, `
 have defaults but no invented events. Copy/upgrade/query methods are callable by their consumers.
 ## Cross-colour card authoring
 
+Adding a red, blue or purple card changes only its header and `core/cards/catalog.def`;
+generation discovers hooks, state, metadata and snapshots from those files. Inventory already
+contains the original foreign library. Add oracle scenarios and evidence separately; do not
+add an ID branch to dispatch, snapshots, pools or the run loop.
+
 Read the matching Java card, action and power together. `core/orbs/` and `core/stances/`
 contain one header for each foreign rule unit; shared dispatch is in `orbs.hpp` and
 `stances.hpp`. The action and power catalogs include the cross-colour batches. A header's
 `SPIRE_WAITING_RULE` marks missing caller evidence, not a passing port. Remove it only after
 recording the caller on three seeds and replaying both scopes through the terminal record.
+`tests/content.py` generates status from replay outcomes. `matched` requires a scenario or
+observed object; method rules without an object use `caller_matched`, tracked separately from
+direct observations. `SPIRE_RULE` in a rule header associates it with its inventory key;
+`SPIRE_WAITING_RULE` prevents source-call evidence from marking a missing caller as covered.
 `hasEmptyOrb` waits for the Defect-only Frozen Core caller; `evokeNewestOrb` has no gameplay
 caller in the Java tree. Neither counts as matched through a different orb method.
 
 ### Orbs and stances
 
-- `Game::orbs` owns 128 twelve-byte orb objects, ten two-byte active slot references and a
+- `Game::orbs` owns 128 eight-byte orb objects, a 32-byte two-bit type table, ten byte active slot references and a
   256-entry channel history. Slots and histories refer to the same orb objects. Evoking removes
   a slot reference, not the historical object; later Focus changes affect active orbs only.
   The object and history capacities are execution budgets and assert on exhaustion.
@@ -386,7 +405,9 @@ caller in the Java tree. Neither counts as matched through a different orb metho
 
 - Java IDs differ from class names: Tranquility is `ClearTheMind`, Recursion is `Redo`,
   Cold Snap and several red powers contain spaces. Catalog IDs must match Java.
-  `CardTarget::All` represents Java `ALL` (Vault); `AllEnemies` represents `ALL_ENEMY`.
+  `CardTarget::All` represents Java `ALL` (Vault); `AllEnemies` represents `ALL_ENEMY`;
+  `SelfAndEnemy` represents `SELF_AND_ENEMY` (Spot Weakness) and takes a monster target.
+  GameActionManager's dead-target queue check tests only `ENEMY`, as in Java.
 - `CardDef::self_retain` initializes innate retention. Keep `retain`, `self_retain`,
   Equilibrium and Well-Laid Plans separate. Establishment reads the retained cards at its
   queued action, and retained-card hooks run in the existing restoration path.
@@ -394,7 +415,9 @@ caller in the Java tree. Neither counts as matched through a different orb metho
   `base_magic` and `magic` are signed 16-bit fields for generated Expunger counts.
   `CardDef::initial_block` covers constructor-time `block` assignments such as Prostrate's.
   Card authors must inspect `makeStatEquivalentCopy`, `applyPowers` and `canUpgrade` overrides;
-  the current one-bit `upgrades` representation needs expansion for Searing Blow.
+  `upgrades` supports repeated upgrades such as Searing Blow; preserve the Java constructor
+  and stat-equivalent-copy distinction in its own hooks. Grid name sorting compares repeated
+  upgrade suffixes as decimal strings (`+10` sorts before `+2`), matching Java names.
 - `modify_cost_for_combat` follows Java's interaction between `cost` and `costForTurn`.
   Corruption changes existing skills when ApplyPowerAction is constructed, not when the
   power enters the player's list. Draw and hand refresh have separate cost-update call sites.
@@ -430,7 +453,8 @@ orb slot. It does not expand ShopScreen's coloured-card pool: the shop still req
 Silent's attack/skill/power pools. Preserve the discarded shuffle RNG draw and the later sorted
 card selection in CardLibrary. Foreign Influence uses cardRandomRng for rarity and shuffle,
 then cardRng for the filtered attack choice; it excludes HEALING-tagged attacks. Discovery's
-ordinary combat pools remain separate. A generated offer of an unported playable card is a
+ordinary combat pools remain separate. Foreign reward templates cover unupgraded offers; an
+upgraded offer or an acquired unported card remains blocked on that card unit. A generated offer of an unported playable card is a
 waiting dependency, not permission to substitute a Silent card or omit an option.
 
 Keep full recordings outside the repository and commit a losslessly compressed representative
@@ -533,6 +557,9 @@ idle frames before every decision and terminal observation in the second recordi
 compares the JSONL bytes. The permanent suite includes full seeds 1 through 31, every committed
 fixture and the recorder callback scenarios. Optional trace files or directories add their
 original seed/scenario inputs, so generated run-start batches can use the same check.
+`--jobs /tmp/jobs.json` also accepts fresh `{seed, scenario, output}` jobs; the first pass writes
+the requested outputs and the second pass compares their idle-frame counterparts. A direct
+map-node start must have an outgoing edge for that seed, or the original has no route onward.
 
 For the implemented content set, `tests/content.py record /tmp/spire-content` records every
 scenario on seeds 101, 102 and 103 in one JVM. Each job restores the initial Boss-seen
@@ -552,8 +579,9 @@ even when the unit's combat scenario matches. This covers the recorded scenarios
 Use the Java class name for a primary scenario and `<Class>-<case>.json` for a supplement.
 Scenarios waiting for content use `blocked--<kind>-<ID>--<Class>-<case>.json`, stripping spaces and
 punctuation from the dependency ID in the filename; the JSON keeps the original Java IDs.
-Multiple dependencies are joined with `+`. These scenarios are recorded too. Only absent catalog content in the scenario or actually acquired objects in its oracle
-snapshots is classified as blocked; differences or assertion faults remain failures.
+Multiple dependencies are joined with `+`. These scenarios are recorded too. Only absent catalog content in the scenario, live card groups, or unsupported upgraded foreign
+offers in its oracle snapshots is classified as blocked. The first observation and missing unit
+are recorded; other differences or assertion faults remain failures.
 Use `blocked--rule-<caller>--<Class>-<case>.json` when an existing scenario still needs a rules
 caller (for example a real Boss room). Its ambient replay may match without exercising that hook. The next wave can replay the existing recordings after
 adding the dependency, then rename the scenario when it passes.

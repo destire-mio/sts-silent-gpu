@@ -193,13 +193,23 @@ def source_digest():
 def trace_evidence(path, units):
     classes = {u["java_class"].removeprefix("com.megacrit.cardcrawl."): key for key, u in units.items()
                if not (u["kind"] == "rule" and "rule" in u["facts"])}
+    known_cards = {u["game_id"] for u in units.values() if u["kind"] == "card"}
     known_relics = {u["game_id"] for u in units.values() if u["kind"] == "relic"}
     observed, missing, decisions = set(), [], 0
     with replay.open_trace(path) as stream:
         header = json.loads(next(stream))
-        for line in stream:
+        for line_number, line in enumerate(stream, 2):
             row = json.loads(line)
             decisions += "action" in row
+            objects = row["snapshot"]["objects"]
+            grouped = {reference["ref"] for obj in objects if obj["class"] == "cards.CardGroup"
+                       for reference in obj["fields"]["CardGroup.group"]}
+            for index, obj in enumerate(objects):
+                card = obj["fields"].get("AbstractCard.cardID")
+                if card and card not in known_cards and (obj["fields"]["AbstractCard.upgraded"] or index in grouped):
+                    dependency = dict(kind="card", id=card,
+                        reason="Unported upgraded reward or live card", first_observation=line_number)
+                    if not any(d["kind"] == "card" and d["id"] == card for d in missing): missing.append(dependency)
             for obj in row["snapshot"]["objects"]:
                 if obj["class"] in classes:
                     observed.add(classes[obj["class"]])
@@ -227,7 +237,8 @@ def replay_content(output, units, cases, run_paths=()):
                     scope="Both scopes and terminal snapshots; missing units and rules-only hooks are separate",
                     units={}, scenarios={})
     inventory = json.loads((ROOT / "inventory/units.json").read_text())["units"]
-    document["not_implemented"] = [u["key"] for u in inventory if u["kind"] in catalogs()
+    kinds = catalogs()
+    document["not_implemented"] = [u["key"] for u in inventory if u["kind"] in kinds
                                    and u["stage"] in ("standard", "cross_color_last")
                                    and (u["kind"] != "rule" or u["stage"] == "cross_color_last")
                                    and u["key"] not in units]
@@ -269,12 +280,11 @@ def replay_content(output, units, cases, run_paths=()):
     for path in run_paths:
         header, observed, missing, decisions, invoked = trace_evidence(path, units)
         assert header["scenario"] is None or "start" in header["scenario"], path
-        assert not missing, (path, missing)
         name = "run:" + path.name.removesuffix(".gz").removesuffix(".jsonl")
         assert name not in document["scenarios"], name
-        row = replay_trace(path, spire)
+        row = dict(status="blocked", decisions=decisions, waiting_for=missing) if missing else replay_trace(path, spire)
         row.update(seed=header["seed"], trace_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
-        document["scenarios"][name] = dict(units=sorted(observed), waiting_for=[], results=[row])
+        document["scenarios"][name] = dict(units=sorted(observed), waiting_for=missing, results=[row])
         for scope in row.get("scopes", {}).values():
             if scope["first_difference"]:
                 scope["first_difference"] = scope["first_difference"].replace(str(path), name)
@@ -283,7 +293,7 @@ def replay_content(output, units, cases, run_paths=()):
                 call_evidence[key].append(name)
             for key in observed:
                 observations[key].append(name)
-        else:
+        elif row["status"] != "blocked":
             failed = True
         print(name, json.dumps(row), flush=True)
     for key, unit in sorted(units.items()):
@@ -294,7 +304,7 @@ def replay_content(output, units, cases, run_paths=()):
         blocked = [row for value in selected.values() for row in value["results"] if row["status"] == "blocked"]
         primary = Path(unit["java_path"]).stem
         primary_rows = [row for name, value in selected.items() if name.split("--")[-1] == primary for row in value["results"]]
-        status = "different" if bad else "blocked" if any(r["status"] == "blocked" for r in primary_rows) else "matched" if eligible or observations[key] else "caller_matched" if call_evidence[key] and not waiting_rules(unit) else "unobserved"
+        status = "different" if bad else "blocked" if any(r["status"] == "blocked" for r in primary_rows) else "matched" if any(r["status"] == "matched" for r in eligible) or observations[key] else "caller_matched" if call_evidence[key] and not waiting_rules(unit) else "unobserved"
         document["units"][key] = dict(status=status, scenarios=list(selected),
             observed_in=sorted(set(observations[key])), caller_matched_in=sorted(set(call_evidence[key])),
             waiting_for_rules=waiting_rules(unit),
@@ -307,7 +317,7 @@ def replay_content(output, units, cases, run_paths=()):
                             for status in ("matched", "caller_matched", "blocked", "different", "unobserved")},
                           waiting_for_rules=sum(bool(value["waiting_for_rules"]) for key, value in document["units"].items() if key.startswith(kind + ":")),
                           total=sum(key.startswith(kind + ":") for key in document["units"]),
-                          not_implemented=sum(key.startswith(kind + ":") for key in document["not_implemented"])) for kind in catalogs()},
+                          not_implemented=sum(key.startswith(kind + ":") for key in document["not_implemented"])) for kind in kinds},
         traces={status: sum(row["status"] == status for row in rows) for status in ("matched", "blocked", "different", "error", "fault")},
         scopes={scope: dict(matched=sum(row.get("scopes", {}).get(scope, {}).get("matched", 0) for row in rows),
                             decisions=sum(row.get("decisions", 0) for row in rows if row["status"] != "blocked")) for scope in ("combat", "run")},

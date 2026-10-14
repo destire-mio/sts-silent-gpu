@@ -43,7 +43,7 @@ def jobs(output, paths=()):
     return recordings
 
 
-def check(output, paths=()):
+def check(output, paths=(), inputs=()):
     instance = ROOT / 'oracle/instance'
     classes = output / 'classes'
     classes.mkdir()
@@ -58,6 +58,9 @@ def check(output, paths=()):
             jar.write(path, str(path.relative_to(classes)))
     first = jobs(output / 'a', paths)
     second = jobs(output / 'b', paths)
+    first.extend(inputs)
+    second.extend(dict(job, output=str(output / 'b' / 'fresh' / f'{index}.jsonl'))
+                  for index, job in enumerate(inputs))
     run_jobs(first)
     with (output / 'a/full/16.jsonl').open() as stream:
         snapshots = [json.loads(line)['snapshot'] for line in list(stream)[1:]]
@@ -85,7 +88,8 @@ def check(output, paths=()):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Compare original recordings with 13 extra idle frames before every observation')
     parser.add_argument('traces', nargs='*', type=Path)
+    parser.add_argument('--jobs', type=Path, help='Record these seed/scenario/output jobs in the same idle-frame check')
     args = parser.parse_args()
     output = Path(tempfile.mkdtemp(prefix='oracle-frames-'))
     print('Frame-check output:', output, flush=True)
-    check(output, args.traces)
+    check(output, args.traces, json.loads(args.jobs.read_text()) if args.jobs else ())
