@@ -4,7 +4,6 @@
 
 namespace spire::units::powers {
 struct Brutality : PowerHooks {
-    SPIRE_WAITING_RULE("BrutalityPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void atStartOfTurnPostDraw(Game& g, Power& p, int owner) {
         add_bottom(g, units::actions::Draw::construct(p.amount, true, -1, owner));

@@ -1,0 +1,24 @@
+{
+  "deck": [
+    {
+      "id": "Brutality",
+      "upgrades": 0
+    },
+    {
+      "id": "Brutality",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 1,
+  "encounter": "Cultist"
+}

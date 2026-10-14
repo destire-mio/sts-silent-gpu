@@ -180,3 +180,4 @@ SPIRE_UNIT(BloodForBlood, "Blood for Blood", "core/cards/blood_for_blood.hpp", B
 SPIRE_UNIT(Bloodletting, "Bloodletting", "core/cards/bloodletting.hpp", Bloodletting)
 SPIRE_UNIT(Bludgeon, "Bludgeon", "core/cards/bludgeon.hpp", Bludgeon)
 SPIRE_UNIT(BodySlam, "Body Slam", "core/cards/body_slam.hpp", BodySlam)
+SPIRE_UNIT(Brutality, "Brutality", "core/cards/brutality.hpp", Brutality)
