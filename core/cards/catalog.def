@@ -183,3 +183,4 @@ SPIRE_UNIT(ShrugItOff, "Shrug It Off", "core/cards/shrug_it_off.hpp", ShrugItOff
 SPIRE_UNIT(SpotWeakness, "Spot Weakness", "core/cards/spot_weakness.hpp", SpotWeakness)
 SPIRE_UNIT(SwordBoomerang, "Sword Boomerang", "core/cards/sword_boomerang.hpp", SwordBoomerang)
 SPIRE_UNIT(ThunderClap, "Thunderclap", "core/cards/thunder_clap.hpp", ThunderClap)
+SPIRE_UNIT(TrueGrit, "True Grit", "core/cards/true_grit.hpp", TrueGrit)
