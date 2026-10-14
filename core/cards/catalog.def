@@ -177,3 +177,4 @@ SPIRE_UNIT(SearingBlow, "Searing Blow", "core/cards/searing_blow.hpp", SearingBl
 SPIRE_UNIT(SecondWind, "Second Wind", "core/cards/second_wind.hpp", SecondWind)
 SPIRE_UNIT(SeeingRed, "Seeing Red", "core/cards/seeing_red.hpp", SeeingRed)
 SPIRE_UNIT(Sentinel, "Sentinel", "core/cards/sentinel.hpp", Sentinel)
+SPIRE_UNIT(SeverSoul, "Sever Soul", "core/cards/sever_soul.hpp", SeverSoul)
