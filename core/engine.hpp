@@ -66,14 +66,17 @@ SPIRE_FN inline void sort_selection_cards(Game& g) {
         g.grid_cards[j] = card;
     }
 }
-SPIRE_FN inline CardId foreign_attack_card(Game& g) {
+SPIRE_FN inline CardId library_card_native(int library) {
+    return library_reward_cards[library].native;
+}
+SPIRE_FN inline int foreign_attack_card(Game& g) {
     const int roll = g.rng.card_random.random(99);
     const CardRarity rarity = roll < 55 ? CardRarity::Common : roll < 85 ? CardRarity::Uncommon : CardRarity::Rare;
     List<uint16_t, 384> cards{};
     for (int i = 0; i < static_cast<int>(sizeof(library_reward_cards) / sizeof(*library_reward_cards)); ++i)
         if (library_reward_cards[i].type == CardType::Attack && library_reward_cards[i].rarity == rarity && !library_reward_cards[i].healing) cards.push_back(i);
     g.rng.card_random.randomLong();
-    return card_id(library_reward_cards[cards[g.rng.card.random(cards.size - 1)]].id);
+    return cards[g.rng.card.random(cards.size - 1)];
 }
 SPIRE_FN inline CardId random_common_card(Game& g) {
     return card_id(common_card_pool[g.rng.card_random.random(static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)) - 1)].id);

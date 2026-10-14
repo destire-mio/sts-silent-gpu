@@ -3,20 +3,22 @@
 
 namespace spire::units::actions {
 struct ForeignInfluence : ActionHooks {
-    SPIRE_WAITING_RULE("ForeignInfluenceAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(ForeignInfluence, bool retrieveCard; bool upgraded; bool selecting;)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (!e.payload.state.ForeignInfluence.selecting) {
             g.reward_cards.clear();
             while (g.reward_cards.size != 3) {
-                const CardId id = foreign_attack_card(g);
+                const int library = foreign_attack_card(g);
                 bool duplicate = false;
-                for (int i = 0; i < g.reward_cards.size; ++i)
-                    if (g.cards[g.reward_cards[i]].id == id)
+                for (int i = 0; i < g.reward_cards.size; ++i) {
+                    const int card = g.reward_cards[i];
+                    if (card < card_capacity ? g.cards[card].id == library_card_native(library) :
+                        g.foreign_reward_cards[card - card_capacity].library_index == library)
                         duplicate = true;
+                }
                 if (!duplicate)
-                    g.reward_cards.push_back(create_card(g, make_card(id)));
+                    g.reward_cards.push_back(create_library_card(g, library));
             }
             g.discovery_card = -1;
             g.reward_skippable = true;
@@ -26,6 +28,7 @@ struct ForeignInfluence : ActionHooks {
         }
         if (!e.payload.state.ForeignInfluence.retrieveCard) {
             if (g.discovery_card >= 0) {
+                SPIRE_ASSERT(g.discovery_card < card_capacity);
                 Card copy = card_makeStatEquivalentCopy(g, g.discovery_card);
                 if (e.payload.state.ForeignInfluence.upgraded && copy.cost_for_turn >= 0)
                     copy.cost_for_turn = 0;
