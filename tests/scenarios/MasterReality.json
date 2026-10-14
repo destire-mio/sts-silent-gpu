@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "MasterReality",
+      "upgrades": 0
+    },
+    {
+      "id": "MasterReality",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 0
+    },
+    {
+      "id": "Cloak And Dagger",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Distraction",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 240,
+  "max_hp": 240,
+  "encounter": "Maw"
+}
