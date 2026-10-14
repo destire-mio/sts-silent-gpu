@@ -854,7 +854,7 @@ SPIRE_FN inline void construct_encounter(Game& g, EncounterId encounter) {
     g.prepared_encounter = encounter;
     g.room_has_monsters = true;
     encounter_initialize_state(g);
-    g.power_objects.clear(); g.next_power_instance = 1;
+    g.power_objects.clear(); g.next_power_instance = 1; g.next_damage_info_instance = 1;
     g.move_histories.size = 0;
     g.monsters.clear(); g.monster_damage_extra.clear(); g.monster_order.clear();
     build_encounter(g, encounter);
@@ -1024,7 +1024,7 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.orbs.slots.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
     g.player.creature.powers.clear();
-    g.power_objects.clear(); g.next_power_instance = 1;
+    g.power_objects.clear(); g.next_power_instance = 1; g.next_damage_info_instance = 1;
     g.player.creature.block = 0;
     g.turn = 1;
     g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();
