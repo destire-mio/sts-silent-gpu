@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "Study",
+      "upgrades": 0
+    },
+    {
+      "id": "Study",
+      "upgrades": 0
+    },
+    {
+      "id": "Madness",
+      "upgrades": 0
+    },
+    {
+      "id": "Madness",
+      "upgrades": 0
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper",
+    "Snecko Eye"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Giant Head"
+}

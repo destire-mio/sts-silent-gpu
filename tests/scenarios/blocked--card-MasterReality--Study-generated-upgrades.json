@@ -1,0 +1,35 @@
+{
+  "deck": [
+    {
+      "id": "Study",
+      "upgrades": 0
+    },
+    {
+      "id": "Study",
+      "upgrades": 1
+    },
+    {
+      "id": "MasterReality",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Giant Head"
+}
