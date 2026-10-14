@@ -4,6 +4,7 @@
 
 #define SPIRE_STATE(type, ...)
 #define SPIRE_WAITING_RULE(...)
+#define SPIRE_NOT_APPLICABLE(...)
 #define SPIRE_SNAPSHOT(...)
 #define SPIRE_STATIC(...)
 #define SPIRE_STATIC_STATE(type, ...)

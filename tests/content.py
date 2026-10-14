@@ -83,6 +83,7 @@ RULE_CALLERS = {
     "bowl_hp": ("core/engine.hpp", ".bowl_hp"),
     "event_chest_interval": ("core/event_room.hpp", ".event_chest_interval"),
     "crosses_map_paths": ("core/engine.hpp", ".crosses_map_paths"),
+    "stacks_on_obtain": ("core/lifecycle.hpp", ".stacks_on_obtain"),
 }
 
 
@@ -94,7 +95,7 @@ def rule_consumers(unit):
     if "RoomKind::Boss" in source:
         hooks.add("boss room flag")
     for field in ("shop_multiplier", "purge_cost", "rest_heal_bonus", "bowl_hp",
-                  "event_chest_interval", "crosses_map_paths"):
+                  "event_chest_interval", "crosses_map_paths", "stacks_on_obtain"):
         if "." + field in source:
             hooks.add(field)
     result = {}
@@ -114,13 +115,12 @@ def rule_consumers(unit):
 def waiting_rules(unit):
     source = (ROOT / unit["header"]).read_text()
     waiting = set(re.findall(r'SPIRE_WAITING_RULE\("([^\"]+)"\)', source))
-    if "escape_next" in source:
-        waiting.add("escapeNext: no caller in the original Java")
-    if ".score" in source:
-        waiting.add("score: GameOverScreen calculation is outside the snapshot contract")
-    if ".hides_intents" in source:
-        waiting.add("hides_intents: original rendering only")
     return sorted(waiting)
+
+
+def not_applicable(unit):
+    source = (ROOT / unit["header"]).read_text()
+    return sorted(re.findall(r'SPIRE_NOT_APPLICABLE\("([^\"]+)"\)', source))
 
 
 def missing_content(scenario):
@@ -274,6 +274,7 @@ def replay_content(output, units, cases, run_paths=()):
         status = "different" if bad else "blocked" if any(r["status"] == "blocked" for r in primary_rows) else "matched" if eligible or observations[key] else "unobserved"
         document["units"][key] = dict(status=status, scenarios=list(selected),
             observed_in=sorted(set(observations[key])), waiting_for_rules=waiting_rules(unit),
+            not_applicable=not_applicable(unit),
             rule_callers=rule_consumers(unit),
             matched_traces=sum(row["status"] == "matched" for row in eligible), blocked_traces=len(blocked))
     rows = [row for value in document["scenarios"].values() for row in value["results"]]

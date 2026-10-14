@@ -3,6 +3,7 @@
 
 namespace spire::units::monsters {
 struct GremlinWizard : MonsterHooks {
+    SPIRE_NOT_APPLICABLE("escapeNext: Java defines the hook but contains no caller; the included escapeNext field remains false")
     SPIRE_STATE(GremlinWizard, int16_t currentCharge;)
     SPIRE_FN static constexpr MonsterData data() { return {22, 26, {30, 0}, 0, 0}; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {

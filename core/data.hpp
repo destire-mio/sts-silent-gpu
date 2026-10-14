@@ -76,8 +76,6 @@ struct RelicData {
     int bowl_hp = 0;
     int purge_cost = -1;
     bool any_color_rewards = false;
-    bool hides_intents = false;
-    int score = 0;
     const char* empty_orb_class = nullptr;
     bool prevents_revival = false;
     int potion_reward_chance = -1;
