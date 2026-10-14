@@ -187,3 +187,4 @@ SPIRE_UNIT(MeteorStrike, "Meteor Strike", "core/cards/meteor_strike.hpp", Meteor
 SPIRE_UNIT(MultiCast, "Multi-Cast", "core/cards/multi_cast.hpp", MultiCast)
 SPIRE_UNIT(Rainbow, "Rainbow", "core/cards/rainbow.hpp", Rainbow)
 SPIRE_UNIT(Reboot, "Reboot", "core/cards/reboot.hpp", Reboot)
+SPIRE_UNIT(Rebound, "Rebound", "core/cards/rebound.hpp", Rebound)
