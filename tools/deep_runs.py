@@ -180,6 +180,8 @@ def fight(game, rng, prefix):
                 actions = []
                 state = trial.search_state()
                 for _ in range(120):
+                    if state['action_slots'] >= 32:
+                        break
                     legal = trial.legal_actions()
                     assert legal, json.dumps(dict(seed=trial.snapshot()['run']['seed'],
                         actions=prefix + previous + actions, snapshot=trial.snapshot()))
@@ -189,12 +191,15 @@ def fight(game, rng, prefix):
                     state = trial.search_state()
                     if state['dead'] or not state['combat'] or state['turn'] != turn:
                         break
-                assert state['dead'] or not state['combat'] or state['turn'] != turn, state
+                assert state['dead'] or not state['combat'] or state['turn'] != turn or state['action_slots'] >= 32, state
                 candidate = trial, previous + actions
                 if state['dead'] or not state['combat']:
                     finished.append(candidate)
-                else:
+                elif state['action_slots'] < 32:
                     children.append(candidate)
+                else:
+                    print(f'prune action budget seed={trial.snapshot()["run"]["seed"]} '
+                          f'floor={state["floor"]} slots={state["action_slots"]}', flush=True)
         if not children:
             break
         children.sort(key=lambda candidate: combat_score(candidate[0]), reverse=True)
@@ -215,7 +220,8 @@ def fight(game, rng, prefix):
         if wins and max(candidate[0].search_state()['hp'] for candidate in wins) >= max(
                 candidate[0].search_state()['hp'] for candidate in beam):
             break
-    assert finished
+    if not finished:
+        return None
     return max(finished, key=lambda candidate: (not candidate[0].search_state()['dead'],
                                               candidate[0].search_state()['hp'], -len(candidate[1])))
 
@@ -250,7 +256,10 @@ def find(seed):
             base = parent.game
             prefix = []
             if base.search_state()['combat']:
-                base, prefix = fight(base, rng, parent.actions)
+                outcome = fight(base, rng, parent.actions)
+                if outcome is None:
+                    continue
+                base, prefix = outcome
             for _ in range(32 if floor == 0 else 4):
                 trial = base.copy()
                 actions = list(prefix)
@@ -263,7 +272,10 @@ def find(seed):
                         children.append(Candidate(trial, parent.actions + actions))
                         break
                     if state['combat']:
-                        trial, inputs = fight(trial, rng, parent.actions + actions)
+                        outcome = fight(trial, rng, parent.actions + actions)
+                        if outcome is None:
+                            break
+                        trial, inputs = outcome
                         actions.extend(inputs)
                     else:
                         assert trial.legal_actions(), json.dumps(dict(seed=seed,
@@ -313,7 +325,8 @@ def find(seed):
             frontier.append(alternatives)
         print(f'seed={seed} floor={beam[0].game.search_state()["floor"]} '
               f'candidates={len(beam)} hp={beam[0].game.search_state()["hp"]}', flush=True)
-    assert terminal
+    if not terminal:
+        return None
     return max(terminal, key=lambda c: (c.game.search_state()['act'], c.game.search_state()['floor'],
                                       c.game.search_state()['victory'],
                                       c.game.search_state()['hp']))
@@ -344,6 +357,12 @@ def main():
             seed += 1
             continue
         candidate = find(seed)
+        if candidate is None:
+            predictions.append(dict(seed=seed, selected=False, search_cutoff=True,
+                                    search_seconds=time.monotonic() - start))
+            (args.output / 'predictions.json').write_text(json.dumps(predictions, indent=2))
+            seed += 1
+            continue
         state = candidate.game.search_state()
         seconds = time.monotonic() - start
         scenario = {'actions': candidate.actions}
