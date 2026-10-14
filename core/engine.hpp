@@ -795,6 +795,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             }
             g.manager.using_card = false;
         } else if (g.battle_over) {
+            settle_card_moves(g);
             on_victory(g);
             clear_actions(g, g.manager.actions);
             clear_actions(g, g.manager.pre_turn_actions);
