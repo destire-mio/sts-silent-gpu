@@ -24,13 +24,13 @@ SPIRE_FN inline Card make_card(CardId id, int upgrades) {
     card.cost = def.cost;
     card.base_damage = def.damage;
     card.base_magic = def.magic;
+    card.magic = def.magic;
     card.self_retain = def.self_retain;
     card.block = def.initial_block;
     card.exhaust = def.exhaust;
     card.ethereal = def.ethereal;
     for (int i = 0; i < upgrades; ++i) card_upgrade(card);
     card.cost_for_turn = card.cost;
-    card.magic = card.base_magic;
     return card;
 }
 SPIRE_FN inline Card make_card(CardId id, int upgrades, int misc) {
