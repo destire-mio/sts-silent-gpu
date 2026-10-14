@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct Multicast : ActionHooks {
-    SPIRE_WAITING_RULE("MulticastAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(Multicast, int energyOnUse; bool freeToPlayOnce; bool upgraded;)
     SPIRE_SNAPSHOT("MulticastAction.p", player)
