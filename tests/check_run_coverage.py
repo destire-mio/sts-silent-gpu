@@ -12,7 +12,7 @@ def fields(snapshot, reference):
 def evidence(path):
     with (gzip.open(path, 'rt') if path.suffix == '.gz' else path.open()) as stream:
         header = json.loads(next(stream))
-        if header['scenario'] is not None and 'start' not in header['scenario']:
+        if header['scenario'] is not None and 'encounter' in header['scenario'] and 'start' not in header['scenario']:
             return set(), 0
         rows = [json.loads(line) for line in stream]
     result = set()
@@ -25,7 +25,7 @@ def evidence(path):
         action = row.get('action', {})
         player = fields(snapshot, snapshot['player'])
         result.add(('room', room['class']))
-        if index == 0 and header['scenario'] is not None and header['scenario']['start']['room'] == 'EventRoom':
+        if index == 0 and header['scenario'] is not None and 'start' in header['scenario'] and header['scenario']['start']['room'] == 'EventRoom':
             result.add(('question', room['class']))
         for obj in objects:
             if obj['class'].startswith('events.') and obj['class'] not in ('events.GenericEventDialog', 'events.RoomEventDialog'):
@@ -90,7 +90,7 @@ def evidence(path):
                 result.add(('map', 'wing_boots'))
     if len(bosses) >= 2:
         result.add(('boss', 'act_three_double'))
-    if header['scenario'] is not None:
+    if header['scenario'] is not None and 'encounter' in header['scenario']:
         result |= {('run:' + kind, value) for kind, value in result}
     return result, len(rows) - 1
 

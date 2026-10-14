@@ -35,7 +35,7 @@ def check(path):
             assert row['action'] in row['legal'] and len(row['legal']) > 0
     first = rows[1]['snapshot']
     player = first['objects'][first['player']['ref']]['fields']
-    if header['scenario'] is not None:
+    if header['scenario'] is not None and 'encounter' in header['scenario']:
         scenario = header['scenario']
         start = scenario.get('start')
         assert first['run']['floorNum'] == (start['floor'] if start else 1)

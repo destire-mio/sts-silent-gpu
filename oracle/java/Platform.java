@@ -109,6 +109,8 @@ public final class Platform {
             }
             for (AbstractMonster monster : room.monsters.monsters) {
                 if (monster.isDying && !monster.isDead) return false;
+                // AbstractMonster.updateEscapeAnimation calls endBattle after escapeTimer expires.
+                if (monster.isEscaping && !monster.escaped) return false;
                 // AbstractRoom.update stops the action manager on DEATH; summoned monsters may retain DEBUG.
                 if (!AbstractDungeon.player.isDead && !monster.isDeadOrEscaped() && monster.intent == AbstractMonster.Intent.DEBUG) return false;
             }

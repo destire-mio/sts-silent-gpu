@@ -162,7 +162,7 @@ def replay(path, engine):
         compare("THE_SILENT", header["character"], f"{path}:1:$.character")
         compare(20, header["ascension"], f"{path}:1:$.ascension")
         game = engine.Game()
-        result = ReplayResult(header["scenario"] is not None)
+        result = ReplayResult(header["scenario"] is not None and "encounter" in header["scenario"])
         if result.scenario:
             game.start_combat(header["seed"], header["scenario"])
         else:

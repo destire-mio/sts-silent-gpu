@@ -61,6 +61,8 @@ public final class Recorder {
         if (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) return CardCrawlGame.mode == CardCrawlGame.GameMode.CHAR_SELECT && !CardCrawlGame.mainMenuScreen.isFadingOut;
         if (AbstractDungeon.isFadingOut || AbstractDungeon.isFadingIn || AbstractDungeon.player == null) return false;
         if (terminal(false)) return true;
+        // AbstractRoom.update opens rewards after endBattle changes isBattleOver.
+        if (AbstractDungeon.getCurrRoom().isBattleOver && AbstractDungeon.getCurrRoom().phase == AbstractRoom.RoomPhase.COMBAT) return false;
         // ShopScreen.updatePurge consumes the GRID result on the next SHOP update.
         if ((!AbstractDungeon.isScreenUp || AbstractDungeon.screen == AbstractDungeon.CurrentScreen.SHOP)
                 && !AbstractDungeon.gridSelectScreen.selectedCards.isEmpty()) return false;
@@ -189,7 +191,8 @@ public final class Recorder {
     static void record(JsonObject job) throws Exception {
         long seed = job.get("seed").getAsLong();
         boolean isScenario = !job.get("scenario").isJsonNull();
-        boolean combatScenario = isScenario && !job.getAsJsonObject("scenario").has("start");
+        boolean setupScenario = isScenario && job.getAsJsonObject("scenario").has("encounter");
+        boolean combatScenario = setupScenario && !job.getAsJsonObject("scenario").has("start");
         playtimeAtLeast800 = isScenario && job.getAsJsonObject("scenario").has("playtime_at_least_800")
             && job.getAsJsonObject("scenario").get("playtime_at_least_800").getAsBoolean();
         JsonArray inputs = isScenario && job.getAsJsonObject("scenario").has("actions")
@@ -221,7 +224,7 @@ public final class Recorder {
         CardCrawlGame.mainMenuScreen.fadeOutMusic();
         while (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) tick();
         settle();
-        if (isScenario) { scenario(job.getAsJsonObject("scenario"), seed); settle(); }
+        if (setupScenario) { scenario(job.getAsJsonObject("scenario"), seed); settle(); }
         RandomXS128 policy = new RandomXS128(seed);
         try (BufferedWriter out = Files.newBufferedWriter(Paths.get(job.get("output").getAsString()), StandardCharsets.UTF_8)) {
             JsonObject header = new JsonObject();
@@ -238,12 +241,12 @@ public final class Recorder {
                 ArrayList<JsonObject> legal = Actions.legal();
                 if (legal.isEmpty()) throw new AssertionError("Empty actions: " + AbstractDungeon.screen);
                 JsonObject action = legal.get(policy.nextInt(legal.size()));
-                if (count < inputs.size()) {
-                    action = inputs.get(count).getAsJsonObject();
-                    if (!legal.contains(action)) throw new AssertionError("Illegal scenario input: " + action + " legal=" + legal);
-                }
                 JsonObject line = new JsonObject();
                 line.add("snapshot", Snapshot.capture());
+                if (count < inputs.size()) {
+                    action = inputs.get(count).getAsJsonObject();
+                    if (!legal.contains(action)) throw new AssertionError("Illegal scenario input: " + action + " legal=" + legal + " snapshot=" + line.get("snapshot"));
+                }
                 line.add("legal", JSON.toJsonTree(legal));
                 line.add("action", action);
                 out.write(JSON.toJson(line)); out.newLine();
