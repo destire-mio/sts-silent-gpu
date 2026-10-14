@@ -7,7 +7,7 @@ struct Intimidate : CardHooks {
     static SPIRE_FN constexpr CardDef data() {
         return {CardType::Skill, CardTarget::AllEnemies, 0, -1, -1, 1, 0, 0, 1, true, false};
     }
-    static SPIRE_FN void use(Game& g, int card, int target) {
+    static SPIRE_FN void use(Game& g, int card, int) {
         Effect sound{};
         sound.kind = EffectKind::SFX;
         add_bottom(g, sound);
