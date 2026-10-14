@@ -109,10 +109,14 @@ public final class Platform {
                     || AbstractDungeon.player.endTurnQueued || AbstractDungeon.player.isEndingTurn
                     || !AbstractDungeon.overlayMenu.endTurnButton.enabled) return false;
             }
+            // AbstractDungeon.update freezes room animations behind GRID and CARD_REWARD unless peeking.
+            boolean animationsRunning = AbstractDungeon.screen != AbstractDungeon.CurrentScreen.GRID
+                && AbstractDungeon.screen != AbstractDungeon.CurrentScreen.CARD_REWARD
+                || com.megacrit.cardcrawl.ui.buttons.PeekButton.isPeeking;
             for (AbstractMonster monster : room.monsters.monsters) {
-                if (monster.isDying && !monster.isDead) return false;
+                if (animationsRunning && monster.isDying && !monster.isDead) return false;
                 // AbstractMonster.updateEscapeAnimation calls endBattle after escapeTimer expires.
-                if (monster.isEscaping && !monster.escaped) return false;
+                if (animationsRunning && monster.isEscaping && !monster.escaped) return false;
                 // AbstractRoom.update stops the action manager on DEATH; summoned monsters may retain DEBUG.
                 if (!AbstractDungeon.player.isDead && !monster.isDeadOrEscaped() && monster.intent == AbstractMonster.Intent.DEBUG) return false;
             }
