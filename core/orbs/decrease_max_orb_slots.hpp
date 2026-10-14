@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:decreaseMaxOrbSlots")
 
 namespace spire {
 SPIRE_FN inline void decrease_max_orb_slots(Game& g, int amount) {

@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:channelOrb")
 
 namespace spire {
 SPIRE_FN inline void channel_orb(Game& g, int index) {

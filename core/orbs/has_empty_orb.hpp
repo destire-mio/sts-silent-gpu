@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:hasEmptyOrb")
 
 namespace spire {
 SPIRE_WAITING_RULE("AbstractPlayer.hasEmptyOrb: FrozenCore is unavailable in the Silent pool; waiting for oracle evidence")

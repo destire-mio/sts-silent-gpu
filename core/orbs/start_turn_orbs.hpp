@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:applyStartOfTurnOrbs")
 
 namespace spire {
 SPIRE_FN inline void start_turn_orbs(Game& g) {

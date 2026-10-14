@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:filledOrbCount")
 
 namespace spire {
 SPIRE_FN inline int filled_orb_count(const Game& g) {

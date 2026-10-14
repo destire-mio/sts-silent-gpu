@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:evokeNewestOrb")
 
 namespace spire {
 SPIRE_WAITING_RULE("AbstractPlayer.evokeNewestOrb: no gameplay caller in the original Java")

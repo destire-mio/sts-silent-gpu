@@ -2,6 +2,7 @@
 #include "../api.hpp"
 #include "../actions/gain_energy.hpp"
 #include "../actions/change_stance.hpp"
+SPIRE_RULE("rule:stances.DivinityStance")
 
 namespace spire::units::stances {
 struct Divinity {

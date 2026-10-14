@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:removeNextOrb")
 
 namespace spire {
 SPIRE_FN inline void remove_next_orb(Game& g) {

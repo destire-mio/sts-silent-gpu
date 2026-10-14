@@ -1,5 +1,6 @@
 #pragma once
 #include "../api.hpp"
+SPIRE_RULE("rule:characters.AbstractPlayer:evokeOrb")
 
 namespace spire {
 SPIRE_FN inline void evoke_orb(Game& g) {

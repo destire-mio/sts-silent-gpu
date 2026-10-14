@@ -1,6 +1,7 @@
 #pragma once
 #include "../hooks.hpp"
 #include "../actions/gain_energy.hpp"
+SPIRE_RULE("rule:orbs.Frost")
 
 namespace spire::units::orbs {
 struct Frost {
