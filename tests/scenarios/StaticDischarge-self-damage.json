@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Static Discharge",
+      "upgrades": 0
+    },
+    {
+      "id": "Static Discharge",
+      "upgrades": 1
+    },
+    {
+      "id": "Offering",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Bottled Tornado"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "Lagavulin",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}
