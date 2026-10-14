@@ -171,3 +171,4 @@ SPIRE_UNIT(PerfectedStrike, "Perfected Strike", "core/cards/perfected_strike.hpp
 SPIRE_UNIT(PommelStrike, "Pommel Strike", "core/cards/pommel_strike.hpp", PommelStrike)
 SPIRE_UNIT(Pummel, "Pummel", "core/cards/pummel.hpp", Pummel)
 SPIRE_UNIT(Rage, "Rage", "core/cards/rage.hpp", Rage)
+SPIRE_UNIT(Rampage, "Rampage", "core/cards/rampage.hpp", Rampage)
