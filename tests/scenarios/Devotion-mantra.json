@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Devotion",
+      "upgrades": 0
+    },
+    {
+      "id": "Devotion",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}
