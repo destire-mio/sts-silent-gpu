@@ -635,10 +635,12 @@ SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
 }
 SPIRE_FN inline void begin_player_turn(Game& g) {
     settle_card_moves(g);
-    // AbstractRoom.endTurn and GameActionManager.getNextAction wait across the monster turn;
-    // AbstractMonster.updateDeathAnimation has cleared deaths preceding that turn.
-    for (int i = 0; i < g.monsters.size; ++i)
-        if ((g.deaths_before_monster_turn >> i) & 1) g.monsters[i].creature.powers.clear();
+    // GameActionManager.getNextAction waits after the final monster; death animation cleanup
+    // precedes the next turn's power refreshes, including monsters killed by reflected damage.
+    for (int i = 0; i < g.monster_order.size; ++i) {
+        Creature& creature = g.monsters[g.monster_order[i]].creature;
+        if (creature.dying) { creature.dead = true; creature.powers.clear(); }
+    }
     g.deaths_before_monster_turn = 0;
     if (!g.skip_monster_turn) {
         for (int i = 0; i < g.monster_order.size; ++i) {
@@ -700,7 +702,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         bool dead = !g.monster_order.empty();
         for (int i = 0; i < g.monster_order.size; ++i) {
             const Creature& monster = g.monsters[g.monster_order[i]].creature;
-            if (!monster.dead && !monster.escaped) dead = false;
+            // EscapeAction starts a three-second flight; queued SetMoveAction runs before endBattle.
+            if (!monster.dead && (!monster.escaped || g.manager.has_current_action || !g.manager.actions.empty())) { dead = false; break; }
         }
         if (dead && !g.cannot_lose) g.battle_over = true;
         if (g.battle_over && !g.battle_callbacks_done) {
