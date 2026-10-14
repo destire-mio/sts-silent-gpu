@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Coolheaded",
+      "upgrades": 0
+    },
+    {
+      "id": "Coolheaded",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Coolheaded",
+      "upgrades": 0
+    },
+    {
+      "id": "Coolheaded",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 36,
+  "max_hp": 36,
+  "encounter": "Cultist"
+}
