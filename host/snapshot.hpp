@@ -671,7 +671,7 @@ struct SnapshotGraph {
             });
             if (field == "endBattleTimer" && !game.battle_over) return py::float_(0.0);
             if (field == "isBattleOver") return py::bool_(game.battle_over);
-            if (field == "monsters" && game.monster_order.empty()) return py::none();
+            if (field == "monsters" && !game.room_has_monsters) return py::none();
             if (field == "monsters") return object({13, 0, 0}, "monsters.MonsterGroup", [&](const std::string& name) -> py::object {
                 if (name != "MonsterGroup.monsters") return {};
                 py::list result;
@@ -684,7 +684,7 @@ struct SnapshotGraph {
                 return py::str(phases[static_cast<int>(game.room_phase)]);
             }
             if (field == "potions" || field == "relics") return py::list();
-            if (field == "rewardAllowed") return py::bool_(true);
+            if (field == "rewardAllowed") return py::bool_(game.room_reward_allowed);
             if (field == "rewardTime") return py::bool_(game.room_reward_time);
             if (field == "rewards") {
                 py::list result;

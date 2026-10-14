@@ -361,6 +361,7 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
             target.dead = true;
             target.block = 0;
             g.screen = Screen::Death;
+            if (g.event.id != EventId::Count) { g.image_dialog.clear(); g.room_dialog.clear(); }
         }
     }
 }
@@ -742,6 +743,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.room_in_combat = false;
             g.room_phase = RoomPhase::Complete;
             combat_rewards(g);
+            if (g.room_kind == RoomKind::Event && !g.room_reward_allowed) event_reopen(g);
             g.manager.phase = Phase::WaitingOnUser;
             g.manager.has_control = false;
             g.manager.using_card = false;
@@ -775,21 +777,19 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         }
     }
 }
-SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
+SPIRE_FN inline void prepare_room_combat(Game& g, EncounterId encounter) {
+    g.room_has_monsters = true;
     Card retained[64]{};
     for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
     g.cards.clear();
     g.foreign_reward_cards.clear();
     for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
-    g.event = Event{};
     g.previous_screen = Screen::None;
-    g.text.clear();
-    g.room_event_class = 0;
     g.multi_damage.clear();
     g.damage_exceptions.clear();
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
     g.selected_cards.clear();
-    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear(); g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();
+    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
     g.grid_source = PileId::Grid;
     g.discovery_card = -1;
     g.action_objects.clear();
@@ -805,6 +805,11 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.monster_damage_extra.clear();
     g.monster_order.clear();
     g.manager = ActionManager{};
+    g.encounter = encounter;
+    encounter_initialize_state(g);
+    build_encounter(g, encounter);
+}
+SPIRE_FN inline void prepare_player_battle(Game& g) {
     g.manager.player_hp_last_turn = g.player.creature.hp;
     g.player.bloodied = g.player.creature.hp <= g.player.creature.max_hp / 2;
     g.turn = 1;
@@ -819,8 +824,6 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.selection_any_number = g.selection_can_pick_zero = false;
     g.end_turn_enabled = true;
     g.screen = Screen::Combat;
-    g.encounter = encounter;
-    encounter_initialize_state(g);
     g.player.hand_size = g.player.master_hand_size;
     g.player.energy = 0;
     g.player.cards_played_this_turn = 0;
@@ -828,8 +831,6 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     g.player.card_in_use = -1;
     g.player.max_orbs = g.player.master_max_orbs;
     g.player.orb_count = static_cast<uint8_t>(g.player.max_orbs);
-    build_encounter(g, encounter);
-    for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     Pile copy{};
     for (int i = 0; i < g.run.master_deck.size; ++i) {
         const int index = g.cards.size;
@@ -850,6 +851,7 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     }
     for (int i = 0; i < g.run.relics.size; ++i) relic_beforeEnergyPrep(g, i);
     g.player.energy_per_turn = g.player.energy_master;
+    g.player.creature.powers.clear();
     for (int i = 0; i < g.monster_order.size; ++i) {
         const int owner = g.monster_order[i];
         monster_pre_battle(g, owner);
@@ -868,6 +870,10 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
         }
     }
     for (int i = 0; i < g.run.relics.size; ++i) relic_atPreBattle(g, i);
+}
+SPIRE_FN inline void enter_combat(Game& g) {
+    for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
+    prepare_player_battle(g);
     run_until_decision(g);
     g.manager.turn_has_ended = true;
     g.end_turn_enabled = false;
@@ -950,23 +956,26 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.room_in_combat = false;
     g.room_phase = RoomPhase::Incomplete;
     g.room_reward_time = false;
+    g.room_reward_allowed = true;
+    g.room_has_monsters = false;
     g.room_rare_card_chance = 3;
     g.room_uncommon_card_chance = 37;
     g.battle_over = false;
     g.smoked = g.mugged = g.cannot_lose = false;
     if (g.event.id != EventId::Count) { g.room_dialog.clear(); g.image_dialog.clear(); }
     g.event = Event{};
+    g.text.clear();
     g.room_event_class = 0;
     g.monster_order.clear();
     for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(room));
     g.player.creature.draw_x = room == RoomKind::Elite && g.run.act == 4 ? 640.0f : 320.0f;
     g.player.creature.flip_horizontal = false;
     switch (room) {
-    case RoomKind::Monster: enter_combat(g, g.run.monster_list[0]); break;
-    case RoomKind::Elite: enter_combat(g, g.run.elite_list[0]); break;
+    case RoomKind::Monster: prepare_room_combat(g, g.run.monster_list[0]); enter_combat(g); break;
+    case RoomKind::Elite: prepare_room_combat(g, g.run.elite_list[0]); enter_combat(g); break;
     case RoomKind::Boss:
         g.run.boss_list.erase(0);
-        enter_combat(g, g.run.boss_key);
+        prepare_room_combat(g, g.run.boss_key); enter_combat(g);
         break;
     case RoomKind::Rest: enter_campfire(g); break;
     case RoomKind::Treasure: enter_treasure(g); break;
@@ -1054,7 +1063,7 @@ SPIRE_FN inline void start_combat(Game& g, const CombatSetup& setup) {
     enter_room(g, setup.room);
 }
 SPIRE_FN inline void open_map(Game& g) {
-    g.previous_screen = g.screen;
+    g.previous_screen = g.screen == Screen::None && g.event.id != EventId::Count ? Screen::Event : g.screen;
     g.run.map_dismissable = true;
     g.screen = Screen::Map;
     g.room_phase = RoomPhase::Complete;
@@ -1232,7 +1241,9 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
         }
         for (int i = 0; i < get_pile(g, g.grid_source).size; ++i) actions.push_back({ActionKind::Choose, i, -1});
         if (g.selection_any_number) actions.push_back({ActionKind::Proceed, -1, -1});
-        if (!g.room_in_combat && g.grid_can_cancel) actions.push_back({ActionKind::Skip, -1, -1});
+        if (!g.room_in_combat && g.grid_can_cancel &&
+            (g.grid_for_upgrade || g.grid_for_transform || g.grid_for_purge || g.room_kind == RoomKind::Shop))
+            actions.push_back({ActionKind::Skip, -1, -1});
     } else if (g.screen == Screen::CombatReward) {
         for (int i = 0; i < g.screen_rewards.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
         if (g.reward_proceed_visible) actions.push_back({ActionKind::Proceed, -1, -1});
@@ -1398,6 +1409,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
             else if (g.room_kind == RoomKind::Event && !event_data(g.event.id).reward_opens_map) {
                 g.previous_screen = Screen::None;
                 g.screen = Screen::Event;
+                event_reopen(g);
             } else open_map(g);
         }
         return;

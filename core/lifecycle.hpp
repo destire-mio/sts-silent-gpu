@@ -227,6 +227,11 @@ SPIRE_FN inline void open_room_card_rewards(Game& g) {
     g.reward_skippable = true;
     g.screen = Screen::CombatReward;
 }
+SPIRE_FN inline void open_combat_rewards(Game& g) {
+    open_room_card_rewards(g);
+    g.reward_proceed_visible = true;
+    g.combat_reward_skippable = false;
+}
 SPIRE_FN inline void remove_room_relic_reward(Game& g) {
     for (int i = 0; i < g.room_rewards.size; ++i) {
         const RoomReward& reward = g.reward_objects[g.room_rewards[i]];

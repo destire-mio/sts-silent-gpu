@@ -82,8 +82,9 @@ SPIRE_FN inline void combat_rewards(Game& g) {
         add_potion_reward(g, random_potion(g, false));
         g.run.potion_blizz_modifier -= 10;
     } else g.run.potion_blizz_modifier += 10;
+    if (!g.room_reward_allowed) { g.screen = Screen::None; return; }
     g.room_reward_time = true;
-    if (!g.smoked) open_room_card_rewards(g);
+    if (!g.smoked) open_combat_rewards(g);
     else { g.screen_rewards.clear(); g.screen = Screen::CombatReward; }
     g.reward_skippable = false; g.combat_reward_skippable = false;
     g.reward_proceed_visible = true;

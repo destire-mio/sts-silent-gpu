@@ -75,9 +75,9 @@ SPIRE_FN inline void event_purge_cards(Game& g) {
     }
 }
 
-SPIRE_FN inline void event_damage(Game& g, int amount, int source) {
+SPIRE_FN inline void event_damage(Game& g, int amount, int source, DamageType type) {
     DamageInfo damage{};
-    damage.source = source; damage.target = player_target; damage.amount = amount;
+    damage.source = source; damage.target = player_target; damage.amount = amount; damage.damage_type = type;
     player_damage(g, damage);
 }
 }

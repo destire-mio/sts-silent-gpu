@@ -181,6 +181,7 @@ hook("events", "choices", "const Game& g, EventChoices& choices", body="event_di
 hook("events", "enter", "Game& g", body="SPIRE_ASSERT(false);")
 hook("events", "choose", "Game& g, int option", body="SPIRE_ASSERT(false);")
 hook("events", "update", "Game& g")
+hook("events", "reopen", "Game& g")
 hook("actions", "prepare", "Game& g, Effect& e")
 hook("actions", "execute", "Game& g, Effect& e")
 hook("actions", "release", "Game& g, Effect& e")

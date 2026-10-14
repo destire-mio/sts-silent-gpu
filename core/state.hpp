@@ -430,6 +430,8 @@ struct Game {
     bool battle_over = false;
     bool room_in_combat = false;
     bool room_reward_time = false;
+    bool room_reward_allowed = true;
+    bool room_has_monsters = false;
     RoomKind room_kind = RoomKind::Monster;
     RoomPhase room_phase = RoomPhase::Incomplete;
     bool room_elite_trigger = false;
