@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct SlimeBoss : MonsterHooks {
@@ -45,6 +46,7 @@ struct SlimeBoss : MonsterHooks {
         if (!m.creature.dying && static_cast<float>(m.creature.hp) <= static_cast<float>(m.creature.max_hp) / 2.0f && m.move != 3) {
             set_monster_move(g, owner, 3, Intent::Unknown);
             monster_createIntent(g, owner);
+            add_bottom(g, actions::TextAboveCreature::make(owner));
             queue_monster_move(g, owner, 3, Intent::Unknown);
         }
     }

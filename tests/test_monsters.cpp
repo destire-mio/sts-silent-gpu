@@ -95,7 +95,7 @@ void split_and_target_identity() {
     monster_on_damage(g, 0);
     CHECK(g.monsters[0].pending_move == 3);
     CHECK(g.monsters[0].state.SpikeSlime_L.splitTriggered);
-    CHECK(g.manager.actions.size == 1);
+    CHECK(g.manager.actions.size == 2);
     const int history = g.monsters[0].move_history.size;
     monster_on_damage(g, 0);
     CHECK(g.monsters[0].move_history.size == history);

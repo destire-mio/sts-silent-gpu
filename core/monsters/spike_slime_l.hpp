@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct SpikeSlime_L : MonsterHooks {
@@ -46,6 +47,7 @@ struct SpikeSlime_L : MonsterHooks {
             m.move != 3 && !m.state.SpikeSlime_L.splitTriggered) {
             set_monster_move(g, index, 3, Intent::Unknown);
             monster_createIntent(g, index);
+            add_bottom(g, actions::TextAboveCreature::make(index));
             queue_monster_move(g, index, 3, Intent::Unknown);
             m.state.SpikeSlime_L.splitTriggered = true;
         }
