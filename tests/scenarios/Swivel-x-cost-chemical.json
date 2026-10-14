@@ -1,0 +1,44 @@
+{
+  "deck": [
+    {
+      "id": "Swivel",
+      "upgrades": 0
+    },
+    {
+      "id": "Swivel",
+      "upgrades": 1
+    },
+    {
+      "id": "Skewer",
+      "upgrades": 0
+    },
+    {
+      "id": "Skewer",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Chemical X"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 240,
+  "max_hp": 240,
+  "encounter": "Maw"
+}
