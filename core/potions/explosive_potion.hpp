@@ -1,6 +1,7 @@
 #pragma once
 #include "../hooks.hpp"
 #include "../actions/damage_all_enemies.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::potions {
 struct ExplosivePotion : PotionHooks {
@@ -11,6 +12,8 @@ struct ExplosivePotion : PotionHooks {
     }
     static SPIRE_FN int potency(const Game& g, int slot) { return g.run.potion_state[slot].ExplosivePotion.potency; }
     static SPIRE_FN void use(Game& g, int slot, int) {
+        for (int i = 0; i < g.monster_order.size; ++i)
+            if (alive(g.monsters[g.monster_order[i]].creature)) add_bottom(g, actions::VFX::make());
         int amounts[monster_capacity];
         for (int i = 0; i < g.monster_order.size; ++i) amounts[i] = potency(g, slot);
         add_bottom(g, actions::DamageAllEnemies::make(g, no_target, amounts, g.monster_order.size));
