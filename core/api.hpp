@@ -119,6 +119,7 @@ SPIRE_FN inline void reduce_power(Game&, int, PowerId, int, int source = no_targ
 SPIRE_FN inline void at_end_of_round(Game&, int);
 SPIRE_FN inline void at_end_of_turn(Game&, int);
 SPIRE_FN inline void reset_attributes(Card&);
+SPIRE_FN inline void upgrade_base_cost(Card&, int);
 SPIRE_FN inline Card make_card(CardId, int upgrades = 0);
 SPIRE_FN inline Card make_card(CardId, int upgrades, int misc);
 SPIRE_FN inline const CardDef& card_def(CardId);
