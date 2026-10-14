@@ -185,3 +185,4 @@ SPIRE_UNIT(ConserveBattery, "Conserve Battery", "core/cards/conserve_battery.hpp
 SPIRE_UNIT(Coolheaded, "Coolheaded", "core/cards/coolheaded.hpp", Coolheaded)
 SPIRE_UNIT(CoreSurge, "Core Surge", "core/cards/core_surge.hpp", CoreSurge)
 SPIRE_UNIT(CreativeAI, "Creative AI", "core/cards/creative_a_i.hpp", CreativeAI)
+SPIRE_UNIT(DoomAndGloom, "Doom and Gloom", "core/cards/doom_and_gloom.hpp", DoomAndGloom)
