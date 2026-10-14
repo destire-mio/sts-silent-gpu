@@ -180,3 +180,4 @@ SPIRE_UNIT(SandsOfTime, "SandsOfTime", "core/cards/sands_of_time.hpp", SandsOfTi
 SPIRE_UNIT(SashWhip, "SashWhip", "core/cards/sash_whip.hpp", SashWhip)
 SPIRE_UNIT(Scrawl, "Scrawl", "core/cards/scrawl.hpp", Scrawl)
 SPIRE_UNIT(SignatureMove, "SignatureMove", "core/cards/signature_move.hpp", SignatureMove)
+SPIRE_UNIT(SimmeringFury, "Vengeance", "core/cards/simmering_fury.hpp", SimmeringFury)
