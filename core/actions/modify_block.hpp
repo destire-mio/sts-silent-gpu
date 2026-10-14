@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct ModifyBlock : ActionHooks {
-    SPIRE_WAITING_RULE("ModifyBlockAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(ModifyBlock, uint32_t uuid;)
     SPIRE_SNAPSHOT("ModifyBlockAction.uuid", uuid, effect.payload.state.ModifyBlock.uuid)
@@ -19,6 +18,7 @@ struct ModifyBlock : ActionHooks {
             Card& c = g.cards[i];
             if (found[i] && c.uuid == e.payload.state.ModifyBlock.uuid) {
                 c.base_block_adjust += e.amount;
+                // ModifyBlockAction.update clamps baseDamage, not baseBlock.
                 if (c.base_damage < 0)
                     c.base_damage = 0;
             }

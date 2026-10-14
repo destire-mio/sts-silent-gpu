@@ -17,10 +17,7 @@ struct Nightmare : CardHooks {
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {
             ++card.upgrades;
-            const int diff = card.cost_for_turn - card.cost;
-            card.cost = 2;
-            if (card.cost_for_turn > 0) card.cost_for_turn = card.cost + diff;
-            card.cost_for_turn = max(0, card.cost_for_turn);
+            upgrade_base_cost(card, 2);
         }
     }
 };

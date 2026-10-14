@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct BetterDrawPileToHand : ActionHooks {
-    SPIRE_WAITING_RULE("BetterDrawPileToHandAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(BetterDrawPileToHand, int numberOfCards; bool optional; bool selecting;)
     SPIRE_SNAPSHOT("BetterDrawPileToHandAction.player", player)

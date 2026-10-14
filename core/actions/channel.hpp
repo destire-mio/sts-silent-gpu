@@ -11,6 +11,10 @@ struct Channel : ActionHooks {
     }
     static SPIRE_FN void execute(Game& g, const Effect& e) {
         if (e.flag || has_empty_orb(g)) channel_orb(g, e.extra);
+        // ChannelAction.update's ACTION_DUR_FAST and GameActionManager.getNextAction's
+        // final wait let AbstractMonster.updateDeathAnimation settle existing deaths.
+        for (int i = 0; i < g.monsters.size; ++i)
+            if (g.monsters[i].creature.dead) g.deaths_before_monster_turn |= uint64_t{1} << i;
     }
 };
 }

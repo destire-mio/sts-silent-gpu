@@ -4,7 +4,6 @@
 
 namespace spire::units::actions {
 struct Recycle : ActionHooks {
-    SPIRE_WAITING_RULE("RecycleAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(Recycle, bool selecting;)
     SPIRE_SNAPSHOT("RecycleAction.p", player)

@@ -1,0 +1,48 @@
+{
+  "deck": [
+    {
+      "id": "Self Repair",
+      "upgrades": 0
+    },
+    {
+      "id": "Self Repair",
+      "upgrades": 1
+    },
+    {
+      "id": "Self Repair",
+      "upgrades": 0
+    },
+    {
+      "id": "Self Repair",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}

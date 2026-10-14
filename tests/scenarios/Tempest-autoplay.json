@@ -1,0 +1,49 @@
+{
+  "deck": [
+    {
+      "id": "Tempest",
+      "upgrades": 0
+    },
+    {
+      "id": "Tempest",
+      "upgrades": 1
+    },
+    {
+      "id": "Mayhem",
+      "upgrades": 1
+    },
+    {
+      "id": "Mayhem",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Ice Cream"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "Lagavulin"
+}

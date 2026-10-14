@@ -1,0 +1,60 @@
+{
+  "deck": [
+    {
+      "id": "Brilliance",
+      "upgrades": 0
+    },
+    {
+      "id": "Brilliance",
+      "upgrades": 1
+    },
+    {
+      "id": "Brilliance",
+      "upgrades": 0
+    },
+    {
+      "id": "Brilliance",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}

@@ -12,10 +12,7 @@ struct Magnetism : CardHooks {
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {
             ++card.upgrades;
-            const int difference = card.cost_for_turn - card.cost;
-            card.cost = 1;
-            if (card.cost_for_turn > 0) card.cost_for_turn = card.cost + difference;
-            if (card.cost_for_turn < 0) card.cost_for_turn = 0;
+            upgrade_base_cost(card, 1);
         }
     }
 };
