@@ -88,9 +88,10 @@ type Scenario = {
     emerald: boolean
   }
 };
+type WholeGameActions = {actions: Action[]};
 type Header = {
   schema: 2, game_sha256: string, seed: number,
-  character: "THE_SILENT", ascension: 20, scenario: Scenario | null,
+  character: "THE_SILENT", ascension: 20, scenario: Scenario | WholeGameActions | null,
   playtime_at_least_800: boolean
 };
 type Ref = {ref: number};
@@ -260,6 +261,11 @@ no seen bosses and a manually seeded run. Mini blessings require `seeded: false`
 `NeowEvent` ignores spirit preferences in manually seeded runs. This covers
 mini blessings, first-unseen boss selection and the all-seen shuffle without changing the policy.
 
+An input containing only `actions` starts at the first Neow prompt and performs no scenario
+setup. It supplies the decisions for a whole game; the independent recorder policy still draws
+once per decision. The trace header retains the action list. Replay resets the ordinary whole
+game and checks both scopes through death or victory.
+
 The headless platform uses 1280x720, a fixed float32 1/60 tick, no input devices and no GL/audio
 output. Original update/render callbacks execute. Decisions wait for Soul settlement, monster
 death/intent settlement, card-manipulation and `FastCardObtainEffect` callbacks,
@@ -360,3 +366,34 @@ scenario and the run-start scenarios against the same recordings with 13 extra o
 frames before every observation, including terminal snapshots. The comparison is byte for byte.
 Its test agent changes the recorder only, not any game class; it also checks transform-preview
 confirmation and the terminal observation of escaped monsters.
+
+## Deep whole-game recordings (`tools/`)
+
+`tools/deep_runs.py` searches copies of the exact host engine, retaining eight candidates per
+floor and six candidates per combat turn. It preserves alternative floor branches and
+backtracks when the current beam dies, within a 256-floor expansion budget per seed.
+A seeded Python policy samples legal choices and
+scores HP, deck strength and keys; it does not consume game RNG streams. `Game.copy()` copies
+the complete engine and host observation state. Canonical snapshots deduplicate floor states,
+and compact combat observations preserve varied turn candidates. `search_state()` supplies policy observations without constructing the
+canonical snapshot at every combat input.
+
+With the build directory on `PYTHONPATH`, run:
+
+```sh
+PYTHONPATH=/private/tmp/spire-deep-build "$SPIRE_PYTHON" tools/deep_runs.py 202610140100 40 /private/tmp/spire-deep-games
+```
+
+The three positional arguments are the first seed, deep-game count and a fresh output directory.
+It probes consecutive seeds for a Neow boss-swap offering Pandora's Box, then searches those
+seeds until that many games reach the Act 3 boss or Act 4. This targets acceptance depth rather
+than measuring a policy win rate. The predictions retain every probed seed, including rejected
+openings and shallow searched games. The tool writes
+action-only scenarios and search timings outside the repository, records the selected
+jobs in one original-game JVM, replays both scopes and terminal records, and checks the first
+ten recordings with 13 extra idle frames per observation. `predictions.json`, `jobs.json` and
+`replay.json` preserve the inputs, depth counts, per-scope differences and recording timings.
+An original-game divergence is reported and yields a nonzero exit; the searched action list is never adjusted to
+match the recorder. Use lossless gzip for the three representative fixtures under `tests/traces/`.
+The new `tools/` directory holds host search and acceptance orchestration, separate from game
+rules and the original-game observer.

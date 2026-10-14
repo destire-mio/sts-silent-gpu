@@ -43,7 +43,7 @@ def jobs(output, paths=()):
     return recordings
 
 
-def check(output, paths=(), inputs=()):
+def idle_agent(output):
     instance = ROOT / 'oracle/instance'
     classes = output / 'classes'
     classes.mkdir()
@@ -56,6 +56,25 @@ def check(output, paths=(), inputs=()):
         jar.writestr('META-INF/MANIFEST.MF', 'Manifest-Version: 1.0\nPremain-Class: oracle.test.OracleIdleFrames\n\n')
         for path in classes.rglob('*.class'):
             jar.write(path, str(path.relative_to(classes)))
+    return agent
+
+
+def check_recordings(output, recordings):
+    agent = idle_agent(output)
+    delayed = [dict(job, output=str(output / 'delayed' / f'{index}.jsonl'))
+               for index, job in enumerate(recordings)]
+    marker = output / 'probe-active'
+    os.environ['JAVA_TOOL_OPTIONS'] = '-javaagent:' + str(agent) + '=' + str(marker)
+    run_jobs(delayed)
+    del os.environ['JAVA_TOOL_OPTIONS']
+    assert marker.read_text() == 'active\n'
+    for original, extra in zip(recordings, delayed):
+        compare(Path(original['output']), Path(extra['output']))
+    print(f'13 extra frames per observation: {len(recordings)} recordings byte-identical', flush=True)
+
+
+def check(output, paths=(), inputs=()):
+    agent = idle_agent(output)
     first = jobs(output / 'a', paths)
     second = jobs(output / 'b', paths)
     first.extend(inputs)
