@@ -7,7 +7,7 @@ struct Beggar : EventHooks {
     static SPIRE_FN constexpr EventData data() { return {"events.city.Beggar", true}; }
     SPIRE_SNAPSHOT("Beggar.screen", scalar, event.state.Beggar.screen == 0 ? "INTRO" : event.state.Beggar.screen == 1 ? "LEAVE" : "GAVE_MONEY")
     static SPIRE_FN bool canSpawn(const Game& g, EventId) { return g.run.gold >= 75; }
-    static SPIRE_FN void enter(Game& g) { event_options(g, 2); g.image_dialog[0] = g.run.gold < 75; }
+    static SPIRE_FN void enter(Game& g) { event_options(g, 2); g.image_dialog[0].disabled = g.run.gold < 75; }
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.Beggar;
         if (s.screen == 0) {

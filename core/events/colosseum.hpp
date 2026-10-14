@@ -13,13 +13,13 @@ struct Colosseum : EventHooks {
         if (s.screen == 0) { s.screen = 1; return; }
         if (s.screen == 1) {
             s.screen = 3; g.room_reward_allowed = false; g.room_rewards.clear();
-            g.event.has_focus = false; prepare_room_combat(g, EncounterId::ColosseumSlavers); enter_combat(g); event_options(g, 1);
+            g.event.has_focus = false; construct_encounter(g, EncounterId::ColosseumSlavers); enter_combat(g); event_options(g, 1);
         } else if (s.screen == 3) {
             g.room_reward_allowed = true;
             if (option == 1) {
                 s.screen = 2; g.room_rewards.clear();
                 // Colosseum.buttonEffect constructs the encounter before rolling its relic rewards.
-                g.event.has_focus = false; prepare_room_combat(g, EncounterId::ColosseumNobs);
+                g.event.has_focus = false; construct_encounter(g, EncounterId::ColosseumNobs);
                 add_relic_reward(g, RelicTier::Rare); add_relic_reward(g, RelicTier::Uncommon); add_gold_reward(g, 100);
                 g.room_elite_trigger = true;
                 enter_combat(g);

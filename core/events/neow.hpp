@@ -31,7 +31,7 @@ struct Neow : EventHooks {
         s.hp_bonus = static_cast<int>(g.player.creature.max_hp * 0.1f);
         g.room_phase = RoomPhase::Event;
         g.room_dialog.clear();
-        g.room_dialog.push_back(false);
+        g.room_dialog.push_back({static_cast<uint8_t>(g.room_dialog.size), false});
         g.screen = Screen::Event;
     }
     static SPIRE_FN void blessing(Game& g) {
@@ -60,7 +60,7 @@ struct Neow : EventHooks {
         }
         s.screen = 3;
         g.room_dialog.clear();
-        for (int i = 0; i < s.count; ++i) g.room_dialog.push_back(false);
+        for (int i = 0; i < s.count; ++i) g.room_dialog.push_back({static_cast<uint8_t>(g.room_dialog.size), false});
     }
     static SPIRE_FN CardId draw_card(Game& g, CardRarity rarity, bool colorless) {
         if (colorless) {
@@ -149,7 +149,7 @@ struct Neow : EventHooks {
         auto& s = g.event.state.Neow;
         if (s.screen == 1 || s.screen == 0) blessing(g);
         else if (s.screen == 3) {
-            g.room_dialog.clear(); g.room_dialog.push_back(false);
+            g.room_dialog.clear(); g.room_dialog.push_back({static_cast<uint8_t>(g.room_dialog.size), false});
             activate(g, option);
             s.screen = 99;
         } else open_map(g);

@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Sozu"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 50,
+  "max_hp": 70,
+  "encounter": "Cultist",
+  "start": {
+    "act": 2,
+    "floor": 31,
+    "node": [
+      3,
+      14
+    ],
+    "room": "EventRoom",
+    "gold": 99,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}

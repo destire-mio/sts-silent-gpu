@@ -73,16 +73,19 @@ SPIRE_FN inline void settle_card_obtains(Game& g) {
     for (int i = 0; i < g.pending_obtains.size; ++i) obtain_card(g, g.cards[g.pending_obtains[i]]);
     g.pending_obtains.clear();
 }
-SPIRE_FN inline void open_master_selection(Game& g, int amount, bool for_purge) {
+SPIRE_FN inline void open_grid_selection(Game& g, PileId source, int amount, bool for_purge) {
     g.grid_previous_deck_size = g.grid_cards.size;
     g.screen = Screen::Grid;
-    g.grid_source = PileId::MasterDeck;
+    g.grid_source = source;
     g.selection_amount = amount;
     g.selection_any_number = false;
     g.grid_for_purge = for_purge;
     g.grid_for_upgrade = g.grid_for_transform = g.grid_is_master_deck = false;
     g.grid_can_cancel = false;
     g.selected_cards.clear();
+}
+SPIRE_FN inline void open_master_selection(Game& g, int amount, bool for_purge) {
+    open_grid_selection(g, PileId::MasterDeck, amount, for_purge);
 }
 SPIRE_FN inline void queue_relic_above(Game& g, int relic, int owner, bool top) {
     if (g.room_phase != RoomPhase::Combat) return;
@@ -173,6 +176,15 @@ SPIRE_FN inline int create_card_reward(Game& g) {
 SPIRE_FN inline void add_room_card_reward(Game& g) {
     const int index = create_card_reward(g);
     if (index >= 0) g.room_rewards.push_back(index);
+}
+SPIRE_FN inline CardId shuffled_colorless_card(Game& g, CardRarity rarity) {
+    shuffle(g.run.colorless_pool.values, g.run.colorless_pool.size, g.rng.shuffle);
+    for (int i = 0; i < g.run.colorless_pool.size; ++i) {
+        const CardId id = card_id(colorless_card_pool[g.run.colorless_pool[i]].id);
+        if (card_rarity(id) == rarity) return id;
+    }
+    SPIRE_ASSERT(false);
+    __builtin_unreachable();
 }
 SPIRE_FN inline CardId random_colorless_card(Game& g, CardRarity rarity, bool seeded) {
     List<CardId, 64> choices{};

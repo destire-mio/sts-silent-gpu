@@ -7,7 +7,7 @@ struct ForgottenAltar : EventHooks {
     static SPIRE_FN constexpr EventData data() { return {"events.city.ForgottenAltar", true}; }
     static SPIRE_FN void enter(Game& g) {
         g.event.state.ForgottenAltar.hpLoss = floor_int(g.player.creature.max_hp * 0.35f + 0.5f);
-        event_options(g, 3); g.image_dialog[0] = !has_relic(g, "Golden Idol");
+        event_options(g, 3); g.image_dialog[0].disabled = !has_relic(g, "Golden Idol");
     }
     static SPIRE_FN void choose(Game& g, int option) {
         if (g.event.screen) { open_map(g); return; }

@@ -7,7 +7,7 @@ struct DrugDealer : EventHooks {
     static SPIRE_FN constexpr EventData data() { return {"events.city.DrugDealer", true}; }
     static SPIRE_FN void enter(Game& g) {
         master_selection_cards(g, -1);
-        event_options(g, 3); g.image_dialog[1] = g.grid_cards.size < 2; g.grid_cards.clear();
+        event_options(g, 3); g.image_dialog[1].disabled = g.grid_cards.size < 2; g.grid_cards.clear();
     }
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.DrugDealer;

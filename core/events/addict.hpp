@@ -6,7 +6,7 @@ struct Addict : EventHooks {
     SPIRE_STATE(Addict, int screenNum;)
     static SPIRE_FN constexpr EventData data() { return {"events.city.Addict", true}; }
     static SPIRE_FN void enter(Game& g) {
-        event_options(g, 3); g.image_dialog[0] = g.run.gold < 85;
+        event_options(g, 3); g.image_dialog[0].disabled = g.run.gold < 85;
     }
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.Addict;

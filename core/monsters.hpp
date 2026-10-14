@@ -14,7 +14,6 @@ SPIRE_FN inline void monster_on_damage(Game& g, int index) { monster_onDamage(g,
 SPIRE_FN inline void build_encounter(Game& g, EncounterId encounter) {
     g.monsters.clear();
     g.monster_order.clear();
-    g.encounter = encounter;
     encounter_build(g, encounter);
 }
 }

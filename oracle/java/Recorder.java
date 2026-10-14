@@ -67,11 +67,13 @@ public final class Recorder {
         if (AbstractDungeon.screen == AbstractDungeon.CurrentScreen.MAP)
             for (ArrayList<MapRoomNode> row : AbstractDungeon.map) for (MapRoomNode node : row)
                 if (Choices.<Float>get(node, "animWaitTimer") != 0.0f) return false;
+        // AbstractImageEvent.update restores focus on its next EventRoom.update callback.
+        if (!AbstractDungeon.isScreenUp && AbstractDungeon.getCurrRoom().event instanceof com.megacrit.cardcrawl.events.AbstractImageEvent
+                && !Choices.<Boolean>get(AbstractDungeon.getCurrRoom().event, "combatTime")
+                && !AbstractDungeon.getCurrRoom().event.hasFocus) return false;
         if (acquisition && !AbstractDungeon.isScreenUp) return true;
         String choice = Choices.type();
         if (choice.equals("EVENT")) {
-            // AbstractImageEvent.update restores focus on the frame after a button callback clears it.
-            if (!AbstractDungeon.getCurrRoom().event.hasFocus) return false;
             if (Choices.options().isEmpty()) return false;
             if (Choices.imageDialog() && (Choices.<Float>get(AbstractDungeon.getCurrRoom().event.imageEventText, "animateTimer") != 0.0f
                     || !com.megacrit.cardcrawl.events.GenericEventDialog.waitForInput)) return false;

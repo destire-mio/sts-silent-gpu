@@ -11,7 +11,7 @@ struct Cleric : EventHooks {
         s.healAmt = g.run.gold >= 35 ? static_cast<int>(g.player.creature.max_hp * 0.25f) : 0;
         s.purifyCost = 75;
         event_options(g, 3);
-        g.image_dialog[0] = g.run.gold < 35; g.image_dialog[1] = g.run.gold < s.purifyCost;
+        g.image_dialog[0].disabled = g.run.gold < 35; g.image_dialog[1].disabled = g.run.gold < s.purifyCost;
     }
     static SPIRE_FN void choose(Game& g, int option) {
         if (g.event.screen != 0) { open_map(g); return; }

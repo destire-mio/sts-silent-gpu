@@ -8,7 +8,7 @@ struct AccursedBlacksmith : EventHooks {
     static SPIRE_FN void enter(Game& g) {
         bool upgradeable = false;
         for (int i = 0; i < g.run.master_deck.size; ++i) upgradeable |= card_canUpgrade(g, -i - 2);
-        event_options(g, 3); g.image_dialog[0] = !upgradeable;
+        event_options(g, 3); g.image_dialog[0].disabled = !upgradeable;
     }
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.AccursedBlacksmith;

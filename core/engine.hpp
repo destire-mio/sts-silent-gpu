@@ -777,37 +777,17 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         }
     }
 }
-SPIRE_FN inline void prepare_room_combat(Game& g, EncounterId encounter) {
-    g.room_has_monsters = true;
-    Card retained[64]{};
-    for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
-    g.cards.clear();
-    g.foreign_reward_cards.clear();
-    for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
-    g.previous_screen = Screen::None;
-    g.multi_damage.clear();
-    g.damage_exceptions.clear();
-    g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
-    g.selected_cards.clear();
-    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
-    g.grid_source = PileId::Grid;
-    g.discovery_card = -1;
-    g.action_objects.clear();
-    g.power_objects.clear();
-    g.next_power_instance = 1;
-    g.player_turn_effect_pending = false;
-    g.selection_for_upgrade = false;
-    g.drawn_cards.clear();
-    g.selection_any_number = false;
-    g.selection_can_pick_zero = false;
-    g.move_histories.size = 0;
-    g.monsters.clear();
-    g.monster_damage_extra.clear();
-    g.monster_order.clear();
-    g.manager = ActionManager{};
+SPIRE_FN inline void construct_encounter(Game& g, EncounterId encounter) {
+    const EncounterId previous = g.encounter;
     g.encounter = encounter;
+    g.prepared_encounter = encounter;
+    g.room_has_monsters = true;
     encounter_initialize_state(g);
+    g.power_objects.clear(); g.next_power_instance = 1;
+    g.move_histories.size = 0;
+    g.monsters.clear(); g.monster_damage_extra.clear(); g.monster_order.clear();
     build_encounter(g, encounter);
+    g.encounter = previous;
 }
 SPIRE_FN inline void prepare_player_battle(Game& g) {
     g.manager.player_hp_last_turn = g.player.creature.hp;
@@ -872,6 +852,31 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_atPreBattle(g, i);
 }
 SPIRE_FN inline void enter_combat(Game& g) {
+    Card retained[64]{};
+    for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
+    g.cards.clear();
+    g.foreign_reward_cards.clear();
+    for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
+    g.previous_screen = Screen::None;
+    g.multi_damage.clear();
+    g.damage_exceptions.clear();
+    g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
+    g.selected_cards.clear();
+    g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
+    g.grid_source = PileId::Grid;
+    g.discovery_card = -1;
+    g.action_objects.clear();
+    g.player_turn_effect_pending = false;
+    g.selection_for_upgrade = false;
+    g.drawn_cards.clear();
+    g.selection_any_number = false;
+    g.selection_can_pick_zero = false;
+    g.manager = ActionManager{};
+    g.encounter = g.prepared_encounter;
+    if (g.event.id != EventId::Count) {
+        g.event.has_focus = false;
+        if (!event_data(g.event.id).image) g.room_dialog.clear();
+    }
     for (int i = 0; i < g.monster_order.size; ++i) roll_monster_move(g, g.monster_order[i]);
     prepare_player_battle(g);
     run_until_decision(g);
@@ -902,6 +907,8 @@ SPIRE_FN inline void initialize_source_card_pools(Game& g) {
         static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool)),
         static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool)),
         static_cast<int>(sizeof(colorless_card_pool) / sizeof(*colorless_card_pool))};
+    g.run.colorless_pool.clear();
+    for (int i = 0; i < pool_sizes[3]; ++i) g.run.colorless_pool.push_back(i);
     // AbstractDungeon.initializeCardPools copies each pool to its source pool with addToBottom.
     for (int p = 0; p < 4; ++p) {
         g.run.source_card_pools[p].clear();
@@ -937,6 +944,7 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.player.orb_count = 0;
     g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
     g.player.creature.powers.clear();
+    g.power_objects.clear(); g.next_power_instance = 1;
     g.player.creature.block = 0;
     g.turn = 1;
     g.room_rewards.clear(); g.screen_rewards.clear(); g.reward_objects.clear();
@@ -971,11 +979,11 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.player.creature.draw_x = room == RoomKind::Elite && g.run.act == 4 ? 640.0f : 320.0f;
     g.player.creature.flip_horizontal = false;
     switch (room) {
-    case RoomKind::Monster: prepare_room_combat(g, g.run.monster_list[0]); enter_combat(g); break;
-    case RoomKind::Elite: prepare_room_combat(g, g.run.elite_list[0]); enter_combat(g); break;
+    case RoomKind::Monster: construct_encounter(g, g.run.monster_list[0]); enter_combat(g); break;
+    case RoomKind::Elite: construct_encounter(g, g.run.elite_list[0]); enter_combat(g); break;
     case RoomKind::Boss:
         g.run.boss_list.erase(0);
-        prepare_room_combat(g, g.run.boss_key); enter_combat(g);
+        construct_encounter(g, g.run.boss_key); enter_combat(g);
         break;
     case RoomKind::Rest: enter_campfire(g); break;
     case RoomKind::Treasure: enter_treasure(g); break;
@@ -1481,7 +1489,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
             if (g.selected_cards.size != g.selection_amount ||
                 (g.selection_any_number && g.selected_cards.size == get_pile(g, g.grid_source).size)) return;
         } else SPIRE_ASSERT(action.kind == ActionKind::Proceed && g.selection_any_number);
-        if (g.grid_source == PileId::MasterDeck) {
+        if (!g.room_in_combat) {
             complete_master_selection(g);
             return;
         }
