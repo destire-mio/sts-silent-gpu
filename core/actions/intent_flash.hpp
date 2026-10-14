@@ -48,7 +48,7 @@ struct AnimateFastAttack : ActionHooks {
     SPIRE_STATE(AnimateFastAttack, bool called;)
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     static SPIRE_FN Effect make(int owner) {
-        Effect e{}; e.kind = EffectKind::AnimateFastAttack; action_initialize_state(e); e.source = owner; return e;
+        Effect e{}; e.kind = EffectKind::AnimateFastAttack; action_initialize_state(e); e.source = owner; e.target = no_target; return e;
     }
     static SPIRE_FN void execute(Game&, Effect& e) { e.payload.state.AnimateFastAttack.called = true; }
 };
@@ -56,15 +56,23 @@ struct AnimateSlowAttack : ActionHooks {
     SPIRE_STATE(AnimateSlowAttack, bool called;)
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     static SPIRE_FN Effect make(int owner) {
-        Effect e{}; e.kind = EffectKind::AnimateSlowAttack; action_initialize_state(e); e.source = owner; return e;
+        Effect e{}; e.kind = EffectKind::AnimateSlowAttack; action_initialize_state(e); e.source = owner; e.target = no_target; return e;
     }
     static SPIRE_FN void execute(Game&, Effect& e) { e.payload.state.AnimateSlowAttack.called = true; }
+};
+struct AnimateHop : ActionHooks {
+    SPIRE_STATE(AnimateHop, bool called;)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    static SPIRE_FN Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::AnimateHop; action_initialize_state(e); e.source = owner; e.target = no_target; return e;
+    }
+    static SPIRE_FN void execute(Game&, Effect& e) { e.payload.state.AnimateHop.called = true; }
 };
 struct AnimateJump : ActionHooks {
     SPIRE_STATE(AnimateJump, bool called;)
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     static SPIRE_FN Effect make(int owner) {
-        Effect e{}; e.kind = EffectKind::AnimateJump; action_initialize_state(e); e.source = owner; return e;
+        Effect e{}; e.kind = EffectKind::AnimateJump; action_initialize_state(e); e.source = owner; e.target = no_target; return e;
     }
     static SPIRE_FN void execute(Game&, Effect& e) { e.payload.state.AnimateJump.called = true; }
 };
@@ -72,7 +80,7 @@ struct SetAnimation : ActionHooks {
     SPIRE_STATE(SetAnimation, bool called;)
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     static SPIRE_FN Effect make(int owner) {
-        Effect e{}; e.kind = EffectKind::SetAnimation; action_initialize_state(e); e.source = owner; return e;
+        Effect e{}; e.kind = EffectKind::SetAnimation; action_initialize_state(e); e.source = owner; e.target = no_target; return e;
     }
     static SPIRE_FN void execute(Game&, Effect& e) { e.payload.state.SetAnimation.called = true; }
 };
@@ -80,7 +88,7 @@ struct FastShake : ActionHooks {
     SPIRE_STATE(FastShake, bool called;)
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     static SPIRE_FN Effect make(int owner) {
-        Effect e{}; e.kind = EffectKind::FastShake; action_initialize_state(e); e.source = owner; return e;
+        Effect e{}; e.kind = EffectKind::FastShake; action_initialize_state(e); e.source = owner; e.target = no_target; return e;
     }
     static SPIRE_FN void execute(Game&, Effect& e) { e.payload.state.FastShake.called = true; }
 };

@@ -113,6 +113,7 @@ SPIRE_UNIT(AnimateFastAttack, "actions.animations.AnimateFastAttackAction", "cor
 SPIRE_UNIT(AnimateSlowAttack, "actions.animations.AnimateSlowAttackAction", "core/actions/intent_flash.hpp", AnimateSlowAttack)
 SPIRE_UNIT(AnimateJump, "actions.animations.AnimateJumpAction", "core/actions/intent_flash.hpp", AnimateJump)
 SPIRE_UNIT(SetAnimation, "actions.animations.SetAnimationAction", "core/actions/intent_flash.hpp", SetAnimation)
+SPIRE_UNIT(AnimateHop, "actions.animations.AnimateHopAction", "core/actions/intent_flash.hpp", AnimateHop)
 SPIRE_UNIT(FastShake, "actions.animations.FastShakeAction", "core/actions/intent_flash.hpp", FastShake)
 SPIRE_UNIT(MuggerStealGold, "monsters.city.Mugger$1", "core/monsters/mugger.hpp", MuggerStealGold)
 SPIRE_UNIT(MuggerBigStealGold, "monsters.city.Mugger$2", "core/monsters/mugger.hpp", MuggerBigStealGold)

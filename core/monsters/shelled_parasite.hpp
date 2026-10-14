@@ -37,6 +37,7 @@ struct ShelledParasite : MonsterHooks {
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* key) {
         if (same_text(key, "ARMOR_BREAK")) {
+            for (int i = 0; i < 3; ++i) add_bottom(g, actions::AnimateHop::make(owner));
             set_monster_move(g, owner, 4, Intent::Stun);
             monster_createIntent(g, owner);
         }
@@ -45,18 +46,23 @@ struct ShelledParasite : MonsterHooks {
         Monster& m = g.monsters[owner];
         switch (m.move) {
         case 1:
+            add_bottom(g, actions::AnimateSlowAttack::make(owner));
             queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
             break;
         case 2:
+            add_bottom(g, actions::AnimateHop::make(owner));
             queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            add_bottom(g, actions::AnimateHop::make(owner));
             queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
             break;
         case 3: {
+            add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
+            add_bottom(g, actions::VFX::make());
             Effect e{}; e.kind = EffectKind::VampireDamageAction; e.source = owner; e.target = player_target;
             e.info_base = monster_base_damage(g, m, 2); e.amount = monster_output_damage(g, m, 2); add_bottom(g, e); break;
         }
-        case 4: set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 1)); break;
+        case 4: set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 1)); add_bottom(g, actions::TextAboveCreature::make(owner)); break;
         }
         queue_monster_roll(g, owner);
     }
