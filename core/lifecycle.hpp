@@ -129,7 +129,7 @@ SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_
         static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool))};
     for (int i = 0; i < count; ++i) {
         const int roll = g.rng.card.random(99) + g.run.card_blizz_randomizer;
-        g.room_rare_card_chance = g.room_kind == RoomKind::Elite ? 10 : 3;
+        g.room_rare_card_chance = g.room_kind == RoomKind::Elite ? 10 : g.room_kind == RoomKind::Shop ? 9 : 3;
         g.room_uncommon_card_chance = g.room_kind == RoomKind::Elite ? 40 : 37;
         for (int r = 0; r < g.run.relics.size && g.room_kind != RoomKind::Boss; ++r) {
             g.room_rare_card_chance = relic_changeRareCardRewardChance(g, r, g.room_rare_card_chance);
@@ -389,33 +389,6 @@ SPIRE_FN inline void add_relic_reward(Game& g, RelicTier tier) {
 }
 SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
-    while (g.screen == Screen::PotionRewards) {
-        ActionSet actions{};
-        for (int i = 0; i < g.run.potion_slots; ++i) {
-            if (g.run.potions[i] == PotionId::Empty) continue;
-            if (potion_canUse(g, i)) actions.push_back({ActionKind::PotionUse, i, no_target});
-            if (potion_canDiscard(g, i)) actions.push_back({ActionKind::PotionDiscard, i, no_target});
-        }
-        for (int i = 0; i < g.acquisition_potions.size; ++i) actions.push_back({ActionKind::Choose, i, no_target});
-        actions.push_back({ActionKind::Proceed, -1, no_target});
-        const Action action = actions[policy.nextInt(actions.size)];
-        if (action.kind == ActionKind::Proceed) g.screen = Screen::None;
-        else if (action.kind == ActionKind::PotionUse || action.kind == ActionKind::PotionDiscard) {
-            if (action.kind == ActionKind::PotionUse) {
-                potion_use(g, action.index, no_target);
-                for (int i = 0; i < g.run.relics.size; ++i) relic_onUsePotion(g, i);
-            }
-            g.run.potions[action.index] = PotionId::Empty;
-            potion_initialize_state(g, action.index);
-        } else {
-            bool full = true;
-            for (int i = 0; i < g.run.potion_slots; ++i) if (g.run.potions[i] == PotionId::Empty) full = false;
-            if (!full) {
-                const PotionId id = g.acquisition_potions.erase(action.index);
-                obtain_potion(g, id, construct_potion(g, id));
-            }
-        }
-    }
     while (g.screen == Screen::Grid || g.screen == Screen::CombatReward || g.screen == Screen::CardReward) {
         ActionSet actions{};
         legal_actions(g, actions);

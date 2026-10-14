@@ -407,7 +407,6 @@ struct Game {
     Pile drawn_cards{};
     Pile pending_obtains{};
     Pile reward_cards{};
-    List<PotionId, 5> acquisition_potions{};
     List<RoomReward, room_reward_capacity> reward_objects{};
     List<uint8_t, room_reward_capacity> room_rewards{};
     List<uint8_t, room_reward_capacity> screen_rewards{};

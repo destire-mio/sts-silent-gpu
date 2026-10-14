@@ -1498,7 +1498,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
             }
             if (action.kind == ActionKind::Skip) {
                 if (g.previous_screen == g.screen) g.previous_screen = Screen::None;
-                g.screen = g.event.id != EventId::Count ? Screen::Event : g.room_kind == RoomKind::BossTreasure ? Screen::Room : Screen::None;
+                g.screen = g.event.id != EventId::Count ? Screen::Event : Screen::Room;
             } else if (g.room_kind == RoomKind::BossTreasure) next_act(g);
             else if (g.room_kind == RoomKind::Boss && g.run.act < 3) enter_boss_treasure(g);
             else if (g.room_kind == RoomKind::Event && !event_data(g.event.id).reward_opens_map) {

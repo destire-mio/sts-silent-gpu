@@ -173,7 +173,7 @@ policy still draws once per decision, and supplies actions after the prefix.
 
 ## Device memory budget
 
-The integration target is **35 KiB per Game**; the current layout is 35,552 bytes.
+The integration target is **35 KiB per Game**; the current layout is 35,544 bytes.
 `state.hpp` retains the **48 KiB hard budget** for subsequent content and rules. Do not raise
 that assertion to land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
 fields and prints every `Game` member, its element size/capacity, the element types and their
@@ -268,8 +268,8 @@ The choice tags use two bits; granted card IDs use 16 bits so the foreign catalo
 The Java event can repeat without a finite bound; 16 is an execution budget constrained by the
 64-byte payload, and the next reward faults before its history entry is written.
 
-Relic acquisition shares a five-potion reward list (`Cauldron.onEquip` creates five),
-the 16-entry room-reward list (`CallingBell.update` adds three relic rewards), and the existing
+Relic acquisition uses the 16-entry room-reward list (`Cauldron.onEquip` creates five potion
+rewards and `CallingBell.update` adds three relic rewards), and the existing
 selection piles. The five ordered relic pools each reserve 64 byte keys; the pinned Silent
 library has fewer than 64 entries in each tier. The keys name inventory content, including
 content awaiting later batches; dispatch requires the corresponding catalog unit. Card-reward

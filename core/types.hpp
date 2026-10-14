@@ -26,7 +26,7 @@ enum class CardTarget : uint8_t { Enemy, Self, None, AllEnemies, All, SelfAndEne
 enum class Intent : uint8_t { None, Attack, AttackBuff, AttackDebuff, AttackDefend, Buff, Debuff, StrongDebuff, Defend, DefendBuff, DefendDebuff, Escape, Magic, Sleep, Stun, Unknown, Debug };
 enum class DamageType : uint8_t { Normal, Thorns, HpLoss };
 enum class EnemyType : uint8_t { Normal, Elite, Boss };
-enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None, CardReward, PotionRewards, CombatReward, Event, Map, Room, Shop, BossReward };
+enum class Screen : uint8_t { Combat, Discard, Grid, Victory, Death, None, CardReward, CombatReward, Event, Map, Room, Shop, BossReward };
 enum class PileId : uint8_t { Hand, Draw, Discard, Exhaust, Limbo, Grid, MasterDeck };
 enum class EventChoiceKind : uint8_t { Option, Card, Control };
 struct EventChoice { EventChoiceKind kind; uint8_t index; };

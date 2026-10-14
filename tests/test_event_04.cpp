@@ -116,6 +116,19 @@ static void selection_handoffs() {
     bool proceed = false;
     for (int i = 0; i < legal.size; ++i) proceed |= legal[i].kind == ActionKind::Proceed;
     require(proceed, "the chest can be left after choosing the bottled card");
+
+    reset(g, 11); enter_room(g, RoomKind::Shop);
+    const int potion_counter = g.rng.potion.counter;
+    equip_relic(g, RelicId::Cauldron);
+    require(g.screen == Screen::CombatReward && g.room_rewards.size == 5 && g.screen_rewards.size == 5,
+            "buying Cauldron exposes five original potion rewards");
+    require(g.rng.potion.counter == potion_counter + 5 && g.room_rare_card_chance == 9,
+            "Cauldron uses five uniform potion draws and the ShopRoom card rarity");
+    step(g, {ActionKind::Skip});
+    require(g.screen == Screen::Room && g.room_kind == RoomKind::Shop,
+            "closing Cauldron rewards returns to the merchant room");
+    step(g, {ActionKind::Choose, 0});
+    require(g.screen == Screen::Shop, "the merchant can be reopened after Cauldron rewards");
 }
 
 int main() { appearance(); references(); selection_handoffs(); }
