@@ -1,0 +1,36 @@
+{
+  "deck": [
+    {
+      "id": "Scrape",
+      "upgrades": 0
+    },
+    {
+      "id": "Scrape",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "3 Louse",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

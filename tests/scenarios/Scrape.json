@@ -1,0 +1,64 @@
+{
+  "deck": [
+    {
+      "id": "Scrape",
+      "upgrades": 0
+    },
+    {
+      "id": "Scrape",
+      "upgrades": 1
+    },
+    {
+      "id": "Scrape",
+      "upgrades": 0
+    },
+    {
+      "id": "Scrape",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Reflex",
+      "upgrades": 1
+    },
+    {
+      "id": "Tactician",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 100,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}
