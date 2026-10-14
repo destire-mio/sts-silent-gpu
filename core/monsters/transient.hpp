@@ -26,7 +26,7 @@ struct Transient : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-        queue_damage(g, owner, player_target, monster_base_damage(g, m, m.state.Transient.count));
+        queue_monster_damage(g, owner, player_target, m.state.Transient.count);
         ++m.state.Transient.count;
         set_monster_move(g, owner, 1, Intent::Attack, m.state.Transient.startingDeathDmg + m.state.Transient.count * 10);
     }

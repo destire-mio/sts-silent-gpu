@@ -47,12 +47,12 @@ struct JawWorm : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        if (m.move == 1) queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+        if (m.move == 1) queue_monster_damage(g, index, player_target, 0);
         else if (m.move == 2) {
             queue_power(g, index, index, PowerId::Strength, bellow_strength(g));
             queue_block(g, index, bellow_block(g));
         } else {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, index, player_target, 1);
             queue_block(g, index, 5);
         }
         queue_monster_roll(g, index);

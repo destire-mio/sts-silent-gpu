@@ -19,7 +19,7 @@ struct GremlinWarrior : MonsterHooks {
             Effect e{}; e.kind = EffectKind::Escape; e.target = index; add_bottom(g, e);
             queue_monster_move(g, index, 99, Intent::Escape); return;
         }
-        queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+        queue_monster_damage(g, index, player_target, 0);
         if (m.escape_next) queue_monster_move(g, index, 99, Intent::Escape);
         else queue_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
     }

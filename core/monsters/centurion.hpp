@@ -38,7 +38,7 @@ struct Centurion : MonsterHooks {
         else for (int i = 0; i < (m.move == 3 ? (3) : 1); ++i) {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e);
             add_bottom(g, actions::ChangeState::make(g, owner, "MACE_HIT"));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 3 ? 1 : 0));
+            queue_monster_damage(g, owner, player_target, m.move == 3 ? 1 : 0);
         }
         queue_monster_roll(g, owner);
     }

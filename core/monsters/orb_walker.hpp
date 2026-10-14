@@ -30,7 +30,7 @@ struct OrbWalker : MonsterHooks {
         const Monster& m = g.monsters[owner];
         if (m.move == 2) add_bottom(g, actions::AnimateSlowAttack::make(owner));
         else add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-        queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 2 ? 1 : 0));
+        queue_monster_damage(g, owner, player_target, m.move == 2 ? 1 : 0);
         if (m.move == 1) queue_monster_card(g, CardId::Burn, EffectKind::MakeTempCardInDiscardAndDeck, 1);
         queue_monster_roll(g, owner);
     }

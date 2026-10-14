@@ -22,7 +22,7 @@ struct GremlinFat : MonsterHooks {
             Effect e{}; e.kind = EffectKind::Escape; e.target = index; add_bottom(g, e);
             queue_monster_move(g, index, 99, Intent::Escape); return;
         }
-        queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+        queue_monster_damage(g, index, player_target, 0);
         queue_power(g, index, player_target, PowerId::Weak, data().magic, true);
         if (g.run.ascension >= 17) queue_power(g, index, player_target, PowerId::Frail, data().magic, true);
         if (m.escape_next) queue_monster_move(g, index, 99, Intent::Escape);

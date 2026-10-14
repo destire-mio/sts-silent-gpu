@@ -59,9 +59,9 @@ struct Reptomancer : MonsterHooks {
         if (m.move == 1) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
             add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             queue_power(g, owner, player_target, PowerId::Weak, 1, true);
         } else if (m.move == 2) {
             add_bottom(g, actions::ChangeState::make(g, owner, "SUMMON"));
@@ -76,7 +76,7 @@ struct Reptomancer : MonsterHooks {
         } else if (m.move == 3) {
             add_bottom(g, actions::AnimateFastAttack::make(owner));
             add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
         }
         queue_monster_roll(g, owner);
     }

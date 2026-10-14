@@ -36,7 +36,7 @@ struct SpireGrowth : MonsterHooks {
         else if (m.move == 2) add_bottom(g, actions::AnimateSlowAttack::make(owner));
         else add_bottom(g, actions::AnimateFastAttack::make(owner));
         if (m.move == 2) queue_power(g, owner, player_target, PowerId::Constricted, (10) + (g.run.ascension >= 17 ? 2 : 0));
-        else queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : 1));
+        else queue_monster_damage(g, owner, player_target, m.move == 1 ? 0 : 1);
         queue_monster_roll(g, owner);
     }
 };

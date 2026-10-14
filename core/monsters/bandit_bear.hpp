@@ -22,7 +22,7 @@ struct BanditBear : MonsterHooks {
         if (m.move == 1) add_bottom(g, actions::ChangeState::make(g, owner, "MAUL"));
         else add_bottom(g, actions::AnimateSlowAttack::make(owner));
         if (m.move == 2) queue_power(g, owner, player_target, PowerId::Dexterity, g.run.ascension >= 17 ? -4 : -2);
-        else queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : 1));
+        else queue_monster_damage(g, owner, player_target, m.move == 1 ? 0 : 1);
         if (m.move == 3) {
             queue_block(g, owner, 9); queue_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 0));
         } else queue_monster_move(g, owner, 3, Intent::AttackDefend, monster_base_damage(g, m, 1));

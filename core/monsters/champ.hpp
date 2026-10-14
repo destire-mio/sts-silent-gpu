@@ -54,17 +54,17 @@ struct Champ : MonsterHooks {
             queue_power(g, owner, owner, PowerId::Strength, (g.run.ascension >= 19 ? 4 : g.run.ascension >= 4 ? 3 : 2) * 3);
         } else if (m.move == 1) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK")); add_bottom(g, actions::VFX::make());
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
         } else if (m.move == 2) { queue_block(g, owner, (g.run.ascension >= 19 ? 20 : g.run.ascension >= 9 ? 18 : 15)); queue_power(g, owner, owner, PowerId::Metallicize, (g.run.ascension >= 19 ? 7 : g.run.ascension >= 9 ? 6 : 5)); }
         else if (m.move == 3) {
             add_bottom(g, actions::AnimateJump::make(owner));
             for (int i = 0; i < 2; ++i) {
                 add_bottom(g, actions::VFX::make());
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+                queue_monster_damage(g, owner, player_target, 1);
             }
         } else if (m.move == 4) {
             Effect e{}; e.kind = EffectKind::SFX; add_bottom(g, e); add_bottom(g, actions::AnimateFastAttack::make(owner));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 2));
+            queue_monster_damage(g, owner, player_target, 2);
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
             queue_power(g, owner, player_target, PowerId::Vulnerable, 2, true);
         } else if (m.move == 5) queue_power(g, owner, owner, PowerId::Strength, (g.run.ascension >= 19 ? 4 : g.run.ascension >= 4 ? 3 : 2));

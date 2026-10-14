@@ -1,14 +1,17 @@
 #pragma once
 #include "../hooks.hpp"
+#include "damage.hpp"
 
 namespace spire::units::actions {
 struct VampireDamageAction : ActionHooks {
-    SPIRE_SNAPSHOT("VampireDamageAction.info", damage_info, effect, queue, index)
+    SPIRE_STATE(VampireDamageAction, uint32_t info_instance;)
+    SPIRE_SNAPSHOT("VampireDamageAction.info", damage_info, effect, queue, index, effect.payload.state.VampireDamageAction.info_instance)
     SPIRE_FN static constexpr ActionData data() { return {true, "DAMAGE"}; }
-    SPIRE_FN static Effect construct(int target, const DamageInfo& info) {
+    SPIRE_FN static Effect construct(int target, const DamageInfo& info, uint32_t identity = 0) {
         Effect e{};
         e.kind = EffectKind::VampireDamageAction;
         action_initialize_state(e);
+        e.payload.state.VampireDamageAction.info_instance = identity;
         e.target = target;
         e.source = info.source;
         e.amount = info.amount;
@@ -17,10 +20,11 @@ struct VampireDamageAction : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
+        DamageInfo info = Damage::resolve_info(g, e, e.payload.state.VampireDamageAction.info_instance);
         if (e.target == player_target) {
-            player_damage(g, e);
+            player_damage(g, info);
         } else {
-            monster_damage(g, e.target, e);
+            monster_damage(g, e.target, info);
             if (monsters_basically_dead(g)) {
                 g.battle_over = true;
                 g.manager.card_queue.clear();

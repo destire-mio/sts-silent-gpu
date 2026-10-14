@@ -46,8 +46,8 @@ struct CorruptHeart : MonsterHooks {
             case 3: queue_power(g, owner, owner, PowerId::Strength, 10); break;
             default: queue_power(g, owner, owner, PowerId::Strength, 50); break;
             }
-        } else if (m.move == 1) for (int i = 0; i < s.bloodHitCount; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
-        else queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+        } else if (m.move == 1) for (int i = 0; i < s.bloodHitCount; ++i) queue_monster_damage(g, owner, player_target, 1);
+        else queue_monster_damage(g, owner, player_target, 0);
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {

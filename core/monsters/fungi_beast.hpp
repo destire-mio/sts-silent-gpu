@@ -22,7 +22,7 @@ struct FungiBeast : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 1) {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, index, player_target, 0);
         }
         else queue_power(g, index, index, PowerId::Strength, m.state.FungiBeast.strAmt + (g.run.ascension >= 17 ? 1 : 0));
         queue_monster_roll(g, index);

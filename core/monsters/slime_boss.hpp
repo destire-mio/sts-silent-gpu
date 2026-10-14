@@ -32,7 +32,7 @@ struct SlimeBoss : MonsterHooks {
             set_monster_move(g, owner, 2, Intent::Unknown);
         } else if (m.move == 2) set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 1));
         else if (m.move == 1) {
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
             set_monster_move(g, owner, 4, Intent::StrongDebuff);
         } else if (m.move == 3) {
             queue_split(g, owner, MonsterId::SpikeSlime_L, MonsterId::AcidSlime_L, -385.0f, 120.0f);

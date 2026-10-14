@@ -13,6 +13,20 @@ struct Damage : ActionHooks {
         SPIRE_ASSERT(g.next_damage_info_instance < (uint32_t{1} << 31));
         return g.next_damage_info_instance++;
     }
+    static SPIRE_FN constexpr uint32_t monster_identity(int slot) { return (uint32_t{1} << 31) | slot; }
+    static SPIRE_FN DamageInfo monster_info(const Game& g, int source, int slot) {
+        const Monster& monster = g.monsters[source];
+        DamageInfo info{};
+        info.source = source;
+        info.info_base = monster_base_damage(g, monster, slot);
+        info.amount = monster_output_damage(g, monster, slot);
+        info.damage_type = monster_data(monster.id).damage_types[slot];
+        return info;
+    }
+    static SPIRE_FN DamageInfo resolve_info(const Game& g, const Effect& e, uint32_t identity) {
+        if ((identity & (uint32_t{1} << 31)) == 0) return e;
+        return monster_info(g, e.source, identity & ~(uint32_t{1} << 31));
+    }
     static SPIRE_FN Effect from_shared_info(const DamageInfo& info, int target, uint32_t identity, bool skip_wait = false) {
         Effect e = info;
         e.kind = EffectKind::Damage;
@@ -41,7 +55,9 @@ struct Damage : ActionHooks {
             if (e.source == player_target) gain_gold(g, e.extra);
             else get_creature(g, e.source).gold += e.extra;
         }
-        damage(g, e);
+        DamageInfo info = resolve_info(g, e, e.payload.state.Damage.info_instance);
+        info.target = e.target;
+        damage(g, info);
         if (monsters_basically_dead(g)) clear_post_combat_actions(g);
     }
 };

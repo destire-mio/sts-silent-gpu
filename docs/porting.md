@@ -433,8 +433,13 @@ caller in the Java tree. Neither counts as matched through a different orb metho
   ordinal metadata derived by `inventory/build.py` from the isolated oracle's English JAR;
   no localization strings or assets are copied. Build the local oracle before regenerating
   the inventory. Scry preserves top-to-bottom draw order instead of sorting the grid.
-- Repeated hits sharing one Java DamageInfo use `queue_card_damage` with a shared identity;
-  do not create one damage object per hit when Java reuses the same object.
+- Repeated hits sharing one Java DamageInfo use `Damage::from_shared_info` with a shared
+  identity; do not create one damage object per hit when Java reuses the same object. Monster
+  attacks use `queue_monster_damage` with the original damage-slot index. Equal damage values
+  do not establish object identity. The action retains its construction-time amount while
+  execution reads the referenced slot, as `DamageAction.update` does. The reference uses the
+  existing identity payload; it adds no bytes to Game. Generated state unions zero their
+  entire payload at construction, including when an action reuses nonzero storage.
 - Scry's discard hooks run on the original action's fixed ticks, including the pre-selection
   tick. Card movement sets `pending_card_moves`; settlement clears powers in card-index order
   and then refreshes the hand. RestoreRetainedCards refreshes layout only. The observer projects

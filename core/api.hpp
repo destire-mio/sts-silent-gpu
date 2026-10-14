@@ -107,7 +107,7 @@ SPIRE_FN inline int calculate_block(const Game&, int, int card = -1);
 SPIRE_FN inline void apply_card_block(Game&, int);
 SPIRE_FN inline void refresh_powers(Game&);
 SPIRE_FN inline void monster_apply_powers(Game&, int);
-SPIRE_FN inline void queue_damage(Game&, int, int, int, DamageType = DamageType::Normal, int steal = 0);
+SPIRE_FN inline void queue_monster_damage(Game&, int, int, int, int steal = 0, bool skip_wait = false);
 SPIRE_FN inline void queue_block(Game&, int, int);
 SPIRE_FN inline void queue_card_damage(Game&, int, int);
 SPIRE_FN inline void queue_card_copy(Game&, int, int);

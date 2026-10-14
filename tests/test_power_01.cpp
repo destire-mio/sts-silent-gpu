@@ -80,11 +80,17 @@ static void test_damage_hooks() {
     apply_power(g, player_target, player_target, PowerId::Buffer, 1);
     g.player.creature.block = 4;
     const int hp = g.player.creature.hp;
-    queue_damage(g, 0, player_target, 4);
+    DamageInfo hit{};
+    hit.source = 0;
+    hit.amount = hit.info_base = 4;
+    add_bottom(g, units::actions::Damage::from_shared_info(hit, player_target, 0));
     resolve_actions(g);
     require(g.player.creature.hp == hp && has_power(g, g.player.creature, PowerId::Buffer),
             "a blocked hit does not consume Buffer");
-    queue_damage(g, no_target, player_target, 3, DamageType::HpLoss);
+    hit.source = no_target;
+    hit.amount = hit.info_base = 3;
+    hit.damage_type = DamageType::HpLoss;
+    add_bottom(g, units::actions::Damage::from_shared_info(hit, player_target, 0));
     resolve_actions(g);
     require(g.player.creature.hp == hp && !has_power(g, g.player.creature, PowerId::Buffer),
             "Buffer prevents HP loss and removes itself through the queued reduction");

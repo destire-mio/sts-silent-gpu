@@ -321,10 +321,13 @@ def generate(root, output):
         entries = catalogs[kind]
         state_type = {"actions": "Effect", "encounters": "Encounter"}.get(kind, prefix.capitalize()) + "State"
         ids.append(f'union {state_type} {{')
-        ids.append('    uint8_t empty;')
         for typename, fields in states[kind].values():
             ids.append(f'    struct {{ {fields} }} {typename};')
             ids.append(f'    static_assert(__is_trivially_constructible(decltype({typename})), "Unit state fields need trivial default construction");')
+        size = '1'
+        for typename, _ in states[kind].values():
+            size = f'max({size}, sizeof(decltype({typename})))'
+        ids.append(f'    uint8_t empty[{size}];')
         ids.append(f'    SPIRE_FN constexpr {state_type}() : empty{{}} {{}}')
         ids.append('};')
         budget = {"cards": 8, "powers": 8, "relics": 8, "potions": 8, "monsters": 32, "encounters": 16, "events": 64, "actions": 48}[kind]

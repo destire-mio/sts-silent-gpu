@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/vampire_damage.hpp"
 
 namespace spire::units::monsters {
 struct ShelledParasite : MonsterHooks {
@@ -47,20 +48,21 @@ struct ShelledParasite : MonsterHooks {
         switch (m.move) {
         case 1:
             add_bottom(g, actions::AnimateSlowAttack::make(owner));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
             break;
         case 2:
             add_bottom(g, actions::AnimateHop::make(owner));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             add_bottom(g, actions::AnimateHop::make(owner));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             break;
         case 3: {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
             add_bottom(g, actions::VFX::make());
-            Effect e{}; e.kind = EffectKind::VampireDamageAction; e.source = owner; e.target = player_target;
-            e.info_base = monster_base_damage(g, m, 2); e.amount = monster_output_damage(g, m, 2); add_bottom(g, e); break;
+            add_bottom(g, actions::VampireDamageAction::construct(player_target,
+                actions::Damage::monster_info(g, owner, 2), actions::Damage::monster_identity(2)));
+            break;
         }
         case 4: set_monster_move(g, owner, 1, Intent::AttackDebuff, monster_base_damage(g, m, 1)); add_bottom(g, actions::TextAboveCreature::make(owner)); break;
         }

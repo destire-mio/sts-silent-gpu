@@ -769,11 +769,8 @@ struct SnapshotGraph {
         });
     }
     py::object damage_info(const Effect& effect, int queue, int index, uint32_t instance = 0) {
-        if (effect.source >= 0 && effect.damage_type == DamageType::Normal) {
-            const Monster& owner = game.monsters[effect.source];
-            for (int i = 0; i < owner.damage_count; ++i)
-                if (monster_base_damage(game, owner, i) == effect.info_base) return monster_damage(effect.source, i);
-        }
+        if (instance & (uint32_t{1} << 31))
+            return monster_damage(effect.source, instance & ~(uint32_t{1} << 31));
         const std::array<int, 3> identity = instance == 0 ? std::array<int, 3>{16, queue, index}
                                                        : std::array<int, 3>{47, static_cast<int>(instance), 0};
         return object(identity, "cards.DamageInfo", [&](const std::string& name) -> py::object {

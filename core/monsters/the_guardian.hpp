@@ -44,7 +44,7 @@ struct TheGuardian : MonsterHooks {
             set_monster_move(g, owner, 3, Intent::Attack, monster_base_damage(g, m, 1));
             break;
         case 2:
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, owner, player_target, 0);
             set_monster_move(g, owner, 7, Intent::StrongDebuff);
             break;
         case 7:
@@ -53,13 +53,13 @@ struct TheGuardian : MonsterHooks {
             set_monster_move(g, owner, 5, Intent::Attack, 5, 4);
             break;
         case 3:
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
             set_monster_move(g, owner, 4, Intent::AttackBuff, 8, 2);
             break;
         case 4: {
             add_bottom(g, actions::ChangeState::make(g, owner, "Offensive Mode"));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 3));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 3));
+            queue_monster_damage(g, owner, player_target, 3);
+            queue_monster_damage(g, owner, player_target, 3);
             Effect e{}; e.kind = EffectKind::RemovePower; e.source = e.target = owner; e.power = PowerId::SharpHide; add_bottom(g, e);
             set_monster_move(g, owner, 5, Intent::Attack, 5, 4);
             break;
@@ -69,7 +69,7 @@ struct TheGuardian : MonsterHooks {
             for (int i = 0; i < 4; ++i) {
                 add_bottom(g, e);
                 add_bottom(g, actions::VFX::make(owner));
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 2));
+                queue_monster_damage(g, owner, player_target, 2);
             }
             set_monster_move(g, owner, 6, Intent::Defend);
             break;

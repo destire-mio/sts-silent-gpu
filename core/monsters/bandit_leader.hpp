@@ -25,7 +25,7 @@ struct BanditLeader : MonsterHooks {
         if (m.move == 2) queue_monster_move(g, owner, 3, Intent::AttackDebuff, monster_base_damage(g, m, 1));
         else {
             add_bottom(g, actions::ChangeState::make(g, owner, "STAB"));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : 1));
+            queue_monster_damage(g, owner, player_target, m.move == 1 ? 0 : 1);
             if (m.move == 3) queue_power(g, owner, player_target, PowerId::Weak, g.run.ascension >= 17 ? 3 : 2, true);
             if (m.move == 3 || (g.run.ascension >= 17 && !last_two_moves(g, m, 1)))
                 queue_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 0));

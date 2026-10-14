@@ -20,7 +20,7 @@ struct AcidSlime_S : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 1) {
-            queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
+            queue_monster_damage(g, index, player_target, 0);
             set_monster_move(g, index, 2, Intent::Debuff);
         } else {
             queue_power(g, index, player_target, PowerId::Weak, data().magic, true);

@@ -23,7 +23,7 @@ struct SlaverBlue : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        queue_damage(g, index, player_target, monster_base_damage(g, m, m.move == 1 ? 0 : 1));
+        queue_monster_damage(g, index, player_target, m.move == 1 ? 0 : 1);
         if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.state.SlaverBlue.weakAmt + (g.run.ascension >= 17 ? 1 : 0), true);
         queue_monster_roll(g, index);
     }

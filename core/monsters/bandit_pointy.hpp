@@ -22,7 +22,7 @@ struct BanditPointy : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int) { set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, g.monsters[owner], 0), 2); }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         add_bottom(g, actions::ChangeState::make(g, owner, "SLASH"));
-        for (int i = 0; i < 2; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, g.monsters[owner], 0));
+        for (int i = 0; i < 2; ++i) queue_monster_damage(g, owner, player_target, 0);
         queue_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, g.monsters[owner], 0), 2);
     }
 };

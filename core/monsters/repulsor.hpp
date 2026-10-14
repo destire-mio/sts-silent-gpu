@@ -23,7 +23,7 @@ struct Repulsor : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         const Monster& m = g.monsters[owner];
-        if (m.move == 2) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_damage(g, owner, player_target, monster_base_damage(g, m, 0)); }
+        if (m.move == 2) { add_bottom(g, actions::AnimateSlowAttack::make(owner)); queue_monster_damage(g, owner, player_target, 0); }
         else queue_monster_card(g, CardId::Dazed, EffectKind::MakeTempCardInDrawPile, m.state.Repulsor.dazeAmt);
         queue_monster_roll(g, owner);
     }

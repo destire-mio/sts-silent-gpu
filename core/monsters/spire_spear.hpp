@@ -29,7 +29,7 @@ struct SpireSpear : MonsterHooks {
         if (m.move == 1) {
             for (int i = 0; i < 2; ++i) {
                 add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-                queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+                queue_monster_damage(g, owner, player_target, 0);
             }
             Effect e{}; e.kind = g.run.ascension >= 18 ? EffectKind::MakeTempCardInDrawPile : EffectKind::AddCardDiscard;
             action_initialize_state(e); e.card = g.cards.size; e.amount = 2;
@@ -39,7 +39,7 @@ struct SpireSpear : MonsterHooks {
             for (int i = 0; i < g.monster_order.size; ++i) queue_power(g, owner, g.monster_order[i], PowerId::Strength, 2);
         } else for (int i = 0; i < m.state.SpireSpear.skewerCount; ++i) {
             add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
-            queue_damage(g, owner, player_target, monster_base_damage(g, m, 1));
+            queue_monster_damage(g, owner, player_target, 1);
         }
         queue_monster_roll(g, owner);
     }

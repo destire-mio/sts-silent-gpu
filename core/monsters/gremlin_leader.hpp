@@ -69,7 +69,7 @@ struct GremlinLeader : MonsterHooks {
                 queue_power(g, owner, target, PowerId::Strength, (g.run.ascension >= 18 ? 5 : g.run.ascension >= 3 ? 4 : 3));
                 if (target != owner) queue_block(g, target, (g.run.ascension >= 18 ? 10 : 6));
             }
-        } else for (int i = 0; i < 3; ++i) queue_damage(g, owner, player_target, monster_base_damage(g, m, 0));
+        } else for (int i = 0; i < 3; ++i) queue_monster_damage(g, owner, player_target, 0);
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
