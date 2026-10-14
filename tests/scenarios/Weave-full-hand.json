@@ -1,0 +1,121 @@
+{
+  "deck": [
+    {
+      "id": "Weave",
+      "upgrades": 0
+    },
+    {
+      "id": "Weave",
+      "upgrades": 1
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 0
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 1
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 0
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 1
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 1
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 1
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 1
+    },
+    {
+      "id": "Backflip",
+      "upgrades": 1
+    },
+    {
+      "id": "Adrenaline",
+      "upgrades": 0
+    },
+    {
+      "id": "Adrenaline",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Runic Pyramid"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 300,
+  "max_hp": 300,
+  "encounter": "Giant Head"
+}
