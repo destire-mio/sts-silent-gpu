@@ -235,6 +235,21 @@ static void test_nightmare_copies() {
 
 }
 
+static void test_direct_power_order() {
+    Game g = combat();
+    apply_power(g, player_target, 0, PowerId::Flight, 4);
+    units::relics::PhilosopherStone::add_strength(g, 0);
+    Powers& powers = g.monsters[0].creature.powers;
+    const int flight = powers.index(g.power_objects, 0);
+    const int strength = powers.index(g.power_objects, 1);
+    apply_power(g, player_target, 0, PowerId::Poison, 4);
+    require(powers.index(g.power_objects, 0) == strength &&
+            powers.at(g.power_objects, 1).id == PowerId::Poison &&
+            powers.index(g.power_objects, 2) == flight,
+            "a new power stably sorts direct Strength before Flight without replacing their objects");
+    require(g.player.creature.powers.empty(), "monster power sorting leaves player powers untouched");
+}
+
 int main() {
     test_focus();
     test_intangible();
@@ -243,5 +258,6 @@ int main() {
     test_malleable();
     test_block_and_constructor_time();
     test_nightmare_copies();
+    test_direct_power_order();
     std::puts("Power batch 02 Java-derived cases passed (not oracle trace acceptance)");
 }

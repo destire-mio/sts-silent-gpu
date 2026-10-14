@@ -344,10 +344,20 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
     }
     if (!stacked) {
         if (incoming.instance == 0) incoming.instance = next_power_identity(g);
-        int index = c.powers.size;
-        while (index > 0 && power_data(c.powers.at(g.power_objects, index - 1).id).priority > power_data(id).priority) --index;
-        c.powers.insert(g.power_objects, index, g.power_objects.add(incoming));
-        power_onInitialApplication(g, c.powers.at(g.power_objects, index), target);
+        const int applied = g.power_objects.add(incoming);
+        c.powers.push_back(g.power_objects, applied);
+        // ApplyPowerAction.update sorts the entire list, including direct relic additions.
+        for (int i = 1; i < c.powers.size; ++i) {
+            const int object = c.powers.index(g.power_objects, i);
+            int index = i;
+            while (index > 0 && power_data(c.powers.at(g.power_objects, index - 1).id).priority >
+                   power_data(g.power_objects[object].id).priority) --index;
+            if (index != i) {
+                c.powers.erase(g.power_objects, i);
+                c.powers.insert(g.power_objects, index, object);
+            }
+        }
+        power_onInitialApplication(g, g.power_objects[applied], target);
         refresh_powers(g);
     }
 }
