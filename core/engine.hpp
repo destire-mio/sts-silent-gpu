@@ -895,8 +895,6 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     g.turn = 1;
     g.battle_over = false;
     g.battle_callbacks_done = false;
-    g.room_in_combat = true;
-    g.room_phase = RoomPhase::Combat;
     g.room_reward_time = false;
     g.cannot_lose = false;
     g.mugged = false;
@@ -932,7 +930,7 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
         else g.draw.push_back(card);
     }
     for (int i = 0; i < innate.size; ++i) g.draw.push_back(innate[i]);
-    if (innate.size > g.player.hand_size) {
+    if (g.room_phase == RoomPhase::Combat && innate.size > g.player.hand_size) {
         g.manager.pre_turn_actions.push_front(g.action_objects.add(units::actions::Draw::construct(innate.size - g.player.hand_size)));
     }
     for (int i = 0; i < g.run.relics.size; ++i) relic_beforeEnergyPrep(g, i);
@@ -958,6 +956,8 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     for (int i = 0; i < g.run.relics.size; ++i) relic_atPreBattle(g, i);
 }
 SPIRE_FN inline void enter_combat(Game& g) {
+    g.room_in_combat = true;
+    g.room_phase = RoomPhase::Combat;
     // DrawCardAction.drawnCards survives preBattlePrep until the first DrawCardAction.update.
     List<uint8_t, 64 + hand_limit> retained_indices{};
     for (int i = 0; i < g.detached_master_cards.size; ++i) {

@@ -138,12 +138,14 @@ SPIRE_FN inline int hold_action(Game& g, const Effect& effect) {
 SPIRE_FN inline void add_bottom(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
-    g.manager.actions.push_back(g.action_objects.add(prepared));
+    if (g.room_phase == RoomPhase::Combat)
+        g.manager.actions.push_back(g.action_objects.add(prepared));
 }
 SPIRE_FN inline void add_top(Game& g, const Effect& effect) {
     Effect prepared = effect;
     action_prepare(g, prepared);
-    g.manager.actions.push_front(g.action_objects.add(prepared));
+    if (g.room_phase == RoomPhase::Combat)
+        g.manager.actions.push_front(g.action_objects.add(prepared));
 }
 SPIRE_FN inline void release_action(Game& g, int index) {
     action_release(g, g.action_objects[index]);
