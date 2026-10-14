@@ -167,3 +167,4 @@ SPIRE_UNIT(LiveForever, "LiveForever", "core/cards/live_forever.hpp", LiveForeve
 SPIRE_UNIT(FameAndFortune, "FameAndFortune", "core/cards/fame_and_fortune.hpp", FameAndFortune)
 SPIRE_UNIT(Fission, "Fission", "core/cards/fission.hpp", Fission)
 SPIRE_UNIT(Recycle, "Recycle", "core/cards/recycle.hpp", Recycle)
+SPIRE_UNIT(ReinforcedBody, "Reinforced Body", "core/cards/reinforced_body.hpp", ReinforcedBody)
