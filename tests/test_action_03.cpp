@@ -191,6 +191,7 @@ static void damage_and_room_state() {
     e.amount = 4;
     g.player.creature.hp = 50;
     g.battle_over = true;
+    g.battle_callbacks_done = true;
     add_bottom(g, e);
     run_until_decision(g);
     require(g.player.creature.hp == 54, "Regen still heals in the combat phase after battleOver");
