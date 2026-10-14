@@ -41,6 +41,7 @@ struct BetterDiscardPileToHand : ActionHooks {
             }
             // BetterDiscardPileToHandAction.update opens through GridCardSelectScreen.callOnOpen.
             open_grid_selection(g, PileId::Discard, count, false);
+            g.grid_can_cancel = true;
             g.selection_any_number = e.payload.state.BetterDiscardPileToHand.optional;
             g.selection_can_pick_zero = e.payload.state.BetterDiscardPileToHand.optional;
             e.payload.state.BetterDiscardPileToHand.selecting = true;

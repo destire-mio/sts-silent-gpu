@@ -222,7 +222,7 @@ static void test_memories_after_cancelled_purge() {
         require(g.discard.size > 1, "Memories fixture has several discarded cards");
         const int card = g.discard[0], hand_size = g.hand.size, deck_size = g.run.master_deck.size;
         step(g, {ActionKind::PotionUse, 0, -1});
-        require(g.screen == Screen::Grid, "Memories opens the discard selection");
+        require(g.screen == Screen::Grid && g.grid_can_cancel, "Memories opens the cancellable discard selection");
         step(g, {ActionKind::Choose, 0});
         require(g.screen == Screen::Combat && g.hand.size == hand_size + 1 &&
                 g.cards[card].cost_for_turn == 0 && g.run.master_deck.size == deck_size,
