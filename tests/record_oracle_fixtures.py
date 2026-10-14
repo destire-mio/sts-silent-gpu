@@ -1,7 +1,6 @@
 import argparse
 import gzip
 import json
-import shutil
 from pathlib import Path
 import sys
 
@@ -25,4 +24,4 @@ if __name__ == '__main__':
     for job in jobs:
         raw = Path(job['output'])
         check_trace(raw)
-        shutil.copyfile(raw, ROOT / 'traces' / raw.name)
+        (ROOT / 'traces' / raw.name).write_bytes(gzip.compress(gzip.decompress(raw.read_bytes()), mtime=0))
