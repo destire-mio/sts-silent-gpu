@@ -1,0 +1,55 @@
+{
+  "deck": [
+    {
+      "id": "Rupture",
+      "upgrades": 0
+    },
+    {
+      "id": "Rupture",
+      "upgrades": 1
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 1
+    },
+    {
+      "id": "Feel No Pain",
+      "upgrades": 1
+    },
+    {
+      "id": "Offering",
+      "upgrades": 1
+    },
+    {
+      "id": "Rupture",
+      "upgrades": 1
+    },
+    {
+      "id": "Combust",
+      "upgrades": 1
+    },
+    {
+      "id": "Fiend Fire",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}
