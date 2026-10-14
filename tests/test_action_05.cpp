@@ -135,9 +135,9 @@ static void test_calculated_gamble() {
 static void test_stasis_selection() {
     Game g = combat();
     const int slimed = g.cards.size;
-    g.cards.push_back(make_card(CardId::Slimed));
+    g.cards.add(make_card(CardId::Slimed));
     const int dazed = g.cards.size;
-    g.cards.push_back(make_card(CardId::Dazed));
+    g.cards.add(make_card(CardId::Dazed));
     g.draw.push_back(slimed);
     g.draw.push_back(dazed);
     Random expected = g.rng.card_random;

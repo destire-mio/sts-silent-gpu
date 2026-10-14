@@ -205,7 +205,7 @@ from an object's current position in an ordered list:
   Those parent lists are not retained in `Game`. Monster/elite/boss lists reserve 16/10/3
   byte IDs, the maxima produced by the four dungeon generators. Event/shrine/one-time
   lists reserve 16/8/16 byte inventory keys and retain Java order.
-- Master-deck cards removed while a relic or event references them stay in the existing 224-card arena.
+- Master-deck cards removed while a relic or event references them stay in the card arena.
   A 64-byte index list supplies a shared execution budget for these references; retained master objects consume
   the same execution budget as combat cards and keep a distinct snapshot identity.
 - Master-deck and combat cards are different objects with matching UUIDs
@@ -213,6 +213,29 @@ from an object's current position in an ordered list:
   hold byte indices into combat cards. The Reptomancer high-health recordings exceed 128
   combat card objects through Wound generation. These capacities are execution budgets.
   Do not put `Card` values in another pile or queue.
+  `card_references` in `core/card_lifetime.hpp` enumerates the arena references at decision boundaries.
+  `step` collects after the decision implementation returns, when no rule-local card index remains on
+  the C++ stack. Unreferenced cards release their sparse damage rows and join an intrusive free list;
+  allocation reuses those slots without changing card UUID assignment. The arena records occupancy
+  independently of its high-water slot index. Every released Card is poisoned, including release
+  builds, and every indexed access asserts occupancy. Copying Game copies the free list and masks.
+  Roots include combat piles, drawn/played histories, queued/held actions and their payload arrays,
+  prepared powers, powers held by creatures or actions, pending card movements/obtains, rewards,
+  shop stock in the current shop,
+  detached master references, current cards and event-owned cards. Master-deck cards live in their
+  separate value store; bottle/Falling/WeMeetAgain UUID references resolve there or through the
+  detached-master list, whose expired UUID holders are removed before marking. Monsters in the
+  current room and queued spawns retain their powers; storage from an expired room does not.
+  Card/potion/monster/relic payloads
+  have no additional arena indices. Active GRID/HAND_SELECT lists retain their cards; master GRID
+  entries and hovered targets are master-deck positions. Inactive grid scratch may contain those
+  positions or BackToBasics card kinds and is replaced before reuse. SetMove.card stores damage,
+  not a reference. These distinctions follow the corresponding Java action/screen lifetimes.
+  The five UUID-update actions enumerate GetAllInBattleInstances, a Java HashSet. Their mutations
+  affect each selected card independently, without RNG or cross-card writes, so slot traversal
+  order is immaterial. Membership is checked before reading a possibly freed slot. Soul settlement
+  clears independent card caches before one hand refresh; it also has no slot-order dependency.
+  remove_master_card searches by master identity, rather than selecting a card by slot order.
 - Each creature holds the head and size of an ordered list in the shared 128-object power arena.
   `Power::next` links the objects with byte indices; the per-creature budget remains 32. Use
   `creature.powers.at(game.power_objects, index)` and pass `game` to power queries. Removing a
@@ -323,6 +346,18 @@ source bound above keeps Game at 37,848 bytes. `tests/test_dead_branch_capacity.
 the 1,537-action prefix. Original recordings of that branch and the selected game match both
 scopes through 1,541 and 1,687 decisions and their terminal states.
 
+Seed 202610211131 reaches the same Dead Branch overflow at floor 50, Awakened One turn 11.
+The original failing prefix is 1,579 decisions. Its 225th allocation makes Acrobatics after a
+Shiv exhaust. Raising the arena cannot bound DeadBranch.onExhaust and MakeTempCardInHandAction's
+prototype/copy lifetimes. Decision-boundary reclamation reuses unreferenced slots instead.
+The saved whole-search input reproduces 1,036,621 steps, 172,704 branches and 308 cumulative
+creations with the unchanged search observations. Its live peak is 207 at decision boundaries,
+and its peak occupancy between collections is 208. The 224 slots leave 17/16 slots respectively;
+Game is 37,888 bytes, at the 37 KiB ceiling. The old 202610210030 search likewise reproduces
+474,799 steps and 74,808 branches; its peak occupancy falls from 216 to 139. Other previously
+completed searches had cumulative peaks at most 174, which also bound their live occupancy.
+The native regressions assert the original cards and combat outcome, never a slot number.
+
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
 Card damage/block, power amounts, orb amounts and player energy keep Java's 32-bit range.
@@ -337,8 +372,10 @@ RitualDagger keeps its Java `applyPowers` baseBlock/misc behavior in its own sta
 A card's shop price and combat `energyOnUse` share two bytes, distinguished by `priced`.
 Shop cards retain their price when acquired; combat copies and stat-equivalent copies start
 with zero price (`AbstractCard.makeStatEquivalentCopy`). Do not play a master-deck object.
-Card UUIDs use 16 bits: combat setup renumbers the master deck, and subsequent creation
-consumes the 224-card arena. Bottled references use the same width. Catalog enum widths are
+Card UUIDs keep their 16-bit representation and existing creation counter. Reset and scenario
+setup assign master-deck UUIDs; subsequent creation increments next_card_uuid, while same-instance
+copies preserve the source UUID. Recycling a slot neither decrements that counter nor substitutes
+a slot index for a UUID. Bottled references use the same width. Catalog enum widths are
 generated from catalog size; do not narrow a CardId to a byte in unit state. Byte pile indices
 name arena slots, not card kinds.
 

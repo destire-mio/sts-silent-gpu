@@ -33,8 +33,8 @@ struct CorruptHeart : MonsterHooks {
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
             constexpr CardId ids[]{CardId::Dazed, CardId::Slimed, CardId::Wound, CardId::Burn, CardId::VoidCard};
             for (int i = 0; i < 5; ++i) {
-                Effect e{}; e.kind = EffectKind::MakeTempCardInDrawPile; action_initialize_state(e); e.card = g.cards.size; e.amount = 1;
-                e.payload.state.MakeTempCardInDrawPile.random_spot = true; g.cards.push_back(make_card(ids[i])); g.cards[e.card].uuid = g.next_card_uuid++; add_bottom(g, e);
+                Effect e{}; e.kind = EffectKind::MakeTempCardInDrawPile; action_initialize_state(e); e.card = create_card(g, make_card(ids[i])); e.amount = 1;
+                e.payload.state.MakeTempCardInDrawPile.random_spot = true; add_bottom(g, e);
             }
         } else if (m.move == 4) {
             const int strength = power_amount(g, m.creature, PowerId::Strength);

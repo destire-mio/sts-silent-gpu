@@ -17,8 +17,8 @@ struct Taskmaster : MonsterHooks {
     SPIRE_FN static void getMove(Game& g, int owner, int num) { (void)num; set_monster_move(g, owner, 2, Intent::AttackDebuff, 7); }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         queue_monster_damage(g, owner, player_target, 1);
-        Effect e{}; e.kind = EffectKind::AddCardDiscard; e.card = g.cards.size; e.amount = g.monsters[owner].state.Taskmaster.woundCount;
-        g.cards.push_back(make_card(CardId::Wound)); g.cards[e.card].uuid = g.next_card_uuid++; add_bottom(g, e);
+        Effect e{}; e.kind = EffectKind::AddCardDiscard; e.card = create_card(g, make_card(CardId::Wound)); e.amount = g.monsters[owner].state.Taskmaster.woundCount;
+        add_bottom(g, e);
         if (g.run.ascension >= 18) queue_power(g, owner, owner, PowerId::Strength, 1);
         queue_monster_roll(g, owner);
     }

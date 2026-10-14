@@ -1572,8 +1572,10 @@ int main() {
     Game game{};
     reset(game, 202610209004LL);
     for (const auto& action : actions) step(game, action);
+    bool shivs = game.hand.size == 7;
+    for (int i = 0; i < game.hand.size; ++i) shivs &= game.cards[game.hand[i]].id == CardId::Shiv;
     if (game.run.floor != 50 || game.encounter != EncounterId::AwakenedOne ||
-        game.turn != 22 || game.cards.size != 196) {
+        game.turn != 22 || !shivs) {
         std::fprintf(stderr, "searched Blade Dance branch: floor=%d turn=%d cards=%d\n",
                      game.run.floor, game.turn, game.cards.size);
         return 1;

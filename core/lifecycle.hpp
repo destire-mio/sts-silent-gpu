@@ -286,14 +286,13 @@ SPIRE_FN inline void remove_master_card(Game& g, int index) {
     for (int i = 0; i < g.run.relics.size; ++i) referenced |= relic_referencesMasterCard(g, i, removed.uuid);
     int retained = -1;
     for (int i = 0; i < g.cards.size; ++i)
-        if (g.cards[i].master_reference && g.cards[i].uuid == removed.uuid) { retained = i; break; }
+        if (g.cards.contains(i) && g.cards[i].master_reference && g.cards[i].uuid == removed.uuid) { retained = i; break; }
     if (retained >= 0) {
         g.cards[retained] = removed;
         g.cards[retained].master_reference = true;
         g.detached_master_cards.push_back(retained);
     } else if (referenced) {
-        g.detached_master_cards.push_back(g.cards.size);
-        g.cards.push_back(removed);
+        g.detached_master_cards.push_back(g.cards.add(removed));
     }
     card_onRemoveFromMasterDeck(g, removed);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);

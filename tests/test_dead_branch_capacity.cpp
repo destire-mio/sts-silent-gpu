@@ -1548,7 +1548,7 @@ int main() {
     reset(game, 202610210030LL);
     for (const auto& action : actions) step(game, action);
     if (game.run.floor != 50 || game.encounter != EncounterId::AwakenedOne ||
-        game.turn != 11 || game.cards.size != 209 || game.cards[208].id != CardId::Finisher) {
+        game.turn != 11 || game.hand.empty() || game.cards[game.hand[game.hand.size - 1]].id != CardId::Finisher) {
         std::fprintf(stderr, "Dead Branch must create its Finisher copy after exhausting Shiv\n");
         return 1;
     }

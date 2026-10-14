@@ -144,7 +144,7 @@ static void card_value_lifetimes() {
     Game game{};
     reset(game, 3);
     const int card = game.cards.size;
-    game.cards.push_back(make_card(CardId::MasterfulStab));
+    game.cards.add(make_card(CardId::MasterfulStab));
     for (int i = 0; i < 200; ++i) card_tookDamage(game, card);
     require(game.cards[card].cost == 200 && game.cards[card].cost_for_turn == 200,
             "repeated HP loss must not wrap a card cost at byte range");
@@ -167,12 +167,130 @@ static void host_overflow_aborts() {
         const rlimit limit{0, 0};
         setrlimit(RLIMIT_CORE, &limit);
         Game game{};
-        for (int i = 0; i <= card_capacity; ++i) game.cards.push_back(Card{});
+        for (int i = 0; i <= card_capacity; ++i) game.cards.add(Card{});
         _exit(0);
     }
     int status = 0;
     require(waitpid(child, &status, 0) == child && WIFSIGNALED(status) &&
             (WTERMSIG(status) == SIGILL || WTERMSIG(status) == SIGTRAP), "host capacity overflow must abort in release builds");
+}
+
+static void card_reference_lifetimes() {
+    Game game{};
+    const int garbage = create_card(game, make_card(CardId::Shiv));
+    const int values[]{1, 9, 1};
+    DamageArray damage{};
+    damage.assign(game.damage_exceptions, values, 3);
+    game.multi_damage.set(garbage, damage);
+    const auto add = [&]() { return create_card(game, make_card(CardId::Defend_G)); };
+    game.hand.push_back(add()); game.draw.push_back(add()); game.discard.push_back(add());
+    game.exhaust.push_back(add()); game.limbo.push_back(add()); game.drawn_cards.push_back(add());
+    game.selection_excluded.push_back(add()); game.pending_obtains.push_back(add());
+    Effect exhume{}; exhume.kind = EffectKind::Exhume; exhume.payload.state.Exhume.selecting = true;
+    game.action_objects.add(exhume);
+    const int detached = add();
+    game.detached_master_cards.push_back(detached);
+    Relic bottle{RelicId::BottledFlame}; bottle.state.BottledFlame.card = game.cards[detached].uuid;
+    game.run.relics.push_back(bottle);
+    game.reward_cards.push_back(add());
+    game.player.card_in_use = add(); game.discovery_card = add();
+    game.manager.played_cards.record(add()); game.manager.card_queue.push_back({add()});
+    mark_card_move(game, add());
+    game.screen = Screen::Grid;
+    game.grid_cards.push_back(add()); game.selected_cards.push_back(add());
+    RoomReward reward{}; reward.cards.push_back(add()); game.reward_objects.push_back(reward);
+    game.room_kind = RoomKind::Shop;
+    game.shop.colored.push_back(add()); game.shop.colorless.push_back(add());
+    Power nightmare{PowerId::Nightmare, 1}; nightmare.state.Nightmare.card = add();
+    game.player.creature.powers.push_back(game.power_objects, game.power_objects.add(nightmare));
+    Power stasis{PowerId::Stasis, -1}; stasis.state.Stasis.card = add();
+    game.action_objects.add(units::actions::ApplyPower::make(player_target, player_target, stasis, 1));
+    Power removed{PowerId::Stasis, -1}; removed.instance = 19; removed.state.Stasis.card = add();
+    game.power_objects.add(removed);
+    game.action_objects.add(units::actions::RemovePower::from_instance(player_target, player_target, removed));
+    Monster monster{};
+    Power captured{PowerId::Stasis, -1}; captured.state.Stasis.card = add();
+    monster.creature.powers.push_back(game.power_objects, game.power_objects.add(captured));
+    game.monsters.push_back(monster);
+    game.monster_order.push_back(0);
+    Effect held{}; held.kind = EffectKind::ShowCard; held.card = add();
+    hold_action(game, held);
+    Effect armaments{}; armaments.kind = EffectKind::Armaments;
+    armaments.payload.state.Armaments.cannot_upgrade_count = 1;
+    armaments.payload.state.Armaments.cannot_upgrade[0] = add();
+    game.action_objects.add(armaments);
+    Effect dual{}; dual.kind = EffectKind::DualWield;
+    dual.payload.state.DualWield.count = 1; dual.payload.state.DualWield.cannotDuplicate[0] = add();
+    game.action_objects.add(dual);
+    Effect choose{}; choose.kind = EffectKind::ChooseOne;
+    choose.payload.state.ChooseOne.count = 1; choose.payload.state.ChooseOne.choices[0] = add();
+    game.action_objects.add(choose);
+    Effect apply{}; apply.kind = EffectKind::ApplyStasisAction; apply.payload.state.ApplyStasisAction.card = add();
+    game.action_objects.add(apply);
+    game.event.id = EventId::GremlinMatchGame;
+    auto& match = game.event.state.GremlinMatchGame;
+    match.chosen = add(); match.count = 1; match.cards[0] = add();
+    match.cardsMatched = 1; match.matched[0] = add();
+    const int count = game.cards.count();
+    const int next_uuid = game.next_card_uuid;
+    collect_cards(game);
+    require(game.cards.count() == count - 1 && !game.cards.contains(garbage), "only the unreferenced card is reclaimed");
+    for (int i = 1; i < count; ++i) require(game.cards.contains(i), "a card held only by one root survives");
+    require(game.cards.values[garbage].id == CardId::Count && game.cards.values[garbage].damage == static_cast<int>(0xa5a5a5a5u),
+            "released card bytes are poisoned");
+    require(game.multi_damage.head[garbage] == 0, "releasing a card releases its damage exceptions");
+    for (auto word : game.damage_exceptions.used) require(word == 0, "unreferenced damage rows do not leak");
+    const int reused = create_card(game, make_card(CardId::Strike_G));
+    require(reused == garbage && game.cards[reused].uuid == next_uuid, "a reused slot receives the next UUID");
+    for (int i = 0; i < 2000; ++i) {
+        collect_cards(game);
+        require(create_card(game, make_card(CardId::Shiv)) == reused, "cumulative creation does not consume live-card capacity");
+    }
+    Game copy = game;
+    collect_cards(copy);
+    require(game.cards.contains(reused) && !copy.cards.contains(reused), "copied arenas own independent free lists");
+    copy.player.creature.powers.clear(); copy.run.relics.clear();
+    collect_cards(copy);
+    require(!copy.cards.contains(nightmare.state.Nightmare.card) && !copy.cards.contains(detached),
+            "detached powers and expired master-reference bookkeeping do not retain cards");
+    copy.monster_order.clear();
+    collect_cards(copy);
+    require(!copy.cards.contains(captured.state.Stasis.card), "an expired room's monster arena is not a card root");
+
+    Game event{};
+    event.event.id = EventId::Bonfire;
+    event.event.state.Bonfire.offeredCard = create_card(event, make_card(CardId::Strike_G)) + 1;
+    collect_cards(event);
+    require(event.cards.count() == 1, "Bonfire retains the offered card");
+    event.event = Event{}; event.event.id = EventId::Sssserpent;
+    event.event.state.Sssserpent.curse = create_card(event, make_card(CardId::Doubt));
+    collect_cards(event);
+    require(event.cards.count() == 1 && event.cards[event.event.state.Sssserpent.curse].id == CardId::Doubt,
+            "Sssserpent retains its curse after the previous event releases its card");
+}
+
+static void reused_slots_preserve_instance_rules() {
+    Game game{};
+    const int first = create_card(game, make_card(CardId::Strike_G));
+    const int garbage = create_card(game, make_card(CardId::Shiv));
+    const int second = copy_card(game, first, true);
+    const int historical = copy_card(game, first, true);
+    game.player.card_in_use = first;
+    game.hand.push_back(first); game.draw.push_back(second);
+    game.manager.played_cards.record(historical);
+    collect_cards(game);
+    Effect modify{}; modify.kind = EffectKind::ModifyBlock; modify.amount = 3;
+    modify.payload.state.ModifyBlock.uuid = game.cards[first].uuid;
+    units::actions::ModifyBlock::execute(game, modify);
+    require(game.cards[first].base_block_adjust == 3 && game.cards[second].base_block_adjust == 3 &&
+            game.cards[historical].base_block_adjust == 0,
+            "UUID updates deduplicate battle instances and exclude history-only cards across an empty slot");
+    const int reused = create_card(game, make_card(CardId::Defend_G));
+    game.hand.push_back(reused);
+    units::actions::ModifyBlock::execute(game, modify);
+    require(reused == garbage && game.cards[first].base_block_adjust == 6 && game.cards[second].base_block_adjust == 6 &&
+            game.cards[reused].base_block_adjust == 0 && game.cards[historical].base_block_adjust == 0,
+            "reusing an earlier slot does not change UUID membership or apply a rule twice");
 }
 
 int main() {
@@ -183,4 +301,6 @@ int main() {
     fault_isolation();
     card_value_lifetimes();
     host_overflow_aborts();
+    card_reference_lifetimes();
+    reused_slots_preserve_instance_rules();
 }

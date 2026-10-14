@@ -131,7 +131,7 @@ static void discard_to_hand() {
     discard_card(g, 0, false);
     for (int i = 0; i < 9; ++i) {
         const int card = g.cards.size;
-        g.cards.push_back(make_card(CardId::Defend_G));
+        g.cards.add(make_card(CardId::Defend_G));
         g.hand.push_back(card);
     }
     add_bottom(g, BetterDiscardPileToHand::make(2));

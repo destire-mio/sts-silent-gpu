@@ -50,6 +50,45 @@ struct Card {
           shuffle_back_into_draw_pile(false), return_to_hand(false),
           bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), priced(false), master_reference(false) {}
 };
+struct CardArena {
+    Card values[card_capacity]{};
+    uint64_t used[(card_capacity + 63) / 64]{};
+    uint16_t size = 0;
+    uint16_t free_head = card_capacity;
+    SPIRE_FN bool contains(int index) const {
+        return index >= 0 && index < size && (used[index / 64] & (uint64_t{1} << (index % 64))) != 0;
+    }
+    SPIRE_FN Card& operator[](int index) { SPIRE_ASSERT(contains(index)); return values[index]; }
+    SPIRE_FN const Card& operator[](int index) const { SPIRE_ASSERT(contains(index)); return values[index]; }
+    SPIRE_FN int count() const {
+        int result = 0;
+        for (auto word : used) result += __builtin_popcountll(word);
+        return result;
+    }
+    SPIRE_FN int add(const Card& card) {
+        const int index = free_head != card_capacity ? free_head : size;
+        SPIRE_ASSERT(index < card_capacity);
+        if (free_head != card_capacity) free_head = values[index].misc;
+        else ++size;
+        values[index] = card;
+        used[index / 64] |= uint64_t{1} << (index % 64);
+        return index;
+    }
+    SPIRE_FN void release(int index) {
+        SPIRE_ASSERT(contains(index));
+        auto* bytes = reinterpret_cast<unsigned char*>(&values[index]);
+        for (unsigned i = 0; i < sizeof(Card); ++i) bytes[i] = 0xa5;
+        values[index].id = CardId::Count;
+        values[index].misc = free_head;
+        free_head = index;
+        used[index / 64] &= ~(uint64_t{1} << (index % 64));
+    }
+    SPIRE_FN void clear() {
+        for (auto& word : used) word = 0;
+        size = 0;
+        free_head = card_capacity;
+    }
+};
 using Pile = List<uint8_t, card_capacity>;
 struct CampfireChoice { CampfireOption kind; bool usable; };
 using CampfireOptions = List<CampfireChoice, 8>;
@@ -393,7 +432,7 @@ struct Game {
     Player player{};
     OrbState orbs{};
     int stance_changes[4]{};
-    List<Card, card_capacity> cards{};
+    CardArena cards{};
     List<uint8_t, 64> detached_master_cards{};
     uint64_t pending_card_moves[(card_capacity + 63) / 64]{};
     CardDamage multi_damage{};

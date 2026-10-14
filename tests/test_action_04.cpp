@@ -22,7 +22,7 @@ static Game combat() {
 
 static int card(Game& g, CardId id, Pile& pile) {
     const int index = g.cards.size;
-    g.cards.push_back(make_card(id));
+    g.cards.add(make_card(id));
     g.cards[index].uuid = index + 1;
     pile.push_back(index);
     return index;

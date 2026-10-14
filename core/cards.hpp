@@ -123,8 +123,7 @@ SPIRE_FN inline void queue_card_damage(Game& g, int card, int target) {
     add_bottom(g, e);
 }
 SPIRE_FN inline void queue_card_copy(Game& g, int card, int target) {
-    const int copy = g.cards.size;
-    g.cards.push_back(card_makeSameInstanceOf(g, card));
+    const int copy = g.cards.add(card_makeSameInstanceOf(g, card));
     g.limbo.insert(0, copy);
     if (target != no_target) card_calculateCardDamage(g, copy, target);
     g.cards[copy].purge_on_use = true;

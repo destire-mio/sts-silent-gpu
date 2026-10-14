@@ -32,8 +32,7 @@ struct SpireSpear : MonsterHooks {
                 queue_monster_damage(g, owner, player_target, 0);
             }
             Effect e{}; e.kind = g.run.ascension >= 18 ? EffectKind::MakeTempCardInDrawPile : EffectKind::AddCardDiscard;
-            action_initialize_state(e); e.card = g.cards.size; e.amount = 2;
-            g.cards.push_back(make_card(CardId::Burn)); g.cards[e.card].uuid = g.next_card_uuid++;
+            action_initialize_state(e); e.card = create_card(g, make_card(CardId::Burn)); e.amount = 2;
             add_bottom(g, e);
         } else if (m.move == 2) {
             for (int i = 0; i < g.monster_order.size; ++i) queue_power(g, owner, g.monster_order[i], PowerId::Strength, 2);

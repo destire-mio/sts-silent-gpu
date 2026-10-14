@@ -79,7 +79,7 @@ int main() {
     if (g.run.gold != 32 || g.monsters[0].id != MonsterId::CatalogProbe) return 1;
     monster_init(g, 0);
     if (g.monsters[0].pending_move != 1 || g.monsters[0].move != -1) return 15;
-    g.cards.push_back(make_card(CardId::CatalogProbe));
+    g.cards.add(make_card(CardId::CatalogProbe));
     g.hand.push_back(0);
     const Screen previous = g.screen;
     g.screen = Screen::Combat;

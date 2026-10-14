@@ -60,7 +60,7 @@ static void test_pen_nib_and_sharp_hide() {
     require(has_power(g, g.player.creature, PowerId::PenNib) && g.player.creature.hp == 70,
             "playing a skill keeps Pen Nib and does not trigger Sharp Hide");
     const int card = g.cards.size;
-    g.cards.push_back(make_card(CardId::Strike_G));
+    g.cards.add(make_card(CardId::Strike_G));
     g.hand.push_back(card);
     const int hp = g.monsters[0].creature.hp;
     step(g, {ActionKind::Play, g.hand.size - 1, 0});

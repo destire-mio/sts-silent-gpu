@@ -22,7 +22,7 @@ struct Bonfire : EventHooks {
         if (!s.cardSelect || g.selected_cards.empty()) return;
         const int chosen = g.selected_cards[0];
         const Card card = g.run.master_deck[chosen];
-        g.cards.push_back(card); s.offeredCard = g.cards.size;
+        s.offeredCard = g.cards.add(card) + 1;
         switch (card_rarity(card.id)) {
         case CardRarity::Curse: equip_relic(g, has_relic(g, "Spirit Poop") ? RelicId::Circlet : RelicId::SpiritPoop); break;
         case CardRarity::Common: case CardRarity::Special: heal_creature(g, player_target, 5); break;

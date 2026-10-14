@@ -188,7 +188,7 @@ struct Environment {
             "dead"_a=game.player.creature.dead, "victory"_a=game.screen == Screen::Victory,
             "keys"_a=py::make_tuple(game.run.ruby_key, game.run.emerald_key, game.run.sapphire_key),
             "hand"_a=hand, "monsters"_a=monsters, "powers"_a=powers,
-            "card_slots"_a=game.cards.size,
+            "card_slots"_a=game.cards.count(),
             "choices"_a=choices, "remove"_a=(game.screen == Screen::Discard && !keep_selection) || game.grid_for_purge);
     }
     void step(const py::dict& action) {

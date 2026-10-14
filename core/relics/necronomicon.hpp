@@ -21,8 +21,7 @@ struct Necronomicon : RelicHooks {
             !g.run.relics[relic].state.Necronomicon.activated) return;
         g.run.relics[relic].state.Necronomicon.activated = false;
         queue_relic_above(g, relic, player_target, true);
-        const int copy = g.cards.size;
-        g.cards.push_back(card_makeSameInstanceOf(g, card));
+        const int copy = g.cards.add(card_makeSameInstanceOf(g, card));
         card_applyPowers(g, copy);
         g.cards[copy].purge_on_use = true;
         add_card_queue_item(g, {copy, use.target, c.energy_on_use, true, true}, true);

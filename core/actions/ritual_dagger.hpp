@@ -34,8 +34,9 @@ struct RitualDagger : ActionHooks {
             for (int p = 0; p < 5; ++p)
                 for (int i = 0; i < piles[p]->size; ++i) included[(*piles[p])[i]] = true;
             for (int i = 0; i < g.cards.size; ++i) {
+                if (!included[i]) continue;
                 Card& card = g.cards[i];
-                if (!included[i] || card.uuid != e.payload.state.RitualDagger.uuid) continue;
+                if (card.uuid != e.payload.state.RitualDagger.uuid) continue;
                 card.misc += e.payload.state.RitualDagger.increaseAmount;
                 card_applyPowers(g, i);
                 card.base_damage = card.misc;

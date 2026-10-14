@@ -8,8 +8,7 @@ struct Nightmare : PowerHooks {
     static SPIRE_FN constexpr PowerData data() { PowerData data{}; data.stacks_separately = true; return data; }
     static SPIRE_FN void constructPower(Game& g, Power& p, int, int, int, int copy_me) {
         power_initialize_state(p);
-        const int card = g.cards.size;
-        g.cards.push_back(card_makeStatEquivalentCopy(g, copy_me));
+        const int card = g.cards.add(card_makeStatEquivalentCopy(g, copy_me));
         g.cards[card].uuid = g.next_card_uuid++;
         card_resetAttributes(g, card);
         p.state.Nightmare.card = card;

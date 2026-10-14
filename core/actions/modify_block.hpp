@@ -15,8 +15,9 @@ struct ModifyBlock : ActionHooks {
             for (int i = 0; i < pile->size; ++i)
                 found[(*pile)[i]] = true;
         for (int i = 0; i < g.cards.size; ++i) {
+            if (!found[i]) continue;
             Card& c = g.cards[i];
-            if (found[i] && c.uuid == e.payload.state.ModifyBlock.uuid) {
+            if (c.uuid == e.payload.state.ModifyBlock.uuid) {
                 c.base_block_adjust += e.amount;
                 // ModifyBlockAction.update clamps baseDamage, not baseBlock.
                 if (c.base_damage < 0)

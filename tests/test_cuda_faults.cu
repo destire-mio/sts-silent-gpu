@@ -15,7 +15,7 @@ __global__ void overflow(spire::Game* games, int* reached) {
     spire::bind_fault(game);
     if (index == 0) {
         game.cards.size = spire::card_capacity;
-        game.cards.push_back(spire::Card{});
+        game.cards.add(spire::Card{});
     } else spire::step(game, {spire::ActionKind::EndTurn});
     reached[index] = 1;
 }

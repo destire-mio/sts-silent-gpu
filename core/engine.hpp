@@ -9,6 +9,7 @@
 #include "dungeon.hpp"
 #include "orbs.hpp"
 #include "stances.hpp"
+#include "card_lifetime.hpp"
 
 namespace spire {
 SPIRE_FN inline bool potion_can_discard_base(const Game& g, int) {
@@ -22,11 +23,9 @@ SPIRE_FN inline void insert_random_card(Game& g, Pile& pile, int card) {
     else pile.insert(g.rng.card_random.random(pile.size - 1), card);
 }
 SPIRE_FN inline int copy_card(Game& g, int source, bool same_uuid) {
-    const int index = g.cards.size;
     Card card = card_makeStatEquivalentCopy(g, source);
     card.uuid = same_uuid ? g.cards[source].uuid : g.next_card_uuid++;
-    g.cards.push_back(card);
-    return index;
+    return g.cards.add(card);
 }
 SPIRE_FN inline void remove_queued_card(Game& g, int card) {
     const int count = g.manager.card_queue.size;
@@ -38,10 +37,8 @@ SPIRE_FN inline void remove_queued_card(Game& g, int card) {
     }
 }
 SPIRE_FN inline int create_card(Game& g, Card card) {
-    const int index = g.cards.size;
     card.uuid = g.next_card_uuid++;
-    g.cards.push_back(card);
-    return index;
+    return g.cards.add(card);
 }
 SPIRE_FN inline int upgrade_name_order(int count) {
     int order = 0, place = 1;
@@ -917,8 +914,7 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     for (auto& count : g.stance_changes) count = 0;
     Pile copy{};
     for (int i = 0; i < g.run.master_deck.size; ++i) {
-        const int index = g.cards.size;
-        g.cards.push_back(card_makeSameInstanceOf(g, -i - 2));
+        const int index = g.cards.add(card_makeSameInstanceOf(g, -i - 2));
         g.cards[index].energy_on_use = 0; g.cards[index].priced = false;
         copy.push_back(index);
     }
@@ -984,7 +980,7 @@ SPIRE_FN inline void enter_combat(Game& g) {
     g.multi_damage.clear();
     g.damage_exceptions.clear();
     for (int i = 0; i < retained_indices.size; ++i) {
-        g.cards.push_back(retained[i]);
+        g.cards.add(retained[i]);
         int amounts[monster_capacity];
         for (int j = 0; j < retained[i].multi_damage_count; ++j) amounts[j] = retained_damage[i].at(previous_damage, j);
         DamageArray damage{};
@@ -1399,7 +1395,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
         if (g.combat_reward_skippable) actions.push_back({ActionKind::Skip, -1, -1});
     }
 }
-SPIRE_FN inline void step(Game& g, Action action) {
+SPIRE_FN inline void apply_decision(Game& g, Action action) {
     if (g.fault != 0) return;
     bind_fault(g);
     if (action.kind == ActionKind::PotionUse || action.kind == ActionKind::PotionDiscard) {
@@ -1675,5 +1671,9 @@ SPIRE_FN inline void step(Game& g, Action action) {
         }
     }
     run_until_decision(g);
+}
+SPIRE_FN inline void step(Game& g, Action action) {
+    apply_decision(g, action);
+    if (g.fault == 0) collect_cards(g);
 }
 }

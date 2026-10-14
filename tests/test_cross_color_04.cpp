@@ -19,7 +19,7 @@ int main() {
     require(prostrate.base_magic == 3 && prostrate.magic == 3,
             "upgradeMagicNumber changes base and current magic");
     Game game{};
-    game.cards.push_back(halt);
+    game.cards.add(halt);
     game.cards[0].magic = 20;
     const Card copy = card_makeStatEquivalentCopy(game, 0);
     require(copy.base_magic == 14 && copy.magic == 9,

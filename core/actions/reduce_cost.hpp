@@ -19,8 +19,9 @@ struct ReduceCost : ActionHooks {
             for (int i = 0; i < pile->size; ++i)
                 found[(*pile)[i]] = true;
         for (int i = 0; i < g.cards.size; ++i) {
+            if (!found[i]) continue;
             Card& c = g.cards[i];
-            if (found[i] && c.uuid == e.payload.state.ReduceCost.uuid) {
+            if (c.uuid == e.payload.state.ReduceCost.uuid) {
                 modify_cost_for_combat(c, -1);
             }
         }

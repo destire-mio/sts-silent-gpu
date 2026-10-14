@@ -36,9 +36,8 @@ struct ChooseOneColorless : ActionHooks {
             if (g.discovery_card >= 0) {
                 Card copy = card_makeStatEquivalentCopy(g, g.discovery_card);
                 if (find_power(g, g.player.creature, "MasterRealityPower") >= 0) card_upgrade(copy);
-                const int card = g.cards.size;
                 copy.uuid = g.next_card_uuid++;
-                g.cards.push_back(copy);
+                const int card = g.cards.add(copy);
                 // ChooseOneColorless.update creates one copy even when amount is greater than one.
                 if (e.amount == 1 ? g.hand.size < hand_limit :
                     g.hand.size + e.amount <= hand_limit || g.hand.size == 9) {

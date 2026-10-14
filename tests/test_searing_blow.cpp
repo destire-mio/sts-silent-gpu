@@ -13,9 +13,9 @@ static void require(bool condition, const char* message) {
 
 int main() {
     Game g{};
-    g.cards.push_back(make_card(CardId::SearingBlow, 2));
+    g.cards.add(make_card(CardId::SearingBlow, 2));
     require(g.cards[0].base_damage == 21 && card_canUpgrade(g, 0), "repeated upgrades stay eligible");
-    g.cards.push_back(card_makeCopy(g, 0));
+    g.cards.add(card_makeCopy(g, 0));
     require(g.cards[1].upgrades == 2 && g.cards[1].base_damage == 12 &&
             g.cards[1].state.SearingBlow.flags == 0, "constructor copies preserve only the upgrade count");
     Card equivalent = card_makeStatEquivalentCopy(g, 1);

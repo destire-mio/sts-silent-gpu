@@ -21,7 +21,7 @@ static int card(Game& g, CardId id, Pile& pile, int upgrades = 0) {
     const int index = g.cards.size;
     Card c = make_card(id, upgrades);
     c.uuid = index + 1;
-    g.cards.push_back(c);
+    g.cards.add(c);
     pile.push_back(index);
     return index;
 }
@@ -83,7 +83,7 @@ static void modify_damage() {
     g.cards[c].uuid = g.cards[a].uuid;
     g.player.card_in_use = a;
     const int inactive = g.cards.size;
-    g.cards.push_back(g.cards[a]);
+    g.cards.add(g.cards[a]);
     Effect e = effect(EffectKind::ModifyDamage);
     e.amount = -8;
     e.payload.state.ModifyDamage.uuid = g.cards[a].uuid;
