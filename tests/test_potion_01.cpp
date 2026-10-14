@@ -31,6 +31,12 @@ int main() {
             "Entropic Brew remains usable in other event rooms");
     g.manager.turn_has_ended = true;
     require(potion_canUse(g, 0), "an ended combat turn does not block Entropic Brew outside combat");
+    Game expected = g;
+    const PotionId first = random_potion(expected, false);
+    step(g, {ActionKind::PotionUse, 0, -1});
+    require(g.run.potions[0] == first && g.run.potions[1] == PotionId::BlockPotion,
+            "outside combat, Brew fills the consumed slot and preserves the occupied slot");
+    g.run.potions[0] = PotionId::EntropicBrew;
     g.room_in_combat = true;
     require(!potion_canUse(g, 0), "an ended turn blocks Entropic Brew in combat");
     start_combat(g, setup);

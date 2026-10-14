@@ -1374,6 +1374,12 @@ SPIRE_FN inline void step(Game& g, Action action) {
         }
         g.run.potions[action.index] = PotionId::Empty;
         g.run.potion_identity[action.index] = 0;
+        // EntropicBrew.use queues ObtainPotionEffect; TopPanel destroys the consumed potion before its update.
+        for (int i = 0; i < g.potion_effects.size; ++i) {
+            const PreparedPotion& potion = g.potion_effects[i];
+            if (!has_relic(g, "Sozu")) obtain_potion(g, potion.id, potion.state);
+        }
+        g.potion_effects.clear();
         if (g.screen == Screen::Combat) run_until_decision(g);
         return;
     }

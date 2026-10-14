@@ -20,7 +20,7 @@ struct EntropicBrew : PotionHooks {
         } else if (!has_relic(g, "Sozu")) {
             for (int i = 0; i < g.run.potion_slots; ++i) {
                 const PotionId id = random_potion(g, false);
-                obtain_potion(g, id, construct_potion(g, id));
+                g.potion_effects.push_back({construct_potion(g, id), id});
             }
         }
     }

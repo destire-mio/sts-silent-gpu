@@ -406,6 +406,7 @@ struct Game {
     Pile selection_excluded{};
     Pile drawn_cards{};
     Pile pending_obtains{};
+    List<PreparedPotion, potion_capacity> potion_effects{};
     Pile reward_cards{};
     List<RoomReward, room_reward_capacity> reward_objects{};
     List<uint8_t, room_reward_capacity> room_rewards{};
