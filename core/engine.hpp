@@ -379,10 +379,11 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
         g.manager.damage_received_this_combat += amount;
         if (info.damage_type == DamageType::HpLoss) g.manager.hp_loss_this_combat += amount;
         target.hp -= amount;
-        if (amount > 0) {
+        if (amount > 0 && g.room_phase == RoomPhase::Combat) {
             for (int i = 0; i < g.hand.size; ++i) card_tookDamage(g, g.hand[i]);
             for (int i = 0; i < g.discard.size; ++i) card_tookDamage(g, g.discard[i]);
             for (int i = 0; i < g.draw.size; ++i) card_tookDamage(g, g.draw[i]);
+            ++g.player.damaged_this_combat;
         }
         target.hp = max(0, target.hp);
         if (target.hp <= target.max_hp / 2 && !g.player.bloodied) {
@@ -861,6 +862,7 @@ SPIRE_FN inline void construct_encounter(Game& g, EncounterId encounter) {
     g.encounter = previous;
 }
 SPIRE_FN inline void prepare_player_battle(Game& g) {
+    g.player.damaged_this_combat = 0;
     g.manager.player_hp_last_turn = g.player.creature.hp;
     g.player.bloodied = g.player.creature.hp <= g.player.creature.max_hp / 2;
     g.turn = 1;

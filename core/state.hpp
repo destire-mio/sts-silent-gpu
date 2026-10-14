@@ -202,6 +202,7 @@ struct Player {
     int max_orbs = 0;
     int card_in_use = -1;
     int cards_played_this_turn = 0;
+    int damaged_this_combat = 0;
     Stance stance = Stance::Neutral;
     bool bloodied = false;
     bool end_turn_queued = false;

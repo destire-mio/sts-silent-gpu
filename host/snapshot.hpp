@@ -384,6 +384,7 @@ struct SnapshotGraph {
             });
             if (field == "exhaustPile") return group(2, "EXHAUST_PILE", &game.exhaust);
             if (field == "gameHandSize") return py::int_(game.player.hand_size);
+            if (field == "damagedThisCombat") return py::int_(game.player.damaged_this_combat);
             if (field == "masterHandSize") return py::int_(game.player.master_hand_size);
             if (field == "hand") return group(3, "HAND", &game.hand);
             if (field == "hoveredCard") return py::none();

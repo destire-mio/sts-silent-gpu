@@ -49,7 +49,6 @@ final class Snapshot {
         exclude("core.AbstractCreature", "drawX[escaping-or-escaped]", "Projected to null for escaping or escaped monsters: AbstractMonster.updateEscapeAnimation moves drawX each frame; no encounter combines an escaper with a SpawnMonsterAction user, so no subsequent rule reads it.");
         exclude("cards.CardGroup", "queued", "renderHand scratch list controlling draw order, cleared after rendering.");
         exclude("potions.AbstractPotion", "size isThrown", "Bottle artwork and drink/throw tooltip wording; use and target rules are separate.");
-        exclude("characters.AbstractPlayer", "damagedThisCombat", "Vanilla increments and resets this unused counter but never reads it.");
         exclude("relics.AbstractRelic", "discarded", "Acquisition/disposal marker with no vanilla rule reads.");
         exclude("orbs.Frost", "hFlip1 hFlip2", "Ice-sprite horizontal orientation.");
         exclude("neow.NeowEvent", "npc", "Neow animation object; rewards and event stage are separate.");
