@@ -172,3 +172,4 @@ SPIRE_UNIT(MentalFortress, "MentalFortress", "core/cards/mental_fortress.hpp", M
 SPIRE_UNIT(Nirvana, "Nirvana", "core/cards/nirvana.hpp", Nirvana)
 SPIRE_UNIT(Perseverance, "Perseverance", "core/cards/perseverance.hpp", Perseverance)
 SPIRE_UNIT(PressurePoints, "PathToVictory", "core/cards/pressure_points.hpp", PressurePoints)
+SPIRE_UNIT(Protect, "Protect", "core/cards/protect.hpp", Protect)
