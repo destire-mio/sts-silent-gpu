@@ -1,0 +1,30 @@
+{
+  "deck": [
+    {
+      "id": "FTL",
+      "upgrades": 0
+    },
+    {
+      "id": "Pain",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bottled Flame"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 1,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}
