@@ -70,6 +70,8 @@ public final class Recorder {
         if (acquisition && !AbstractDungeon.isScreenUp) return true;
         String choice = Choices.type();
         if (choice.equals("EVENT")) {
+            // AbstractImageEvent.update restores focus on the frame after a button callback clears it.
+            if (!AbstractDungeon.getCurrRoom().event.hasFocus) return false;
             if (Choices.options().isEmpty()) return false;
             if (Choices.imageDialog() && (Choices.<Float>get(AbstractDungeon.getCurrRoom().event.imageEventText, "animateTimer") != 0.0f
                     || !com.megacrit.cardcrawl.events.GenericEventDialog.waitForInput)) return false;
