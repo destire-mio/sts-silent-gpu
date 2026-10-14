@@ -177,3 +177,4 @@ SPIRE_UNIT(BiasedCognition, "Biased Cognition", "core/cards/biased_cognition.hpp
 SPIRE_UNIT(Blizzard, "Blizzard", "core/cards/blizzard.hpp", Blizzard)
 SPIRE_UNIT(BootSequence, "BootSequence", "core/cards/boot_sequence.hpp", BootSequence)
 SPIRE_UNIT(Buffer, "Buffer", "core/cards/buffer.hpp", Buffer)
+SPIRE_UNIT(Chaos, "Chaos", "core/cards/chaos.hpp", Chaos)
