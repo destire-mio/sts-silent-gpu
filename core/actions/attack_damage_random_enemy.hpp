@@ -3,7 +3,7 @@
 
 namespace spire::units::actions {
 struct AttackDamageRandomEnemy : ActionHooks {
-    SPIRE_WAITING_RULE("AttackDamageRandomEnemyAction: waiting for a ported caller with three-seed oracle replay")
+    SPIRE_WAITING_RULE("AttackDamageRandomEnemyAction: waiting for Ragnarok LIGHTNING branch caller evidence")
     SPIRE_SNAPSHOT("AttackDamageRandomEnemyAction.card", card, effect.card)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         e.target = random_living_monster(g);
