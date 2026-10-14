@@ -1,0 +1,34 @@
+{
+  "deck": [
+    {
+      "id": "Flex",
+      "upgrades": 0
+    },
+    {
+      "id": "Flex",
+      "upgrades": 1
+    },
+    {
+      "id": "Heavy Blade",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    "Ancient Potion",
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}

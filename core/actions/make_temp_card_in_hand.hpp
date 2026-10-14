@@ -10,6 +10,9 @@ struct MakeTempCardInHand : ActionHooks {
     SPIRE_SNAPSHOT("MakeTempCardInHandAction.isOtherCardInCenter", scalar, !effect.payload.state.MakeTempCardInHand.other_card_not_in_center)
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(MakeTempCardInHand, bool same_uuid; bool other_card_not_in_center;)
+    SPIRE_FN static void prepare(Game& g, Effect& e) {
+        upgrade_created_card(g, e.card);
+    }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         if (e.amount == 0) return;
         const int hand_amount = min(e.amount, hand_limit - g.hand.size);
@@ -20,7 +23,8 @@ struct MakeTempCardInHand : ActionHooks {
         // ShowCardAndAddToDiscardEffect(AbstractCard,float,float) inserts srcCard.
         for (int i = hand_amount; i < e.amount; ++i) {
             const int card = copy_card(g, e.card, e.payload.state.MakeTempCardInHand.same_uuid);
-            upgrade_created_card(g, card); g.discard.push_back(card);
+            // ShowCardAndAddToDiscardEffect upgrades its display copy, then inserts srcCard.
+            g.discard.push_back(card);
         }
     }
 };

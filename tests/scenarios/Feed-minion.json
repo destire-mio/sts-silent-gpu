@@ -1,0 +1,36 @@
+{
+  "deck": [
+    {
+      "id": "Feed",
+      "upgrades": 0
+    },
+    {
+      "id": "Feed",
+      "upgrades": 1
+    },
+    {
+      "id": "Impervious",
+      "upgrades": 1
+    },
+    {
+      "id": "Inflame",
+      "upgrades": 1
+    },
+    {
+      "id": "Flex",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Vajra",
+    "Akabeko"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Gremlin Leader"
+}

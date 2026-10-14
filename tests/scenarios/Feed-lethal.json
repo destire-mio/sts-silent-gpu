@@ -1,0 +1,25 @@
+{
+  "deck": [
+    {
+      "id": "Feed",
+      "upgrades": 0
+    },
+    {
+      "id": "Feed",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Vajra",
+    "Pen Nib",
+    "Akabeko"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "2 Louse"
+}

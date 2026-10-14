@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Juggernaut : PowerHooks {
-    SPIRE_WAITING_RULE("JuggernautPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void onGainedBlock(Game& g, Power& p, int owner, float amount) {
         if (amount > 0.0f) {

@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct DualWield : ActionHooks {
-    SPIRE_WAITING_RULE("DualWieldAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "DRAW"}; }
     SPIRE_STATE(DualWield, uint8_t cannotDuplicate[10]; uint8_t count; bool selecting;)
     SPIRE_SNAPSHOT("DualWieldAction.p", player)

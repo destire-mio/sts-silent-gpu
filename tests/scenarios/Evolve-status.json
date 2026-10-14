@@ -1,0 +1,50 @@
+{
+  "deck": [
+    {
+      "id": "Evolve",
+      "upgrades": 0
+    },
+    {
+      "id": "Evolve",
+      "upgrades": 1
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Dazed",
+      "upgrades": 0
+    },
+    {
+      "id": "Burn",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}

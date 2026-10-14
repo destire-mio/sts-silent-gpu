@@ -1,0 +1,54 @@
+{
+  "deck": [
+    {
+      "id": "Havoc",
+      "upgrades": 0
+    },
+    {
+      "id": "Havoc",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Disarm",
+      "upgrades": 0
+    },
+    {
+      "id": "Flex",
+      "upgrades": 0
+    },
+    {
+      "id": "Impervious",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly Armor",
+      "upgrades": 0
+    },
+    {
+      "id": "Bane",
+      "upgrades": 1
+    },
+    {
+      "id": "Headbutt",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}
