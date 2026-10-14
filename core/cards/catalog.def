@@ -173,3 +173,4 @@ SPIRE_UNIT(WindmillStrike, "WindmillStrike", "core/cards/windmill_strike.hpp", W
 SPIRE_UNIT(Worship, "Worship", "core/cards/worship.hpp", Worship)
 SPIRE_UNIT(WreathOfFlame, "WreathOfFlame", "core/cards/wreath_of_flame.hpp", WreathOfFlame)
 SPIRE_UNIT(Anger, "Anger", "core/cards/anger.hpp", Anger)
+SPIRE_UNIT(Barricade, "Barricade", "core/cards/barricade.hpp", Barricade)

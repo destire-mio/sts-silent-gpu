@@ -1,0 +1,52 @@
+{
+  "deck": [
+    {
+      "id": "Barricade",
+      "upgrades": 0
+    },
+    {
+      "id": "Barricade",
+      "upgrades": 1
+    },
+    {
+      "id": "Barricade",
+      "upgrades": 0
+    },
+    {
+      "id": "Body Slam",
+      "upgrades": 0
+    },
+    {
+      "id": "Body Slam",
+      "upgrades": 1
+    },
+    {
+      "id": "Blur",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Spheric Guardian"
+}
