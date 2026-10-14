@@ -224,6 +224,14 @@ hand cards cannot overwrite an earlier one-card grid before Pandora confirmation
 An original recording with 13 extra idle frames changes only this field at decision line
 1204, from 32 to 9; the complete target group, selected cards, legal actions and RNGs agree.
 
+Cancelling a campfire upgrade leaves GridCardSelectScreen.forUpgrade set until the next
+open calls callOnOpen. That method clears the earlier mode, confirmation and selected-card
+state before open assigns its own arguments. Combat selection actions use the same opening
+path. In seed 202610210005, Secret Weapon on floor 33 must retrieve its selected attack;
+carrying the cancelled upgrade flag instead creates an unsupported confirmation and strands
+the action manager. The original rejects that engine-produced skip. Fresh recordings of the
+legal prefix and the corrected whole-game search match both scopes through their terminals.
+
 Monster death state remains rule state. `AbstractMonster.die` sets isDying; its death animation
 later sets isDead and clears powers. GRID/CARD_REWARD freeze that update, so a just-killed
 monster retains its powers and isDead=false there (202610141115, decision 202). Deaths preceding

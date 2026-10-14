@@ -88,6 +88,7 @@ SPIRE_FN inline void settle_card_obtains(Game& g) {
     for (int i = 0; i < g.pending_obtains.size; ++i) obtain_card_object(g, g.pending_obtains[i]);
     g.pending_obtains.clear();
 }
+// GridCardSelectScreen.callOnOpen resets flags left by a cancelled earlier grid.
 SPIRE_FN inline void open_grid_selection(Game& g, PileId source, int amount, bool for_purge) {
     g.screen = Screen::Grid;
     g.grid_source = source;
@@ -96,6 +97,8 @@ SPIRE_FN inline void open_grid_selection(Game& g, PileId source, int amount, boo
     g.grid_for_purge = for_purge;
     g.grid_for_upgrade = g.grid_for_transform = g.grid_is_master_deck = false;
     g.grid_can_cancel = false;
+    g.grid_confirm_screen = g.selection_confirmation = false;
+    g.grid_hovered_card = -1;
     g.selected_cards.clear();
 }
 SPIRE_FN inline void prepare_relic_selection(Game& g) {

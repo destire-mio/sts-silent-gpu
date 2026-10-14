@@ -24,12 +24,10 @@ struct Scry : ActionHooks {
             const int count = e.amount == -1 ? g.draw.size : min(e.amount, g.draw.size);
             for (int i = 0; i < count; ++i)
                 g.grid_cards.push_back(g.draw[g.draw.size - i - 1]);
-            g.grid_source = PileId::Grid;
-            g.selected_cards.clear();
-            g.grid_num_cards = e.amount;
+            open_grid_selection(g, PileId::Grid, e.amount, false);
+            g.grid_can_cancel = true;
             g.selection_any_number = true;
             g.selection_can_pick_zero = true;
-            g.screen = Screen::Grid;
             e.payload.state.Scry.selecting = true;
             for (int i = 0; i < g.discard.size; ++i)
                 card_triggerOnScry(g, g.discard[i]);

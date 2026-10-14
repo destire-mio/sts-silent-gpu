@@ -35,12 +35,9 @@ struct SkillFromDeckToHand : ActionHooks {
                 }
                 return;
             }
-            g.grid_source = PileId::Grid;
-            g.selection_any_number = false;
-            g.grid_num_cards = e.amount;
-            g.selected_cards.clear();
+            open_grid_selection(g, PileId::Grid, e.amount, false);
+            g.grid_can_cancel = true;
             e.payload.state.SkillFromDeckToHand.selecting = true;
-            g.screen = Screen::Grid;
             return;
         }
         if (!g.selected_cards.empty()) {

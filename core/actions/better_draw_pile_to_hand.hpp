@@ -29,11 +29,9 @@ struct BetterDrawPileToHand : ActionHooks {
             }
             g.grid_cards = g.draw;
             sort_selection_cards(g);
-            g.grid_source = PileId::Grid;
-            g.selected_cards.clear();
-            g.grid_num_cards = state.numberOfCards;
+            open_grid_selection(g, PileId::Grid, state.numberOfCards, false);
+            g.grid_can_cancel = true;
             g.selection_any_number = g.selection_can_pick_zero = state.optional;
-            g.screen = Screen::Grid;
             state.selecting = true;
             return;
         }

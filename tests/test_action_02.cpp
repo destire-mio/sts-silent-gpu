@@ -188,6 +188,7 @@ static void armaments() {
 
 static void attack_from_deck() {
     Game g = combat();
+    g.grid_for_upgrade = true;
     const int a = card(g, CardId::Strike_G, g.draw);
     const int b = card(g, CardId::Neutralize, g.draw);
     const int skill = card(g, CardId::Defend_G, g.draw);

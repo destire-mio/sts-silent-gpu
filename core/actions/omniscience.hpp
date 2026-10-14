@@ -14,11 +14,9 @@ struct Omniscience : ActionHooks {
                 return;
             g.grid_cards = g.draw;
             sort_selection_cards(g);
-            g.grid_source = PileId::Grid;
-            g.selected_cards.clear();
-            g.grid_num_cards = 1;
+            open_grid_selection(g, PileId::Grid, 1, false);
+            g.grid_can_cancel = true;
             g.selection_any_number = g.selection_can_pick_zero = false;
-            g.screen = Screen::Grid;
             e.payload.state.Omniscience.selecting = true;
             return;
         }

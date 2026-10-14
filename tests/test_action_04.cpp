@@ -54,6 +54,7 @@ static void test_setup() {
 
 static void test_draw_pile_transfers() {
     Game g = combat();
+    g.grid_for_transform = true;
     const int attack = card(g, CardId::Strike_G, g.draw);
     const int first = card(g, CardId::Defend_G, g.draw);
     const int second = card(g, CardId::Survivor, g.draw);

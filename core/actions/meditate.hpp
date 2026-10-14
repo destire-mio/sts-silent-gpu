@@ -27,11 +27,9 @@ struct Meditate : ActionHooks {
                     move(g, cards[i], true);
                 return;
             }
-            g.grid_source = PileId::Discard;
-            g.selected_cards.clear();
-            g.grid_num_cards = e.extra;
+            open_grid_selection(g, PileId::Discard, e.extra, false);
+            g.grid_can_cancel = true;
             g.selection_any_number = g.selection_can_pick_zero = false;
-            g.screen = Screen::Grid;
             e.payload.state.Meditate.selecting = true;
             return;
         }
