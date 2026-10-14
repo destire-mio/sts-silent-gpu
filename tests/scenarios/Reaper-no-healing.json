@@ -1,0 +1,33 @@
+{
+  "deck": [
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Mark of the Bloom"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 30,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}

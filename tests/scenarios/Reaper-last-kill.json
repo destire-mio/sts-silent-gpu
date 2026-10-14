@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Vajra"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 20,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}
