@@ -11,6 +11,7 @@ struct Shuriken : RelicHooks {
             ++counter;
             if (counter % 3 == 0) {
                 counter = 0;
+                queue_relic_above(g, relic, player_target, false);
                 queue_power(g, player_target, player_target, PowerId::Strength, 1);
             }
         }
