@@ -1,0 +1,31 @@
+{
+  "deck": [
+    {
+      "id": "FearNoEvil",
+      "upgrades": 0
+    },
+    {
+      "id": "FearNoEvil",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 1
+    },
+    {
+      "id": "FlurryOfBlows",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}

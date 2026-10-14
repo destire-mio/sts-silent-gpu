@@ -4,7 +4,9 @@
 
 namespace spire {
 SPIRE_FN inline void upgrade_created_card(Game&, int);
-SPIRE_FN inline CardId foreign_attack_card(Game&);
+SPIRE_FN inline int foreign_attack_card(Game&);
+SPIRE_FN inline int create_library_card(Game&, int);
+SPIRE_FN inline CardId library_card_native(int);
 SPIRE_FN inline void sort_selection_cards(Game&);
 SPIRE_FN inline void modify_cost_for_combat(Card&, int);
 SPIRE_FN inline CardId random_common_card(Game&);

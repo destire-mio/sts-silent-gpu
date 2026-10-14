@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct Deva : PowerHooks {
-    SPIRE_WAITING_RULE("DevaPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     SPIRE_STATE(Deva, int energyGainAmount;)
     static SPIRE_FN void initialPower(Game &, Power& p, int) {

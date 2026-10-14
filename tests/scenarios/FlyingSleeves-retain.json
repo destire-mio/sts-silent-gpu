@@ -1,0 +1,40 @@
+{
+  "deck": [
+    {
+      "id": "FlyingSleeves",
+      "upgrades": 0
+    },
+    {
+      "id": "FlyingSleeves",
+      "upgrades": 1
+    },
+    {
+      "id": "Establishment",
+      "upgrades": 1
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "end_turn"
+    }
+  ]
+}

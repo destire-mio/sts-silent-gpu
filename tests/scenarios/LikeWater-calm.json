@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "LikeWater",
+      "upgrades": 0
+    },
+    {
+      "id": "LikeWater",
+      "upgrades": 1
+    },
+    {
+      "id": "InnerPeace",
+      "upgrades": 1
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 1
+    },
+    {
+      "id": "EmptyBody",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}

@@ -166,6 +166,13 @@ SPIRE_FN inline int create_reward(Game& g, RoomReward reward) {
     g.reward_objects.push_back(reward);
     return index;
 }
+SPIRE_FN inline int create_library_card(Game& g, int library) {
+    const CardId native = library_card_native(library);
+    if (native != CardId::Count) return create_card(g, make_card(g, native));
+    const int card = card_capacity + g.foreign_reward_cards.size;
+    g.foreign_reward_cards.push_back({static_cast<uint16_t>(library), static_cast<uint16_t>(g.next_card_uuid++)});
+    return card;
+}
 SPIRE_FN inline int create_card_reward(Game& g) {
     RoomReward reward{};
     List<const char*, reward_card_capacity> choices{};
@@ -173,12 +180,7 @@ SPIRE_FN inline int create_card_reward(Game& g) {
     for (int i = 0; i < choices.size; ++i) {
         int library = 0;
         while (!same_id(library_reward_cards[library].id, choices[i])) ++library;
-        const auto& entry = library_reward_cards[library];
-        if (entry.native != CardId::Count) reward.cards.push_back(create_card(g, make_card(g, entry.native)));
-        else {
-            reward.cards.push_back(card_capacity + g.foreign_reward_cards.size);
-            g.foreign_reward_cards.push_back({static_cast<uint16_t>(library), static_cast<uint16_t>(g.next_card_uuid++)});
-        }
+        reward.cards.push_back(create_library_card(g, library));
     }
     for (int i = 0; i < reward.cards.size; ++i) {
         if (reward.cards[i] >= card_capacity) {

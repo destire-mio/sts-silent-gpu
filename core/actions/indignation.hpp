@@ -4,7 +4,6 @@
 
 namespace spire::units::actions {
 struct Indignation : ActionHooks {
-    SPIRE_WAITING_RULE("IndignationAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (g.player.stance == Stance::Wrath) {
             for (int i = 0; i < g.monster_order.size; ++i)

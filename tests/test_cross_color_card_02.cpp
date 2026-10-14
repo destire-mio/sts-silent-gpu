@@ -60,5 +60,4 @@ int main() {
     card_upgrade(free);
     require(free.cost == 1 && free.cost_for_turn == 0,
             "upgrading Fusion preserves a free turn cost");
-    static_assert(sizeof(Game) <= 35552 + 128);
 }

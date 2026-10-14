@@ -1,0 +1,35 @@
+{
+  "deck": [
+    {
+      "id": "Indignation",
+      "upgrades": 0
+    },
+    {
+      "id": "Indignation",
+      "upgrades": 1
+    },
+    {
+      "id": "Indignation",
+      "upgrades": 1
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 1
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "3 Louse"
+}
