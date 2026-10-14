@@ -2,11 +2,13 @@
 #include "snapshot.hpp"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <type_traits>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
 
 namespace spire::host {
+static_assert(std::is_trivially_copyable_v<Game>);
 py::dict action_snapshot(const Action& action) {
     switch (action.kind) {
     case ActionKind::Play: return py::dict("type"_a="play", "card"_a=action.index, "target"_a=action.target);
@@ -129,6 +131,7 @@ struct Environment {
         }
         spire::reset(game, seed, profile);
         fresh = FreshRunState{}; initialize_fresh_run(fresh);
+        if (scenario.contains("actions") && !scenario.contains("encounter")) return;
         const auto setup = parse_setup(game, scenario);
         spire::start_combat(game, setup);
     }
@@ -139,6 +142,51 @@ struct Environment {
         return py::cast(std::vector<std::string>(graph.gaps.begin(), graph.gaps.end()));
     }
     py::list legal_actions() const { return legal_snapshot(game); }
+    py::dict search_state() const {
+        py::list hand, monsters, powers, choices;
+        if (game.screen == Screen::Discard || game.screen == Screen::Grid || game.screen == Screen::CardReward) {
+            const auto& pile = game.screen == Screen::Discard ? game.hand :
+                game.screen == Screen::Grid ? get_pile(game, game.grid_source) : game.reward_cards;
+            for (int i = 0; i < pile.size; ++i) {
+                const auto& card = get_card(game, game.screen == Screen::Grid && game.grid_source == PileId::MasterDeck ? -pile[i] - 2 : pile[i]);
+                choices.append(card_names[static_cast<int>(card.id)]);
+            }
+        }
+        for (int i = 0; i < game.player.creature.powers.size; ++i) {
+            const auto& power = game.player.creature.powers.at(game.power_objects, i);
+            powers.append(py::make_tuple(power_names[static_cast<int>(power.id)], power.amount));
+        }
+        for (int i = 0; i < game.hand.size; ++i) {
+            const auto& card = game.cards[game.hand[i]];
+            hand.append(py::dict("id"_a=card_names[static_cast<int>(card.id)],
+                "type"_a=static_cast<int>(card_data(card.id).type), "cost"_a=card.cost_for_turn,
+                "damage"_a=card.damage, "block"_a=card.block, "magic"_a=card.magic));
+        }
+        for (int index = 0; index < game.monster_order.size; ++index) {
+            const auto& monster = game.monsters[game.monster_order[index]];
+            py::list powers;
+            for (int i = 0; i < monster.creature.powers.size; ++i) {
+                const auto& power = monster.creature.powers.at(game.power_objects, i);
+                powers.append(py::make_tuple(power_names[static_cast<int>(power.id)], power.amount));
+            }
+            monsters.append(py::dict("hp"_a=monster.creature.hp, "block"_a=monster.creature.block,
+                "alive"_a=!(monster.creature.dead || monster.creature.escaped || monster.creature.half_dead),
+                "damage"_a=monster.intent_damage, "hits"_a=monster.intent_hits,
+                "powers"_a=powers));
+        }
+        const bool keep_selection = game.selection_for_upgrade || (game.manager.has_current_action &&
+            (game.action_objects[game.manager.current_action].kind == EffectKind::RetainCards ||
+             game.action_objects[game.manager.current_action].kind == EffectKind::NightmareAction ||
+             game.action_objects[game.manager.current_action].kind == EffectKind::Setup));
+        return py::dict("act"_a=game.run.act, "floor"_a=game.run.floor,
+            "hp"_a=game.player.creature.hp, "max_hp"_a=game.player.creature.max_hp,
+            "block"_a=game.player.creature.block, "energy"_a=game.player.energy,
+            "turn"_a=game.turn, "combat"_a=game.room_in_combat && !game.battle_over,
+            "dead"_a=game.player.creature.dead, "victory"_a=game.screen == Screen::Victory,
+            "keys"_a=py::make_tuple(game.run.ruby_key, game.run.emerald_key, game.run.sapphire_key),
+            "hand"_a=hand, "monsters"_a=monsters, "powers"_a=powers,
+            "choices"_a=choices, "remove"_a=(game.screen == Screen::Discard && !keep_selection) || game.grid_for_purge);
+    }
     void step(const py::dict& action) {
         if (game.fault != 0) return;
         spire::step(game, parse_action(action));
@@ -161,6 +209,8 @@ PYBIND11_MODULE(spire, module) {
         .def("legal_actions", &Environment::legal_actions)
         .def("step", &Environment::step, "action"_a)
         .def("snapshot", &Environment::snapshot)
+        .def("copy", [](const Environment& env) { return env; })
+        .def("search_state", &Environment::search_state)
         .def("schema_gaps", &Environment::schema_gaps)
         .def_property_readonly("fault", [](const Environment& env) { return env.game.fault; });
     module.def("reset", [](std::int64_t seed, bool playtime_at_least_800) { Environment result; result.reset(seed, playtime_at_least_800); return result; }, "seed"_a, "playtime_at_least_800"_a=false);

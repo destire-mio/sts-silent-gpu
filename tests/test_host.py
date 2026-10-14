@@ -23,6 +23,26 @@ def pile(state, name):
 
 
 class HostInterface(unittest.TestCase):
+    def test_copy_keeps_run_rng_and_object_identity_independent(self):
+        game = spire.start_combat(11, {
+            'encounter': 'Cultist', 'deck': [{'id': 'Survivor', 'upgrades': 0}] * 4,
+        })
+        game.step({'type': 'play', 'card': 0, 'target': -1})
+        before = game.snapshot()
+        copied = game.copy()
+        self.assertEqual(before, copied.snapshot())
+        copied.step({'type': 'choose', 'option': 0})
+        self.assertEqual(before, game.snapshot())
+        game.step({'type': 'choose', 'option': 0})
+        for env in (game, copied):
+            env.step({'type': 'proceed'})
+            env.step({'type': 'end_turn'})
+        self.assertEqual(game.snapshot(), copied.snapshot())
+
+    def test_action_only_scenario_starts_at_neow(self):
+        self.assertEqual(spire.reset(27).snapshot(),
+                         spire.start_combat(27, {'actions': []}).snapshot())
+
     def test_fault_api_and_indexed_reset(self):
         batch = spire.Batch(2)
         batch.start_combat([1, 2], {"encounter": "Cultist"})
