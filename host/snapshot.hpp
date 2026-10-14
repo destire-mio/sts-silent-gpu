@@ -117,11 +117,11 @@ struct SnapshotGraph {
             if (field == "baseDamage") return py::int_(card.base_damage);
             if (field == "baseMagicNumber") return py::int_(card.base_magic);
             if (field == "block") {
-                if (definition.block == -1 && card_baseBlock(card) == -1) return py::none();
+                if (!game.room_in_combat || (definition.block == -1 && card_baseBlock(card) == -1)) return py::none();
                 return py::int_(card.block);
             }
             if (field == "damage") {
-                if (definition.damage == -1 && card.base_damage == -1) return py::none();
+                if (!game.room_in_combat || (definition.damage == -1 && card.base_damage == -1)) return py::none();
                 return py::int_(card.damage);
             }
             if (field == "magicNumber") return py::int_(card.magic);
@@ -866,7 +866,7 @@ struct SnapshotGraph {
                 return result;
             }
             if (field == "currentAction") return manager.has_current_action ? effect(game.action_objects[manager.current_action], 3, manager.current_action) : py::object(py::none());
-            if (field == "hasControl") return py::bool_(manager.has_control);
+            if (field == "hasControl") return game.room_in_combat ? py::object(py::bool_(manager.has_control)) : py::object(py::none());
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
             if (field == "usingCard") return py::bool_(manager.using_card);
             if (field == "mantraGained") return py::int_(manager.mantra_gained);
@@ -878,7 +878,7 @@ struct SnapshotGraph {
                 for (int i = first; i < game.orbs.channeled.size; ++i) result.append(orb(game.orbs.channeled[i]));
                 return result;
             }
-            if (field == "phase") return py::str(manager.phase == Phase::WaitingOnUser ? "WAITING_ON_USER" : "EXECUTING_ACTIONS");
+            if (field == "phase") return game.room_in_combat ? py::object(py::str(manager.phase == Phase::WaitingOnUser ? "WAITING_ON_USER" : "EXECUTING_ACTIONS")) : py::object(py::none());
             if (field == "turnHasEnded") return py::bool_(manager.turn_has_ended);
             if (field == "uniqueStancesThisCombat") {
                 py::dict result;

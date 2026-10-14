@@ -1394,10 +1394,7 @@
   },
   "actions.utility.TextAboveCreatureAction": {
     "extends": "actions.AbstractGameAction",
-    "fields": {
-      "msg": "java.lang.String",
-      "used": "boolean"
-    }
+    "fields": {}
   },
   "actions.utility.TextCenteredAction": {
     "extends": "actions.AbstractGameAction",
@@ -13412,6 +13409,8 @@
     "actions.AbstractGameAction.attackEffect": "Attack artwork and sound selection, not damage calculation.",
     "actions.AbstractGameAction.duration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
     "actions.AbstractGameAction.startDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "actions.GameActionManager.hasControl[outside-combat]": "Projected to null outside COMBAT: a final WaitAction can leave the dispatcher executing after rewards freeze it. The only external hasControl reader is AbstractPlayer.updateInput in COMBAT; preBattlePrep queues actions, and getNextAction overwrites both fields before any next-battle input or selection.",
+    "actions.GameActionManager.phase[outside-combat]": "Projected to null outside COMBAT: a final WaitAction can leave the dispatcher executing after rewards freeze it. The only external hasControl reader is AbstractPlayer.updateInput in COMBAT; preBattlePrep queues actions, and getNextAction overwrites both fields before any next-battle input or selection.",
     "actions.GameActionManager.previousAction": "Historical action references are assigned or cleared but never read by vanilla rules.",
     "actions.GameActionManager.turnStartCurrentAction": "Historical action references are assigned or cleared but never read by vanilla rules.",
     "actions.animations.ShoutAction.bubbleDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
@@ -13449,8 +13448,12 @@
     "actions.utility.ShakeScreenAction.intensity": "Screen-shake presentation.",
     "actions.utility.ShakeScreenAction.shakeDur": "Screen-shake presentation.",
     "actions.utility.ShakeScreenAction.startDur": "Screen-shake presentation.",
+    "actions.utility.TextAboveCreatureAction.msg": "Localized floating text and its one-shot rendering flag; update only creates TextAboveCreatureEffect and ticks duration. Queue position and source/target remain recorded.",
+    "actions.utility.TextAboveCreatureAction.used": "Localized floating text and its one-shot rendering flag; update only creates TextAboveCreatureEffect and ticks duration. Queue position and source/target remain recorded.",
     "actions.watcher.ClarityAction.startingDuration": "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.",
+    "cards.AbstractCard.block[outside-combat]": "Projected to null outside COMBAT: Soul completion may refresh retained cards before or after their restoration. No event, shop, Neow, relic or potion rule reads card damage/block caches outside combat. initializeDeck replaces combat piles with master-deck copies; makeStatEquivalentCopy copies base stats, not these caches; useCard recalculates before use.",
     "cards.AbstractCard.block[unset-base]": "Projected to null when both the CardLibrary template and current base stat are -1: Soul flight uses presentation RNG, positions and frame time, so its hand refresh changes unused caches between -1 and 0. No gameplay caller consumes these unset stats; useCard and AttackDamageRandomEnemyAction recalculate before use, and SpiritShield assigns baseBlock before its block read.",
+    "cards.AbstractCard.damage[outside-combat]": "Projected to null outside COMBAT: Soul completion may refresh retained cards before or after their restoration. No event, shop, Neow, relic or potion rule reads card damage/block caches outside combat. initializeDeck replaces combat piles with master-deck copies; makeStatEquivalentCopy copies base stats, not these caches; useCard recalculates before use.",
     "cards.AbstractCard.damage[unset-base]": "Projected to null when both the CardLibrary template and current base stat are -1: Soul flight uses presentation RNG, positions and frame time, so its hand refresh changes unused caches between -1 and 0. No gameplay caller consumes these unset stats; useCard and AttackDamageRandomEnemyAction recalculate before use, and SpiritShield assigns baseBlock before its block read.",
     "cards.AbstractCard.isBlockModified": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",
     "cards.AbstractCard.isCostModified": "Card text color or upgrade display; numeric stats and upgrade count remain recorded.",

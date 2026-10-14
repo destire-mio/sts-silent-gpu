@@ -49,6 +49,7 @@ final class Snapshot {
     static final Map<String, String> EXCLUDED = new TreeMap<String, String>();
     static {
         exclude("core.AbstractCreature", "drawX[escaping-or-escaped]", "Projected to null for escaping or escaped monsters: AbstractMonster.updateEscapeAnimation moves drawX each frame; no encounter combines an escaper with a SpawnMonsterAction user, so no subsequent rule reads it.");
+        exclude("cards.AbstractCard", "block[outside-combat] damage[outside-combat]", "Projected to null outside COMBAT: Soul completion may refresh retained cards before or after their restoration. No event, shop, Neow, relic or potion rule reads card damage/block caches outside combat. initializeDeck replaces combat piles with master-deck copies; makeStatEquivalentCopy copies base stats, not these caches; useCard recalculates before use.");
         exclude("cards.AbstractCard", "block[unset-base] damage[unset-base]", "Projected to null when both the CardLibrary template and current base stat are -1: Soul flight uses presentation RNG, positions and frame time, so its hand refresh changes unused caches between -1 and 0. No gameplay caller consumes these unset stats; useCard and AttackDamageRandomEnemyAction recalculate before use, and SpiritShield assigns baseBlock before its block read.");
         exclude("cards.CardGroup", "queued", "renderHand scratch list controlling draw order, cleared after rendering.");
         exclude("potions.AbstractPotion", "size isThrown", "Bottle artwork and drink/throw tooltip wording; use and target rules are separate.");
@@ -85,7 +86,9 @@ final class Snapshot {
         exclude("screens.select.GridCardSelectScreen", "ritualAnimTimer", "Schedules a disposable transform preview using presentation RNG; confirmation ignores the preview.");
         exclude("screens.select.HandCardSelectScreen", "waitToCloseTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
         exclude("actions.AbstractGameAction", "attackEffect", "Attack artwork and sound selection, not damage calculation.");
+        exclude("actions.GameActionManager", "hasControl[outside-combat] phase[outside-combat]", "Projected to null outside COMBAT: a final WaitAction can leave the dispatcher executing after rewards freeze it. The only external hasControl reader is AbstractPlayer.updateInput in COMBAT; preBattlePrep queues actions, and getNextAction overwrites both fields before any next-battle input or selection.");
         exclude("actions.GameActionManager", "previousAction turnStartCurrentAction", "Historical action references are assigned or cleared but never read by vanilla rules.");
+        exclude("actions.utility.TextAboveCreatureAction", "msg used", "Localized floating text and its one-shot rendering flag; update only creates TextAboveCreatureEffect and ticks duration. Queue position and source/target remain recorded.");
         exclude("actions.animations.ShoutAction", "msg used", "Speech presentation and its one-shot display flag.");
         exclude("actions.animations.TalkAction", "msg player used", "Speech presentation and its one-shot display flag.");
         exclude("actions.animations.VFXAction", "isTopLevelEffect", "Chooses a rendering effect list.");
@@ -364,6 +367,12 @@ final class Snapshot {
                         && value instanceof com.megacrit.cardcrawl.monsters.AbstractMonster
                         && (((com.megacrit.cardcrawl.monsters.AbstractMonster)value).isEscaping
                             || ((com.megacrit.cardcrawl.monsters.AbstractMonster)value).escaped))
+                    data.add(entry.getKey(), JsonNull.INSTANCE);
+                else if ((entry.getKey().equals("GameActionManager.hasControl") || entry.getKey().equals("GameActionManager.phase"))
+                        && AbstractDungeon.getCurrRoom().phase != com.megacrit.cardcrawl.rooms.AbstractRoom.RoomPhase.COMBAT)
+                    data.add(entry.getKey(), JsonNull.INSTANCE);
+                else if ((entry.getKey().equals("AbstractCard.block") || entry.getKey().equals("AbstractCard.damage"))
+                        && AbstractDungeon.getCurrRoom().phase != com.megacrit.cardcrawl.rooms.AbstractRoom.RoomPhase.COMBAT)
                     data.add(entry.getKey(), JsonNull.INSTANCE);
                 else if (entry.getKey().equals("AbstractCard.block") && template.baseBlock == -1 && card.baseBlock == -1
                         || entry.getKey().equals("AbstractCard.damage") && template.baseDamage == -1 && card.baseDamage == -1)

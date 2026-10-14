@@ -13,8 +13,7 @@ Exactness: same seed + same actions => same snapshot as the original at every de
 ## Engine (`core/`)
 One `Game` struct holds a whole run: run state, combat state and every RNG stream. It is plain
 data with fixed capacities, so a batch is an array of `Game` and a GPU thread owns one element.
-The integration size target is 36 KiB per `Game`, with a 48 KiB compile-time budget for later
-content and rules. Per-unit payload budgets
+The size limit is 36 KiB per `Game`, enforced at compile time. Per-unit payload budgets
 and the build-time member breakdown are described in `porting.md`.
 
 Entry points, all deterministic and free of global state:
@@ -181,11 +180,26 @@ its `use` calls `applyPowers`, which assigns `baseBlock` from hand count before 
 The current-base condition therefore preserves its computed value. `AbstractPlayer.useCard`
 calls `calculateCardDamage` before `use`; `AttackDamageRandomEnemyAction.update` recalculates
 before reading the card's damage. `makeStatEquivalentCopy` copies base stats, not these caches.
-The template condition preserves real stats even if arithmetic makes a current base negative.
+During COMBAT the template condition preserves real stats even if arithmetic makes a current base negative.
 An original-game reproduction delaying Soul flight by 120 frames in the recorder changed only
 these unset caches in all 22 reported terminal failures; actions, legal actions, RNG streams
 and all other recorded fields were identical. The observer never changes the Java card, flight,
 rule RNG, patched game classes or comparison. Fresh recordings use the same scenario and seed.
+
+Outside COMBAT the observer projects card `damage` and `block` caches to null, including real
+stats; base stats remain exact. In seed 202610142024, floor 38, RestoreRetainedCardsAction
+returns Poisoned Stab with its reset damage 6 after the discard Souls finish. Completing a
+Soul after that return would instead apply the player's Strength and leave damage 12. Flight
+speed, position and frame time choose that ordering. This cache survives in the hand and
+DrawCardAction.drawnCards after victory, but no event, shop, Neow, relic or potion rule reads
+card damage/block outside combat. `AbstractPlayer.preBattlePrep` clears combat piles;
+`CardGroup.initializeDeck` creates copies from the master deck. `makeStatEquivalentCopy`
+copies baseDamage/baseBlock, not damage/block. `DrawCardAction` replaces drawnCards before
+EscapePlan/Scrape can read it, and `useCard` recalculates before using a card. Acquisition and
+upgrade paths retain base stats and recompute their caches. Therefore these remnants cannot
+supply a later rule value. This does not exclude any real damage/block cache during COMBAT:
+Codex's ShowCardAndAddToDrawPileEffect/Soul hand refresh must run at hand-selection decisions,
+including the 9-versus-11 and 7-versus-5 regressions on seed 202610141365.
 
 Power, relic and monster fields include private subclass counters/references as well as
 base state. `manager.currentAction` and all rule actions in queues are recorded even at interrupted
@@ -193,6 +207,24 @@ card-selection decisions. The observer omits exact `WaitAction` queue entries an
 exact `WaitAction` current action to null: its update only advances a presentation timer and has
 no rule callback. Other action classes and their included fields remain in the graph. Graph
 references retain the identity of their cards, powers and creatures.
+
+`GameActionManager.hasControl` and `phase` remain exact during COMBAT. Outside COMBAT the
+observer projects both to null. `GameActionManager.update` resets these only in its COMBAT
+branch; `clear` resets phase but preserves hasControl, and a trailing `WaitAction` may leave
+phase EXECUTING_ACTIONS when rewards freeze the room. A source-wide read audit finds the only
+external hasControl read in `AbstractPlayer.updateInput`, called by `AbstractRoom.update` only
+in COMBAT while monsters remain. Phase only dispatches the manager's next update. On entering
+another battle, `AbstractPlayer.preBattlePrep` queues a WaitAction and combat setup queues the
+initial actions. In either prior phase, `getNextAction` assigns EXECUTING_ACTIONS and hasControl
+true when taking that first action, before any card-selection or player input. On draining the
+combat queue, update assigns WAITING_ON_USER and false. Thus no future rule consumes the
+outside-combat remnants before these writes; the observer changes neither dispatcher nor queue.
+
+`TextAboveCreatureAction.msg` and `used` are excluded like Talk/Shout display fields. Its update
+creates only `TextAboveCreatureEffect`, marks the text displayed and ticks its duration. No rule
+reads that text or flag. The action object, queue position, source and target remain recorded:
+AcidSlime_L, SpikeSlime_L and SlimeBoss enqueue it before SetMoveAction when damage triggers a
+split, and its presence changes the queue visible at interrupted hand selections.
 
 `RunState` has the following exact keys (Java `AbstractDungeon` names except the final two):
 
