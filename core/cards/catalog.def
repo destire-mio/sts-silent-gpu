@@ -168,3 +168,4 @@ SPIRE_UNIT(FameAndFortune, "FameAndFortune", "core/cards/fame_and_fortune.hpp", 
 SPIRE_UNIT(Fission, "Fission", "core/cards/fission.hpp", Fission)
 SPIRE_UNIT(WaveOfTheHand, "WaveOfTheHand", "core/cards/wave_of_the_hand.hpp", WaveOfTheHand)
 SPIRE_UNIT(Weave, "Weave", "core/cards/weave.hpp", Weave)
+SPIRE_UNIT(WheelKick, "WheelKick", "core/cards/wheel_kick.hpp", WheelKick)
