@@ -21,6 +21,7 @@ struct Astrolabe : RelicHooks {
         g.selected_cards.clear();
     }
     static SPIRE_FN void onEquip(Game& g, int relic) {
+        prepare_relic_selection(g);
         g.run.relics[relic].state.Astrolabe.cardsSelected = false;
         master_selection_cards(g, -1);
         if (g.grid_cards.empty()) {

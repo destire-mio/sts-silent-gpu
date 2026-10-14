@@ -1149,7 +1149,11 @@ SPIRE_FN inline void open_map(Game& g) {
     g.room_phase = RoomPhase::Complete;
 }
 SPIRE_FN inline void update_event(Game& g) {
-    if (g.event.id != EventId::Count) event_update(g);
+    if (g.event.id != EventId::Count) {
+        event_update(g);
+        if (event_data(g.event.id).image && !g.room_in_combat && (g.screen == Screen::None || g.screen == Screen::Event))
+            g.event.has_focus = true;
+    }
     settle_card_obtains(g);
 }
 SPIRE_FN inline void complete_master_selection(Game& g) {
@@ -1241,7 +1245,7 @@ SPIRE_FN inline void next_act(Game& g) {
         g.monster_order.clear();
         g.event = Event{}; g.room_event_class = 0;
     }
-    g.screen = Screen::Map; g.previous_screen = Screen::None;
+    g.screen = Screen::Map;
 }
 SPIRE_FN inline void enter_boss_treasure(Game& g) {
     g.run.monster_list.erase(0);
@@ -1478,17 +1482,19 @@ SPIRE_FN inline void step(Game& g, Action action) {
             // ProceedButton.update consumes the first attempt to leave three relic rewards with an FTUE.
             if (action.kind == ActionKind::Proceed && relic_count == 3 && !g.reward_relic_warning_seen) {
                 g.reward_relic_warning_seen = true;
+                g.previous_screen = Screen::CombatReward;
                 return;
             }
             if (action.kind == ActionKind::Skip) {
                 if (g.previous_screen == g.screen) g.previous_screen = Screen::None;
-                g.screen = g.event.id == EventId::Count ? Screen::None : Screen::Event;
+                g.screen = g.event.id != EventId::Count ? Screen::Event : g.room_kind == RoomKind::BossTreasure ? Screen::Room : Screen::None;
             } else if (g.room_kind == RoomKind::BossTreasure) next_act(g);
             else if (g.room_kind == RoomKind::Boss && g.run.act < 3) enter_boss_treasure(g);
             else if (g.room_kind == RoomKind::Event && !event_data(g.event.id).reward_opens_map) {
                 g.previous_screen = Screen::None;
                 g.screen = Screen::Event;
                 event_reopen(g);
+                update_event(g);
             } else open_map(g);
         }
         return;

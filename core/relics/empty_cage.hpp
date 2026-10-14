@@ -17,6 +17,7 @@ struct EmptyCage : RelicHooks {
         g.room_phase = RoomPhase::Complete;
     }
     static SPIRE_FN void onEquip(Game& g, int relic) {
+        prepare_relic_selection(g);
         g.run.relics[relic].state.EmptyCage.cardsSelected = false;
         g.room_phase = RoomPhase::Incomplete;
         g.grid_cards.clear();

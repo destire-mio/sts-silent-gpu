@@ -185,7 +185,6 @@ SPIRE_FN inline void purchase_shop(Game& g, int choice) {
             relic_initialize_state(reward.relic);
             item.price = shop_restock_price(g, relic_data(replacement).price);
         } else g.shop.relics.erase(position);
-        if (g.screen == Screen::Grid) g.previous_screen = Screen::Shop;
         settle_card_obtains(g);
     } else {
         const int position = choice - 11;

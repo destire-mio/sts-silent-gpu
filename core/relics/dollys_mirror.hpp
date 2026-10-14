@@ -6,6 +6,7 @@ struct DollysMirror : RelicHooks {
     SPIRE_STATE(DollysMirror, bool cardSelected;)
     static SPIRE_FN void initializeState(Relic& relic) { relic.state.DollysMirror.cardSelected = true; }
     static SPIRE_FN void onEquip(Game& g, int relic) {
+        prepare_relic_selection(g);
         g.run.relics[relic].state.DollysMirror.cardSelected = false;
         g.room_phase = RoomPhase::Incomplete;
         g.grid_cards.clear();

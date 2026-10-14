@@ -11,6 +11,8 @@ struct BottledFlame : RelicHooks {
         master_selection_cards(g, CardType::Attack);
         if (!g.grid_cards.empty()) {
             g.run.relics[relic].state.BottledFlame.cardSelected = false;
+            prepare_relic_selection(g);
+            g.room_phase = RoomPhase::Incomplete;
             open_master_selection(g, 1, false);
         }
     }
@@ -18,6 +20,7 @@ struct BottledFlame : RelicHooks {
         auto& state = g.run.relics[relic].state.BottledFlame;
         if (!state.cardSelected && !g.selected_cards.empty()) {
             state.cardSelected = true;
+            g.room_phase = RoomPhase::Complete;
             Card& card = g.run.master_deck[g.selected_cards[0]];
             state.card = card.uuid;
             card.bottle_flame = true;

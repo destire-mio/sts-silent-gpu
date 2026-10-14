@@ -23,6 +23,11 @@ SPIRE_FN inline int create_colorless_reward(Game& g) {
 }
 SPIRE_FN inline RelicTier random_relic_tier(Game& g) {
     const int roll = g.rng.relic.random(0, 99);
+    return g.run.act == 4 ? RelicTier::Uncommon : roll < 50 ? RelicTier::Common : roll < 83 ? RelicTier::Uncommon : RelicTier::Rare;
+}
+SPIRE_FN inline RelicTier random_elite_relic_tier(Game& g) {
+    // MonsterRoomElite.returnRandomRelicTier does not use TheEnding's dungeon odds.
+    const int roll = g.rng.relic.random(0, 99);
     return roll < 50 ? RelicTier::Common : roll < 83 ? RelicTier::Uncommon : RelicTier::Rare;
 }
 SPIRE_FN inline RelicId random_screenless_relic(Game& g, RelicTier tier) {
@@ -66,9 +71,9 @@ SPIRE_FN inline void combat_rewards(Game& g) {
         return;
     }
     if (g.room_kind == RoomKind::Elite) {
-        add_relic_reward(g, random_relic_tier(g));
+        add_relic_reward(g, random_elite_relic_tier(g));
         for (int i = 0; i < g.run.relics.size; ++i)
-            if (relic_data(g.run.relics[i].id).extra_elite_relic) add_noncamp_relic_reward(g, random_relic_tier(g));
+            if (relic_data(g.run.relics[i].id).extra_elite_relic) add_noncamp_relic_reward(g, random_elite_relic_tier(g));
         if (!g.run.emerald_key && g.run.map[g.run.node_y][g.run.node_x].emerald) add_key_reward(g, RewardKind::EmeraldKey);
     }
     int chance = g.room_kind == RoomKind::Elite || g.room_kind == RoomKind::Event ||

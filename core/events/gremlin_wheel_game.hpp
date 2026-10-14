@@ -29,7 +29,7 @@ struct GremlinWheelGame : EventHooks {
         } else if (s.screen == 1) {
             s.screen = 2; event_options(g, 1);
             // EventRoom.update completes the room after applyResult clears hasFocus.
-            if (s.result < 4) g.room_phase = RoomPhase::Complete;
+            if (s.result < 4) { g.event.has_focus = false; g.room_phase = RoomPhase::Complete; }
             if (s.result == 1) {
                 g.room_rewards.clear();
                 RoomReward reward{}; reward.kind = RewardKind::Relic;
@@ -54,6 +54,7 @@ struct GremlinWheelGame : EventHooks {
         auto& s = g.event.state.GremlinWheelGame;
         if (!s.purgeResult || g.selected_cards.empty()) return;
         remove_master_card(g, g.selected_cards[0]); g.selected_cards.clear(); s.purgeResult = false;
+        g.event.has_focus = false;
         g.room_phase = RoomPhase::Complete;
     }
 };

@@ -91,6 +91,10 @@ SPIRE_FN inline void open_grid_selection(Game& g, PileId source, int amount, boo
     g.grid_can_cancel = false;
     g.selected_cards.clear();
 }
+SPIRE_FN inline void prepare_relic_selection(Game& g) {
+    if (g.screen == Screen::CombatReward || g.screen == Screen::Shop || g.screen == Screen::BossReward)
+        g.previous_screen = g.screen;
+}
 SPIRE_FN inline void open_master_selection(Game& g, int amount, bool for_purge) {
     open_grid_selection(g, PileId::MasterDeck, amount, for_purge);
 }
@@ -347,13 +351,16 @@ SPIRE_FN inline RelicId relic_id(const char* name) {
 SPIRE_FN inline RelicKey random_relic_key(Game& g, int tier, bool from_end) {
     while (true) {
         int pool = tier;
-        while (g.run.relic_pools[pool].empty() && (pool < 2 || pool == 3)) pool = pool == 3 ? 1 : pool + 1;
+        while (g.run.relic_pools[pool].empty() && (pool < 2 || pool == 3)) {
+            pool = pool == 3 ? 1 : pool + 1;
+            from_end = false;
+        }
         RelicKey key;
         if (g.run.relic_pools[pool].empty()) {
             // RelicLibrary.getRelic maps AbstractDungeon's exhausted boss-pool key to Circlet.
             key = RelicKey::Circlet;
         }
-        else key = g.run.relic_pools[pool].erase(from_end ? g.run.relic_pools[pool].size - 1 : 0);
+        else key = g.run.relic_pools[pool].erase((from_end && pool != static_cast<int>(RelicTier::Boss)) ? g.run.relic_pools[pool].size - 1 : 0);
         if (relic_can_spawn_id(g, relic_id(relic_key_name(key)))) return key;
         from_end = true;
     }
