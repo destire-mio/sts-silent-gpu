@@ -19,7 +19,7 @@ UNITS = {
     }
 """),
     "powers": ("PowerHooks", """
-    SPIRE_STATE(CatalogProbe, int counter; bool active;)
+    SPIRE_STATE(CatalogProbe, int16_t counter; bool active;)
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void atStartOfTurn(Game& g, Power& p, int) {
         ++p.state.CatalogProbe.counter;

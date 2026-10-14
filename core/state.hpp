@@ -404,10 +404,10 @@ struct Game {
     uint64_t deaths_before_monster_turn = 0;
     bool player_turn_effect_pending = false;
     Pile selection_excluded{};
-    Pile drawn_cards{};
+    List<uint8_t, hand_limit> drawn_cards{};
     Pile pending_obtains{};
     List<PreparedPotion, potion_capacity> potion_effects{};
-    Pile reward_cards{};
+    List<uint8_t, reward_card_capacity> reward_cards{};
     List<RoomReward, room_reward_capacity> reward_objects{};
     List<uint8_t, room_reward_capacity> room_rewards{};
     List<uint8_t, room_reward_capacity> screen_rewards{};
@@ -480,7 +480,7 @@ struct Game {
     bool smoked = false;
     int bomb_id_offset = 0;
 };
-static_assert(sizeof(Game) <= 48 * 1024, "Game exceeds the 48 KiB device memory budget; see docs/porting.md");
+static_assert(sizeof(Game) <= 36 * 1024, "Game exceeds the 36 KiB device memory budget; see docs/porting.md");
 
 SPIRE_FN inline uint32_t next_power_identity(Game& g) {
     SPIRE_ASSERT(g.next_power_instance < (uint32_t{1} << 29));

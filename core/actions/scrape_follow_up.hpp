@@ -4,7 +4,7 @@
 namespace spire::units::actions {
 struct ScrapeFollowUp : ActionHooks {
     static SPIRE_FN void execute(Game& g, Effect &) {
-        const Pile cards = g.drawn_cards;
+        const auto cards = g.drawn_cards;
         for (int i = 0; i < cards.size; ++i) {
             const int card = cards[i];
             if (g.cards[card].cost_for_turn == 0 || g.cards[card].free_to_play_once)

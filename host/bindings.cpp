@@ -145,12 +145,15 @@ struct Environment {
     py::dict search_state() const {
         py::list hand, monsters, powers, choices;
         if (game.screen == Screen::Discard || game.screen == Screen::Grid || game.screen == Screen::CardReward) {
-            const auto& pile = game.screen == Screen::Discard ? game.hand :
-                game.screen == Screen::Grid ? get_pile(game, game.grid_source) : game.reward_cards;
-            for (int i = 0; i < pile.size; ++i) {
-                const auto& card = get_card(game, game.screen == Screen::Grid && game.grid_source == PileId::MasterDeck ? -pile[i] - 2 : pile[i]);
-                choices.append(card_names[static_cast<int>(card.id)]);
-            }
+            const auto append = [&](const auto& pile) {
+                for (int i = 0; i < pile.size; ++i) {
+                    const auto& card = get_card(game, game.screen == Screen::Grid && game.grid_source == PileId::MasterDeck ? -pile[i] - 2 : pile[i]);
+                    choices.append(card_names[static_cast<int>(card.id)]);
+                }
+            };
+            if (game.screen == Screen::Discard) append(game.hand);
+            else if (game.screen == Screen::Grid) append(get_pile(game, game.grid_source));
+            else append(game.reward_cards);
         }
         for (int i = 0; i < game.player.creature.powers.size; ++i) {
             const auto& power = game.player.creature.powers.at(game.power_objects, i);

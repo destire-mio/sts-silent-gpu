@@ -173,9 +173,8 @@ policy still draws once per decision, and supplies actions after the prefix.
 
 ## Device memory budget
 
-The integration target is **36 KiB per Game**; the merged layout is measured by each build.
-`state.hpp` retains the **48 KiB hard budget** for subsequent content and rules. Do not raise
-that assertion to land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
+The hard budget is **36 KiB per Game**; the merged layout is measured by each build.
+Do not raise that assertion to land a unit. Every build of a core consumer runs `host/check_layout.py`: Clang discovers the
 fields and prints every `Game` member, its element size/capacity, the element types and their
 fields, and every generated unit payload. There is no handwritten member list to keep in sync.
 
@@ -206,11 +205,11 @@ from an object's current position in an ordered list:
   Those parent lists are not retained in `Game`. Monster/elite/boss lists reserve 16/10/3
   byte IDs, the maxima produced by the four dungeon generators. Event/shrine/one-time
   lists reserve 16/8/16 byte inventory keys and retain Java order.
-- Master-deck cards removed while a relic or event references them stay in the existing 160-card arena.
+- Master-deck cards removed while a relic or event references them stay in the existing 184-card arena.
   A 64-byte index list supplies a shared execution budget for these references; retained master objects consume
   the same execution budget as combat cards and keep a distinct snapshot identity.
 - Master-deck and combat cards are different objects with matching UUIDs
-  (`AbstractCard.makeSameInstanceOf`). The master deck holds 128 cards and the combat arena holds 160; piles and played histories
+  (`AbstractCard.makeSameInstanceOf`). The master deck holds 128 cards and the combat arena holds 184; piles and played histories
   hold byte indices into combat cards. The Reptomancer high-health recordings exceed 128
   combat card objects through Wound generation. These capacities are execution budgets.
   Do not put `Card` values in another pile or queue.
@@ -252,7 +251,7 @@ from an object's current position in an ordered list:
 - Text needed by action state uses offsets into a 1,024-byte per-combat interned buffer, with
   offset zero representing Java null. No process pointers or per-action character buffers.
   Constant facts and derivable snapshot fields belong in unit data and host projections.
-- Pending card acquisition effects hold byte indices in a 160-entry list into the same card
+- Pending card acquisition effects hold byte indices in a 184-entry list into the same card
   arena. Their callbacks settle before a decision; they do not enter the Java action queue.
 
 The hand limit of 10 comes from `DrawCardAction.update` and card-generation actions; Armaments'
@@ -282,11 +281,19 @@ generation uses a 128-card temporary list, an execution budget for Java
 The remaining budgets are 32 card-queue entries, 64 relics and 1,024 played-card references
 per combat. The master deck starts with 13 cards at
 A20 (`TheSilent.getStartingDeck` plus the ascension curse); its 128 slots leave room for rewards
-and events. The combat arena has 160 slots including copies, templates and created cards.
+and events. The combat arena has 184 slots including copies, templates and created cards.
 **These capacities are execution budgets, not Java limits.**
 Java uses growing lists; card-creation loops and repeated turns have no finite bound. Histories,
 held actions, detached powers, text and damage rows can also exhaust their budgets. A valid Java
 sequence can therefore fault an environment; count this separately from losses and reset it.
+A Neow game on seed 202610141141 reaches 162 resident objects by decision 1522 through Cloak
+and Dagger. The former 160 slots were insufficient. The arena now holds 184 cards; DrawCardAction's
+history uses ten indices (the hand limit, including split draws across a shuffle), and card-reward
+selection uses eight indices (the reward-card limit), rather than full combat piles. These two
+lists do not truncate: recursive draw parts share a hand-limited amount, and reward selections
+come from bounded reward lists or three-card Discovery/Codex/ChooseOne choices. The resulting
+Game is 36,616 bytes. Search telemetry records branch counts at 128 and 160 and peak residency.
+
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
 Card damage/block, power amounts, orb amounts and player energy keep Java's 32-bit range.
@@ -302,7 +309,7 @@ A card's shop price and combat `energyOnUse` share two bytes, distinguished by `
 Shop cards retain their price when acquired; combat copies and stat-equivalent copies start
 with zero price (`AbstractCard.makeStatEquivalentCopy`). Do not play a master-deck object.
 Card UUIDs use 16 bits: combat setup renumbers the master deck, and subsequent creation
-consumes the 160-card arena. Bottled references use the same width. Catalog enum widths are
+consumes the 184-card arena. Bottled references use the same width. Catalog enum widths are
 generated from catalog size; do not narrow a CardId to a byte in unit state. Byte pile indices
 name arena slots, not card kinds.
 

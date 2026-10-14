@@ -16,7 +16,8 @@ static void require(bool condition, const char* message) {
     }
 }
 
-static void require_pile(const Pile& actual, std::initializer_list<int> expected, const char* message) {
+template<class Cards>
+static void require_pile(const Cards& actual, std::initializer_list<int> expected, const char* message) {
     require(actual.size == static_cast<int>(expected.size()), message);
     int index = 0;
     for (int card : expected) require(actual[index++] == card, message);
