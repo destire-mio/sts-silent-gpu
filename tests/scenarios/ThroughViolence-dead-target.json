@@ -1,0 +1,35 @@
+{
+  "deck": [
+    {
+      "id": "ThroughViolence",
+      "upgrades": 1
+    },
+    {
+      "id": "ThroughViolence",
+      "upgrades": 1
+    },
+    {
+      "id": "Double Tap",
+      "upgrades": 1
+    },
+    {
+      "id": "Double Tap",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "MutagenicStrength"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}

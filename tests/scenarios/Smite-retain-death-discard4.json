@@ -1,0 +1,42 @@
+{
+  "deck": [
+    {
+      "id": "Smite",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}
