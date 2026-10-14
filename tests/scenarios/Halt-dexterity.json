@@ -1,0 +1,36 @@
+{
+  "deck": [
+    {
+      "id": "Halt",
+      "upgrades": 0
+    },
+    {
+      "id": "Halt",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 1
+    },
+    {
+      "id": "Fasting2",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper",
+    "Oddly Smooth Stone"
+  ],
+  "potions": [
+    "Dexterity Potion",
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}

@@ -182,3 +182,4 @@ SPIRE_UNIT(FlyingSleeves, "FlyingSleeves", "core/cards/flying_sleeves.hpp", Flyi
 SPIRE_UNIT(FollowUp, "FollowUp", "core/cards/follow_up.hpp", FollowUp)
 SPIRE_UNIT(ForeignInfluence, "ForeignInfluence", "core/cards/foreign_influence.hpp", ForeignInfluence)
 SPIRE_UNIT(Foresight, "Wireheading", "core/cards/foresight.hpp", Foresight)
+SPIRE_UNIT(Halt, "Halt", "core/cards/halt.hpp", Halt)
