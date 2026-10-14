@@ -181,3 +181,4 @@ SPIRE_UNIT(MachineLearning, "Machine Learning", "core/cards/machine_learning.hpp
 SPIRE_UNIT(Hologram, "Hologram", "core/cards/hologram.hpp", Hologram)
 SPIRE_UNIT(Hyperbeam, "Hyperbeam", "core/cards/hyperbeam.hpp", Hyperbeam)
 SPIRE_UNIT(Leap, "Leap", "core/cards/leap.hpp", Leap)
+SPIRE_UNIT(LockOn, "Lockon", "core/cards/lock_on.hpp", LockOn)
