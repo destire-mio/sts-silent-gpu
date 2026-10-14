@@ -219,8 +219,9 @@ SPIRE_FN inline void apply_card_block(Game& g, int card) {
     c.block = max(0, floor_int(value));
 }
 SPIRE_FN inline void refresh_powers(Game& g) {
-    for (int i = 0; i < g.orbs.slots.size; ++i) if (g.orbs.slots[i] >= 0) apply_orb_focus(g, g.orbs.slots[i]);
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
+    if (!g.orbs.slots.empty() && has_power(g, g.player.creature, PowerId::Focus))
+        for (int i = 0; i < g.orbs.slots.size; ++i) if (g.orbs.slots[i] >= 0) apply_orb_focus(g, g.orbs.slots[i]);
     for (int i = 0; i < g.monster_order.size; ++i) monster_applyPowers(g, g.monster_order[i]);
 }
 SPIRE_FN inline void queue_damage(Game& g, int source, int target, int base, DamageType type, int steal) {
@@ -303,6 +304,8 @@ SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t inst
         power_onRemove(g, c.powers.at(g.power_objects, index), target);
         c.powers.erase(g.power_objects, index);
         refresh_powers(g);
+        for (int i = 0; i < g.orbs.slots.size; ++i)
+            if (g.orbs.slots[i] >= 0) apply_orb_focus(g, g.orbs.slots[i]);
     }
 }
 SPIRE_FN inline bool keeps_block(const Game& g, int owner) {

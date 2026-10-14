@@ -43,6 +43,33 @@ SPIRE_FN inline int create_card(Game& g, Card card) {
     g.cards.push_back(card);
     return index;
 }
+SPIRE_FN inline void sort_selection_cards(Game& g) {
+    const int rarity_rank[] = {0, 2, 3, 4, 1, 5};
+    for (int i = 1; i < g.grid_cards.size; ++i) {
+        const int card = g.grid_cards[i]; const Card& value = g.cards[card];
+        const int rank = (card_data(value.id).type == CardType::Status ? 100000 : 0) - rarity_rank[static_cast<int>(card_rarity(value.id))] * 1000 + card_name_order(value);
+        int j = i;
+        while (j > 0) {
+            const Card& previous = g.cards[g.grid_cards[j - 1]];
+            const int previous_rank = (card_data(previous.id).type == CardType::Status ? 100000 : 0) - rarity_rank[static_cast<int>(card_rarity(previous.id))] * 1000 + card_name_order(previous);
+            if (previous_rank <= rank) break;
+            g.grid_cards[j] = g.grid_cards[j - 1]; --j;
+        }
+        g.grid_cards[j] = card;
+    }
+}
+SPIRE_FN inline CardId foreign_attack_card(Game& g) {
+    const int roll = g.rng.card_random.random(99);
+    const CardRarity rarity = roll < 55 ? CardRarity::Common : roll < 85 ? CardRarity::Uncommon : CardRarity::Rare;
+    List<uint16_t, 384> cards{};
+    for (int i = 0; i < static_cast<int>(sizeof(library_reward_cards) / sizeof(*library_reward_cards)); ++i)
+        if (library_reward_cards[i].type == CardType::Attack && library_reward_cards[i].rarity == rarity && !library_reward_cards[i].healing) cards.push_back(i);
+    g.rng.card_random.randomLong();
+    return card_id(library_reward_cards[cards[g.rng.card.random(cards.size - 1)]].id);
+}
+SPIRE_FN inline CardId random_common_card(Game& g) {
+    return card_id(common_card_pool[g.rng.card_random.random(static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)) - 1)].id);
+}
 SPIRE_FN inline const char* random_card_in_combat(Game& g, int type, bool colorless) {
     const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool, colorless_card_pool};
     List<const char*, 128> candidates{};
@@ -103,9 +130,14 @@ SPIRE_FN inline void move_to_bottom_of_deck(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.hand, card);
     g.draw.insert(0, card);
-    g.cards[card].pending_clear = true;
+    mark_card_move(g, card);
+}
+SPIRE_FN inline void upgrade_created_card(Game& g, int card) {
+    const CardType type = card_data(g.cards[card].id).type;
+    if (type != CardType::Curse && type != CardType::Status && has_power(g, g.player.creature, PowerId::MasterReality)) card_upgrade(g.cards[card]);
 }
 SPIRE_FN inline void add_created_card_to_hand(Game& g, int card) {
+    upgrade_created_card(g, card);
     g.hand.push_back(card);
     card_triggerWhenCopied(g, card);
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
@@ -131,11 +163,16 @@ SPIRE_FN inline void on_draw_or_discard(Game& g) {
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_onDrawOrDiscard(g, powers.at(g.power_objects, i), player_target);
     for (int i = 0; i < g.run.relics.size; ++i) relic_onDrawOrDiscard(g, i);
+    if (has_power(g, g.player.creature, PowerId::Corruption))
+        for (int i = 0; i < g.hand.size; ++i) {
+            Card& card = g.cards[g.hand[i]];
+            if (card_data(card.id).type == CardType::Skill && card.cost_for_turn != 0) modify_cost_for_combat(card, -9);
+        }
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
 }
 SPIRE_FN inline void move_to_discard(Game& g, int card) {
     remove_queued_card(g, card);
-    g.cards[card].pending_clear = true;
+    mark_card_move(g, card);
     card_onMoveToDiscard(g, card);
     g.discard.push_back(card);
     on_draw_or_discard(g);
@@ -218,6 +255,8 @@ SPIRE_FN inline void exhaust_from_pile(Game& g, int card, PileId pile) {
 SPIRE_FN inline void draw_pile_to_discard(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.draw, card);
+    mark_card_move(g, card);
+    card_onMoveToDiscard(g, card);
     g.discard.push_back(card);
     on_draw_or_discard(g);
 }
@@ -225,7 +264,7 @@ SPIRE_FN inline void hand_to_deck(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.hand, card);
     g.draw.push_back(card);
-    g.cards[card].pending_clear = true;
+    mark_card_move(g, card);
 }
 SPIRE_FN inline void add_card_queue_item(Game& g, const CardQueueItem& item, bool immediate) {
     // GameActionManager.addCardQueueItem inserts after the currently queued card.
@@ -438,14 +477,19 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     }
     if (m.pending_base_damage >= 0) m.intent_damage = calculate_intent_damage(g, owner, m.pending_base_damage);
 }
+SPIRE_FN inline void mark_card_move(Game& g, int card) {
+    g.pending_card_moves[card / 64] |= uint64_t{1} << (card % 64);
+}
 SPIRE_FN inline void settle_card_moves(Game& g) {
     // Soul.update clears the moving card and refreshes the hand when its move completes.
     bool moved = false;
-    for (int i = 0; i < g.cards.size; ++i) {
-        if (!g.cards[i].pending_clear) continue;
-        card_clearPowers(g, i);
-        g.cards[i].pending_clear = false;
-        moved = true;
+    for (int word = 0; word < (card_capacity + 63) / 64; ++word) {
+        while (g.pending_card_moves[word]) {
+            const int bit = __builtin_ctzll(g.pending_card_moves[word]);
+            card_clearPowers(g, word * 64 + bit);
+            g.pending_card_moves[word] &= ~(uint64_t{1} << bit);
+            moved = true;
+        }
     }
     if (moved && g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward)
         for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
@@ -571,19 +615,21 @@ SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
 }
 SPIRE_FN inline void begin_player_turn(Game& g) {
     settle_card_moves(g);
-    // AbstractMonster.updateDeathAnimation clears powers before the next player-turn callbacks.
-    for (int i = 0; i < g.monster_order.size; ++i) {
-        Creature& creature = g.monsters[g.monster_order[i]].creature;
-        if (creature.dead) creature.powers.clear();
-    }
-    for (int i = 0; i < g.monster_order.size; ++i) {
-        const int id = g.monster_order[i];
-        if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_turn(g, id);
-    }
-    at_end_of_round(g, player_target);
-    for (int i = 0; i < g.monster_order.size; ++i) {
-        const int id = g.monster_order[i];
-        if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_round(g, id);
+    // AbstractRoom.endTurn and GameActionManager.getNextAction wait across the monster turn;
+    // AbstractMonster.updateDeathAnimation has cleared deaths preceding that turn.
+    for (int i = 0; i < g.monsters.size; ++i)
+        if ((g.deaths_before_monster_turn >> i) & 1) g.monsters[i].creature.powers.clear();
+    g.deaths_before_monster_turn = 0;
+    if (!g.skip_monster_turn) {
+        for (int i = 0; i < g.monster_order.size; ++i) {
+            const int id = g.monster_order[i];
+            if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_turn(g, id);
+        }
+        at_end_of_round(g, player_target);
+        for (int i = 0; i < g.monster_order.size; ++i) {
+            const int id = g.monster_order[i];
+            if (!g.monsters[id].creature.dying && !g.monsters[id].creature.escaped) at_end_of_round(g, id);
+        }
     }
     g.player.cards_played_this_turn = 0;
     g.orbs.turn_start = g.orbs.channeled.size;
@@ -597,6 +643,7 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
     start_turn_orbs(g);
     ++g.turn;
+    g.skip_monster_turn = false;
     g.manager.turn_has_ended = false;
     g.manager.total_discarded_this_turn = 0;
     g.manager.played_cards.begin_turn();
@@ -698,10 +745,13 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             complete_end_turn(g);
         } else if (!g.manager.monster_attacks_queued) {
             g.manager.monster_attacks_queued = true;
+            g.deaths_before_monster_turn = 0;
+            for (int i = 0; i < g.monsters.size; ++i)
+                if (g.monsters[i].creature.dead) g.deaths_before_monster_turn |= uint64_t{1} << i;
             for (int i = 0; i < g.monster_order.size; ++i) {
                 const int id = g.monster_order[i];
                 const Creature& c = g.monsters[id].creature;
-                if (alive(c) || c.half_dead) g.manager.monster_queue.push_back(id);
+                if (!g.skip_monster_turn && (alive(c) || c.half_dead)) g.manager.monster_queue.push_back(id);
             }
             if (g.manager.phase == Phase::ExecutingActions && !g.manager.using_card) {
                 g.manager.phase = Phase::WaitingOnUser;
@@ -712,6 +762,8 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         } else if (!g.manager.monster_queue.empty()) {
             const int id = g.manager.monster_queue.pop_front();
             if (alive(g.monsters[id].creature) || g.monsters[id].creature.half_dead) {
+                for (int i = 0; i < g.monsters.size; ++i)
+                    if (g.monsters[i].creature.dead) g.deaths_before_monster_turn |= uint64_t{1} << i;
                 if (g.monsters[id].intent != Intent::None) {
                     Effect show{};
                     show.kind = EffectKind::ShowMoveName;
@@ -742,6 +794,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.orbs.channeled.clear(); g.orbs.turn_start = 0;
             for (auto& count : g.stance_changes) count = 0;
             g.manager.energy_gained_this_combat = 0;
+            g.manager.mantra_gained = 0;
             g.manager.damage_received_this_combat = 0;
             g.manager.damage_received_this_turn = 0;
             g.manager.hp_loss_this_combat = 0;
@@ -788,6 +841,7 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     Card retained[64]{};
     for (int i = 0; i < g.detached_master_cards.size; ++i) retained[i] = g.cards[g.detached_master_cards[i]];
     g.cards.clear();
+    for (auto& word : g.pending_card_moves) word = 0;
     g.foreign_reward_cards.clear();
     for (int i = 0; i < g.detached_master_cards.size; ++i) { g.detached_master_cards[i] = i; g.cards.push_back(retained[i]); }
     g.event = Event{};
@@ -832,6 +886,7 @@ SPIRE_FN inline void enter_combat(Game& g, EncounterId encounter) {
     encounter_initialize_state(g);
     g.player.hand_size = g.player.master_hand_size;
     g.player.energy = 0;
+    g.skip_monster_turn = false;
     g.player.cards_played_this_turn = 0;
     g.orbs.turn_start = g.orbs.channeled.size;
     g.player.end_turn_queued = false;

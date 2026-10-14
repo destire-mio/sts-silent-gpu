@@ -123,7 +123,7 @@ struct SnapshotGraph {
             if (field == "color" || field == "rarity" || field == "type" || field == "tags")
                 return py::reinterpret_borrow<py::object>(data[py::str(field)]);
             if (field == "target") {
-                const char* targets[] = {"ENEMY", "SELF", "NONE", "ALL_ENEMY"};
+                const char* targets[] = {"ENEMY", "SELF", "NONE", "ALL_ENEMY", "ALL"};
                 return py::str(targets[static_cast<int>(card.target)]);
             }
             if (field == "upgradedCost") return py::bool_(card.upgraded_cost);
@@ -642,7 +642,7 @@ struct SnapshotGraph {
             if (field == "cannotLose") return py::bool_(game.cannot_lose);
             if (field == "eliteTrigger") return py::bool_(game.room_elite_trigger);
             if (field == "combatEvent") return py::bool_(game.room_combat_event);
-            if (field == "skipMonsterTurn") return py::bool_(false);
+            if (field == "skipMonsterTurn") return py::bool_(game.skip_monster_turn);
             if (field == "smoked") return py::bool_(game.smoked);
             if (field == "event") return event();
             if (field == "campfireUI") return campfire();
@@ -866,7 +866,7 @@ struct SnapshotGraph {
             if (field == "hasControl") return py::bool_(manager.has_control);
             if (field == "lastCard" || field == "turnStartCurrentAction") return py::none();
             if (field == "usingCard") return py::bool_(manager.using_card);
-            if (field == "mantraGained") return py::int_(0);
+            if (field == "mantraGained") return py::int_(manager.mantra_gained);
             if (field == "monsterAttacksQueued") return py::bool_(manager.monster_attacks_queued);
             if (field == "nextCombatActions") return py::list();
             if (field == "orbsChanneledThisCombat" || field == "orbsChanneledThisTurn") {
@@ -947,13 +947,14 @@ struct SnapshotGraph {
                 const std::string field = key.substr(key.find('.') + 1);
                 if (field == "rewardGroup") return cards(game.reward_cards);
                 if (field == "discoveryCard") return card(game.discovery_card);
-                if (field == "discovery") return py::bool_(game.room_in_combat);
+                if (field == "discovery") return py::bool_(game.room_in_combat && !(game.manager.has_current_action && game.action_objects[game.manager.current_action].kind == EffectKind::ChooseOne));
                 if (field == "skippable") return py::bool_(game.reward_skippable);
                 if (field == "draftCount") return py::int_(0);
                 if (field == "rItem") return game.room_in_combat || game.acquisition_reward < 0 ? py::object(py::none()) : core_reward(game.acquisition_reward);
                 if (field == "codexCard") return py::none();
                 if (field == "cardOnly") return py::bool_(false);
-                if (field == "chooseOne" || field == "codex" || field == "draft" || field == "hasTakenAll") return py::bool_(false);
+                if (field == "chooseOne") return py::bool_(game.manager.has_current_action && game.action_objects[game.manager.current_action].kind == EffectKind::ChooseOne);
+                if (field == "codex" || field == "draft" || field == "hasTakenAll") return py::bool_(false);
                 return {};
             });
         }

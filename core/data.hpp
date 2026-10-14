@@ -22,6 +22,8 @@ struct CardDef {
     int misc = 0;
     bool purgeable = true;
     bool strike = false;
+    bool self_retain = false;
+    int initial_block = -1;
 };
 struct PowerData {
     int priority = 5;

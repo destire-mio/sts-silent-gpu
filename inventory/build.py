@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import zipfile
 
 SOURCE = Path('/Users/destire/Documents/Codex/2026-09-10/new-chat-2/work/native-complete-source/source')
 PACKAGE = 'com.megacrit.cardcrawl.'
@@ -707,6 +708,13 @@ def main():
                 work.extend(units[d]['depends_on'])
         u['content_dependencies'] = sorted(effects)
 
+    with zipfile.ZipFile(Path(__file__).resolve().parents[1] / 'oracle/instance/desktop-1.0.jar') as game:
+        names = json.loads(game.read('localization/eng/cards.json'))
+    ordered_names = sorted({names[u['game_id']]['NAME'] + suffix for u in units.values() if u['kind'] == 'card' for suffix in ('', '+')})
+    name_ranks = {name: index for index, name in enumerate(ordered_names)}
+    for u in units.values():
+        if u['kind'] == 'card':
+            u['facts']['name_order'] = [name_ranks[names[u['game_id']]['NAME'] + suffix] for suffix in ('', '+')]
     groups = defaultdict(list)
     for key, u in units.items():
         if not u.get('scenario_only'):

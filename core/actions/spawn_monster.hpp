@@ -25,6 +25,8 @@ struct SpawnMonster : ActionHooks {
     SPIRE_FN static void execute(Game& g, Effect& e) {
         auto& state = e.payload.state.SpawnMonster;
         if (state.used) return;
+        for (int i = 0; i < g.monsters.size; ++i)
+            if (g.monsters[i].creature.dead) g.deaths_before_monster_turn |= uint64_t{1} << i;
         for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, state.m);
         monster_init(g, state.m);
         monster_applyPowers(g, state.m);

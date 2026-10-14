@@ -16,7 +16,7 @@ struct Shuffle : ActionHooks {
         shuffle(g.discard.values, g.discard.size, g.rng.shuffle);
         for (int i = 0; i < g.discard.size; ++i) {
             ++e.payload.state.Shuffle.count;
-            g.cards[g.discard[i]].pending_clear = true;
+            mark_card_move(g, g.discard[i]);
             g.draw.push_back(g.discard[i]);
         }
         g.discard.clear();

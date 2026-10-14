@@ -129,3 +129,4 @@ SPIRE_UNIT(LightningOrbEvoke, "actions.defect.LightningOrbEvokeAction", "core/ac
 SPIRE_UNIT(DarkOrbEvoke, "actions.common.DarkOrbEvokeAction", "core/actions/dark_orb_evoke.hpp", DarkOrbEvoke)
 SPIRE_UNIT(ChangeStance, "actions.watcher.ChangeStanceAction", "core/actions/change_stance.hpp", ChangeStance)
 SPIRE_UNIT(Redo, "actions.defect.RedoAction", "core/actions/redo.hpp", Redo)
+SPIRE_UNIT(ChooseOne, "actions.watcher.ChooseOneAction", "core/actions/choose_one.hpp", ChooseOne)

@@ -3,6 +3,11 @@
 #include "spire_generated/declarations.hpp"
 
 namespace spire {
+SPIRE_FN inline void upgrade_created_card(Game&, int);
+SPIRE_FN inline CardId foreign_attack_card(Game&);
+SPIRE_FN inline void sort_selection_cards(Game&);
+SPIRE_FN inline void modify_cost_for_combat(Card&, int);
+SPIRE_FN inline CardId random_common_card(Game&);
 SPIRE_FN inline int make_orb(Game&, OrbKind);
 SPIRE_FN inline void apply_orb_focus(Game&, int);
 SPIRE_FN inline void orb_start_turn(Game&, int);
@@ -125,6 +130,7 @@ SPIRE_FN inline void open_hand_selection(Game&, int, bool any_number = false, bo
 SPIRE_FN inline void exhaust_card(Game&, int);
 SPIRE_FN inline void move_to_discard(Game&, int);
 SPIRE_FN inline void settle_card_moves(Game&);
+SPIRE_FN inline void mark_card_move(Game&, int);
 SPIRE_FN inline void damage(Game&, const Effect&);
 SPIRE_FN inline void player_damage(Game&, const DamageInfo&);
 SPIRE_FN inline void monster_damage_base(Game&, int, const DamageInfo&);

@@ -47,6 +47,7 @@ SPIRE_FN inline Card stat_equivalent_copy(Game& g, int card_id) {
     copy.misc = source.misc;
     copy.target = source.target;
     copy.base_damage = source.base_damage;
+    copy.base_block_adjust = source.base_block_adjust;
     copy.state = source.state;
     copy.base_magic = source.base_magic;
     copy.cost = source.cost;
@@ -157,7 +158,8 @@ SPIRE_FN inline void use_card(Game& g, int card_id, int target) {
     for (int i = 0; i < g.hand.size; ++i)
         if (g.hand[i] == card_id) { g.hand.erase(i); break; }
     g.player.card_in_use = card_id;
-    if (!card_freeToPlay(g, card_id) && !card.in_autoplay && card.cost_for_turn > 0)
+    if (!card_freeToPlay(g, card_id) && !card.in_autoplay && card.cost_for_turn > 0 &&
+        !(has_power(g, g.player.creature, PowerId::Corruption) && card_data(card.id).type == CardType::Skill))
         g.player.energy -= card.cost_for_turn;
 }
 SPIRE_FN inline void starter_deck(Run& run) {
