@@ -1,0 +1,58 @@
+{
+  "deck": [
+    {
+      "id": "Capacitor",
+      "upgrades": 1
+    },
+    {
+      "id": "Zap",
+      "upgrades": 1
+    },
+    {
+      "id": "Zap",
+      "upgrades": 1
+    },
+    {
+      "id": "Compile Driver",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "PrismaticShard",
+    "Ring of the Snake",
+    "Lantern"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 48,
+  "max_hp": 48,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 4,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}
