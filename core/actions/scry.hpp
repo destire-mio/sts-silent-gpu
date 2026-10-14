@@ -1,0 +1,48 @@
+#pragma once
+#include "../hooks.hpp"
+
+namespace spire::units::actions {
+struct Scry : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
+    SPIRE_STATE(Scry, bool selecting;)
+    static SPIRE_FN void prepare(Game& g, Effect& e) {
+        action_initialize_state(e);
+        e.source = e.target = no_target;
+        if (has_relic(g, "GoldenEye"))
+            e.amount += 2;
+    }
+    static SPIRE_FN void execute(Game& g, Effect& e) {
+        if (monsters_basically_dead(g))
+            return;
+        if (!e.payload.state.Scry.selecting) {
+            Powers &powers = g.player.creature.powers;
+            for (int i = 0; i < powers.size; ++i)
+                power_onScry(g, powers.at(g.power_objects, i), player_target);
+            if (g.draw.empty())
+                return;
+            g.grid_cards.clear();
+            const int count = e.amount == -1 ? g.draw.size : min(e.amount, g.draw.size);
+            for (int i = 0; i < count; ++i)
+                g.grid_cards.push_back(g.draw[g.draw.size - i - 1]);
+            g.grid_source = PileId::Grid;
+            g.selected_cards.clear();
+            g.selection_amount = e.amount;
+            g.selection_any_number = true;
+            g.selection_can_pick_zero = true;
+            g.grid_previous_deck_size = g.grid_cards.size;
+            g.screen = Screen::Grid;
+            e.payload.state.Scry.selecting = true;
+            for (int i = 0; i < g.discard.size; ++i)
+                card_triggerOnScry(g, g.discard[i]);
+            return;
+        }
+        for (int i = 0; i < g.selected_cards.size; ++i)
+            draw_pile_to_discard(g, g.selected_cards[i]);
+        g.selected_cards.clear();
+        // ScryAction.update invokes the discard hooks on all 16 fixed oracle ticks.
+        for (int tick = 0; tick < 15; ++tick)
+            for (int i = 0; i < g.discard.size; ++i)
+                card_triggerOnScry(g, g.discard[i]);
+    }
+};
+}
