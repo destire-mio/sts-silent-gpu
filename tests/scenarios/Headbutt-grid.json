@@ -1,0 +1,90 @@
+{
+  "deck": [
+    {
+      "id": "Headbutt",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bottled Flame",
+    "Gambling Chip"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}

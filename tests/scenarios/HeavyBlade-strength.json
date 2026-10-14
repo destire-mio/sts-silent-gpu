@@ -1,0 +1,36 @@
+{
+  "deck": [
+    {
+      "id": "Heavy Blade",
+      "upgrades": 0
+    },
+    {
+      "id": "Heavy Blade",
+      "upgrades": 1
+    },
+    {
+      "id": "Inflame",
+      "upgrades": 1
+    },
+    {
+      "id": "Flex",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Vajra",
+    "Bag of Marbles"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}
