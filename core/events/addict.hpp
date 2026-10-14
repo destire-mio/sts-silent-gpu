@@ -11,6 +11,7 @@ struct Addict : EventHooks {
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.Addict;
         if (s.screenNum) { open_map(g); return; }
+        if (option == 0 && g.run.gold < 85) { s.screenNum = 1; return; }
         if (option < 2) {
             const RelicId relic = random_screenless_relic(g, random_relic_tier(g));
             if (option == 0) lose_gold(g, 85);

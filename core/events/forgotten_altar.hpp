@@ -15,7 +15,8 @@ struct ForgottenAltar : EventHooks {
             if (has_relic(g, "Bloody Idol")) equip_relic(g, RelicId::Circlet);
             else {
                 int index = 0;
-                while (g.run.relics[index].id != RelicId::GoldenIdol) ++index;
+                for (int i = 0; i < g.run.relics.size; ++i)
+                    if (g.run.relics[i].id == RelicId::GoldenIdol) { index = i; break; }
                 relic_onUnequip(g, index);
                 g.run.relics[index] = {RelicId::BloodyIdol, relic_data(RelicId::BloodyIdol).counter};
                 relic_initialize_state(g.run.relics[index]);
