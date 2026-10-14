@@ -28,7 +28,7 @@ struct ApplyPower : ActionHooks {
             e.power_constructed = true;
         }
         Power& power = e.payload.power;
-        if (power.instance == 0) power.instance = g.next_power_instance++;
+        if (power.instance == 0) power.instance = next_power_identity(g);
         if (e.source == player_target && e.target != e.source && power.id == PowerId::Poison) {
             for (int i = 0; i < g.run.relics.size; ++i) {
                 const int bonus = relic_data(g.run.relics[i].id).poison_bonus;

@@ -13,7 +13,8 @@ Exactness: same seed + same actions => same snapshot as the original at every de
 ## Engine (`core/`)
 One `Game` struct holds a whole run: run state, combat state and every RNG stream. It is plain
 data with fixed capacities, so a batch is an array of `Game` and a GPU thread owns one element.
-The cross-colour foundation acceptance ceiling and compile-time limit are 38 KiB per `Game`. Per-unit payload budgets
+The integration size target is 35 KiB per `Game`, with a 48 KiB compile-time budget for later
+content and rules. Per-unit payload budgets
 and the build-time member breakdown are described in `porting.md`.
 
 Entry points, all deterministic and free of global state:

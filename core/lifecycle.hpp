@@ -57,8 +57,10 @@ SPIRE_FN inline void obtain_relic_object(Game& g, int reference) {
 }
 SPIRE_FN inline int obtain_card(Game& g, Card card) {
     const CardRarity rarity = card_rarity(card.id);
-    if (rarity != CardRarity::Basic && rarity != CardRarity::Special && rarity != CardRarity::Curse)
+    if (rarity != CardRarity::Basic && rarity != CardRarity::Special && rarity != CardRarity::Curse) {
+        SPIRE_ASSERT(g.obtained_cards[static_cast<int>(card.id)] < 65535);
         ++g.obtained_cards[static_cast<int>(card.id)];
+    }
     if (card_data(card.id).type == CardType::Curse)
         for (int i = 0; i < g.run.relics.size; ++i) if (relic_onCurseObtain(g, i)) return -1;
     for (int i = 0; i < g.run.relics.size; ++i) relic_onObtainCard(g, i, card);
@@ -158,6 +160,7 @@ SPIRE_FN inline int create_reward(Game& g, RoomReward reward) {
         reward.relic.counter = relic_data(reward.relic.id).counter;
         relic_initialize_state(reward.relic);
     }
+    SPIRE_ASSERT(g.next_reward_identity <= 65535);
     reward.identity = g.next_reward_identity++;
     const int index = g.reward_objects.size;
     g.reward_objects.push_back(reward);

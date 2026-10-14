@@ -11,7 +11,7 @@ struct CompileDriver : ActionHooks {
         int count = 0;
         for (int i = 0; i < g.orbs.slots.size; ++i)
             if (g.orbs.slots[i] >= 0)
-                present[static_cast<int>(g.orbs.objects[g.orbs.slots[i]].kind)] = true;
+                present[static_cast<int>(g.orbs.kind(g.orbs.slots[i]))] = true;
         for (bool value : present)
             if (value)
                 ++count;

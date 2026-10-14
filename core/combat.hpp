@@ -343,7 +343,7 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
         refresh_powers(g);
     }
     if (!stacked) {
-        if (incoming.instance == 0) incoming.instance = g.next_power_instance++;
+        if (incoming.instance == 0) incoming.instance = next_power_identity(g);
         int index = c.powers.size;
         while (index > 0 && power_data(c.powers.at(g.power_objects, index - 1).id).priority > power_data(id).priority) --index;
         c.powers.insert(g.power_objects, index, g.power_objects.add(incoming));
@@ -357,7 +357,7 @@ SPIRE_FN inline void apply_power(Game& g, int source, int target, PowerId id, in
     incoming.amount = amount;
     incoming.just_applied = just_applied;
     power_constructPower(g, incoming, target, source, extra, card);
-    incoming.instance = g.next_power_instance++;
+    incoming.instance = next_power_identity(g);
     apply_prepared_power(g, source, target, incoming, amount);
 }
 SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, int source) {

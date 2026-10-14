@@ -67,6 +67,26 @@ static void interleaved_histories() {
     }
 }
 
+static void relocated_orbs() {
+    Game game{};
+    for (int i = 0; i < 128; ++i) {
+        const int orb = game.orbs.add(static_cast<OrbKind>(i % 4), 100000 + i, 200000 + i);
+        game.orbs.channeled.push_back(orb);
+    }
+    game.orbs.slots.push_back(127);
+    game.orbs.slots.push_back(-1);
+    game.orbs.slots.push_back(-2);
+    Game copy = game;
+    copy.orbs.objects[127].evoke += 300000;
+    for (int i = 0; i < 128; ++i)
+        require(copy.orbs.kind(copy.orbs.channeled[i]) == static_cast<OrbKind>(i % 4) &&
+                copy.orbs.objects[i].passive == 100000 + i,
+                "relocation preserves distinct orb types, history references and 32-bit amounts");
+    require(copy.orbs.slots[0] == 127 && copy.orbs.slots[1] == -1 && copy.orbs.slots[2] == -2 &&
+            game.orbs.objects[127].evoke == 200127 && copy.orbs.objects[127].evoke == 500127,
+            "the final orb index and both empty-slot identities survive copying without shared storage");
+}
+
 static void fault_isolation() {
     host::Batch batch(2);
     batch.reset({7, 8});
@@ -108,6 +128,7 @@ static void host_overflow_aborts() {
 int main() {
     compact_storage();
     interleaved_histories();
+    relocated_orbs();
     fault_isolation();
     host_overflow_aborts();
 }

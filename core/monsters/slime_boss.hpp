@@ -14,7 +14,7 @@ struct SlimeBoss : MonsterHooks {
         Monster m = make_monster(g, MonsterId::SlimeBoss, stats, hp_override);
         m.state.SlimeBoss.firstTurn = true;
         Power split{PowerId::Split, -1};
-        split.instance = g.next_power_instance++;
+        split.instance = next_power_identity(g);
         power_initialize_state(split);
         m.creature.powers.push_back(g.power_objects, g.power_objects.add(split));
         return m;

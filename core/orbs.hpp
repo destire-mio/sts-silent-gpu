@@ -29,21 +29,21 @@ SPIRE_FN inline int orb_base_evoke(OrbKind kind) {
 }
 SPIRE_FN inline void apply_orb_focus(Game& g, int index) {
     Orb& orb = g.orbs.objects[index];
-    const int focus = orb.kind == OrbKind::Plasma ? 0 : power_amount(g, g.player.creature, PowerId::Focus);
-    orb.passive = max(0, orb_base_passive(orb.kind) + focus);
-    if (orb.kind != OrbKind::Dark) orb.evoke = max(0, orb_base_evoke(orb.kind) + focus);
+    const OrbKind kind = g.orbs.kind(index);
+    const int focus = kind == OrbKind::Plasma ? 0 : power_amount(g, g.player.creature, PowerId::Focus);
+    orb.passive = max(0, orb_base_passive(kind) + focus);
+    if (kind != OrbKind::Dark) orb.evoke = max(0, orb_base_evoke(kind) + focus);
 }
 SPIRE_FN inline int make_orb(Game& g, OrbKind kind) {
-    const int index = g.orbs.objects.size;
-    g.orbs.objects.push_back({orb_base_passive(kind), orb_base_evoke(kind), kind});
+    const int index = g.orbs.add(kind, orb_base_passive(kind), orb_base_evoke(kind));
     apply_orb_focus(g, index); return index;
 }
 SPIRE_FN inline void orb_start_turn(Game& g, int index) {
-    if (index >= 0 && g.orbs.objects[index].kind == OrbKind::Plasma) units::orbs::Plasma::onStartOfTurn(g, index);
+    if (index >= 0 && g.orbs.kind(index) == OrbKind::Plasma) units::orbs::Plasma::onStartOfTurn(g, index);
 }
 SPIRE_FN inline void orb_end_turn(Game& g, int index) {
     if (index < 0) return;
-    switch (g.orbs.objects[index].kind) {
+    switch (g.orbs.kind(index)) {
     case OrbKind::Lightning: units::orbs::Lightning::onEndOfTurn(g, index); break;
     case OrbKind::Frost: units::orbs::Frost::onEndOfTurn(g, index); break;
     case OrbKind::Dark: units::orbs::Dark::onEndOfTurn(g, index); break;
@@ -51,7 +51,7 @@ SPIRE_FN inline void orb_end_turn(Game& g, int index) {
     }
 }
 SPIRE_FN inline void orb_evoke(Game& g, int index) {
-    switch (g.orbs.objects[index].kind) {
+    switch (g.orbs.kind(index)) {
     case OrbKind::Lightning: units::orbs::Lightning::onEvoke(g, index); break;
     case OrbKind::Frost: units::orbs::Frost::onEvoke(g, index); break;
     case OrbKind::Dark: units::orbs::Dark::onEvoke(g, index); break;

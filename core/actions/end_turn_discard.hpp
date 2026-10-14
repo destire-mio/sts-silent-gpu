@@ -7,7 +7,7 @@ struct EndTurnDiscard : ActionHooks {
     SPIRE_FN static void execute(Game& g, Effect& e) {
         for (int i = 0; i < g.hand.size;) {
             const Card& card = g.cards[g.hand[i]];
-            if (card.retain || card.self_retain) g.retained.push_back(g.hand.erase(i));
+            if (card.retain || card.self_retain) g.limbo.push_back(g.hand.erase(i));
             else ++i;
         }
         Effect restore{};

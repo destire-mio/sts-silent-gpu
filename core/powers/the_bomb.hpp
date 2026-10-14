@@ -11,6 +11,7 @@ struct TheBomb : PowerHooks {
         power_initialize_state(p);
         p.state.TheBomb.damage = damage;
         // TheBombPower constructor assigns a new ID for every bomb, across combats.
+        SPIRE_ASSERT(g.bomb_id_offset <= 32767);
         p.id_offset = g.bomb_id_offset++;
     }
     static SPIRE_FN void atEndOfTurn(Game& g, Power& p, int owner, bool) {

@@ -24,7 +24,7 @@ def main():
                 for child in node.get("inner", []):
                     if child.get("kind") == "CXXRecordDecl" and child.get("completeDefinition"):
                         records[child["name"]] = [field for field in child.get("inner", [])
-                                                  if field.get("kind") == "FieldDecl"]
+                                                  if field.get("kind") in ("FieldDecl", "IndirectFieldDecl") and "name" in field]
             for child in node.get("inner", []):
                 visit(child)
 

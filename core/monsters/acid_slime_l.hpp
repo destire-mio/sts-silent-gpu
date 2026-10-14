@@ -12,7 +12,7 @@ struct AcidSlime_L : MonsterHooks {
         if (g.run.ascension < 2) { stats.damage[0] = 11; stats.damage[1] = 16; }
         Monster m = make_monster(g, MonsterId::AcidSlime_L, stats, hp_override);
         Power split{PowerId::Split, -1};
-        split.instance = g.next_power_instance++;
+        split.instance = next_power_identity(g);
         power_initialize_state(split);
         m.creature.powers.push_back(g.power_objects, g.power_objects.add(split));
         return m;
@@ -42,7 +42,7 @@ struct AcidSlime_L : MonsterHooks {
             set_monster_move(g, index, 3, Intent::Unknown);
             return;
         }
-        if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
+        if (m.move == 4) queue_power(g, index, player_target, PowerId::Weak, data().magic, true);
         else {
             queue_damage(g, index, player_target, monster_base_damage(g, m, m.move == 2 ? 1 : 0));
             if (m.move == 1) queue_slimed(g, 2);

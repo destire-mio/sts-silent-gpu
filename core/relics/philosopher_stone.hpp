@@ -15,7 +15,7 @@ struct PhilosopherStone : RelicHooks {
         }
         if (!stacked) {
             Power p(PowerId::Strength, 1);
-            p.instance = g.next_power_instance++;
+            p.instance = next_power_identity(g);
             power_constructPower(g, p, owner, owner, 0, -1);
             powers.push_back(g.power_objects, g.power_objects.add(p));
         }

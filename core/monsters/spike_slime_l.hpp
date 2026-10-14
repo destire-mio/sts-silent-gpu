@@ -12,7 +12,7 @@ struct SpikeSlime_L : MonsterHooks {
         if (g.run.ascension < 2) { stats.damage[0] = 16; stats.damage[1] = 0; }
         Monster m = make_monster(g, MonsterId::SpikeSlime_L, stats, hp_override);
         Power split{PowerId::Split, -1};
-        split.instance = g.next_power_instance++;
+        split.instance = next_power_identity(g);
         power_initialize_state(split);
         m.creature.powers.push_back(g.power_objects, g.power_objects.add(split));
         return m;

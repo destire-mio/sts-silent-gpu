@@ -883,7 +883,7 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     for (int i = 0; i < g.run.master_deck.size; ++i) {
         const int index = g.cards.size;
         g.cards.push_back(g.run.master_deck[i]);
-        g.cards[index].price = 0;
+        g.cards[index].energy_on_use = 0; g.cards[index].priced = false;
         copy.push_back(index);
     }
     shuffle(copy.values, copy.size, g.rng.shuffle);
@@ -929,7 +929,7 @@ SPIRE_FN inline void enter_combat(Game& g) {
     g.previous_screen = Screen::None;
     g.multi_damage.clear();
     g.damage_exceptions.clear();
-    g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear(); g.retained.clear();
+    g.hand.clear(); g.draw.clear(); g.discard.clear(); g.exhaust.clear(); g.limbo.clear();
     g.selected_cards.clear();
     g.limbo.clear(); g.grid_cards.clear(); g.reward_cards.clear();
     g.grid_source = PileId::Grid;

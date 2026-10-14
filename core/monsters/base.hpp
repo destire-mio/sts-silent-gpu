@@ -22,8 +22,6 @@ SPIRE_FN inline Monster make_monster(Game& g, MonsterId id, const MonsterData& d
         monster_base_damage(g, m, i) = data.damage[i];
         monster_output_damage(g, m, i) = data.damage[i];
     }
-    m.block_amount = data.block;
-    m.magic = data.magic;
     return m;
 }
 

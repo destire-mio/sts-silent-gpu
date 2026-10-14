@@ -78,7 +78,7 @@ SPIRE_FN inline void enter_shop(Game& g) {
         Card& card = g.cards[i < 5 ? g.shop.colored[i] : g.shop.colorless[i - 5]];
         float price = shop_card_base_price(card.id) * g.rng.merchant.random(0.9f, 1.1f);
         if (i >= 5) price *= 1.2f;
-        card.price = static_cast<int>(price);
+        card.priced = true; card.price = static_cast<int>(price);
         preview_card_obtain(g, card);
     }
     g.cards[g.shop.colored[g.rng.merchant.random(0, 4)]].price /= 2;
@@ -156,7 +156,7 @@ SPIRE_FN inline void purchase_shop(Game& g, int choice) {
             price *= 0.8f;
             for (int i = 0; i < g.run.relics.size; ++i)
                 if (relic_data(g.run.relics[i].id).discounts_existing_stock) price *= relic_data(g.run.relics[i].id).shop_multiplier;
-            stock.price = static_cast<int>(price);
+            stock.priced = true; stock.price = static_cast<int>(price);
             stock.uuid = g.next_card_uuid++;
             g.cards[index] = stock;
         } else if (colorless) g.shop.colorless.erase(position);

@@ -18,7 +18,7 @@ struct SpikeSlime_M : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        if (m.move == 4) queue_power(g, index, player_target, PowerId::Frail, m.magic, true);
+        if (m.move == 4) queue_power(g, index, player_target, PowerId::Frail, data().magic, true);
         else {
             queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
             queue_slimed(g, 1);

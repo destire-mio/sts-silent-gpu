@@ -23,7 +23,7 @@ struct AcidSlime_S : MonsterHooks {
             queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
             set_monster_move(g, index, 2, Intent::Debuff);
         } else {
-            queue_power(g, index, player_target, PowerId::Weak, m.magic, true);
+            queue_power(g, index, player_target, PowerId::Weak, data().magic, true);
             set_monster_move(g, index, 1, Intent::Attack, monster_base_damage(g, m, 0));
         }
     }

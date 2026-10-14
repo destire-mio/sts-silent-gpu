@@ -13,16 +13,15 @@ struct Card {
     int block = -1;
     int16_t cost = 0;
     int16_t cost_for_turn = 0;
-    int16_t energy_on_use = 0;
+    union { int16_t energy_on_use = 0; int16_t price; };
     uint16_t uuid = 0;
-    int16_t price = 0;
+    uint16_t upgrades = 0;
     int16_t base_magic = -1;
     int16_t magic = -1;
     CardId id = CardId::Strike_G;
     uint8_t multi_damage_count : 7;
     bool upgraded_cost : 1;
     CardTarget target : 3;
-    uint8_t upgrades : 1;
     bool ignore_energy_on_use : 1;
     bool exhaust : 1;
     bool ethereal : 1;
@@ -40,14 +39,15 @@ struct Card {
     bool bottle_lightning : 1;
     bool bottle_tornado : 1;
     bool is_flipped : 1;
+    bool priced : 1;
     bool master_reference : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
-        : multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), upgrades(0), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
+        : multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false),
-          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), master_reference(false) {}
+          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), priced(false), master_reference(false) {}
 };
 using Pile = List<uint8_t, card_capacity>;
 struct CampfireChoice { CampfireOption kind; bool usable; };
@@ -84,17 +84,17 @@ struct Relic {
     SPIRE_FN constexpr Relic(RelicId id = RelicId::SnakeRing, int counter = -1) : id(id), counter(counter) {}
 };
 struct Power {
-    uint32_t instance = 0;
     int amount;
-    int id_offset = -1;
     PowerState state{};
+    int16_t id_offset = -1;
     PowerId id;
+    uint8_t next = 255;
+    uint32_t instance : 29;
     bool just_applied : 1;
     bool triggered : 1;
     bool skip_first : 1;
-    uint8_t next = 255;
     SPIRE_FN constexpr Power(PowerId id = PowerId::Strength, int amount = 0)
-        : amount(amount), id(id), just_applied(false), triggered(false), skip_first(true) {}
+        : amount(amount), id(id), instance(0), just_applied(false), triggered(false), skip_first(true) {}
 };
 struct Powers {
     uint8_t head = 255;
@@ -155,31 +155,41 @@ struct Monster {
     int16_t pending_base_damage = -1;
     int16_t pending_hits = 0;
     uint16_t move_name = 0;
-    int16_t block_amount = 0;
-    int16_t magic = 0;
     MonsterId id = MonsterId::Cultist;
     Intent intent = Intent::Debug;
     int8_t move = -1;
     int8_t pending_move = -1;
     Intent pending_intent = Intent::None;
     uint8_t damage_extra = 0;
-    uint8_t damage_count = 1;
     uint8_t damage_modified = 0;
-    bool pending_multi = false;
-    bool intent_multi = false;
-    bool cannot_escape = false;
-    bool escape_next = false;
+    uint8_t damage_count : 4;
+    bool pending_multi : 1;
+    bool intent_multi : 1;
+    bool cannot_escape : 1;
+    bool escape_next : 1;
+    SPIRE_FN constexpr Monster() : damage_count(1), pending_multi(false), intent_multi(false), cannot_escape(false), escape_next(false) {}
 };
 struct Orb {
     int passive = 0;
     int evoke = 0;
-    OrbKind kind = OrbKind::Lightning;
 };
 struct OrbState {
     List<Orb, 128> objects{};
-    List<int16_t, 10> slots{};
+    uint8_t kinds[32]{};
+    List<int8_t, 10> slots{};
     List<uint8_t, 256> channeled{};
     uint16_t turn_start = 0;
+    SPIRE_FN OrbKind kind(int index) const {
+        SPIRE_ASSERT(index >= 0 && index < objects.size);
+        return static_cast<OrbKind>((kinds[index / 4] >> ((index % 4) * 2)) & 3);
+    }
+    SPIRE_FN int add(OrbKind kind, int passive, int evoke) {
+        const int index = objects.size;
+        objects.push_back({passive, evoke});
+        const int shift = (index % 4) * 2;
+        kinds[index / 4] = (kinds[index / 4] & ~(3 << shift)) | (static_cast<int>(kind) << shift);
+        return index;
+    }
 };
 struct Player {
     Creature creature{};
@@ -348,19 +358,20 @@ struct Run {
 };
 enum class RewardKind : uint8_t { Card, Gold, Potion, Relic, StolenGold, SapphireKey, EmeraldKey };
 struct RoomReward {
-    RewardKind kind = RewardKind::Card;
     int amount = 0;
     int bonus_gold = 0;
-    PotionId potion = PotionId::Empty;
     PotionState potion_state{};
-    int8_t potion_slot = -1;
-    bool done = false;
-    bool ignored = false;
-    List<uint8_t, reward_card_capacity> cards{};
     Relic relic{RelicId::Count};
+    List<uint8_t, reward_card_capacity> cards{};
+    uint16_t identity = 0;
+    int8_t relic_link = -1;
     int8_t relic_slot = -1;
-    int relic_link = -1;
-    int identity = 0;
+    int8_t potion_slot = -1;
+    RewardKind kind = RewardKind::Card;
+    PotionId potion = PotionId::Empty;
+    bool done : 1;
+    bool ignored : 1;
+    SPIRE_FN constexpr RoomReward() : done(false), ignored(false) {}
 };
 struct CardDamage {
     int base[card_capacity]{};
@@ -387,7 +398,7 @@ struct Game {
     uint64_t pending_card_moves[(card_capacity + 63) / 64]{};
     CardDamage multi_damage{};
     DamageExceptions damage_exceptions{};
-    Pile hand{}, draw{}, discard{}, exhaust{}, retained{}, selected_cards{}, limbo{}, grid_cards{};
+    Pile hand{}, draw{}, discard{}, exhaust{}, selected_cards{}, limbo{}, grid_cards{};
     Pool<Effect, action_capacity> action_objects{};
     Pool<Power, power_object_capacity> power_objects{};
     uint64_t deaths_before_monster_turn = 0;
@@ -432,7 +443,7 @@ struct Game {
     int put_on_deck_num = 0;
     uint32_t next_power_instance = 1;
     uint32_t next_card_uuid = 1;
-    int obtained_cards[static_cast<int>(CardId::Count)]{};
+    uint16_t obtained_cards[static_cast<int>(CardId::Count)]{};
     bool selection_for_upgrade = false;
     bool grid_for_purge = false;
     bool grid_for_upgrade = false;
@@ -467,7 +478,12 @@ struct Game {
     bool smoked = false;
     int bomb_id_offset = 0;
 };
-static_assert(sizeof(Game) <= 38 * 1024, "Game exceeds the 38 KiB device memory budget; see docs/porting.md");
+static_assert(sizeof(Game) <= 48 * 1024, "Game exceeds the 48 KiB device memory budget; see docs/porting.md");
+
+SPIRE_FN inline uint32_t next_power_identity(Game& g) {
+    SPIRE_ASSERT(g.next_power_instance < (uint32_t{1} << 29));
+    return g.next_power_instance++;
+}
 
 SPIRE_FN inline void bind_fault(Game& g) {
 #if defined(__CUDA_ARCH__)

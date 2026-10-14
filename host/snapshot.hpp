@@ -130,7 +130,7 @@ struct SnapshotGraph {
             if (field == "cost") return py::int_(card.cost);
             if (field == "costForTurn") return py::int_(card.cost_for_turn);
             if (field == "misc") return py::int_(card.misc);
-            if (field == "energyOnUse") return py::int_(card.energy_on_use);
+            if (field == "energyOnUse") return py::int_(card.priced ? 0 : card.energy_on_use);
             if (field == "dontTriggerOnUseCard") return py::bool_(card.dont_trigger_on_use_card);
             if (field == "isInAutoplay") return py::bool_(card.in_autoplay);
             if (field == "ignoreEnergyOnUse") return py::bool_(card.ignore_energy_on_use);
@@ -169,7 +169,7 @@ struct SnapshotGraph {
             if (field == "inBottleFlame") return py::bool_(card.bottle_flame);
             if (field == "inBottleLightning") return py::bool_(card.bottle_lightning);
             if (field == "inBottleTornado") return py::bool_(card.bottle_tornado);
-            if (field == "price") return py::int_(card.price);
+            if (field == "price") return py::int_(card.priced ? card.price : 0);
             if (field == "isFlipped") return py::bool_(card.is_flipped);
             if (field == "exhaustOnFire" || field == "inBottleFlame" ||
                 field == "inBottleLightning" || field == "inBottleTornado" || field == "isFlipped" ||
@@ -350,11 +350,11 @@ struct SnapshotGraph {
         if (index < 0 && slot < 0) return py::none();
         static const char* names[] = {"Lightning", "Frost", "Dark", "Plasma"};
         const Orb* value = index < 0 ? nullptr : &game.orbs.objects[index];
-        const std::string type = value ? names[static_cast<int>(value->kind)] : "EmptyOrbSlot";
+        const std::string type = value ? names[static_cast<int>(game.orbs.kind(index))] : "EmptyOrbSlot";
         return object({46, index < 0 ? 128 + slot : index, 0}, "orbs." + type, [&](const std::string& key) -> py::object {
             if (key == "AbstractOrb.ID") return value ? py::object(py::str(type)) : index == -2 ? py::object(py::str("Empty")) : py::object(py::none());
-            if (key == "AbstractOrb.basePassiveAmount") return py::int_(value ? orb_base_passive(value->kind) : 0);
-            if (key == "AbstractOrb.baseEvokeAmount") return py::int_(value ? orb_base_evoke(value->kind) : 0);
+            if (key == "AbstractOrb.basePassiveAmount") return py::int_(value ? orb_base_passive(game.orbs.kind(index)) : 0);
+            if (key == "AbstractOrb.baseEvokeAmount") return py::int_(value ? orb_base_evoke(game.orbs.kind(index)) : 0);
             if (key == "AbstractOrb.passiveAmount") return py::int_(value ? value->passive : 0);
             if (key == "AbstractOrb.evokeAmount") return py::int_(value ? value->evoke : 0);
             return {};

@@ -136,14 +136,14 @@ static void selections() {
     step(g, {ActionKind::Proceed});
     require(g.cards[ordinary].retain && !g.cards[ethereal].retain && g.hand[g.hand.size - 2] == ordinary &&
             g.hand[g.hand.size - 1] == ethereal, "retain selection restores cards in selection order and excludes ethereal");
-    g.retained.push_back(g.hand.erase(g.hand.size - 2));
+    g.limbo.push_back(g.hand.erase(g.hand.size - 2));
     const int unretained = create_card(g, make_card(CardId::Defend_G));
-    g.retained.push_back(unretained);
+    g.limbo.push_back(unretained);
     e.kind = EffectKind::RestoreRetained;
     add_bottom(g, e);
     run_until_decision(g);
-    require(g.hand[g.hand.size - 1] == ordinary && !g.cards[ordinary].retain && g.retained.size == 1 &&
-            g.retained[0] == unretained, "RestoreRetained leaves non-retained entries in the original group");
+    require(g.hand[g.hand.size - 1] == ordinary && !g.cards[ordinary].retain && g.limbo.size == 1 &&
+            g.limbo[0] == unretained, "RestoreRetained leaves non-retained entries in the original group");
 }
 
 static void damage_and_room_state() {

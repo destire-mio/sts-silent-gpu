@@ -3,17 +3,18 @@
 
 namespace spire::units::monsters {
 struct JawWorm : MonsterHooks {
-    SPIRE_SNAPSHOT("JawWorm.bellowBlock", scalar, monster.block_amount)
-    SPIRE_SNAPSHOT("JawWorm.bellowStr", scalar, monster.magic)
+    SPIRE_SNAPSHOT("JawWorm.bellowBlock", scalar, units::monsters::JawWorm::bellow_block(game))
+    SPIRE_SNAPSHOT("JawWorm.bellowStr", scalar, units::monsters::JawWorm::bellow_strength(game))
     SPIRE_SNAPSHOT("JawWorm.chompDmg", scalar, monster_base_damage(graph.game, monster, 0))
     SPIRE_SNAPSHOT("JawWorm.thrashBlock", scalar, 5)
     SPIRE_SNAPSHOT("JawWorm.thrashDmg", scalar, monster_base_damage(graph.game, monster, 1))
     SPIRE_STATE(JawWorm, bool firstMove; bool hardMode;)
     SPIRE_FN static constexpr MonsterData data() { return {42, 46, {12, 7}, 9, 5, 2}; }
+    SPIRE_FN static int bellow_block(const Game& g) { return g.run.ascension < 17 ? 6 : data().block; }
+    SPIRE_FN static int bellow_strength(const Game& g) { return g.run.ascension < 17 ? (g.run.ascension >= 2 ? 4 : 3) : data().magic; }
     SPIRE_FN static Monster construct(Game& g, int hp_override) {
         MonsterData stats = data();
         if (g.run.ascension < 7) { stats.hp_min = 40; stats.hp_max = 44; }
-        if (g.run.ascension < 17) { stats.block = 6; stats.magic = g.run.ascension >= 2 ? 4 : 3; }
         if (g.run.ascension < 2) stats.damage[0] = 11;
         Monster m = make_monster(g, MonsterId::JawWorm, stats, hp_override);
         m.state.JawWorm.firstMove = true;
@@ -23,8 +24,8 @@ struct JawWorm : MonsterHooks {
         const Monster& m = g.monsters[owner];
         const auto& s = m.state.JawWorm;
         if (s.hardMode) {
-            queue_power(g, owner, owner, PowerId::Strength, m.magic);
-            queue_block(g, owner, m.block_amount);
+            queue_power(g, owner, owner, PowerId::Strength, bellow_strength(g));
+            queue_block(g, owner, bellow_block(g));
         }
     }
     SPIRE_FN static void getMove(Game& g, int index, int num) {
@@ -48,8 +49,8 @@ struct JawWorm : MonsterHooks {
         Monster& m = g.monsters[index];
         if (m.move == 1) queue_damage(g, index, player_target, monster_base_damage(g, m, 0));
         else if (m.move == 2) {
-            queue_power(g, index, index, PowerId::Strength, m.magic);
-            queue_block(g, index, m.block_amount);
+            queue_power(g, index, index, PowerId::Strength, bellow_strength(g));
+            queue_block(g, index, bellow_block(g));
         } else {
             queue_damage(g, index, player_target, monster_base_damage(g, m, 1));
             queue_block(g, index, 5);
