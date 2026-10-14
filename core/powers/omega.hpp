@@ -10,7 +10,7 @@ struct Omega : PowerHooks {
             return;
         for (int i = 0; i < g.monster_order.size; ++i) {
             const Creature &c = g.monsters[g.monster_order[i]].creature;
-            if (!c.dead && !c.escaped) {
+            if (alive(c)) {
                 Effect e{};
                 e.kind = EffectKind::VFX;
                 e.source = e.target = no_target;

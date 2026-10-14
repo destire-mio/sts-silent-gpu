@@ -5,7 +5,7 @@ namespace spire::units::actions {
 struct ExpungeVFX : ActionHooks {
     SPIRE_SNAPSHOT("ExpungeVFXAction.m", creature, effect.extra)
     static SPIRE_FN void execute(Game& g, Effect& e) {
-        if (!get_creature(g, e.extra).dead && !get_creature(g, e.extra).escaped) {
+        if (alive(get_creature(g, e.extra))) {
             Effect a{};
             a.source = a.target = no_target;
             a.kind = EffectKind::VFX;

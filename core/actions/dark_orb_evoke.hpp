@@ -10,7 +10,7 @@ struct DarkOrbEvoke : ActionHooks {
         e.target = no_target;
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int m = g.monster_order[i]; const Creature& c = g.monsters[m].creature;
-            if (c.dead || c.escaped) continue;
+            if (!alive(c)) continue;
             if (e.target == no_target || c.hp < g.monsters[e.target].creature.hp) e.target = m;
         }
     }

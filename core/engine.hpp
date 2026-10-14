@@ -708,6 +708,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
         if (dead && !g.cannot_lose) g.battle_over = true;
         if (g.battle_over && !g.battle_callbacks_done) {
             // AbstractRoom.endBattle clears pending actions, but leaves the monster queue.
+            settle_card_moves(g);
             g.battle_callbacks_done = true;
             on_victory(g);
             clear_actions(g, g.manager.actions);
@@ -779,7 +780,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                     g.manager.played_cards.record(queued.card);
                 }
                 if (card.target != CardTarget::Enemy ||
-                    (queued.target != no_target && !get_creature(g, queued.target).dead && !get_creature(g, queued.target).escaped))
+                    (queued.target != no_target && alive(get_creature(g, queued.target))))
                     use_card(g, queued.card, queued.target);
                 else remove_from_pile(g.limbo, queued.card);
             }
