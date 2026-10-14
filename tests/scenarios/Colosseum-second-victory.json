@@ -1,0 +1,50 @@
+{
+  "deck": [
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 90,
+  "max_hp": 90,
+  "encounter": "Cultist",
+  "start": {
+    "act": 2,
+    "floor": 31,
+    "node": [
+      0,
+      13
+    ],
+    "room": "EventRoom",
+    "gold": 200,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}
