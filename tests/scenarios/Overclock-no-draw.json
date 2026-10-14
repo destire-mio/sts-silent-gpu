@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Steam Power",
+      "upgrades": 0
+    },
+    {
+      "id": "Steam Power",
+      "upgrades": 1
+    },
+    {
+      "id": "Bullet Time",
+      "upgrades": 0
+    },
+    {
+      "id": "Bullet Time",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Cultist"
+}

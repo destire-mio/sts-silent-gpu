@@ -4,7 +4,6 @@
 
 namespace spire::units::powers {
 struct Omega : PowerHooks {
-    SPIRE_WAITING_RULE("OmegaPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {}; }
     static SPIRE_FN void atEndOfTurn(Game& g, Power& p, int, bool is_player) {
         if (!is_player)

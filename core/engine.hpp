@@ -339,6 +339,17 @@ SPIRE_FN inline void monster_damage_base(Game& g, int owner, const DamageInfo& i
     if (amount > 0) target.hp = max(0, target.hp - amount);
     if (target.hp <= 0) {
         monster_die(g, owner, true);
+        if (monsters_basically_dead(g)) {
+            // AbstractMonster.damage calls GameActionManager.cleanCardQueue, retaining limbo copies.
+            const int count = g.manager.card_queue.size;
+            for (int i = 0; i < count; ++i) {
+                const CardQueueItem item = g.manager.card_queue.pop_front();
+                bool in_hand = false;
+                for (int j = 0; j < g.hand.size; ++j)
+                    if (g.hand[j] == item.card) in_hand = true;
+                if (!in_hand) g.manager.card_queue.push_back(item);
+            }
+        }
         target.block = 0;
     }
 }
@@ -424,7 +435,6 @@ SPIRE_FN inline void creature_damage(Game& g, const DamageInfo& e) {
         monster_damage(g, e.target, e);
         if (monsters_basically_dead(g)) {
             if (!g.cannot_lose) g.battle_over = true;
-            g.manager.card_queue.clear();
         }
     }
 }

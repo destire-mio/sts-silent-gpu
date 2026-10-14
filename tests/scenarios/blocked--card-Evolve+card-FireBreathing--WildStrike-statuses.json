@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Wild Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Wild Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Evolve",
+      "upgrades": 1
+    },
+    {
+      "id": "Fire Breathing",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Giant Head"
+}

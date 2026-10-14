@@ -3,12 +3,11 @@
 
 namespace spire::units::actions {
 struct Collect : ActionHooks {
-    SPIRE_WAITING_RULE("CollectAction: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr ActionData data() { return {false, "SPECIAL"}; }
     SPIRE_STATE(Collect, int energyOnUse; bool freeToPlayOnce; bool upgraded;)
     SPIRE_SNAPSHOT("CollectAction.p", player)
     static SPIRE_FN void execute(Game& g, Effect& e) {
-        int count = e.payload.state.Collect.energyOnUse < 0 ? g.player.energy : e.payload.state.Collect.energyOnUse;
+        int count = e.payload.state.Collect.energyOnUse == -1 ? g.player.energy : e.payload.state.Collect.energyOnUse;
         if (has_relic(g, "Chemical X"))
             count += 2;
         if (e.payload.state.Collect.upgraded)

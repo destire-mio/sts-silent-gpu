@@ -1,0 +1,57 @@
+{
+  "deck": [
+    {
+      "id": "DeusExMachina",
+      "upgrades": 0
+    },
+    {
+      "id": "DeusExMachina",
+      "upgrades": 1
+    },
+    {
+      "id": "DeusExMachina",
+      "upgrades": 1
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    },
+    {
+      "id": "Wound",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "Toolbox",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 80,
+  "max_hp": 80,
+  "encounter": "Cultist"
+}

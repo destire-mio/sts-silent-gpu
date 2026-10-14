@@ -1,0 +1,43 @@
+{
+  "deck": [
+    {
+      "id": "Safety",
+      "upgrades": 0
+    },
+    {
+      "id": "Safety",
+      "upgrades": 1
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 0
+    },
+    {
+      "id": "Feel No Pain",
+      "upgrades": 0
+    },
+    {
+      "id": "Corruption",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 160,
+  "max_hp": 160,
+  "encounter": "Giant Head"
+}
