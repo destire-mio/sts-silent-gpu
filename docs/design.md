@@ -372,8 +372,8 @@ confirmation and the terminal observation of escaped monsters.
 `tools/deep_runs.py` searches copies of the exact host engine, retaining eight candidates per
 floor and six candidates per combat turn. It preserves alternative floor branches and
 backtracks when the current beam dies, within a 256-floor expansion budget per seed.
-Combat branches stop at 32 occupied action slots, leaving room for the next decision's
-queued actions under the engine's 64-slot execution budget. Pruned branches are search
+Combat branches stop at 128 resident card slots, leaving room for the next decision's
+card creation under the engine's 160-card execution budget. Pruned branches are search
 cutoffs, not deaths; the engine's capacities and assertions stay unchanged.
 A seeded Python policy samples legal choices and
 scores HP, deck strength and keys; it does not consume game RNG streams. `Game.copy()` copies

@@ -180,7 +180,7 @@ def fight(game, rng, prefix):
                 actions = []
                 state = trial.search_state()
                 for _ in range(120):
-                    if state['action_slots'] >= 32:
+                    if state['card_slots'] >= 128:
                         break
                     legal = trial.legal_actions()
                     assert legal, json.dumps(dict(seed=trial.snapshot()['run']['seed'],
@@ -191,15 +191,15 @@ def fight(game, rng, prefix):
                     state = trial.search_state()
                     if state['dead'] or not state['combat'] or state['turn'] != turn:
                         break
-                assert state['dead'] or not state['combat'] or state['turn'] != turn or state['action_slots'] >= 32, state
+                assert state['dead'] or not state['combat'] or state['turn'] != turn or state['card_slots'] >= 128, state
                 candidate = trial, previous + actions
                 if state['dead'] or not state['combat']:
                     finished.append(candidate)
-                elif state['action_slots'] < 32:
+                elif state['card_slots'] < 128:
                     children.append(candidate)
                 else:
-                    print(f'prune action budget seed={trial.snapshot()["run"]["seed"]} '
-                          f'floor={state["floor"]} slots={state["action_slots"]}', flush=True)
+                    print(f'prune card budget seed={trial.snapshot()["run"]["seed"]} '
+                          f'floor={state["floor"]} slots={state["card_slots"]}', flush=True)
         if not children:
             break
         children.sort(key=lambda candidate: combat_score(candidate[0]), reverse=True)

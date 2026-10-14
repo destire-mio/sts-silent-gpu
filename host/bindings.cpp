@@ -143,8 +143,6 @@ struct Environment {
     }
     py::list legal_actions() const { return legal_snapshot(game); }
     py::dict search_state() const {
-        int action_slots = 0;
-        for (int i = 0; i < action_capacity; ++i) action_slots += game.action_objects.contains(i);
         py::list hand, monsters, powers, choices;
         if (game.screen == Screen::Discard || game.screen == Screen::Grid || game.screen == Screen::CardReward) {
             const auto& pile = game.screen == Screen::Discard ? game.hand :
@@ -187,7 +185,7 @@ struct Environment {
             "dead"_a=game.player.creature.dead, "victory"_a=game.screen == Screen::Victory,
             "keys"_a=py::make_tuple(game.run.ruby_key, game.run.emerald_key, game.run.sapphire_key),
             "hand"_a=hand, "monsters"_a=monsters, "powers"_a=powers,
-            "action_slots"_a=action_slots,
+            "card_slots"_a=game.cards.size,
             "choices"_a=choices, "remove"_a=(game.screen == Screen::Discard && !keep_selection) || game.grid_for_purge);
     }
     void step(const py::dict& action) {
