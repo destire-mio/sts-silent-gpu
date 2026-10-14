@@ -123,7 +123,7 @@ struct SnapshotGraph {
             if (field == "color" || field == "rarity" || field == "type" || field == "tags")
                 return py::reinterpret_borrow<py::object>(data[py::str(field)]);
             if (field == "target") {
-                const char* targets[] = {"ENEMY", "SELF", "NONE", "ALL_ENEMY", "ALL"};
+                const char* targets[] = {"ENEMY", "SELF", "NONE", "ALL_ENEMY", "ALL", "SELF_AND_ENEMY"};
                 return py::str(targets[static_cast<int>(card.target)]);
             }
             if (field == "upgradedCost") return py::bool_(card.upgraded_cost);

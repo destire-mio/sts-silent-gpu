@@ -43,6 +43,12 @@ SPIRE_FN inline int create_card(Game& g, Card card) {
     g.cards.push_back(card);
     return index;
 }
+SPIRE_FN inline int upgrade_name_order(int count) {
+    int order = 0, place = 1;
+    do { order += (count % 10 + 1) * place; place *= 11; count /= 10; } while (count);
+    while (place < 161051) { order *= 11; place *= 11; }
+    return order;
+}
 SPIRE_FN inline void sort_selection_cards(Game& g) {
     const int rarity_rank[] = {0, 2, 3, 4, 1, 5};
     for (int i = 1; i < g.grid_cards.size; ++i) {
@@ -52,7 +58,9 @@ SPIRE_FN inline void sort_selection_cards(Game& g) {
         while (j > 0) {
             const Card& previous = g.cards[g.grid_cards[j - 1]];
             const int previous_rank = (card_data(previous.id).type == CardType::Status ? 100000 : 0) - rarity_rank[static_cast<int>(card_rarity(previous.id))] * 1000 + card_name_order(previous);
-            if (previous_rank <= rank) break;
+            if (previous_rank < rank) break;
+            if (previous_rank == rank && (previous.id != value.id || !previous.upgrades || !value.upgrades ||
+                upgrade_name_order(previous.upgrades) <= upgrade_name_order(value.upgrades))) break;
             g.grid_cards[j] = g.grid_cards[j - 1]; --j;
         }
         g.grid_cards[j] = card;
@@ -1261,7 +1269,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
     if (g.screen == Screen::Combat) {
         for (int i = 0; i < g.hand.size; ++i) {
             const Card& card = g.cards[g.hand[i]];
-            if (card.target == CardTarget::Enemy) {
+            if (card.target == CardTarget::Enemy || card.target == CardTarget::SelfAndEnemy) {
                 for (int j = 0; j < g.monster_order.size; ++j) {
                     if (alive(g.monsters[g.monster_order[j]].creature) && card_canUse(g, g.hand[i], g.monster_order[j])) actions.push_back({ActionKind::Play, i, j});
                 }
@@ -1581,7 +1589,7 @@ SPIRE_FN inline void step(Game& g, Action action) {
             const int card = g.hand[action.index];
             SPIRE_ASSERT(can_play(g, card));
             int target = no_target;
-            if (g.cards[card].target == CardTarget::Enemy) {
+            if (g.cards[card].target == CardTarget::Enemy || g.cards[card].target == CardTarget::SelfAndEnemy) {
                 target = g.monster_order[action.target];
                 SPIRE_ASSERT(alive(g.monsters[target].creature));
                 const Powers& powers = g.player.creature.powers;

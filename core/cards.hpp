@@ -44,6 +44,10 @@ SPIRE_FN inline Card stat_equivalent_copy(Game& g, int card_id) {
     const Card& source = get_card(g, card_id);
     Card copy = card_makeCopy(g, card_id);
     for (int i = 0; i < source.upgrades; ++i) card_upgrade(copy);
+    copy.upgrades = source.upgrades;
+    copy.bottle_flame = source.bottle_flame;
+    copy.bottle_lightning = source.bottle_lightning;
+    copy.bottle_tornado = source.bottle_tornado;
     copy.misc = source.misc;
     copy.target = source.target;
     copy.base_damage = source.base_damage;

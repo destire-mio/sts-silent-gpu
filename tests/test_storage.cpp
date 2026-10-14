@@ -110,6 +110,26 @@ static void fault_isolation() {
             std::memcmp(before, &batch.games[1], sizeof(Game)) == 0, "indexed reset clears the fault without resetting its neighbor");
 }
 
+static void card_value_lifetimes() {
+    Game game{};
+    reset(game, 3);
+    const int card = game.cards.size;
+    game.cards.push_back(make_card(CardId::MasterfulStab));
+    for (int i = 0; i < 200; ++i) card_tookDamage(game, card);
+    require(game.cards[card].cost == 200 && game.cards[card].cost_for_turn == 200,
+            "repeated HP loss must not wrap a card cost at byte range");
+    game.cards[card].priced = true;
+    game.cards[card].price = 75;
+    game.cards[card].bottle_flame = true;
+    Card copy = card_makeStatEquivalentCopy(game, card);
+    require(!copy.priced && copy.energy_on_use == 0 && copy.bottle_flame && copy.cost == 200,
+            "stat-equivalent copies discard shop price and preserve bottled identity flags and cost");
+    require(upgrade_name_order(1) < upgrade_name_order(10) &&
+            upgrade_name_order(10) < upgrade_name_order(2) &&
+            upgrade_name_order(2) < upgrade_name_order(65535),
+            "repeated upgrade suffixes sort as decimal strings");
+}
+
 static void host_overflow_aborts() {
     const pid_t child = fork();
     require(child >= 0, "fork");
@@ -130,5 +150,6 @@ int main() {
     interleaved_histories();
     relocated_orbs();
     fault_isolation();
+    card_value_lifetimes();
     host_overflow_aborts();
 }

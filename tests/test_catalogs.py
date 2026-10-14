@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 UNITS = {
     "cards": ("CardHooks", """
     static SPIRE_FN constexpr CardDef data() {
-        return {CardType::Skill, CardTarget::Self, 0, -1, -1, -1, 0, 0, 0, false, false};
+        return {CardType::Skill, CardTarget::SelfAndEnemy, 0, -1, -1, -1, 0, 0, 0, false, false};
     }
     static SPIRE_FN void use(Game& g, int, int) { g.run.gold += 1; }
     static SPIRE_FN void triggerOnGainEnergy(Game& g, int, int amount, bool card_gain) {
@@ -78,6 +78,12 @@ int main() {
     if (g.monsters[0].pending_move != 1 || g.monsters[0].move != -1) return 15;
     g.cards.push_back(make_card(CardId::CatalogProbe));
     g.hand.push_back(0);
+    const Screen previous = g.screen;
+    g.screen = Screen::Combat;
+    ActionSet legal{};
+    legal_actions(g, legal);
+    if (legal[0].kind != ActionKind::Play || legal[0].target != 0) return 23;
+    g.screen = previous;
     use_card(g, 0, no_target);
     if (g.run.gold != 33) return 2;
     apply_power(g, player_target, 0, PowerId::CatalogProbe, 1);
