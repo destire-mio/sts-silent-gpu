@@ -34,6 +34,7 @@ SPIRE_FN inline Card make_card(CardId id, int upgrades) {
     card.base_magic = def.magic;
     card.magic = def.magic;
     card.self_retain = def.self_retain;
+    card.shuffle_back_into_draw_pile = def.shuffle_back_into_draw_pile;
     card.block = def.initial_block;
     card.exhaust = def.exhaust;
     card.ethereal = def.ethereal;

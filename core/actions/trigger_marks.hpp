@@ -3,7 +3,6 @@
 
 namespace spire::units::actions {
 struct TriggerMarks : ActionHooks {
-    SPIRE_WAITING_RULE("TriggerMarksAction: waiting for a ported caller with three-seed oracle replay")
     SPIRE_SNAPSHOT("TriggerMarksAction.card", card, effect.card)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         for (int i = 0; i < g.monster_order.size; ++i) {

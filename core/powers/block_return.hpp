@@ -3,7 +3,6 @@
 
 namespace spire::units::powers {
 struct BlockReturn : PowerHooks {
-    SPIRE_WAITING_RULE("BlockReturnPower: waiting for a ported caller with three-seed oracle replay")
     static SPIRE_FN constexpr PowerData data() { return {5, true}; }
     static SPIRE_FN int onAttacked(Game& g, Power& p, int owner, const DamageInfo &info, int amount) {
         if (info.damage_type == DamageType::Normal && info.source != no_target && info.source != owner) {

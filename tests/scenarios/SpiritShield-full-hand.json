@@ -1,0 +1,69 @@
+{
+  "deck": [
+    {
+      "id": "SpiritShield",
+      "upgrades": 0
+    },
+    {
+      "id": "SpiritShield",
+      "upgrades": 1
+    },
+    {
+      "id": "Scrawl",
+      "upgrades": 0
+    },
+    {
+      "id": "Scrawl",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper",
+    "Oddly Smooth Stone"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 240,
+  "max_hp": 240,
+  "encounter": "Maw"
+}

@@ -24,6 +24,7 @@ struct CardDef {
     bool strike = false;
     bool self_retain = false;
     int initial_block = -1;
+    bool shuffle_back_into_draw_pile = false;
 };
 struct PowerData {
     int priority = 5;

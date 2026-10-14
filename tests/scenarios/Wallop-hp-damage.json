@@ -1,0 +1,40 @@
+{
+  "deck": [
+    {
+      "id": "Wallop",
+      "upgrades": 0
+    },
+    {
+      "id": "Wallop",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 0
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Coffee Dripper"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 120,
+  "max_hp": 120,
+  "encounter": "Cultist"
+}
