@@ -386,7 +386,7 @@ def main():
                        act4=any(s['run']['actNum'] == 4 for s in snapshots),
                        heart=any(obj['class'] == 'monsters.ending.CorruptHeart'
                                  for s in snapshots for obj in s['objects']),
-                       win=rows[-1]['terminal'] == 'victory' and snapshots[-1]['run']['actNum'] == 4)
+                       win=rows[-1]['terminal'] == 'victory')
         results.append(dict(seed=job['seed'], depth=reached, decisions=result.decisions,
                             scopes={name: dict(passed=status.passed, decisions=status.matched_decisions,
                                               terminal=status.terminal_matches, differences=status.differences)
