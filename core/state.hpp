@@ -464,6 +464,7 @@ struct Game {
     bool reward_relic_warning_seen = false;
     bool skip_monster_turn = false;
     bool battle_over = false;
+    bool battle_callbacks_done = false;
     bool room_in_combat = false;
     bool room_reward_time = false;
     bool room_reward_allowed = true;

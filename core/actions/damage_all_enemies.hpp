@@ -69,7 +69,6 @@ struct DamageAllEnemies : ActionHooks {
             monster_damage(g, owner, info);
         }
         if (monsters_basically_dead(g)) {
-            g.battle_over = true;
             clear_post_combat_actions(g);
         }
     }

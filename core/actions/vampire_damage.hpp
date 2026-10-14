@@ -26,7 +26,6 @@ struct VampireDamageAction : ActionHooks {
         } else {
             monster_damage(g, e.target, info);
             if (monsters_basically_dead(g)) {
-                g.battle_over = true;
                 g.manager.card_queue.clear();
             }
         }

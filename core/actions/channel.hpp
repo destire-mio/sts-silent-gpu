@@ -14,7 +14,7 @@ struct Channel : ActionHooks {
         // ChannelAction.update's ACTION_DUR_FAST and GameActionManager.getNextAction's
         // final wait let AbstractMonster.updateDeathAnimation settle existing deaths.
         for (int i = 0; i < g.monsters.size; ++i)
-            if (g.monsters[i].creature.dead) g.deaths_before_monster_turn |= uint64_t{1} << i;
+            if (g.monsters[i].creature.dying) g.deaths_before_monster_turn |= uint64_t{1} << i;
     }
 };
 }

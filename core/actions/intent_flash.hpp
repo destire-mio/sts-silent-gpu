@@ -103,6 +103,13 @@ struct IntentFlash : ActionHooks {
         e.extra = monster;
         return e;
     }
-    SPIRE_FN static void execute(Game&, const Effect&) {}
+    SPIRE_FN static void execute(Game& g, const Effect&) {
+        // AbstractMonster.updateDeathAnimation clears deaths preceding the monster's intent flash.
+        for (int i = 0; i < g.monsters.size; ++i) {
+            if (!((g.deaths_before_monster_turn >> i) & 1)) continue;
+            Creature& creature = g.monsters[i].creature;
+            if (creature.dying) { creature.dead = true; creature.powers.clear(); }
+        }
+    }
 };
 }

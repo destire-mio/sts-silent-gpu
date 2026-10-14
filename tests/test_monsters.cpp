@@ -107,7 +107,7 @@ void split_and_target_identity() {
     CHECK(g.monster_order[0] == 2 && g.monster_order[1] == 0 && g.monster_order[2] == 1 && g.monster_order[3] == 3);
     CHECK(g.monsters[2].creature.draw_x < g.monsters[0].creature.draw_x);
     CHECK(g.monsters[3].creature.draw_x > g.monsters[1].creature.draw_x);
-    CHECK(g.monsters[0].creature.dead);
+    CHECK(g.monsters[0].creature.dying && !g.monsters[0].creature.dead);
     CHECK(g.monsters[1].id == MonsterId::Cultist);
     CHECK(g.monsters[2].creature.hp == half && g.monsters[3].creature.hp == half);
     CHECK(g.rng.monster_hp.counter == hp_calls);

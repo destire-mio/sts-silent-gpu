@@ -208,6 +208,22 @@ exact `WaitAction` current action to null: its update only advances a presentati
 no rule callback. Other action classes and their included fields remain in the graph. Graph
 references retain the identity of their cards, powers and creatures.
 
+Monster death state remains rule state. `AbstractMonster.die` sets isDying; its death animation
+later sets isDead and clears powers. GRID/CARD_REWARD freeze that update, so a just-killed
+monster retains its powers and isDead=false there (202610141115, decision 202). Deaths preceding
+a monster turn settle across the intent/action waits before subsequent rule callbacks refresh
+DamageInfo. In 202610140424, the original clears Centurion's Strength during Healer's intent
+flash, then Healer's ApplyPowerAction refreshes the dead Centurion's outputs to 14/7 rather
+than 18/11. Spawn/channel waits also precede the next intent calculation. The engine keeps
+DamageInfo output/isModified and both death flags in the observation.
+
+`AbstractRoom.endBattle` runs victory callbacks and `GameActionManager.clear` when the final
+death settles; it does not wait for the remaining monster queue. Clear removes current/pending
+actions and combat counters, but preserves the monster queue. A half-dead Darkling queued
+before the final poison kill can therefore lose its pending RollMoveAction while the following
+Darkling still takes its queued turn (202610142024, floor 36). The engine distinguishes this
+callback boundary from the later transition to the reward screen.
+
 `GameActionManager.hasControl` and `phase` remain exact during COMBAT. Outside COMBAT the
 observer projects both to null. `GameActionManager.update` resets these only in its COMBAT
 branch; `clear` resets phase but preserves hasControl, and a trailing `WaitAction` may leave
