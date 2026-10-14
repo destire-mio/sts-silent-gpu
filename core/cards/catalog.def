@@ -177,3 +177,4 @@ SPIRE_UNIT(GoForTheEyes, "Go for the Eyes", "core/cards/go_for_the_eyes.hpp", Go
 SPIRE_UNIT(Heatsinks, "Heatsinks", "core/cards/heatsinks.hpp", Heatsinks)
 SPIRE_UNIT(HelloWorld, "Hello World", "core/cards/hello_world.hpp", HelloWorld)
 SPIRE_UNIT(Loop, "Loop", "core/cards/loop.hpp", Loop)
+SPIRE_UNIT(MachineLearning, "Machine Learning", "core/cards/machine_learning.hpp", MachineLearning)
