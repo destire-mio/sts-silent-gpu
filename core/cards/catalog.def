@@ -173,3 +173,4 @@ SPIRE_UNIT(CutThroughFate, "CutThroughFate", "core/cards/cut_through_fate.hpp", 
 SPIRE_UNIT(DevaForm, "DevaForm", "core/cards/deva_form.hpp", DevaForm)
 SPIRE_UNIT(Devotion, "Devotion", "core/cards/devotion.hpp", Devotion)
 SPIRE_UNIT(EmptyBody, "EmptyBody", "core/cards/empty_body.hpp", EmptyBody)
+SPIRE_UNIT(EmptyFist, "EmptyFist", "core/cards/empty_fist.hpp", EmptyFist)
