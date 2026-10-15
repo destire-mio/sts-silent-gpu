@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "wait.hpp"
 
 namespace spire::units::actions {
 struct RetainCards : ActionHooks {
@@ -12,6 +13,7 @@ struct RetainCards : ActionHooks {
     SPIRE_FN static void execute(Game& g, Effect& e) {
         if (!e.payload.state.RetainCards.selecting) {
             open_hand_selection(g, e.amount, false, true, false, true);
+            add_bottom(g, Wait::make(16));
             e.payload.state.RetainCards.selecting = true;
             return;
         }
@@ -22,6 +24,8 @@ struct RetainCards : ActionHooks {
                 g.hand.push_back(index);
             }
             g.selected_cards_retrieved = true;
+            // RetainCardsAction.update has 29 ticks left after opening the selection.
+            advance_escape(g, 28);
         }
     }
 };

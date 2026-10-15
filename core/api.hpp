@@ -95,6 +95,8 @@ SPIRE_FN inline int find_power(const Game& g, const Creature&, const char*);
 SPIRE_FN inline int random_living_monster(Game&);
 SPIRE_FN inline void clear_post_combat_actions(Game&);
 SPIRE_FN inline void complete_player_turn_effect(Game&);
+SPIRE_FN inline void settle_deaths_after_wait(Game&, int);
+SPIRE_FN inline void advance_escape(Game&, int);
 SPIRE_FN inline void remove_queued_card(Game&, int);
 SPIRE_FN inline void draw_pile_to_discard(Game&, int);
 SPIRE_FN inline void hand_to_deck(Game&, int);

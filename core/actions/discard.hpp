@@ -22,6 +22,7 @@ struct Discard : ActionHooks {
                     increment_discard(g, e.flag);
                 }
                 g.selected_cards_retrieved = true;
+                advance_escape(g, 5);
             }
             return;
         }
@@ -46,6 +47,8 @@ struct Discard : ActionHooks {
             for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
             e.payload.state.Discard.selecting = true;
         }
+        // DiscardAction.update ticks ACTION_DUR_XFAST after the discard, including an empty hand.
+        if (!e.payload.state.Discard.selecting) advance_escape(g, 6);
     }
 };
 }

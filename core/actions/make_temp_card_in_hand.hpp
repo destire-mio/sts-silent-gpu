@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "wait.hpp"
 
 namespace spire::units::actions {
 struct MakeTempCardInHand : ActionHooks {
@@ -26,6 +27,8 @@ struct MakeTempCardInHand : ActionHooks {
             // ShowCardAndAddToDiscardEffect upgrades its display copy, then inserts srcCard.
             g.discard.push_back(card);
         }
+        // MakeTempCardInHandAction.update puts a 0.8s WaitAction at the queue front.
+        add_top(g, Wait::make(49));
     }
 };
 }

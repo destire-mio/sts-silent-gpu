@@ -441,6 +441,7 @@ struct Game {
     Pool<Effect, action_capacity> action_objects{};
     Pool<Power, power_object_capacity> power_objects{};
     uint64_t deaths_before_monster_turn = 0;
+    uint16_t death_wait_bound[monster_capacity]{};
     bool player_turn_effect_pending = false;
     Pile selection_excluded{};
     List<uint8_t, hand_limit> drawn_cards{};

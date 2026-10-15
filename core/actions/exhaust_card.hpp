@@ -24,6 +24,8 @@ struct ExhaustCard : ActionHooks {
             g.cards[e.card].free_to_play_once = false;
             break;
         }
+        // ExhaustSpecificCardAction.update always ticks ACTION_DUR_FAST, even for an absent card.
+        advance_escape(g, 15);
     }
 };
 }

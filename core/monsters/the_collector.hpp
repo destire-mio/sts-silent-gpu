@@ -65,6 +65,8 @@ struct TheCollector : MonsterHooks {
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
         monster_die_base(g, owner, trigger_relics);
+        // TheCollector.die adds 1.5s before AbstractMonster.die and onBossVictoryLogic.
+        g.death_wait_bound[owner] += 90;
         monster_onBossVictoryLogic(g, owner);
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int id = g.monster_order[i];

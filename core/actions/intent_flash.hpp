@@ -111,6 +111,8 @@ struct IntentFlash : ActionHooks {
             if (creature.dying) { creature.dead = true; creature.powers.clear(); }
             deaths &= deaths - 1;
         }
+        // IntentFlashAction.update ticks ACTION_DUR_XLONG before the queued monster actions.
+        advance_escape(g, 90);
     }
 };
 }

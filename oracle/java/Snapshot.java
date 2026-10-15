@@ -48,7 +48,7 @@ final class Snapshot {
 
     static final Map<String, String> EXCLUDED = new TreeMap<String, String>();
     static {
-        exclude("core.AbstractCreature", "drawX[escaping-or-escaped]", "Projected to null for escaping or escaped monsters: AbstractMonster.updateEscapeAnimation moves drawX each frame; no encounter combines an escaper with a SpawnMonsterAction user, so no subsequent rule reads it.");
+        exclude("core.AbstractCreature", "drawX[escaping-or-escaped]", "Projected to null during player escape and for escaping or escaped monsters: updateEscapeAnimation moves drawX each frame. SmokeBomb.canUse excludes BackAttack and bosses, so player escape cannot affect Surrounded damage. No encounter combines a monster escaper with a SpawnMonsterAction user.");
         exclude("cards.AbstractCard", "block[outside-combat] damage[outside-combat]", "Projected to null outside COMBAT: Soul completion may refresh retained cards before or after their restoration. No event, shop, Neow, relic or potion rule reads card damage/block caches outside combat. initializeDeck replaces combat piles with master-deck copies; makeStatEquivalentCopy copies base stats, not these caches; useCard recalculates before use.");
         exclude("cards.AbstractCard", "block[unset-base] damage[unset-base]", "Projected to null when both the CardLibrary template and current base stat are -1: Soul flight uses presentation RNG, positions and frame time, so its hand refresh changes unused caches between -1 and 0. No gameplay caller consumes these unset stats; useCard and AttackDamageRandomEnemyAction recalculate before use, and SpiritShield assigns baseBlock before its block read.");
         exclude("cards.CardGroup", "queued", "renderHand scratch list controlling draw order, cleared after rendering.");
@@ -365,9 +365,10 @@ final class Snapshot {
                 if (entry.getKey().equals("GridCardSelectScreen.hoveredCard") && !AbstractDungeon.gridSelectScreen.confirmScreenUp)
                     data.add(entry.getKey(), JsonNull.INSTANCE);
                 else if (entry.getKey().equals("AbstractCreature.drawX")
-                        && value instanceof com.megacrit.cardcrawl.monsters.AbstractMonster
+                        && (value == AbstractDungeon.player && AbstractDungeon.player.isEscaping
+                        || value instanceof com.megacrit.cardcrawl.monsters.AbstractMonster
                         && (((com.megacrit.cardcrawl.monsters.AbstractMonster)value).isEscaping
-                            || ((com.megacrit.cardcrawl.monsters.AbstractMonster)value).escaped))
+                            || ((com.megacrit.cardcrawl.monsters.AbstractMonster)value).escaped)))
                     data.add(entry.getKey(), JsonNull.INSTANCE);
                 else if ((entry.getKey().equals("GameActionManager.hasControl") || entry.getKey().equals("GameActionManager.phase"))
                         && AbstractDungeon.getCurrRoom().phase != com.megacrit.cardcrawl.rooms.AbstractRoom.RoomPhase.COMBAT)

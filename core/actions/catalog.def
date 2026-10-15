@@ -197,3 +197,4 @@ SPIRE_UNIT(DualWield, "actions.unique.DualWieldAction", "core/actions/dual_wield
 SPIRE_UNIT(ForeignInfluence, "actions.watcher.ForeignInfluenceAction", "core/actions/foreign_influence.hpp", ForeignInfluence)
 SPIRE_UNIT(LessonLearned, "actions.watcher.LessonLearnedAction", "core/actions/lesson_learned.hpp", LessonLearned)
 SPIRE_UNIT(VampireDamageAllEnemies, "actions.unique.VampireDamageAllEnemiesAction", "core/actions/vampire_damage_all_enemies.hpp", VampireDamageAllEnemies)
+SPIRE_UNIT(Wait, "actions.utility.WaitAction", "core/actions/wait.hpp", Wait)

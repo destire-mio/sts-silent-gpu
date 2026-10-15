@@ -3,21 +3,52 @@
   "execution_budgets": {
     "Run.potions": {
       "capacity": 8,
-      "java": ["characters.AbstractPlayer.potions", "relics.PotionBelt.onEquip"],
+      "java": [
+        "characters.AbstractPlayer.potions",
+        "relics.PotionBelt.onEquip"
+      ],
       "lifetime": "Run; potionSlots starts at two at A20 and PotionBelt appends two slots on acquisition.",
       "overflow": "SPIRE_ASSERT in PotionBelt.onEquip before indexing appended slots. Java uses a growing ArrayList; eight is an execution budget."
     },
     "Game.room_rewards": {
       "capacity": 16,
-      "java": ["rooms.AbstractRoom.rewards", "screens.CombatRewardScreen.rewards"],
+      "java": [
+        "rooms.AbstractRoom.rewards",
+        "screens.CombatRewardScreen.rewards"
+      ],
       "lifetime": "Current room; card reward objects survive reward selection and carry distinct identities for relicLink comparisons. The scenario acquisition room is cleared before combat.",
       "overflow": "SPIRE_ASSERT on List insertion. Java uses growing ArrayLists; sixteen is an execution budget."
     },
     "RoomReward.cards": {
       "capacity": 8,
-      "java": ["rewards.RewardItem.cards", "dungeons.AbstractDungeon.getRewardCards"],
+      "java": [
+        "rewards.RewardItem.cards",
+        "dungeons.AbstractDungeon.getRewardCards"
+      ],
       "lifetime": "One room reward; references point into the shared card arena. Java starts with three cards and applies relic reward-count hooks.",
       "overflow": "SPIRE_ASSERT before generating more than eight cards and on List insertion. Eight is an execution budget, not a Java limit."
+    },
+    "Game.cards": {
+      "capacity": 221,
+      "java": [
+        "cards.CardGroup.group",
+        "actions.GameActionManager.cardsPlayedThisCombat",
+        "actions.common.DrawCardAction.drawnCards",
+        "actions.common.MakeTempCardInHandAction.update",
+        "relics.DeadBranch.onExhaust"
+      ],
+      "lifetime": "Until no live Game root refers to the arena slot. core/card_lifetime.hpp enumerates card indices at each returned decision; master-deck cards are separate values. Allocation reuses an intrusive free list without changing UUID generation.",
+      "overflow": "SPIRE_ASSERT when 221 slots remain occupied before the next decision. This bounds live referenced cards plus allocations within one decision, not cumulative creations. Released slots are poisoned in every build.",
+      "measured_live_peak": 207,
+      "measured_occupied_peak": 208,
+      "live_margin": 14,
+      "allocation_margin": 13,
+      "measurement": "inventory/deep-neow.json capacity and external search artifacts; seed202610211131 creates308 objects but reaches207 live/208 occupied."
+    },
+    "Game": {
+      "capacity_bytes": 37888,
+      "measured_bytes": 37872,
+      "overflow": "Compile-time sizeof(Game) assertion; includes reusable card slots and monster death-wait bounds."
     }
   }
 }

@@ -269,7 +269,7 @@ struct SnapshotGraph {
         if (key == "AbstractCreature.currentBlock") return py::int_(c.block);
         if (key == "AbstractCreature.currentHealth") return py::int_(c.hp);
         if (key == "AbstractCreature.drawX") {
-            if (owner != player_target && c.escaped) return py::none();
+            if (owner == player_target ? game.player.escaping : c.escaped) return py::none();
             return java_float(c.draw_x);
         }
         if (key == "AbstractCreature.flipHorizontal") return py::bool_(c.flip_horizontal);
@@ -783,6 +783,7 @@ struct SnapshotGraph {
         });
     }
     py::object effect(const Effect& effect, int queue, int index) {
+        if (effect.kind == EffectKind::Wait) return py::none();
         const std::string name = effect_names[static_cast<int>(effect.kind)];
         if (!inventory["schema"].cast<py::dict>().contains(py::str(name))) return {};
         UnitStateSnapshot state;
@@ -819,6 +820,7 @@ struct SnapshotGraph {
     py::object effects(const Queue<uint8_t, action_capacity>& queue) {
         py::list result;
         for (int i = 0; i < queue.size; ++i) {
+            if (game.action_objects[queue[i]].kind == EffectKind::Wait) continue;
             py::object item = effect(game.action_objects[queue[i]], 3, queue[i]);
             if (!item) return {};
             result.append(item);

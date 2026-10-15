@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "wait.hpp"
 
 namespace spire::units::actions {
 struct EndTurn : ActionHooks {
@@ -16,6 +17,8 @@ struct RoomEndTurn : ActionHooks {
         Effect end{};
         end.kind = EffectKind::EndTurn;
         add_bottom(g, end);
+        // AbstractRoom.endTurn queues WaitAction(1.2f) before MonsterStartTurnAction.
+        add_bottom(g, Wait::make(73));
         Effect start{};
         start.kind = EffectKind::MonsterStart;
         if (!g.skip_monster_turn) add_bottom(g, start);

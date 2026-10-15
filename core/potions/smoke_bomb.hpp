@@ -16,6 +16,7 @@ struct SmokeBomb : PotionHooks {
     static SPIRE_FN void use(Game& g, int, int) {
         if (g.room_in_combat) {
             g.smoked = true;
+            add_bottom(g, units::actions::VFX::make());
             g.player.escaping = true;
             g.player.creature.flip_horizontal = !g.player.creature.flip_horizontal;
             g.end_turn_enabled = false;

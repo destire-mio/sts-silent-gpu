@@ -305,12 +305,30 @@ SPIRE_FN inline void monster_die_base(Game& g, int owner, bool trigger_relics) {
     Creature& c = g.monsters[owner].creature;
     if (c.dying) return;
     c.dying = true;
+    // AbstractMonster.die takes 109 fixed ticks; Cultist/Looter dialogue can add 1.5s.
+    const MonsterId id = g.monsters[owner].id;
+    g.death_wait_bound[owner] = id == MonsterId::Cultist || id == MonsterId::Looter ? 199 : 109;
     if (trigger_relics) {
         if (c.hp <= 0)
             for (int i = 0; i < c.powers.size; ++i) power_onDeath(g, c.powers.at(g.power_objects, i), owner);
         for (int i = 0; i < g.run.relics.size; ++i) relic_onMonsterDeath(g, i, owner);
     }
     c.hp = max(0, c.hp);
+}
+SPIRE_FN inline void settle_deaths_after_wait(Game& g, int frames) {
+    // AbstractMonster.updateDeathAnimation: mandatory waits alone can prove death has settled.
+    // Other animation time is handled by the intent/turn/decision settlement boundaries.
+    for (int i = 0; i < g.monster_order.size; ++i) {
+        const int owner = g.monster_order[i];
+        Creature& creature = g.monsters[owner].creature;
+        if (!creature.dying || creature.dead) continue;
+        if (g.death_wait_bound[owner] > frames) g.death_wait_bound[owner] -= frames;
+        else {
+            g.death_wait_bound[owner] = 0;
+            creature.dead = true;
+            creature.powers.clear();
+        }
+    }
 }
 SPIRE_FN inline void monster_damage_base(Game& g, int owner, const DamageInfo& info) {
     Creature& target = g.monsters[owner].creature;
@@ -541,6 +559,11 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
         }
         effect.payload.state.Draw.shuffle_check = true;
     }
+    // DrawCardAction.update waits ACTION_DUR_FASTER before each card (13 fixed ticks).
+    settle_deaths_after_wait(g, 13);
+    const bool escaping = g.player.escaping;
+    advance_escape(g, 12);
+    if (escaping && !g.player.escaping) { effect.done = true; return; }
     --effect.amount;
     if (!g.draw.empty()) {
         const int card = g.draw[g.draw.size - 1];
@@ -567,6 +590,8 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
 SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
     if (e.done) return;
     action_execute(g, e);
+    // GameActionManager.update and AbstractPlayer.update consume the action's update frame.
+    advance_escape(g, 1);
     if (!action_data(e.kind).multi_step && g.screen != Screen::Discard &&
         g.screen != Screen::Grid && g.screen != Screen::CardReward) e.done = true;
 }
@@ -682,19 +707,21 @@ SPIRE_FN inline void complete_player_turn_effect(Game& g) {
     Powers& powers = g.player.creature.powers;
     for (int i = 0; i < powers.size; ++i) power_atEnergyGain(g, powers.at(g.power_objects, i), player_target);
 }
-SPIRE_FN inline void run_until_decision(Game& g) {
-    if (g.player.escaping) {
-        // AbstractPlayer.updateEscapeAnimation advances rule-read drawX at the oracle's fixed tick.
-        while (g.player.escape_timer > 0.0f) {
-            g.player.escape_timer -= 1.0f / 60.0f;
-            const float speed = g.player.creature.flip_horizontal ? -400.0f : 500.0f;
-            g.player.creature.draw_x += (1.0f / 60.0f) * speed * (1280.0f / 1920.0f);
+SPIRE_FN inline void advance_escape(Game& g, int frames) {
+    // AbstractPlayer.updateEscapeAnimation advances during action waits at the fixed oracle tick.
+    while (g.player.escaping && frames-- > 0) {
+        g.player.escape_timer -= 1.0f / 60.0f;
+        const float speed = g.player.creature.flip_horizontal ? -400.0f : 500.0f;
+        g.player.creature.draw_x += (1.0f / 60.0f) * speed * (1280.0f / 1920.0f);
+        if (g.player.escape_timer < 0.0f) {
+            g.battle_over = true;
+            g.player.creature.flip_horizontal = false;
+            g.player.escaping = false;
+            g.player.escape_timer = 0.0f;
         }
-        g.battle_over = true;
-        g.player.creature.flip_horizontal = false;
-        g.player.escaping = false;
-        g.player.escape_timer = 0.0f;
     }
+}
+SPIRE_FN inline void run_until_decision(Game& g) {
     while (g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward && g.screen != Screen::Death) {
         bool dead = !g.monster_order.empty();
         for (int i = 0; i < g.monster_order.size; ++i) {
@@ -738,12 +765,15 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.manager.current_action = g.manager.actions.pop_front();
             g.manager.has_current_action = true;
             g.manager.has_control = true;
+            // GameActionManager.getNextAction selects the action one frame before its update.
+            advance_escape(g, 1);
         } else if (!g.manager.pre_turn_actions.empty()) {
             if (g.manager.phase == Phase::ExecutingActions) g.manager.using_card = false;
             g.manager.phase = Phase::ExecutingActions;
             g.manager.current_action = g.manager.pre_turn_actions.pop_front();
             g.manager.has_current_action = true;
             g.manager.has_control = true;
+            advance_escape(g, 1);
         } else if (!g.manager.card_queue.empty()) {
             g.manager.using_card = g.manager.phase == Phase::WaitingOnUser;
             CardQueueItem queued = g.manager.card_queue[0];
@@ -844,6 +874,10 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                     Creature& creature = g.monsters[g.monster_order[i]].creature;
                     if (creature.dying) creature.dead = true;
                 }
+                continue;
+            }
+            if (g.player.escaping) {
+                advance_escape(g, 151);
                 continue;
             }
             if (g.player_turn_effect_pending) {

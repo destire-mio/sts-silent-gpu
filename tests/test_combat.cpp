@@ -301,6 +301,34 @@ static void test_played_card_history() {
     require(history.size == 0 && history.turn_start == 0, "new combat begins with empty played histories");
 }
 
+static void test_death_during_draw() {
+    for (bool copy_wait : {false, true}) {
+        Game g{};
+        reset(g, 202610212003);
+        start_combat(g, deck_setup({CardId::Defend_G}));
+        g.monsters[0] = units::monsters::Spiker::construct(g, 3);
+        append_monster(g, units::monsters::Spiker::construct(g, 50));
+        apply_power(g, player_target, 0, PowerId::Weak, 1);
+        g.hand.clear();
+        g.draw.clear();
+        for (int i = 0; i < 5; ++i)
+            g.draw.push_back(create_card(g, make_card(copy_wait && i == 0 ? CardId::EndlessAgony : CardId::Defend_G)));
+        DamageInfo hit{};
+        hit.source = player_target;
+        hit.amount = hit.info_base = 3;
+        hit.damage_type = DamageType::Thorns;
+        monster_damage_base(g, 0, hit);
+        add_bottom(g, units::actions::Draw::construct(5));
+        queue_power(g, player_target, 1, PowerId::Poison, 3);
+        run_until_decision(g);
+        require(g.monsters[0].creature.dead && g.monsters[0].creature.powers.empty(), "dead Spiker settles at the decision");
+        require(monster_output_damage(g, g.monsters[0], 0) == (copy_wait ? 9 : 6),
+                "creation wait clears the dead Spiker's Weak before the queued poison refresh");
+        require(power_amount(g, g.monsters[1].creature, PowerId::Poison) == 3,
+                "the living Spiker receives the queued poison");
+    }
+}
+
 int main() {
     test_default_cultist();
     test_survivor_and_slimed();
@@ -314,5 +342,6 @@ int main() {
     test_artifact();
     test_terminal_states();
     test_played_card_history();
+    test_death_during_draw();
     std::puts("Java-derived combat cases passed (not oracle trace acceptance)");
 }
