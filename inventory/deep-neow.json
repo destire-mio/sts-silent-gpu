@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "validated_engine_commit": "546d4df2b56d57a378e1f99092be11e35f962dde",
+  "validated_engine_commit": "e304c2c2cd5d280a5a152c052d17cf0a568174c1",
   "merged_main": "5164ccb",
   "game_sha256": "dd60a613a6178e08f1a57bcb8d5747e33c21fd49e743b88d76e9d74042803b2a",
   "java_source_root": "/Users/destire/Documents/Codex/2026-09-10/new-chat-2/work/native-complete-source/source",
@@ -18,7 +18,7 @@
           "win": 0
         },
         "without_pandora": 0,
-        "peak_resident_cards": 146,
+        "peak_resident_cards": 78,
         "gzip_bytes": 406406289,
         "scopes": {
           "combat": {
@@ -29,33 +29,6 @@
           "run": {
             "traces": 40,
             "decisions": 44251,
-            "terminal": 40
-          }
-        }
-      },
-      "fresh": {
-        "games": 40,
-        "decisions": 49303,
-        "depth": {
-          "act2": 40,
-          "act3": 40,
-          "act3_boss": 40,
-          "act4": 5,
-          "heart": 3,
-          "win": 1
-        },
-        "without_pandora": 35,
-        "peak_resident_cards": 168,
-        "gzip_bytes": 451293999,
-        "scopes": {
-          "combat": {
-            "traces": 40,
-            "decisions": 49303,
-            "terminal": 40
-          },
-          "run": {
-            "traces": 40,
-            "decisions": 49303,
             "terminal": 40
           }
         }
@@ -72,7 +45,7 @@
           "win": 0
         },
         "without_pandora": 7,
-        "peak_resident_cards": 186,
+        "peak_resident_cards": 120,
         "gzip_bytes": 69065986,
         "scopes": {
           "combat": {
@@ -86,26 +59,122 @@
             "terminal": 11
           }
         }
+      },
+      "fresh": {
+        "games": 40,
+        "decisions": 49303,
+        "depth": {
+          "act2": 40,
+          "act3": 40,
+          "act3_boss": 40,
+          "act4": 5,
+          "heart": 3,
+          "win": 1
+        },
+        "without_pandora": 35,
+        "peak_resident_cards": 110,
+        "gzip_bytes": 451293999,
+        "scopes": {
+          "combat": {
+            "traces": 40,
+            "decisions": 49303,
+            "terminal": 40
+          },
+          "run": {
+            "traces": 40,
+            "decisions": 49303,
+            "terminal": 40
+          }
+        }
+      },
+      "fault_hunt_regression": {
+        "games": 10,
+        "decisions": 13565,
+        "depth": {
+          "act2": 10,
+          "act3": 8,
+          "act3_boss": 8,
+          "act4": 1,
+          "heart": 1,
+          "win": 0
+        },
+        "without_pandora": 10,
+        "peak_resident_cards": 207,
+        "gzip_bytes": 134681021,
+        "scopes": {
+          "combat": {
+            "traces": 10,
+            "decisions": 13565,
+            "terminal": 10
+          },
+          "run": {
+            "traces": 10,
+            "decisions": 13565,
+            "terminal": 10
+          }
+        }
+      },
+      "fault_hunt_fresh": {
+        "games": 20,
+        "decisions": 23268,
+        "depth": {
+          "act2": 20,
+          "act3": 20,
+          "act3_boss": 20,
+          "act4": 1,
+          "heart": 0,
+          "win": 0
+        },
+        "without_pandora": 17,
+        "peak_resident_cards": 66,
+        "gzip_bytes": 210078118,
+        "scopes": {
+          "combat": {
+            "traces": 20,
+            "decisions": 23268,
+            "terminal": 20
+          },
+          "run": {
+            "traces": 20,
+            "decisions": 23268,
+            "terminal": 20
+          }
+        }
       }
     },
-    "total_recordings": 91,
-    "total_decisions": 101151,
+    "total_recordings": 121,
+    "total_decisions": 137984,
     "both_scopes": true,
     "all_terminals": true,
-    "fresh_idle_games": 40,
+    "fresh_idle_games": 60,
     "idle_extra_frames": 13,
-    "fresh_without_pandora": 35,
+    "fresh_without_pandora": 52,
     "actions_unchanged": true,
-    "unresolved_differences": []
+    "unresolved_differences": [],
+    "fault_hunt_fresh_idle_games": 20,
+    "fault_hunt_regression_idle_recordings": 3,
+    "unique_inputs": 120,
+    "freed_card_poison": "0xa5 in all builds; CardId::Count sentinel; occupied-slot assertions",
+    "peak_measurement": "Maximum live arena occupancy at replay decision boundaries",
+    "supplemental_idle_exception": {
+      "scenario": "SmokeBomb-RetainOne",
+      "seed": 202610212024,
+      "normal": "post-combat Cultist has no Ritual",
+      "extra13frames": "post-combat Cultist has Ritual5",
+      "meaning": "Original escape timing changes whether its queued Ritual action is cleared; this supplemental case is not idle-invariant. The requested20freshdeep games and3pool regression recordings remain byte-identical.",
+      "evidence": "/private/tmp/fault-hunt/escape-controls-idle.log"
+    }
   },
   "tests": {
-    "ctest_passed": 37,
-    "ctest_total": 37,
-    "committed_traces": 838,
-    "committed_decisions_per_scope": 19206,
+    "ctest_passed": 41,
+    "ctest_total": 41,
+    "committed_traces": 841,
+    "committed_decisions_per_scope": 19221,
     "all_terminals": true,
-    "log": "/private/tmp/spire-deep-round2/final-ctest.log",
-    "details": "/private/tmp/spire-deep-round2/final-ctest-details.log"
+    "log": "/private/tmp/fault-hunt/final-ctest.log",
+    "details": "/private/tmp/fault-hunt/build/Testing/Temporary/LastTest.log",
+    "deep_log": "/private/tmp/fault-hunt/final-deep-replay.log",
+    "build_log": "/private/tmp/fault-hunt/final-build.log"
   },
   "history": {
     "branch": "deep-runs",
@@ -114,50 +183,226 @@
     "committed_deep_fixture_gzip_bytes": 0,
     "removed_fixture_commit": "966c7e5c27970c41c1194617e98b9b1ac806237c",
     "round1_backup": "/private/tmp/spire-deep-round2/round1-branch.bundle",
-    "pushed": false
+    "pushed": false,
+    "fault_hunt": {
+      "branch": "fault-hunt",
+      "base": "1f386c7",
+      "previous_validation": "546d4df2b56d57a378e1f99092be11e35f962dde",
+      "implementation_commit": "7c77bed",
+      "pushed": false
+    }
   },
   "capacity": {
-    "cards": 192,
-    "game_bytes": 36848,
-    "budget_bytes": 36864,
+    "cards": 221,
+    "game_bytes": 37872,
+    "budget_bytes": 37888,
     "search_telemetry": {
-      "completed_searches": 85,
-      "selected_deep_games": 40,
-      "branches": 22581348,
-      "steps": 139838206,
-      "branches_128": 2833,
-      "branches_160": 252,
-      "seeds_128": 8,
-      "seeds_160": 3,
-      "peak_cards": 188,
+      "branches": 96689316,
+      "steps": 600367599,
       "turn_cutoffs": 0,
-      "unfinished_search": "202610180031 stopped after 40 candidates were complete; not included in completed-search totals"
+      "completed_searches": 350,
+      "target_searches": 300,
+      "fresh_searches": 50,
+      "selected_fresh_deep_games": 20,
+      "reused_clean_searches": 270,
+      "rerun_preexisting_clean_searches": 1,
+      "rerun_overflow_searches": 1,
+      "remaining_searches": 28,
+      "peak_live_cards": 207,
+      "peak_occupied_cards": 208,
+      "other_target_search_occupancy_upper_bound": 174,
+      "prior_round_search_cumulative_bound": 188,
+      "prior_shiv_search_cumulative_bound": 202
     },
-    "details": "/private/tmp/spire-deep-round2/search-telemetry-final.json",
+    "details": "/private/tmp/fault-hunt/final-search-summary.json",
     "original_cloak_and_dagger_peak": 169,
     "dead_branch_fault_prefix_peak": 186,
     "dead_branch_search_peak": 188,
     "capacity_failures_pruned": false,
-    "card_scalar_values_unchanged": true
+    "card_scalar_values_unchanged": true,
+    "live_peak": 207,
+    "occupied_peak": 208,
+    "live_margin": 14,
+    "allocation_margin": 13,
+    "poison_enabled": true,
+    "measured_arena_peaks": {
+      "cards": {
+        "peak": 208,
+        "limit": 221,
+        "seed": 202610211131
+      },
+      "run.master_deck": {
+        "peak": 61,
+        "limit": 128,
+        "seed": 202610211131
+      },
+      "run.relics": {
+        "peak": 21,
+        "limit": 64,
+        "seed": 202610210132
+      },
+      "action_objects": {
+        "peak": 34,
+        "limit": 64,
+        "seed": 202610211141
+      },
+      "power_objects": {
+        "peak": 104,
+        "limit": 128,
+        "seed": 202610213001
+      },
+      "player.creature.powers": {
+        "peak": 13,
+        "limit": 32,
+        "seed": 202610211131
+      },
+      "monster.powers": {
+        "peak": 10,
+        "limit": 32,
+        "seed": 202610211145
+      },
+      "monsters": {
+        "peak": 17,
+        "limit": 64,
+        "seed": 202610211141
+      },
+      "monster_order": {
+        "peak": 17,
+        "limit": 64,
+        "seed": 202610211141
+      },
+      "manager.actions": {
+        "peak": 34,
+        "limit": 64,
+        "seed": 202610211141
+      },
+      "manager.pre_turn_actions": {
+        "peak": 1,
+        "limit": 64,
+        "seed": 202610210055
+      },
+      "manager.card_queue": {
+        "peak": 8,
+        "limit": 32,
+        "seed": 202610212005
+      },
+      "manager.monster_queue": {
+        "peak": 5,
+        "limit": 64,
+        "seed": 202610213014
+      },
+      "manager.played_cards": {
+        "peak": 346,
+        "limit": 1024,
+        "seed": 202610211130
+      },
+      "move_histories": {
+        "peak": 145,
+        "limit": 1024,
+        "seed": 202610213001
+      },
+      "text": {
+        "peak": 71,
+        "limit": 320,
+        "seed": 202610212024
+      },
+      "damage_exceptions": {
+        "peak": 22,
+        "limit": 255,
+        "seed": 202610211048
+      },
+      "drawn_cards": {
+        "peak": 10,
+        "limit": 10,
+        "seed": 202610211131
+      },
+      "pending_obtains": {
+        "peak": 5,
+        "limit": 8,
+        "seed": 202610213016
+      },
+      "reward_cards": {
+        "peak": 4,
+        "limit": 8,
+        "seed": 202610211126
+      },
+      "reward_objects": {
+        "peak": 12,
+        "limit": 16,
+        "seed": 202610213010
+      },
+      "monster_damage_extra": {
+        "peak": 5,
+        "limit": 16,
+        "seed": 202610213016
+      }
+    },
+    "measurement_scope": "Reuse prior clean search telemetry; cumulative occupancy bounds the live count in older searches. Re-run the two former largest card searches, the two fresh timing-fault searches, and all three pool-regression recordings with live/occupied instrumentation. Non-card historical maxima describe their recorded engine versions.",
+    "regression_recording_peaks": [
+      {
+        "trace": "/private/tmp/fault-hunt/reuse-original/selected.jsonl.gz",
+        "decisions": 1627,
+        "live_peak": 184,
+        "occupied_peak": 185
+      },
+      {
+        "trace": "/private/tmp/fault-hunt/reuse-original/live-peak.jsonl.gz",
+        "decisions": 1651,
+        "live_peak": 207,
+        "occupied_peak": 208
+      },
+      {
+        "trace": "/private/tmp/fault-hunt/reuse-original/fault.jsonl.gz",
+        "decisions": 1580,
+        "live_peak": 159,
+        "occupied_peak": 160
+      }
+    ],
+    "regression_recording_details": "/private/tmp/fault-hunt/final-regression-capacity.json",
+    "before_after": {
+      "seed": 202610211131,
+      "cumulative_created": 308,
+      "before_occupied": 308,
+      "after_live": 207,
+      "after_occupied": 208,
+      "search_steps": 1036621,
+      "search_branches": 172704,
+      "source": "/private/tmp/fault-hunt/live-final/202610211131.result.json",
+      "second_seed": {
+        "seed": 202610210030,
+        "before_occupied": 216,
+        "after_live": 138,
+        "after_occupied": 139,
+        "search_steps": 474799,
+        "search_branches": 74808
+      }
+    }
   },
   "performance": {
     "machine": "Apple M4, 10 CPU cores",
     "threads": 1,
     "steps_per_run": 5000000,
     "games_per_run": 284785,
-    "alternating_pairs": 7,
+    "alternating_pairs": 3,
+    "baseline_commit": "1f386c7",
+    "current_engine_commit": "e304c2c2cd5d280a5a152c052d17cf0a568174c1",
+    "build": "clang -O2 -g -DNDEBUG -ffp-contract=off; searches paused; one benchmark process",
     "baseline": {
-      "steps_per_second": 1013123.298533,
-      "seconds": 4.935233,
-      "game_bytes": 35552
+      "steps": 5000000,
+      "games": 284785,
+      "game_bytes": 37848,
+      "seconds": 4.950684,
+      "steps_per_second": 1009961.383858
     },
     "current": {
-      "steps_per_second": 1023328.626632,
-      "seconds": 4.886016,
-      "game_bytes": 36848
+      "steps": 5000000,
+      "games": 284785,
+      "game_bytes": 37872,
+      "seconds": 5.489385,
+      "steps_per_second": 910848.812687
     },
-    "ratio": 1.0100731353368115,
-    "details": "/private/tmp/spire-deep-round2/performance-final.json"
+    "ratio": 0.9018649893400923,
+    "details": "/private/tmp/fault-hunt/final-performance.json"
   },
   "timing": {
     "search_seed": 202610160050,
@@ -240,7 +485,96 @@
       202610180030
     ],
     "collisions": [],
-    "baseline_audit": "/private/tmp/spire-deep-delivery/seed-audit.json"
+    "baseline_audit": "/private/tmp/spire-deep-delivery/seed-audit.json",
+    "fault_hunt": {
+      "target_ranges": [
+        [
+          202610210000,
+          202610210149
+        ],
+        [
+          202610211000,
+          202610211149
+        ]
+      ],
+      "target_clean": 300,
+      "fresh_search_seeds": [
+        202610212000,
+        202610212001,
+        202610212002,
+        202610212003,
+        202610212004,
+        202610212005,
+        202610212006,
+        202610212007,
+        202610212008,
+        202610212009,
+        202610212010,
+        202610212011,
+        202610212012,
+        202610212013,
+        202610212014,
+        202610212015,
+        202610212016,
+        202610212017,
+        202610212018,
+        202610212019,
+        202610212020,
+        202610212021,
+        202610212022,
+        202610212023,
+        202610212024,
+        202610212025,
+        202610212026,
+        202610212027,
+        202610212028,
+        202610212029,
+        202610212030,
+        202610212031,
+        202610212032,
+        202610213000,
+        202610213001,
+        202610213002,
+        202610213003,
+        202610213004,
+        202610213005,
+        202610213006,
+        202610213007,
+        202610213008,
+        202610213009,
+        202610213010,
+        202610213011,
+        202610213012,
+        202610213013,
+        202610213014,
+        202610213015,
+        202610213016
+      ],
+      "accepted_fresh_seeds": [
+        202610212000,
+        202610212003,
+        202610212004,
+        202610212005,
+        202610212006,
+        202610212007,
+        202610212009,
+        202610212021,
+        202610212024,
+        202610212032,
+        202610213001,
+        202610213003,
+        202610213005,
+        202610213008,
+        202610213009,
+        202610213010,
+        202610213011,
+        202610213012,
+        202610213014,
+        202610213016
+      ],
+      "collisions": [],
+      "sources": "/private/tmp/fault-hunt/final-search-summary.json"
+    }
   },
   "oracle_contract": {
     "original_classes_audited": 2306,
@@ -457,6 +791,94 @@
       "commits": [
         "546d4df"
       ]
+    },
+    "Grid opening resets": {
+      "java": [
+        "screens.select.GridCardSelectScreen.callOnOpen",
+        "screens.select.GridCardSelectScreen.open"
+      ],
+      "change": "Reset previous grid selection modes before combat grid opening; cancelled campfire upgrade must not turn Secret Weapon into an upgrade selection.",
+      "repro": "202610210005 saved grid-prefix and selected game",
+      "commits": [
+        "eb6bcd8"
+      ]
+    },
+    "Card arena reclamation": {
+      "java": [
+        "cards.green.BladeDance.use",
+        "cards.green.CloakAndDagger.use",
+        "relics.DeadBranch.onExhaust",
+        "actions.common.MakeTempCardInHandAction.update",
+        "cards.AbstractCard.makeStatEquivalentCopy",
+        "helpers.GetAllInBattleInstances.get"
+      ],
+      "change": "At each returned decision enumerate all rule-live arena references, release unreachable cards and sparse damage rows, poison released slots and reuse an intrusive free list without changing UUID generation. The earlier capacity-only fixes are superseded by reclamation.",
+      "repro": "202610209004, 202610210030, 202610211131; the last fails its 225th allocation at floor50 Awakened One turn11 after Shiv exhaust and creates308 cumulative objects in the complete search.",
+      "commits": [
+        "023109c",
+        "1f386c7",
+        "7c77bed"
+      ],
+      "enumerator": "core/card_lifetime.hpp:card_references",
+      "roots": [
+        "combat piles",
+        "drawn and played histories",
+        "current card and discovery selection",
+        "pending card movements and obtains",
+        "occupied queued/current/held actions and reference payloads",
+        "prepared powers and powers retained by creatures/actions",
+        "current monsters and queued spawns",
+        "current grid and hand selections",
+        "rewards and current shop stock",
+        "event-owned cards",
+        "detached master cards with a current relic/event UUID holder"
+      ],
+      "value_owned": [
+        "master deck"
+      ],
+      "non_arena_references": [
+        "bottle/Falling/WeMeetAgain UUIDs resolve to master deck or detached master objects",
+        "master grid positions and hovered target",
+        "SetMove.card is damage",
+        "inactive grid scratch is replaced before reuse"
+      ],
+      "slot_order_audit": "GetAllInBattleInstances is a HashSet: ModifyDamage, ModifyBlock, ReduceCost, IncreaseMisc and RitualDagger update independent members without RNG; membership is checked before reading a slot. Soul cache clearing has independent per-card writes then one hand refresh. Removed master cards are resolved by identity.",
+      "uuid": "Existing16-bit UUID and next_card_uuid assignment unchanged; a recycled slot never provides a UUID."
+    },
+    "Death cleanup during draw waits": {
+      "java": [
+        "monsters.AbstractMonster.die",
+        "monsters.AbstractMonster.updateDeathAnimation",
+        "actions.common.DrawCardAction.update",
+        "actions.common.MakeTempCardInHandAction.update"
+      ],
+      "change": "Track sufficient mandatory wait frames for a death to settle before subsequent power refreshes; preserve shorter-wait damage caches and the existing intent/turn/decision settlement boundaries.",
+      "repro": "202610212003 line625, floor36; Mercury Hourglass kills a weakened Spiker, Endless Agony creation waits precede Noxious Fumes. Original DamageInfo output9/isModifiedfalse, prior engine6/true.",
+      "original_frame_evidence": "oracle/instance/job-1792021620911321000/game.log",
+      "regression": "tests/test_combat.cpp:test_death_during_draw"
+    },
+    "Escape during card selection": {
+      "java": [
+        "potions.SmokeBomb.use",
+        "characters.AbstractPlayer.updateEscapeAnimation",
+        "actions.unique.SetupAction.update",
+        "actions.unique.RetainCardsAction.update",
+        "rooms.AbstractRoom.endTurn",
+        "actions.GameActionManager.getNextAction"
+      ],
+      "change": "Keep pending selection and card actions running while escape advances across mandatory waits. Preserve Smoke Bomb VFX and the queued Retain/room WaitActions; escape can clear the pending monster-start action during the 1.2s room wait. Retain the original post-victory monster-queue behavior.",
+      "repro": "202610212024 floor11 Setup and floor35 Well-Laid Plans; missing freeToPlayOnce, discard entries and subsequent unseeded RNG draw.",
+      "original_frame_evidence": "oracle/instance/job-1792022890107633000/game.log",
+      "regression": "tests/test_potion_02.cpp and3 SmokeBomb-Retain oracle fixtures",
+      "idle_boundary": {
+        "scenario": "SmokeBomb-RetainOne",
+        "seed": 202610212024,
+        "normal": "post-combat Cultist has no Ritual",
+        "extra13frames": "post-combat Cultist has Ritual5",
+        "meaning": "Original escape timing changes whether its queued Ritual action is cleared; this supplemental case is not idle-invariant. The requested20freshdeep games and3pool regression recordings remain byte-identical.",
+        "evidence": "/private/tmp/fault-hunt/escape-controls-idle.log"
+      },
+      "observation": "Project only escaping-player drawX to null: 13 extra idle frames changed exactly3 position observations and no other field. SmokeBomb.canUse excludes BackAttack/bosses; Surrounded rule readers cannot consume escape position. Original input and seed unchanged; comparison,18 patched game classes and RNG split unchanged."
     }
   },
   "presentation_decisions": [
@@ -565,7 +987,20 @@
     "root": "/private/tmp/spire-deep-round2",
     "replay": "/private/tmp/spire-deep-round2/final91-replay.json",
     "accepted_inputs": "/private/tmp/spire-deep-round2/accepted-inputs",
-    "full_result": "/private/tmp/spire-deep-round2/accepted-games.json"
+    "full_result": "/private/tmp/spire-deep-round2/accepted-games.json",
+    "fault_hunt": {
+      "root": "/private/tmp/fault-hunt",
+      "replay": "/private/tmp/fault-hunt/final-deep-replay.json",
+      "accepted_inputs": "/private/tmp/fault-hunt/final-inputs",
+      "recording_jobs": [
+        "/private/tmp/fault-hunt/accept-a/jobs.json",
+        "/private/tmp/fault-hunt/accept-b/jobs.json"
+      ],
+      "idle_proofs": [
+        "/private/tmp/fault-hunt/accept-a/idle.json",
+        "/private/tmp/fault-hunt/accept-b/idle.json"
+      ]
+    }
   },
   "games": [
     {
@@ -590,7 +1025,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 58,
+      "peak_resident_cards": 46,
       "replay": {
         "combat": true,
         "run": true,
@@ -619,7 +1054,7 @@
       "final_act": 4,
       "final_floor": 54,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 111,
+      "peak_resident_cards": 78,
       "replay": {
         "combat": true,
         "run": true,
@@ -648,7 +1083,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 77,
+      "peak_resident_cards": 54,
       "replay": {
         "combat": true,
         "run": true,
@@ -677,7 +1112,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 62,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -706,7 +1141,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 57,
+      "peak_resident_cards": 43,
       "replay": {
         "combat": true,
         "run": true,
@@ -735,7 +1170,7 @@
       "final_act": 4,
       "final_floor": 54,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 73,
+      "peak_resident_cards": 57,
       "replay": {
         "combat": true,
         "run": true,
@@ -764,7 +1199,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 68,
+      "peak_resident_cards": 56,
       "replay": {
         "combat": true,
         "run": true,
@@ -793,7 +1228,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 66,
+      "peak_resident_cards": 51,
       "replay": {
         "combat": true,
         "run": true,
@@ -822,7 +1257,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 91,
+      "peak_resident_cards": 66,
       "replay": {
         "combat": true,
         "run": true,
@@ -851,7 +1286,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 65,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -880,7 +1315,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 69,
+      "peak_resident_cards": 46,
       "replay": {
         "combat": true,
         "run": true,
@@ -909,7 +1344,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 49,
+      "peak_resident_cards": 40,
       "replay": {
         "combat": true,
         "run": true,
@@ -938,7 +1373,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 71,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -967,7 +1402,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 76,
+      "peak_resident_cards": 60,
       "replay": {
         "combat": true,
         "run": true,
@@ -996,7 +1431,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 68,
+      "peak_resident_cards": 52,
       "replay": {
         "combat": true,
         "run": true,
@@ -1025,7 +1460,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 78,
+      "peak_resident_cards": 54,
       "replay": {
         "combat": true,
         "run": true,
@@ -1054,7 +1489,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 85,
+      "peak_resident_cards": 70,
       "replay": {
         "combat": true,
         "run": true,
@@ -1083,7 +1518,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 70,
+      "peak_resident_cards": 51,
       "replay": {
         "combat": true,
         "run": true,
@@ -1112,7 +1547,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 61,
+      "peak_resident_cards": 50,
       "replay": {
         "combat": true,
         "run": true,
@@ -1141,7 +1576,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 70,
+      "peak_resident_cards": 57,
       "replay": {
         "combat": true,
         "run": true,
@@ -1170,7 +1605,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 68,
+      "peak_resident_cards": 52,
       "replay": {
         "combat": true,
         "run": true,
@@ -1199,7 +1634,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 74,
+      "peak_resident_cards": 58,
       "replay": {
         "combat": true,
         "run": true,
@@ -1228,7 +1663,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 59,
+      "peak_resident_cards": 52,
       "replay": {
         "combat": true,
         "run": true,
@@ -1257,7 +1692,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 93,
+      "peak_resident_cards": 72,
       "replay": {
         "combat": true,
         "run": true,
@@ -1286,7 +1721,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 61,
+      "peak_resident_cards": 44,
       "replay": {
         "combat": true,
         "run": true,
@@ -1315,7 +1750,7 @@
       "final_act": 4,
       "final_floor": 54,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 90,
+      "peak_resident_cards": 67,
       "replay": {
         "combat": true,
         "run": true,
@@ -1344,7 +1779,7 @@
       "final_act": 4,
       "final_floor": 55,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 98,
+      "peak_resident_cards": 70,
       "replay": {
         "combat": true,
         "run": true,
@@ -1373,7 +1808,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 83,
+      "peak_resident_cards": 63,
       "replay": {
         "combat": true,
         "run": true,
@@ -1402,7 +1837,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 59,
+      "peak_resident_cards": 43,
       "replay": {
         "combat": true,
         "run": true,
@@ -1431,7 +1866,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 68,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -1460,7 +1895,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 146,
+      "peak_resident_cards": 78,
       "replay": {
         "combat": true,
         "run": true,
@@ -1489,7 +1924,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 69,
+      "peak_resident_cards": 51,
       "replay": {
         "combat": true,
         "run": true,
@@ -1518,7 +1953,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 61,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -1547,7 +1982,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 66,
+      "peak_resident_cards": 43,
       "replay": {
         "combat": true,
         "run": true,
@@ -1576,7 +2011,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 68,
+      "peak_resident_cards": 55,
       "replay": {
         "combat": true,
         "run": true,
@@ -1605,7 +2040,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 62,
+      "peak_resident_cards": 51,
       "replay": {
         "combat": true,
         "run": true,
@@ -1634,7 +2069,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 69,
+      "peak_resident_cards": 56,
       "replay": {
         "combat": true,
         "run": true,
@@ -1663,7 +2098,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 68,
+      "peak_resident_cards": 50,
       "replay": {
         "combat": true,
         "run": true,
@@ -1692,7 +2127,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 88,
+      "peak_resident_cards": 57,
       "replay": {
         "combat": true,
         "run": true,
@@ -1721,7 +2156,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 62,
+      "peak_resident_cards": 40,
       "replay": {
         "combat": true,
         "run": true,
@@ -1750,7 +2185,7 @@
       "final_act": 2,
       "final_floor": 22,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 44,
+      "peak_resident_cards": 30,
       "replay": {
         "combat": true,
         "run": true,
@@ -1779,7 +2214,7 @@
       "final_act": 1,
       "final_floor": 10,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 63,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -1808,7 +2243,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 174,
+      "peak_resident_cards": 120,
       "replay": {
         "combat": true,
         "run": true,
@@ -1837,7 +2272,7 @@
       "final_act": 2,
       "final_floor": 21,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 54,
+      "peak_resident_cards": 44,
       "replay": {
         "combat": true,
         "run": true,
@@ -1866,7 +2301,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 73,
+      "peak_resident_cards": 56,
       "replay": {
         "combat": true,
         "run": true,
@@ -1895,7 +2330,7 @@
       "final_act": 3,
       "final_floor": 51,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 69,
+      "peak_resident_cards": 58,
       "replay": {
         "combat": true,
         "run": true,
@@ -1924,7 +2359,7 @@
       "final_act": 2,
       "final_floor": 33,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 44,
+      "peak_resident_cards": 31,
       "replay": {
         "combat": true,
         "run": true,
@@ -1953,7 +2388,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 84,
+      "peak_resident_cards": 58,
       "replay": {
         "combat": true,
         "run": true,
@@ -1988,7 +2423,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 79,
+      "peak_resident_cards": 62,
       "replay": {
         "combat": true,
         "run": true,
@@ -2023,7 +2458,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 103,
+      "peak_resident_cards": 78,
       "replay": {
         "combat": true,
         "run": true,
@@ -2058,7 +2493,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 68,
+      "peak_resident_cards": 50,
       "replay": {
         "combat": true,
         "run": true,
@@ -2093,7 +2528,7 @@
       "final_act": 4,
       "final_floor": 54,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 118,
+      "peak_resident_cards": 83,
       "replay": {
         "combat": true,
         "run": true,
@@ -2128,7 +2563,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 73,
+      "peak_resident_cards": 58,
       "replay": {
         "combat": true,
         "run": true,
@@ -2163,7 +2598,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 107,
+      "peak_resident_cards": 67,
       "replay": {
         "combat": true,
         "run": true,
@@ -2198,7 +2633,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 86,
+      "peak_resident_cards": 47,
       "replay": {
         "combat": true,
         "run": true,
@@ -2233,7 +2668,7 @@
       "final_act": 3,
       "final_floor": 51,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 71,
+      "peak_resident_cards": 55,
       "replay": {
         "combat": true,
         "run": true,
@@ -2268,7 +2703,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 57,
+      "peak_resident_cards": 50,
       "replay": {
         "combat": true,
         "run": true,
@@ -2303,7 +2738,7 @@
       "final_act": 4,
       "final_floor": 54,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 152,
+      "peak_resident_cards": 110,
       "replay": {
         "combat": true,
         "run": true,
@@ -2338,7 +2773,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 62,
+      "peak_resident_cards": 51,
       "replay": {
         "combat": true,
         "run": true,
@@ -2373,7 +2808,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 96,
+      "peak_resident_cards": 57,
       "replay": {
         "combat": true,
         "run": true,
@@ -2408,7 +2843,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 61,
+      "peak_resident_cards": 48,
       "replay": {
         "combat": true,
         "run": true,
@@ -2443,7 +2878,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 94,
+      "peak_resident_cards": 62,
       "replay": {
         "combat": true,
         "run": true,
@@ -2478,7 +2913,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 57,
+      "peak_resident_cards": 41,
       "replay": {
         "combat": true,
         "run": true,
@@ -2513,7 +2948,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 74,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -2548,7 +2983,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 58,
+      "peak_resident_cards": 49,
       "replay": {
         "combat": true,
         "run": true,
@@ -2583,7 +3018,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 75,
+      "peak_resident_cards": 51,
       "replay": {
         "combat": true,
         "run": true,
@@ -2618,7 +3053,7 @@
       "final_act": 2,
       "final_floor": 24,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 83,
+      "peak_resident_cards": 60,
       "replay": {
         "combat": true,
         "run": true,
@@ -2676,7 +3111,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 90,
+      "peak_resident_cards": 58,
       "replay": {
         "combat": true,
         "run": true,
@@ -2711,7 +3146,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 72,
+      "peak_resident_cards": 46,
       "replay": {
         "combat": true,
         "run": true,
@@ -2746,7 +3181,7 @@
       "final_act": 4,
       "final_floor": 55,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 168,
+      "peak_resident_cards": 107,
       "replay": {
         "combat": true,
         "run": true,
@@ -2781,7 +3216,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 72,
+      "peak_resident_cards": 59,
       "replay": {
         "combat": true,
         "run": true,
@@ -2816,7 +3251,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 74,
+      "peak_resident_cards": 56,
       "replay": {
         "combat": true,
         "run": true,
@@ -2851,7 +3286,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 70,
+      "peak_resident_cards": 52,
       "replay": {
         "combat": true,
         "run": true,
@@ -2886,7 +3321,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 59,
+      "peak_resident_cards": 50,
       "replay": {
         "combat": true,
         "run": true,
@@ -2921,7 +3356,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 85,
+      "peak_resident_cards": 67,
       "replay": {
         "combat": true,
         "run": true,
@@ -2956,7 +3391,7 @@
       "final_act": 4,
       "final_floor": 55,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 153,
+      "peak_resident_cards": 100,
       "replay": {
         "combat": true,
         "run": true,
@@ -2991,7 +3426,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 74,
+      "peak_resident_cards": 56,
       "replay": {
         "combat": true,
         "run": true,
@@ -3026,7 +3461,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 60,
+      "peak_resident_cards": 50,
       "replay": {
         "combat": true,
         "run": true,
@@ -3061,7 +3496,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 93,
+      "peak_resident_cards": 60,
       "replay": {
         "combat": true,
         "run": true,
@@ -3096,7 +3531,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 80,
+      "peak_resident_cards": 61,
       "replay": {
         "combat": true,
         "run": true,
@@ -3131,7 +3566,7 @@
       "final_act": 4,
       "final_floor": 56,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 74,
+      "peak_resident_cards": 57,
       "replay": {
         "combat": true,
         "run": true,
@@ -3166,7 +3601,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 81,
+      "peak_resident_cards": 63,
       "replay": {
         "combat": true,
         "run": true,
@@ -3201,7 +3636,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 82,
+      "peak_resident_cards": 50,
       "replay": {
         "combat": true,
         "run": true,
@@ -3236,7 +3671,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 72,
+      "peak_resident_cards": 58,
       "replay": {
         "combat": true,
         "run": true,
@@ -3271,7 +3706,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": true,
-      "peak_resident_cards": 186,
+      "peak_resident_cards": 120,
       "replay": {
         "combat": true,
         "run": true,
@@ -3300,7 +3735,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 150,
+      "peak_resident_cards": 92,
       "replay": {
         "combat": true,
         "run": true,
@@ -3335,7 +3770,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 76,
+      "peak_resident_cards": 57,
       "replay": {
         "combat": true,
         "run": true,
@@ -3399,7 +3834,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 97,
+      "peak_resident_cards": 62,
       "replay": {
         "combat": true,
         "run": true,
@@ -3434,7 +3869,7 @@
       "final_act": 3,
       "final_floor": 50,
       "neow_pandora_swap": false,
-      "peak_resident_cards": 95,
+      "peak_resident_cards": 68,
       "replay": {
         "combat": true,
         "run": true,
@@ -3445,6 +3880,1014 @@
         "byte_identical": true,
         "trace": "/private/tmp/spire-deep-round2/fresh-batch4-idle/delayed/1.jsonl.gz",
         "verification": "/private/tmp/spire-deep-round2/fresh-batch4-idle-result.json"
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/original/fault.jsonl.gz",
+      "seed": 202610209004,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/91-202610209004.json",
+      "scenario_sha256": "440b66a0dc4e90e79eec704393e317500a4e618acb980838ade13d57fa1aef1a",
+      "jsonl_sha256": "1e6a974b181ff6a9233012c3d690a35c63629565f8b1ed07018b60ef5ba94940",
+      "gzip_sha256": "a0a0e572919883a37e8dd8ff88efd2f1610a722d5a3fde662a330f1eeac45417",
+      "gzip_bytes": 14786014,
+      "decisions": 1570,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 149,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/original/selected.jsonl.gz",
+      "seed": 202610209004,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/92-202610209004.json",
+      "scenario_sha256": "cff9ddc8fab59f89cf7845809a45d00c02bb6665c38f6cf2db6b9db3715885f5",
+      "jsonl_sha256": "46cb887a690baf4fb5dab76bedc9235e1fdbb79e669a17f14d02e59b744d2719",
+      "gzip_sha256": "aaeed1b28a6b8715408cd0a2c9a387ad4b7e8efe80c155c8fa0abe182330be44",
+      "gzip_bytes": 11476262,
+      "decisions": 1283,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 97,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/grid-fixed/selected.jsonl.gz",
+      "seed": 202610210005,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/93-202610210005.json",
+      "scenario_sha256": "c1258cab6bae5b72fe96be1c86057cab064c2d86234fc51cdebd6df3a58fbcc8",
+      "jsonl_sha256": "a1a4aa32e76645b4daf33460f34fccba21aff29aa1fd6fd897808be91e43dd1c",
+      "gzip_sha256": "83a834ea3076603888d02fcaf01e2cdf8d1c3233b2129f04d4d85cff6e03cbb8",
+      "gzip_bytes": 4591972,
+      "decisions": 549,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 2,
+      "final_floor": 33,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 35,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/grid-fixed/grid-prefix.jsonl.gz",
+      "seed": 202610210005,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/94-202610210005.json",
+      "scenario_sha256": "ebb3c3dc5587d4988d7d58a44fb510bf83cb1446fa13297ed36863472d680995",
+      "jsonl_sha256": "faaa51cbb9c062c4b53553babe9f84328276a12a8c81dec1e07d06cfef901c78",
+      "gzip_sha256": "909a4400e2b8e27f1caaa29b95ccded511a48fab12ebc3ad0631abffb69f5573",
+      "gzip_bytes": 4086723,
+      "decisions": 497,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": false,
+        "act3_boss": false,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 2,
+      "final_floor": 33,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 37,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/dead-branch-fixed/fault.jsonl.gz",
+      "seed": 202610210030,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/95-202610210030.json",
+      "scenario_sha256": "7db3e7ce4690a06f4bc9c5c5e4c569c438cf349d1b510db6a72bfea63cb6b8c7",
+      "jsonl_sha256": "049251013c0b7b92398d3f8bf8fb3cd84c4db7f4ddeb160949333b356a7d804f",
+      "gzip_sha256": "1059efaf8ef9c156bb1ed1ffab402b8f5326d6700bf98423116bd82d5b4dae5b",
+      "gzip_bytes": 15149057,
+      "decisions": 1541,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 138,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/dead-branch-fixed/selected.jsonl.gz",
+      "seed": 202610210030,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/96-202610210030.json",
+      "scenario_sha256": "0667632aaa1e4dd2b1f56acd0dc90238d633fd526d1a5adc9b75f613639ded21",
+      "jsonl_sha256": "fb98e12b1f429e654a7ad750d917682d89bd6a6b6ecd0a5fd1e4089b979824ea",
+      "gzip_sha256": "01058975e044257d2570cc90f759bc3aec7c5c8dbd01c2aa3477b5c6c04a410c",
+      "gzip_bytes": 16554996,
+      "decisions": 1687,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": true,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 55,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 138,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/branch-wide/fault.jsonl.gz",
+      "seed": 202610211131,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/97-202610211131.json",
+      "scenario_sha256": "8a425c1b3ede53c26df9c4b242013f1d6596500b078b13efc3403b68a5f99182",
+      "jsonl_sha256": "69a22489536140e3e65ea43313a54ab6625ff763b997b220e7542e52e3e59d35",
+      "gzip_sha256": "8721655cf164d2ba3b66d9e0d397c1e5e7ef79902cb233a7c6bf7f05cb2ad5ca",
+      "gzip_bytes": 16502929,
+      "decisions": 1580,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 159,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212000.jsonl.gz",
+      "seed": 202610212000,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/98-202610212000.json",
+      "scenario_sha256": "91e685299e1164c066006af9b1bdbe28f4f1c927ed3ed143429299bf4e5aa1b7",
+      "jsonl_sha256": "cd86ddb23989f1804481fbe1c7cdd860aeb30797d1b0a3587d1fe8aa1cb097df",
+      "gzip_sha256": "84079dd368f4decaa9c6caee50a00dad0bfb72daf5fe6a318136a035d46dd302",
+      "gzip_bytes": 12428285,
+      "decisions": 1337,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 56,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/0.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212003.jsonl.gz",
+      "seed": 202610212003,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/99-202610212003.json",
+      "scenario_sha256": "c5cd6208e3d94264954ea957543382dbbcb1a9b124a1e8a5a1e401cf3e34c1cc",
+      "jsonl_sha256": "fe100b487d560ff99d521685a988e780ed6ab810a6c16a76df65407e8954ab05",
+      "gzip_sha256": "015d04f2a0bc96f80bbc6f9b071a247245a525ecf51a5011e21f71c0cc619d06",
+      "gzip_bytes": 8669950,
+      "decisions": 967,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 50,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/1.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212004.jsonl.gz",
+      "seed": 202610212004,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/100-202610212004.json",
+      "scenario_sha256": "ddf01d8e270790371b061fb28fee52fe7f04caa69ba68ab1d927487cd9058a16",
+      "jsonl_sha256": "d6124a809cab98f6aab3d3225bcaa9ad8299ec48749385a8928a3d58295759a2",
+      "gzip_sha256": "5a96fdff97a8e15e7a805b244234e128c5103330da8537eae277339d3943288f",
+      "gzip_bytes": 11727683,
+      "decisions": 1295,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 59,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/2.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212005.jsonl.gz",
+      "seed": 202610212005,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/101-202610212005.json",
+      "scenario_sha256": "2e8bf56cc7809ef8422d9484cc879b4fcce9d770174152d20e850601878f1b9f",
+      "jsonl_sha256": "975b508f2b14a547e532f9993d52bf32fe4a843ca956910bb426b71bbe0f1f03",
+      "gzip_sha256": "df2aac57c62998aa69ffd50ddecf93f5eca680b4e35b6c125e47701216682942",
+      "gzip_bytes": 13746479,
+      "decisions": 1553,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 52,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/3.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212006.jsonl.gz",
+      "seed": 202610212006,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/102-202610212006.json",
+      "scenario_sha256": "2f6c1312c1b46e05915137c0255bbac8742cced6d9d98e893d72aaa3a66f8295",
+      "jsonl_sha256": "40b42203256fa5f7f7abfea6c96994c9a158c2f6b4211325ee1ffd217111d726",
+      "gzip_sha256": "9e2f8924c0c58e96a7b8b39bdb5eaf1faf4e673d174ecaa8ec9cd79894e3f7dc",
+      "gzip_bytes": 8929680,
+      "decisions": 1013,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 49,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/4.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212007.jsonl.gz",
+      "seed": 202610212007,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/103-202610212007.json",
+      "scenario_sha256": "ae60b8e5fa342c2f64fa4f6f81f6b5fc11df871dd97f552b4ff7b13ebe3ecd2a",
+      "jsonl_sha256": "c24774499f7b373696525436947fb4cbf3e79bba97eb31fd6b5112fe2140b9b2",
+      "gzip_sha256": "98f5cbbd0d6caacd482692c622082f74c62e0bc5f2a600156a5c71e7756c10f0",
+      "gzip_bytes": 9264936,
+      "decisions": 1059,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 52,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/5.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212009.jsonl.gz",
+      "seed": 202610212009,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/104-202610212009.json",
+      "scenario_sha256": "b633b842677b06709375a9555da4b2a05fcb13d041915cc0fc0093f573678ac9",
+      "jsonl_sha256": "939e146e53328923a58dfd2ff0758e612f478c70353e2a6983c2c026cdabc8a6",
+      "gzip_sha256": "697c30fab2f7273defe4f45f037576b97f332881cc4de8e67665b4d099a39b5b",
+      "gzip_bytes": 12231119,
+      "decisions": 1336,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 47,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/6.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212021.jsonl.gz",
+      "seed": 202610212021,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/105-202610212021.json",
+      "scenario_sha256": "ed19d0ecbe04dee3a8f32e79202b0be179104d610b8eb1f815e94d5812ae9aeb",
+      "jsonl_sha256": "214ecf0f4960c56719bc4b8f530d4b27018b2e8255885139df49e24cb2e2e42c",
+      "gzip_sha256": "cfb51c5c8459bf5e99735e35dbccfd0d7891ad7a32d5f4c49016946fa5adadc4",
+      "gzip_bytes": 10524065,
+      "decisions": 1188,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 55,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/7.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212024.jsonl.gz",
+      "seed": 202610212024,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/106-202610212024.json",
+      "scenario_sha256": "1df3735122c868cbf27ab2674594bc5ef6c996cd3260d0ef7ed8033a74cbc5c9",
+      "jsonl_sha256": "aa0e105210a71d4280bbeade6cd3406b31f2ad2d9c5bfd00e9db539d3ce1218b",
+      "gzip_sha256": "8d8c9b54d1b7f16bcc17612b4353ba237d3aad2396a8242f06f01261f7ca1d02",
+      "gzip_bytes": 14857328,
+      "decisions": 1545,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": true,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 4,
+      "final_floor": 54,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 63,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/8.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-a/202610212032.jsonl.gz",
+      "seed": 202610212032,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/107-202610212032.json",
+      "scenario_sha256": "85a3e1ab6197b88226f26acd81ed60551d3254a1954a6c2fe9eeb1935cc19293",
+      "jsonl_sha256": "52a3031a53d0466881586752c84a7b291558f306c7717f28b601dec79bc06937",
+      "gzip_sha256": "d4643c04c036b94e4f824f8d71a95413bb08d138a49680cfe8884b2b28b9cd3b",
+      "gzip_bytes": 10764883,
+      "decisions": 1185,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 59,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/9.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/reuse-original/selected.jsonl.gz",
+      "seed": 202610211131,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/108-202610211131.json",
+      "scenario_sha256": "b65b013219f0ddbc518c67fe6b78a6748d1294999c44e40d787c5fbb91a8b7aa",
+      "jsonl_sha256": "b5e5123ddb43da6ffd694121ab79461a9d5b521f0bdfc00bd858e656f9911b68",
+      "gzip_sha256": "edd5399e94310ef6a9bfdfee42f3b7e6ad899efdf81b87d2c9ffa5443b324355",
+      "gzip_bytes": 17306528,
+      "decisions": 1627,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 51,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 184,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/10.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/reuse-original/live-peak.jsonl.gz",
+      "seed": 202610211131,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/109-202610211131.json",
+      "scenario_sha256": "6c4bdbd791182709583426ab709055f283d21e783cc6a8385f5668bac9c31e2d",
+      "jsonl_sha256": "00104409ddf7e7d91647a27d2f627b333b5709d85b2c3b7f3add285aef3ed328",
+      "gzip_sha256": "4adfec3d05786e8cfa06e9928b162e20d341219c76116c7ead2b9f5c7c0f2a47",
+      "gzip_bytes": 17723611,
+      "decisions": 1651,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 51,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 207,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/11.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_regression",
+      "trace": "/private/tmp/fault-hunt/reuse-original/fault.jsonl.gz",
+      "seed": 202610211131,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/110-202610211131.json",
+      "scenario_sha256": "8a425c1b3ede53c26df9c4b242013f1d6596500b078b13efc3403b68a5f99182",
+      "jsonl_sha256": "69a22489536140e3e65ea43313a54ab6625ff763b997b220e7542e52e3e59d35",
+      "gzip_sha256": "8721655cf164d2ba3b66d9e0d397c1e5e7ef79902cb233a7c6bf7f05cb2ad5ca",
+      "gzip_bytes": 16502929,
+      "decisions": 1580,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 159,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-a/idle-frames/delayed/12.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-a/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213001.jsonl.gz",
+      "seed": 202610213001,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/111-202610213001.json",
+      "scenario_sha256": "7a5b646348d3dacf2ce30c94663a1e17a3765d87aa230677c4f1a8726f3adf01",
+      "jsonl_sha256": "a8a8c247b7d6a9891bc9773e410ba4749963192c0e1e5796c7c6f575bbfca52b",
+      "gzip_sha256": "0633559b38ee438f8ddff4d5512b2656cb6269bb3e88c4a2987f053aa643f065",
+      "gzip_bytes": 9311718,
+      "decisions": 1079,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 60,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/0.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213003.jsonl.gz",
+      "seed": 202610213003,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/112-202610213003.json",
+      "scenario_sha256": "ddabae57cf497d940d317eb0e1629414eb37cd19804c3b9841f652a2ffe4e38a",
+      "jsonl_sha256": "b88917b0976c688bbd67e0db6c156c9339b32c48db607abf31064dbb992194c9",
+      "gzip_sha256": "9e7e4c5c236507398071d575cf10fada97b05d4830a011032814d66f074b1df3",
+      "gzip_bytes": 10752530,
+      "decisions": 1220,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 54,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/1.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213005.jsonl.gz",
+      "seed": 202610213005,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/113-202610213005.json",
+      "scenario_sha256": "6d5f94c31b099661af53bf0f08874accd0f2cfe42df1fcf99015143d63597d41",
+      "jsonl_sha256": "716af103a0e6d1bf9f4fa3a3ceeaa80c272ee13bf64b45c2b1baabbf5ed22e55",
+      "gzip_sha256": "2974586a7101737ce24fcdfbcc500927a35a9bd6ba9643eb72590e68e0a8eb1e",
+      "gzip_bytes": 9531655,
+      "decisions": 1049,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 51,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 66,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/2.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213008.jsonl.gz",
+      "seed": 202610213008,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/114-202610213008.json",
+      "scenario_sha256": "2c4c3000df7da1a6ada931196a1aff9515de34fd19f5158a0d2c7c2b07749972",
+      "jsonl_sha256": "45bc0751bb75ecee1e622d093ea2db9ab9a9f6f4cb0bed9d947e5768140756a6",
+      "gzip_sha256": "7328c41994f5e332b2aad7795391ed1ee4383833f019499a4470e813e84b0433",
+      "gzip_bytes": 9977021,
+      "decisions": 1070,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 49,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/3.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213009.jsonl.gz",
+      "seed": 202610213009,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/115-202610213009.json",
+      "scenario_sha256": "268e769faaebb63825c6ce03d5ee080ab3eff123a0114fd76f872c52c91cae61",
+      "jsonl_sha256": "487b3ab9f689c7a9a947312b4e241bb28698e707f957e4372018738a7e9ace9a",
+      "gzip_sha256": "cda5c321a13a99e5c9e4276e4167166a66a8ea1c5e07800a9ebed13e9ddc92f4",
+      "gzip_bytes": 8957732,
+      "decisions": 990,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 50,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/4.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213010.jsonl.gz",
+      "seed": 202610213010,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/116-202610213010.json",
+      "scenario_sha256": "7b4935e6ca47c152eb5e866513620463fd7f39e0409d8954357ef5e94444f5df",
+      "jsonl_sha256": "91759252362ded33a6a16c109c863d550bce133b1602c8a07336e145e1e2b642",
+      "gzip_sha256": "368a932efba8605548bf0af38973006c133b78989bb0b6b190c122d29c2eec68",
+      "gzip_bytes": 11989086,
+      "decisions": 1293,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 58,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/5.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213011.jsonl.gz",
+      "seed": 202610213011,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/117-202610213011.json",
+      "scenario_sha256": "384736a28ae76360f742cce0ef33023d5db1224cd958fc8cc1272e4a581700fc",
+      "jsonl_sha256": "7318605689540f5c25b4433567894cc4eb26200b1e3d755a0c5e93a7795189e4",
+      "gzip_sha256": "f9dd9d2314df2bc3d51f2c61041a076bcb7e1635f3fb672c229dcad4a1e15d93",
+      "gzip_bytes": 10197387,
+      "decisions": 1164,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 54,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/6.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213012.jsonl.gz",
+      "seed": 202610213012,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/118-202610213012.json",
+      "scenario_sha256": "615a754cde2958a42b0c0b7a4751bf5409fd19aba36b12ec6e0ca2fbfd496d97",
+      "jsonl_sha256": "52899c8a87421fa5914434c24945d927705325a6c529345228cc34da8d353b12",
+      "gzip_sha256": "4359fdd68ccc3a740539fb0dc5acdaa63284157593dfb3bebf82dd3063ec0602",
+      "gzip_bytes": 8080122,
+      "decisions": 932,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 49,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/7.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213014.jsonl.gz",
+      "seed": 202610213014,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/119-202610213014.json",
+      "scenario_sha256": "e0ea66022a7ee0d554799c1c89eebdc47f445c3d6c380ea09b16ced5cd91489d",
+      "jsonl_sha256": "14f40653beeeb1188f79ed473c869586c0dea7cfa0785e7fda02cb53bbb6a8be",
+      "gzip_sha256": "fab13136b22792097c9592def48d49d6b93f0335032453d1768611c413f4f7e8",
+      "gzip_bytes": 7171561,
+      "decisions": 796,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": true,
+      "peak_resident_cards": 37,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/8.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
+      }
+    },
+    {
+      "group": "fault_hunt_fresh",
+      "trace": "/private/tmp/fault-hunt/accept-b/202610213016.jsonl.gz",
+      "seed": 202610213016,
+      "scenario": "/private/tmp/fault-hunt/final-inputs/120-202610213016.json",
+      "scenario_sha256": "c1eba91d7919b06aa04914086460e9757e05ede1165f173ac2a4f54273424017",
+      "jsonl_sha256": "7677bb6bf654ecef959cf68019725a3048e9646704409b2cba28c4c10ea73954",
+      "gzip_sha256": "298c1783f7bf1cec6b98a578fb0460bb1d7f5d65b0a24f548572e671d849d837",
+      "gzip_bytes": 10964898,
+      "decisions": 1197,
+      "terminal": "death",
+      "depth": {
+        "act2": true,
+        "act3": true,
+        "act3_boss": true,
+        "act4": false,
+        "heart": false,
+        "win": false
+      },
+      "final_act": 3,
+      "final_floor": 50,
+      "neow_pandora_swap": false,
+      "peak_resident_cards": 59,
+      "replay": {
+        "combat": true,
+        "run": true,
+        "terminal": true
+      },
+      "idle": {
+        "extra_frames": 13,
+        "byte_identical": true,
+        "trace": "/private/tmp/fault-hunt/accept-b/idle-frames/delayed/9.jsonl.gz",
+        "verification": "/private/tmp/fault-hunt/accept-b/idle.json"
       }
     }
   ]
