@@ -1697,6 +1697,6 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
 }
 SPIRE_FN inline void step(Game& g, Action action) {
     apply_decision(g, action);
-    if (g.fault == 0) collect_cards(g);
+    if (g.fault == 0 && card_capacity - g.cards.count() < 80) collect_cards(g);
 }
 }

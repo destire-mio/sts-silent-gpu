@@ -325,6 +325,14 @@ scopes through 1,541 and 1,687 decisions and their terminal states.
 
 Never silently truncate, overwrite live slots, or shrink an amount to fit a capacity.
 
+Card collection runs at a decision boundary when fewer than 80 arena slots are free.
+Allocation counters over the 119 whole-game inputs in `inventory/deep-neow.json`
+(137,942 decisions; the other two entries are combat scenarios) measured at most 65
+card allocations in one decision, including combat initialization. The margin leaves 15
+additional slots above that measured peak. This is an execution budget, not a Java bound;
+capacity assertions remain active. The reference scan, ordered references and released-slot
+poisoning are unchanged. Slot occupancy is not part of the snapshot.
+
 Card damage/block, power amounts, orb amounts and player energy keep Java's 32-bit range.
 Immutable CardDef constructor values and upgrade deltas use 8 bits in a 20-byte table row;
 these are constructor constants, not limits on a mutable card's combat stats.
