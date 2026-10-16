@@ -44,6 +44,7 @@ add_custom_target(generate_snapshot DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/spire_h
 add_custom_target(check_device_core ALL
     COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_device_core.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/core" --compiler "${CMAKE_CXX_COMPILER}"
+        --extra-root "${CMAKE_CURRENT_SOURCE_DIR}/obs"
         --generated "${SPIRE_GENERATED_DIR}"
     VERBATIM)
 add_dependencies(check_device_core generate_content)
@@ -104,6 +105,8 @@ if(BUILD_TESTING)
         get_filename_component(test_name "${source}" NAME_WE)
         add_executable("${test_name}" "${source}")
         target_link_libraries("${test_name}" PRIVATE spire_core)
+        target_compile_definitions("${test_name}" PRIVATE
+            SPIRE_DEEP_ACTIONS="${CMAKE_CURRENT_SOURCE_DIR}/tests/deep_benchmark.actions")
         add_dependencies("${test_name}" check_device_core)
         add_test(NAME "${test_name}" COMMAND "${test_name}")
     endforeach()

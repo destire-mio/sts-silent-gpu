@@ -22,9 +22,10 @@ def position(location):
     return location.get("expansionLoc", location)
 
 
-def check(root, compiler, generated=None):
+def check(root, compiler, generated=None, extra_roots=()):
     root = root.resolve()
     roots = [root]
+    roots.extend(path.resolve() for path in extra_roots)
     if generated is not None:
         roots.append(generated.resolve())
     include_dirs = [directory.parent for directory in roots]
@@ -140,8 +141,9 @@ def main():
     parser.add_argument("root", type=Path)
     parser.add_argument("--compiler", required=True)
     parser.add_argument("--generated", type=Path, required=True)
+    parser.add_argument("--extra-root", type=Path, action="append", default=[])
     args = parser.parse_args()
-    errors = check(args.root, args.compiler, args.generated)
+    errors = check(args.root, args.compiler, args.generated, args.extra_root)
     if not errors:
         with tempfile.TemporaryDirectory(prefix="spire-cuda-check-") as temporary:
             unit = Path(temporary) / "batch.cu"
@@ -153,6 +155,12 @@ def main():
 struct dim3 { unsigned x, y, z; };
 extern __device__ const dim3 threadIdx, blockIdx, blockDim;
 #include "cuda/batch.cu"
+#include "obs/encode.hpp"
+__global__ void encode_observation(const spire::Game* games, spire::obs::Observation* output) {
+    spire::ActionSet actions;
+    spire::obs::History history;
+    spire::obs::encode(games[threadIdx.x], history, output[threadIdx.x].view(), actions);
+}
 ''')
             result = subprocess.run(
                 [args.compiler, "-std=c++17", "-x", "cuda", "--cuda-device-only", "-nocudainc",
