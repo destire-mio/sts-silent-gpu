@@ -89,7 +89,7 @@ buffers. CPU stepping releases the GIL. Its [visible-information protocol](docs/
 defines the array layout, training-only clone, seed sequence and reset semantics. Give the
 policy only the seven observation arrays; `snapshot()` and `search_state()` expose hidden state.
 Root-family partitions are in [the seed inventory](inventory/seed-partitions.json); evaluation
-arithmetic is in `tools/evaluation.py`. There is no training algorithm in this interface.
+arithmetic is in `tools/evaluation.py`. The `train/` package supplies the training algorithm.
 
 ```python
 import numpy as np
@@ -122,6 +122,108 @@ Deep-route candidate indices are resolved before timing; the timed path steps th
 Neow to death/victory and restarts from the caller's repeated root sequence. The output includes
 act counts, observation bytes and worker encoding/stepping/reset shares. It excludes network
 inference, rollout storage and learning; timing output goes to stdout.
+
+## E1 training and evaluation
+
+`train/` uses one shared PyTorch policy for all screens. Each tag and ID row has an embedding;
+signed-log numeric rows have a linear projection. Masked Transformer layers mix entities.
+Candidate scores use their three referenced entities, action kind and pooled context. A
+sigmoid value head predicts the win probability. Defaults are width 128, four layers, four
+heads and feedforward width 256, about one million parameters. `--width`, `--layers`,
+`--heads` and `--feedforward` configure the size.
+
+This is the E1 **no memory** setting: no recurrent state or learned prefix memory. Root replay
+rebuilds the encoder's visible-history sidecar, then the network first observes the root.
+Both heads receive only the seven observation arrays. `train/` has no search, game save/load,
+reward shaping or hidden-state input.
+
+The collector finishes a fixed group of starts under one frozen policy before PPO updates.
+Completed episodes use full-episode Monte-Carlo value targets with gamma=1; default GAE
+lambda=1 gives advantage `outcome - old_value`. `--gae-lambda` changes advantages only;
+completed value targets remain the actual 0/1 result. A decision-cap cut bootstraps the
+frozen final-observation value and is labeled truncated, excluded from win/loss calibration.
+Faulted trajectories are excluded from PPO and retained in episode logs. Host core assertions
+still abort the process; there is no signal recovery.
+
+PPO stores old chosen-action log probabilities and complete legal candidate sets in compact
+observation records. Only selected minibatches are padded by `ObservationBatch`. The clipped
+policy objective uses advantage normalization, value MSE, entropy divided by log(legal
+candidate count), and gradient clipping. Single-candidate entropy is zero. `ppo.kl` is the
+nonnegative sampled approximation `mean(ratio - 1 - log_ratio)` across minibatches, not an
+exact distribution KL or an automatic stopping rule.
+
+Use one CPU thread and keep generated artifacts outside the checkout:
+
+```sh
+export SPIRE_PYTHON=/Users/destire/Documents/Codex/2026-09-10/new-chat-2/outputs/spire-lab/.venv/bin/python
+export PYTHONPATH=/private/tmp/trainer-runs/build:.
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
+"$SPIRE_PYTHON" -m train.run --output /private/tmp/trainer-runs/natural \
+  --updates 2 --episodes 12 --batch-size 4
+
+"$SPIRE_PYTHON" -m train.roots --output /private/tmp/trainer-runs/roots.json
+"$SPIRE_PYTHON" -m train.run --roots /private/tmp/trainer-runs/roots.json \
+  --output /private/tmp/trainer-runs/deep --updates 2 --episodes 6 --batch-size 3
+```
+
+The build commands above can use `/private/tmp/trainer-runs/build` in place of
+`/private/tmp/spire-build`. PyTorch is required in the selected Python environment.
+`train.roots` checks the inventory's source-action hash, replays legal actions to candidate
+indices and verifies the victory observation. Its default roots are 8, 32 and 128 decisions
+before the known seed 202610180018 victory. It generates root inputs, not demonstrations for
+the loss. All three belong to one historical family, outside the train/dev/locked partitions.
+They can establish continuation wiring, not unseen-seed performance.
+
+Root files have this format (every prefix starts at fresh Neow):
+
+```json
+{"observation_version": 2, "roots": [{"seed": 1000000000, "candidates": [0, 1]}]}
+```
+
+Training cycles supplied roots in order. Natural starts use consecutive train seeds; new
+updates use new seeds. Except for the historical E1 winning route, training rejects roots
+outside the train partition. `--init-seed` controls initialization, policy sampling and
+minibatch shuffling; planned independent initializations are 1729, 2718 and 31415.
+`--episodes` is starts per update, `--minibatch-size` is decisions per gradient minibatch.
+`--decision-cap` counts continuation decisions, excluding prefix replay. Compact storage has
+a fixed `--storage-mib` budget; exhaustion aborts without a partial update. The defaults are
+for small runs, not a pre-approved large experiment.
+
+Each fresh output directory contains config/root inputs, initial and latest checkpoints,
+update JSONL metrics and episode candidate-index logs for replay/audit. Checkpoints include
+model, optimizer, configuration, observation version and engine Git commit. Logs report
+starts/completions/wins, independent families won, natural starts, faults/truncations, new and
+replay decisions, per-screen normalized entropy, sampled KL, start/decision value calibration
+with screen/act breakdowns, compact bytes and peak RSS. Wall-time buckets are engine+encode
+(including root replay), inference (including tensor transfer/sampling), storage, PPO update
+(including padding/transfer), and other work. Worker reset/step/encode times are additional
+detail, not added again to wall time.
+
+Frozen evaluation samples one continuation per root seed using an independent per-seed PCG64
+stream. It retains faults/truncations in the denominator; ordinary Wilson intervals are
+reported only if every attempt terminates, otherwise it reports bounds with unresolved
+outcomes. Paired reports require identical roots, sampling stream, cap and evaluation engine.
+
+```sh
+"$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/natural/initial.pt \
+  --episodes 8 --output /private/tmp/trainer-runs/before.json
+"$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/natural/checkpoint.pt \
+  --episodes 8 --reference /private/tmp/trainer-runs/before.json \
+  --output /private/tmp/trainer-runs/after.json
+"$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/deep/checkpoint.pt \
+  --roots /private/tmp/trainer-runs/roots.json --root-index 1 \
+  --output /private/tmp/trainer-runs/deep-32-eval.json
+```
+
+Duplicate seed families are rejected in one evaluation; use one distance per E1 root task.
+Repeated policy-stream trials on that root are not independent game seeds. The CLI defaults
+to development seeds; sealed evaluation requires an explicit partition and seed selection
+after policy/configuration freeze. These smoke commands do not execute the E1 three-seed
+learning experiment or establish its success thresholds.
+
+`--device cuda` moves the same network and optimizer code to CUDA. Tensor allocation and
+timing synchronization use that device. The current `TrainingBatch` engine remains on CPU;
+GPU-resident engine integration and CUDA execution/parity measurements are separate work.
 
 ## Trace replay
 
@@ -179,6 +281,7 @@ in `inventory/deep-neow.json`. These are input actions, not replacement oracle s
 - `core/`: fixed-capacity C++17 run and combat state, RNG, queues and per-unit content.
 - `obs/`: device-C++ visible-information encoder and fixed numeric schema.
 - `host/`: CPU batch driver, Python binding, snapshot serialization and benchmark.
+- `train/`: visible-observation entity policy, synchronous PPO, roots and frozen evaluation.
 - `cuda/`: conditional CUDA batch kernel.
 - `tests/`: native checks, device discipline checker and strict trace replayer.
 - `oracle/`: original-game trace recorder developed on its own branch.
