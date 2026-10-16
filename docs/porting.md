@@ -23,6 +23,12 @@ read the same catalogs. Unit metadata uses shared constexpr tables built from ea
 inheriting the same default hook share one dispatch branch. Generated files are build products;
 do not edit or commit them.
 
+Damage/block folds use generated `next_power_*` and `next_relic_*` participant tables.
+They skip inherited identity hooks and visit overrides in the original list order. Power
+iteration follows arena links once instead of restarting at the head for each list position.
+These filters apply to cumulative value calculations; a caller that replaces a result from
+the original base value on each iteration, such as FirePotion.use, must retain default calls.
+
 ## Unit code
 
 Include `../hooks.hpp`, put the type in `spire::units::<category>`, and inherit the category's

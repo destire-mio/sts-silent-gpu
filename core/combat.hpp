@@ -100,53 +100,53 @@ SPIRE_FN inline int calculate_intent_damage(const Game& g, int monster, int base
     float value = static_cast<float>(base);
     const Powers& source = g.monsters[monster].creature.powers;
     const Powers& target = g.player.creature.powers;
-    for (int i = 0; i < source.size; ++i) value = power_atDamageGive(g, source.at(g.power_objects, i), monster, value, DamageType::Normal);
-    for (int i = 0; i < target.size; ++i) value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, DamageType::Normal);
+    for (int p = next_power_atDamageGive(g, source.head); p != 255; p = next_power_atDamageGive(g, g.power_objects[p].next)) value = power_atDamageGive(g, g.power_objects[p], monster, value, DamageType::Normal);
+    for (int p = next_power_atDamageReceive(g, target.head); p != 255; p = next_power_atDamageReceive(g, g.power_objects[p].next)) value = power_atDamageReceive(g, g.power_objects[p], player_target, value, DamageType::Normal);
     value = stance_damage_receive(g, value, DamageType::Normal);
     const float multiplier = rear_damage_multiplier(g, monster);
     if (multiplier != 1.0f) value = static_cast<int>(value * multiplier);
-    for (int i = 0; i < source.size; ++i) value = power_atDamageFinalGive(g, source.at(g.power_objects, i), monster, value, DamageType::Normal);
-    for (int i = 0; i < target.size; ++i) value = power_atDamageFinalReceive(g, target.at(g.power_objects, i), player_target, value, DamageType::Normal);
+    for (int p = next_power_atDamageFinalGive(g, source.head); p != 255; p = next_power_atDamageFinalGive(g, g.power_objects[p].next)) value = power_atDamageFinalGive(g, g.power_objects[p], monster, value, DamageType::Normal);
+    for (int p = next_power_atDamageFinalReceive(g, target.head); p != 255; p = next_power_atDamageFinalReceive(g, g.power_objects[p].next)) value = power_atDamageFinalReceive(g, g.power_objects[p], player_target, value, DamageType::Normal);
     return max(0, floor_int(value));
 }
 SPIRE_FN inline int calculate_damage(const Game& g, int source, int target, int base, DamageType type, int card) {
     float value = static_cast<float>(base);
     if (card >= 0) {
-        for (int i = 0; i < g.run.relics.size; ++i) value = relic_atDamageModify(g, i, value, card);
+        for (int i = next_relic_atDamageModify(g, 0); i < g.run.relics.size; i = next_relic_atDamageModify(g, i + 1)) value = relic_atDamageModify(g, i, value, card);
     }
     if (source != no_target) {
         const Powers& powers = get_creature(g, source).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageGive(g, powers.at(g.power_objects, i), source, value, type, card);
+        for (int p = next_power_atDamageGive(g, powers.head); p != 255; p = next_power_atDamageGive(g, g.power_objects[p].next)) value = power_atDamageGive(g, g.power_objects[p], source, value, type, card);
     }
     if (source == player_target) value = stance_damage_give(g, value, type);
     if (target != no_target) {
         const Powers& powers = get_creature(g, target).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageReceive(g, powers.at(g.power_objects, i), target, value, type, card);
+        for (int p = next_power_atDamageReceive(g, powers.head); p != 255; p = next_power_atDamageReceive(g, g.power_objects[p].next)) value = power_atDamageReceive(g, g.power_objects[p], target, value, type, card);
     }
     if (source >= 0) value = stance_damage_receive(g, value, type);
     if (source != no_target) {
         const Powers& powers = get_creature(g, source).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageFinalGive(g, powers.at(g.power_objects, i), source, value, type, card);
+        for (int p = next_power_atDamageFinalGive(g, powers.head); p != 255; p = next_power_atDamageFinalGive(g, g.power_objects[p].next)) value = power_atDamageFinalGive(g, g.power_objects[p], source, value, type, card);
     }
     if (target != no_target) {
         const Powers& powers = get_creature(g, target).powers;
-        for (int i = 0; i < powers.size; ++i) value = power_atDamageFinalReceive(g, powers.at(g.power_objects, i), target, value, type, card);
+        for (int p = next_power_atDamageFinalReceive(g, powers.head); p != 255; p = next_power_atDamageFinalReceive(g, g.power_objects[p].next)) value = power_atDamageFinalReceive(g, g.power_objects[p], target, value, type, card);
     }
     return max(0, floor_int(value));
 }
 SPIRE_FN inline int calculate_block(const Game& g, int base, int card) {
     float value = static_cast<float>(base);
     const Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers.at(g.power_objects, i), player_target, value, card);
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers.at(g.power_objects, i), player_target, value);
+    for (int p = next_power_modifyBlock(g, powers.head); p != 255; p = next_power_modifyBlock(g, g.power_objects[p].next)) value = power_modifyBlock(g, g.power_objects[p], player_target, value, card);
+    for (int p = next_power_modifyBlockLast(g, powers.head); p != 255; p = next_power_modifyBlockLast(g, g.power_objects[p].next)) value = power_modifyBlockLast(g, g.power_objects[p], player_target, value);
     return max(0, floor_int(value));
 }
 SPIRE_FN inline void apply_card_block(Game& g, int card) {
     Card& c = get_card(g, card);
     float value = static_cast<float>(card_baseBlock(c));
     const Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlock(g, powers.at(g.power_objects, i), player_target, value, card);
-    for (int i = 0; i < powers.size; ++i) value = power_modifyBlockLast(g, powers.at(g.power_objects, i), player_target, value);
+    for (int p = next_power_modifyBlock(g, powers.head); p != 255; p = next_power_modifyBlock(g, g.power_objects[p].next)) value = power_modifyBlock(g, g.power_objects[p], player_target, value, card);
+    for (int p = next_power_modifyBlockLast(g, powers.head); p != 255; p = next_power_modifyBlockLast(g, g.power_objects[p].next)) value = power_modifyBlockLast(g, g.power_objects[p], player_target, value);
     // AbstractCard.applyPowersToBlock compares before clamping negative block.
     c.block = max(0, floor_int(value));
 }

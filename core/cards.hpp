@@ -62,24 +62,24 @@ SPIRE_FN inline Card stat_equivalent_copy(Game& g, int card_id) {
 SPIRE_FN inline int card_damage_value(Game& g, int card_id, int target) {
     Card& c = get_card(g, card_id);
     float value = static_cast<float>(c.base_damage);
-    for (int i = 0; i < g.run.relics.size; ++i) {
+    for (int i = next_relic_atDamageModify(g, 0); i < g.run.relics.size; i = next_relic_atDamageModify(g, i + 1)) {
         value = relic_atDamageModify(g, i, value, card_id);
     }
     const Powers& source = g.player.creature.powers;
-    for (int i = 0; i < source.size; ++i)
-        value = power_atDamageGive(g, source.at(g.power_objects, i), player_target, value, DamageType::Normal, card_id);
+    for (int p = next_power_atDamageGive(g, source.head); p != 255; p = next_power_atDamageGive(g, g.power_objects[p].next))
+        value = power_atDamageGive(g, g.power_objects[p], player_target, value, DamageType::Normal, card_id);
     value = stance_damage_give(g, value, DamageType::Normal);
     if (target != no_target) {
         const Powers& receive = g.monsters[target].creature.powers;
-        for (int i = 0; i < receive.size; ++i)
-            value = power_atDamageReceive(g, receive.at(g.power_objects, i), target, value, DamageType::Normal, card_id);
+        for (int p = next_power_atDamageReceive(g, receive.head); p != 255; p = next_power_atDamageReceive(g, g.power_objects[p].next))
+            value = power_atDamageReceive(g, g.power_objects[p], target, value, DamageType::Normal, card_id);
     }
-    for (int i = 0; i < source.size; ++i)
-        value = power_atDamageFinalGive(g, source.at(g.power_objects, i), player_target, value, DamageType::Normal, card_id);
+    for (int p = next_power_atDamageFinalGive(g, source.head); p != 255; p = next_power_atDamageFinalGive(g, g.power_objects[p].next))
+        value = power_atDamageFinalGive(g, g.power_objects[p], player_target, value, DamageType::Normal, card_id);
     if (target != no_target) {
         const Powers& receive = g.monsters[target].creature.powers;
-        for (int i = 0; i < receive.size; ++i)
-            value = power_atDamageFinalReceive(g, receive.at(g.power_objects, i), target, value, DamageType::Normal, card_id);
+        for (int p = next_power_atDamageFinalReceive(g, receive.head); p != 255; p = next_power_atDamageFinalReceive(g, g.power_objects[p].next))
+            value = power_atDamageFinalReceive(g, g.power_objects[p], target, value, DamageType::Normal, card_id);
     }
     const int damage = max(0, floor_int(value));
     return damage;

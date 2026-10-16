@@ -5,7 +5,7 @@ namespace spire::units::actions {
 struct Scry : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(Scry, bool selecting;)
-    static SPIRE_FN void prepare(Game& g, Effect& e) {
+    static SPIRE_FN void prepare(Game&, Effect& e) {
         action_initialize_state(e);
         e.source = e.target = no_target;
     }

@@ -478,22 +478,22 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
         const DamageType type = monster_data(m.id).damage_types[d];
         float value = static_cast<float>(monster_base_damage(g, m, d));
         bool modified = false;
-        for (int i = 0; i < source.size; ++i) {
-            value = power_atDamageGive(g, source.at(g.power_objects, i), owner, value, type, -1);
+        for (int p = next_power_atDamageGive(g, source.head); p != 255; p = next_power_atDamageGive(g, g.power_objects[p].next)) {
+            value = power_atDamageGive(g, g.power_objects[p], owner, value, type, -1);
             if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
-        for (int i = 0; i < target.size; ++i) {
-            value = power_atDamageReceive(g, target.at(g.power_objects, i), player_target, value, type, -1);
+        for (int p = next_power_atDamageReceive(g, target.head); p != 255; p = next_power_atDamageReceive(g, g.power_objects[p].next)) {
+            value = power_atDamageReceive(g, g.power_objects[p], player_target, value, type, -1);
             if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
         value = stance_damage_receive(g, value, type);
         if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
-        for (int i = 0; i < source.size; ++i) {
-            value = power_atDamageFinalGive(g, source.at(g.power_objects, i), owner, value, type, -1);
+        for (int p = next_power_atDamageFinalGive(g, source.head); p != 255; p = next_power_atDamageFinalGive(g, g.power_objects[p].next)) {
+            value = power_atDamageFinalGive(g, g.power_objects[p], owner, value, type, -1);
             if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
-        for (int i = 0; i < target.size; ++i) {
-            value = power_atDamageFinalReceive(g, target.at(g.power_objects, i), player_target, value, type, -1);
+        for (int p = next_power_atDamageFinalReceive(g, target.head); p != 255; p = next_power_atDamageFinalReceive(g, g.power_objects[p].next)) {
+            value = power_atDamageFinalReceive(g, g.power_objects[p], player_target, value, type, -1);
             if (monster_base_damage(g, m, d) != static_cast<int>(value)) modified = true;
         }
         monster_output_damage(g, m, d) = static_cast<int>(max(0, floor_int(value)) * rear_multiplier);

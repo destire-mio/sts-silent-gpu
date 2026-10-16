@@ -413,6 +413,19 @@ def generate(root, output):
                     continue
                 invocation = f'units::{kind}::{typename}::{name}({", ".join(call_args)})'
                 dispatch.append(f'case {enum}::{unit}: return {invocation};')
+            if kind in ('powers', 'relics') and result == 'float' and body == 'return value;' and signature.startswith('const Game&'):
+                end = '255' if kind == 'powers' else 'g.run.relics.size'
+                content.append(f'SPIRE_FN inline int next_{prefix}_{name}(const Game& g, int index) {{')
+                if len(inherited) == len(entries):
+                    content.append(f'(void)g; (void)index; return {end}; }}')
+                else:
+                    content.append('constexpr bool active[] = {' + ', '.join('false' if unit in inherited else 'true' for unit, _, _, _ in entries) + '};')
+                    advance = 'g.power_objects[index].next' if kind == 'powers' else 'index + 1'
+                    object_id = 'g.power_objects[index].id' if kind == 'powers' else 'g.run.relics[index].id'
+                    content.append(f'for (; index != {end}; index = {advance}) {{')
+                    content.append(f'const {enum} id = {object_id}; SPIRE_ASSERT(id < {enum}::Count);')
+                    content.append('if (active[static_cast<int>(id)]) return index;')
+                    content.append(f'}} return {end}; }}')
             if len(inherited) == len(entries):
                 content.append(f'SPIRE_FN inline {result} {prefix}_{name}({plain}) {{ return {base}::{name}({", ".join(call_args)}); }}')
                 continue
