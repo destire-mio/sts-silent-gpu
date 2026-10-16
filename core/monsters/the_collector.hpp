@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct TheCollector : MonsterHooks {
@@ -51,6 +52,9 @@ struct TheCollector : MonsterHooks {
                     queue_power(g, owner, id, PowerId::Strength, g.run.ascension >= 19 ? 5 : g.run.ascension >= 4 ? 4 : 3);
             }
         } else if (m.move == 4) {
+            add_bottom(g, actions::Talk::make(owner));
+            Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound);
+            add_bottom(g, actions::VFX::make());
             const int amount = g.run.ascension >= 19 ? 5 : 3;
             queue_power(g, owner, player_target, PowerId::Weak, amount, true);
             queue_power(g, owner, player_target, PowerId::Vulnerable, amount, true);
@@ -71,7 +75,9 @@ struct TheCollector : MonsterHooks {
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int id = g.monster_order[i];
             if (!g.monsters[id].creature.dead && !g.monsters[id].creature.dying) {
+                Effect hide{}; hide.kind = EffectKind::HideHealthBar; hide.source = id; hide.target = no_target; add_top(g, hide);
                 Effect e{}; e.kind = EffectKind::Suicide; e.target = id; add_top(g, e);
+                add_top(g, actions::VFX::make(id));
             }
         }
     }

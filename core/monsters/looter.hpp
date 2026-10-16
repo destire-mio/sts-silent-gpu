@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct Looter : MonsterHooks {
@@ -44,6 +45,7 @@ struct Looter : MonsterHooks {
             queue_block(g, index, data().block);
             queue_monster_move(g, index, 3, Intent::Escape);
         } else {
+            add_bottom(g, actions::VFX::make());
             g.mugged = true;
             Effect e{};
             e.kind = EffectKind::Escape;

@@ -13,6 +13,26 @@ struct SFX : ActionHooks {
     SPIRE_FN static void prepare(Game&, Effect& e) { e.source = e.target = no_target; }
     SPIRE_FN static void execute(Game&, const Effect&) {}
 };
+struct AnimateShake : ActionHooks {
+    SPIRE_STATE(AnimateShake, bool called; float shakeDur;)
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    SPIRE_FN static Effect make(int owner) {
+        Effect e{}; e.kind = EffectKind::AnimateShake; action_initialize_state(e);
+        e.source = owner; e.target = no_target;
+        e.payload.state.AnimateShake.shakeDur = 1.0f;
+        return e;
+    }
+    SPIRE_FN static void execute(Game&, Effect& e) { e.payload.state.AnimateShake.called = true; }
+};
+struct HideHealthBar : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    SPIRE_FN static void execute(Game&, const Effect&) {}
+};
+struct ShakeScreen : ActionHooks {
+    static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
+    SPIRE_FN static void prepare(Game&, Effect& e) { e.source = e.target = no_target; }
+    SPIRE_FN static void execute(Game&, const Effect&) {}
+};
 struct VFX : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {false, "WAIT"}; }
     SPIRE_FN static Effect make(int source = no_target) {

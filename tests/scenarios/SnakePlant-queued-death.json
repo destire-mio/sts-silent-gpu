@@ -1,0 +1,21 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Snake Plant",
+  "actions": [
+    {
+      "type": "end_turn"
+    }
+  ]
+}

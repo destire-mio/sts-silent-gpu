@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::cards {
 struct MindBlast : CardHooks {
@@ -7,6 +8,7 @@ struct MindBlast : CardHooks {
         return {CardType::Attack, CardTarget::Enemy, 2, 0, -1, -1, 0, 0, 0, false, false, true};
     }
     static SPIRE_FN void use(Game& g, int card, int target) {
+        add_bottom(g, actions::VFX::make());
         queue_card_damage(g, card, target);
     }
     static SPIRE_FN void upgrade(Card& card) {

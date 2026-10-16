@@ -1,6 +1,7 @@
 #pragma once
 #include "../hooks.hpp"
 #include "../actions/spawn_monster.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire {
 SPIRE_FN inline void position_monster(Monster& monster, float offset_x) {
@@ -123,7 +124,10 @@ SPIRE_FN inline void queue_split(Game& g, int index, MonsterId left, MonsterId r
     Effect e{};
     e.kind = EffectKind::CannotLose;
     add_bottom(g, e);
+    add_bottom(g, units::actions::AnimateShake::make(index));
+    Effect hide{}; hide.kind = EffectKind::HideHealthBar; hide.source = index; hide.target = no_target; add_bottom(g, hide);
     queue_suicide(g, index, false);
+    Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound);
     const int hp = g.monsters[index].creature.hp;
     queue_spawn_monster(g, left, left_x, false, hp);
     queue_spawn_monster(g, right, right_x, false, hp);

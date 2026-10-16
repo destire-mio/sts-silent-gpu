@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct BronzeAutomaton : MonsterHooks {
@@ -43,7 +44,10 @@ struct BronzeAutomaton : MonsterHooks {
         } else if (m.move == 5) {
             queue_block(g, owner, g.run.ascension >= 9 ? 12 : 9);
             queue_power(g, owner, owner, PowerId::Strength, g.run.ascension >= 4 ? 4 : 3);
-        } else if (m.move == 2) queue_monster_damage(g, owner, player_target, 1);
+        } else if (m.move == 2) {
+            add_bottom(g, actions::VFX::make());
+            queue_monster_damage(g, owner, player_target, 1);
+        }
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
@@ -52,7 +56,9 @@ struct BronzeAutomaton : MonsterHooks {
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int id = g.monster_order[i];
             if (!g.monsters[id].creature.dead && !g.monsters[id].creature.dying) {
+                Effect hide{}; hide.kind = EffectKind::HideHealthBar; hide.source = id; hide.target = no_target; add_top(g, hide);
                 Effect e{}; e.kind = EffectKind::Suicide; e.target = id; add_top(g, e);
+                add_top(g, actions::VFX::make(id));
             }
         }
     }

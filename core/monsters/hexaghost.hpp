@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 #include "../actions/change_state.hpp"
 
 namespace spire::units::monsters {
@@ -53,7 +54,14 @@ struct Hexaghost : MonsterHooks {
             return;
         }
         if (m.move == 1 || m.move == 6) {
-            for (int i = 0; i < 6; ++i) queue_monster_damage(g, owner, player_target, m.move == 1 ? 2 : 3, 0, m.move == 1);
+            if (m.move == 6) add_bottom(g, actions::VFX::make(owner));
+            for (int i = 0; i < 6; ++i) {
+                if (m.move == 1) {
+                    add_bottom(g, actions::VFX::make(owner));
+                    Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound);
+                }
+                queue_monster_damage(g, owner, player_target, m.move == 1 ? 2 : 3, 0, m.move == 1);
+            }
             if (m.move == 6) {
                 Effect e{}; e.kind = EffectKind::BurnIncrease; add_bottom(g, e);
                 m.state.Hexaghost.burnUpgraded = true;
@@ -61,12 +69,16 @@ struct Hexaghost : MonsterHooks {
             add_bottom(g, actions::ChangeState::make(g, owner, "Deactivate"));
         } else {
             if (m.move == 2) {
+                add_bottom(g, actions::VFX::make());
+                add_bottom(g, actions::AnimateSlowAttack::make(owner));
                 queue_monster_damage(g, owner, player_target, 0);
                 queue_monster_damage(g, owner, player_target, 0);
             } else if (m.move == 4) {
+                add_bottom(g, actions::VFX::make());
                 queue_monster_damage(g, owner, player_target, 1);
                 queue_monster_card(g, CardId::Burn, EffectKind::AddCardDiscard, g.run.ascension >= 19 ? 2 : 1, m.state.Hexaghost.burnUpgraded ? 1 : 0);
             } else if (m.move == 3) {
+                add_bottom(g, actions::VFX::make(owner));
                 queue_block(g, owner, 12);
                 queue_power(g, owner, owner, PowerId::Strength, g.run.ascension >= 19 ? 3 : 2);
             }

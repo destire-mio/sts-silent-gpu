@@ -1,0 +1,23 @@
+{
+  "deck": [
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    }
+  ],
+  "relics": [],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "4 Shapes",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

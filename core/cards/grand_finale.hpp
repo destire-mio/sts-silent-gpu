@@ -1,5 +1,6 @@
 #pragma once
 #include "../hooks.hpp"
+#include "../actions/intent_flash.hpp"
 #include "../actions/damage_all_enemies.hpp"
 
 namespace spire::units::cards {
@@ -8,6 +9,7 @@ struct GrandFinale : CardHooks {
         return {CardType::Attack, CardTarget::AllEnemies, 0, 50, -1, -1, 10, 0, 0, false, false, false, true};
     }
     static SPIRE_FN void use(Game& g, int card, int) {
+        add_bottom(g, actions::VFX::make());
         add_bottom(g, actions::DamageAllEnemies::from_card(g, card));
     }
     static SPIRE_FN bool canUse(const Game& g, int card, int target) {

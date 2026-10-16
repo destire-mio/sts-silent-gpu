@@ -19,6 +19,11 @@
     102,
     105
   ],
+  "DaggerSpray-queued-death": [
+    1000001178,
+    1000001179,
+    1000001180
+  ],
   "FiendFire-shared-info-retaliation": [
     101,
     113,
@@ -79,9 +84,29 @@
     123,
     138
   ],
+  "Grid-shop-cancel": [
+    1000050000,
+    1000050001,
+    1000050003
+  ],
+  "Grid-smith-cancel": [
+    1000050000,
+    1000050001,
+    1000050003
+  ],
+  "Grid-toke-cancel": [
+    1000050000,
+    1000050001,
+    1000050003
+  ],
   "PrismaticShard-upgraded-reward": [
     101,
     102,
     104
+  ],
+  "SnakePlant-queued-death": [
+    1000000067,
+    1000000068,
+    1000000069
   ]
 }

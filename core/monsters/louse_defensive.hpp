@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 #include "../actions/change_state.hpp"
 
 namespace spire::units::monsters {
@@ -29,6 +30,7 @@ struct LouseDefensive : MonsterHooks {
             queue_monster_damage(g, index, player_target, 0);
         } else {
             add_bottom(g, units::actions::ChangeState::make(g, index, m.state.LouseDefensive.isOpen ? "REAR_IDLE" : "REAR"));
+            add_bottom(g, actions::VFX::make());
             queue_power(g, index, player_target, PowerId::Weak, data().magic, true);
         }
         queue_monster_roll(g, index);

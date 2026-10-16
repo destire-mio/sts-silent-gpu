@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct Snecko : MonsterHooks {
@@ -25,8 +26,13 @@ struct Snecko : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
-        if (m.move == 1) queue_power(g, owner, player_target, PowerId::Confusion, -1);
-        else if (m.move == 2) queue_monster_damage(g, owner, player_target, 0);
+        if (m.move == 1) {
+            add_bottom(g, actions::VFX::make(owner));
+            queue_power(g, owner, player_target, PowerId::Confusion, -1);
+        } else if (m.move == 2) {
+            add_bottom(g, actions::VFX::make());
+            queue_monster_damage(g, owner, player_target, 0);
+        }
         else {
             queue_monster_damage(g, owner, player_target, 1);
             if (g.run.ascension >= 17) queue_power(g, owner, player_target, PowerId::Weak, 2, true);

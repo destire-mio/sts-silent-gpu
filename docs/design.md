@@ -208,6 +208,14 @@ exact `WaitAction` current action to null: its update only advances a presentati
 no rule callback. Other action classes and their included fields remain in the graph. Graph
 references retain the identity of their cards, powers and creatures.
 
+DaggerSpray.use queues a VFXAction before each hit; SnakePlant.takeTurn does the same for
+its three bites. Death during the first hit leaves the later VFX actions in the manager queue.
+The engine therefore retains these objects with the original constructor's source/target,
+even though their execute callbacks have no rule effect. The direct VFXAction caller audit
+covers all 75 green-card classes, 39 colorless-card classes and 73 monster classes, including
+BronzeAutomaton/TheCollector death callbacks. Exact WaitAction remains projected out under
+the existing contract; VFXAction, ShakeScreenAction and HideHealthBarAction are distinct types.
+
 GridCardSelectScreen.prevDeckSize is excluded as a scroll-bound cache. The source-wide read
 audit finds its sole reader in updateScrolling: a size change calls calculateScrollBounds,
 which derives scrollUpperBound from targetGroup.size and stores that size. The resulting
@@ -231,6 +239,14 @@ path. In seed 202610210005, Secret Weapon on floor 33 must retrieve its selected
 carrying the cancelled upgrade flag instead creates an unsupported confirmation and strands
 the action manager. The original rejects that engine-produced skip. Fresh recordings of the
 legal prefix and the corrected whole-game search match both scopes through their terminals.
+
+Grid cancellation follows CancelButton.update and AbstractDungeon.closeCurrentScreen:
+nonempty CombatRewardScreen.rewards overrides previousScreen with COMBAT_REWARD, even in a
+shop after leaving Cauldron's potion rewards. Reopening that screen restores rewardTime.
+Without outstanding rewards, previousScreen supplies the return destination. Cancelling the
+confirmation preview only dismisses the preview; a second cancel closes GRID. A rest-room
+cancel additionally reopens the campfire. GridCardSelectScreen.open/reopen tests the previous
+screen, not the room kind, when deciding whether a shop grid offers cancel.
 
 Monster death state remains rule state. `AbstractMonster.die` sets isDying; its death animation
 later sets isDead and clears powers. GRID/CARD_REWARD freeze that update, so a just-killed

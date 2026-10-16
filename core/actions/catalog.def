@@ -198,3 +198,6 @@ SPIRE_UNIT(ForeignInfluence, "actions.watcher.ForeignInfluenceAction", "core/act
 SPIRE_UNIT(LessonLearned, "actions.watcher.LessonLearnedAction", "core/actions/lesson_learned.hpp", LessonLearned)
 SPIRE_UNIT(VampireDamageAllEnemies, "actions.unique.VampireDamageAllEnemiesAction", "core/actions/vampire_damage_all_enemies.hpp", VampireDamageAllEnemies)
 SPIRE_UNIT(Wait, "actions.utility.WaitAction", "core/actions/wait.hpp", Wait)
+SPIRE_UNIT(ShakeScreen, "actions.utility.ShakeScreenAction", "core/actions/intent_flash.hpp", ShakeScreen)
+SPIRE_UNIT(HideHealthBar, "actions.utility.HideHealthBarAction", "core/actions/intent_flash.hpp", HideHealthBar)
+SPIRE_UNIT(AnimateShake, "actions.animations.AnimateShakeAction", "core/actions/intent_flash.hpp", AnimateShake)

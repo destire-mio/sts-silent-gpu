@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct SnakePlant : MonsterHooks {
@@ -23,7 +24,10 @@ struct SnakePlant : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
-        if (m.move == 1) for (int i = 0; i < 3; ++i) queue_monster_damage(g, owner, player_target, 0);
+        if (m.move == 1) for (int i = 0; i < 3; ++i) {
+            add_bottom(g, actions::VFX::make());
+            queue_monster_damage(g, owner, player_target, 0);
+        }
         else {
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
             queue_power(g, owner, player_target, PowerId::Weak, 2, true);

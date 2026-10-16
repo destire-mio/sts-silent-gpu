@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct JawWorm : MonsterHooks {
@@ -47,11 +48,18 @@ struct JawWorm : MonsterHooks {
     }
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
-        if (m.move == 1) queue_monster_damage(g, index, player_target, 0);
+        if (m.move == 1) {
+            add_bottom(g, actions::SetAnimation::make(index));
+            add_bottom(g, actions::VFX::make());
+            queue_monster_damage(g, index, player_target, 0);
+        }
         else if (m.move == 2) {
+            Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound);
+            Effect shake{}; shake.kind = EffectKind::ShakeScreen; add_bottom(g, shake);
             queue_power(g, index, index, PowerId::Strength, bellow_strength(g));
             queue_block(g, index, bellow_block(g));
         } else {
+            add_bottom(g, actions::AnimateHop::make(index));
             queue_monster_damage(g, index, player_target, 1);
             queue_block(g, index, 5);
         }

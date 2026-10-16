@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct Sentry : MonsterHooks {
@@ -29,8 +30,14 @@ struct Sentry : MonsterHooks {
         else set_monster_move(g, owner, 4, Intent::Attack, monster_base_damage(g, m, 0));
     }
     SPIRE_FN static void takeTurn(Game& g, int owner) {
-        if (g.monsters[owner].move == 3) queue_monster_card(g, CardId::Dazed, EffectKind::AddCardDiscard, g.run.ascension >= 18 ? 3 : 2);
-        else queue_monster_damage(g, owner, player_target, 0);
+        if (g.monsters[owner].move == 3) {
+            add_bottom(g, actions::VFX::make(owner));
+            queue_monster_card(g, CardId::Dazed, EffectKind::AddCardDiscard, g.run.ascension >= 18 ? 3 : 2);
+        } else {
+            add_bottom(g, actions::VFX::make());
+            add_bottom(g, actions::VFX::make());
+            queue_monster_damage(g, owner, player_target, 0);
+        }
         queue_monster_roll(g, owner);
     }
 };

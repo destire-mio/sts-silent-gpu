@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct SlaverRed : MonsterHooks {
@@ -29,6 +30,7 @@ struct SlaverRed : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int index) {
         Monster& m = g.monsters[index];
         if (m.move == 2) {
+            add_bottom(g, actions::VFX::make());
             queue_power(g, index, player_target, PowerId::Entangled, 1, true);
             m.state.SlaverRed.usedEntangle = true;
         } else {

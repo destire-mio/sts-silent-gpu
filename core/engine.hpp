@@ -1410,7 +1410,7 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
         for (int i = 0; i < get_pile(g, g.grid_source).size; ++i) actions.push_back({ActionKind::Choose, i, -1});
         if (g.selection_any_number) actions.push_back({ActionKind::Proceed, -1, -1});
         if (!g.room_in_combat && g.grid_can_cancel &&
-            (g.grid_for_upgrade || g.grid_for_transform || g.grid_for_purge || g.room_kind == RoomKind::Shop))
+            (g.grid_for_upgrade || g.grid_for_transform || g.grid_for_purge || g.previous_screen == Screen::Shop))
             actions.push_back({ActionKind::Skip, -1, -1});
     } else if (g.screen == Screen::CombatReward) {
         for (int i = 0; i < g.screen_rewards.size; ++i) actions.push_back({ActionKind::Choose, i, -1});
@@ -1619,15 +1619,23 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
         return;
     }
     if (g.screen == Screen::Grid && action.kind == ActionKind::Skip) {
-        SPIRE_ASSERT((g.room_kind == RoomKind::Rest || g.room_kind == RoomKind::Shop) && g.grid_can_cancel);
-        if (g.room_kind == RoomKind::Shop) {
+        SPIRE_ASSERT(g.grid_can_cancel);
+        // AbstractDungeon.closeCurrentScreen(GRID) gives outstanding rewards precedence over previousScreen.
+        if (!g.screen_rewards.empty()) g.previous_screen = Screen::CombatReward;
+        g.screen = g.previous_screen;
+        if (g.previous_screen != Screen::None)
             g.previous_screen = g.room_reward_time ? Screen::CombatReward : Screen::None;
-            g.screen = Screen::Shop;
-            return;
+        if (g.screen == Screen::CombatReward) {
+            g.room_reward_time = true;
+            if (!g.combat_reward_skippable) g.reward_proceed_visible = true;
         }
-        g.campfire.something_selected = false;
-        g.room_phase = RoomPhase::Incomplete;
-        g.screen = Screen::Room;
+        // CancelButton.update reopens the campfire after closing the grid.
+        if (g.room_kind == RoomKind::Rest) {
+            g.campfire.something_selected = false;
+            g.room_phase = RoomPhase::Incomplete;
+            if (g.screen == Screen::None) g.screen = Screen::Room;
+        }
+        if (g.event.id != EventId::Count && g.screen == Screen::None) g.screen = Screen::Event;
         return;
     }
     if (g.screen == Screen::Grid && g.selection_confirmation) {

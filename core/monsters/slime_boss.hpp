@@ -29,10 +29,18 @@ struct SlimeBoss : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 4) {
+            add_bottom(g, actions::AnimateSlowAttack::make(owner));
+            Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound);
             queue_slimed(g, g.run.ascension >= 19 ? 5 : 3);
             set_monster_move(g, owner, 2, Intent::Unknown);
-        } else if (m.move == 2) set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 1));
+        } else if (m.move == 2) {
+            add_bottom(g, actions::Shout::make(owner));
+            Effect shake{}; shake.kind = EffectKind::ShakeScreen; add_bottom(g, shake);
+            set_monster_move(g, owner, 1, Intent::Attack, monster_base_damage(g, m, 1));
+        }
         else if (m.move == 1) {
+            add_bottom(g, actions::AnimateJump::make(owner));
+            add_bottom(g, actions::VFX::make());
             queue_monster_damage(g, owner, player_target, 1);
             set_monster_move(g, owner, 4, Intent::StrongDebuff);
         } else if (m.move == 3) {

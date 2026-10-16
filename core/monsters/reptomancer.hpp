@@ -85,6 +85,7 @@ struct Reptomancer : MonsterHooks {
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int id = g.monster_order[i];
             if (!g.monsters[id].creature.dead && !g.monsters[id].creature.dying) {
+                Effect hide{}; hide.kind = EffectKind::HideHealthBar; hide.source = id; hide.target = no_target; add_top(g, hide);
                 Effect e{}; e.kind = EffectKind::Suicide; e.target = id; add_top(g, e);
             }
         }

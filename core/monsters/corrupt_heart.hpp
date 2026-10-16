@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 
 namespace spire::units::monsters {
 struct CorruptHeart : MonsterHooks {
@@ -28,6 +29,7 @@ struct CorruptHeart : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner]; auto& s = m.state.CorruptHeart;
         if (m.move == 3) {
+            add_bottom(g, actions::VFX::make());
             queue_power(g, owner, player_target, PowerId::Vulnerable, 2, true);
             queue_power(g, owner, player_target, PowerId::Weak, 2, true);
             queue_power(g, owner, player_target, PowerId::Frail, 2, true);
@@ -37,6 +39,8 @@ struct CorruptHeart : MonsterHooks {
                 e.payload.state.MakeTempCardInDrawPile.random_spot = true; add_bottom(g, e);
             }
         } else if (m.move == 4) {
+            add_bottom(g, actions::VFX::make());
+            add_bottom(g, actions::VFX::make());
             const int strength = power_amount(g, m.creature, PowerId::Strength);
             queue_power(g, owner, owner, PowerId::Strength, max(0, -strength) + 2);
             switch (s.buffCount++) {
@@ -46,8 +50,11 @@ struct CorruptHeart : MonsterHooks {
             case 3: queue_power(g, owner, owner, PowerId::Strength, 10); break;
             default: queue_power(g, owner, owner, PowerId::Strength, 50); break;
             }
-        } else if (m.move == 1) for (int i = 0; i < s.bloodHitCount; ++i) queue_monster_damage(g, owner, player_target, 1);
-        else queue_monster_damage(g, owner, player_target, 0);
+        } else {
+            add_bottom(g, actions::VFX::make());
+            if (m.move == 1) for (int i = 0; i < s.bloodHitCount; ++i) queue_monster_damage(g, owner, player_target, 1);
+            else queue_monster_damage(g, owner, player_target, 0);
+        }
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {

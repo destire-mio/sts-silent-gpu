@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include "../actions/intent_flash.hpp"
 #include "../actions/change_state.hpp"
 
 namespace spire::units::monsters {
@@ -36,8 +37,14 @@ struct AwakenedOne : MonsterHooks {
     SPIRE_FN static void takeTurn(Game& g, int owner) {
         Monster& m = g.monsters[owner];
         if (m.move == 1 || m.move == 5 || m.move == 6) {
+            if (m.move == 1) { Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound); }
             add_bottom(g, actions::ChangeState::make(g, owner, m.move == 1 ? "ATTACK_1" : "ATTACK_2"));
-            if (m.move == 5) m.state.AwakenedOne.firstTurn = false;
+            if (m.move == 5) {
+                m.state.AwakenedOne.firstTurn = false;
+                Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound);
+                add_bottom(g, actions::VFX::make(owner));
+                add_bottom(g, actions::VFX::make(owner));
+            }
             queue_monster_damage(g, owner, player_target, m.move == 1 ? 0 : m.move == 5 ? 2 : 3);
             if (m.move == 6) {
                 Effect e{}; e.kind = EffectKind::MakeTempCardInDrawPile; action_initialize_state(e);
@@ -49,8 +56,16 @@ struct AwakenedOne : MonsterHooks {
             }
         } else if (m.move == 2 || m.move == 8) {
             const int count = m.move == 2 ? 4 : 3;
-            for (int i = 0; i < count; ++i) queue_monster_damage(g, owner, player_target, m.move == 2 ? 1 : 4);
-        } else if (m.move == 3) add_bottom(g, actions::ChangeState::make(g, owner, "REBIRTH"));
+            if (m.move == 8) { Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound); }
+            for (int i = 0; i < count; ++i) {
+                if (m.move == 8) add_bottom(g, actions::AnimateFastAttack::make(owner));
+                queue_monster_damage(g, owner, player_target, m.move == 2 ? 1 : 4);
+            }
+        } else if (m.move == 3) {
+            Effect sound{}; sound.kind = EffectKind::SFX; add_bottom(g, sound);
+            add_bottom(g, actions::VFX::make(owner));
+            add_bottom(g, actions::ChangeState::make(g, owner, "REBIRTH"));
+        }
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* key) {
