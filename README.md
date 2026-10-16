@@ -18,12 +18,13 @@ cmake --build /private/tmp/spire-build --parallel 1
 ctest --test-dir /private/tmp/spire-build --output-on-failure
 ```
 
-Every build checks `core/` headers and the clang AST for device restrictions, including mutable
+Every build checks `core/` and `obs/` headers and the clang AST for device restrictions, including mutable
 globals, missing `SPIRE_FN`, heap allocation, exceptions, function pointers and recursion. Native
 checks cover RNG vectors, monster behavior and combat; Python checks cover the host API and trace
 comparison. Host floating point contraction is disabled. `cuda/batch.cu` provides one thread per
-`Game`, stepping a batch of actions, and is built only when CMake finds a CUDA compiler. CUDA has
-not been compiled or run on this machine.
+`Game`, stepping a batch of actions, and is built only when CMake finds a CUDA compiler.
+Clang's device-LLVM smoke check covers the engine and observation encoder. NVCC compilation
+and execution on GPU hardware have not been tested on this machine.
 
 ## Python API
 
@@ -82,6 +83,31 @@ For CPU batches, `batch = spire.Batch(count)` owns independent games. Call
 `batch.step(actions)` and `batch.snapshot()`. Supply one seed or action per game. Batch stepping
 uses one CPU thread and retains the Python GIL.
 
+`spire.TrainingBatch(size, threads, decision_cap, seeds)` provides preallocated NumPy entity,
+candidate and mask arrays, candidate-index actions, terminal reward, truncation, fault and reset
+buffers. CPU stepping releases the GIL. Its [visible-information protocol](docs/observation.md)
+defines the array layout, training-only clone, seed sequence and reset semantics. Give the
+policy only the five observation arrays; `snapshot()` and `search_state()` expose hidden state.
+Root-family partitions are in [the seed inventory](inventory/seed-partitions.json); evaluation
+arithmetic is in `tools/evaluation.py`. There is no training algorithm in this interface.
+
+```python
+import numpy as np
+
+batch = spire.TrainingBatch(96, 4, 3000, list(range(1000000000, 1000010000)))
+ids, values = batch.ids, batch.values
+candidates, entity_mask, candidate_mask = batch.candidates, batch.entity_mask, batch.candidate_mask
+actions = np.zeros(96, dtype=np.int32)
+batch.step(actions)
+```
+
+After a terminal/cap/fault output, the next call resets that slot and ignores its action index.
+Read final observations before that call; clear recurrent memory where `reset_mask` is set.
+Run `tools/check_observation.py tests/traces --deep inventory/deep-neow.json --output /private/tmp/observations.json`
+with the same `PYTHONPATH` to encode oracle decisions while replaying both comparison scopes.
+Run `tools/benchmark_training.py --batches 280` to measure 1/4/8-thread uniform-candidate throughput,
+including encoding and reset. Timing output goes to stdout; it excludes network inference and learning.
+
 ## Trace replay
 
 ```sh
@@ -136,6 +162,7 @@ in `inventory/deep-neow.json`. These are input actions, not replacement oracle s
 ## Layout
 
 - `core/`: fixed-capacity C++17 run and combat state, RNG, queues and per-unit content.
+- `obs/`: device-C++ visible-information encoder and fixed numeric schema.
 - `host/`: CPU batch driver, Python binding, snapshot serialization and benchmark.
 - `cuda/`: conditional CUDA batch kernel.
 - `tests/`: native checks, device discipline checker and strict trace replayer.
