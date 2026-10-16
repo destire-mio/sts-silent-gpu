@@ -106,6 +106,12 @@ After a terminal/cap/fault output, the next call resets that slot and ignores it
 Read final observations before that call; clear recurrent memory where `reset_mask` is set.
 Run `tools/check_observation.py tests/traces --deep inventory/deep-neow.json --output /private/tmp/observations.json`
 with the same `PYTHONPATH` to encode oracle decisions while replaying both comparison scopes.
+The padded observation is 10,184 bytes including counts. `batch.store(slots, data, offsets)`
+writes valid rows to caller-owned uint8 storage with uint64 offsets; records occupy
+`12 + 24*entities + 7*candidates` bytes including their offset. Use
+`spire.ObservationBatch(minibatch_size).pad(data, offsets, indices)` to gather a dense minibatch.
+The [protocol](docs/observation.md#compact-rollout-storage) specifies append and fault behavior.
+
 Run `tools/benchmark_training.py --batches 280` to measure 1/4/8-thread uniform-candidate throughput,
 including encoding and reset. Timing output goes to stdout; it excludes network inference and learning.
 

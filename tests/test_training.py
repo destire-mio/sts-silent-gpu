@@ -68,3 +68,50 @@ class TrainingTests(unittest.TestCase):
         finally:
             sys.setswitchinterval(interval)
             worker.join()
+
+    def test_compact_append_gather_and_capacity(self):
+        batch = spire.TrainingBatch(4, 2, 30, list(range(1000000000, 1000000100)))
+        slots = np.arange(4, dtype=np.int32)
+        data = np.full(20000, 165, dtype=np.uint8)
+        offsets = np.full(13, 999, dtype=np.uint64)
+        offsets[0] = 3
+        fields = ("tags", "ids", "values", "candidate_kinds", "candidate_refs", "entity_mask", "candidate_mask",
+                  "entity_counts", "candidate_counts")
+        expected = {name: [] for name in fields}
+        for turn in range(3):
+            for name in fields:
+                expected[name].extend(getattr(batch, name).copy())
+            start = turn * 4
+            self.assertEqual(batch.store(slots, data, offsets[start:start + 5]), 0)
+            expected_sizes = 4 + 24 * batch.entity_counts + 7 * batch.candidate_counts
+            np.testing.assert_array_equal(np.diff(offsets[start:start + 5]), expected_sizes)
+            batch.step(np.zeros(4, dtype=np.int32))
+        self.assertTrue((data[:3] == 165).all())
+        self.assertTrue((data[int(offsets[-1]):] == 165).all())
+        minibatch = spire.ObservationBatch(5)
+        views = [getattr(minibatch, name) for name in fields]
+        addresses = [view.ctypes.data for view in views]
+        for indices in (np.array([7, 0, 11, 7, 1], dtype=np.int32), np.array([0, 0, 0, 0, 0], dtype=np.int32)):
+            minibatch.pad(data, offsets, indices)
+            for name, view in zip(fields, views):
+                np.testing.assert_array_equal(view, np.array(expected[name])[indices])
+        self.assertEqual(addresses, [getattr(minibatch, name).ctypes.data for name in fields])
+        self.assertFalse(minibatch.tags.flags.writeable)
+        too_small = np.full(1, 165, dtype=np.uint8)
+        output_offsets = np.full(5, 999, dtype=np.uint64)
+        output_offsets[0] = 0
+        self.assertEqual(batch.store(slots, too_small, output_offsets), 0xe0000007)
+        np.testing.assert_array_equal(output_offsets, [0, 999, 999, 999, 999])
+        np.testing.assert_array_equal(too_small, [165])
+        self.assertFalse(batch.faults.any())
+        output_offsets[0] = np.iinfo(np.uint64).max
+        self.assertEqual(batch.store(slots, data, output_offsets), 0xe0000007)
+        self.assertEqual(output_offsets[0], np.iinfo(np.uint64).max)
+        output_offsets[0] = 0
+        self.assertEqual(batch.store(slots[:0], too_small, output_offsets[:1]), 0)
+        with self.assertRaises(TypeError):
+            batch.store(slots.astype(np.int64), data, offsets[:5])
+        with self.assertRaises(ValueError):
+            batch.store(slots, data, offsets[:4])
+        with self.assertRaises(ValueError):
+            minibatch.pad(data, offsets, np.array([0, 1, 2, 3, 12], dtype=np.int32))

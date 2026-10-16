@@ -1,5 +1,6 @@
 #pragma once
 #include "obs/encode.hpp"
+#include "observation_batch.hpp"
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
@@ -13,29 +14,22 @@ struct Episode {
     bool finished = false;
 };
 
-struct TrainingBatch {
-    const int size, threads;
+struct TrainingBatch : ObservationBatch {
+    const int threads;
     const uint64_t decision_cap;
     std::vector<Game> games;
     std::vector<ActionSet> actions;
     std::vector<Episode> episodes;
     std::vector<obs::History> reveals;
-    std::vector<int16_t> ids, values, candidate_refs;
-    std::vector<uint8_t> tags, candidate_kinds;
-    std::vector<uint8_t> entity_mask, candidate_mask, done, truncated, reset_mask, advanced;
+    std::vector<uint8_t> done, truncated, reset_mask, advanced;
     std::vector<float> rewards;
     std::vector<uint32_t> faults;
-    std::vector<int32_t> entity_counts, candidate_counts;
     std::vector<int64_t> seed_indices, decision_counts, timing_ns;
 
     TrainingBatch(int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds)
-        : size(size), threads(threads), decision_cap(cap), games(size), actions(size), episodes(size), reveals(size),
-          ids(size * obs::id_rows * obs::entity_capacity), values(size * obs::value_rows * obs::entity_capacity),
-          candidate_refs(size * obs::candidate_rows * obs::candidate_capacity),
-          tags(size * obs::tag_rows * obs::entity_capacity), candidate_kinds(size * obs::candidate_capacity),
-          entity_mask(size * obs::entity_mask_bytes), candidate_mask(size * obs::candidate_mask_bytes),
+        : ObservationBatch(size), threads(threads), decision_cap(cap), games(size), actions(size), episodes(size), reveals(size),
           done(size), truncated(size), reset_mask(size), advanced(size), rewards(size), faults(size),
-          entity_counts(size), candidate_counts(size), seed_indices(size), decision_counts(size), timing_ns(size * 3),
+          seed_indices(size), decision_counts(size), timing_ns(size * 3),
           seeds_(seeds), next_seeds_(size) {
         SPIRE_ASSERT(size > 0 && threads > 0 && threads <= size && cap > 0);
         for (auto& episode : episodes) episode.finished = true;
@@ -51,16 +45,6 @@ struct TrainingBatch {
         }
         wake_.notify_all();
         for (auto& worker : workers_) worker.join();
-    }
-    obs::View view(int i) {
-        return {tags.data() + i * obs::tag_rows * obs::entity_capacity,
-            ids.data() + i * obs::id_rows * obs::entity_capacity,
-            values.data() + i * obs::value_rows * obs::entity_capacity,
-            candidate_kinds.data() + i * obs::candidate_capacity,
-            candidate_refs.data() + i * obs::candidate_rows * obs::candidate_capacity,
-            entity_mask.data() + i * obs::entity_mask_bytes,
-            candidate_mask.data() + i * obs::candidate_mask_bytes,
-            &entity_counts[i], &candidate_counts[i]};
     }
     void publish(int i) {
         const auto start = Clock::now();
@@ -87,6 +71,11 @@ struct TrainingBatch {
         run(0);
         std::unique_lock<std::mutex> lock(mutex_);
         completed_.wait(lock, [this] { return remaining_ == 0; });
+    }
+    uint32_t store(const int32_t* slots, int count, uint8_t* data, uint64_t capacity, uint64_t* offsets) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int i = 0; i < count; ++i) if (faults[slots[i]]) return faults[slots[i]];
+        return ObservationBatch::store(slots, count, data, capacity, offsets);
     }
     void extend_seeds(const std::vector<int64_t>& seeds) {
         std::lock_guard<std::mutex> operation(operation_mutex_);

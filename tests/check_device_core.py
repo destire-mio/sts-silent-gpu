@@ -156,10 +156,16 @@ struct dim3 { unsigned x, y, z; };
 extern __device__ const dim3 threadIdx, blockIdx, blockDim;
 #include "cuda/batch.cu"
 #include "obs/encode.hpp"
+#include "obs/storage.hpp"
 __global__ void encode_observation(const spire::Game* games, spire::obs::Observation* output) {
     spire::ActionSet actions;
     spire::obs::History history;
     spire::obs::encode(games[threadIdx.x], history, output[threadIdx.x].view(), actions);
+}
+__global__ void compact_observation(spire::obs::Observation* input, unsigned char* storage, spire::obs::Observation* output) {
+    auto* record = storage + threadIdx.x * sizeof(spire::obs::Observation);
+    spire::obs::store(input[threadIdx.x].view(), record);
+    spire::obs::pad(record, output[threadIdx.x].view());
 }
 ''')
             result = subprocess.run(

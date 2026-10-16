@@ -229,12 +229,25 @@ py::tuple observation(Environment& env) {
     return py::make_tuple(tags, ids, values, kinds, refs, entities, candidates, result.fault);
 }
 
-template<class T>
-py::array buffer(TrainingBatch& batch, std::vector<T>& data, std::vector<py::ssize_t> shape) {
+template<class T, class Batch>
+py::array buffer(Batch& batch, std::vector<T>& data, std::vector<py::ssize_t> shape) {
     py::array result(py::dtype::of<T>(), shape, data.data(), py::cast(&batch, py::return_value_policy::reference));
     result.attr("setflags")(false);
     return result;
 }
+template<class Batch>
+void observation_arrays(py::class_<Batch>& cls) {
+    cls.def_property_readonly("tags", [](Batch& b) { return buffer(b, b.tags, {b.size, obs::tag_rows, obs::entity_capacity}); })
+        .def_property_readonly("ids", [](Batch& b) { return buffer(b, b.ids, {b.size, obs::id_rows, obs::entity_capacity}); })
+        .def_property_readonly("values", [](Batch& b) { return buffer(b, b.values, {b.size, obs::value_rows, obs::entity_capacity}); })
+        .def_property_readonly("candidate_kinds", [](Batch& b) { return buffer(b, b.candidate_kinds, {b.size, obs::candidate_capacity}); })
+        .def_property_readonly("candidate_refs", [](Batch& b) { return buffer(b, b.candidate_refs, {b.size, obs::candidate_rows, obs::candidate_capacity}); })
+        .def_property_readonly("entity_mask", [](Batch& b) { return buffer(b, b.entity_mask, {b.size, obs::entity_mask_bytes}); })
+        .def_property_readonly("candidate_mask", [](Batch& b) { return buffer(b, b.candidate_mask, {b.size, obs::candidate_mask_bytes}); })
+        .def_property_readonly("entity_counts", [](Batch& b) { return buffer(b, b.entity_counts, {b.size}); })
+        .def_property_readonly("candidate_counts", [](Batch& b) { return buffer(b, b.candidate_counts, {b.size}); });
+}
+
 }
 
 PYBIND11_MODULE(spire, module) {
@@ -293,7 +306,9 @@ PYBIND11_MODULE(spire, module) {
         })
         .def("__len__", [](const EnvironmentBatch& batch) { return batch.games.size(); });
     module.attr("encounters") = py::cast(std::vector<std::string>(std::begin(encounter_names), std::end(encounter_names)));
-    py::class_<TrainingBatch>(module, "TrainingBatch")
+    auto training = py::class_<TrainingBatch>(module, "TrainingBatch");
+    observation_arrays(training);
+    training
         .def(py::init([](int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds) {
             py::gil_scoped_release release;
             return std::make_unique<TrainingBatch>(size, threads, cap, seeds);
@@ -305,24 +320,37 @@ PYBIND11_MODULE(spire, module) {
         }, "candidate_indices"_a.noconvert())
         .def("clone", &TrainingBatch::clone, "source"_a, "target"_a, py::call_guard<py::gil_scoped_release>())
         .def("extend_seeds", &TrainingBatch::extend_seeds, "seeds"_a, py::call_guard<py::gil_scoped_release>())
-        .def_property_readonly("tags", [](TrainingBatch& b) { return buffer(b, b.tags, {b.size, obs::tag_rows, obs::entity_capacity}); })
-        .def_property_readonly("ids", [](TrainingBatch& b) { return buffer(b, b.ids, {b.size, obs::id_rows, obs::entity_capacity}); })
-        .def_property_readonly("values", [](TrainingBatch& b) { return buffer(b, b.values, {b.size, obs::value_rows, obs::entity_capacity}); })
-        .def_property_readonly("candidate_kinds", [](TrainingBatch& b) { return buffer(b, b.candidate_kinds, {b.size, obs::candidate_capacity}); })
-        .def_property_readonly("candidate_refs", [](TrainingBatch& b) { return buffer(b, b.candidate_refs, {b.size, obs::candidate_rows, obs::candidate_capacity}); })
-        .def_property_readonly("entity_mask", [](TrainingBatch& b) { return buffer(b, b.entity_mask, {b.size, obs::entity_mask_bytes}); })
-        .def_property_readonly("candidate_mask", [](TrainingBatch& b) { return buffer(b, b.candidate_mask, {b.size, obs::candidate_mask_bytes}); })
         .def_property_readonly("rewards", [](TrainingBatch& b) { return buffer(b, b.rewards, {b.size}); })
         .def_property_readonly("done", [](TrainingBatch& b) { return buffer(b, b.done, {b.size}); })
         .def_property_readonly("truncated", [](TrainingBatch& b) { return buffer(b, b.truncated, {b.size}); })
         .def_property_readonly("faults", [](TrainingBatch& b) { return buffer(b, b.faults, {b.size}); })
         .def_property_readonly("reset_mask", [](TrainingBatch& b) { return buffer(b, b.reset_mask, {b.size}); })
         .def_property_readonly("advanced", [](TrainingBatch& b) { return buffer(b, b.advanced, {b.size}); })
-        .def_property_readonly("entity_counts", [](TrainingBatch& b) { return buffer(b, b.entity_counts, {b.size}); })
-        .def_property_readonly("candidate_counts", [](TrainingBatch& b) { return buffer(b, b.candidate_counts, {b.size}); })
         .def_property_readonly("seed_indices", [](TrainingBatch& b) { return buffer(b, b.seed_indices, {b.size}); })
         .def_property_readonly("decision_counts", [](TrainingBatch& b) { return buffer(b, b.decision_counts, {b.size}); })
         .def_property_readonly("timing_ns", [](TrainingBatch& b) { return buffer(b, b.timing_ns, {b.size, 3}); });
+    training.def("store", [](TrainingBatch& batch, py::array_t<int32_t, py::array::c_style> slots,
+            py::array_t<uint8_t, py::array::c_style> data, py::array_t<uint64_t, py::array::c_style> offsets) {
+        if (slots.ndim() != 1 || data.ndim() != 1 || offsets.ndim() != 1 || offsets.size() != slots.size() + 1)
+            throw std::invalid_argument("store expects slots[M], data[bytes], offsets[M+1]");
+        for (py::ssize_t i = 0; i < slots.size(); ++i) if (slots.data()[i] < 0 || slots.data()[i] >= batch.size)
+            throw std::invalid_argument("store slot outside batch");
+        auto* output = data.mutable_data(); auto* positions = offsets.mutable_data();
+        py::gil_scoped_release release;
+        return batch.store(slots.data(), slots.size(), output, data.size(), positions);
+    }, "slots"_a.noconvert(), "data"_a.noconvert(), "offsets"_a.noconvert());
+    auto padded = py::class_<ObservationBatch>(module, "ObservationBatch");
+    observation_arrays(padded);
+    padded.def(py::init<int>(), "size"_a)
+        .def("pad", [](ObservationBatch& batch, py::array_t<uint8_t, py::array::c_style> data,
+                py::array_t<uint64_t, py::array::c_style> offsets, py::array_t<int32_t, py::array::c_style> indices) {
+            if (data.ndim() != 1 || offsets.ndim() != 1 || indices.ndim() != 1 || indices.size() != batch.size)
+                throw std::invalid_argument("pad expects data[bytes], offsets[records+1], indices[batch size]");
+            for (py::ssize_t i = 0; i < indices.size(); ++i) if (indices.data()[i] < 0 || indices.data()[i] >= offsets.size() - 1)
+                throw std::invalid_argument("pad record outside offsets");
+            py::gil_scoped_release release;
+            batch.pad(data.data(), offsets.data(), indices.data());
+        }, "data"_a.noconvert(), "offsets"_a.noconvert(), "indices"_a.noconvert());
     module.attr("entity_bytes") = obs::entity_bytes;
     module.attr("candidate_bytes") = obs::candidate_bytes;
     module.attr("observation_bytes") = sizeof(obs::Observation);

@@ -299,7 +299,9 @@ produce zero entity/candidate arrays and masks. Seed exhaustion also produces ze
 
 E0 fault codes are `0xe0000001` entity overflow, `0xe0000002` candidate overflow,
 `0xe0000003` no live decision, `0xe0000004` invalid candidate index and `0xe0000005`
-seed exhaustion and `0xe0000006` numeric range. Other nonzero codes are the unchanged core's latched assertion IDs.
+seed exhaustion, `0xe0000006` numeric range and `0xe0000007` insufficient caller storage.
+Storage exhaustion is returned by `store` and does not end or modify a game. Other nonzero
+codes are the unchanged core's latched assertion IDs.
 Host core invariant violations still abort the process, including in release builds.
 
 `clone(i, j)` copies the game, visible-history sidecar, root-family identity and episode decision count;
@@ -314,3 +316,33 @@ candidate kinds, candidate refs, entity mask, candidate mask and a fault code. T
 uses the unchanged oracle comparator while encoding every decision. The seed-family contract
 is in `inventory/seed-partitions.json`; `tools/evaluation.py` supplies Wilson intervals and
 same-root paired counts, retaining fault/truncated pairs as separate counts.
+
+## Compact rollout storage
+
+`batch.store(slots, data, offsets)` copies selected current observations to caller-owned
+contiguous NumPy buffers: slots int32 `[M]`, data uint8 `[capacity]`, offsets uint64 `[M+1]`.
+Set offsets[0] to the append position; pass a slice of the episode's existing offset table
+for subsequent appends. Repeated slots and arbitrary slot order are supported. This call
+releases the GIL and serializes with step/clone. It returns zero on success. Insufficient
+capacity returns StorageCapacity before any data/offset writes. Selecting a faulted slot
+returns that fault before writing; its partial observation never enters rollout storage.
+It does not advance games, consume RNG or change rewards. Save the decision observation
+before stepping, and save terminal/truncated observations separately when needed.
+
+Each record is four header bytes (entity count and candidate count, unsigned 16-bit little
+endian) followed by valid prefixes only, in this order: four uint8 tag rows, four int16 ID
+rows, six int16 numeric rows, uint8 candidate kinds, three int16 candidate-reference rows.
+All words are little endian; records need no alignment or end padding. There are no masks
+in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
+8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
+return/recurrent-state storage belongs to the trainer and is not included in these sizes.
+The format is tied to protocol version 2; it is not a save/load format for games.
+
+Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
+gathers records by int32 indices into its preallocated dense arrays with the same shapes,
+dtypes, padding, counts and masks as TrainingBatch. Cache those read-only NumPy views once;
+subsequent pad calls keep their addresses. This call releases the GIL; do not access its
+buffers concurrently or overlap pad calls on one minibatch. Input records and their offsets
+must come from this protocol's store operation, with the complete referenced data buffer; the helper trusts that format rather than validating
+engine-produced records. Only the selected minibatch is expanded.
+`obs::store` and `obs::pad` implement the same record format in device C++ without allocation.
