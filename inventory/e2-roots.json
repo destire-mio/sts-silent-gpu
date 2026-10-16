@@ -1,0 +1,2055 @@
+{
+  "version": 1,
+  "engine_base": "a7878b5b86c5700db0128678911d99dca4f54268",
+  "partition_sha256": "3cb1691b609f65c9b5d528ec4cd08a1f58f9fe85449ae5c475a7910ba39aa6df",
+  "root_schema": "root.seed (signed int64), root.candidates (canonical legal-action indices); all other fields are metadata, never restore state",
+  "status": "blocked_original_validation",
+  "released_for_curriculum": false,
+  "selection": "First reachable boundary per seed and stage, including exploratory branches before choosing a turn. No filtering on continuation difficulty. Uniform sampling over families within eligible partition/stage. Stages with fewer than 20 families are diagnostic-only. No stage is released until original validation passes.",
+  "search_bias": "Weighted card/reward/map policy and true-future search favor survival, HP, poison/scaling, and keys. Initial pilot/breadth/breadth3 retained one turn candidate; later searches retained up to two distinct-score turn candidates through a combat. Floor checkpoints retry failures. First Act2 roots were extended; the three Act3 families received 60000 decisions each. Act1 boss collection was added after scarce late-stage coverage. No search result is a training label.",
+  "goals": {
+    "act2_entry": "act3_entry",
+    "act3_entry": "act3_boss",
+    "act3_boss": "act4_entry",
+    "act4_entry": "heart_start",
+    "heart_start": "heart_win",
+    "heart_turn2": "heart_win",
+    "heart_turn3": "heart_win",
+    "heart_turn5": "heart_win",
+    "act1_boss": "act2_entry"
+  },
+  "difficulty": "16 uniform legal continuations capped at 2048 decisions each; 4 search RNG streams, 512 engine decisions each, up to two turn candidates and four sampled continuations per candidate. Search success is finding the target within this budget; returned deaths and live cutoffs are reported separately. The search returns its best finished branch when any finished branch exists, even if live branches remain at budget exhaustion. A zero search rate does not establish that a root is unwinnable. All trials keep the same game RNG world; only policy RNG varies. No difficulty filtering.",
+  "families": {
+    "train": 275,
+    "dev": 135
+  },
+  "family_targets_met": true,
+  "family_cap_stages": [
+    "act2_entry",
+    "act1_boss"
+  ],
+  "stages": {
+    "train": {
+      "act2_entry": {
+        "roots": 208,
+        "families": 208,
+        "family_cap_satisfied": true,
+        "max_family_share": 0.004807692307692308,
+        "unique_decks": 208,
+        "unique_relic_sets": 200,
+        "unique_deck_relic_pairs": 208,
+        "hp": {
+          "45": 1,
+          "47": 4,
+          "48": 1,
+          "49": 2,
+          "50": 53,
+          "51": 33,
+          "52": 21,
+          "53": 12,
+          "54": 19,
+          "55": 13,
+          "56": 12,
+          "57": 8,
+          "58": 3,
+          "59": 7,
+          "60": 6,
+          "61": 1,
+          "62": 1,
+          "63": 5,
+          "64": 1,
+          "65": 2,
+          "66": 2,
+          "68": 1
+        },
+        "deck_size": {
+          "17": 1,
+          "18": 4,
+          "19": 16,
+          "20": 27,
+          "21": 35,
+          "22": 41,
+          "23": 40,
+          "24": 23,
+          "25": 12,
+          "26": 8,
+          "27": 1
+        },
+        "relic_count": {
+          "1": 10,
+          "2": 34,
+          "3": 74,
+          "4": 55,
+          "5": 21,
+          "6": 7,
+          "7": 3,
+          "8": 3,
+          "9": 1
+        },
+        "potion_count": {
+          "0": 123,
+          "1": 78,
+          "2": 7
+        },
+        "uniform_successes_out_of_16": {
+          "0": 208
+        },
+        "search_successes_out_of_4": {
+          "0": 208
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 304
+      },
+      "act3_entry": {
+        "roots": 2,
+        "families": 2,
+        "family_cap_satisfied": false,
+        "max_family_share": 0.5,
+        "unique_decks": 2,
+        "unique_relic_sets": 2,
+        "unique_deck_relic_pairs": 2,
+        "hp": {
+          "54": 1,
+          "58": 1
+        },
+        "deck_size": {
+          "29": 1,
+          "31": 1
+        },
+        "relic_count": {
+          "9": 2
+        },
+        "potion_count": {
+          "0": 2
+        },
+        "uniform_successes_out_of_16": {
+          "0": 2
+        },
+        "search_successes_out_of_4": {
+          "0": 2
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 4
+      },
+      "act3_boss": {
+        "roots": 2,
+        "families": 2,
+        "family_cap_satisfied": false,
+        "max_family_share": 0.5,
+        "unique_decks": 2,
+        "unique_relic_sets": 2,
+        "unique_deck_relic_pairs": 2,
+        "hp": {
+          "66": 1,
+          "7": 1
+        },
+        "deck_size": {
+          "36": 1,
+          "39": 1
+        },
+        "relic_count": {
+          "11": 2
+        },
+        "potion_count": {
+          "0": 1,
+          "2": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 2
+        },
+        "search_successes_out_of_4": {
+          "0": 2
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 1
+      },
+      "act4_entry": {
+        "roots": 1,
+        "families": 1,
+        "family_cap_satisfied": false,
+        "max_family_share": 1.0,
+        "unique_decks": 1,
+        "unique_relic_sets": 1,
+        "unique_deck_relic_pairs": 1,
+        "hp": {
+          "2": 1
+        },
+        "deck_size": {
+          "38": 1
+        },
+        "relic_count": {
+          "12": 1
+        },
+        "potion_count": {
+          "0": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_start": {
+        "roots": 1,
+        "families": 1,
+        "family_cap_satisfied": false,
+        "max_family_share": 1.0,
+        "unique_decks": 1,
+        "unique_relic_sets": 1,
+        "unique_deck_relic_pairs": 1,
+        "hp": {
+          "1": 1
+        },
+        "deck_size": {
+          "38": 1
+        },
+        "relic_count": {
+          "13": 1
+        },
+        "potion_count": {
+          "1": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_turn2": {
+        "roots": 1,
+        "families": 1,
+        "family_cap_satisfied": false,
+        "max_family_share": 1.0,
+        "unique_decks": 1,
+        "unique_relic_sets": 1,
+        "unique_deck_relic_pairs": 1,
+        "hp": {
+          "1": 1
+        },
+        "deck_size": {
+          "38": 1
+        },
+        "relic_count": {
+          "13": 1
+        },
+        "potion_count": {
+          "0": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_turn3": {
+        "roots": 1,
+        "families": 1,
+        "family_cap_satisfied": false,
+        "max_family_share": 1.0,
+        "unique_decks": 1,
+        "unique_relic_sets": 1,
+        "unique_deck_relic_pairs": 1,
+        "hp": {
+          "1": 1
+        },
+        "deck_size": {
+          "38": 1
+        },
+        "relic_count": {
+          "13": 1
+        },
+        "potion_count": {
+          "0": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_turn5": {
+        "roots": 1,
+        "families": 1,
+        "family_cap_satisfied": false,
+        "max_family_share": 1.0,
+        "unique_decks": 1,
+        "unique_relic_sets": 1,
+        "unique_deck_relic_pairs": 1,
+        "hp": {
+          "1": 1
+        },
+        "deck_size": {
+          "38": 1
+        },
+        "relic_count": {
+          "13": 1
+        },
+        "potion_count": {
+          "0": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "act1_boss": {
+        "roots": 84,
+        "families": 84,
+        "family_cap_satisfied": true,
+        "max_family_share": 0.011904761904761904,
+        "unique_decks": 84,
+        "unique_relic_sets": 70,
+        "unique_deck_relic_pairs": 84,
+        "hp": {
+          "1": 2,
+          "10": 1,
+          "11": 3,
+          "12": 1,
+          "17": 1,
+          "18": 1,
+          "19": 2,
+          "2": 2,
+          "20": 4,
+          "21": 4,
+          "22": 3,
+          "23": 5,
+          "24": 3,
+          "25": 6,
+          "26": 2,
+          "27": 2,
+          "28": 1,
+          "29": 1,
+          "3": 2,
+          "31": 2,
+          "32": 4,
+          "33": 1,
+          "34": 2,
+          "36": 2,
+          "37": 1,
+          "38": 2,
+          "39": 1,
+          "4": 1,
+          "43": 3,
+          "45": 1,
+          "46": 3,
+          "47": 1,
+          "48": 2,
+          "50": 1,
+          "51": 2,
+          "52": 1,
+          "54": 3,
+          "60": 1,
+          "63": 1,
+          "66": 2,
+          "9": 1
+        },
+        "deck_size": {
+          "17": 2,
+          "18": 4,
+          "19": 8,
+          "20": 10,
+          "21": 23,
+          "22": 17,
+          "23": 13,
+          "24": 6,
+          "25": 1
+        },
+        "relic_count": {
+          "1": 16,
+          "2": 28,
+          "3": 27,
+          "4": 8,
+          "5": 5
+        },
+        "potion_count": {
+          "0": 48,
+          "1": 33,
+          "2": 3
+        },
+        "uniform_successes_out_of_16": {
+          "0": 83,
+          "1": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 69,
+          "1": 3,
+          "2": 4,
+          "3": 3,
+          "4": 5
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 18
+      }
+    },
+    "dev": {
+      "act2_entry": {
+        "roots": 89,
+        "families": 89,
+        "family_cap_satisfied": true,
+        "max_family_share": 0.011235955056179775,
+        "unique_decks": 89,
+        "unique_relic_sets": 87,
+        "unique_deck_relic_pairs": 89,
+        "hp": {
+          "45": 3,
+          "47": 2,
+          "50": 22,
+          "51": 13,
+          "52": 10,
+          "53": 10,
+          "54": 11,
+          "55": 5,
+          "56": 4,
+          "57": 1,
+          "58": 3,
+          "59": 2,
+          "65": 2,
+          "66": 1
+        },
+        "deck_size": {
+          "19": 4,
+          "20": 14,
+          "21": 14,
+          "22": 25,
+          "23": 13,
+          "24": 10,
+          "25": 6,
+          "26": 1,
+          "27": 1,
+          "29": 1
+        },
+        "relic_count": {
+          "1": 2,
+          "2": 28,
+          "3": 26,
+          "4": 19,
+          "5": 9,
+          "6": 2,
+          "7": 2,
+          "8": 1
+        },
+        "potion_count": {
+          "0": 55,
+          "1": 34
+        },
+        "uniform_successes_out_of_16": {
+          "0": 89
+        },
+        "search_successes_out_of_4": {
+          "0": 89
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 128
+      },
+      "act3_entry": {
+        "roots": 1,
+        "families": 1,
+        "family_cap_satisfied": false,
+        "max_family_share": 1.0,
+        "unique_decks": 1,
+        "unique_relic_sets": 1,
+        "unique_deck_relic_pairs": 1,
+        "hp": {
+          "55": 1
+        },
+        "deck_size": {
+          "35": 1
+        },
+        "relic_count": {
+          "5": 1
+        },
+        "potion_count": {
+          "0": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 2
+      },
+      "act3_boss": {
+        "roots": 1,
+        "families": 1,
+        "family_cap_satisfied": false,
+        "max_family_share": 1.0,
+        "unique_decks": 1,
+        "unique_relic_sets": 1,
+        "unique_deck_relic_pairs": 1,
+        "hp": {
+          "9": 1
+        },
+        "deck_size": {
+          "46": 1
+        },
+        "relic_count": {
+          "12": 1
+        },
+        "potion_count": {
+          "0": 1
+        },
+        "uniform_successes_out_of_16": {
+          "0": 1
+        },
+        "search_successes_out_of_4": {
+          "0": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "act4_entry": {
+        "roots": 0,
+        "families": 0,
+        "family_cap_satisfied": false,
+        "max_family_share": null,
+        "unique_decks": 0,
+        "unique_relic_sets": 0,
+        "unique_deck_relic_pairs": 0,
+        "hp": {},
+        "deck_size": {},
+        "relic_count": {},
+        "potion_count": {},
+        "uniform_successes_out_of_16": {},
+        "search_successes_out_of_4": {},
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_start": {
+        "roots": 0,
+        "families": 0,
+        "family_cap_satisfied": false,
+        "max_family_share": null,
+        "unique_decks": 0,
+        "unique_relic_sets": 0,
+        "unique_deck_relic_pairs": 0,
+        "hp": {},
+        "deck_size": {},
+        "relic_count": {},
+        "potion_count": {},
+        "uniform_successes_out_of_16": {},
+        "search_successes_out_of_4": {},
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_turn2": {
+        "roots": 0,
+        "families": 0,
+        "family_cap_satisfied": false,
+        "max_family_share": null,
+        "unique_decks": 0,
+        "unique_relic_sets": 0,
+        "unique_deck_relic_pairs": 0,
+        "hp": {},
+        "deck_size": {},
+        "relic_count": {},
+        "potion_count": {},
+        "uniform_successes_out_of_16": {},
+        "search_successes_out_of_4": {},
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_turn3": {
+        "roots": 0,
+        "families": 0,
+        "family_cap_satisfied": false,
+        "max_family_share": null,
+        "unique_decks": 0,
+        "unique_relic_sets": 0,
+        "unique_deck_relic_pairs": 0,
+        "hp": {},
+        "deck_size": {},
+        "relic_count": {},
+        "potion_count": {},
+        "uniform_successes_out_of_16": {},
+        "search_successes_out_of_4": {},
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "heart_turn5": {
+        "roots": 0,
+        "families": 0,
+        "family_cap_satisfied": false,
+        "max_family_share": null,
+        "unique_decks": 0,
+        "unique_relic_sets": 0,
+        "unique_deck_relic_pairs": 0,
+        "hp": {},
+        "deck_size": {},
+        "relic_count": {},
+        "potion_count": {},
+        "uniform_successes_out_of_16": {},
+        "search_successes_out_of_4": {},
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 0
+      },
+      "act1_boss": {
+        "roots": 57,
+        "families": 57,
+        "family_cap_satisfied": true,
+        "max_family_share": 0.017543859649122806,
+        "unique_decks": 57,
+        "unique_relic_sets": 51,
+        "unique_deck_relic_pairs": 57,
+        "hp": {
+          "11": 1,
+          "13": 1,
+          "15": 1,
+          "16": 2,
+          "2": 1,
+          "20": 3,
+          "21": 1,
+          "22": 2,
+          "23": 3,
+          "24": 1,
+          "25": 2,
+          "26": 2,
+          "27": 2,
+          "28": 1,
+          "29": 1,
+          "30": 5,
+          "31": 1,
+          "33": 1,
+          "35": 3,
+          "38": 1,
+          "4": 2,
+          "40": 1,
+          "42": 3,
+          "47": 1,
+          "49": 1,
+          "5": 1,
+          "52": 1,
+          "53": 1,
+          "54": 1,
+          "55": 1,
+          "58": 2,
+          "61": 1,
+          "62": 2,
+          "66": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1
+        },
+        "deck_size": {
+          "16": 1,
+          "17": 1,
+          "18": 3,
+          "19": 6,
+          "20": 12,
+          "21": 13,
+          "22": 7,
+          "23": 11,
+          "24": 2,
+          "25": 1
+        },
+        "relic_count": {
+          "1": 11,
+          "2": 20,
+          "3": 15,
+          "4": 8,
+          "5": 2,
+          "6": 1
+        },
+        "potion_count": {
+          "0": 37,
+          "1": 20
+        },
+        "uniform_successes_out_of_16": {
+          "0": 57
+        },
+        "search_successes_out_of_4": {
+          "0": 47,
+          "1": 5,
+          "2": 1,
+          "3": 3,
+          "4": 1
+        },
+        "uniform_cutoffs": 0,
+        "search_cutoffs": 8
+      }
+    }
+  },
+  "budget": {
+    "decision_limit": 10000000,
+    "cpu_seconds_limit": 21600,
+    "entries": [
+      {
+        "name": "pilot",
+        "kind": "collect",
+        "decisions": 192000,
+        "cpu_seconds": 0.246342,
+        "failed": false
+      },
+      {
+        "name": "pilot-batch",
+        "kind": "training_batch_replay",
+        "decisions": 2394,
+        "cpu_seconds": 0.02523199999999999,
+        "failed": false
+      },
+      {
+        "name": "breadth",
+        "kind": "collect",
+        "decisions": 2096743,
+        "cpu_seconds": 2.3150489999999997,
+        "failed": false
+      },
+      {
+        "name": "breadth-batch",
+        "kind": "training_batch_replay",
+        "decisions": 31858,
+        "cpu_seconds": 0.08435700000000002,
+        "failed": false
+      },
+      {
+        "name": "breadth3",
+        "kind": "collect",
+        "decisions": 1495006,
+        "cpu_seconds": 1.838049,
+        "failed": false
+      },
+      {
+        "name": "late",
+        "kind": "extend",
+        "decisions": 594044,
+        "cpu_seconds": 0.987417,
+        "failed": false
+      },
+      {
+        "name": "beam",
+        "kind": "collect",
+        "decisions": 2880000,
+        "cpu_seconds": 4.278633,
+        "failed": false
+      },
+      {
+        "name": "remaining-batch",
+        "kind": "training_batch_replay",
+        "decisions": 65040,
+        "cpu_seconds": 0.161373,
+        "failed": false
+      },
+      {
+        "name": "act3-deep",
+        "kind": "extend",
+        "decisions": 180000,
+        "cpu_seconds": 0.343427,
+        "failed": false
+      },
+      {
+        "name": "measured",
+        "kind": "evaluate",
+        "decisions": 721226,
+        "cpu_seconds": 1.333721,
+        "failed": false
+      },
+      {
+        "name": "earlier",
+        "kind": "collect",
+        "decisions": 1055645,
+        "cpu_seconds": 2.1291789999999997,
+        "failed": false
+      },
+      {
+        "name": "measured-earlier",
+        "kind": "evaluate",
+        "decisions": 278031,
+        "cpu_seconds": 0.510176,
+        "failed": false
+      },
+      {
+        "name": "late-earlier-batch",
+        "kind": "training_batch_replay",
+        "decisions": 70289,
+        "cpu_seconds": 0.21088,
+        "failed": false
+      },
+      {
+        "name": "oracle-audit",
+        "kind": "original_validation",
+        "decisions": 17455,
+        "cpu_seconds": 335.079425,
+        "failed": true
+      },
+      {
+        "name": "terminal-diagnosis",
+        "kind": "diagnostic_replay",
+        "decisions": 1117,
+        "cpu_seconds": 0.508252,
+        "failed": false
+      },
+      {
+        "name": "oracle-audit-idle",
+        "kind": "original_idle_frames",
+        "decisions": 0,
+        "cpu_seconds": 306.18913599999996,
+        "failed": false
+      },
+      {
+        "name": "illegal-prefix-diagnosis",
+        "kind": "diagnostic_replay",
+        "decisions": 1676,
+        "cpu_seconds": 6.445526,
+        "failed": false
+      },
+      {
+        "name": "oracle-extra-interrupted",
+        "kind": "original_validation_interrupted",
+        "decisions": 22056,
+        "cpu_seconds": 587.7704405784607,
+        "failed": true,
+        "cpu_measurement": "upper bound: ten logical cores times JVM log elapsed; parent exited before recording rusage",
+        "wall_seconds": 58.77704405784607
+      },
+      {
+        "name": "rejected-prefix-idle",
+        "kind": "original_idle_frames",
+        "decisions": 0,
+        "cpu_seconds": 90.58961799999999,
+        "failed": true
+      },
+      {
+        "name": "oracle-extra-resume",
+        "kind": "original_validation",
+        "decisions": 20071,
+        "cpu_seconds": 474.539472,
+        "failed": true
+      },
+      {
+        "name": "oracle-extra-idle",
+        "kind": "original_idle_frames",
+        "decisions": 0,
+        "cpu_seconds": 428.31134499999996,
+        "failed": false
+      }
+    ],
+    "engine_decisions": 9724651,
+    "original_decisions": 61558,
+    "total_including_original_decisions": 9786209,
+    "cpu_seconds_accounted_upper_bound": 2243.8970495784606,
+    "cpu_scope": "Collector processes, Python collection wrappers, prefix/batch replay, strict replay and original/idle JVMs; excludes compilation and interactive inspection. The interrupted original JVM uses a conservative ten-core-times-wall bound because its parent exited before saving rusage.",
+    "stop_reason": "Original parity failures block acceptance; leave remaining decisions unused. Family targets are met only after moving coverage to Act1 boss and Act2 entry."
+  },
+  "validation": [
+    {
+      "path": "/private/tmp/e2-roots/oracle-audit/results.json",
+      "sha256": "84fa0077523fca75e36b4842e8008172f26710e034aa58391afd2387cafa2cad",
+      "results": [
+        {
+          "seed": 2000000148,
+          "partition": "dev",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/0.jsonl.gz",
+          "sha256": "1355c9622d14f707e4f095b0d38cde192f6cf9ffa7305bacea41d315ad638fa7",
+          "decisions": 305,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 305,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 305,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 282
+        },
+        {
+          "seed": 2000000573,
+          "partition": "dev",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/1.jsonl.gz",
+          "sha256": "532e46f778f765df2820ba742527ebefcf79b3f3112dfde84daef1b2de9b7526",
+          "decisions": 472,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 472,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 472,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 419
+        },
+        {
+          "seed": 2000000006,
+          "partition": "dev",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/2.jsonl.gz",
+          "sha256": "de54779d52348c6fde464074204c17b934f9efb5c90b40f8111b8af154358ed5",
+          "decisions": 343,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 343,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 343,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 288
+        },
+        {
+          "seed": 2000000006,
+          "partition": "dev",
+          "stage": "act3_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/3.jsonl.gz",
+          "sha256": "2ce493e66a2802b1d9941ddd50291979ce8e6e841fa751bcee3cff70a3bc7da7",
+          "decisions": 787,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 787,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 787,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 764
+        },
+        {
+          "seed": 1000001066,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/4.jsonl.gz",
+          "sha256": "77ec3f6c47e7c13004589b334cacc73a505c6d4c34a0c750de440881c46796a6",
+          "decisions": 408,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 408,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 408,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 380
+        },
+        {
+          "seed": 1000001089,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/5.jsonl.gz",
+          "sha256": "24262d77d2274b3f99148588e16c9603381deb79e117f5082b2895f2a256d175",
+          "decisions": 580,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 580,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 580,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 570
+        },
+        {
+          "seed": 1000000542,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/6.jsonl.gz",
+          "sha256": "c5adc5d19e546a66551d54835ce33a235e79130f62e81d8b2f3cf78c354e7da0",
+          "decisions": 363,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 363,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 363,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 355
+        },
+        {
+          "seed": 1000001178,
+          "partition": "train",
+          "stage": "act3_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/7.jsonl.gz",
+          "sha256": "d551a650938a7d98146d70e5440aa636c48e2f73a3872d0730954c2b74b84fa9",
+          "decisions": 732,
+          "scopes": {
+            "combat": {
+              "passed": false,
+              "matched_decisions": 732,
+              "terminal": false,
+              "differences": [
+                "/private/tmp/e2-roots/oracle-audit/7.jsonl.gz:734:$.snapshot.manager.fields.GameActionManager.actions.length: expected 3, got 2"
+              ]
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 732,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 707
+        },
+        {
+          "seed": 1000001301,
+          "partition": "train",
+          "stage": "act3_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/8.jsonl.gz",
+          "sha256": "18ebc4c194545b914845bef85e1301bd0f44e2ca97ace963bce147264a1aeaf0",
+          "decisions": 943,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 943,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 943,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 904
+        },
+        {
+          "seed": 1000000000,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/9.jsonl.gz",
+          "sha256": "dfd63812912b6d728ec669fc2d9607c45df778e55ae5e7f6213a0fb15f9a1c0d",
+          "decisions": 354,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 354,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 354,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 332
+        },
+        {
+          "seed": 1000000002,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/10.jsonl.gz",
+          "sha256": "58e30423ea494a0132f3dea6c9ed59954516740806ce72aa14fadecaa1cbc3f7",
+          "decisions": 450,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 450,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 450,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 406
+        },
+        {
+          "seed": 1000000004,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/11.jsonl.gz",
+          "sha256": "624291626dc8beb7ced88f8e73a22c30e597d03c1d8c9d49875ff525dcf6628b",
+          "decisions": 282,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 282,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 282,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 259
+        },
+        {
+          "seed": 1000000015,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/12.jsonl.gz",
+          "sha256": "3a98e702ba3348bcf6de07f973cc2ce8d11d204c9b21b62fe7c2fee1adcb3758",
+          "decisions": 361,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 361,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 361,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 345
+        },
+        {
+          "seed": 1000000040,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/13.jsonl.gz",
+          "sha256": "7d7b976b9be0987623a7ce3c4a37a0809e05a4480cab713f2811634b792a95e2",
+          "decisions": 459,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 459,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 459,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 434
+        },
+        {
+          "seed": 1000000047,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/14.jsonl.gz",
+          "sha256": "b12842f91e60beef8457bb97bca4ae0943caec71041517c2e70ea9ee69bd2fbf",
+          "decisions": 316,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 316,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 316,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 303
+        },
+        {
+          "seed": 1000000061,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/15.jsonl.gz",
+          "sha256": "7692efcf78da2a26d7164c3a8cbc5ac17ac69d85b10b71fa8f70800bfabe3c29",
+          "decisions": 331,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 331,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 331,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 298
+        },
+        {
+          "seed": 2000000046,
+          "partition": "dev",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/16.jsonl.gz",
+          "sha256": "2ac7af942e2c254b89b8e159da8b2205ad3f564a7acf1b0c7bfee71e79c1c60b",
+          "decisions": 455,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 455,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 455,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 424
+        },
+        {
+          "seed": 1000000067,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/17.jsonl.gz",
+          "sha256": "031a630bfceefc9e2dee181cc3df44b78118175ad7eeff1c4362324823bc3595",
+          "decisions": 385,
+          "scopes": {
+            "combat": {
+              "passed": false,
+              "matched_decisions": 385,
+              "terminal": false,
+              "differences": [
+                "/private/tmp/e2-roots/oracle-audit/17.jsonl.gz:387:$.snapshot.manager.fields.GameActionManager.actions.length: expected 5, got 3"
+              ]
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 385,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 296
+        },
+        {
+          "seed": 2000000049,
+          "partition": "dev",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/18.jsonl.gz",
+          "sha256": "9e60f452f836df1b32a64c1c8582ba74880462b29fd2e9a55e805ddf6a5d0980",
+          "decisions": 365,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 365,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 365,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 343
+        },
+        {
+          "seed": 1000000077,
+          "partition": "train",
+          "stage": "act2_entry",
+          "path": "/private/tmp/e2-roots/oracle-audit/19.jsonl.gz",
+          "sha256": "4aa054b6ebd5d04a3f3448bd6731aa5d52a5e07134e28409fd8af06275615f63",
+          "decisions": 341,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 341,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 341,
+              "terminal": true,
+              "differences": []
+            }
+          },
+          "stopped": null,
+          "root_prefix_decisions": 314
+        }
+      ],
+      "idle_frames": 13,
+      "byte_identical": 20
+    },
+    {
+      "path": "/private/tmp/e2-roots/oracle-extra/results.json",
+      "sha256": "303e8fcb3d856b621cf046a8df9de354bf572df0a52a42a3979b7391a8a98e85",
+      "results": [
+        {
+          "seed": 2000002085,
+          "partition": "dev",
+          "stage": "act1_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/0.jsonl.gz",
+          "sha256": "16d2353223641c8967805af3bbdb69b556b68e7eb3b2efae6e52aacd29353f64",
+          "decisions": 246,
+          "root_prefix_decisions": 238,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 246,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 246,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2000002079,
+          "partition": "dev",
+          "stage": "act1_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/1.jsonl.gz",
+          "sha256": "489b49640438996c229e6a23a5afcdf31aaa040871284529db259daff2fef235",
+          "decisions": 264,
+          "root_prefix_decisions": 241,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 264,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 264,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2000002098,
+          "partition": "dev",
+          "stage": "act1_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/2.jsonl.gz",
+          "sha256": "c7fea8f3afcaac8c592016bf3c687d966ce0fbe68f088594859d36c59599ed3c",
+          "decisions": 223,
+          "root_prefix_decisions": 195,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 223,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 223,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2000000006,
+          "partition": "dev",
+          "stage": "act3_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/3.jsonl.gz",
+          "sha256": "d15ade7eaf1bad90d2e51ef5d9f3d14302722b7baac36cc4e1e01f36e7a48ac8",
+          "decisions": 1676,
+          "root_prefix_decisions": 2151,
+          "stopped": "original rejects choose option 4 at floor 44 before root; partial trace has no terminal",
+          "scopes": {
+            "combat": {
+              "passed": false,
+              "matched_decisions": 1675,
+              "terminal": false,
+              "differences": [
+                "decision 1675: original COMBAT_REWARD, engine SHOP"
+              ]
+            },
+            "run": {
+              "passed": false,
+              "matched_decisions": 1675,
+              "terminal": false,
+              "differences": [
+                "decision 1675: original COMBAT_REWARD, engine SHOP"
+              ]
+            }
+          }
+        },
+        {
+          "seed": 1000002017,
+          "partition": "train",
+          "stage": "act1_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/4.jsonl.gz",
+          "sha256": "0e2bcd4d5e50480e5d7382126b05e6d3f812e013cf69ea113be17bbf3d9e7ee6",
+          "decisions": 219,
+          "root_prefix_decisions": 212,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 219,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 219,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000002112,
+          "partition": "train",
+          "stage": "act1_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/5.jsonl.gz",
+          "sha256": "385557fb42667ace245ab8937ae058afe4a6e28bc62f3d1135a93201d60d7c9e",
+          "decisions": 225,
+          "root_prefix_decisions": 221,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 225,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 225,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000002131,
+          "partition": "train",
+          "stage": "act1_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/6.jsonl.gz",
+          "sha256": "84be8509134506965acced271f89b93224466b8067a23bd5fbe1cf091c217dbc",
+          "decisions": 233,
+          "root_prefix_decisions": 213,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 233,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 233,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000001178,
+          "partition": "train",
+          "stage": "act3_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/7.jsonl.gz",
+          "sha256": "a8161230f3b19f8739735ed852e878f2e9cc0fbb6e28f5e25920bf51d90aedd9",
+          "decisions": 955,
+          "root_prefix_decisions": 944,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 955,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 955,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000001301,
+          "partition": "train",
+          "stage": "act3_boss",
+          "path": "/private/tmp/e2-roots/oracle-extra/8.jsonl.gz",
+          "sha256": "87b2d4f9fd371b651bb9098f4c9bd8cf0b3db061cf666494944c3497d7b2c316",
+          "decisions": 2456,
+          "root_prefix_decisions": 2416,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 2456,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 2456,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000001301,
+          "partition": "train",
+          "stage": "act4_entry",
+          "path": "/private/tmp/e2-roots/oracle-extra/9.jsonl.gz",
+          "sha256": "1bb26114597b45e32670f65a7157b965feb80d4f3c7098657e1aac6baee6738f",
+          "decisions": 3006,
+          "root_prefix_decisions": 2994,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 3006,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 3006,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000001301,
+          "partition": "train",
+          "stage": "heart_start",
+          "path": "/private/tmp/e2-roots/oracle-extra/10.jsonl.gz",
+          "sha256": "e707e8611d6eef3dc7be726c0ee53c0d0d8af6a339d8f8c96da60feb9ad366fe",
+          "decisions": 3043,
+          "root_prefix_decisions": 3040,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 3043,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 3043,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000001301,
+          "partition": "train",
+          "stage": "heart_turn2",
+          "path": "/private/tmp/e2-roots/oracle-extra/11.jsonl.gz",
+          "sha256": "1483492df796d1a696027423bdb06e2a6cb01f1d041e1f12de839a0febbc4a9b",
+          "decisions": 3059,
+          "root_prefix_decisions": 3053,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 3059,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 3059,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000001301,
+          "partition": "train",
+          "stage": "heart_turn3",
+          "path": "/private/tmp/e2-roots/oracle-extra/12.jsonl.gz",
+          "sha256": "40bcfc8b69472c32f6d1a95e16ac6b155484843d122ea973829628231fbde9f5",
+          "decisions": 3062,
+          "root_prefix_decisions": 3061,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 3062,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 3062,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1000001301,
+          "partition": "train",
+          "stage": "heart_turn5",
+          "path": "/private/tmp/e2-roots/oracle-extra/13.jsonl.gz",
+          "sha256": "c6716eab8a6435b9455864fd51de9ba6cf63927a4cc59bd0d6e2c124badc76ef",
+          "decisions": 3080,
+          "root_prefix_decisions": 3077,
+          "stopped": null,
+          "scopes": {
+            "combat": {
+              "passed": true,
+              "matched_decisions": 3080,
+              "terminal": true,
+              "differences": []
+            },
+            "run": {
+              "passed": true,
+              "matched_decisions": 3080,
+              "terminal": true,
+              "differences": []
+            }
+          }
+        }
+      ],
+      "idle_frames": 13,
+      "byte_identical": 13
+    }
+  ],
+  "search_configurations": [
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "extend",
+        "180000",
+        "60000",
+        "8",
+        "21590.063548",
+        "/private/tmp/e2-roots/act3-deep.journal",
+        "/private/tmp/e2-roots/act3-deep.inputs"
+      ],
+      "mode": "extend",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "21ce39300a4723304348a08fc7c494e4b31302789bb1e22454057af40481f210",
+      "input_sha256": "d2c78cee366f6934cd475ea5205c8b293cbdadb6db61da43ff342e89567b98a6"
+    },
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "collect",
+        "2880000",
+        "6000",
+        "4",
+        "21594.503554",
+        "/private/tmp/e2-roots/beam.journal",
+        "/private/tmp/e2-roots/beam.seeds"
+      ],
+      "mode": "collect",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "21ce39300a4723304348a08fc7c494e4b31302789bb1e22454057af40481f210",
+      "input_sha256": "4b33caeeda2e0c6fe940838a22bb9ca2e3db56854662b112c3ce9398c7280303"
+    },
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "collect",
+        "2100000",
+        "3500",
+        "6",
+        "21599.728426",
+        "/private/tmp/e2-roots/breadth.journal",
+        "/private/tmp/e2-roots/breadth.seeds"
+      ],
+      "mode": "collect",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "25a920b50ec805a879e4955f158df491cdb4ca40883aaefeb8487ba750ffe403",
+      "input_sha256": "870648f8c977e46991049f482343c951914bbed68bfdff7fd5b7c4425a3bdac1"
+    },
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "collect",
+        "1500000",
+        "2500",
+        "3",
+        "21597.32902",
+        "/private/tmp/e2-roots/breadth3.journal",
+        "/private/tmp/e2-roots/breadth3.seeds"
+      ],
+      "mode": "collect",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "25a920b50ec805a879e4955f158df491cdb4ca40883aaefeb8487ba750ffe403",
+      "input_sha256": "ac020d52ea171eb4552801617bee5bb2757064036859c1c288b3e33e62aa3f07"
+    },
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "collect",
+        "1056000",
+        "2200",
+        "3",
+        "21588.3864",
+        "/private/tmp/e2-roots/earlier.journal",
+        "/private/tmp/e2-roots/earlier.seeds"
+      ],
+      "mode": "collect",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "1b6d89a0bf9f7c023bb270efa085e6667e69e083c5422eaaebafcf0aed5ea65d",
+      "input_sha256": "140ba47a1c5396b9ef30e9445d7ef003c3ab513dfdc568375b6ded5b6c21dd96"
+    },
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "extend",
+        "924000",
+        "6000",
+        "4",
+        "21595.490971",
+        "/private/tmp/e2-roots/late.journal",
+        "/private/tmp/e2-roots/late.inputs"
+      ],
+      "mode": "extend",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "21ce39300a4723304348a08fc7c494e4b31302789bb1e22454057af40481f210",
+      "input_sha256": "8c003a4fbb9d269858859b74baa0d42b6f55d91b1a46afbb8a87c533ebbf1f6b"
+    },
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "evaluate",
+        "450000",
+        "8000",
+        "6",
+        "21586.257221",
+        "/private/tmp/e2-roots/measured-earlier.journal",
+        "/private/tmp/e2-roots/measured-earlier.inputs"
+      ],
+      "mode": "evaluate",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "1b6d89a0bf9f7c023bb270efa085e6667e69e083c5422eaaebafcf0aed5ea65d",
+      "input_sha256": "e6ac2c959019261e0d17603eb92f4a5032e5623d13958401bbf5f0a328511067"
+    },
+    {
+      "command": [
+        "/private/tmp/e2-build/spire_collect_roots",
+        "evaluate",
+        "1500000",
+        "8000",
+        "6",
+        "21589.720121",
+        "/private/tmp/e2-roots/measured.journal",
+        "/private/tmp/e2-roots/measured.inputs"
+      ],
+      "mode": "evaluate",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "1b6d89a0bf9f7c023bb270efa085e6667e69e083c5422eaaebafcf0aed5ea65d",
+      "input_sha256": "279f7da200a50ed12dc2fbd67915ca575713fe1e14255959f6aa0a61fe7f820e"
+    },
+    {
+      "mode": "collect",
+      "train": 16,
+      "dev": 8,
+      "decisions": 192000,
+      "family_decisions": 8000,
+      "trials": 6,
+      "seed_file": "/private/tmp/e2-roots/pilot.seeds",
+      "selection": "first boundary per family/stage",
+      "engine": "a7878b5b86c5700db0128678911d99dca4f54268",
+      "source_sha256": "25a920b50ec805a879e4955f158df491cdb4ca40883aaefeb8487ba750ffe403",
+      "input_sha256": "42cb83ddbf398d0913daa79b1e3104c13e830569fa0c46c3af4512ee4064e19e"
+    }
+  ],
+  "files": [
+    {
+      "path": "/private/tmp/e2-roots/candidates-train.jsonl.gz",
+      "sha256": "360c693807ad55d7534ea2ac9c622f60706d8b40b88fa37cc4b4019bcbdc43ce",
+      "bytes": 50191,
+      "roots": 292,
+      "released_for_curriculum": false
+    },
+    {
+      "path": "/private/tmp/e2-roots/candidates-dev.jsonl.gz",
+      "sha256": "ced573714e4ec66eab77d8b6fc96b1d1b20f7eae23d2a4266e5a4c23254228f1",
+      "bytes": 24368,
+      "roots": 146,
+      "released_for_curriculum": false
+    },
+    {
+      "path": "/private/tmp/e2-roots/candidates-sparse.jsonl.gz",
+      "sha256": "3cfad343d4cc28044599cf292878e8562931d01c93713213b530e5714a060bbd",
+      "bytes": 3514,
+      "roots": 11,
+      "released_for_curriculum": false
+    }
+  ],
+  "validation_summary": {
+    "selected_roots": 34,
+    "original_complete_recordings": 33,
+    "both_scopes_and_terminal_passed": 31,
+    "terminal_only_failures": 2,
+    "original_rejected_prefixes": 1,
+    "original_prefixes_matching_both_scopes": 33,
+    "complete_13_frame_pairs": 33,
+    "rejected_13_frame_prefix_pair": {
+      "seed": 2000000006,
+      "stage": "act3_boss",
+      "original_exit": 1,
+      "idle_exit": 1,
+      "extra_frames": 13,
+      "partial_recording_byte_identical": true,
+      "terminal_present": false,
+      "original_sha256": "d15ade7eaf1bad90d2e51ef5d9f3d14302722b7baac36cc4e1e01f36e7a48ac8",
+      "idle_sha256": "d15ade7eaf1bad90d2e51ef5d9f3d14302722b7baac36cc4e1e01f36e7a48ac8"
+    },
+    "training_batch": {
+      "roots": 449,
+      "decisions": 169581,
+      "faults": 0
+    },
+    "focused_unit_tests": 3,
+    "build": "Release native collector and spire module compiled; device/LLVM/layout build checks passed",
+    "protected_tracked_paths_changed": [],
+    "runtime_patch_audits": [
+      {
+        "path": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/e2/oracle/instance/job-1792187806927532000/bytecode-audit.txt",
+        "sha256": "e15a058cfd09999ecb97dce5fa16b53bb06eb3a0de761d524d25809eba2e4e2e",
+        "loaded_classes": 2306,
+        "changed_classes": 18
+      },
+      {
+        "path": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/e2/oracle/instance/job-1792188098887015000/bytecode-audit.txt",
+        "sha256": "8517c9f2d5ebd3f61eaebf84276de8f145e4662f0cf630946c0b451aabfac116",
+        "loaded_classes": 2306,
+        "changed_classes": 18
+      },
+      {
+        "path": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/e2/oracle/instance/job-1792188390669399000/bytecode-audit.txt",
+        "sha256": "e15a058cfd09999ecb97dce5fa16b53bb06eb3a0de761d524d25809eba2e4e2e",
+        "loaded_classes": 2306,
+        "changed_classes": 18
+      },
+      {
+        "path": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/e2/oracle/instance/job-1792188792256831000/bytecode-audit.txt",
+        "sha256": "8517c9f2d5ebd3f61eaebf84276de8f145e4662f0cf630946c0b451aabfac116",
+        "loaded_classes": 2306,
+        "changed_classes": 18
+      }
+    ],
+    "runtime_patch_audit_absent_for_aborted_jvms": [
+      "oracle/instance/job-1792188039538958000",
+      "oracle/instance/job-1792188738608105000"
+    ]
+  },
+  "blockers": [
+    {
+      "seed": 1000001178,
+      "stage": "act3_entry",
+      "root_prefix_decisions": 707,
+      "terminal_decisions": 732,
+      "difference": "Terminal actions length: original 3, engine 2. Original retains a VFXAction between Dagger Spray hits; engine queues only the damage actions.",
+      "evidence": "/private/tmp/e2-roots/terminal-difference-1000001178.json",
+      "source": "Original cards.green.DaggerSpray.use versus core/cards/dagger_spray.hpp",
+      "prefix_passed": true
+    },
+    {
+      "seed": 1000000067,
+      "stage": "act2_entry",
+      "root_prefix_decisions": 296,
+      "terminal_decisions": 385,
+      "difference": "Terminal actions length: original 5, engine 3. Original Snake Plant attack retains two VFXActions that are absent from the engine queue.",
+      "evidence": "/private/tmp/e2-roots/terminal-difference-1000000067.json",
+      "source": "Original monsters.city.SnakePlant.takeTurn versus core/monsters/snake_plant.hpp",
+      "prefix_passed": true
+    },
+    {
+      "seed": 2000000006,
+      "stage": "act3_boss",
+      "root_prefix_decisions": 2151,
+      "first_divergent_decision_index": 1675,
+      "rejected_decision_index": 1676,
+      "difference": "After cancelling a GRID at floor 44, original returns to COMBAT_REWARD with three potions; engine returns to SHOP. Original rejects later choose option 4. Root is not original-reachable by the stored prefix.",
+      "evidence": "/private/tmp/e2-roots/illegal-prefix-diagnosis.json",
+      "prefix_passed": false
+    }
+  ],
+  "gaps": [
+    "No collection release: two strict terminal mismatches and one original-illegal prefix remain; no core, host, snapshot, trace or comparator changes were made.",
+    "Act3 entry covers only two train families and one dev family. Heart covers one train family and zero dev families. Sparse stages violate the 5% family bound and are diagnostic-only.",
+    "No root has an empirical uniform-policy success fraction in the 10%-80% range from its 16 continuations; these are difficult candidate states, not demonstrated learnable curriculum roots.",
+    "Original audits cover 34 selected roots, not every collected family. Difficulty measurements use the engine and do not establish original-game continuation rates."
+  ],
+  "discovery": {
+    "unique_families_attempted": {
+      "train": 1416,
+      "dev": 768
+    },
+    "source_rollbacks": 39077,
+    "locked_test_engine_resets": 0,
+    "source": "Fresh Neow resets in declared train/dev ranges; later discovery replays existing prefixes and searches engine copies.",
+    "raw_ledger_files": [
+      {
+        "path": "/private/tmp/e2-roots/pilot.jsonl",
+        "sha256": "38c751622859f4d07eafc7b7e464363785be473187de1b23fc9c4bc445ac59aa"
+      },
+      {
+        "path": "/private/tmp/e2-roots/breadth.jsonl",
+        "sha256": "65192aa068dd39fc2184106578ada0d8b6083867439f99579412433b46501a9a"
+      },
+      {
+        "path": "/private/tmp/e2-roots/breadth3.jsonl",
+        "sha256": "1a967388c64e3f9ce6b3bee7f78c8787d25c2ca633b44589b3e08feac0869a65"
+      },
+      {
+        "path": "/private/tmp/e2-roots/late.jsonl",
+        "sha256": "a19b5fce00d9017d532fe6a88fe495f9d74297362c462096d31a891008638528"
+      },
+      {
+        "path": "/private/tmp/e2-roots/beam.jsonl",
+        "sha256": "ca88bf18ef01cf1bafca4f1f6ed058c7222219adf7c83abe8e0bfa163b8b9a58"
+      },
+      {
+        "path": "/private/tmp/e2-roots/act3-deep.jsonl",
+        "sha256": "f7b23d478d98eb637d6433af9fd60f2ed18a88914b3f0bcf6b4746125dc991fe"
+      },
+      {
+        "path": "/private/tmp/e2-roots/earlier.jsonl",
+        "sha256": "bbe78a2e3116eabb9a93f74f3846be1b033b07c096b51a507adb28c5a38d458f"
+      }
+    ]
+  },
+  "diversity_summary": {
+    "distinct_decks": 446,
+    "distinct_relic_sets": 398,
+    "distinct_deck_relic_pairs": 446,
+    "hp_range": [
+      1,
+      68
+    ],
+    "deck_size_range": [
+      16,
+      46
+    ],
+    "relic_count_range": [
+      1,
+      13
+    ],
+    "occupied_potion_slots": {
+      "0": 272,
+      "1": 166,
+      "2": 11
+    }
+  },
+  "difficulty_summary": {
+    "uniform_success_counts_out_of_16": {
+      "0": 448,
+      "1": 1
+    },
+    "search_success_counts_out_of_4": {
+      "0": 424,
+      "3": 6,
+      "4": 6,
+      "1": 8,
+      "2": 5
+    },
+    "uniform_returned_live_cutoffs": 0,
+    "search_returned_live_cutoffs": 465
+  },
+  "collector_archives": [
+    {
+      "path": "/private/tmp/e2-roots/collector-1b6d89a0bf9f7c023bb270efa085e6667e69e083c5422eaaebafcf0aed5ea65d.cpp",
+      "sha256": "1b6d89a0bf9f7c023bb270efa085e6667e69e083c5422eaaebafcf0aed5ea65d"
+    },
+    {
+      "path": "/private/tmp/e2-roots/collector-21ce39300a4723304348a08fc7c494e4b31302789bb1e22454057af40481f210.cpp",
+      "sha256": "21ce39300a4723304348a08fc7c494e4b31302789bb1e22454057af40481f210"
+    },
+    {
+      "path": "/private/tmp/e2-roots/collector-25a920b50ec805a879e4955f158df491cdb4ca40883aaefeb8487ba750ffe403.cpp",
+      "sha256": "25a920b50ec805a879e4955f158df491cdb4ca40883aaefeb8487ba750ffe403"
+    }
+  ],
+  "storage": {
+    "root_gzip_bytes": 78073,
+    "evidence_directory_bytes": 532145609,
+    "build_directory_bytes": 13457110,
+    "quota_bytes": 5000000000,
+    "scope": "E2-created files only. /private/tmp already contained about 14 GiB from other work at task start; those files were not removed."
+  },
+  "implementation_commits": [
+    "dffbf03",
+    "f5e1122"
+  ]
+}
