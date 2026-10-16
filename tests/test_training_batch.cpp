@@ -23,7 +23,7 @@ static void clone_and_isolation() {
     require(std::memcmp(&before, &batch.games[1], sizeof(Game)) == 0, "faulted clone changed game");
     require(batch.faults[0] == 0 && batch.faults[1] == static_cast<uint32_t>(obs::Fault::InvalidCandidate), "fault isolation failed");
     require(!batch.done[1] && !batch.truncated[1] && batch.rewards[1] == 0, "fault counted as terminal game outcome");
-    for (int i = 0; i < obs::entity_capacity; ++i) require(batch.entity_mask[obs::entity_capacity + i] == 0, "fault observation remained valid");
+    for (int i = 0; i < obs::entity_mask_bytes; ++i) require(batch.entity_mask[obs::entity_mask_bytes + i] == 0, "fault observation remained valid");
     batch.clone(0, 1);
     require(!batch.faults[1], "clone did not replace fault status");
     batch.games[0].fault = 12345;
@@ -62,7 +62,7 @@ static void observation_fault() {
     b.publish(0);
     require(b.faults[0] == static_cast<uint32_t>(obs::Fault::Entities), "entity overflow not reported");
     require(!b.done[0] && !b.truncated[0] && !b.candidate_counts[0] && b.rewards[0] == 0, "overflow became a loss or partial observation");
-    for (int i = 0; i < obs::entity_capacity; ++i) require(b.entity_mask[i] == 0, "overflow retained partial mask");
+    for (int i = 0; i < obs::entity_mask_bytes; ++i) require(b.entity_mask[i] == 0, "overflow retained partial mask");
     require(!b.faults[1] && b.candidate_counts[1] > 0, "overflow contaminated another game");
     int32_t choices[]{-1, 0}; b.step(choices);
     require(b.reset_mask[0] && !b.faults[0] && b.advanced[1], "overflow recovery blocked another game");

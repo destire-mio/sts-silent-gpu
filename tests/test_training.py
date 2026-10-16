@@ -11,7 +11,7 @@ class TrainingTests(unittest.TestCase):
         seeds = list(range(1000000000, 1000001000))
         a = spire.TrainingBatch(8, 1, 20, seeds)
         b = spire.TrainingBatch(8, 4, 20, seeds)
-        fields = ("ids", "values", "candidates", "entity_mask", "candidate_mask", "rewards", "done",
+        fields = ("tags", "ids", "values", "candidate_kinds", "candidate_refs", "entity_mask", "candidate_mask", "rewards", "done",
                   "truncated", "faults", "reset_mask", "advanced", "seed_indices", "decision_counts")
         buffers_a = [getattr(a, name) for name in fields]
         buffers_b = [getattr(b, name) for name in fields]
@@ -24,14 +24,22 @@ class TrainingTests(unittest.TestCase):
                 np.testing.assert_array_equal(x, y)
         self.assertEqual(addresses, [getattr(a, name).ctypes.data for name in fields])
         a.clone(0, 1)
-        for name in ("ids", "values", "candidates", "entity_mask", "candidate_mask"):
+        for name in ("tags", "ids", "values", "candidate_kinds", "candidate_refs", "entity_mask", "candidate_mask"):
             np.testing.assert_array_equal(getattr(a, name)[0], getattr(a, name)[1])
         self.assertEqual(a.rewards[1], 0)
         self.assertFalse(a.ids.flags.writeable)
+        self.assertEqual(a.tags.dtype, np.uint8)
+        self.assertEqual(a.ids.dtype, np.int16)
+        self.assertEqual(a.values.dtype, np.int16)
+        self.assertEqual(a.candidate_kinds.dtype, np.uint8)
+        self.assertEqual(a.candidate_refs.dtype, np.int16)
+        self.assertEqual(a.entity_mask.shape, (8, 48))
+        self.assertEqual(a.candidate_mask.shape, (8, 16))
+        self.assertEqual(spire.observation_bytes, 10184)
 
     def test_buffer_lifetime_and_input_contract(self):
         batch = spire.TrainingBatch(1, 1, 10, [1000000000, 1000000001])
-        ids = batch.ids
+        ids = batch.tags
         with self.assertRaises(TypeError):
             batch.step(np.zeros(1, dtype=np.int64))
         with self.assertRaises(ValueError):

@@ -28,42 +28,44 @@ class Audit:
         self.decisions = 0
 
     def check(self, observation, legal):
-        ids, values, candidates, entities, mask, fault = observation
+        tags, ids, values, kinds, refs, entity_bits, candidate_bits, fault = observation
+        entities = np.unpackbits(entity_bits, bitorder="little")
+        mask = np.unpackbits(candidate_bits, bitorder="little")
         assert fault == 0, fault
         count, choices = int(entities.sum()), int(mask.sum())
-        self.boundaries[SCREENS[int(ids[1, 0]) - 1]] += 1
+        self.boundaries[SCREENS[int(ids[0, 0]) - 1]] += 1
         assert choices == len(legal)
         assert (entities[:count] == 1).all() and (entities[count:] == 0).all()
         assert (mask[:choices] == 1).all() and (mask[choices:] == 0).all()
-        assert not ids[:, count:].any() and not values[:, count:].any() and not candidates[:, choices:].any()
-        assert (candidates[1:, :choices] >= 0).all() and (candidates[1:, :choices] <= count).all()
-        assert (candidates[0, :choices] > 0).all()
-        for i in np.flatnonzero(ids[0, :count] == 12):
+        assert not tags[:, count:].any() and not ids[:, count:].any() and not values[:, count:].any() and not kinds[choices:].any() and not refs[:, choices:].any()
+        assert (refs[:, :choices] >= 0).all() and (refs[:, :choices] <= count).all()
+        assert (kinds[:choices] > 0).all()
+        for i in np.flatnonzero(tags[0, :count] == 12):
             target = int(values[1, i])
             if target:
-                assert target != i + 1 and 1 <= target <= count and ids[0, target - 1] == 12
+                assert target != i + 1 and 1 <= target <= count and tags[0, target - 1] == 12
                 assert values[1, target - 1] == i + 1
         for i, action in enumerate(legal):
-            row = candidates[:, i]
+            row = refs[:, i]
             if action["type"] == "play":
-                assert row[1] > 0 and ids[0, row[1] - 1] == 3
+                assert row[0] > 0 and tags[0, row[0] - 1] == 3
             if action["type"] == "choose":
-                assert row[3] > 0
+                assert row[2] > 0
             if action.get("target", -1) >= 0:
-                assert row[2] > 0 and ids[0, row[2] - 1] == 4
+                assert row[1] > 0 and tags[0, row[1] - 1] == 4
         self.peaks["entities"] = max(self.peaks["entities"], count)
         self.peaks["candidates"] = max(self.peaks["candidates"], choices)
-        for kind, amount in Counter(map(int, ids[0, :count])).items():
+        for kind, amount in Counter(map(int, tags[0, :count])).items():
             self.peaks[f"kind_{kind}"] = max(self.peaks[f"kind_{kind}"], amount)
 
     def decision(self, observation):
-        ids = observation[0]
-        screen = SCREENS[int(ids[1, 0]) - 1]
+        ids = observation[1]
+        screen = SCREENS[int(ids[0, 0]) - 1]
         self.screens[screen] += 1
         if screen == "EVENT":
-            self.events[str(int(ids[5, 0]) - 1)] += 1
+            self.events[str(int(ids[3, 0]) - 1)] += 1
         if screen == "ROOM":
-            self.rooms[str(int(ids[5, 0]) - 1)] += 1
+            self.rooms[str(int(ids[3, 0]) - 1)] += 1
         self.decisions += 1
 
 
@@ -117,7 +119,8 @@ def main():
                   boundaries=audit.boundaries,
                   events=audit.events, rooms=audit.rooms, peaks=audit.peaks,
                   gaps=[name for name in SCREENS if name not in audit.boundaries],
-                  game_bytes=spire.game_bytes, observation_bytes=spire.observation_bytes, results=results)
+                  game_bytes=spire.game_bytes, observation_bytes=spire.observation_bytes,
+                  results=results)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k != "results"}, indent=2))
     return int(any(not item["passed"] for item in results))

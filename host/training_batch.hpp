@@ -20,7 +20,8 @@ struct TrainingBatch {
     std::vector<ActionSet> actions;
     std::vector<Episode> episodes;
     std::vector<obs::History> reveals;
-    std::vector<int32_t> ids, values, candidates;
+    std::vector<int16_t> ids, values, candidate_refs;
+    std::vector<uint8_t> tags, candidate_kinds;
     std::vector<uint8_t> entity_mask, candidate_mask, done, truncated, reset_mask, advanced;
     std::vector<float> rewards;
     std::vector<uint32_t> faults;
@@ -30,8 +31,9 @@ struct TrainingBatch {
     TrainingBatch(int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds)
         : size(size), threads(threads), decision_cap(cap), games(size), actions(size), episodes(size), reveals(size),
           ids(size * obs::id_rows * obs::entity_capacity), values(size * obs::value_rows * obs::entity_capacity),
-          candidates(size * obs::candidate_rows * obs::candidate_capacity),
-          entity_mask(size * obs::entity_capacity), candidate_mask(size * obs::candidate_capacity),
+          candidate_refs(size * obs::candidate_rows * obs::candidate_capacity),
+          tags(size * obs::tag_rows * obs::entity_capacity), candidate_kinds(size * obs::candidate_capacity),
+          entity_mask(size * obs::entity_mask_bytes), candidate_mask(size * obs::candidate_mask_bytes),
           done(size), truncated(size), reset_mask(size), advanced(size), rewards(size), faults(size),
           entity_counts(size), candidate_counts(size), seed_indices(size), decision_counts(size), timing_ns(size * 3),
           seeds_(seeds), next_seeds_(size) {
@@ -51,17 +53,19 @@ struct TrainingBatch {
         for (auto& worker : workers_) worker.join();
     }
     obs::View view(int i) {
-        return {ids.data() + i * obs::id_rows * obs::entity_capacity,
+        return {tags.data() + i * obs::tag_rows * obs::entity_capacity,
+            ids.data() + i * obs::id_rows * obs::entity_capacity,
             values.data() + i * obs::value_rows * obs::entity_capacity,
-            candidates.data() + i * obs::candidate_rows * obs::candidate_capacity,
-            entity_mask.data() + i * obs::entity_capacity,
-            candidate_mask.data() + i * obs::candidate_capacity};
+            candidate_kinds.data() + i * obs::candidate_capacity,
+            candidate_refs.data() + i * obs::candidate_rows * obs::candidate_capacity,
+            entity_mask.data() + i * obs::entity_mask_bytes,
+            candidate_mask.data() + i * obs::candidate_mask_bytes,
+            &entity_counts[i], &candidate_counts[i]};
     }
     void publish(int i) {
         const auto start = Clock::now();
         const auto result = obs::encode(games[i], reveals[i], view(i), actions[i]);
         timing_ns[i * 3 + 2] += elapsed(start);
-        entity_counts[i] = result.entities; candidate_counts[i] = result.candidates;
         if (result.fault) {
             faults[i] = result.fault; episodes[i].finished = true;
             done[i] = truncated[i] = 0; rewards[i] = 0;
@@ -134,7 +138,7 @@ private:
     void fail(int i, uint32_t code) {
         faults[i] = code; episodes[i].finished = true;
         done[i] = truncated[i] = 0; rewards[i] = 0;
-        view(i).clear(); actions[i].clear(); entity_counts[i] = candidate_counts[i] = 0;
+        view(i).finish(0, 0); actions[i].clear();
     }
     void run(int worker) {
         for (int i = worker; i < size; i += threads) {

@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 1 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 2 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -16,35 +16,52 @@ training forks copy it. Engine-internal histories are not exported.
 
 ## Numeric contract
 
-Entity arrays are structure-of-arrays: `ids[6, E]` and `values[16, E]`, both signed int32,
-with `entity_mask[E]` uint8. The six ID rows are kind, catalog ID, zone, owner pointer,
-visible position, and variant. Zero is padding/no reference; catalog IDs and pointers
-are shifted by one. Catalog indices come from the committed `core/*/catalog.def` files.
-Pointers address observation entities, never engine slots. Numeric rows are kind-specific
-as defined below. Unused rows and padding are zero. No raw struct bytes are exported.
+Entity arrays are structure-of-arrays: `tags[4, E]` uint8, `ids[4, E]` int16 and
+`values[6, E]` int16. Tag rows are kind, zone, packed flags and an auxiliary byte.
+ID rows are catalog ID, owner pointer, visible position and variant. Zero is padding/no
+reference; catalog IDs and pointers are shifted by one. Catalog indices come from the
+committed `core/*/catalog.def` files. Pointers address observation entities, never engine
+slots. The kind-specific numeric/flag mapping is listed below. Unused rows and padding
+are zero. No raw struct bytes are exported.
 
-Candidates are `candidates[4, A]` int32: action kind + 1, subject entity, target entity,
-option entity; `candidate_mask[A]` uint8. Their order is the engine's legal-action order
-from `design.md`; card/potion/option indices are replaced by public entity pointers. The
-private action mapping stays in the environment. Capacity overflow invalidates the entire
-observation and reports a fault; partial observations are never delivered as valid inputs.
+Candidates are `candidate_kinds[A]` uint8 (action kind + 1) and `candidate_refs[3, A]`
+int16 (subject, target, option entity). Their order remains the engine's legal-action order
+from `design.md`; the private action mapping stays in the environment. All IDs, positions,
+references and amount rows are checked before conversion to int16 [-32768, 32767]; byte
+rows are checked against [0, 255], individual flags against [0, 1]. Card variable masks
+must fit three bits. An out-of-range value invalidates the entire observation with
+NumericRange, rather than saturating or wrapping. These are representation limits, not
+new game rules. Shared int16 rows include values above 255 and signed costs/power amounts;
+kind, zone, flags and auxiliary fields use uint8.
+
+`entity_mask[E/8]` and `candidate_mask[A/8]` pack eight positions per byte, least significant
+bit first: bit `i % 8` of byte `i / 8` is one exactly when slot i is valid. Zero remains
+padding. Every count and mask is derived from the same emitted prefix. Consumers can
+unpack with `np.unpackbits(mask, axis=-1, bitorder="little")`.
 
 E0 reserves 384 entity tokens and 128 candidates. The measured maxima over the 841 committed
 and 133 local deep traces are 285 and 51; `inventory/observation.json` identifies the corpus
 and per-kind peaks. These are execution budgets with headroom, not Java game limits.
-The five network arrays occupy 36,352 bytes per environment decision, including padding.
-The visible-history sidecar and episode bookkeeping are outside those network arrays and
-outside the unchanged 37,872-byte `Game`.
+Seven network arrays occupy 10,176 bytes per decision (24 bytes/entity, 7 bytes/candidate,
+64 mask bytes). Two int32 counts bring the padded observation to 10,184 bytes, versus
+36,352 array bytes in version 1. The visible-history sidecar and episode bookkeeping are
+outside these arrays and outside the unchanged 37,872-byte `Game`.
 
-Device callers own one `obs::History` beside each game. Clear it on reset, call
-`obs::record_action(history, game, action)` before stepping, then call
-`obs::encode(game, history, view, private_actions)` at every settled decision boundary.
-Encoding reads `Game` without mutation; it records only the visible RestOption label in
-the sidecar. Copy the sidecar with a training fork. The CPU batch implements this ordering.
+Device callers own one `obs::History` and a zero-initialized `obs::Observation` beside each
+game. Clear history on reset, call `obs::record_action(history, game, action)` before stepping,
+then call `obs::encode(game, history, view, private_actions)` at each settled boundary.
+A borrowed `View` requires zero-initialized backing arrays/counts on first use; preserve its
+counts across subsequent calls, including game resets and forks. The encoder overwrites
+valid rows, clears only the previously used tail, and regenerates the used mask bytes.
+Faults clear the previous and partially written prefixes. It never clears all capacities
+per decision. Pile sorting initializes only populated scratch tokens, retains the version 1
+public-tuple ordering and never introduces a hidden tie-breaker. Legal actions are enumerated
+once, shared by candidate encoding and the next step. Encoding reads `Game` without mutation;
+it records only the visible RestOption label in history. Copy history with a training fork.
 
 ## Common entities
 
-| Entity | Allowed values (numeric rows from zero) | Java display basis |
+| Entity | Allowed values | Java display basis |
 | --- | --- | --- |
 | Screen | active screen ID; act, floor, ascension, ruby/emerald/sapphire keys | `ui/panels/TopPanel.render`, `helpers/Key` rendering; active screen's `render` |
 | Player | HP, max HP, gold; block/energy only in combat | `core/AbstractCreature.renderHealth`, `characters/AbstractPlayer.render`, `ui/panels/EnergyPanel.render`, `TopPanel.render` |
@@ -73,9 +90,9 @@ in the rendered cost (`AbstractCard.getCost/freeToPlay`).
 
 `TheBombPower.updateDescription` and `PanachePower.updateDescription` display their damage;
 `CombustPower.updateDescription` displays HP loss; `DevaPower.updateDescription` displays
-energyGainAmount; `MalleablePower.updateDescription` displays basePower. These use numeric row 2.
+energyGainAmount; `MalleablePower.updateDescription` displays basePower. These use numeric row 1.
 `StasisPower.updateDescription` and `NightmarePower.updateDescription` display a card name:
-variant is its catalog ID + 1 and numeric row 3 its upgrade suffix. The referenced card's
+variant is its catalog ID + 1 and numeric row 2 its upgrade suffix. The referenced card's
 other stats and engine reference are denied. Invincible maxAmt, Flight storedAmount,
 Echo cardsDoubledThisTurn, poison/constriction sources and just-applied flags are denied.
 Intents at interrupted selection/reward overlays are omitted: the engine does not retain
@@ -221,19 +238,20 @@ signals or change `core/`. Latched engine faults and observation faults have bat
 All rows not named here are zero. IDs/positions use the one-based convention above;
 numeric amounts/coordinates are unshifted. A card cost of -1 means X; -2 means no printed cost.
 
-| Kind | Numeric rows |
-| --- | --- |
-| Screen | 0 act, 1 floor, 2 ascension, 3-5 keys; EVENT: 6 page; selection: 7 prompt, 8 requested count (zero at confirmation), 9 selected count, 10 any-number, 11 can-pick-zero (HAND_SELECT only), 12 confirmation |
-| Player | 0 HP, 1 max HP, 2 gold, 3 block, 4 energy |
-| Card | 0 upgrades, 1 printed cost, 2 description-variable mask (D=1/B=2/M=4), 3 damage, 4 block, 5 magic, 6-8 bottle badges; SHOP: 11 price; GRID: 12 selected, 13 confirmation target |
-| Monster | 0 HP, 1 max HP, 2 block, 3 screen x, 4 facing; 6 shown intent + 1 (zero hidden), 7 shown damage, 8 shown hits |
-| Power | 0 amount-visible, 1 amount, 2 whitelisted tooltip number, 3 referenced card upgrade suffix |
-| Relic | 0 counter-visible, 1 counter, 2 grayscale, 3 used-up tooltip; SHOP: 11 price |
-| Potion | owned slot: 0 potency; SHOP: 11 price; offered potion ID identifies its description |
-| Orb | 0 passive amount, 1 evoke amount; empty slot has catalog ID zero and a valid entity mask |
-| MapNode | 0 x, 1 y, 2 destination-column bitset, 3 emerald, 4 taken, 5 current; row 14 edges reach the boss, Act 4 row 2 reaches the Heart |
-| Reward | 0 displayed gold, 1 linked reward entity; variant = offered relic/potion ID + 1 |
-| Option | control-specific: purge 0 price; campfire 0 disabled, 1 rest heal, 2 Regal Pillow bonus; chest 0 open, 1 size; event 0 disabled, 1-3 whitelisted parameters, 9 page; match card/back 10 attempts remaining |
+| Kind | int16 numeric rows (0–5) | Flag bits (low to high) | Auxiliary byte |
+| --- | --- | --- | --- |
+| Screen | act, floor, ascension, event page, requested count (0 at confirmation), selected count | ruby, emerald, sapphire, any-number, can-pick-zero (HAND_SELECT), confirmation | selection prompt |
+| Player | HP, max HP, gold, block, energy, 0 | 0 | 0 |
+| Card | upgrades, printed cost, damage, block, magic, shop price | description D/B/M in bits 0–2; bottle flame/lightning/tornado in 3–5; grid selected/confirmation target in 6–7 | Match attempts remaining |
+| Monster | HP, max HP, block, screen x, shown damage, shown hits | facing | shown intent + 1 (0 hidden) |
+| Power | shown amount, whitelisted tooltip number, referenced card upgrade suffix, 0, 0, 0 | amount-visible | 0 |
+| Relic | shown counter, shop price, 0, 0, 0, 0 | counter-visible, grayscale, used-up tooltip | 0 |
+| Potion | owned potency, shop price, 0, 0, 0, 0 | 0 | 0 |
+| Orb | passive, evoke, 0, 0, 0, 0; empty slot has ID 0 and valid mask | 0 | 0 |
+| Stance | all zero | 0 | 0 |
+| MapNode | x, y, destination-column bitset, 0, 0, 0; map row 14 reaches boss, Act 4 row 2 reaches Heart | emerald, taken, current | 0 |
+| Reward | displayed gold, linked reward entity, 0, 0, 0, 0; variant = offered relic/potion ID + 1 | 0 | 0 |
+| Option | control-specific: purge 0 price; campfire 0 disabled, 1 rest heal, 2 Regal Pillow bonus; chest 0 open, 1 size; event 0 disabled, 1–3 whitelisted parameters, 4 page; Match back 5 attempts | 0 | 0 |
 
 Screen variant is event ID + 1 on EVENT and room kind + 1 on ROOM. Event option variant is
 event ID + 1; campfire variant is option kind + 1; boss variant is announced encounter ID + 1.
@@ -259,9 +277,10 @@ requires a contiguous int32 `[N]` array. It releases the GIL and returns no dict
 
 | Buffer | Shape / dtype | Meaning |
 | --- | --- | --- |
-| ids / values | `[N, 6, E]` / `[N, 16, E]`, int32 | network entity input |
-| candidates | `[N, 4, A]`, int32 | network candidate input |
-| entity_mask / candidate_mask | `[N, E]` / `[N, A]`, uint8 | network padding masks |
+| tags | `[N, 4, E]`, uint8 | kind, zone, packed flags, auxiliary |
+| ids / values | `[N, 4, E]` / `[N, 6, E]`, int16 | catalog/references and numeric rows |
+| candidate_kinds / candidate_refs | `[N, A]` uint8 / `[N, 3, A]` int16 | action kind and public references |
+| entity_mask / candidate_mask | `[N, E/8]` / `[N, A/8]`, uint8 | packed padding masks |
 | rewards | `[N]`, float32 | 1 on the step reaching Victory, 0 otherwise |
 | done | `[N]`, uint8 | true game victory/death transition |
 | truncated | `[N]`, uint8 | decision cap, with final observation retained |
@@ -280,18 +299,18 @@ produce zero entity/candidate arrays and masks. Seed exhaustion also produces ze
 
 E0 fault codes are `0xe0000001` entity overflow, `0xe0000002` candidate overflow,
 `0xe0000003` no live decision, `0xe0000004` invalid candidate index and `0xe0000005`
-seed exhaustion. Other nonzero codes are the unchanged core's latched assertion IDs.
+seed exhaustion and `0xe0000006` numeric range. Other nonzero codes are the unchanged core's latched assertion IDs.
 Host core invariant violations still abort the process, including in release builds.
 
 `clone(i, j)` copies the game, visible-history sidecar, root-family identity and episode decision count;
 it refreshes j's observation, emits no reward and consumes no seed. The caller copies its
 network memory and policy RNG separately. Mutating calls on a batch serialize; caller-owned
 input arrays and borrowed output views must not be read/written concurrently with a call.
-An inference worker should receive only the five network arrays, never the batch object,
+An inference worker should receive only the seven network arrays, never the batch object,
 snapshot/search APIs, seed bookkeeping or the training-only clone method.
 
-`Game.observation()` is an allocation-based audit convenience returning the five arrays and
-a fault code. Training uses the preallocated batch interface. `tools/check_observation.py`
+`Game.observation()` is an allocation-based audit convenience returning tags, ids, values,
+candidate kinds, candidate refs, entity mask, candidate mask and a fault code. Training uses the preallocated batch interface. `tools/check_observation.py`
 uses the unchanged oracle comparator while encoding every decision. The seed-family contract
 is in `inventory/seed-partitions.json`; `tools/evaluation.py` supplies Wilson intervals and
 same-root paired counts, retaining fault/truncated pairs as separate counts.

@@ -166,9 +166,9 @@ static void screen_local_state() {
     require(!obs::encode(a, history, after.view(), actions).fault, "rest after potion failed");
     int rest_options = 0;
     for (int i = 0; i < obs::entity_capacity; ++i) {
-        if (before.ids[i] != static_cast<int>(obs::Kind::Option) ||
-            before.ids[obs::entity_capacity + i] != static_cast<int>(obs::Control::Campfire) ||
-            before.ids[5 * obs::entity_capacity + i] != static_cast<int>(CampfireOption::Rest) + 1) continue;
+        if (before.tags[i] != static_cast<int>(obs::Kind::Option) ||
+            before.ids[i] != static_cast<int>(obs::Control::Campfire) ||
+            before.ids[3 * obs::entity_capacity + i] != static_cast<int>(CampfireOption::Rest) + 1) continue;
         ++rest_options;
         require(before.values[obs::entity_capacity + i] == after.values[obs::entity_capacity + i], "RestOption's frozen visible label changed after potion");
         require(before.values[obs::entity_capacity + i] == static_cast<int>(max_hp * 0.3f), "rest label disagrees with entry HP");
@@ -191,10 +191,10 @@ static void reward_identity() {
     const auto observation = observe(a);
     int linked = 0;
     for (int i = 0; i < obs::entity_capacity; ++i) {
-        if (observation.ids[i] != static_cast<int>(obs::Kind::Reward)) continue;
+        if (observation.tags[i] != static_cast<int>(obs::Kind::Reward)) continue;
         const int target = observation.values[obs::entity_capacity + i];
         if (!target) continue;
-        require(target != i + 1 && observation.ids[target - 1] == static_cast<int>(obs::Kind::Reward), "reward link does not point to another visible reward");
+        require(target != i + 1 && observation.tags[target - 1] == static_cast<int>(obs::Kind::Reward), "reward link does not point to another visible reward");
         require(observation.values[obs::entity_capacity + target - 1] == i + 1, "key/relic links are not reciprocal");
         ++linked;
     }

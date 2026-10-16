@@ -26,7 +26,7 @@ SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int po
     return t;
 }
 SPIRE_FN inline void pile(Writer& w, const Game& g, const Pile& cards, Zone zone, bool unordered, bool copy) {
-    Token sorted[card_capacity]{};
+    Token sorted[card_capacity];
     for (int i = 0; i < cards.size; ++i) {
         const int index = !unordered && (zone == Zone::Draw || zone == Zone::Exhaust) ? cards.size - i - 1 : i;
         const Card& c = g.cards[cards[index]];

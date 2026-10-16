@@ -87,7 +87,7 @@ uses one CPU thread and retains the Python GIL.
 candidate and mask arrays, candidate-index actions, terminal reward, truncation, fault and reset
 buffers. CPU stepping releases the GIL. Its [visible-information protocol](docs/observation.md)
 defines the array layout, training-only clone, seed sequence and reset semantics. Give the
-policy only the five observation arrays; `snapshot()` and `search_state()` expose hidden state.
+policy only the seven observation arrays; `snapshot()` and `search_state()` expose hidden state.
 Root-family partitions are in [the seed inventory](inventory/seed-partitions.json); evaluation
 arithmetic is in `tools/evaluation.py`. There is no training algorithm in this interface.
 
@@ -95,8 +95,9 @@ arithmetic is in `tools/evaluation.py`. There is no training algorithm in this i
 import numpy as np
 
 batch = spire.TrainingBatch(96, 4, 3000, list(range(1000000000, 1000010000)))
-ids, values = batch.ids, batch.values
-candidates, entity_mask, candidate_mask = batch.candidates, batch.entity_mask, batch.candidate_mask
+tags, ids, values = batch.tags, batch.ids, batch.values
+kinds, refs = batch.candidate_kinds, batch.candidate_refs
+entity_mask, candidate_mask = batch.entity_mask, batch.candidate_mask
 actions = np.zeros(96, dtype=np.int32)
 batch.step(actions)
 ```
