@@ -28,8 +28,9 @@ SPIRE_FN inline const Creature& get_creature(const Game& g, int target) {
 }
 SPIRE_FN inline bool alive(const Creature& c) { return !c.dead && !c.dying && !c.escaped && !c.half_dead; }
 SPIRE_FN inline int find_power(const Game& g, const Creature& c, PowerId id, int offset) {
-    for (int i = 0; i < c.powers.size; ++i)
-        if (c.powers.at(g.power_objects, i).id == id && c.powers.at(g.power_objects, i).id_offset == offset) return i;
+    int position = 0;
+    for (int p = c.powers.head; p != 255; p = g.power_objects[p].next, ++position)
+        if (g.power_objects[p].id == id && g.power_objects[p].id_offset == offset) return position;
     return -1;
 }
 SPIRE_FN inline bool has_power(const Game& g, const Creature& c, PowerId id) { return find_power(g, c, id) >= 0; }
@@ -92,8 +93,8 @@ SPIRE_FN inline float rear_damage_multiplier(const Game& g, int monster) {
     if (!((player.flip_horizontal && player.draw_x < g.monsters[monster].creature.draw_x) ||
           (!player.flip_horizontal && player.draw_x > g.monsters[monster].creature.draw_x))) return 1.0f;
     float multiplier = 1.0f;
-    for (int i = 0; i < player.powers.size; ++i)
-        multiplier *= power_data(player.powers.at(g.power_objects, i).id).rear_damage_multiplier;
+    for (int p = player.powers.head; p != 255; p = g.power_objects[p].next)
+        multiplier *= power_data(g.power_objects[p].id).rear_damage_multiplier;
     return multiplier;
 }
 SPIRE_FN inline int calculate_intent_damage(const Game& g, int monster, int base) {
@@ -236,8 +237,8 @@ SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t inst
 }
 SPIRE_FN inline bool keeps_block(const Game& g, int owner) {
     const Powers& powers = get_creature(g, owner).powers;
-    for (int i = 0; i < powers.size; ++i) {
-        const PowerData data = power_data(powers.at(g.power_objects, i).id);
+    for (int p = powers.head; p != 255; p = g.power_objects[p].next) {
+        const PowerData data = power_data(g.power_objects[p].id);
         if (owner == player_target ? data.keep_player_block : data.keep_monster_block) return true;
     }
     return false;

@@ -6,7 +6,7 @@ SPIRE_FN inline bool card_free_to_play_base(const Game& g, int card) {
     if (g.cards[card].free_to_play_once) return true;
     if (card_data(g.cards[card].id).type == CardType::Attack) {
         const Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i) if (power_data(powers.at(g.power_objects, i).id).free_attacks) return true;
+        for (int p = powers.head; p != 255; p = g.power_objects[p].next) if (power_data(g.power_objects[p].id).free_attacks) return true;
     }
     return false;
 }
@@ -14,13 +14,13 @@ SPIRE_FN inline bool card_has_enough_energy_base(const Game& g, int card_id) {
     if (g.manager.turn_has_ended) return false;
     const Card& card = g.cards[card_id];
     const Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i)
-        if (!power_canPlayCard(g, powers.at(g.power_objects, i), player_target, card_id)) return false;
+    for (int p = next_power_canPlayCard(g, powers.head); p != 255; p = next_power_canPlayCard(g, g.power_objects[p].next))
+        if (!power_canPlayCard(g, g.power_objects[p], player_target, card_id)) return false;
     if (card_def(card.id).type == CardType::Attack)
-        for (int i = 0; i < powers.size; ++i) if (power_data(powers.at(g.power_objects, i).id).prevents_attacks) return false;
-    for (int i = 0; i < g.run.relics.size; ++i)
+        for (int p = powers.head; p != 255; p = g.power_objects[p].next) if (power_data(g.power_objects[p].id).prevents_attacks) return false;
+    for (int i = next_relic_canPlay(g, 0); i < g.run.relics.size; i = next_relic_canPlay(g, i + 1))
         if (!relic_canPlay(g, i, card_id)) return false;
-    for (int i = 0; i < g.hand.size; ++i)
+    for (int i = next_card_canPlay(g, g.hand, 0); i < g.hand.size; i = next_card_canPlay(g, g.hand, i + 1))
         if (!card_canPlay(g, g.hand[i], card_id)) return false;
     return card.cost_for_turn <= g.player.energy || card_freeToPlay(g, card_id) || card.in_autoplay;
 }

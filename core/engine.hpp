@@ -143,8 +143,8 @@ SPIRE_FN inline void add_created_card_to_hand(Game& g, int card) {
 SPIRE_FN inline void refresh_hand(Game& g) {
     if (monsters_basically_dead(g)) return;
     const Powers& powers = g.player.creature.powers;
-    for (int p = 0; p < powers.size; ++p) {
-        const PowerId rear = power_data(powers.at(g.power_objects, p).id).rear_attack_power;
+    for (int p = powers.head; p != 255; p = g.power_objects[p].next) {
+        const PowerId rear = power_data(g.power_objects[p].id).rear_attack_power;
         if (rear == PowerId::Count) continue;
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int owner = g.monster_order[i];
@@ -360,8 +360,8 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
     Creature& target = g.player.creature;
     int amount = max(0, info.amount);
     // AbstractPlayer.damage caps uncalculated DamageInfo before block, including HP_LOSS.
-    for (int i = 0; i < target.powers.size; ++i) {
-        const int cap = power_data(target.powers.at(g.power_objects, i).id).incoming_damage_limit;
+    for (int p = target.powers.head; p != 255; p = g.power_objects[p].next) {
+        const int cap = power_data(g.power_objects[p].id).incoming_damage_limit;
         if (cap > 0) amount = min(amount, cap);
     }
     amount = decrement_block(g, player_target, info, amount);
@@ -460,8 +460,8 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
     const float rear_multiplier = rear_damage_multiplier(g, owner);
     if (rear_multiplier != 1.0f) {
         const Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i) {
-            const PowerId id = power_data(powers.at(g.power_objects, i).id).rear_attack_power;
+        for (int p = powers.head; p != 255; p = g.power_objects[p].next) {
+            const PowerId id = power_data(g.power_objects[p].id).rear_attack_power;
             if (id == PowerId::Count || has_power(g, m.creature, id)) continue;
             Effect e{};
             e.kind = EffectKind::ApplyPower;
@@ -523,8 +523,8 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
     settle_card_moves(g);
     if (!effect.flag) { g.drawn_cards.clear(); effect.flag = true; }
     bool blocked = false;
-    for (int i = 0; i < g.player.creature.powers.size; ++i)
-        blocked |= power_data(g.player.creature.powers.at(g.power_objects, i).id).blocks_draw;
+    for (int p = g.player.creature.powers.head; p != 255; p = g.power_objects[p].next)
+        blocked |= power_data(g.power_objects[p].id).blocks_draw;
     if (blocked || effect.amount <= 0 ||
         g.draw.size + g.discard.size == 0 || g.hand.size == hand_limit) {
         effect.done = true;
@@ -1684,8 +1684,8 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
                 target = g.monster_order[action.target];
                 SPIRE_ASSERT(alive(g.monsters[target].creature));
                 const Powers& powers = g.player.creature.powers;
-                for (int i = 0; i < powers.size; ++i) {
-                    if (power_data(powers.at(g.power_objects, i).id).rear_attack_power != PowerId::Count) {
+                for (int p = powers.head; p != 255; p = g.power_objects[p].next) {
+                    if (power_data(g.power_objects[p].id).rear_attack_power != PowerId::Count) {
                         g.player.creature.flip_horizontal = g.monsters[target].creature.draw_x < g.player.creature.draw_x;
                     }
                 }

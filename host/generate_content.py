@@ -414,7 +414,9 @@ def generate(root, output):
                     continue
                 invocation = f'units::{kind}::{typename}::{name}({", ".join(call_args)})'
                 dispatch.append(f'case {enum}::{unit}: return {invocation};')
-            if name not in filters and ((kind in ('powers', 'relics') and result == 'float' and body == 'return value;' and signature.startswith('const Game&')) or (kind in ('cards', 'powers', 'relics') and result == 'void' and not body)):
+            identity = kind in ('powers', 'relics') and result == 'float' and body == 'return value;' and signature.startswith('const Game&')
+            inactive = (result == 'void' and not body) or (result == 'bool' and body == 'return true;')
+            if name not in filters and kind in ('cards', 'powers', 'relics') and (identity or inactive):
                 filters.add(name)
                 end = {'powers': '255', 'relics': 'g.run.relics.size', 'cards': 'pile.size'}[kind]
                 extra = ', const Pile& pile' if kind == 'cards' else ''

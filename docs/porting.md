@@ -33,6 +33,8 @@ filters retain list positions; power event filters follow arena links. These cal
 power insertion/removal rather than changing the traversed power list during dispatch.
 Hooks with nonempty defaults, including ethereal-card exhaustion and block flooring, retain
 those defaults at their original call sites.
+Card-availability checks skip inherited `true` hooks. Read-only power queries follow the
+same arena links; `find_power` still returns the ordered list position for removal callers.
 
 ## Unit code
 
