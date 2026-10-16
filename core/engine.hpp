@@ -1239,17 +1239,23 @@ SPIRE_FN inline void update_event(Game& g) {
     }
     settle_card_obtains(g);
 }
+SPIRE_FN inline void close_grid_screen(Game& g) {
+    // AbstractDungeon.closeCurrentScreen(GRID) gives outstanding rewards precedence over previousScreen.
+    if (!g.screen_rewards.empty()) g.previous_screen = Screen::CombatReward;
+    g.screen = g.previous_screen;
+    if (g.previous_screen != Screen::None)
+        g.previous_screen = g.room_reward_time ? Screen::CombatReward : Screen::None;
+    if (g.screen == Screen::CombatReward) {
+        g.room_reward_time = true;
+        if (!g.combat_reward_skippable) g.reward_proceed_visible = true;
+    }
+}
 SPIRE_FN inline void complete_master_selection(Game& g) {
-    // AbstractDungeon.closeCurrentScreen reopens a reward screen saved by BottledLightning.onEquip.
-    g.screen = g.previous_screen == Screen::CombatReward ? Screen::CombatReward : Screen::None;
+    close_grid_screen(g);
     for (int i = next_relic_update(g, 0); i < g.run.relics.size; i = next_relic_update(g, i + 1)) relic_update(g, i);
     if (g.room_kind == RoomKind::Rest) finish_campfire_selection(g);
     if (g.room_kind == RoomKind::BossTreasure && g.screen == Screen::None) g.screen = Screen::Room;
-    if (g.room_kind == RoomKind::Shop) {
-        if (g.grid_for_purge) finish_shop_purge(g);
-        g.screen = Screen::Shop;
-        g.previous_screen = g.room_reward_time ? Screen::CombatReward : Screen::None;
-    }
+    if (g.room_kind == RoomKind::Shop && g.screen == Screen::None) g.screen = Screen::Room;
     update_event(g);
     if (g.event.id != EventId::Count && g.screen == Screen::None) g.screen = Screen::Event;
     settle_card_obtains(g);
@@ -1620,15 +1626,7 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
     }
     if (g.screen == Screen::Grid && action.kind == ActionKind::Skip) {
         SPIRE_ASSERT(g.grid_can_cancel);
-        // AbstractDungeon.closeCurrentScreen(GRID) gives outstanding rewards precedence over previousScreen.
-        if (!g.screen_rewards.empty()) g.previous_screen = Screen::CombatReward;
-        g.screen = g.previous_screen;
-        if (g.previous_screen != Screen::None)
-            g.previous_screen = g.room_reward_time ? Screen::CombatReward : Screen::None;
-        if (g.screen == Screen::CombatReward) {
-            g.room_reward_time = true;
-            if (!g.combat_reward_skippable) g.reward_proceed_visible = true;
-        }
+        close_grid_screen(g);
         // CancelButton.update reopens the campfire after closing the grid.
         if (g.room_kind == RoomKind::Rest) {
             g.campfire.something_selected = false;
@@ -1706,6 +1704,9 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
 SPIRE_FN inline void step(Game& g, Action action) {
     apply_decision(g, action);
     if (g.fault == 0) {
+        // ShopRoom.updatePurge and ShopScreen.updatePurge run only on their active screens.
+        if (g.room_kind == RoomKind::Shop && (g.screen == Screen::Room || g.screen == Screen::Shop))
+            finish_shop_purge(g);
         if (card_capacity - g.cards.count() < 80) collect_cards(g);
         else prune_detached_master_cards(g);
     }

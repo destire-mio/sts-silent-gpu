@@ -59,6 +59,20 @@ static constexpr uint16_t prefix[]{
     2,2,4,3,5,2,6,2,6,3,44,
 };
 
+static constexpr uint16_t purge_prefix[]{
+    0,1,0,3,1,1,3,0,0,0,1,0,0,1,0,4,1,1,1,0,0,0,0,0,0,0,5,4,1,0,4,1,
+    0,0,2,1,1,1,0,2,1,0,2,0,0,1,1,0,0,0,11,0,5,0,0,3,0,0,0,1,0,0,0,2,
+    0,0,2,1,1,0,0,0,1,2,1,6,0,0,0,2,0,0,3,1,3,2,0,1,1,0,2,1,0,0,3,2,
+    2,0,2,0,3,0,1,1,1,1,3,1,1,2,11,1,1,1,1,3,1,1,1,2,4,4,2,1,1,0,1,1,
+    0,0,2,3,2,0,0,0,3,0,0,3,3,3,1,0,0,0,0,0,0,0,0,4,0,0,4,3,0,0,1,2,
+    2,1,0,0,0,1,0,0,0,2,0,0,6,3,11,2,0,2,0,7,4,0,0,3,0,1,3,1,0,3,2,2,
+    1,1,1,1,2,12,2,10,2,8,2,13,2,15,1,1,2,1,1,3,4,4,0,1,0,3,0,2,0,0,1,2,
+    1,0,0,0,1,1,1,0,1,1,0,2,1,0,0,0,0,3,2,1,0,0,2,0,3,0,2,0,0,0,1,3,
+    2,0,1,0,2,0,0,2,1,0,1,2,0,0,0,1,1,0,1,1,3,1,4,4,3,1,0,1,0,1,1,1,
+    1,0,0,3,1,2,1,1,0,0,4,1,0,0,1,0,0,3,4,0,0,0,1,0,0,2,0,1,0,5,7,0,
+    3,5,2,4,2,18,3,9,2,
+};
+
 int main() {
     Game game{};
     reset(game, 2000000006);
@@ -73,4 +87,22 @@ int main() {
     SPIRE_ASSERT(game.screen_rewards.size == 3);
     SPIRE_ASSERT(game.selected_cards.empty());
     SPIRE_ASSERT(game.shop.purge_available);
+    Game purge{};
+    reset(purge, 2000002405);
+    for (const auto candidate : purge_prefix) {
+        ActionSet legal; legal_actions(purge, legal);
+        SPIRE_ASSERT(candidate < legal.size);
+        step(purge, legal[candidate]);
+    }
+    SPIRE_ASSERT(purge.screen == Screen::CombatReward);
+    SPIRE_ASSERT(purge.run.gold == 54 && purge.shop.purge_available);
+    SPIRE_ASSERT(purge.selected_cards.size == 1);
+    const int deck_size = purge.run.master_deck.size;
+    step(purge, {ActionKind::Skip, -1, -1});
+    SPIRE_ASSERT(purge.screen == Screen::Room && purge.previous_screen == Screen::None);
+    SPIRE_ASSERT(purge.run.gold == 4 && !purge.shop.purge_available);
+    SPIRE_ASSERT(purge.run.master_deck.size == deck_size - 1 && purge.selected_cards.empty());
+    step(purge, {ActionKind::Choose, 0, -1});
+    SPIRE_ASSERT(purge.screen == Screen::Shop && purge.previous_screen == Screen::None);
+
 }
