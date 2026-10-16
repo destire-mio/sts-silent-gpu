@@ -80,6 +80,10 @@ target_compile_definitions(spire_deep_benchmark PRIVATE
     SPIRE_DEEP_ACTIONS="${CMAKE_CURRENT_SOURCE_DIR}/tests/deep_benchmark.actions")
 add_dependencies(spire_deep_benchmark check_device_core)
 
+add_executable(spire_collect_roots tools/collect_roots.cpp)
+target_link_libraries(spire_collect_roots PRIVATE spire_core)
+add_dependencies(spire_collect_roots check_device_core)
+
 include(CheckLanguage)
 check_language(CUDA)
 if(CMAKE_CUDA_COMPILER)
