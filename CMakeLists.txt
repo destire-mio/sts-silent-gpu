@@ -73,6 +73,12 @@ target_link_libraries(spire_benchmark PRIVATE spire_core)
 add_dependencies(spire_benchmark check_device_core)
 add_custom_target(benchmark COMMAND spire_benchmark 100000 DEPENDS spire_benchmark USES_TERMINAL)
 
+add_executable(spire_deep_benchmark host/deep_benchmark.cpp)
+target_link_libraries(spire_deep_benchmark PRIVATE spire_core)
+target_compile_definitions(spire_deep_benchmark PRIVATE
+    SPIRE_DEEP_ACTIONS="${CMAKE_CURRENT_SOURCE_DIR}/tests/deep_benchmark.actions")
+add_dependencies(spire_deep_benchmark check_device_core)
+
 include(CheckLanguage)
 check_language(CUDA)
 if(CMAKE_CUDA_COMPILER)
@@ -85,6 +91,7 @@ endif()
 
 include(CTest)
 if(BUILD_TESTING)
+    add_test(NAME deep_benchmark_inputs COMMAND spire_deep_benchmark 1)
     if(CMAKE_CUDA_COMPILER)
         add_executable(test_cuda_faults tests/test_cuda_faults.cu)
         target_link_libraries(test_cuda_faults PRIVATE spire_cuda)

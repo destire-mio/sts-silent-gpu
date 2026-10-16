@@ -118,6 +118,20 @@ The combat deck and starting HP are fixed so adding run initialization does not 
 benchmark load. Timing includes complete run resets and dungeon generation. To choose the decision count, run `/private/tmp/spire-build/spire_benchmark 1000000`.
 Results are written to stdout.
 
+`spire_benchmark` measures starter combats with a complete dungeon reset per combat.
+For whole-game throughput, run `/private/tmp/spire-build/spire_deep_benchmark 1000`.
+This replays 12 fixed Neow-to-terminal games (15,038 decisions per round) on one thread.
+Timing includes resets and native `step`, excluding file loading and the initial legal-action
+and terminal check. The optional second argument selects an action file. The output checksum
+consumes terminal floor, HP and screen; strict snapshot parity remains the trace replayer's job.
+
+`tests/deep_benchmark.actions` stores a seed and decision count followed by integer triples
+`ActionKind, index, target` in recorded order. Unused indices/targets are -1. The nine
+202610230xxx games with more than 800 decisions come from `perf-evidence/deep-actions/`:
+000, 004, 005, 006, 007, 008, 010, 013, 014. Seeds 202610210030 (Dead Branch),
+202610211131 (card residency) and 202610180018 (victory) come from the accepted trace actions
+in `inventory/deep-neow.json`. These are input actions, not replacement oracle snapshots.
+
 ## Layout
 
 - `core/`: fixed-capacity C++17 run and combat state, RNG, queues and per-unit content.
