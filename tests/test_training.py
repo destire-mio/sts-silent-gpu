@@ -146,4 +146,3 @@ class TrainingTests(unittest.TestCase):
             break
         else:
             self.fail("Missing accepted winning route")
-
