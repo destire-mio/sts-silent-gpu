@@ -1,9 +1,11 @@
 import sys
+from pathlib import Path
 import threading
 import unittest
 
 import numpy as np
 import spire
+import training_state
 
 
 class TrainingTests(unittest.TestCase):
@@ -115,3 +117,32 @@ class TrainingTests(unittest.TestCase):
             batch.store(slots, data, offsets[:4])
         with self.assertRaises(ValueError):
             minibatch.pad(data, offsets, np.array([0, 1, 2, 3, 12], dtype=np.int32))
+
+    def test_deep_prefix_game_snapshots(self):
+        words = iter(map(int, (Path(__file__).resolve().parent / "deep_benchmark.actions").read_text().split()))
+        names = ("play", "end_turn", "choose", "potion_use", "potion_discard", "proceed", "skip")
+        for seed in words:
+            count = next(words)
+            raw = [(next(words), next(words), next(words)) for _ in range(count)]
+            if seed != 202610180018:
+                continue
+            game = spire.reset(seed)
+            prefix = []
+            for kind, index, target in raw:
+                action = dict(type=names[kind])
+                if kind == 0:
+                    action.update(card=index, target=target)
+                elif kind == 2:
+                    action.update(option=index)
+                elif kind in (3, 4):
+                    action.update(slot=index)
+                    if kind == 3:
+                        action.update(target=target)
+                prefix.append(game.legal_actions().index(action))
+                game.step(action)
+            for distance in (8, 32, 128):
+                live, replayed = training_state.prefix_states(seed, prefix[:-distance])
+                self.assertEqual(live, replayed)
+            break
+        else:
+            self.fail("Missing accepted winning route")

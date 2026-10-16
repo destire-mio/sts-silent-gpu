@@ -76,9 +76,24 @@ static void original_terminals() {
     int64_t seed; int count, wins = 0, deaths = 0;
     while (input >> seed >> count) {
         TrainingBatch b(1, 1, count, {seed, 424242});
+        TrainingBatch replayed(2, 1, 2, {11, 12});
+        std::vector<int32_t> prefix;
         float total = 0;
         bool heart = false;
         for (int i = 0; i < count; ++i) {
+            if (seed == 202610180018 && (i == count - 8 || i == count - 32 || i == count - 128)) {
+                replayed.reset_to_many({1, 0}, {seed, seed}, {prefix, prefix});
+                for (int slot = 0; slot < 2; ++slot) {
+                    require(std::memcmp(&b.reveals[0], &replayed.reveals[slot], sizeof(obs::History)) == 0, "prefix visible history differs");
+                    uint8_t live[sizeof(obs::Observation)]{}, replay[sizeof(obs::Observation)]{};
+                    obs::store(b.view(0), live); obs::store(replayed.view(slot), replay);
+                    require(std::memcmp(live, replay, sizeof(live)) == 0, "prefix observation bytes differ");
+                    require(!replayed.faults[slot] && !replayed.truncated[slot] && replayed.decision_counts[slot] == 0,
+                            "prefix consumed continuation decision cap");
+                    require(replayed.reset_mask[slot] && !replayed.advanced[slot] && replayed.rewards[slot] == 0,
+                            "prefix emitted a transition reward");
+                }
+            }
             int kind, index, target; input >> kind >> index >> target;
             require(input.good(), "incomplete input");
             int32_t selected = -1;
@@ -87,6 +102,7 @@ static void original_terminals() {
                 if (static_cast<int>(a.kind) == kind && a.index == index && a.target == target) selected = j;
             }
             require(selected >= 0, "oracle action missing from candidate list");
+            prefix.push_back(selected);
             heart |= b.games[0].run.act == 4 && b.games[0].encounter == EncounterId::TheHeart;
             b.step(&selected);
             require(!b.faults[0] && !b.truncated[0], "terminal precedence/cap failed");
@@ -105,4 +121,19 @@ static void original_terminals() {
     require(wins > 0 && deaths > 0, "terminal coverage missing");
     std::printf("original terminal routes: wins=%d deaths=%d\n", wins, deaths);
 }
-int main() { clone_and_isolation(); truncation(); observation_fault(); original_terminals(); }
+static void selected_slots() {
+    TrainingBatch b(2, 1, 1, {1, 2, 3});
+    const Game untouched = b.games[1];
+    b.step_slots({0}, {0});
+    require(b.truncated[0] && !b.advanced[1], "subset step advanced wrong slot");
+    require(std::memcmp(&untouched, &b.games[1], sizeof(Game)) == 0, "subset step changed inactive game");
+    b.step_slots({1}, {0});
+    require(b.truncated[0] && b.truncated[1] && !b.reset_mask[0] && !b.advanced[0], "inactive terminal reset");
+    b.reset_to(1, 1, {0});
+    require(!b.faults[1] && !b.truncated[1] && b.decision_counts[1] == 0, "explicit reset failed");
+    b.step_slots({0}, {-1});
+    require(b.seed_indices[0] == 2 && b.reset_mask[0], "explicit reset consumed scheduled seed");
+    b.reset_to(1, 1, {-1});
+    require(b.faults[1] == static_cast<uint32_t>(obs::Fault::InvalidCandidate) && !b.done[1], "invalid prefix became loss");
+}
+int main() { clone_and_isolation(); truncation(); observation_fault(); original_terminals(); selected_slots(); }
