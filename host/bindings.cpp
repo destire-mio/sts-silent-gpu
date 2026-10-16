@@ -1,6 +1,8 @@
 #include "batch.hpp"
 #include "snapshot.hpp"
+#include "training_batch.hpp"
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 #include <type_traits>
 
@@ -107,11 +109,13 @@ CombatSetup parse_setup(const Game& game, const py::dict& value) {
 struct Environment {
     Game game;
     FreshRunState fresh;
+    obs::History reveal{};
 
     void reset(std::int64_t seed, bool playtime_at_least_800 = false) {
         RunProfile profile{};
         profile.playtime_at_least_800 = playtime_at_least_800;
         spire::reset(game, seed, profile);
+        reveal = {};
         fresh = FreshRunState{};
         initialize_fresh_run(fresh);
     }
@@ -130,6 +134,7 @@ struct Environment {
             }
         }
         spire::reset(game, seed, profile);
+        reveal = {};
         fresh = FreshRunState{}; initialize_fresh_run(fresh);
         if (scenario.contains("actions") && !scenario.contains("encounter")) return;
         const auto setup = parse_setup(game, scenario);
@@ -193,7 +198,9 @@ struct Environment {
     }
     void step(const py::dict& action) {
         if (game.fault != 0) return;
-        spire::step(game, parse_action(action));
+        const auto selected = parse_action(action);
+        obs::record_action(reveal, game, selected);
+        spire::step(game, selected);
     }
 };
 
@@ -201,6 +208,24 @@ struct EnvironmentBatch {
     std::vector<Environment> games;
     explicit EnvironmentBatch(std::size_t size) : games(size) {}
 };
+
+py::tuple observation(Environment& env) {
+    py::array_t<int32_t> ids({obs::id_rows, obs::entity_capacity});
+    py::array_t<int32_t> values({obs::value_rows, obs::entity_capacity});
+    py::array_t<int32_t> candidates({obs::candidate_rows, obs::candidate_capacity});
+    py::array_t<uint8_t> entity_mask(obs::entity_capacity), candidate_mask(obs::candidate_capacity);
+    ActionSet actions;
+    const auto result = obs::encode(env.game, env.reveal, {ids.mutable_data(), values.mutable_data(), candidates.mutable_data(),
+        entity_mask.mutable_data(), candidate_mask.mutable_data()}, actions);
+    return py::make_tuple(ids, values, candidates, entity_mask, candidate_mask, result.fault);
+}
+
+template<class T>
+py::array buffer(TrainingBatch& batch, std::vector<T>& data, std::vector<py::ssize_t> shape) {
+    py::array result(py::dtype::of<T>(), shape, data.data(), py::cast(&batch, py::return_value_policy::reference));
+    result.attr("setflags")(false);
+    return result;
+}
 }
 
 PYBIND11_MODULE(spire, module) {
@@ -215,6 +240,7 @@ PYBIND11_MODULE(spire, module) {
         .def("snapshot", &Environment::snapshot)
         .def("copy", [](const Environment& env) { return env; })
         .def("search_state", &Environment::search_state)
+        .def("observation", &observation)
         .def("schema_gaps", &Environment::schema_gaps)
         .def_property_readonly("fault", [](const Environment& env) { return env.game.fault; });
     module.def("reset", [](std::int64_t seed, bool playtime_at_least_800) { Environment result; result.reset(seed, playtime_at_least_800); return result; }, "seed"_a, "playtime_at_least_800"_a=false);
@@ -258,4 +284,34 @@ PYBIND11_MODULE(spire, module) {
         })
         .def("__len__", [](const EnvironmentBatch& batch) { return batch.games.size(); });
     module.attr("encounters") = py::cast(std::vector<std::string>(std::begin(encounter_names), std::end(encounter_names)));
+    py::class_<TrainingBatch>(module, "TrainingBatch")
+        .def(py::init([](int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds) {
+            py::gil_scoped_release release;
+            return std::make_unique<TrainingBatch>(size, threads, cap, seeds);
+        }), "size"_a, "threads"_a, "decision_cap"_a, "seeds"_a)
+        .def("step", [](TrainingBatch& batch, py::array_t<int32_t, py::array::c_style> selected) {
+            if (selected.ndim() != 1 || selected.size() != batch.size) throw py::value_error("Expected one int32 candidate index per game");
+            py::gil_scoped_release release;
+            batch.step(selected.data());
+        }, "candidate_indices"_a.noconvert())
+        .def("clone", &TrainingBatch::clone, "source"_a, "target"_a, py::call_guard<py::gil_scoped_release>())
+        .def("extend_seeds", &TrainingBatch::extend_seeds, "seeds"_a, py::call_guard<py::gil_scoped_release>())
+        .def_property_readonly("ids", [](TrainingBatch& b) { return buffer(b, b.ids, {b.size, obs::id_rows, obs::entity_capacity}); })
+        .def_property_readonly("values", [](TrainingBatch& b) { return buffer(b, b.values, {b.size, obs::value_rows, obs::entity_capacity}); })
+        .def_property_readonly("candidates", [](TrainingBatch& b) { return buffer(b, b.candidates, {b.size, obs::candidate_rows, obs::candidate_capacity}); })
+        .def_property_readonly("entity_mask", [](TrainingBatch& b) { return buffer(b, b.entity_mask, {b.size, obs::entity_capacity}); })
+        .def_property_readonly("candidate_mask", [](TrainingBatch& b) { return buffer(b, b.candidate_mask, {b.size, obs::candidate_capacity}); })
+        .def_property_readonly("rewards", [](TrainingBatch& b) { return buffer(b, b.rewards, {b.size}); })
+        .def_property_readonly("done", [](TrainingBatch& b) { return buffer(b, b.done, {b.size}); })
+        .def_property_readonly("truncated", [](TrainingBatch& b) { return buffer(b, b.truncated, {b.size}); })
+        .def_property_readonly("faults", [](TrainingBatch& b) { return buffer(b, b.faults, {b.size}); })
+        .def_property_readonly("reset_mask", [](TrainingBatch& b) { return buffer(b, b.reset_mask, {b.size}); })
+        .def_property_readonly("advanced", [](TrainingBatch& b) { return buffer(b, b.advanced, {b.size}); })
+        .def_property_readonly("entity_counts", [](TrainingBatch& b) { return buffer(b, b.entity_counts, {b.size}); })
+        .def_property_readonly("candidate_counts", [](TrainingBatch& b) { return buffer(b, b.candidate_counts, {b.size}); })
+        .def_property_readonly("seed_indices", [](TrainingBatch& b) { return buffer(b, b.seed_indices, {b.size}); })
+        .def_property_readonly("decision_counts", [](TrainingBatch& b) { return buffer(b, b.decision_counts, {b.size}); })
+        .def_property_readonly("timing_ns", [](TrainingBatch& b) { return buffer(b, b.timing_ns, {b.size, 3}); });
+    module.attr("observation_bytes") = sizeof(obs::Observation);
+    module.attr("game_bytes") = sizeof(Game);
 }
