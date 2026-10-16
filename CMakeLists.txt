@@ -92,6 +92,9 @@ endif()
 
 include(CTest)
 if(BUILD_TESTING)
+    pybind11_add_module(training_state tests/training_state.cpp)
+    target_link_libraries(training_state PRIVATE spire_core)
+    add_dependencies(training_state check_device_core generate_snapshot)
     add_test(NAME deep_benchmark_inputs COMMAND spire_deep_benchmark 1)
     if(CMAKE_CUDA_COMPILER)
         add_executable(test_cuda_faults tests/test_cuda_faults.cu)
@@ -119,5 +122,5 @@ if(BUILD_TESTING)
     add_test(NAME combat_replay COMMAND "${Python_EXECUTABLE}"
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/replay.py" "${CMAKE_CURRENT_SOURCE_DIR}/tests/traces")
     set_tests_properties(host_tests combat_replay PROPERTIES
-        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:spire>")
+        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:spire>:${CMAKE_CURRENT_SOURCE_DIR};OMP_NUM_THREADS=1;OPENBLAS_NUM_THREADS=1;VECLIB_MAXIMUM_THREADS=1")
 endif()

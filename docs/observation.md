@@ -311,6 +311,23 @@ input arrays and borrowed output views must not be read/written concurrently wit
 An inference worker should receive only the seven network arrays, never the batch object,
 snapshot/search APIs, seed bookkeeping or the training-only clone method.
 
+`reset_to(slot, seed, candidates)` starts a fresh Neow game and replays the candidate-index
+prefix, recording visible actions and encoding every boundary to rebuild `History`.
+`reset_to_many(slots, seeds, candidates)` takes equally sized lists; each element of
+`candidates` is one prefix, and slots are distinct. Both release the GIL and serialize with
+other batch mutations. The root must be a live decision. An invalid candidate or terminal
+root produces a fault, never a reward. Prefix replay ignores the continuation decision cap;
+the returned root has decision count zero, reset_mask one, and reward/advanced/done/truncated
+zero. Explicit resets do not consume the scheduled seed sequence; seed_indices is -1 because
+the seed came from the caller. The trainer retains the actual seed as the root-family key.
+Reset, replay stepping and encoding accumulate in the existing timing buffers.
+
+`step_slots(slots, candidate_indices)` steps only the distinct selected slots, with the same
+autoreset contract as `step`. Inactive games, observations and terminal/fault flags stay in
+place; reward, advanced and reset_mask are zero for inactive slots. This lets synchronous
+full-episode collection finish its fixed start group without advancing or resetting finished
+lanes. The two arguments are equally sized lists; empty lists advance nothing.
+
 `Game.observation()` is an allocation-based audit convenience returning tags, ids, values,
 candidate kinds, candidate refs, entity mask, candidate mask and a fault code. Training uses the preallocated batch interface. `tools/check_observation.py`
 uses the unchanged oracle comparator while encoding every decision. The seed-family contract

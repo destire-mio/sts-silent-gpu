@@ -30,7 +30,7 @@ struct TrainingBatch : ObservationBatch {
         : ObservationBatch(size), threads(threads), decision_cap(cap), games(size), actions(size), episodes(size), reveals(size),
           done(size), truncated(size), reset_mask(size), advanced(size), rewards(size), faults(size),
           seed_indices(size), decision_counts(size), timing_ns(size * 3),
-          seeds_(seeds), next_seeds_(size) {
+          seeds_(seeds), next_seeds_(size), active_(size), slot_choices_(size) {
         SPIRE_ASSERT(size > 0 && threads > 0 && threads <= size && cap > 0);
         for (auto& episode : episodes) episode.finished = true;
         for (int i = 1; i < threads; ++i) workers_.emplace_back([this, i] { worker(i); });
@@ -57,10 +57,41 @@ struct TrainingBatch : ObservationBatch {
     }
     void step(const int32_t* selected) {
         std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int i = 0; i < size; ++i) active_[i] = 1;
         selected_ = selected;
+        dispatch();
+    }
+    void step_slots(const std::vector<int32_t>& slots, const std::vector<int32_t>& selected) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        SPIRE_ASSERT(slots.size() == selected.size());
+        for (int i = 0; i < size; ++i) active_[i] = 0;
+        for (std::size_t j = 0; j < slots.size(); ++j) {
+            const int i = slots[j];
+            SPIRE_ASSERT(i >= 0 && i < size && !active_[i]);
+            active_[i] = 1; slot_choices_[i] = selected[j];
+        }
+        selected_ = slot_choices_.data();
+        dispatch();
+    }
+    void reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        replay(slot, seed, candidates);
+    }
+    void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
+                       const std::vector<std::vector<int32_t>>& candidates) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        SPIRE_ASSERT(slots.size() == seeds.size() && slots.size() == candidates.size());
+        for (std::size_t j = 0; j < slots.size(); ++j) {
+            for (std::size_t k = 0; k < j; ++k) SPIRE_ASSERT(slots[j] != slots[k]);
+            replay(slots[j], seeds[j], candidates[j]);
+        }
+    }
+private:
+    void dispatch() {
         for (int i = 0; i < size; ++i) {
             next_seeds_[i] = -1;
-            if (episodes[i].finished && next_seed_ < seeds_.size()) next_seeds_[i] = next_seed_++;
+            rewards[i] = 0; advanced[i] = reset_mask[i] = 0;
+            if (active_[i] && episodes[i].finished && next_seed_ < seeds_.size()) next_seeds_[i] = next_seed_++;
         }
         {
             std::lock_guard<std::mutex> lock(mutex_);
@@ -72,6 +103,7 @@ struct TrainingBatch : ObservationBatch {
         std::unique_lock<std::mutex> lock(mutex_);
         completed_.wait(lock, [this] { return remaining_ == 0; });
     }
+public:
     uint32_t store(const int32_t* slots, int count, uint8_t* data, uint64_t capacity, uint64_t* offsets) {
         std::lock_guard<std::mutex> operation(operation_mutex_);
         for (int i = 0; i < count; ++i) if (faults[slots[i]]) return faults[slots[i]];
@@ -95,6 +127,8 @@ struct TrainingBatch : ObservationBatch {
 private:
     using Clock = std::chrono::steady_clock;
     std::vector<int64_t> seeds_, next_seeds_;
+    std::vector<uint8_t> active_;
+    std::vector<int32_t> slot_choices_;
     std::size_t next_seed_ = 0;
     const int32_t* selected_ = nullptr;
     std::vector<std::thread> workers_;
@@ -129,8 +163,32 @@ private:
         done[i] = truncated[i] = 0; rewards[i] = 0;
         view(i).finish(0, 0); actions[i].clear();
     }
+    void replay(int i, int64_t seed, const std::vector<int32_t>& candidates) {
+        SPIRE_ASSERT(i >= 0 && i < size);
+        const auto start = Clock::now();
+        spire::reset(games[i], seed);
+        reveals[i] = {};
+        timing_ns[i * 3] += elapsed(start);
+        episodes[i] = Episode{};
+        seed_indices[i] = -1; decision_counts[i] = 0;
+        rewards[i] = 0; done[i] = truncated[i] = advanced[i] = 0; reset_mask[i] = 1; faults[i] = 0;
+        publish(i);
+        for (const int candidate : candidates) {
+            if (faults[i]) return;
+            if (candidate < 0 || candidate >= actions[i].size) {
+                fail(i, static_cast<uint32_t>(obs::Fault::InvalidCandidate)); return;
+            }
+            const auto step_start = Clock::now();
+            obs::record_action(reveals[i], games[i], actions[i][candidate]);
+            spire::step(games[i], actions[i][candidate]);
+            timing_ns[i * 3 + 1] += elapsed(step_start);
+            publish(i);
+        }
+        if (!faults[i] && actions[i].empty()) fail(i, static_cast<uint32_t>(obs::Fault::NoDecision));
+    }
     void run(int worker) {
         for (int i = worker; i < size; i += threads) {
+            if (!active_[i]) continue;
             auto& episode = episodes[i];
             auto& g = games[i];
             rewards[i] = 0; done[i] = truncated[i] = reset_mask[i] = advanced[i] = 0; faults[i] = 0;
