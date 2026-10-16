@@ -1,0 +1,124 @@
+{
+  "protocol_version": 1,
+  "base_commit": "8e12f098b5afe26278bea52b81c4990b2111878b",
+  "protocol": "docs/observation.md",
+  "capacities": {
+    "entities": 384,
+    "candidates": 128
+  },
+  "capacity_basis": "Execution budgets: 285 entities and 51 candidates observed; reserve 99 entity slots and the existing 128-action engine capacity. Overflow is a fault, not a game limit or truncation.",
+  "observation_bytes": 36352,
+  "game_bytes": 37872,
+  "corpus": {
+    "committed_traces": 841,
+    "deep_manifest": "inventory/deep-neow.json",
+    "deep_manifest_traces": 121,
+    "extra_deep_traces": [
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/202610230000.jsonl.gz",
+        "gzip_sha256": "42abd18a7249d504663aae7a9ba83acf86a971c6d59a6718142f344485887bc0"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/idle-frames/delayed/1.jsonl.gz",
+        "gzip_sha256": "b975f963235258f75d4caca80d5c54a3956ae2a44dd6bef48faf28ab988e9273"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/202610230005.jsonl.gz",
+        "gzip_sha256": "7caa30bb19e0a52b6d5fa3ab547fe271ab15b08d358b318c97f9f62ac24182b7"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/202610230008.jsonl.gz",
+        "gzip_sha256": "7ae0763070e63e613664ce609ee4d45caed7189a9092df35c1649753e99a5553"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/202610230004.jsonl.gz",
+        "gzip_sha256": "b975f963235258f75d4caca80d5c54a3956ae2a44dd6bef48faf28ab988e9273"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/idle-frames/delayed/5.jsonl.gz",
+        "gzip_sha256": "754033f4f2c6fb6c1bc4747769814ab5c6c74eaf5f25b2feb5ee702c31059451"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/idle-frames/delayed/2.jsonl.gz",
+        "gzip_sha256": "7caa30bb19e0a52b6d5fa3ab547fe271ab15b08d358b318c97f9f62ac24182b7"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/idle-frames/delayed/0.jsonl.gz",
+        "gzip_sha256": "42abd18a7249d504663aae7a9ba83acf86a971c6d59a6718142f344485887bc0"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/idle-frames/delayed/4.jsonl.gz",
+        "gzip_sha256": "7ae0763070e63e613664ce609ee4d45caed7189a9092df35c1649753e99a5553"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/202610230007.jsonl.gz",
+        "gzip_sha256": "768b02e299b76ca31619d6b2899e28594f4e2b63667101ff6b320a97622248bd"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/idle-frames/delayed/3.jsonl.gz",
+        "gzip_sha256": "768b02e299b76ca31619d6b2899e28594f4e2b63667101ff6b320a97622248bd"
+      },
+      {
+        "path": "/private/tmp/claude-501/-Users-destire/8b47fc2f-d01b-48e0-a002-360b13ca5f41/scratchpad/deep-mine2/202610230014.jsonl.gz",
+        "gzip_sha256": "754033f4f2c6fb6c1bc4747769814ab5c6c74eaf5f25b2feb5ee702c31059451"
+      }
+    ],
+    "decisions": 172725,
+    "sha256_of_sorted_gzip_sha256_lines": "5aca847d5e029d155ad89f1e3d8caea277134b71e00443559cf6fbe3c4f39fce"
+  },
+  "measured_peaks": {
+    "entities": 285,
+    "candidates": 51,
+    "by_kind": {
+      "screen": 1,
+      "player": 1,
+      "card": 255,
+      "monster": 5,
+      "power": 26,
+      "relic": 21,
+      "potion": 7,
+      "orb": 10,
+      "stance": 1,
+      "map_node": 71,
+      "option": 12,
+      "reward": 5
+    }
+  },
+  "decisions_by_screen": {
+    "BOSS_REWARD": 268,
+    "CARD_REWARD": 4267,
+    "COMBAT": 108666,
+    "COMBAT_REWARD": 14012,
+    "EVENT": 3273,
+    "GRID": 3812,
+    "HAND_SELECT": 19138,
+    "MAP": 7691,
+    "ROOM": 7442,
+    "SHOP": 4156
+  },
+  "boundaries_by_screen": {
+    "BOSS_REWARD": 268,
+    "CARD_REWARD": 4267,
+    "COMBAT": 108666,
+    "COMBAT_REWARD": 14344,
+    "DEATH": 640,
+    "EVENT": 3273,
+    "GRID": 3812,
+    "HAND_SELECT": 19138,
+    "MAP": 7691,
+    "ROOM": 7442,
+    "SHOP": 4156,
+    "VICTORY": 2
+  },
+  "event_types_observed": 52,
+  "gaps": [
+    {
+      "screen": "NONE",
+      "reason": "No legal policy decision exists; covered by the batch no-decision fault test, not an oracle decision trace."
+    },
+    {
+      "field": "Intent visibility during selection/reward overlays",
+      "reason": "Renderer intent alpha is absent from Game; the protocol omits these intents by default deny."
+    }
+  ]
+}
