@@ -8,7 +8,7 @@ struct Metamorphosis : CardHooks {
     }
     static SPIRE_FN void use(Game& g, int card, int) {
         for (int i = 0; i < g.cards[card].magic; ++i) {
-            Card generated = make_card(card_id(random_card_in_combat(g, static_cast<int>(CardType::Attack), false)));
+            Card generated = make_card(random_card_in_combat(g, static_cast<int>(CardType::Attack), false));
             if (generated.cost > 0) generated.cost = generated.cost_for_turn = 0;
             Effect e{};
             e.kind = EffectKind::MakeTempCardInDrawPile;

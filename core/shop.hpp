@@ -17,7 +17,7 @@ SPIRE_FN inline CardId shop_card(Game& g, int type, bool seeded, CardRarity colo
     const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
     const int sizes[] = {sizeof(common_card_pool) / sizeof(*common_card_pool), sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool), sizeof(rare_card_pool) / sizeof(*rare_card_pool)};
     for (int i = 0; i < sizes[rarity]; ++i)
-        if (static_cast<int>(pools[rarity][i].type) == type) choices.push_back(card_id(pools[rarity][i].id));
+        if (static_cast<int>(pools[rarity][i].type) == type) choices.push_back(pools[rarity][i].native);
     for (int i = 1; i < choices.size; ++i) {
         const CardId card = choices[i];
         int j = i;
@@ -32,7 +32,7 @@ SPIRE_FN inline int shop_card_base_price(CardId card) {
 }
 SPIRE_FN inline int shop_potion_price(PotionId id) {
     for (const auto& entry : silent_potion_pool)
-        if (potion_matches_id(id, entry.id)) return entry.rarity == 0 ? 50 : entry.rarity == 1 ? 75 : 100;
+        if (id == entry.id) return entry.rarity == 0 ? 50 : entry.rarity == 1 ? 75 : 100;
     SPIRE_ASSERT(false);
     __builtin_unreachable();
 }
@@ -86,7 +86,7 @@ SPIRE_FN inline void enter_shop(Game& g) {
         const RelicTier tier = i == 2 ? RelicTier::Shop : shop_relic_tier(g);
         RoomReward reward{};
         reward.kind = RewardKind::Relic;
-        reward.relic.id = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier), true)));
+        reward.relic.id = relic_id(random_relic_key(g, static_cast<int>(tier), true));
         const int index = create_reward(g, reward);
         const int price = floor_int(relic_data(reward.relic.id).price * g.rng.merchant.random(0.95f, 1.05f) + 0.5f);
         g.shop.relics.push_back({static_cast<uint8_t>(index), static_cast<uint8_t>(i), static_cast<int16_t>(price)});
@@ -179,7 +179,7 @@ SPIRE_FN inline void purchase_shop(Game& g, int choice) {
         }
         if (shop_restock(g)) {
             RelicId replacement;
-            do { replacement = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(shop_relic_tier(g)), true))); }
+            do { replacement = relic_id(random_relic_key(g, static_cast<int>(shop_relic_tier(g)), true)); }
             while (relic_data(replacement).excluded_from_restock);
             reward.relic = {replacement, relic_data(replacement).counter};
             relic_initialize_state(reward.relic);

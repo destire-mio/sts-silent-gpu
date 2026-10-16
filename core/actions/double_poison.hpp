@@ -15,7 +15,7 @@ struct DoublePoison : ActionHooks {
     SPIRE_FN static void execute(Game& g, const Effect& e) {
         if (e.target == no_target) return;
         const Creature& target = get_creature(g, e.target);
-        const int index = find_power(g, target, "Poison");
+        const int index = find_power(g, target, PowerId::Poison);
         if (index < 0) return;
         Effect apply{};
         apply.kind = EffectKind::ApplyPower;

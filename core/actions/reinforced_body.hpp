@@ -10,7 +10,7 @@ struct ReinforcedBody : ActionHooks {
     static SPIRE_FN void execute(Game& g, Effect& e) {
         int count = e.payload.state.ReinforcedBody.energyOnUse < 0 ? g.player.energy
                                                                    : e.payload.state.ReinforcedBody.energyOnUse;
-        if (has_relic(g, "Chemical X"))
+        if (has_relic(g, RelicId::ChemicalX))
             count += 2;
         if (count > 0) {
             for (int i = 0; i < count; ++i) {

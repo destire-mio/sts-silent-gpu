@@ -8,7 +8,7 @@ struct Chrysalis : CardHooks {
     }
     static SPIRE_FN void use(Game& g, int card, int) {
         for (int i = 0; i < g.cards[card].magic; ++i) {
-            Card created = make_card(card_id(random_card_in_combat(g, static_cast<int>(CardType::Skill), false)));
+            Card created = make_card(random_card_in_combat(g, static_cast<int>(CardType::Skill), false));
             if (created.cost > 0) created.cost = created.cost_for_turn = 0;
             Effect e{};
             e.kind = EffectKind::MakeTempCardInDrawPile;

@@ -7,7 +7,7 @@ struct Distraction : CardHooks {
         return {CardType::Skill, CardTarget::None, 1, -1, -1, -1, 0, 0, 0, true, false};
     }
     static SPIRE_FN void use(Game& g, int, int) {
-        Card generated = make_card(card_id(random_card_in_combat(g, static_cast<int>(CardType::Skill), false)));
+        Card generated = make_card(random_card_in_combat(g, static_cast<int>(CardType::Skill), false));
         if (generated.cost_for_turn >= 0) generated.cost_for_turn = 0;
         Effect e{};
         e.kind = EffectKind::MakeTempCardInHand;

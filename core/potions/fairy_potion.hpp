@@ -6,7 +6,7 @@ struct FairyPotion : PotionHooks {
     SPIRE_STATE(FairyPotion, int potency;)
     static SPIRE_FN constexpr PotionData data() { return {30, CardTarget::Self, true, true}; }
     static SPIRE_FN void constructPotion(const Game& g, PotionState& state, PotionId) {
-        state.FairyPotion.potency = data().potency * (has_relic(g, "SacredBark") ? 2 : 1);
+        state.FairyPotion.potency = data().potency * (has_relic(g, RelicId::SacredBark) ? 2 : 1);
     }
     static SPIRE_FN int potency(const Game& g, int slot) { return g.run.potion_state[slot].FairyPotion.potency; }
     static SPIRE_FN bool canUse(const Game&, int) { return false; }

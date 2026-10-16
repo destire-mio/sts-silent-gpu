@@ -7,7 +7,7 @@ struct Accuracy : PowerHooks {
     static SPIRE_FN void updateShivs(Game& g, const Power& p, const Pile& pile) {
         for (int i = 0; i < pile.size; ++i) {
             Card& card = g.cards[pile[i]];
-            if (card_is(card.id, "Shiv")) card.base_damage = (card.upgrades == 0 ? 4 : 6) + p.amount;
+            if (card.id == CardId::Shiv) card.base_damage = (card.upgrades == 0 ? 4 : 6) + p.amount;
         }
     }
     static SPIRE_FN void updateExistingShivs(Game& g, const Power& p) {

@@ -34,7 +34,7 @@ struct LouseNormal : MonsterHooks {
         queue_monster_roll(g, index);
     }
     SPIRE_FN static void changeState(Game& g, int index, const char* state) {
-        g.monsters[index].state.LouseNormal.isOpen = !same_id(state, "CLOSED");
+        g.monsters[index].state.LouseNormal.isOpen = !same_text(state, "CLOSED");
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int index) {
         queue_power(g, index, index, PowerId::CurlUp, g.run.ascension >= 17 ? g.rng.monster_hp.random(9, 12) : g.run.ascension >= 7 ? g.rng.monster_hp.random(4, 8) : g.rng.monster_hp.random(3, 7));

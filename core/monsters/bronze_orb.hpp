@@ -30,7 +30,7 @@ struct BronzeOrb : MonsterHooks {
             int target = no_target;
             for (int i = 0; i < g.monster_order.size; ++i) {
                 const int index = g.monster_order[i];
-                if (monster_is(g.monsters[index].id, "BronzeAutomaton")) { target = index; break; }
+                if (g.monsters[index].id == MonsterId::BronzeAutomaton) { target = index; break; }
             }
             Effect e{}; e.kind = EffectKind::Block; e.source = owner; e.target = target; e.amount = 12; add_bottom(g, e);
         } else { Effect e{}; e.kind = EffectKind::ApplyStasisAction; e.target = owner; add_bottom(g, e); }

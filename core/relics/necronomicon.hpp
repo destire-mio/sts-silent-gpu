@@ -6,10 +6,10 @@ struct Necronomicon : RelicHooks {
     static SPIRE_FN constexpr RelicData data() { return {-1, 400}; }
     SPIRE_STATE(Necronomicon, bool activated;)
     static SPIRE_FN void initializeState(Relic& r) { r.state.Necronomicon.activated = true; }
-    static SPIRE_FN void onEquip(Game& g, int) { obtain_card(g, make_card(card_id("Necronomicurse"))); }
+    static SPIRE_FN void onEquip(Game& g, int) { obtain_card(g, make_card(CardId::Necronomicurse)); }
     static SPIRE_FN void onUnequip(Game& g, int) {
         for (int i = 0; i < g.run.master_deck.size; ++i) {
-            if (!card_is(g.run.master_deck[i].id, "Necronomicurse")) continue;
+            if (g.run.master_deck[i].id != CardId::Necronomicurse) continue;
             g.run.master_deck.erase(i);
             break;
         }

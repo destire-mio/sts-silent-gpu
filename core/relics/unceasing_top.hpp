@@ -17,7 +17,7 @@ struct UnceasingTop : RelicHooks {
     static SPIRE_FN void onRefreshHand(Game& g, int relic) {
         const auto& state = g.run.relics[relic].state.UnceasingTop;
         if (g.manager.actions.empty() && g.hand.empty() && !g.manager.turn_has_ended && state.canDraw &&
-            !has_power(g, g.player.creature, "No Draw") && g.screen == Screen::Combat &&
+            !has_power(g, g.player.creature, PowerId::NoDraw) && g.screen == Screen::Combat &&
             g.room_in_combat && !state.disabledUntilEndOfTurn && (!g.discard.empty() || !g.draw.empty())) {
             Effect show{};
             show.kind = EffectKind::RelicAboveCreature;

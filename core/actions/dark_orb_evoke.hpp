@@ -16,7 +16,7 @@ struct DarkOrbEvoke : ActionHooks {
     }
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (e.target == no_target) return;
-        e.amount = has_power(g, get_creature(g, e.target), "Lockon") ? static_cast<int>(e.info_base * 1.5f) : e.info_base;
+        e.amount = has_power(g, get_creature(g, e.target), PowerId::LockOn) ? static_cast<int>(e.info_base * 1.5f) : e.info_base;
         damage(g, e);
         if (monsters_basically_dead(g)) clear_post_combat_actions(g);
     }

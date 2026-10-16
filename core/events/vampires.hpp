@@ -9,7 +9,7 @@ struct Vampires : EventHooks {
     static SPIRE_FN void enter(Game& g) {
         auto& s = g.event.state.Vampires;
         s.maxHpLoss = min(g.player.creature.max_hp - 1, -floor_int(-g.player.creature.max_hp * 0.3f));
-        s.hasVial = has_relic(g, "Blood Vial");
+        s.hasVial = has_relic(g, RelicId::BloodVial);
         event_options(g, s.hasVial ? 3 : 2);
     }
     static SPIRE_FN void choose(Game& g, int option) {

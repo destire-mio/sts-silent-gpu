@@ -44,7 +44,6 @@ struct Champ : MonsterHooks {
         Monster& m = g.monsters[owner]; auto& s = m.state.Champ;
         if (s.firstTurn) {
             s.firstTurn = false;
-            if (has_relic(g, "Champion Belt")) add_bottom(g, actions::Talk::make(owner));
         }
         if (m.move == 7) {
             Effect sfx{}; sfx.kind = EffectKind::SFX; add_bottom(g, sfx); add_bottom(g, actions::Shout::make(owner));

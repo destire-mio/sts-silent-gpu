@@ -12,7 +12,7 @@ struct Wish : CardHooks {
         e.kind = EffectKind::ChooseOne;
         action_initialize_state(e);
         e.source = e.target = no_target;
-        const CardId ids[] = {card_id("BecomeAlmighty"), card_id("FameAndFortune"), card_id("LiveForever")};
+        const CardId ids[] = {CardId::BecomeAlmighty, CardId::FameAndFortune, CardId::LiveForever};
         for (int i = 0; i < 3; ++i)
             e.payload.state.ChooseOne.choices[i] = create_card(g, make_card(ids[i], g.cards[card].upgrades));
         e.payload.state.ChooseOne.count = 3;

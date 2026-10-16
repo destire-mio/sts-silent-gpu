@@ -10,7 +10,7 @@ SPIRE_FN inline void enter_boss_chest(Game& g) {
     for (int i = 0; i < 3; ++i) {
         RoomReward reward{};
         reward.kind = RewardKind::Relic;
-        reward.relic.id = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(RelicTier::Boss))));
+        reward.relic.id = relic_id(random_relic_key(g, static_cast<int>(RelicTier::Boss)));
         g.chest.relics.push_back(create_reward(g, reward));
     }
     g.room_phase = RoomPhase::Complete;

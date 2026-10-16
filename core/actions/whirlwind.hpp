@@ -11,7 +11,7 @@ struct Whirlwind : ActionHooks {
     SPIRE_SNAPSHOT("WhirlwindAction.p", player)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         int count = e.payload.state.Whirlwind.energyOnUse < 0 ? g.player.energy : e.payload.state.Whirlwind.energyOnUse;
-        if (has_relic(g, "Chemical X"))
+        if (has_relic(g, RelicId::ChemicalX))
             count += 2;
         if (count > 0) {
             for (int i = 0; i < count; ++i) {

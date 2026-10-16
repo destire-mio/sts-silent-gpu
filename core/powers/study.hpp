@@ -8,7 +8,7 @@ struct Study : PowerHooks {
         Effect e{};
         e.kind = EffectKind::MakeTempCardInDrawPile;
         action_initialize_state(e);
-        e.card = create_card(g, make_card(card_id("Insight"), 0));
+        e.card = create_card(g, make_card(CardId::Insight, 0));
         e.amount = p.amount;
         e.payload.state.MakeTempCardInDrawPile.random_spot = true;
         add_bottom(g, e);

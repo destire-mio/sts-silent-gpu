@@ -15,7 +15,7 @@ struct GremlinMatchGame : EventHooks {
         s.attemptCount = 5; s.chosen = -1;
         const CardPoolEntry* pools[] = {rare_card_pool, uncommon_card_pool, common_card_pool};
         const int sizes[] = {sizeof(rare_card_pool) / sizeof(*rare_card_pool), sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool), sizeof(common_card_pool) / sizeof(*common_card_pool)};
-        for (int i = 0; i < 3; ++i) s.cards[s.count++] = create_card(g, make_card(card_id(pools[i][g.rng.card.random(sizes[i] - 1)].id)));
+        for (int i = 0; i < 3; ++i) s.cards[s.count++] = create_card(g, make_card(pools[i][g.rng.card.random(sizes[i] - 1)].native));
         for (int i = 0; i < 2; ++i) s.cards[s.count++] = create_card(g, make_card(random_curse(g)));
         s.cards[s.count++] = create_card(g, make_card(CardId::Neutralize));
         for (int i = 0; i < 6; ++i) {

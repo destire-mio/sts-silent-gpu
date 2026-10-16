@@ -19,7 +19,6 @@ SPIRE_FN inline void stance_start_turn(Game& g) {
     if (g.player.stance == Stance::Divinity) units::stances::Divinity::atStartOfTurn(g);
 }
 SPIRE_FN inline void change_stance(Game& g, Stance stance) {
-    if (has_power(g, g.player.creature, "CannotChangeStancePower")) return;
     const Stance old = g.player.stance;
     if (old != stance) {
         Powers& powers = g.player.creature.powers;

@@ -119,7 +119,7 @@ SPIRE_FN inline void queue_relic_above(Game& g, int relic, int owner, bool top) 
     if (top) g.manager.actions.push_front(index);
     else g.manager.actions.push_back(index);
 }
-SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_capacity>& choices) {
+SPIRE_FN inline void reward_card_choices(Game& g, List<CardId, reward_card_capacity>& choices) {
     bool any_color = false;
     for (int i = 0; i < g.run.relics.size; ++i) any_color |= relic_data(g.run.relics[i].id).any_color_rewards;
     int count = 3;
@@ -140,7 +140,7 @@ SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_
         const int rarity = g.room_kind == RoomKind::Boss || roll < g.room_rare_card_chance ? 2 : roll < g.room_rare_card_chance + g.room_uncommon_card_chance ? 1 : 0;
         if (rarity == 2) g.run.card_blizz_randomizer = 5;
         else if (rarity == 0) g.run.card_blizz_randomizer = max(-40, g.run.card_blizz_randomizer - 1);
-        const char* id;
+        CardId id;
         bool duplicate;
         do {
             if (any_color) {
@@ -149,10 +149,10 @@ SPIRE_FN inline void reward_card_choices(Game& g, List<const char*, reward_card_
                 for (int c = 0; c < static_cast<int>(sizeof(library_reward_cards) / sizeof(*library_reward_cards)); ++c)
                     if (library_reward_cards[c].rarity == rarities[rarity]) candidates.push_back(c);
                 g.rng.card.randomLong();
-                id = library_reward_cards[candidates[g.rng.card.random(candidates.size - 1)]].id;
-            } else id = pools[rarity][g.rng.card.random(sizes[rarity] - 1)].id;
+                id = library_reward_cards[candidates[g.rng.card.random(candidates.size - 1)]].native;
+            } else id = pools[rarity][g.rng.card.random(sizes[rarity] - 1)].native;
             duplicate = false;
-            for (int c = 0; c < choices.size; ++c) if (same_id(choices[c], id)) duplicate = true;
+            for (int c = 0; c < choices.size; ++c) if (choices[c] == id) duplicate = true;
         } while (duplicate);
         choices.push_back(id);
     }
@@ -173,12 +173,10 @@ SPIRE_FN inline int create_library_card(Game& g, int library) {
 }
 SPIRE_FN inline int create_card_reward(Game& g) {
     RoomReward reward{};
-    List<const char*, reward_card_capacity> choices{};
+    List<CardId, reward_card_capacity> choices{};
     reward_card_choices(g, choices);
     for (int i = 0; i < choices.size; ++i) {
-        int library = 0;
-        while (!same_id(library_reward_cards[library].id, choices[i])) ++library;
-        reward.cards.push_back(create_library_card(g, library));
+        reward.cards.push_back(create_card(g, make_card(g, choices[i])));
     }
     for (int i = 0; i < reward.cards.size; ++i) {
         Card& card = g.cards[reward.cards[i]];
@@ -195,7 +193,7 @@ SPIRE_FN inline void add_room_card_reward(Game& g) {
 SPIRE_FN inline CardId shuffled_colorless_card(Game& g, CardRarity rarity) {
     shuffle(g.run.colorless_pool.values, g.run.colorless_pool.size, g.rng.shuffle);
     for (int i = 0; i < g.run.colorless_pool.size; ++i) {
-        const CardId id = card_id(colorless_card_pool[g.run.colorless_pool[i]].id);
+        const CardId id = colorless_card_pool[g.run.colorless_pool[i]].native;
         if (card_rarity(id) == rarity) return id;
     }
     SPIRE_ASSERT(false);
@@ -204,7 +202,7 @@ SPIRE_FN inline CardId shuffled_colorless_card(Game& g, CardRarity rarity) {
 SPIRE_FN inline CardId random_colorless_card(Game& g, CardRarity rarity, bool seeded) {
     List<CardId, 64> choices{};
     for (const auto& entry : colorless_card_pool) {
-        const CardId id = card_id(entry.id);
+        const CardId id = entry.native;
         if (card_rarity(id) != rarity) continue;
         int at = choices.size;
         while (at > 0 && card_sort_order(choices[at - 1]) > card_sort_order(id)) --at;
@@ -341,16 +339,16 @@ SPIRE_FN inline Card transform_card(Game& g, const Card& original, bool upgrade,
         for (const CardId id : library_curses) if (id != original.id) candidates.push_back(id);
     } else if (colorless) {
         for (int i = 0; i < g.run.source_card_pools[3].size; ++i) {
-            const CardId id = card_id(pools[3][g.run.source_card_pools[3][i]].id);
+            const CardId id = pools[3][g.run.source_card_pools[3][i]].native;
             if (id != original.id) candidates.push_back(id);
         }
     } else {
         for (int i = 0; i < sizes[0]; ++i) {
-            const CardId id = card_id(pools[0][i].id);
+            const CardId id = pools[0][i].native;
             if (id != original.id) candidates.push_back(id);
         }
         for (int p = 1; p < 3; ++p) for (int i = 0; i < g.run.source_card_pools[p].size; ++i) {
-            const CardId id = card_id(pools[p][g.run.source_card_pools[p][i]].id);
+            const CardId id = pools[p][g.run.source_card_pools[p][i]].native;
             if (id != original.id) candidates.push_back(id);
         }
     }
@@ -358,12 +356,6 @@ SPIRE_FN inline Card transform_card(Game& g, const Card& original, bool upgrade,
     if (upgrade) card_upgrade(result);
     result.uuid = g.next_card_uuid++;
     return result;
-}
-SPIRE_FN inline RelicId relic_id(const char* name) {
-    for (int i = 0; i < static_cast<int>(RelicId::Count); ++i)
-        if (relic_matches_id(static_cast<RelicId>(i), name)) return static_cast<RelicId>(i);
-    SPIRE_ASSERT(false);
-    __builtin_unreachable();
 }
 SPIRE_FN inline RelicKey random_relic_key(Game& g, int tier, bool from_end) {
     while (true) {
@@ -378,14 +370,14 @@ SPIRE_FN inline RelicKey random_relic_key(Game& g, int tier, bool from_end) {
             key = RelicKey::Circlet;
         }
         else key = g.run.relic_pools[pool].erase((from_end && pool != static_cast<int>(RelicTier::Boss)) ? g.run.relic_pools[pool].size - 1 : 0);
-        if (relic_can_spawn_id(g, relic_id(relic_key_name(key)))) return key;
+        if (relic_can_spawn_id(g, relic_id(key))) return key;
         from_end = true;
     }
 }
 SPIRE_FN inline void add_relic_reward(Game& g, RelicTier tier) {
     RoomReward reward{};
     reward.kind = RewardKind::Relic;
-    reward.relic.id = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier))));
+    reward.relic.id = relic_id(random_relic_key(g, static_cast<int>(tier)));
     g.room_rewards.push_back(create_reward(g, reward));
 }
 SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {

@@ -6,7 +6,7 @@ struct BlessingOfTheForge : PotionHooks {
     SPIRE_STATE(BlessingOfTheForge, int potency;)
     static SPIRE_FN constexpr PotionData data() { return {0, CardTarget::Self, true}; }
     static SPIRE_FN void constructPotion(const Game& g, PotionState& state, PotionId) {
-        state.BlessingOfTheForge.potency = data().potency * (has_relic(g, "SacredBark") ? 2 : 1);
+        state.BlessingOfTheForge.potency = data().potency * (has_relic(g, RelicId::SacredBark) ? 2 : 1);
     }
     static SPIRE_FN int potency(const Game& g, int slot) { return g.run.potion_state[slot].BlessingOfTheForge.potency; }
     static SPIRE_FN void use(Game& g, int, int) {

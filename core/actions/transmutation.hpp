@@ -20,10 +20,10 @@ struct TransmutationAction : ActionHooks {
     SPIRE_FN static void execute(Game& g, Effect& e) {
         const auto& state = e.payload.state.TransmutationAction;
         int effect = state.energy_on_use == -1 ? g.player.energy : state.energy_on_use;
-        if (has_relic(g, "Chemical X")) effect += 2;
+        if (has_relic(g, RelicId::ChemicalX)) effect += 2;
         if (effect > 0) {
             for (int i = 0; i < effect; ++i) {
-                const int card = create_card(g, make_card(card_id(random_card_in_combat(g, -1, true))));
+                const int card = create_card(g, make_card(random_card_in_combat(g, -1, true)));
                 if (state.upgraded) card_upgrade(g.cards[card]);
                 if (g.cards[card].cost_for_turn >= 0) g.cards[card].cost_for_turn = 0;
                 Effect copy{};

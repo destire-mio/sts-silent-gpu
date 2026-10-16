@@ -39,7 +39,7 @@ static void acquisition_order() {
     require(before.run.master_deck.size == 6, "an exhausted Omamori permits a curse");
     obtain_card(before, make_card(CardId::Necronomicurse));
     unequip_relic(before, RelicId::Necronomicon);
-    require(before.run.master_deck.size == 6 && card_is(before.run.master_deck[5].id, "Necronomicurse"),
+    require(before.run.master_deck.size == 6 && (before.run.master_deck[5].id == CardId::Necronomicurse),
         "unequipping Necronomicon removes one curse");
     require(before.obtained_cards[static_cast<int>(CardId::Necronomicurse)] == 0,
         "CardHelper does not track curse acquisitions");

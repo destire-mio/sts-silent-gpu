@@ -9,7 +9,7 @@ struct Tempest : ActionHooks {
     SPIRE_SNAPSHOT("TempestAction.p", player)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         int count = e.payload.state.Tempest.energyOnUse < 0 ? g.player.energy : e.payload.state.Tempest.energyOnUse;
-        if (has_relic(g, "Chemical X"))
+        if (has_relic(g, RelicId::ChemicalX))
             count += 2;
         if (e.payload.state.Tempest.upgraded)
             ++count;

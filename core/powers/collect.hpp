@@ -14,7 +14,7 @@ struct Collect : PowerHooks {
         Effect e{};
         e.kind = EffectKind::MakeTempCardInHand;
         action_initialize_state(e);
-        e.card = create_card(g, make_card(card_id("Miracle"), 1));
+        e.card = create_card(g, make_card(CardId::Miracle, 1));
         e.amount = 1;
         e.payload.state.MakeTempCardInHand.other_card_not_in_center = false;
         add_bottom(g, e);

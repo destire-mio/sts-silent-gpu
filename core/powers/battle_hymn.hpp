@@ -9,7 +9,7 @@ struct BattleHymn : PowerHooks {
             Effect e{};
             e.kind = EffectKind::MakeTempCardInHand;
             action_initialize_state(e);
-            e.card = create_card(g, make_card(card_id("Smite"), 0));
+            e.card = create_card(g, make_card(CardId::Smite, 0));
             e.amount = p.amount;
             e.payload.state.MakeTempCardInHand.other_card_not_in_center = true;
             add_bottom(g, e);

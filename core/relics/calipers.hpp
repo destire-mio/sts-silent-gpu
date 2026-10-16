@@ -9,6 +9,6 @@ struct Calipers : RelicHooks {
 
 namespace spire {
 SPIRE_FN inline int relic_block_loss(const Game& g) {
-    return has_relic(g, "Calipers") ? 15 : g.player.creature.block;
+    return has_relic(g, RelicId::Calipers) ? 15 : g.player.creature.block;
 }
 }

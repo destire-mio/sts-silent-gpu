@@ -40,7 +40,7 @@ struct TheCollector : MonsterHooks {
         Monster& m = g.monsters[owner];
         auto& state = m.state.TheCollector;
         if (m.move == 1) {
-            for (int i = 0; i < 2; ++i) state.enemySlots[i] = queue_spawn_monster(g, monster_id("TorchHead"), -100.0f - 185.0f * static_cast<float>(i + 1), true);
+            for (int i = 0; i < 2; ++i) state.enemySlots[i] = queue_spawn_monster(g, MonsterId::TorchHead, -100.0f - 185.0f * static_cast<float>(i + 1), true);
             state.initialSpawn = false;
         } else if (m.move == 2) queue_monster_damage(g, owner, player_target, 0);
         else if (m.move == 3) {
@@ -58,7 +58,7 @@ struct TheCollector : MonsterHooks {
             state.ultUsed = true;
         } else if (m.move == 5) {
             for (int i = 0; i < 2; ++i) if (g.monsters[state.enemySlots[i]].creature.dying)
-                state.enemySlots[i] = queue_spawn_monster(g, monster_id("TorchHead"), -100.0f - 185.0f * static_cast<float>(i + 1), true);
+                state.enemySlots[i] = queue_spawn_monster(g, MonsterId::TorchHead, -100.0f - 185.0f * static_cast<float>(i + 1), true);
         }
         ++state.turnsTaken;
         queue_monster_roll(g, owner);

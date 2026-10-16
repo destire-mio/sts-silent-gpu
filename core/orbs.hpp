@@ -62,14 +62,14 @@ SPIRE_FN inline void lightning_damage(Game& g, const Effect& e) {
     if (e.flag) {
         int amounts[monster_capacity]{};
         for (int i = 0; i < g.monster_order.size; ++i)
-            amounts[i] = has_power(g, g.monsters[g.monster_order[i]].creature, "Lockon") ? static_cast<int>(e.info_base * 1.5f) : e.info_base;
+            amounts[i] = has_power(g, g.monsters[g.monster_order[i]].creature, PowerId::LockOn) ? static_cast<int>(e.info_base * 1.5f) : e.info_base;
         add_top(g, units::actions::DamageAllEnemies::make(g, player_target, amounts, g.monster_order.size, DamageType::Thorns));
     } else {
         const int target = random_living_monster(g);
         if (target == no_target) return;
         Effect hit{}; hit.kind = EffectKind::Damage; hit.target = target; hit.damage_type = DamageType::Thorns;
         hit.info_base = e.info_base;
-        hit.amount = has_power(g, get_creature(g, target), "Lockon") ? static_cast<int>(e.info_base * 1.5f) : e.info_base;
+        hit.amount = has_power(g, get_creature(g, target), PowerId::LockOn) ? static_cast<int>(e.info_base * 1.5f) : e.info_base;
         hit.flag = true; add_top(g, hit);
     }
 }

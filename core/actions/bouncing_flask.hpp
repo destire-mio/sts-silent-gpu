@@ -30,7 +30,7 @@ struct BouncingFlask : ActionHooks {
             apply.kind = EffectKind::ApplyPower;
             apply.source = player_target;
             apply.target = e.target;
-            apply.power = power_id("Poison");
+            apply.power = PowerId::Poison;
             apply.amount = e.payload.state.BouncingFlask.amount;
             add_top(g, apply);
         }

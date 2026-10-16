@@ -62,7 +62,7 @@ struct Darkling : MonsterHooks {
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* key) {
-        if (same_id(key, "REVIVE")) g.monsters[owner].creature.half_dead = false;
+        if (same_text(key, "REVIVE")) g.monsters[owner].creature.half_dead = false;
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics) {
         if (!g.cannot_lose) monster_die_base(g, owner, trigger_relics);

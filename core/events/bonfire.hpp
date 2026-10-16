@@ -24,7 +24,7 @@ struct Bonfire : EventHooks {
         const Card card = g.run.master_deck[chosen];
         s.offeredCard = g.cards.add(card) + 1;
         switch (card_rarity(card.id)) {
-        case CardRarity::Curse: equip_relic(g, has_relic(g, "Spirit Poop") ? RelicId::Circlet : RelicId::SpiritPoop); break;
+        case CardRarity::Curse: equip_relic(g, has_relic(g, RelicId::SpiritPoop) ? RelicId::Circlet : RelicId::SpiritPoop); break;
         case CardRarity::Common: case CardRarity::Special: heal_creature(g, player_target, 5); break;
         case CardRarity::Uncommon: heal_creature(g, player_target, g.player.creature.max_hp); break;
         case CardRarity::Rare: increase_max_hp(g, 10); heal_creature(g, player_target, g.player.creature.max_hp); break;

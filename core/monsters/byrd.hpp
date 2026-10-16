@@ -22,7 +22,7 @@ struct Byrd : MonsterHooks {
     }
     SPIRE_FN static void usePreBattleAction(Game& g, int owner) { queue_power(g, owner, owner, PowerId::Flight, g.run.ascension >= 17 ? 4 : 3); }
     SPIRE_FN static void changeState(Game& g, int owner, const char* key) {
-        if (same_id(key, "GROUNDED")) {
+        if (same_text(key, "GROUNDED")) {
             set_monster_move(g, owner, 4, Intent::Stun); monster_createIntent(g, owner);
             g.monsters[owner].state.Byrd.isFlying = false;
         }

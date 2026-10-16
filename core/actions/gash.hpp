@@ -11,7 +11,7 @@ struct Gash : ActionHooks {
         for (const Pile *pile : piles)
             for (int i = 0; i < pile->size; ++i) {
                 const int card = (*pile)[i];
-                if (!card_is(g.cards[card].id, "Gash"))
+                if (g.cards[card].id != CardId::Claw)
                     continue;
                 g.cards[card].base_damage += e.amount;
                 card_applyPowers(g, card);

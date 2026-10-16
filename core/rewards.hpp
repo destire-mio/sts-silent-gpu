@@ -32,7 +32,7 @@ SPIRE_FN inline RelicTier random_elite_relic_tier(Game& g) {
 }
 SPIRE_FN inline RelicId random_screenless_relic(Game& g, RelicTier tier) {
     RelicId id;
-    do { id = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier)))); }
+    do { id = relic_id(random_relic_key(g, static_cast<int>(tier))); }
     while (relic_data(id).screenless_excluded);
     return id;
 }
@@ -52,7 +52,7 @@ SPIRE_FN inline void add_key_reward(Game& g, RewardKind kind) {
 SPIRE_FN inline void add_noncamp_relic_reward(Game& g, RelicTier tier) {
     RelicId id;
     do {
-        id = relic_id(relic_key_name(random_relic_key(g, static_cast<int>(tier))));
+        id = relic_id(random_relic_key(g, static_cast<int>(tier)));
     } while (relic_data(id).adds_campfire_option);
     RoomReward reward{};
     reward.kind = RewardKind::Relic;

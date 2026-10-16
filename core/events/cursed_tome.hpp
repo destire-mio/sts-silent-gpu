@@ -21,9 +21,9 @@ struct CursedTome : EventHooks {
             event_damage(g, damage, no_target, DamageType::HpLoss); s.damageTaken += damage;
             if (option == 0) {
                 RelicId books[3]{}; int count = 0;
-                if (!has_relic(g, "Necronomicon")) books[count++] = RelicId::Necronomicon;
-                if (!has_relic(g, "Enchiridion")) books[count++] = RelicId::Enchiridion;
-                if (!has_relic(g, "Nilry's Codex")) books[count++] = RelicId::NilrysCodex;
+                if (!has_relic(g, RelicId::Necronomicon)) books[count++] = RelicId::Necronomicon;
+                if (!has_relic(g, RelicId::Enchiridion)) books[count++] = RelicId::Enchiridion;
+                if (!has_relic(g, RelicId::NilrysCodex)) books[count++] = RelicId::NilrysCodex;
                 if (count == 0) books[count++] = RelicId::Circlet;
                 RoomReward reward{}; reward.kind = RewardKind::Relic;
                 reward.relic.id = books[g.rng.misc.random(count - 1)];

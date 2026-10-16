@@ -20,7 +20,7 @@ struct Mushrooms : EventHooks {
         else {
             add_gold_reward(g, g.rng.misc.random(20, 30));
             RoomReward reward{}; reward.kind = RewardKind::Relic;
-            reward.relic.id = has_relic(g, "Odd Mushroom") ? RelicId::Circlet : RelicId::OddMushroom;
+            reward.relic.id = has_relic(g, RelicId::OddMushroom) ? RelicId::Circlet : RelicId::OddMushroom;
             g.room_rewards.push_back(create_reward(g, reward));
             enter_combat(g);
             g.combat_metric_event = g.event.id;

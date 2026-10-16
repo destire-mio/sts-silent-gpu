@@ -14,12 +14,12 @@ struct Codex : ActionHooks {
         if (!e.payload.state.Codex.selecting) {
             g.reward_cards.clear();
             while (g.reward_cards.size != 3) {
-                const char* name = random_card_in_combat(g, -1, false);
+                const CardId name = random_card_in_combat(g, -1, false);
                 bool duplicate = false;
                 for (int i = 0; i < g.reward_cards.size; ++i)
-                    if (card_is(g.cards[g.reward_cards[i]].id, name)) duplicate = true;
+                    if (g.cards[g.reward_cards[i]].id == name) duplicate = true;
                 if (duplicate) continue;
-                g.reward_cards.push_back(create_card(g, make_card(card_id(name))));
+                g.reward_cards.push_back(create_card(g, make_card(name)));
             }
             g.discovery_card = -1;
             g.reward_skippable = true;
@@ -31,7 +31,7 @@ struct Codex : ActionHooks {
             if (g.discovery_card >= 0) {
                 Card card = card_makeStatEquivalentCopy(g, g.discovery_card);
                 const CardType type = card_data(card.id).type;
-                if (type != CardType::Curse && type != CardType::Status && has_power(g, g.player.creature, "MasterRealityPower"))
+                if (type != CardType::Curse && type != CardType::Status && has_power(g, g.player.creature, PowerId::MasterReality))
                     card_upgrade(card);
                 const int index = create_card(g, card);
                 if (g.draw.empty()) g.draw.push_back(index);

@@ -16,7 +16,7 @@ struct GoldenIdolEvent : EventHooks {
         auto& s = g.event.state.GoldenIdolEvent;
         if (s.screenNum == 0) {
             if (option == 0) {
-                equip_relic(g, has_relic(g, "Golden Idol") ? RelicId::Circlet : RelicId::GoldenIdol);
+                equip_relic(g, has_relic(g, RelicId::GoldenIdol) ? RelicId::Circlet : RelicId::GoldenIdol);
                 s.relicMetric = g.run.relics.size;
                 s.screenNum = 1; event_options(g, 3);
             } else { s.screenNum = 2; event_options(g, 1); }

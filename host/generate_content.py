@@ -245,12 +245,12 @@ def generate(root, output):
     declarations += ['SPIRE_FN inline CardRarity card_rarity(CardId id);',
                      'SPIRE_FN inline int card_sort_order(CardId id);']
     card_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'card'}
-    content.append('struct RewardCardPoolEntry { const char* id; CardRarity rarity; CardId native; CardType type; bool healing; };')
+    content.append('struct RewardCardPoolEntry { CardRarity rarity; CardId native; CardType type; bool healing; };')
     content.append('constexpr RewardCardPoolEntry library_reward_cards[] = {')
     native_cards = {row[1]: row[0] for row in catalogs['cards']}
     for game_id, facts in sorted(card_facts.items()):
         if facts['rarity'] in ('COMMON', 'UNCOMMON', 'RARE') and facts['type'] not in ('CURSE', 'STATUS'):
-            content.append('{' + json.dumps(game_id) + ', CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards[game_id] + ', CardType::' + facts['type'].title() + ', ' + str('HEALING' in facts['tags']).lower() + '},')
+            content.append('{CardRarity::' + facts['rarity'].title() + ', CardId::' + native_cards[game_id] + ', CardType::' + facts['type'].title() + ', ' + str('HEALING' in facts['tags']).lower() + '},')
     content.append('};')
     ranks = {game_id: rank for rank, game_id in enumerate(sorted(row[1] for row in catalogs['cards']))}
     for name, result in [('card_rarity', 'CardRarity'), ('card_sort_order', 'int')]:
@@ -272,6 +272,13 @@ def generate(root, output):
     content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
     relic_inventory = [unit for unit in inventory if unit['kind'] == 'relic']
     ids.append('enum class RelicKey : uint8_t { ' + ', '.join(unit['java_class'].rsplit('.', 1)[1] for unit in relic_inventory) + ', Count };')
+    native_relics = {row[1]: row[0] for row in catalogs['relics']}
+    declarations.append('SPIRE_FN inline RelicId relic_id(RelicKey key);')
+    content.append('constexpr RelicId relic_key_ids[] = {')
+    for unit in relic_inventory:
+        content.append('RelicId::' + native_relics[unit['game_id']] + ',')
+    content.append('};')
+    content.append('SPIRE_FN inline RelicId relic_id(RelicKey key) { SPIRE_ASSERT(key < RelicKey::Count); return relic_key_ids[static_cast<int>(key)]; }')
     declarations.append('SPIRE_FN inline const char* relic_key_name(RelicKey key);')
     content.append('SPIRE_FN inline const char* relic_key_name(RelicKey key) { switch (key) {')
     for unit in relic_inventory:
@@ -303,20 +310,14 @@ def generate(root, output):
         content.append('};')
     potion_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'potion'}
     potion_pool = next(unit['facts']['silent_pool'] for unit in inventory if unit['key'] == 'rule:helpers.PotionHelper')
-    potion_types = {game_id: typename for _, game_id, _, typename in catalogs['potions']}
-    content.append('struct PotionPoolEntry { const char* id; int rarity; bool limited_exclusion; };')
+    potion_types = {game_id: (unit, typename) for unit, game_id, _, typename in catalogs['potions']}
+    content.append('struct PotionPoolEntry { PotionId id; int rarity; bool limited_exclusion; };')
     content.append('constexpr PotionPoolEntry silent_potion_pool[] = {')
     for game_id in potion_pool:
         rarity = {'COMMON': 0, 'UNCOMMON': 1, 'RARE': 2}[potion_facts[game_id]['rarity']]
-        content.append('{' + json.dumps(game_id) + ', ' + str(rarity) + ', units::potions::' + potion_types[game_id] + '::data().limited_exclusion},')
+        unit, typename = potion_types[game_id]
+        content.append('{PotionId::' + unit + ', ' + str(rarity) + ', units::potions::' + typename + '::data().limited_exclusion},')
     content.append('};')
-    for kind in ('powers', 'relics', 'potions'):
-        enum, _, prefix, _ = KINDS[kind]
-        declarations.append(f'SPIRE_FN inline bool {prefix}_matches_id({enum} id, const char* java_id);')
-        content.append(f'SPIRE_FN inline bool {prefix}_matches_id({enum} id, const char* java_id) {{ switch (id) {{')
-        for unit, java_id, _, _ in catalogs[kind]:
-            content.append(f'case {enum}::{unit}: return same_text(java_id, "{java_id}");')
-        content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
     for kind, (enum, base, prefix, selector) in KINDS.items():
         entries = catalogs[kind]
         state_type = {"actions": "Effect", "encounters": "Encounter"}.get(kind, prefix.capitalize()) + "State"

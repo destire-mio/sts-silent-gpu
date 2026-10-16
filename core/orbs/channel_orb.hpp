@@ -5,7 +5,6 @@ SPIRE_RULE("rule:characters.AbstractPlayer:channelOrb")
 namespace spire {
 SPIRE_FN inline void channel_orb(Game& g, int index) {
     if (g.player.max_orbs <= 0) return;
-    if (has_relic(g, "Dark Core") && g.orbs.kind(index) != OrbKind::Dark) index = make_orb(g, OrbKind::Dark);
     for (int i = 0; i < g.orbs.slots.size; ++i) {
         if (g.orbs.slots[i] >= 0) continue;
         g.orbs.slots[i] = index;

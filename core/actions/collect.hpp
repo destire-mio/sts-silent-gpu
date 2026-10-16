@@ -8,7 +8,7 @@ struct Collect : ActionHooks {
     SPIRE_SNAPSHOT("CollectAction.p", player)
     static SPIRE_FN void execute(Game& g, Effect& e) {
         int count = e.payload.state.Collect.energyOnUse == -1 ? g.player.energy : e.payload.state.Collect.energyOnUse;
-        if (has_relic(g, "Chemical X"))
+        if (has_relic(g, RelicId::ChemicalX))
             count += 2;
         if (e.payload.state.Collect.upgraded)
             ++count;

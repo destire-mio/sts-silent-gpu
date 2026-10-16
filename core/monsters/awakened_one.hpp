@@ -42,7 +42,7 @@ struct AwakenedOne : MonsterHooks {
             if (m.move == 6) {
                 Effect e{}; e.kind = EffectKind::MakeTempCardInDrawPile; action_initialize_state(e);
                 e.source = e.target = no_target;
-                e.card = create_card(g, make_card(card_id("Void")));
+                e.card = create_card(g, make_card(CardId::VoidCard));
                 e.amount = 1;
                 e.payload.state.MakeTempCardInDrawPile.random_spot = true;
                 add_bottom(g, e);
@@ -54,7 +54,7 @@ struct AwakenedOne : MonsterHooks {
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* key) {
-        if (same_id(key, "REBIRTH")) {
+        if (same_text(key, "REBIRTH")) {
             Creature& c = g.monsters[owner].creature;
             c.max_hp = g.run.ascension >= 9 ? 320 : 300;
             c.half_dead = false;
@@ -74,7 +74,7 @@ struct AwakenedOne : MonsterHooks {
             for (int i = 0; i < c.powers.size;) {
                 const Power& p = c.powers.at(g.power_objects, i);
                 // AwakenedOne.damage reads the instance type; negative Strength is a debuff.
-                if (power_isDebuff(p, owner) || p.id == PowerId::Curiosity || p.id == PowerId::Unawakened || power_matches_id(p.id, "Shackled")) c.powers.erase(g.power_objects, i);
+                if (power_isDebuff(p, owner) || p.id == PowerId::Curiosity || p.id == PowerId::Unawakened || (p.id == PowerId::GainStrength)) c.powers.erase(g.power_objects, i);
                 else ++i;
             }
             set_monster_move(g, owner, 3, Intent::Unknown);

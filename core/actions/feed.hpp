@@ -11,7 +11,7 @@ struct Feed : ActionHooks {
             return;
         creature_damage(g, e);
         const Creature &c = get_creature(g, e.target);
-        if ((c.dying || c.hp <= 0) && !c.half_dead && !has_power(g, c, "Minion"))
+        if ((c.dying || c.hp <= 0) && !c.half_dead && !has_power(g, c, PowerId::Minion))
             increase_max_hp(g, e.extra);
         if (monsters_basically_dead(g))
             clear_post_combat_actions(g);

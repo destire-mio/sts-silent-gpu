@@ -28,7 +28,7 @@ struct CallingBell : RelicHooks {
             for (int tier = 0; tier < 3; ++tier) {
                 RoomReward reward{};
                 reward.kind = RewardKind::Relic;
-                reward.relic.id = relic_id(relic_key_name(screenlessRelic(g, tier)));
+                reward.relic.id = relic_id(screenlessRelic(g, tier));
                 g.screen_rewards.push_back(create_reward(g, reward));
             }
             g.reward_proceed_visible = true;

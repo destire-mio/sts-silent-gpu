@@ -10,9 +10,9 @@ struct ConjureBlade : ActionHooks {
     static SPIRE_FN void execute(Game& g, Effect& e) {
         int count =
             e.payload.state.ConjureBlade.energyOnUse < 0 ? g.player.energy : e.payload.state.ConjureBlade.energyOnUse;
-        if (has_relic(g, "Chemical X"))
+        if (has_relic(g, RelicId::ChemicalX))
             count += 2;
-        Card card = make_card(card_id("Expunger"));
+        Card card = make_card(CardId::Expunger);
         card.base_magic = card.magic = count;
         Effect a{};
         a.kind = EffectKind::MakeTempCardInDrawPile;

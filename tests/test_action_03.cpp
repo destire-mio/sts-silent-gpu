@@ -275,12 +275,12 @@ static void source_pools() {
     g.run.source_card_pools[0].push_back(4);
     g.run.source_card_pools[0].push_back(0);
     const int64_t before = g.rng.card_random.counter;
-    require(same_id(random_card_in_combat(g, static_cast<int>(CardType::Skill), false), "Cloak And Dagger"),
+    require((random_card_in_combat(g, static_cast<int>(CardType::Skill), false) == CardId::CloakAndDagger),
             "typed combat choices read the source pool and filter attack cards");
     g.run.source_card_pools[3].clear();
     g.run.source_card_pools[3].push_back(8);
     g.run.source_card_pools[3].push_back(34);
-    require(same_id(random_card_in_combat(g, -1, true), "Madness") && g.rng.card_random.counter == before + 2,
+    require((random_card_in_combat(g, -1, true) == CardId::Madness) && g.rng.card_random.counter == before + 2,
             "colorless choices exclude healing and consume a draw for a singleton pool");
 }
 

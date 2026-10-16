@@ -18,7 +18,7 @@ struct MaskedBandits : EventHooks {
             else if (option == 1) {
                 add_gold_reward(g, g.rng.misc.random(25, 35));
                 RoomReward reward{}; reward.kind = RewardKind::Relic;
-                reward.relic.id = has_relic(g, "Red Mask") ? RelicId::Circlet : RelicId::RedMask;
+                reward.relic.id = has_relic(g, RelicId::RedMask) ? RelicId::Circlet : RelicId::RedMask;
                 g.room_rewards.push_back(create_reward(g, reward));
                 enter_combat(g);
             }

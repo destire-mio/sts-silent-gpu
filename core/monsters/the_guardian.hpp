@@ -83,20 +83,20 @@ struct TheGuardian : MonsterHooks {
     SPIRE_FN static void changeState(Game& g, int owner, const char* name) {
         Monster& m = g.monsters[owner];
         auto& state = m.state.TheGuardian;
-        if (same_id(name, "Defensive Mode")) {
+        if (same_text(name, "Defensive Mode")) {
             Effect e{}; e.kind = EffectKind::RemovePower; e.source = e.target = owner; e.power = PowerId::ModeShift; add_bottom(g, e);
             queue_block(g, owner, 20);
             state.dmgThreshold += 10;
             set_monster_move(g, owner, 1, Intent::Buff);
             monster_createIntent(g, owner);
             state.isOpen = false;
-        } else if (same_id(name, "Offensive Mode")) {
+        } else if (same_text(name, "Offensive Mode")) {
             queue_power(g, owner, owner, PowerId::ModeShift, state.dmgThreshold);
             add_bottom(g, actions::ChangeState::make(g, owner, "Reset Threshold"));
             if (m.creature.block != 0) add_bottom(g, actions::LoseBlock::construct(owner, owner, m.creature.block));
             state.isOpen = true;
             state.closeUpTriggered = false;
-        } else if (same_id(name, "Reset Threshold")) state.dmgTaken = 0;
+        } else if (same_text(name, "Reset Threshold")) state.dmgTaken = 0;
     }
     SPIRE_FN static void damage(Game& g, int owner, const DamageInfo& info) {
         Monster& m = g.monsters[owner];

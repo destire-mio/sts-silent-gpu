@@ -5,7 +5,7 @@ namespace spire::units::powers {
 struct Mark : PowerHooks {
     static SPIRE_FN constexpr PowerData data() { return {5, true}; }
     static SPIRE_FN void triggerMarks(Game& g, Power& p, int owner, int card) {
-        if (card_is(g.cards[card].id, "PathToVictory")) {
+        if (g.cards[card].id == CardId::PressurePoints) {
             Effect e{};
             e.kind = EffectKind::LoseHP;
             e.source = no_target;

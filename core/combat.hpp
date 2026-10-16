@@ -14,53 +14,6 @@ SPIRE_FN inline int16_t& monster_output_damage(Game& g, Monster& m, int slot) {
 SPIRE_FN inline const int16_t& monster_output_damage(const Game& g, const Monster& m, int slot) {
     return slot < 3 ? m.damage_output[slot] : g.monster_damage_extra[m.damage_extra + slot - 3].output;
 }
-SPIRE_FN inline bool same_id(const char* a, const char* b) {
-    while (*a && *a == *b) { ++a; ++b; }
-    return *a == *b;
-}
-SPIRE_FN inline bool card_is(CardId id, const char* name) {
-    switch (id) {
-#define SPIRE_UNIT(id, java_name, header, type) case CardId::id: return same_id(java_name, name);
-#include "cards/catalog.def"
-#undef SPIRE_UNIT
-    default: SPIRE_ASSERT(false); }
-    __builtin_unreachable();
-}
-SPIRE_FN inline bool monster_is(MonsterId id, const char* name) {
-    switch (id) {
-#define SPIRE_UNIT(id, java_name, header, type) case MonsterId::id: return same_id(java_name, name);
-#include "monsters/catalog.def"
-#undef SPIRE_UNIT
-    default: SPIRE_ASSERT(false);
-    }
-    __builtin_unreachable();
-}
-SPIRE_FN inline CardId card_id(const char* name) {
-    for (int i = 0; i < static_cast<int>(CardId::Count); ++i)
-        if (card_is(static_cast<CardId>(i), name)) return static_cast<CardId>(i);
-    SPIRE_ASSERT(false);
-    __builtin_unreachable();
-}
-SPIRE_FN inline MonsterId monster_id(const char* name) {
-#define SPIRE_UNIT(unit, id, path, type) if (same_id(name, id)) return MonsterId::unit;
-#include "monsters/catalog.def"
-#undef SPIRE_UNIT
-    SPIRE_ASSERT(false);
-    __builtin_unreachable();
-}
-SPIRE_FN inline int find_power(const Game& g, const Creature& c, const char* name) {
-    for (int i = 0; i < c.powers.size; ++i) {
-        const char* game_id = nullptr;
-        switch (c.powers.at(g.power_objects, i).id) {
-#define SPIRE_UNIT(id, java_name, header, type) case PowerId::id: game_id = java_name; break;
-#include "powers/catalog.def"
-#undef SPIRE_UNIT
-        default: SPIRE_ASSERT(false); }
-        if (same_id(game_id, name)) return i;
-    }
-    return -1;
-}
-SPIRE_FN inline bool has_power(const Game& g, const Creature& c, const char* name) { return find_power(g, c, name) >= 0; }
 SPIRE_FN inline Card& get_card(Game& g, int index) {
     return index <= -2 ? g.run.master_deck[-index - 2] : g.cards[index];
 }
@@ -91,31 +44,8 @@ SPIRE_FN inline bool monsters_basically_dead(const Game& g) {
     }
     return true;
 }
-SPIRE_FN inline const char* power_java_id(PowerId id) {
-    switch (id) {
-#define SPIRE_UNIT(unit, name, path, type) case PowerId::unit: return name;
-#include "powers/catalog.def"
-#undef SPIRE_UNIT
-    default: SPIRE_ASSERT(false);
-    }
-    __builtin_unreachable();
-}
-SPIRE_FN inline PowerId power_id(const char* name) {
-#define SPIRE_UNIT(unit, id, path, type) if (same_id(name, id)) return PowerId::unit;
-#include "powers/catalog.def"
-#undef SPIRE_UNIT
-    SPIRE_ASSERT(false);
-    __builtin_unreachable();
-}
-SPIRE_FN inline bool has_relic(const Game& g, const char* name) {
-    for (int i = 0; i < g.run.relics.size; ++i) {
-        switch (g.run.relics[i].id) {
-#define SPIRE_UNIT(unit, id, path, type) case RelicId::unit: if (same_id(name, id)) return true; break;
-#include "relics/catalog.def"
-#undef SPIRE_UNIT
-        default: SPIRE_ASSERT(false);
-        }
-    }
+SPIRE_FN inline bool has_relic(const Game& g, RelicId id) {
+    for (int i = 0; i < g.run.relics.size; ++i) if (g.run.relics[i].id == id) return true;
     return false;
 }
 SPIRE_FN inline int random_living_monster(Game& g) {

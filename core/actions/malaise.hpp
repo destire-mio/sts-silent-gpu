@@ -22,7 +22,7 @@ struct MalaiseAction : ActionHooks {
     SPIRE_FN static void execute(Game& g, Effect& e) {
         const auto& state = e.payload.state.MalaiseAction;
         int effect = state.energy_on_use == -1 ? g.player.energy : state.energy_on_use;
-        if (has_relic(g, "Chemical X")) effect += 2;
+        if (has_relic(g, RelicId::ChemicalX)) effect += 2;
         if (state.upgraded) ++effect;
         if (effect > 0) {
             Effect strength{};

@@ -17,8 +17,8 @@ struct PeacePipe : RelicHooks {
         bool usable = false;
         for (int i = 0; i < g.run.master_deck.size; ++i) {
             const Card& card = g.run.master_deck[i];
-            if (card_is(card.id, "Necronomicurse") || card_is(card.id, "CurseOfTheBell") ||
-                card_is(card.id, "AscendersBane") || card.bottle_flame || card.bottle_lightning || card.bottle_tornado) continue;
+            if ((card.id == CardId::Necronomicurse) || (card.id == CardId::CurseOfTheBell) ||
+                (card.id == CardId::AscendersBane) || card.bottle_flame || card.bottle_lightning || card.bottle_tornado) continue;
             usable = true;
         }
         options.push_back({CampfireOption::Toke, usable});

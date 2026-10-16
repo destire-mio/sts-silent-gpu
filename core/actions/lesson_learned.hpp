@@ -15,7 +15,7 @@ struct LessonLearned : ActionHooks {
             return;
         creature_damage(g, e);
         const Creature &c = get_creature(g, e.target);
-        if ((c.dying || c.hp <= 0) && !c.half_dead && !has_power(g, c, "Minion")) {
+        if ((c.dying || c.hp <= 0) && !c.half_dead && !has_power(g, c, PowerId::Minion)) {
             List<uint8_t, master_deck_capacity> candidates{};
             for (int i = 0; i < g.run.master_deck.size; ++i)
                 if (card_canUpgrade(g, -i - 2))

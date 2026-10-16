@@ -66,7 +66,7 @@ struct Neow : EventHooks {
         if (colorless) {
             List<CardId, 64> candidates{};
             for (const auto& entry : colorless_card_pool) {
-                const CardId id = card_id(entry.id);
+                const CardId id = entry.native;
                 if (card_rarity(id) != rarity) continue;
                 int at = candidates.size;
                 while (at > 0 && card_sort_order(candidates[at - 1]) > card_sort_order(id)) --at;
@@ -74,9 +74,9 @@ struct Neow : EventHooks {
             }
             return candidates[g.rng.card.random(candidates.size - 1)];
         }
-        if (rarity == CardRarity::Rare) return card_id(rare_card_pool[g.rng.neow.random(static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool) - 1))].id);
-        if (rarity == CardRarity::Uncommon) return card_id(uncommon_card_pool[g.rng.neow.random(static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool) - 1))].id);
-        return card_id(common_card_pool[g.rng.neow.random(static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool) - 1))].id);
+        if (rarity == CardRarity::Rare) return rare_card_pool[g.rng.neow.random(static_cast<int>(sizeof(rare_card_pool) / sizeof(*rare_card_pool) - 1))].native;
+        if (rarity == CardRarity::Uncommon) return uncommon_card_pool[g.rng.neow.random(static_cast<int>(sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool) - 1))].native;
+        return common_card_pool[g.rng.neow.random(static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool) - 1))].native;
     }
     static SPIRE_FN void cards(Game& g, bool rare, bool colorless) {
         g.reward_cards.clear();
@@ -115,9 +115,9 @@ struct Neow : EventHooks {
         case ThreeRareCards: cards(g, true, false); break;
         case ThreeCards: cards(g, false, false); break;
         case RandomRareCard: queue_card_obtain(g, make_card(draw_card(g, CardRarity::Rare, false))); break;
-        case CommonRelic: equip_relic(g, relic_id(relic_key_name(random_relic_key(g, 0)))); break;
-        case RareRelic: equip_relic(g, relic_id(relic_key_name(random_relic_key(g, 2)))); break;
-        case BossRelic: unequip_relic(g, g.run.relics[0].id); equip_relic(g, relic_id(relic_key_name(random_relic_key(g, 4)))); break;
+        case CommonRelic: equip_relic(g, relic_id(random_relic_key(g, 0))); break;
+        case RareRelic: equip_relic(g, relic_id(random_relic_key(g, 2))); break;
+        case BossRelic: unequip_relic(g, g.run.relics[0].id); equip_relic(g, relic_id(random_relic_key(g, 4))); break;
         case Lament: equip_relic(g, RelicId::NeowsLament); break;
         case HpBonus: increase_max_hp(g, s.hp_bonus); break;
         case LargeHpBonus: increase_max_hp(g, s.hp_bonus * 2); break;

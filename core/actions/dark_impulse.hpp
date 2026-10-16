@@ -9,9 +9,6 @@ struct DarkImpulse : ActionHooks {
             const int orb = g.orbs.slots[i];
             if (orb >= 0 && g.orbs.kind(orb) == OrbKind::Dark) { orb_start_turn(g, orb); orb_end_turn(g, orb); }
         }
-        if (has_relic(g, "Cables") && has_orb(g) && g.orbs.kind(g.orbs.slots[0]) == OrbKind::Dark) {
-            orb_start_turn(g, g.orbs.slots[0]); orb_end_turn(g, g.orbs.slots[0]);
-        }
     }
 };
 }

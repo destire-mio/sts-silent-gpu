@@ -66,7 +66,7 @@ struct Lagavulin : MonsterHooks {
         }
     }
     SPIRE_FN static void changeState(Game& g, int owner, const char* name) {
-        if (same_id(name, "OPEN") && !g.monsters[owner].creature.dying) {
+        if (same_text(name, "OPEN") && !g.monsters[owner].creature.dying) {
             g.monsters[owner].state.Lagavulin.isOut = true;
             Effect e{};
             e.kind = EffectKind::ReducePower;

@@ -15,7 +15,7 @@ struct EndTurnDiscard : ActionHooks {
         add_top(g, restore);
         bool keep_hand = false;
         for (int i = 0; i < g.run.relics.size; ++i) keep_hand |= relic_data(g.run.relics[i].id).keep_hand;
-        if (!keep_hand && find_power(g, g.player.creature, "Equilibrium") < 0) {
+        if (!keep_hand && find_power(g, g.player.creature, PowerId::Equilibrium) < 0) {
             const int count = g.hand.size;
             for (int i = 0; i < count; ++i) {
                 Effect discard{};

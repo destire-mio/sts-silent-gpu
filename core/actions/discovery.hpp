@@ -30,22 +30,22 @@ struct Discovery : ActionHooks {
         e.payload.state.Discovery.returnColorless = e.flag;
         e.payload.state.Discovery.cardType = e.extra - 1;
     }
-    SPIRE_FN static void generate(Game& g, const Effect& e, const char* (&choices)[3]) {
+    SPIRE_FN static void generate(Game& g, const Effect& e, CardId (&choices)[3]) {
         int count = 0;
         while (count != 3) {
-            const char* name = random_card_in_combat(g, e.payload.state.Discovery.cardType, e.payload.state.Discovery.returnColorless);
+            const CardId name = random_card_in_combat(g, e.payload.state.Discovery.cardType, e.payload.state.Discovery.returnColorless);
             bool duplicate = false;
-            for (int i = 0; i < count; ++i) if (same_id(choices[i], name)) duplicate = true;
+            for (int i = 0; i < count; ++i) if (choices[i] == name) duplicate = true;
             if (!duplicate) choices[count++] = name;
         }
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        const char* choices[3]{};
+        CardId choices[3]{};
         generate(g, e, choices);
         if (!e.payload.state.Discovery.selecting) {
             g.reward_cards.clear();
             for (int i = 0; i < 3; ++i)
-                g.reward_cards.push_back(create_card(g, make_card(card_id(choices[i]))));
+                g.reward_cards.push_back(create_card(g, make_card(choices[i])));
             g.discovery_card = -1;
             g.reward_skippable = e.payload.state.Discovery.cardType >= 0;
             g.screen = Screen::CardReward;
@@ -56,7 +56,7 @@ struct Discovery : ActionHooks {
             if (g.discovery_card >= 0) {
                 Card first = card_makeStatEquivalentCopy(g, g.discovery_card);
                 Card second = card_makeStatEquivalentCopy(g, g.discovery_card);
-                if (has_power(g, g.player.creature, "MasterRealityPower")) {
+                if (has_power(g, g.player.creature, PowerId::MasterReality)) {
                     card_upgrade(first);
                     card_upgrade(second);
                 }

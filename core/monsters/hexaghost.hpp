@@ -36,9 +36,9 @@ struct Hexaghost : MonsterHooks {
     SPIRE_FN static void changeState(Game& g, int owner, const char* name) {
         Monster& m = g.monsters[owner];
         auto& state = m.state.Hexaghost;
-        if (same_id(name, "Activate")) state.orbActiveCount = 6;
-        else if (same_id(name, "Deactivate")) state.orbActiveCount = 0;
-        else if (same_id(name, "Activate Orb")) {
+        if (same_text(name, "Activate")) state.orbActiveCount = 6;
+        else if (same_text(name, "Deactivate")) state.orbActiveCount = 0;
+        else if (same_text(name, "Activate Orb")) {
             ++state.orbActiveCount;
             if (state.orbActiveCount == 6) set_monster_move(g, owner, 6, Intent::AttackDebuff, monster_base_damage(g, m, 3), 6);
         }

@@ -14,7 +14,7 @@ struct DrugDealer : EventHooks {
         if (s.screenNum) { open_map(g); return; }
         if (option == 0) queue_card_obtain(g, make_card(CardId::JAX));
         else if (option == 1) { master_selection_cards(g, -1); open_master_selection(g, 2, false); }
-        else equip_relic(g, has_relic(g, "MutagenicStrength") ? RelicId::Circlet : RelicId::MutagenicStrength);
+        else equip_relic(g, has_relic(g, RelicId::MutagenicStrength) ? RelicId::Circlet : RelicId::MutagenicStrength);
         s.screenNum = 1; event_options(g, 1);
     }
     static SPIRE_FN void update(Game& g) {

@@ -42,7 +42,7 @@ struct SpawnMonster : ActionHooks {
             apply.kind = EffectKind::ApplyPower;
             apply.source = state.m;
             apply.target = state.m;
-            apply.power = power_id("Minion");
+            apply.power = PowerId::Minion;
             apply.amount = -1;
             add_top(g, apply);
         }

@@ -16,7 +16,7 @@ struct PoisonLoseHp : ActionHooks {
             info.damage_type = DamageType::HpLoss;
             creature_damage(g, info);
         }
-        const int poison = find_power(g, target, "Poison");
+        const int poison = find_power(g, target, PowerId::Poison);
         if (poison >= 0 && --target.powers.at(g.power_objects, poison).amount == 0) target.powers.erase(g.power_objects, poison);
         if (monsters_basically_dead(g)) clear_post_combat_actions(g);
     }

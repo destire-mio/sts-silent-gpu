@@ -29,7 +29,7 @@ struct KnowingSkull : EventHooks {
         SPIRE_ASSERT(s.count < 16);
         const int index = s.count++;
         s.choices |= static_cast<uint32_t>(option) << (2 * index);
-        if (option == 0 && !has_relic(g, "Sozu")) {
+        if (option == 0 && !has_relic(g, RelicId::Sozu)) {
             const PotionId potion = random_potion_from_pool(g, g.rng.potion);
             s.grants[index] = static_cast<uint16_t>(potion);
             obtain_potion(g, potion, construct_potion(g, potion));

@@ -29,7 +29,7 @@ struct Nloth : EventHooks {
         auto& s = g.event.state.Nloth;
         if (s.screenNum) { open_map(g); return; }
         if (option < 2) {
-            const RelicId gift = has_relic(g, "Nloth's Gift") ? RelicId::Circlet : RelicId::NlothsGift;
+            const RelicId gift = has_relic(g, RelicId::NlothsGift) ? RelicId::Circlet : RelicId::NlothsGift;
             // Nloth.buttonEffect keeps the offered relic when the player already has the gift.
             if (gift == RelicId::NlothsGift)
                 unequip_relic(g, g.reward_objects[option == 0 ? s.choice1 : s.choice2].relic.id);

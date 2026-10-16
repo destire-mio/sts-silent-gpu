@@ -20,7 +20,7 @@ struct TheLibrary : EventHooks {
         const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool};
         const int sizes[] = {sizeof(common_card_pool) / sizeof(*common_card_pool), sizeof(uncommon_card_pool) / sizeof(*uncommon_card_pool), sizeof(rare_card_pool) / sizeof(*rare_card_pool)};
         const int rarity = roll < g.room_rare_card_chance ? 2 : roll < g.room_rare_card_chance + g.room_uncommon_card_chance ? 1 : 0;
-        return make_card(card_id(pools[rarity][g.rng.card.random(sizes[rarity] - 1)].id));
+        return make_card(pools[rarity][g.rng.card.random(sizes[rarity] - 1)].native);
     }
     static SPIRE_FN void choose(Game& g, int option) {
         auto& s = g.event.state.TheLibrary;

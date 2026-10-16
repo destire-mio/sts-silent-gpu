@@ -10,7 +10,7 @@ struct Multicast : ActionHooks {
         if (!has_orb(g))
             return;
         int count = e.payload.state.Multicast.energyOnUse < 0 ? g.player.energy : e.payload.state.Multicast.energyOnUse;
-        if (has_relic(g, "Chemical X"))
+        if (has_relic(g, RelicId::ChemicalX))
             count += 2;
         if (e.payload.state.Multicast.upgraded)
             ++count;

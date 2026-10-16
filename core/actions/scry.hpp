@@ -8,8 +8,6 @@ struct Scry : ActionHooks {
     static SPIRE_FN void prepare(Game& g, Effect& e) {
         action_initialize_state(e);
         e.source = e.target = no_target;
-        if (has_relic(g, "GoldenEye"))
-            e.amount += 2;
     }
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (monsters_basically_dead(g))

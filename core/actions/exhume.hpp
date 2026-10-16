@@ -23,13 +23,13 @@ struct Exhume : ActionHooks {
             if (g.hand.size == hand_limit || g.exhaust.empty())
                 return;
             if (g.exhaust.size == 1) {
-                if (!card_is(g.cards[g.exhaust[0]].id, "Exhume"))
+                if (g.cards[g.exhaust[0]].id != CardId::Exhume)
                     move(g, e, g.exhaust[0]);
                 return;
             }
             g.selection_excluded.clear();
             for (int i = 0; i < g.exhaust.size;) {
-                if (card_is(g.cards[g.exhaust[i]].id, "Exhume")) {
+                if (g.cards[g.exhaust[i]].id == CardId::Exhume) {
                     g.selection_excluded.push_back(g.exhaust[i]);
                     g.exhaust.erase(i);
                 } else

@@ -7,7 +7,7 @@ struct InfernalBlade : CardHooks {
         return {CardType::Skill, CardTarget::None, 1, -1, -1, -1, 0, 0, 0, true, false};
     }
     static SPIRE_FN void use(Game& g, int, int) {
-        Card created = make_card(card_id(random_card_in_combat(g, static_cast<int>(CardType::Attack), false)));
+        Card created = make_card(random_card_in_combat(g, static_cast<int>(CardType::Attack), false));
         if (created.cost_for_turn > 0) created.cost_for_turn = 0;
         Effect e{};
         e.kind = EffectKind::MakeTempCardInHand;

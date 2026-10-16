@@ -10,7 +10,7 @@ struct JackOfAllTrades : CardHooks {
         for (int i = 0; i < (g.cards[card].upgrades > 0 ? 2 : 1); ++i) {
             Effect e{};
             e.kind = EffectKind::MakeTempCardInHand;
-            e.card = create_card(g, make_card(card_id(random_card_in_combat(g, -1, true))));
+            e.card = create_card(g, make_card(random_card_in_combat(g, -1, true)));
             e.amount = 1;
             add_bottom(g, e);
         }

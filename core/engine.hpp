@@ -76,16 +76,16 @@ SPIRE_FN inline int foreign_attack_card(Game& g) {
     return cards[g.rng.card.random(cards.size - 1)];
 }
 SPIRE_FN inline CardId random_common_card(Game& g) {
-    return card_id(common_card_pool[g.rng.card_random.random(static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)) - 1)].id);
+    return common_card_pool[g.rng.card_random.random(static_cast<int>(sizeof(common_card_pool) / sizeof(*common_card_pool)) - 1)].native;
 }
-SPIRE_FN inline const char* random_card_in_combat(Game& g, int type, bool colorless) {
+SPIRE_FN inline CardId random_card_in_combat(Game& g, int type, bool colorless) {
     const CardPoolEntry* pools[] = {common_card_pool, uncommon_card_pool, rare_card_pool, colorless_card_pool};
-    List<const char*, 128> candidates{};
+    List<CardId, 128> candidates{};
     for (int p = colorless ? 3 : 0; p < (colorless ? 4 : 3); ++p) {
         for (int i = 0; i < g.run.source_card_pools[p].size; ++i) {
             const CardPoolEntry& card = pools[p][g.run.source_card_pools[p][i]];
             if (!card.healing && (colorless || type < 0 || static_cast<int>(card.type) == type))
-                candidates.push_back(card.id);
+                candidates.push_back(card.native);
         }
     }
     return candidates[g.rng.card_random.random(candidates.size - 1)];
@@ -96,11 +96,7 @@ SPIRE_FN inline PotionState construct_potion(const Game& g, PotionId id) {
     return state;
 }
 SPIRE_FN inline PotionId random_potion_from_pool(Game&, Random& rng) {
-    const char* id = silent_potion_pool[rng.random(static_cast<int>(sizeof(silent_potion_pool) / sizeof(*silent_potion_pool)) - 1)].id;
-    for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
-        if (potion_matches_id(static_cast<PotionId>(i), id)) return static_cast<PotionId>(i);
-    SPIRE_ASSERT(false);
-    __builtin_unreachable();
+    return silent_potion_pool[rng.random(static_cast<int>(sizeof(silent_potion_pool) / sizeof(*silent_potion_pool)) - 1)].id;
 }
 SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
     const int roll = g.rng.potion.random(0, 99);
@@ -113,17 +109,10 @@ SPIRE_FN inline PotionId random_potion(Game& g, bool limited) {
         if (silent_potion_pool[index].limited_exclusion) continue;
         spam_check = false;
     }
-    for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
-        if (potion_matches_id(static_cast<PotionId>(i), silent_potion_pool[index].id)) return static_cast<PotionId>(i);
-    SPIRE_ASSERT(false);
-    __builtin_unreachable();
+    return silent_potion_pool[index].id;
 }
 SPIRE_FN inline PotionId potion_from_pool(Random& rng) {
-    const char* name = silent_potion_pool[rng.random(32)].id;
-    for (int i = 0; i < static_cast<int>(PotionId::Count); ++i)
-        if (potion_matches_id(static_cast<PotionId>(i), name)) return static_cast<PotionId>(i);
-    SPIRE_ASSERT(false);
-    __builtin_unreachable();
+    return silent_potion_pool[rng.random(32)].id;
 }
 SPIRE_FN inline void obtain_potion(Game& g, PotionId id, const PotionState& state) {
     for (int i = 0; i < g.run.potion_slots; ++i) {
@@ -1446,7 +1435,7 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
         // EntropicBrew.use queues ObtainPotionEffect; TopPanel destroys the consumed potion before its update.
         for (int i = 0; i < g.potion_effects.size; ++i) {
             const PreparedPotion& potion = g.potion_effects[i];
-            if (!has_relic(g, "Sozu")) obtain_potion(g, potion.id, potion.state);
+            if (!has_relic(g, RelicId::Sozu)) obtain_potion(g, potion.id, potion.state);
         }
         g.potion_effects.clear();
         if (g.screen == Screen::Combat) run_until_decision(g);
