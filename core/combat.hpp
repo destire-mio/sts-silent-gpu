@@ -144,12 +144,7 @@ SPIRE_FN inline int calculate_block(const Game& g, int base, int card) {
 }
 SPIRE_FN inline void apply_card_block(Game& g, int card) {
     Card& c = get_card(g, card);
-    float value = static_cast<float>(card_baseBlock(c));
-    const Powers& powers = g.player.creature.powers;
-    for (int p = next_power_modifyBlock(g, powers.head); p != 255; p = next_power_modifyBlock(g, g.power_objects[p].next)) value = power_modifyBlock(g, g.power_objects[p], player_target, value, card);
-    for (int p = next_power_modifyBlockLast(g, powers.head); p != 255; p = next_power_modifyBlockLast(g, g.power_objects[p].next)) value = power_modifyBlockLast(g, g.power_objects[p], player_target, value);
-    // AbstractCard.applyPowersToBlock compares before clamping negative block.
-    c.block = max(0, floor_int(value));
+    c.block = calculate_block(g, card_baseBlock(c), card);
 }
 SPIRE_FN inline void refresh_powers(Game& g) {
     for (int i = 0; i < g.hand.size; ++i) card_applyPowers(g, g.hand[i]);
