@@ -154,12 +154,12 @@ SPIRE_FN inline void refresh_hand(Game& g) {
             add_top(g, e);
         }
     }
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onRefreshHand(g, i);
+    for (int i = next_relic_onRefreshHand(g, 0); i < g.run.relics.size; i = next_relic_onRefreshHand(g, i + 1)) relic_onRefreshHand(g, i);
 }
 SPIRE_FN inline void on_draw_or_discard(Game& g) {
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onDrawOrDiscard(g, powers.at(g.power_objects, i), player_target);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onDrawOrDiscard(g, i);
+    for (int p = next_power_onDrawOrDiscard(g, powers.head); p != 255; p = next_power_onDrawOrDiscard(g, g.power_objects[p].next)) power_onDrawOrDiscard(g, g.power_objects[p], player_target);
+    for (int i = next_relic_onDrawOrDiscard(g, 0); i < g.run.relics.size; i = next_relic_onDrawOrDiscard(g, i + 1)) relic_onDrawOrDiscard(g, i);
     if (has_power(g, g.player.creature, PowerId::Corruption))
         for (int i = 0; i < g.hand.size; ++i) {
             Card& card = g.cards[g.hand[i]];
@@ -232,16 +232,16 @@ SPIRE_FN inline void discard_card(Game& g, int hand_index, bool end_turn) {
 SPIRE_FN inline void increment_discard(Game& g, bool end_turn) {
     ++g.manager.total_discarded_this_turn;
     if (!end_turn && !g.manager.turn_has_ended) {
-        for (int i = 0; i < g.hand.size; ++i) card_didDiscard(g, g.hand[i]);
-        for (int i = 0; i < g.discard.size; ++i) card_didDiscard(g, g.discard[i]);
-        for (int i = 0; i < g.draw.size; ++i) card_didDiscard(g, g.draw[i]);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onManualDiscard(g, i);
+        for (int i = next_card_didDiscard(g, g.hand, 0); i < g.hand.size; i = next_card_didDiscard(g, g.hand, i + 1)) card_didDiscard(g, g.hand[i]);
+        for (int i = next_card_didDiscard(g, g.discard, 0); i < g.discard.size; i = next_card_didDiscard(g, g.discard, i + 1)) card_didDiscard(g, g.discard[i]);
+        for (int i = next_card_didDiscard(g, g.draw, 0); i < g.draw.size; i = next_card_didDiscard(g, g.draw, i + 1)) card_didDiscard(g, g.draw[i]);
+        for (int i = next_relic_onManualDiscard(g, 0); i < g.run.relics.size; i = next_relic_onManualDiscard(g, i + 1)) relic_onManualDiscard(g, i);
     }
 }
 SPIRE_FN inline void exhaust_from_pile(Game& g, int card, PileId pile) {
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onExhaust(g, i, card);
+    for (int i = next_relic_onExhaust(g, 0); i < g.run.relics.size; i = next_relic_onExhaust(g, i + 1)) relic_onExhaust(g, i, card);
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onExhaust(g, powers.at(g.power_objects, i), player_target, card);
+    for (int p = next_power_onExhaust(g, powers.head); p != 255; p = next_power_onExhaust(g, g.power_objects[p].next)) power_onExhaust(g, g.power_objects[p], player_target, card);
     card_triggerOnExhaust(g, card);
     remove_queued_card(g, card);
     card_resetAttributes(g, card);
@@ -286,7 +286,7 @@ SPIRE_FN inline int decrement_block(Game& g, int owner, const DamageInfo& info, 
         target.block -= blocked;
         amount -= blocked;
         if (target.block == 0 && owner != player_target)
-            for (int i = 0; i < g.run.relics.size; ++i) relic_onBlockBroken(g, i, owner);
+            for (int i = next_relic_onBlockBroken(g, 0); i < g.run.relics.size; i = next_relic_onBlockBroken(g, i + 1)) relic_onBlockBroken(g, i, owner);
     }
     return amount;
 }
@@ -299,8 +299,8 @@ SPIRE_FN inline void monster_die_base(Game& g, int owner, bool trigger_relics) {
     g.death_wait_bound[owner] = id == MonsterId::Cultist || id == MonsterId::Looter ? 199 : 109;
     if (trigger_relics) {
         if (c.hp <= 0)
-            for (int i = 0; i < c.powers.size; ++i) power_onDeath(g, c.powers.at(g.power_objects, i), owner);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onMonsterDeath(g, i, owner);
+            for (int p = next_power_onDeath(g, c.powers.head); p != 255; p = next_power_onDeath(g, g.power_objects[p].next)) power_onDeath(g, g.power_objects[p], owner);
+        for (int i = next_relic_onMonsterDeath(g, 0); i < g.run.relics.size; i = next_relic_onMonsterDeath(g, i + 1)) relic_onMonsterDeath(g, i, owner);
     }
     c.hp = max(0, c.hp);
 }
@@ -331,11 +331,11 @@ SPIRE_FN inline void monster_damage_base(Game& g, int owner, const DamageInfo& i
     }
     for (int i = 0; i < target.powers.size; ++i) amount = power_onAttackedToChangeDamage(g, target.powers.at(g.power_objects, i), owner, info, amount);
     if (info.source == player_target)
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onAttack(g, i, info, amount, owner);
-    for (int i = 0; i < target.powers.size; ++i) power_wasHPLost(g, target.powers.at(g.power_objects, i), owner, info, amount);
+        for (int i = next_relic_onAttack(g, 0); i < g.run.relics.size; i = next_relic_onAttack(g, i + 1)) relic_onAttack(g, i, info, amount, owner);
+    for (int p = next_power_wasHPLost(g, target.powers.head); p != 255; p = next_power_wasHPLost(g, g.power_objects[p].next)) power_wasHPLost(g, g.power_objects[p], owner, info, amount);
     if (info.source != no_target) {
         Powers& source = get_creature(g, info.source).powers;
-        for (int i = 0; i < source.size; ++i) power_onAttack(g, source.at(g.power_objects, i), info.source, info, amount, owner);
+        for (int p = next_power_onAttack(g, source.head); p != 255; p = next_power_onAttack(g, g.power_objects[p].next)) power_onAttack(g, g.power_objects[p], info.source, info, amount, owner);
     }
     for (int i = 0; i < target.powers.size; ++i) amount = power_onAttacked(g, target.powers.at(g.power_objects, i), owner, info, amount);
     target.last_damage_taken = min(amount, target.hp);
@@ -374,10 +374,10 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
     for (int i = 0; i < g.run.relics.size; ++i) amount = relic_onAttackedToChangeDamage(g, i, info, amount);
     for (int i = 0; i < target.powers.size; ++i) amount = power_onAttackedToChangeDamage(g, target.powers.at(g.power_objects, i), player_target, info, amount);
     if (info.source == player_target)
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onAttack(g, i, info, amount, player_target);
+        for (int i = next_relic_onAttack(g, 0); i < g.run.relics.size; i = next_relic_onAttack(g, i + 1)) relic_onAttack(g, i, info, amount, player_target);
     if (info.source != no_target) {
         Powers& source = get_creature(g, info.source).powers;
-        for (int i = 0; i < source.size; ++i) power_onAttack(g, source.at(g.power_objects, i), info.source, info, amount, player_target);
+        for (int p = next_power_onAttack(g, source.head); p != 255; p = next_power_onAttack(g, g.power_objects[p].next)) power_onAttack(g, g.power_objects[p], info.source, info, amount, player_target);
         for (int i = 0; i < target.powers.size; ++i) amount = power_onAttacked(g, target.powers.at(g.power_objects, i), player_target, info, amount);
         for (int i = 0; i < g.run.relics.size; ++i) amount = relic_onAttacked(g, i, info, amount);
     }
@@ -385,27 +385,27 @@ SPIRE_FN inline void player_damage(Game& g, const DamageInfo& info) {
     target.last_damage_taken = min(amount, target.hp);
     if (amount > 0) {
         for (int i = 0; i < target.powers.size; ++i) amount = power_onLoseHp(g, target.powers.at(g.power_objects, i), player_target, amount);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onLoseHp(g, i, amount);
-        for (int i = 0; i < target.powers.size; ++i) power_wasHPLost(g, target.powers.at(g.power_objects, i), player_target, info, amount);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_wasHPLost(g, i, amount);
+        for (int i = next_relic_onLoseHp(g, 0); i < g.run.relics.size; i = next_relic_onLoseHp(g, i + 1)) relic_onLoseHp(g, i, amount);
+        for (int p = next_power_wasHPLost(g, target.powers.head); p != 255; p = next_power_wasHPLost(g, g.power_objects[p].next)) power_wasHPLost(g, g.power_objects[p], player_target, info, amount);
+        for (int i = next_relic_wasHPLost(g, 0); i < g.run.relics.size; i = next_relic_wasHPLost(g, i + 1)) relic_wasHPLost(g, i, amount);
         if (info.source != no_target) {
             Powers& source = get_creature(g, info.source).powers;
-            for (int i = 0; i < source.size; ++i) power_onInflictDamage(g, source.at(g.power_objects, i), info.source, info, amount, player_target);
+            for (int p = next_power_onInflictDamage(g, source.head); p != 255; p = next_power_onInflictDamage(g, g.power_objects[p].next)) power_onInflictDamage(g, g.power_objects[p], info.source, info, amount, player_target);
         }
         g.manager.damage_received_this_turn += amount;
         g.manager.damage_received_this_combat += amount;
         if (info.damage_type == DamageType::HpLoss) g.manager.hp_loss_this_combat += amount;
         target.hp -= amount;
         if (amount > 0 && g.room_phase == RoomPhase::Combat) {
-            for (int i = 0; i < g.hand.size; ++i) card_tookDamage(g, g.hand[i]);
-            for (int i = 0; i < g.discard.size; ++i) card_tookDamage(g, g.discard[i]);
-            for (int i = 0; i < g.draw.size; ++i) card_tookDamage(g, g.draw[i]);
+            for (int i = next_card_tookDamage(g, g.hand, 0); i < g.hand.size; i = next_card_tookDamage(g, g.hand, i + 1)) card_tookDamage(g, g.hand[i]);
+            for (int i = next_card_tookDamage(g, g.discard, 0); i < g.discard.size; i = next_card_tookDamage(g, g.discard, i + 1)) card_tookDamage(g, g.discard[i]);
+            for (int i = next_card_tookDamage(g, g.draw, 0); i < g.draw.size; i = next_card_tookDamage(g, g.draw, i + 1)) card_tookDamage(g, g.draw[i]);
             ++g.player.damaged_this_combat;
         }
         target.hp = max(0, target.hp);
         if (target.hp <= target.max_hp / 2 && !g.player.bloodied) {
             g.player.bloodied = true;
-            for (int i = 0; i < g.run.relics.size; ++i) relic_onBloodied(g, i);
+            for (int i = next_relic_onBloodied(g, 0); i < g.run.relics.size; i = next_relic_onBloodied(g, i + 1)) relic_onBloodied(g, i);
         }
         if (target.hp == 0) {
             bool prevents_revival = false;
@@ -452,7 +452,7 @@ SPIRE_FN inline void heal_creature(Game& g, int owner, int amount) {
     c.hp = min(c.max_hp, c.hp + amount);
     if (owner == player_target && c.hp > c.max_hp / 2 && g.player.bloodied) {
         g.player.bloodied = false;
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onNotBloodied(g, i);
+        for (int i = next_relic_onNotBloodied(g, 0); i < g.run.relics.size; i = next_relic_onNotBloodied(g, i + 1)) relic_onNotBloodied(g, i);
     }
 }
 SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
@@ -598,13 +598,13 @@ SPIRE_FN inline void end_turn_early(Game& g) {
 }
 SPIRE_FN inline void begin_end_turn(Game& g) {
     g.player.end_turn_queued = true;
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onPlayerEndTurn(g, i);
+    for (int i = next_relic_onPlayerEndTurn(g, 0); i < g.run.relics.size; i = next_relic_onPlayerEndTurn(g, i + 1)) relic_onPlayerEndTurn(g, i);
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_atEndOfTurnPreEndTurnCards(g, powers.at(g.power_objects, i), player_target, true);
+    for (int p = next_power_atEndOfTurnPreEndTurnCards(g, powers.head); p != 255; p = next_power_atEndOfTurnPreEndTurnCards(g, g.power_objects[p].next)) power_atEndOfTurnPreEndTurnCards(g, g.power_objects[p], player_target, true);
     Effect orbs{};
     orbs.kind = EffectKind::TriggerEndOfTurnOrbs;
     add_bottom(g, orbs);
-    for (int i = 0; i < g.hand.size; ++i) card_triggerOnEndOfTurnForPlayingCard(g, g.hand[i]);
+    for (int i = next_card_triggerOnEndOfTurnForPlayingCard(g, g.hand, 0); i < g.hand.size; i = next_card_triggerOnEndOfTurnForPlayingCard(g, g.hand, i + 1)) card_triggerOnEndOfTurnForPlayingCard(g, g.hand[i]);
 }
 SPIRE_FN inline void complete_end_turn(Game& g) {
     g.player.end_turn_queued = false;
@@ -635,14 +635,14 @@ SPIRE_FN inline void recharge_energy(Game& g) {
         gain_energy(g, g.player.energy_per_turn);
     } else g.player.energy = g.player.energy_per_turn;
     g.manager.energy_gained_this_combat += g.player.energy_per_turn;
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onEnergyRecharge(g, i);
+    for (int i = next_relic_onEnergyRecharge(g, 0); i < g.run.relics.size; i = next_relic_onEnergyRecharge(g, i + 1)) relic_onEnergyRecharge(g, i);
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onEnergyRecharge(g, powers.at(g.power_objects, i), player_target);
+    for (int p = next_power_onEnergyRecharge(g, powers.head); p != 255; p = next_power_onEnergyRecharge(g, g.power_objects[p].next)) power_onEnergyRecharge(g, g.power_objects[p], player_target);
 }
 SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
-    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStartPostDraw(g, i);
+    for (int i = next_relic_atTurnStartPostDraw(g, 0); i < g.run.relics.size; i = next_relic_atTurnStartPostDraw(g, i + 1)) relic_atTurnStartPostDraw(g, i);
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_atStartOfTurnPostDraw(g, powers.at(g.power_objects, i), player_target);
+    for (int p = next_power_atStartOfTurnPostDraw(g, powers.head); p != 255; p = next_power_atStartOfTurnPostDraw(g, g.power_objects[p].next)) power_atStartOfTurnPostDraw(g, g.power_objects[p], player_target);
 }
 SPIRE_FN inline void begin_player_turn(Game& g) {
     settle_card_moves(g);
@@ -667,13 +667,13 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
     g.player.cards_played_this_turn = 0;
     g.orbs.turn_start = g.orbs.channeled.size;
     stance_start_turn(g);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStart(g, i);
-    for (int i = 0; i < g.hand.size; ++i) card_atTurnStartPreDraw(g, g.hand[i]);
-    for (int i = 0; i < g.draw.size; ++i) card_atTurnStart(g, g.draw[i]);
-    for (int i = 0; i < g.hand.size; ++i) card_atTurnStart(g, g.hand[i]);
-    for (int i = 0; i < g.discard.size; ++i) card_atTurnStart(g, g.discard[i]);
+    for (int i = next_relic_atTurnStart(g, 0); i < g.run.relics.size; i = next_relic_atTurnStart(g, i + 1)) relic_atTurnStart(g, i);
+    for (int i = next_card_atTurnStartPreDraw(g, g.hand, 0); i < g.hand.size; i = next_card_atTurnStartPreDraw(g, g.hand, i + 1)) card_atTurnStartPreDraw(g, g.hand[i]);
+    for (int i = next_card_atTurnStart(g, g.draw, 0); i < g.draw.size; i = next_card_atTurnStart(g, g.draw, i + 1)) card_atTurnStart(g, g.draw[i]);
+    for (int i = next_card_atTurnStart(g, g.hand, 0); i < g.hand.size; i = next_card_atTurnStart(g, g.hand, i + 1)) card_atTurnStart(g, g.hand[i]);
+    for (int i = next_card_atTurnStart(g, g.discard, 0); i < g.discard.size; i = next_card_atTurnStart(g, g.discard, i + 1)) card_atTurnStart(g, g.discard[i]);
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
+    for (int p = next_power_atStartOfTurn(g, powers.head); p != 255; p = next_power_atStartOfTurn(g, g.power_objects[p].next)) power_atStartOfTurn(g, g.power_objects[p], player_target);
     start_turn_orbs(g);
     ++g.turn;
     g.skip_monster_turn = false;
@@ -694,7 +694,7 @@ SPIRE_FN inline void begin_player_turn(Game& g) {
 SPIRE_FN inline void complete_player_turn_effect(Game& g) {
     g.player_turn_effect_pending = false;
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_atEnergyGain(g, powers.at(g.power_objects, i), player_target);
+    for (int p = next_power_atEnergyGain(g, powers.head); p != 255; p = next_power_atEnergyGain(g, g.power_objects[p].next)) power_atEnergyGain(g, g.power_objects[p], player_target);
 }
 SPIRE_FN inline void advance_escape(Game& g, int frames) {
     // AbstractPlayer.updateEscapeAnimation advances during action waits at the fixed oracle tick.
@@ -767,7 +767,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             g.manager.using_card = g.manager.phase == Phase::WaitingOnUser;
             CardQueueItem queued = g.manager.card_queue[0];
             if (g.manager.card_queue.size == 1 && queued.is_end_turn_auto_play)
-                for (int i = 0; i < g.run.relics.size; ++i) relic_disableUntilTurnEnds(g, i);
+                for (int i = next_relic_disableUntilTurnEnds(g, 0); i < g.run.relics.size; i = next_relic_disableUntilTurnEnds(g, i + 1)) relic_disableUntilTurnEnds(g, i);
             if (queued.card < 0) {
                 begin_end_turn(g);
             } else {
@@ -836,7 +836,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 }
                 monster_take_turn(g, id);
                 Powers& powers = g.monsters[id].creature.powers;
-                for (int i = 0; i < powers.size; ++i) power_duringTurn(g, powers.at(g.power_objects, i), id);
+                for (int p = next_power_duringTurn(g, powers.head); p != 255; p = next_power_duringTurn(g, g.power_objects[p].next)) power_duringTurn(g, g.power_objects[p], id);
             }
             // GameActionManager.update refreshes the hand when getNextAction queued a monster turn but selected no action.
             if (g.manager.phase == Phase::ExecutingActions && !g.manager.using_card) {
@@ -952,7 +952,7 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     if (g.room_phase == RoomPhase::Combat && innate.size > g.player.hand_size) {
         g.manager.pre_turn_actions.push_front(g.action_objects.add(units::actions::Draw::construct(innate.size - g.player.hand_size)));
     }
-    for (int i = 0; i < g.run.relics.size; ++i) relic_beforeEnergyPrep(g, i);
+    for (int i = next_relic_beforeEnergyPrep(g, 0); i < g.run.relics.size; i = next_relic_beforeEnergyPrep(g, i + 1)) relic_beforeEnergyPrep(g, i);
     g.player.energy_per_turn = g.player.energy_master;
     g.player.creature.powers.clear();
     for (int i = 0; i < g.monster_order.size; ++i) {
@@ -972,7 +972,7 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
             }
         }
     }
-    for (int i = 0; i < g.run.relics.size; ++i) relic_atPreBattle(g, i);
+    for (int i = next_relic_atPreBattle(g, 0); i < g.run.relics.size; i = next_relic_atPreBattle(g, i + 1)) relic_atPreBattle(g, i);
 }
 SPIRE_FN inline void enter_combat(Game& g) {
     g.room_in_combat = true;
@@ -1033,7 +1033,7 @@ SPIRE_FN inline void enter_combat(Game& g) {
     g.manager.turn_has_ended = true;
     g.end_turn_enabled = false;
     add_bottom(g, units::actions::GainEnergyAndEnableControls::make(g.player.energy_master));
-    for (int i = 0; i < g.run.relics.size; ++i) relic_atBattleStartPreDraw(g, i);
+    for (int i = next_relic_atBattleStartPreDraw(g, 0); i < g.run.relics.size; i = next_relic_atBattleStartPreDraw(g, i + 1)) relic_atBattleStartPreDraw(g, i);
     Effect draw{};
     draw.kind = EffectKind::Draw;
     draw.amount = g.player.hand_size;
@@ -1043,11 +1043,11 @@ SPIRE_FN inline void enter_combat(Game& g) {
     add_bottom(g, enable);
     relics_at_battle_start(g);
     stance_start_turn(g);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStart(g, i);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_atTurnStartPostDraw(g, i);
-    for (int i = 0; i < g.draw.size; ++i) card_atTurnStart(g, g.draw[i]);
+    for (int i = next_relic_atTurnStart(g, 0); i < g.run.relics.size; i = next_relic_atTurnStart(g, i + 1)) relic_atTurnStart(g, i);
+    for (int i = next_relic_atTurnStartPostDraw(g, 0); i < g.run.relics.size; i = next_relic_atTurnStartPostDraw(g, i + 1)) relic_atTurnStartPostDraw(g, i);
+    for (int i = next_card_atTurnStart(g, g.draw, 0); i < g.draw.size; i = next_card_atTurnStart(g, g.draw, i + 1)) card_atTurnStart(g, g.draw[i]);
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_atStartOfTurn(g, powers.at(g.power_objects, i), player_target);
+    for (int p = next_power_atStartOfTurn(g, powers.head); p != 255; p = next_power_atStartOfTurn(g, g.power_objects[p].next)) power_atStartOfTurn(g, g.power_objects[p], player_target);
     start_turn_orbs(g);
     run_until_decision(g);
     for (int i = 0; i < g.monster_order.size; ++i) monster_createIntent(g, g.monster_order[i]);
@@ -1104,7 +1104,7 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     g.previous_screen = Screen::None;
     g.acquisition_reward = -1;
     g.rng.reseed_floor(g.run.seed, g.run.floor);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onEnterRoom(g, i, static_cast<int>(room));
+    for (int i = next_relic_onEnterRoom(g, 0); i < g.run.relics.size; i = next_relic_onEnterRoom(g, i + 1)) relic_onEnterRoom(g, i, static_cast<int>(room));
     g.room_combat_event = false;
     if (room == RoomKind::Event) {
         room = roll_event_room(g);
@@ -1129,7 +1129,7 @@ SPIRE_FN inline void enter_room(Game& g, RoomKind room) {
     // DiscardAction.update retains HAND_SELECT cards; Beggar.update reads a separate GRID list.
     g.selected_cards.clear();
     g.monster_order.clear();
-    for (int i = 0; i < g.run.relics.size; ++i) relic_justEnteredRoom(g, i, static_cast<int>(room));
+    for (int i = next_relic_justEnteredRoom(g, 0); i < g.run.relics.size; i = next_relic_justEnteredRoom(g, i + 1)) relic_justEnteredRoom(g, i, static_cast<int>(room));
     g.player.creature.draw_x = room == RoomKind::Elite && g.run.act == 4 ? 640.0f : 320.0f;
     g.player.creature.flip_horizontal = false;
     switch (room) {
@@ -1242,7 +1242,7 @@ SPIRE_FN inline void update_event(Game& g) {
 SPIRE_FN inline void complete_master_selection(Game& g) {
     // AbstractDungeon.closeCurrentScreen reopens a reward screen saved by BottledLightning.onEquip.
     g.screen = g.previous_screen == Screen::CombatReward ? Screen::CombatReward : Screen::None;
-    for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
+    for (int i = next_relic_update(g, 0); i < g.run.relics.size; i = next_relic_update(g, i + 1)) relic_update(g, i);
     if (g.room_kind == RoomKind::Rest) finish_campfire_selection(g);
     if (g.room_kind == RoomKind::BossTreasure && g.screen == Screen::None) g.screen = Screen::Room;
     if (g.room_kind == RoomKind::Shop) {
@@ -1428,7 +1428,7 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
             SPIRE_ASSERT(potion_canUse(g, action.index));
             const int target = action.target >= 0 ? g.monster_order[action.target] : player_target;
             potion_use(g, action.index, target);
-            for (int i = 0; i < g.run.relics.size; ++i) relic_onUsePotion(g, i);
+            for (int i = next_relic_onUsePotion(g, 0); i < g.run.relics.size; i = next_relic_onUsePotion(g, i + 1)) relic_onUsePotion(g, i);
         }
         g.run.potions[action.index] = PotionId::Empty;
         g.run.potion_identity[action.index] = 0;

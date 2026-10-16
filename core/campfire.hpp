@@ -9,14 +9,14 @@ SPIRE_FN inline void enter_campfire(Game& g) {
     bool upgradeable = false;
     for (int i = 0; i < g.run.master_deck.size; ++i) upgradeable |= card_canUpgrade(g, -i - 2);
     options.push_back({CampfireOption::Smith, upgradeable});
-    for (int i = 0; i < g.run.relics.size; ++i) relic_addCampfireOption(g, i, options);
+    for (int i = next_relic_addCampfireOption(g, 0); i < g.run.relics.size; i = next_relic_addCampfireOption(g, i + 1)) relic_addCampfireOption(g, i, options);
     for (int i = 0; i < options.size; ++i)
         for (int r = 0; r < g.run.relics.size; ++r)
             if (!relic_canUseCampfireOption(g, r, static_cast<int>(options[i].kind))) { options[i].usable = false; break; }
     if (!g.run.ruby_key) options.push_back({CampfireOption::Recall, true});
     g.room_phase = RoomPhase::Complete;
     for (int i = 0; i < options.size; ++i) if (options[i].usable) g.room_phase = RoomPhase::Incomplete;
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onEnterRestRoom(g, i);
+    for (int i = next_relic_onEnterRestRoom(g, 0); i < g.run.relics.size; i = next_relic_onEnterRestRoom(g, i + 1)) relic_onEnterRestRoom(g, i);
     g.screen = Screen::Room;
 }
 
@@ -29,7 +29,7 @@ SPIRE_FN inline void choose_campfire(Game& g, int option) {
         int amount = static_cast<int>(g.player.creature.max_hp * 0.3f);
         for (int i = 0; i < g.run.relics.size; ++i) amount += relic_data(g.run.relics[i].id).rest_heal_bonus;
         heal_creature(g, player_target, amount);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onRest(g, i);
+        for (int i = next_relic_onRest(g, 0); i < g.run.relics.size; i = next_relic_onRest(g, i + 1)) relic_onRest(g, i);
         g.room_phase = RoomPhase::Complete;
         for (int i = 0; i < g.run.relics.size; ++i) if (relic_data(g.run.relics[i].id).rest_card_reward) {
             const int reward = create_card_reward(g);
@@ -51,7 +51,7 @@ SPIRE_FN inline void choose_campfire(Game& g, int option) {
         g.grid_for_upgrade = true;
         g.grid_can_cancel = true;
         // CampfireSmithEffect.update invokes onSmith when it opens the selection screen.
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onSmith(g, i);
+        for (int i = next_relic_onSmith(g, 0); i < g.run.relics.size; i = next_relic_onSmith(g, i + 1)) relic_onSmith(g, i);
         break;
     case CampfireOption::Toke:
         master_selection_cards(g, -1);

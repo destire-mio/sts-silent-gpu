@@ -57,7 +57,7 @@ struct Darkling : MonsterHooks {
             Effect e{}; e.kind = EffectKind::Heal; e.source = e.target = owner; e.amount = m.creature.max_hp / 2; add_bottom(g, e);
             add_bottom(g, actions::ChangeState::make(g, owner, "REVIVE"));
             queue_power(g, owner, owner, PowerId::Regrow, 1);
-            for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, owner);
+            for (int i = next_relic_onSpawnMonster(g, 0); i < g.run.relics.size; i = next_relic_onSpawnMonster(g, i + 1)) relic_onSpawnMonster(g, i, owner);
         }
         queue_monster_roll(g, owner);
     }
@@ -72,8 +72,8 @@ struct Darkling : MonsterHooks {
         Creature& c = g.monsters[owner].creature;
         if (c.hp <= 0 && !c.half_dead) {
             c.half_dead = true;
-            for (int i = 0; i < c.powers.size; ++i) power_onDeath(g, c.powers.at(g.power_objects, i), owner);
-            for (int i = 0; i < g.run.relics.size; ++i) relic_onMonsterDeath(g, i, owner);
+            for (int p = next_power_onDeath(g, c.powers.head); p != 255; p = next_power_onDeath(g, g.power_objects[p].next)) power_onDeath(g, g.power_objects[p], owner);
+            for (int i = next_relic_onMonsterDeath(g, 0); i < g.run.relics.size; i = next_relic_onMonsterDeath(g, i + 1)) relic_onMonsterDeath(g, i, owner);
             c.powers.clear();
             bool all_dead = true;
             for (int i = 0; i < g.monster_order.size; ++i) {

@@ -28,6 +28,11 @@ They skip inherited identity hooks and visit overrides in the original list orde
 iteration follows arena links once instead of restarting at the head for each list position.
 These filters apply to cumulative value calculations; a caller that replaces a result from
 the original base value on each iteration, such as FirePotion.use, must retain default calls.
+Empty card, power and relic event hooks use the same participant tables. Card and relic
+filters retain list positions; power event filters follow arena links. These callbacks queue
+power insertion/removal rather than changing the traversed power list during dispatch.
+Hooks with nonempty defaults, including ethereal-card exhaustion and block flooring, retain
+those defaults at their original call sites.
 
 ## Unit code
 

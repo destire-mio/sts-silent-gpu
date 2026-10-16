@@ -16,7 +16,7 @@ struct GainEnergyIfDiscard : ActionHooks {
             const int amount = e.payload.state.GainEnergyIfDiscard.energyGain;
             gain_energy(g, amount);
             g.manager.energy_gained_this_combat += amount;
-            for (int i = 0; i < g.hand.size; ++i) card_triggerOnGainEnergy(g, g.hand[i], amount, true);
+            for (int i = next_card_triggerOnGainEnergy(g, g.hand, 0); i < g.hand.size; i = next_card_triggerOnGainEnergy(g, g.hand, i + 1)) card_triggerOnGainEnergy(g, g.hand[i], amount, true);
         }
     }
 };

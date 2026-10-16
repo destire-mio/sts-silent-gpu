@@ -25,34 +25,34 @@ struct UseCard : ActionHooks {
         Card& card = g.cards[e.card];
         e.flag = card.exhaust_on_use_once || card.exhaust;
         Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i)
-            if (!card.dont_trigger_on_use_card) power_onUseCard(g, powers.at(g.power_objects, i), player_target, e.card, e);
-        for (int i = 0; i < g.run.relics.size; ++i)
+        for (int p = next_power_onUseCard(g, powers.head); p != 255; p = next_power_onUseCard(g, g.power_objects[p].next))
+            if (!card.dont_trigger_on_use_card) power_onUseCard(g, g.power_objects[p], player_target, e.card, e);
+        for (int i = next_relic_onUseCard(g, 0); i < g.run.relics.size; i = next_relic_onUseCard(g, i + 1))
             if (!card.dont_trigger_on_use_card) relic_onUseCard(g, i, e.card, e);
-        for (int i = 0; i < g.hand.size; ++i)
+        for (int i = next_card_triggerOnCardPlayed(g, g.hand, 0); i < g.hand.size; i = next_card_triggerOnCardPlayed(g, g.hand, i + 1))
             if (!card.dont_trigger_on_use_card) card_triggerOnCardPlayed(g, g.hand[i], e.card);
-        for (int i = 0; i < g.discard.size; ++i)
+        for (int i = next_card_triggerOnCardPlayed(g, g.discard, 0); i < g.discard.size; i = next_card_triggerOnCardPlayed(g, g.discard, i + 1))
             if (!card.dont_trigger_on_use_card) card_triggerOnCardPlayed(g, g.discard[i], e.card);
-        for (int i = 0; i < g.draw.size; ++i)
+        for (int i = next_card_triggerOnCardPlayed(g, g.draw, 0); i < g.draw.size; i = next_card_triggerOnCardPlayed(g, g.draw, i + 1))
             if (!card.dont_trigger_on_use_card) card_triggerOnCardPlayed(g, g.draw[i], e.card);
         for (int m = 0; m < g.monster_order.size; ++m) {
             const int owner = g.monster_order[m];
             Powers& other = g.monsters[owner].creature.powers;
-            for (int i = 0; i < other.size; ++i)
-                if (!card.dont_trigger_on_use_card) power_onUseCard(g, other.at(g.power_objects, i), owner, e.card, e);
+            for (int p = next_power_onUseCard(g, other.head); p != 255; p = next_power_onUseCard(g, g.power_objects[p].next))
+                if (!card.dont_trigger_on_use_card) power_onUseCard(g, g.power_objects[p], owner, e.card, e);
         }
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         Card& card = g.cards[e.card];
         Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i)
-            if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, powers.at(g.power_objects, i), player_target, e.card, e);
+        for (int p = next_power_onAfterUseCard(g, powers.head); p != 255; p = next_power_onAfterUseCard(g, g.power_objects[p].next))
+            if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, g.power_objects[p], player_target, e.card, e);
         for (int m = 0; m < g.monster_order.size; ++m) {
             const int owner = g.monster_order[m];
             Powers& other = g.monsters[owner].creature.powers;
-            for (int i = 0; i < other.size; ++i)
-                if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, other.at(g.power_objects, i), owner, e.card, e);
+            for (int p = next_power_onAfterUseCard(g, other.head); p != 255; p = next_power_onAfterUseCard(g, g.power_objects[p].next))
+                if (!card.dont_trigger_on_use_card) power_onAfterUseCard(g, g.power_objects[p], owner, e.card, e);
         }
         card.free_to_play_once = false;
         card.in_autoplay = false;

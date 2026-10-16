@@ -132,16 +132,16 @@ SPIRE_FN inline void queue_card_copy(Game& g, int card, int target) {
 }
 SPIRE_FN inline void play_card_hooks(Game& g, int card, int target) {
     Powers& powers = g.player.creature.powers;
-    for (int i = 0; i < powers.size; ++i) power_onPlayCard(g, powers.at(g.power_objects, i), player_target, card, target);
+    for (int p = next_power_onPlayCard(g, powers.head); p != 255; p = next_power_onPlayCard(g, g.power_objects[p].next)) power_onPlayCard(g, g.power_objects[p], player_target, card, target);
     for (int m = 0; m < g.monster_order.size; ++m) {
         const int owner = g.monster_order[m];
         Powers& others = g.monsters[owner].creature.powers;
-        for (int i = 0; i < others.size; ++i) power_onPlayCard(g, others.at(g.power_objects, i), owner, card, target);
+        for (int p = next_power_onPlayCard(g, others.head); p != 255; p = next_power_onPlayCard(g, g.power_objects[p].next)) power_onPlayCard(g, g.power_objects[p], owner, card, target);
     }
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onPlayCard(g, i, card, target);
-    for (int i = 0; i < g.hand.size; ++i) card_onPlayCard(g, g.hand[i], card, target);
-    for (int i = 0; i < g.discard.size; ++i) card_onPlayCard(g, g.discard[i], card, target);
-    for (int i = 0; i < g.draw.size; ++i) card_onPlayCard(g, g.draw[i], card, target);
+    for (int i = next_relic_onPlayCard(g, 0); i < g.run.relics.size; i = next_relic_onPlayCard(g, i + 1)) relic_onPlayCard(g, i, card, target);
+    for (int i = next_card_onPlayCard(g, g.hand, 0); i < g.hand.size; i = next_card_onPlayCard(g, g.hand, i + 1)) card_onPlayCard(g, g.hand[i], card, target);
+    for (int i = next_card_onPlayCard(g, g.discard, 0); i < g.discard.size; i = next_card_onPlayCard(g, g.discard, i + 1)) card_onPlayCard(g, g.discard[i], card, target);
+    for (int i = next_card_onPlayCard(g, g.draw, 0); i < g.draw.size; i = next_card_onPlayCard(g, g.draw, i + 1)) card_onPlayCard(g, g.draw[i], card, target);
 }
 SPIRE_FN inline void use_card(Game& g, int card_id, int target) {
     Card& card = g.cards[card_id];
@@ -154,9 +154,9 @@ SPIRE_FN inline void use_card(Game& g, int card_id, int target) {
     add_bottom(g, finish);
     if (!card.dont_trigger_on_use_card) {
         Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < g.hand.size; ++i)
+        for (int i = next_card_triggerOnOtherCardPlayed(g, g.hand, 0); i < g.hand.size; i = next_card_triggerOnOtherCardPlayed(g, g.hand, i + 1))
             if (g.hand[i] != card_id) card_triggerOnOtherCardPlayed(g, g.hand[i], card_id);
-        for (int i = 0; i < powers.size; ++i) power_onAfterCardPlayed(g, powers.at(g.power_objects, i), player_target, card_id);
+        for (int p = next_power_onAfterCardPlayed(g, powers.head); p != 255; p = next_power_onAfterCardPlayed(g, g.power_objects[p].next)) power_onAfterCardPlayed(g, g.power_objects[p], player_target, card_id);
     }
     for (int i = 0; i < g.hand.size; ++i)
         if (g.hand[i] == card_id) { g.hand.erase(i); break; }
@@ -175,6 +175,6 @@ SPIRE_FN inline void starter_deck(Run& run) {
     run.relics.push_back({RelicId::SnakeRing, -1});
 }
 SPIRE_FN inline void relics_at_battle_start(Game& g) {
-    for (int i = 0; i < g.run.relics.size; ++i) relic_atBattleStart(g, i);
+    for (int i = next_relic_atBattleStart(g, 0); i < g.run.relics.size; i = next_relic_atBattleStart(g, i + 1)) relic_atBattleStart(g, i);
 }
 }

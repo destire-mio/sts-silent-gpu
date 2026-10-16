@@ -9,7 +9,7 @@ struct Shuffle : ActionHooks {
     SPIRE_FN static void prepare(Game& g, Effect& e) {
         action_initialize_state(e);
         e.source = e.target = no_target;
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onShuffle(g, i);
+        for (int i = next_relic_onShuffle(g, 0); i < g.run.relics.size; i = next_relic_onShuffle(g, i + 1)) relic_onShuffle(g, i);
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         e.payload.state.Shuffle.shuffled = true;

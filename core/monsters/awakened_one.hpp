@@ -68,8 +68,8 @@ struct AwakenedOne : MonsterHooks {
         Creature& c = m.creature;
         if (c.hp <= 0 && !c.half_dead) {
             if (g.cannot_lose) c.half_dead = true;
-            for (int i = 0; i < c.powers.size; ++i) power_onDeath(g, c.powers.at(g.power_objects, i), owner);
-            for (int i = 0; i < g.run.relics.size; ++i) relic_onMonsterDeath(g, i, owner);
+            for (int p = next_power_onDeath(g, c.powers.head); p != 255; p = next_power_onDeath(g, g.power_objects[p].next)) power_onDeath(g, g.power_objects[p], owner);
+            for (int i = next_relic_onMonsterDeath(g, 0); i < g.run.relics.size; i = next_relic_onMonsterDeath(g, i + 1)) relic_onMonsterDeath(g, i, owner);
             Effect e{}; e.kind = EffectKind::ClearCardQueue; add_top(g, e);
             for (int i = 0; i < c.powers.size;) {
                 const Power& p = c.powers.at(g.power_objects, i);

@@ -12,8 +12,8 @@ struct VampireDamageAllEnemies : ActionHooks {
         for (int i = 0; i < count; ++i)
             amounts[i] = values.at(g.damage_exceptions, i);
         Powers &powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i)
-            power_onDamageAllEnemies(g, powers.at(g.power_objects, i), player_target, amounts);
+        for (int p = next_power_onDamageAllEnemies(g, powers.head); p != 255; p = next_power_onDamageAllEnemies(g, g.power_objects[p].next))
+            power_onDamageAllEnemies(g, g.power_objects[p], player_target, amounts);
         values.assign(g.damage_exceptions, amounts, count);
         g.multi_damage.set(e.card, values);
         int healing = 0;

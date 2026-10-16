@@ -14,8 +14,8 @@ struct Scry : ActionHooks {
             return;
         if (!e.payload.state.Scry.selecting) {
             Powers &powers = g.player.creature.powers;
-            for (int i = 0; i < powers.size; ++i)
-                power_onScry(g, powers.at(g.power_objects, i), player_target);
+            for (int p = next_power_onScry(g, powers.head); p != 255; p = next_power_onScry(g, g.power_objects[p].next))
+                power_onScry(g, g.power_objects[p], player_target);
             if (g.draw.empty())
                 return;
             g.grid_cards.clear();
@@ -27,7 +27,7 @@ struct Scry : ActionHooks {
             g.selection_any_number = true;
             g.selection_can_pick_zero = true;
             e.payload.state.Scry.selecting = true;
-            for (int i = 0; i < g.discard.size; ++i)
+            for (int i = next_card_triggerOnScry(g, g.discard, 0); i < g.discard.size; i = next_card_triggerOnScry(g, g.discard, i + 1))
                 card_triggerOnScry(g, g.discard[i]);
             return;
         }
@@ -36,7 +36,7 @@ struct Scry : ActionHooks {
         g.selected_cards.clear();
         // ScryAction.update invokes the discard hooks on all 16 fixed oracle ticks.
         for (int tick = 0; tick < 15; ++tick)
-            for (int i = 0; i < g.discard.size; ++i)
+            for (int i = next_card_triggerOnScry(g, g.discard, 0); i < g.discard.size; i = next_card_triggerOnScry(g, g.discard, i + 1))
                 card_triggerOnScry(g, g.discard[i]);
     }
 };

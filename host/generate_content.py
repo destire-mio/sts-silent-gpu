@@ -391,6 +391,7 @@ def generate(root, output):
             bases.append(f'struct {base} {{')
             if kind == "actions":
                 bases.append('    static SPIRE_FN constexpr ActionData data() { return {}; }')
+        filters = set()
         for name, signature, result, body, custom_selector in HOOKS[kind]:
             params = parameters(signature)
             plain = ', '.join(param.split('=')[0].strip() for param in params)
@@ -413,15 +414,18 @@ def generate(root, output):
                     continue
                 invocation = f'units::{kind}::{typename}::{name}({", ".join(call_args)})'
                 dispatch.append(f'case {enum}::{unit}: return {invocation};')
-            if kind in ('powers', 'relics') and result == 'float' and body == 'return value;' and signature.startswith('const Game&'):
-                end = '255' if kind == 'powers' else 'g.run.relics.size'
-                content.append(f'SPIRE_FN inline int next_{prefix}_{name}(const Game& g, int index) {{')
+            if name not in filters and ((kind in ('powers', 'relics') and result == 'float' and body == 'return value;' and signature.startswith('const Game&')) or (kind in ('cards', 'powers', 'relics') and result == 'void' and not body)):
+                filters.add(name)
+                end = {'powers': '255', 'relics': 'g.run.relics.size', 'cards': 'pile.size'}[kind]
+                extra = ', const Pile& pile' if kind == 'cards' else ''
+                declarations.append(f'SPIRE_FN inline int next_{prefix}_{name}(const Game& g{extra}, int index);')
+                content.append(f'SPIRE_FN inline int next_{prefix}_{name}(const Game& g{extra}, int index) {{')
                 if len(inherited) == len(entries):
                     content.append(f'(void)g; (void)index; return {end}; }}')
                 else:
                     content.append('constexpr bool active[] = {' + ', '.join('false' if unit in inherited else 'true' for unit, _, _, _ in entries) + '};')
                     advance = 'g.power_objects[index].next' if kind == 'powers' else 'index + 1'
-                    object_id = 'g.power_objects[index].id' if kind == 'powers' else 'g.run.relics[index].id'
+                    object_id = {'powers': 'g.power_objects[index].id', 'relics': 'g.run.relics[index].id', 'cards': 'g.cards[pile[index]].id'}[kind]
                     content.append(f'for (; index != {end}; index = {advance}) {{')
                     content.append(f'const {enum} id = {object_id}; SPIRE_ASSERT(id < {enum}::Count);')
                     content.append('if (active[static_cast<int>(id)]) return index;')

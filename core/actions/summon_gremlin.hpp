@@ -30,7 +30,7 @@ struct SummonGremlinAction : ActionHooks {
         const int owner = g.monsters.size;
         g.monsters.push_back(monster);
         gremlins[slot] = e.payload.state.SummonGremlinAction.m = owner;
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onSpawnMonster(g, i, owner);
+        for (int i = next_relic_onSpawnMonster(g, 0); i < g.run.relics.size; i = next_relic_onSpawnMonster(g, i + 1)) relic_onSpawnMonster(g, i, owner);
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {

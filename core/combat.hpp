@@ -195,7 +195,7 @@ SPIRE_FN inline void gain_block(Game& g, int target, int amount) {
     if (target == player_target) {
         for (int i = 0; i < g.run.relics.size; ++i) value = static_cast<float>(relic_onPlayerGainedBlock(g, i, value));
         if (value > 0.0f) {
-            for (int i = 0; i < c.powers.size; ++i) power_onGainedBlock(g, c.powers.at(g.power_objects, i), target, value);
+            for (int p = next_power_onGainedBlock(g, c.powers.head); p != 255; p = next_power_onGainedBlock(g, g.power_objects[p].next)) power_onGainedBlock(g, g.power_objects[p], target, value);
         }
     }
     for (int i = 0; i < g.monster_order.size; ++i) {
@@ -251,7 +251,7 @@ SPIRE_FN inline void apply_prepared_power(Game& g, int source, int target, Power
     if (!power_data(id).can_stack && existing >= 0) return;
     if (source != no_target) {
         Powers& powers = get_creature(g, source).powers;
-        for (int i = 0; i < powers.size; ++i) power_onApplyPower(g, powers.at(g.power_objects, i), source, incoming, target, source);
+        for (int p = next_power_onApplyPower(g, powers.head); p != 255; p = next_power_onApplyPower(g, g.power_objects[p].next)) power_onApplyPower(g, g.power_objects[p], source, incoming, target, source);
     }
     if (target != player_target && (c.dying || c.half_dead || c.escaped)) return;
     if (power_isDebuff(incoming, target)) {
@@ -315,7 +315,7 @@ SPIRE_FN inline void reduce_power(Game& g, int target, PowerId id, int amount, i
 }
 SPIRE_FN inline void at_end_of_round(Game& g, int target) {
     Powers& powers = get_creature(g, target).powers;
-    for (int i = 0; i < powers.size; ++i) power_atEndOfRound(g, powers.at(g.power_objects, i), target);
+    for (int p = next_power_atEndOfRound(g, powers.head); p != 255; p = next_power_atEndOfRound(g, g.power_objects[p].next)) power_atEndOfRound(g, g.power_objects[p], target);
 }
 SPIRE_FN inline void at_end_of_turn(Game& g, int target) {
     Powers& powers = get_creature(g, target).powers;

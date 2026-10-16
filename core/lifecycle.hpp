@@ -13,14 +13,14 @@ SPIRE_FN inline void gain_gold(Game& g, int amount) {
         if (relic_data(g.run.relics[i].id).blocks_gold) return;
     if (amount <= 0) return;
     g.run.gold += amount;
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onGainGold(g, i);
+    for (int i = next_relic_onGainGold(g, 0); i < g.run.relics.size; i = next_relic_onGainGold(g, i + 1)) relic_onGainGold(g, i);
 }
 SPIRE_FN inline void lose_gold(Game& g, int amount) {
     if (g.room_kind == RoomKind::Shop)
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onSpendGold(g, i);
+        for (int i = next_relic_onSpendGold(g, 0); i < g.run.relics.size; i = next_relic_onSpendGold(g, i + 1)) relic_onSpendGold(g, i);
     if (amount <= 0) return;
     g.run.gold = max(0, g.run.gold - amount);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onLoseGold(g, i);
+    for (int i = next_relic_onLoseGold(g, 0); i < g.run.relics.size; i = next_relic_onLoseGold(g, i + 1)) relic_onLoseGold(g, i);
 }
 SPIRE_FN inline void equip_relic(Game& g, RelicId id) {
     if (relic_data(id).stacks_on_obtain)
@@ -48,7 +48,7 @@ SPIRE_FN inline bool unequip_relic(Game& g, RelicId id) {
     return true;
 }
 SPIRE_FN inline void preview_card_obtain(Game& g, Card& card) {
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onPreviewObtainCard(g, i, card);
+    for (int i = next_relic_onPreviewObtainCard(g, 0); i < g.run.relics.size; i = next_relic_onPreviewObtainCard(g, i + 1)) relic_onPreviewObtainCard(g, i, card);
 }
 SPIRE_FN inline void obtain_relic_object(Game& g, int reference) {
     const int size = g.run.relics.size;
@@ -63,10 +63,10 @@ SPIRE_FN inline int obtain_card(Game& g, Card card) {
     }
     if (card_data(card.id).type == CardType::Curse)
         for (int i = 0; i < g.run.relics.size; ++i) if (relic_onCurseObtain(g, i)) return -1;
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onObtainCard(g, i, card);
+    for (int i = next_relic_onObtainCard(g, 0); i < g.run.relics.size; i = next_relic_onObtainCard(g, i + 1)) relic_onObtainCard(g, i, card);
     const int index = g.run.master_deck.size;
     g.run.master_deck.push_back(card);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);
+    for (int i = next_relic_onMasterDeckChange(g, 0); i < g.run.relics.size; i = next_relic_onMasterDeckChange(g, i + 1)) relic_onMasterDeckChange(g, i);
     return index;
 }
 SPIRE_FN inline void obtain_card_object(Game& g, int card) {
@@ -293,15 +293,15 @@ SPIRE_FN inline void remove_master_card(Game& g, int index) {
         g.detached_master_cards.push_back(g.cards.add(removed));
     }
     card_onRemoveFromMasterDeck(g, removed);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onMasterDeckChange(g, i);
+    for (int i = next_relic_onMasterDeckChange(g, 0); i < g.run.relics.size; i = next_relic_onMasterDeckChange(g, i + 1)) relic_onMasterDeckChange(g, i);
 }
 SPIRE_FN inline void on_victory(Game& g) {
-    for (int i = 0; i < g.run.relics.size; ++i)
+    for (int i = next_relic_onTrigger(g, 0); i < g.run.relics.size; i = next_relic_onTrigger(g, i + 1))
         if (relic_data(g.run.relics[i].id).triggers_at_battle_end) relic_onTrigger(g, i);
     if (!g.player.creature.dying) {
-        for (int i = 0; i < g.run.relics.size; ++i) relic_onVictory(g, i);
+        for (int i = next_relic_onVictory(g, 0); i < g.run.relics.size; i = next_relic_onVictory(g, i + 1)) relic_onVictory(g, i);
         Powers& powers = g.player.creature.powers;
-        for (int i = 0; i < powers.size; ++i) power_onVictory(g, powers.at(g.power_objects, i), player_target);
+        for (int p = next_power_onVictory(g, powers.head); p != 255; p = next_power_onVictory(g, g.power_objects[p].next)) power_onVictory(g, g.power_objects[p], player_target);
     }
     g.player.damaged_this_combat = 0;
 }
@@ -381,13 +381,13 @@ SPIRE_FN inline void add_relic_reward(Game& g, RelicTier tier) {
     g.room_rewards.push_back(create_reward(g, reward));
 }
 SPIRE_FN inline void settle_relic_acquisition(Game& g, RandomXS128& policy) {
-    for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
+    for (int i = next_relic_update(g, 0); i < g.run.relics.size; i = next_relic_update(g, i + 1)) relic_update(g, i);
     while (g.screen == Screen::Grid || g.screen == Screen::CombatReward || g.screen == Screen::CardReward) {
         ActionSet actions{};
         legal_actions(g, actions);
         SPIRE_ASSERT(!actions.empty());
         step(g, actions[policy.nextInt(actions.size)]);
-        for (int i = 0; i < g.run.relics.size; ++i) relic_update(g, i);
+        for (int i = next_relic_update(g, 0); i < g.run.relics.size; i = next_relic_update(g, i + 1)) relic_update(g, i);
     }
     settle_card_obtains(g);
 }

@@ -19,7 +19,7 @@ SPIRE_FN inline void enter_boss_chest(Game& g) {
 
 SPIRE_FN inline void open_boss_chest(Game& g) {
     g.chest.open = true;
-    for (int i = 0; i < g.run.relics.size; ++i)
+    for (int i = next_relic_onChestOpen(g, 0); i < g.run.relics.size; i = next_relic_onChestOpen(g, i + 1))
         if (!relic_data(g.run.relics[i].id).boss_chest_excluded) relic_onChestOpen(g, i, true);
     g.screen = Screen::BossReward;
 }
@@ -49,7 +49,7 @@ SPIRE_FN inline void enter_treasure(Game& g) {
 
 SPIRE_FN inline void open_chest(Game& g) {
     g.chest.open = true;
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onChestOpen(g, i, false);
+    for (int i = next_relic_onChestOpen(g, 0); i < g.run.relics.size; i = next_relic_onChestOpen(g, i + 1)) relic_onChestOpen(g, i, false);
     const auto& data = chest_data[g.chest.size];
     if (g.chest.gold) add_gold_reward(g, floor_int(g.rng.treasure.random(data.gold_amount * 0.9f, data.gold_amount * 1.1f) + 0.5f));
     if (g.chest.cursed) {
@@ -57,7 +57,7 @@ SPIRE_FN inline void open_chest(Game& g) {
     }
     add_relic_reward(g, g.chest.relic);
     if (!g.run.sapphire_key) add_key_reward(g, RewardKind::SapphireKey);
-    for (int i = 0; i < g.run.relics.size; ++i) relic_onChestOpenAfter(g, i, false);
+    for (int i = next_relic_onChestOpenAfter(g, 0); i < g.run.relics.size; i = next_relic_onChestOpenAfter(g, i + 1)) relic_onChestOpenAfter(g, i, false);
     open_room_card_rewards(g);
     g.reward_proceed_visible = true;
     g.reward_skippable = false; g.combat_reward_skippable = false;
