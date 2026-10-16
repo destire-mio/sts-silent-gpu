@@ -125,40 +125,59 @@ inference, rollout storage and learning; timing output goes to stdout.
 
 ## E2 curriculum root collection
 
-`tools/collect_roots.cpp` searches native `Game` copies; `tools/e2_roots.py` stores gzip JSONL
-outside the checkout. A root contains only a signed seed and canonical candidate indices.
-Deck/relic signatures, resources and continuation results are metadata, never restored state
-or training labels. Replay each prefix through `TrainingBatch(1, 1, 8192, [seed]).step(indices)`
-to rebuild the visible history. No reset-to-root binding is required.
+`tools/collect_roots.cpp` searches native `Game` copies. Roots store a signed seed and
+canonical legal-action candidate indices, with separate curriculum metadata; no state bytes
+or hidden-future search labels enter training. `TrainingBatch.reset_to(slot, seed, candidates)`
+rebuilds the game and visible history. `batch-check` compares supplied prefixes with ordinary
+batch stepping, including all observation/candidate buffers.
 
 ```sh
 cmake --build /private/tmp/e2-build --target spire spire_collect_roots --parallel 1
-python3 tools/e2_roots.py collect --name collection --output /private/tmp/e2-roots --train 512 --dev 256 --decisions 6000000
-python3 tools/e2_roots.py evaluate --name difficulty --inputs /private/tmp/e2-roots/collection.roots.jsonl.gz --decisions 2000000
-PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py batch-check --name replay --inputs /private/tmp/e2-roots/difficulty.roots.jsonl.gz
-python3 oracle/build.py
-PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py validate --name original --inputs /private/tmp/e2-roots/difficulty.roots.jsonl.gz
-python3 tools/e2_roots.py summarize --name candidates --inputs /private/tmp/e2-roots/difficulty.roots.jsonl.gz --audits /private/tmp/e2-roots/original/results.json
+python3 tools/e2_roots.py collect --output /private/tmp/e2-roots/round2 --name breadth \
+  --offset 2300 --train 1024 --dev 512 --family-decisions 2000000 --trials 12
+python3 tools/e2_roots.py audit --output /private/tmp/e2-roots/round2 --name audited \
+  --inputs /private/tmp/e2-roots/round2/breadth.roots.jsonl.gz
+python3 tools/e2_roots.py evaluate --output /private/tmp/e2-roots/round2 --name measured \
+  --inputs /private/tmp/e2-roots/round2/audited.roots.jsonl.gz
+PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py batch-check \
+  --output /private/tmp/e2-roots/round2 --name batch-check \
+  --inputs /private/tmp/e2-roots/round2/measured.roots.jsonl.gz
+PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py validate \
+  --output /private/tmp/e2-roots/round2 --name oracle --minimum-roots 30 \
+  --inputs /private/tmp/e2-roots/round2/measured.roots.jsonl.gz
+python3 tools/e2_roots.py summarize --output /private/tmp/e2-roots/round2 --name candidates \
+  --inputs /private/tmp/e2-roots/round2/measured.roots.jsonl.gz \
+  --audits /private/tmp/e2-roots/round2/oracle/results.json
 ```
 
-Configure `/private/tmp/e2-build` using the build instructions above. Use a fresh output directory
-and unique command names. Run one command at a time; original recordings share
-`/private/tmp/spire-oracle.lock`. The ledger includes all search branches, failed searches,
-difficulty continuations, prefix replays and validation replays. Native runs stop at their
-decision/CPU allocation and preserve the pending prefix in a mapped journal on an assertion.
-`extend --inputs ...` continues from the latest saved boundary in each existing family; its
-prefix replay consumes budget too. `--offset` selects unused train/dev seeds from the inventory;
-locked seeds never enter the engine.
+Use a fresh output directory. `budget.json` starts a shared three-hour wall-clock budget;
+there is no total engine-decision cap. Family decision and floor-expansion limits allocate
+search effort, and every attempted decision is counted. Run at most two CPU-heavy processes
+and one original-game JVM. Generated roots, traces, cost ledgers and fault prefixes stay outside
+the repository; output must remain below 5 GB. Only train/dev root families are accepted.
 
-Selection keeps the first boundary reached per family/stage before difficulty is measured.
-Stage/partition groups below 20 families remain diagnostic-only, enforcing the 5% family cap
-without duplicates. Search measurements use four independent policy RNG streams with 512
-decisions each; uniform measurements use sixteen streams with a 2048-decision cap. All share
-the root's fixed game RNG. Search success is a budgeted discovery rate, not a policy label or
-proof that a zero-success root is unwinnable. The first collection added Act 1 boss starts
-after Act 3/Heart proved sparse; [its manifest](inventory/e2-roots.json) records the exact
-budgets, selection changes, coverage, checksums and unresolved original-game differences.
-Any original validation failure blocks release of the collection for curriculum use.
+Search keeps eight floor candidates, preferring distinct builds, and up to six distinct-score
+combat-turn candidates. It saves the first observed boundary on any branch, including weak
+states and branches that later die. Burning-elite reachability directs emerald routing;
+sapphire trades and Act 3 campfire recall are explicit choices. Search bias and exact budgets
+belong in the manifest. `extend` resumes Act 3 entry roots for families without a saved Heart
+turn 5, retaining existing boundaries and spending its family budget on later stages.
+Each root receives 16 uniform continuations (4096 decisions each) and
+four search continuations (16384 decisions each). Success, death and live budget cuts remain
+separate metadata. No filtering uses these difficulty outcomes.
+
+`audit` replays stored indices and checks stage/resource metadata after engine changes. It
+quarantines obsolete prefixes and curse-transform previews: the original's curse-preview
+branch advances `cardRng` with elapsed frames, failing the 13-frame check. Discovery excludes
+that choice. Uniform difficulty sampling still draws from every legal action, but records
+`frame_dependent` censoring if that preview is selected. This limitation is retained in the
+manifest; the original RNG split and comparison are unchanged.
+
+Sampling is uniform over families within each partition/stage. Groups with fewer than 20
+families remain diagnostic-only, so one family never exceeds 5% in a released group. Original
+validation, both replay scopes and the 13-idle-frame check gate release. The
+[collection manifest](inventory/e2-roots.json) records coverage, distributions, checksums,
+validation and remaining gaps.
 
 ## E1 training and evaluation
 

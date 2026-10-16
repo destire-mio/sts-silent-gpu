@@ -21,8 +21,9 @@ class RootInventoryTests(unittest.TestCase):
                     e2.partition(seed)
 
     def test_duplicates_cannot_satisfy_family_cap(self):
-        template = dict(root=dict(seed=0, candidates=[0]), hp=1, deck=[], relics=[], potions=[],
-                        difficulty=dict(uniform=dict(success=0, cutoff=0), search=dict(success=0, cutoff=0)))
+        template = dict(root=dict(seed=0, candidates=[0]), hp=1, max_hp=66, keys=[0, 0, 0], deck=[], relics=[], potions=[],
+                        difficulty=dict(uniform=dict(success=0, cutoff=0, death=16, other_terminal=0, frame_dependent=0),
+                                        search=dict(success=0, cutoff=0, death=4, other_terminal=0, frame_dependent=0)))
         group = []
         for seed in range(20):
             row = copy.deepcopy(template)

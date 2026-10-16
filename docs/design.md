@@ -247,6 +247,9 @@ Without outstanding rewards, previousScreen supplies the return destination. Can
 confirmation preview only dismisses the preview; a second cancel closes GRID. A rest-room
 cancel additionally reopens the campfire. GridCardSelectScreen.open/reopen tests the previous
 screen, not the room kind, when deciding whether a shop grid offers cancel.
+Confirmation follows the same return-screen rule. ShopScreen.updatePurge and
+ShopRoom.updatePurge consume the selected card and gold only when SHOP or the room is
+active; an intervening COMBAT_REWARD leaves the purchase pending until that screen closes.
 
 Monster death state remains rule state. `AbstractMonster.die` sets isDying; its death animation
 later sets isDead and clears powers. GRID/CARD_REWARD freeze that update, so a just-killed
@@ -437,8 +440,15 @@ to their fresh-process values before each seed; this includes The Bomb's id allo
 counters, dialog selections, stale next-room/encounter references, and the captured cold-menu
 relic exclusion list. Device-cache RNG is isolated from both presentation and rule streams.
 The grid screen is recreated between runs; its transform timer remains original game state but
-is outside the rule snapshot. Transform-preview randomness uses the presentation stream,
-including the otherwise implicit default-Random constructor draws.
+is outside the rule snapshot. Non-curse transform-preview randomness uses the presentation
+stream, including the otherwise implicit default-Random constructor draws. The original
+AbstractDungeon.returnTrulyRandomCardFromAvailable CURSE branch ignores the supplied RNG
+and calls CardLibrary.getCurse, which advances cardRng. Seed 2000002442, decision 216,
+has cardRng counter 64 with ordinary recording and 65 after 13 extra idle frames. That
+preview path does not satisfy the frame-independent observation contract. E2 quarantines
+prefixes entering it, excludes that choice from discovery search, and records a separate
+censored outcome if a uniform difficulty continuation selects it. The RNG split and
+comparison remain unchanged; these roots do not certify the excluded path.
 
 Each UTF-8 JSONL file is `Header`, followed by zero or more `Decision` records, then one `Terminal`.
 Every line ends with LF. Recorded data is never edited. Committed fixtures may use `.jsonl.gz`:

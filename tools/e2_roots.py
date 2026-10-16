@@ -15,8 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PARTITIONS = json.loads((ROOT / 'inventory/seed-partitions.json').read_text())
 STAGES = ('act2_entry', 'act3_entry', 'act3_boss', 'act4_entry', 'heart_start',
           'heart_turn2', 'heart_turn3', 'heart_turn5', 'act1_boss')
-DECISION_LIMIT = 10_000_000
-CPU_LIMIT = 6 * 3600
+DECISION_LIMIT = (1 << 64) - 1
+WALL_LIMIT = 3 * 3600
 
 
 def digest(path):
@@ -59,24 +59,29 @@ def costs(output):
 def account(output, item):
     with (output / 'ledger.jsonl').open('a') as stream:
         stream.write(json.dumps(item) + '\n')
-    assert sum(row['decisions'] for row in costs(output)) <= DECISION_LIMIT
-    assert sum(row['cpu_seconds'] for row in costs(output)) <= CPU_LIMIT
-    assert sum(p.stat().st_size for p in output.rglob('*') if p.is_file()) < 5_000_000_000
+    assert sum(p.stat().st_size for directory in (Path('/private/tmp/e2-roots'), Path('/private/tmp/e2-build'))
+               for p in directory.rglob('*') if p.is_file()) < 5_000_000_000
 
 
 def native(args, mode, input_path):
     prefix = args.output / args.name
     assert not prefix.with_suffix('.jsonl').exists()
-    previous = costs(args.output)
-    remaining = DECISION_LIMIT - sum(x['decisions'] for x in previous)
-    cpu_remaining = CPU_LIMIT - sum(x['cpu_seconds'] for x in previous)
-    assert 0 < args.decisions <= remaining and cpu_remaining > 0
-    command = [str(args.build / 'spire_collect_roots'), mode, str(args.decisions),
-               str(args.family_decisions), str(args.trials), str(cpu_remaining),
+    deadline_file = args.output / 'budget.json'
+    if not deadline_file.exists():
+        deadline_file.write_text(json.dumps(dict(start=time.time(), wall_limit=WALL_LIMIT)))
+    budget = json.loads(deadline_file.read_text())
+    wall_remaining = budget['start'] + budget['wall_limit'] - time.time()
+    assert wall_remaining > 0
+    command = [str(args.build / 'spire_collect_roots'), mode, str(DECISION_LIMIT),
+               str(args.family_decisions), str(args.trials), str(wall_remaining),
                str(prefix.with_suffix('.journal')), str(input_path)]
     config = dict(command=command, mode=mode, engine=subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         source_sha256=digest(ROOT / 'tools/collect_roots.cpp'), input_sha256=digest(input_path))
+    patch = prefix.with_suffix('.source.patch')
+    patch.write_bytes(subprocess.check_output(['git', 'diff', 'HEAD', '--', 'core', 'obs', 'host', 'tools/collect_roots.cpp'], cwd=ROOT))
+    config['source_patch'] = dict(path=str(patch), sha256=digest(patch))
+    config['binary_sha256'] = digest(args.build / 'spire_collect_roots')
     prefix.with_suffix('.config.json').write_text(json.dumps(config, indent=2) + '\n')
     start = time.monotonic()
     with prefix.with_suffix('.jsonl').open('x') as out, prefix.with_suffix('.stderr').open('x') as err:
@@ -149,6 +154,35 @@ def evaluate(args):
     write_gzip(args.output / f'{args.name}.roots.jsonl.gz', roots)
 
 
+def audit(args):
+    roots = [row for file in args.inputs for row in rows(file)]
+    input_path = args.output / f'{args.name}.inputs'
+    with input_path.open('x') as stream:
+        for row in roots:
+            root = row['root']
+            assert partition(root['seed']) == row['partition']
+            stream.write(f"{row['partition']} {root['seed']} {STAGES.index(row['stage'])} "
+                         f"{len(root['candidates'])} " + ' '.join(map(str, root['candidates'])) + '\n')
+    records = native(args, 'replay', input_path)[:-1]
+    assert len(records) == len(roots)
+    accepted, rejected = [], []
+    for row, replayed in zip(roots, records):
+        if replayed['kind'] == 'quarantine':
+            rejected.append(dict(root=row, evidence=replayed))
+            continue
+        assert row['root'] == replayed['root'] and row['stage'] == replayed['stage']
+        changed = [field for field in ('hp', 'max_hp', 'floor', 'turn', 'gold', 'keys', 'deck', 'relics', 'potions')
+                   if row[field] != replayed[field]]
+        if changed:
+            rejected.append(dict(root=row, evidence=dict(reason='metadata_changed_after_rule_fix', fields=changed)))
+        else:
+            accepted.append(row)
+    write_gzip(args.output / f'{args.name}.roots.jsonl.gz', accepted)
+    write_gzip(args.output / f'{args.name}.quarantine.jsonl.gz', rejected)
+    print(json.dumps(dict(accepted=len(accepted), rejected=len(rejected), reasons=dict(collections.Counter(
+        row['evidence']['reason'] for row in rejected)))), flush=True)
+
+
 def extend(args):
     families = collections.defaultdict(list)
     for file in args.inputs:
@@ -158,7 +192,11 @@ def extend(args):
     input_path = args.output / f'{args.name}.inputs'
     with input_path.open('x') as stream:
         for seed, found in families.items():
-            row = max(found, key=lambda x: (x['floor'], len(x['root']['candidates'])))
+            if any(row['stage'] == 'heart_turn5' for row in found):
+                continue
+            row = next((row for row in found if row['stage'] == 'act3_entry'), None)
+            if row is None:
+                continue
             excluded = 0
             for item in found:
                 excluded |= 1 << STAGES.index(item['stage'])
@@ -177,11 +215,10 @@ def batch_check(args):
     decisions = 0
     results = []
     roots = [row for file in args.inputs for row in rows(file)]
-    assert sum(len(row['root']['candidates']) for row in roots) <= DECISION_LIMIT - sum(x['decisions'] for x in costs(args.output))
     for row in roots:
         root = row['root']
         assert partition(root['seed']) == row['partition']
-        batch = spire.TrainingBatch(1, 1, 8192, [root['seed']])
+        batch = spire.TrainingBatch(1, 1, 16384, [root['seed']])
         action = np.zeros(1, dtype=np.int32)
         for index in root['candidates']:
             assert not batch.done[0] and not batch.truncated[0] and not batch.faults[0]
@@ -190,6 +227,13 @@ def batch_check(args):
             batch.step(action)
             decisions += 1
         assert not batch.done[0] and not batch.truncated[0] and not batch.faults[0]
+        buffers = ('tags', 'ids', 'values', 'candidate_kinds', 'candidate_refs', 'entity_mask', 'candidate_mask')
+        expected = {name: getattr(batch, name).copy() for name in buffers}
+        batch.reset_to(0, root['seed'], root['candidates'])
+        decisions += len(root['candidates'])
+        assert batch.faults[0] == 0 and batch.decision_counts[0] == 0
+        for name in buffers:
+            assert np.array_equal(getattr(batch, name), expected[name]), name
         assert batch.values[0, 0, 1] == row['hp']
         assert batch.values[0, 1, 1] == row['max_hp']
         assert batch.values[0, 1, 0] == row['floor']
@@ -300,14 +344,22 @@ def stage_summary(group):
         unique_decks=len({json.dumps(x['deck']) for x in group}),
         unique_relic_sets=len({json.dumps(x['relics']) for x in group}),
         unique_deck_relic_pairs=len({json.dumps([x['deck'], x['relics']]) for x in group}),
+        keys=distribution(''.join(map(str, x['keys'])) for x in group),
         hp=distribution(x['hp'] for x in group),
+        hp_at_most_quarter=sum(x['hp'] * 4 <= x['max_hp'] for x in group),
         deck_size=distribution(len(x['deck']) for x in group),
         relic_count=distribution(len(x['relics']) for x in group),
         potion_count=distribution(sum(p != 0 for p in x['potions']) for x in group),
         uniform_successes_out_of_16=distribution(x['difficulty']['uniform']['success'] for x in group),
         search_successes_out_of_4=distribution(x['difficulty']['search']['success'] for x in group),
         uniform_cutoffs=sum(x['difficulty']['uniform']['cutoff'] for x in group),
-        search_cutoffs=sum(x['difficulty']['search']['cutoff'] for x in group))
+        search_cutoffs=sum(x['difficulty']['search']['cutoff'] for x in group),
+        uniform_deaths=sum(x['difficulty']['uniform']['death'] for x in group),
+        search_deaths=sum(x['difficulty']['search']['death'] for x in group),
+        uniform_frame_dependent=sum(x['difficulty']['uniform']['frame_dependent'] for x in group),
+        search_frame_dependent=sum(x['difficulty']['search']['frame_dependent'] for x in group),
+        uniform_other_terminals=sum(x['difficulty']['uniform']['other_terminal'] for x in group),
+        search_other_terminals=sum(x['difficulty']['search']['other_terminal'] for x in group))
 
 
 def summarize(args):
@@ -329,11 +381,12 @@ def summarize(args):
             row['root_prefix_decisions'] = len(root['root']['candidates'])
         audits.append(dict(path=str(path), sha256=digest(path), results=report['results'],
                            idle_frames=report['idle_frames'], byte_identical=report['byte_identical']))
-    parity_passed = len([r for audit in audits for r in audit['results']]) >= 20 and all(
+    parity_passed = len([r for audit in audits for r in audit['results']]) >= 30 and all(
         audit['byte_identical'] == len(audit['results']) and all(
-            s['passed'] for row in audit['results'] for s in row['scopes'].values()) for audit in audits)
+            row['stopped'] is None and all(s['passed'] and s['terminal'] for s in row['scopes'].values())
+            for row in audit['results']) for audit in audits)
     family_counts = {part: len({x['root']['seed'] for x in roots if x['partition'] == part}) for part in ('train', 'dev')}
-    family_targets = family_counts['train'] >= 256 and family_counts['dev'] >= 128
+    family_targets = counts['train']['act3_entry']['families'] >= 256 and counts['dev']['act3_entry']['families'] >= 128
     covered = [stage for stage in STAGES if all(counts[part][stage]['family_cap_satisfied'] for part in ('train', 'dev'))]
     passed = parity_passed and family_targets and len(covered) >= 2
     exports = []
@@ -344,17 +397,17 @@ def summarize(args):
         write_gzip(path, selected)
         exports.append(dict(path=str(path), sha256=digest(path), bytes=path.stat().st_size, roots=len(selected),
                             released_for_curriculum=passed and part != 'sparse'))
-    manifest = dict(version=1, engine_base='a7878b5b86c5700db0128678911d99dca4f54268',
+    manifest = dict(version=1, engine_base=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         partition_sha256=digest(ROOT / 'inventory/seed-partitions.json'),
         root_schema='root.seed (signed int64), root.candidates (canonical legal-action indices); all other fields are metadata, never restore state',
         status='accepted' if passed else 'blocked_original_validation' if not parity_passed else 'insufficient_coverage',
         released_for_curriculum=passed,
         selection='First reachable boundary per seed and stage, including exploratory branches before choosing a turn. No filtering on continuation difficulty. Uniform sampling over families within eligible partition/stage. Stages with fewer than 20 families are diagnostic-only. No stage is released until original validation passes.',
-        search_bias='Weighted card/reward/map policy and true-future search favor survival, HP, poison/scaling, and keys. Initial pilot/breadth/breadth3 retained one turn candidate; later searches retained up to two distinct-score turn candidates through a combat. Floor checkpoints retry failures. First Act2 roots were extended; the three Act3 families received 60000 decisions each. Act1 boss collection was added after scarce late-stage coverage. No search result is a training label.',
+        search_bias='True-future floor beam of 8 diverse builds, 4 outside-combat branches (24 at Neow), combat beam of 6 and 12 breadth or 16 extension turn samples. Up to 256 floor expansions with alternative floor beams retained. Emerald routing uses backward map reachability; sapphire reward and Act 3 recall are selected explicitly. First boundary observed on any branch is saved, including weak and later losing paths. Curse-transform preview choices are excluded because the original advances rule RNG as idle frames pass. No search result is a training label.',
         goals=dict(zip(STAGES, ('act3_entry', 'act3_boss', 'act4_entry', 'heart_start', 'heart_win', 'heart_win', 'heart_win', 'heart_win', 'act2_entry'))),
-        difficulty='16 uniform legal continuations capped at 2048 decisions each; 4 search RNG streams, 512 engine decisions each, up to two turn candidates and four sampled continuations per candidate. Search success is finding the target within this budget; returned deaths and live cutoffs are reported separately. The search returns its best finished branch when any finished branch exists, even if live branches remain at budget exhaustion. A zero search rate does not establish that a root is unwinnable. All trials keep the same game RNG world; only policy RNG varies. No difficulty filtering.',
+        difficulty='16 uniform legal continuations capped at 4096 decisions each; 4 search RNG streams capped at 16384 engine decisions each, combat beam of 6 and 4 samples. Continuations keep the same game RNG world. Success, death, other terminal, live budget cutoff and frame-dependent curse-preview censoring are separate metadata; zero success is not proof of impossibility. Uniform selection includes all legal actions and censors the continuation if it selects the unsupported preview. No difficulty filtering.',
         families=family_counts, family_targets_met=family_targets, family_cap_stages=covered,
-        stages=counts, budget=dict(decision_limit=DECISION_LIMIT, cpu_seconds_limit=CPU_LIMIT,
+        stages=counts, budget=dict(decision_limit=None, wall_seconds_limit=WALL_LIMIT, cpu_heavy_process_limit=2,
                                  entries=costs(args.output)),
         validation=audits,
         search_configurations=[json.loads(p.read_text()) for p in sorted(args.output.glob('*.config.json'))],
@@ -364,7 +417,7 @@ def summarize(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=('collect', 'extend', 'evaluate', 'batch-check', 'validate', 'summarize'))
+    parser.add_argument('command', choices=('collect', 'extend', 'audit', 'evaluate', 'batch-check', 'validate', 'summarize'))
     parser.add_argument('--output', type=Path, default=Path('/private/tmp/e2-roots'))
     parser.add_argument('--build', type=Path, default=Path('/private/tmp/e2-build'))
     parser.add_argument('--name', required=True)
@@ -372,14 +425,13 @@ def main():
     parser.add_argument('--train', type=int, default=512)
     parser.add_argument('--dev', type=int, default=256)
     parser.add_argument('--offset', type=int, default=0)
-    parser.add_argument('--decisions', type=int, default=6_000_000)
-    parser.add_argument('--family-decisions', type=int, default=8000)
-    parser.add_argument('--trials', type=int, default=6)
+    parser.add_argument('--family-decisions', type=int, default=2_000_000)
+    parser.add_argument('--trials', type=int, default=12)
     parser.add_argument('--manifest', type=Path, default=ROOT / 'inventory/e2-roots.json')
     parser.add_argument('--minimum-roots', type=int, default=20)
     parser.add_argument('--audits', nargs='*', type=Path, default=[])
     args = parser.parse_args()
-    {'collect': collect, 'extend': extend, 'evaluate': evaluate, 'batch-check': batch_check,
+    {'collect': collect, 'extend': extend, 'audit': audit, 'evaluate': evaluate, 'batch-check': batch_check,
      'validate': validate, 'summarize': summarize}[args.command](args)
 
 
