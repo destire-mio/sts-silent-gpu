@@ -26,6 +26,9 @@ class Audit:
         self.rooms = Counter()
         self.peaks = Counter()
         self.decisions = 0
+        self.entity_counts = Counter()
+        self.candidate_counts = Counter()
+        self.stored_sizes = Counter()
 
     def check(self, observation, legal):
         tags, ids, values, kinds, refs, entity_bits, candidate_bits, fault = observation
@@ -60,6 +63,11 @@ class Audit:
 
     def decision(self, observation):
         ids = observation[1]
+        count = int(np.unpackbits(observation[5], bitorder="little").sum())
+        candidates = int(np.unpackbits(observation[6], bitorder="little").sum())
+        self.entity_counts[count] += 1
+        self.candidate_counts[candidates] += 1
+        self.stored_sizes[12 + spire.entity_bytes * count + spire.candidate_bytes * candidates] += 1
         screen = SCREENS[int(ids[0, 0]) - 1]
         self.screens[screen] += 1
         if screen == "EVENT":
@@ -67,6 +75,21 @@ class Audit:
         if screen == "ROOM":
             self.rooms[str(int(ids[3, 0]) - 1)] += 1
         self.decisions += 1
+
+
+def distribution(histogram):
+    count = sum(histogram.values())
+    ordered = sorted(histogram.items())
+
+    def percentile(fraction):
+        cumulative = 0
+        for value, frequency in ordered:
+            cumulative += frequency
+            if cumulative >= fraction * count:
+                return value
+
+    return dict(mean=sum(value * frequency for value, frequency in ordered) / count,
+                p50=percentile(.5), p99=percentile(.99), max=max(histogram))
 
 
 def engine(audit):
@@ -120,7 +143,11 @@ def main():
                   events=audit.events, rooms=audit.rooms, peaks=audit.peaks,
                   gaps=[name for name in SCREENS if name not in audit.boundaries],
                   game_bytes=spire.game_bytes, observation_bytes=spire.observation_bytes,
-                  results=results)
+                  distributions={name: distribution(histogram) for name, histogram in
+                                 (("entities", audit.entity_counts), ("candidates", audit.candidate_counts),
+                                  ("stored_bytes", audit.stored_sizes))},
+                  histograms=dict(entities=audit.entity_counts, candidates=audit.candidate_counts,
+                                  stored_bytes=audit.stored_sizes), results=results)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k != "results"}, indent=2))
     return int(any(not item["passed"] for item in results))

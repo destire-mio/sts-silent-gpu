@@ -1,13 +1,13 @@
 {
-  "protocol_version": 1,
-  "base_commit": "8e12f098b5afe26278bea52b81c4990b2111878b",
+  "protocol_version": 2,
+  "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
     "entities": 384,
     "candidates": 128
   },
   "capacity_basis": "Execution budgets: 285 entities and 51 candidates observed; reserve 99 entity slots and the existing 128-action engine capacity. Overflow is a fault, not a game limit or truncation.",
-  "observation_bytes": 36352,
+  "observation_bytes": 10184,
   "game_bytes": 37872,
   "corpus": {
     "committed_traces": 841,
@@ -120,5 +120,44 @@
       "field": "Intent visibility during selection/reward overlays",
       "reason": "Renderer intent alpha is absent from Game; the protocol omits these intents by default deny."
     }
-  ]
+  ],
+  "representation": {
+    "network_array_bytes": 10176,
+    "count_bytes": 8,
+    "entity_bytes": 24,
+    "candidate_bytes": 7,
+    "packed_mask_bytes": 64,
+    "compact_record_bytes": "4 + 24 * entities + 7 * candidates",
+    "compact_offset_bytes_per_decision": 8,
+    "compact_final_offset_bytes_per_stream": 8,
+    "previous_padded_array_bytes": 36352
+  },
+  "decision_distributions": {
+    "entities": {
+      "mean": 67.60584165581126,
+      "p50": 66,
+      "p99": 147,
+      "max": 285
+    },
+    "candidates": {
+      "mean": 4.410096974960197,
+      "p50": 4,
+      "p99": 18,
+      "max": 51
+    },
+    "stored_bytes": {
+      "mean": 1665.4108785641915,
+      "p50": 1631,
+      "p99": 3572,
+      "max": 6859
+    }
+  },
+  "distribution_method": "Decision-weighted over all 974 listed traces (172725 decisions); terminal-only boundaries excluded; p50/p99 use nearest rank. Stored bytes include the 4-byte header and one uint64 offset; add 8 bytes once per stream.",
+  "compression_equivalence": {
+    "reference_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
+    "traces": 974,
+    "decisions": 172725,
+    "method": "Expand each typed observation to the original semantic rows and byte masks. SHA256 of every boundary per trace matches the reference, including candidate order and padding.",
+    "sha256_of_sorted_trace_observation_digests": "ce0a211152c0ad79bceaa0f01613a72d8d365418c67f872bbbf447330b03aa73"
+  }
 }
