@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "actions": "tests/deep_benchmark.actions",
+  "sha256": "4f67ddf7027947b3c4ed72a36ef034681be46c90863504a0bde46a10681ff695",
+  "games": [
+    {
+      "seed": 202610230000,
+      "sha256": "2df9e830a2b74670a9bf9ee3ab7c1d36923aee320555a9741ddfd79a43b5ca72",
+      "decisions": 1375,
+      "source": "perf-evidence/deep-actions/202610230000.scenario.json"
+    },
+    {
+      "seed": 202610230004,
+      "sha256": "825632744cca155b530b5507b05d62cbc9710a0ca106ddf83a22600b77fb1b0e",
+      "decisions": 1142,
+      "source": "perf-evidence/deep-actions/202610230004.scenario.json"
+    },
+    {
+      "seed": 202610230005,
+      "sha256": "534028ef88131291d603e63a155db8df208f3b9cb9bec2b7967057094b1ddbca",
+      "decisions": 1902,
+      "source": "perf-evidence/deep-actions/202610230005.scenario.json"
+    },
+    {
+      "seed": 202610230006,
+      "sha256": "92a3cffe47c5b8cc4b13b5d50651f61c17fc913996c6289d8b9c0da83a1feb51",
+      "decisions": 823,
+      "source": "perf-evidence/deep-actions/202610230006.scenario.json"
+    },
+    {
+      "seed": 202610230007,
+      "sha256": "e6dbc7ded218262935ef390623c1a95a773a43ab295836e75c0f28a3ab32dbef",
+      "decisions": 1210,
+      "source": "perf-evidence/deep-actions/202610230007.scenario.json"
+    },
+    {
+      "seed": 202610230008,
+      "sha256": "1b4b3b93beaa0959b9913abe299fd783896f9ddf4ed9c1ad63dd5008d28974a3",
+      "decisions": 1217,
+      "source": "perf-evidence/deep-actions/202610230008.scenario.json"
+    },
+    {
+      "seed": 202610230010,
+      "sha256": "85b9141ace807389b6c5dab65c5155dfae2029d0df181ec1002f807dd03b8620",
+      "decisions": 889,
+      "source": "perf-evidence/deep-actions/202610230010.scenario.json"
+    },
+    {
+      "seed": 202610230013,
+      "sha256": "ee06113587b75f5e6ca04bc53003739befe0db20399146088feff5786180bd55",
+      "decisions": 1024,
+      "source": "perf-evidence/deep-actions/202610230013.scenario.json"
+    },
+    {
+      "seed": 202610230014,
+      "sha256": "4820b84ff29f278af7d7c4fa70b02defb6c365f869e532b9aea7108e9bf00c09",
+      "decisions": 914,
+      "source": "perf-evidence/deep-actions/202610230014.scenario.json"
+    },
+    {
+      "seed": 202610210030,
+      "sha256": "1059efaf8ef9c156bb1ed1ffab402b8f5326d6700bf98423116bd82d5b4dae5b",
+      "decisions": 1541,
+      "source": "/private/tmp/fault-hunt/dead-branch-fixed/fault.jsonl.gz"
+    },
+    {
+      "seed": 202610211131,
+      "sha256": "8721655cf164d2ba3b66d9e0d397c1e5e7ef79902cb233a7c6bf7f05cb2ad5ca",
+      "decisions": 1580,
+      "source": "/private/tmp/fault-hunt/branch-wide/fault.jsonl.gz"
+    },
+    {
+      "seed": 202610180018,
+      "sha256": "c19a1011f3f340235bbddd37cc5d77f0287e3d21846ec9307341edd27de7f336",
+      "decisions": 1421,
+      "source": "/private/tmp/spire-deep-round2/fresh-recordings/202610180018.jsonl.gz"
+    }
+  ]
+}

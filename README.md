@@ -131,6 +131,7 @@ consumes terminal floor, HP and screen; strict snapshot parity remains the trace
 000, 004, 005, 006, 007, 008, 010, 013, 014. Seeds 202610210030 (Dead Branch),
 202610211131 (card residency) and 202610180018 (victory) come from the accepted trace actions
 in `inventory/deep-neow.json`. These are input actions, not replacement oracle snapshots.
+`inventory/benchmark.json` records the source paths, hashes and per-game decision counts.
 
 ## Layout
 
