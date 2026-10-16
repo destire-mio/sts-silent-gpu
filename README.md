@@ -123,6 +123,43 @@ Neow to death/victory and restarts from the caller's repeated root sequence. The
 act counts, observation bytes and worker encoding/stepping/reset shares. It excludes network
 inference, rollout storage and learning; timing output goes to stdout.
 
+## E2 curriculum root collection
+
+`tools/collect_roots.cpp` searches native `Game` copies; `tools/e2_roots.py` stores gzip JSONL
+outside the checkout. A root contains only a signed seed and canonical candidate indices.
+Deck/relic signatures, resources and continuation results are metadata, never restored state
+or training labels. Replay each prefix through `TrainingBatch(1, 1, 8192, [seed]).step(indices)`
+to rebuild the visible history. No reset-to-root binding is required.
+
+```sh
+cmake --build /private/tmp/e2-build --target spire spire_collect_roots --parallel 1
+python3 tools/e2_roots.py collect --name collection --output /private/tmp/e2-roots --train 512 --dev 256 --decisions 6000000
+python3 tools/e2_roots.py evaluate --name difficulty --inputs /private/tmp/e2-roots/collection.roots.jsonl.gz --decisions 2000000
+PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py batch-check --name replay --inputs /private/tmp/e2-roots/difficulty.roots.jsonl.gz
+python3 oracle/build.py
+PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py validate --name original --inputs /private/tmp/e2-roots/difficulty.roots.jsonl.gz
+python3 tools/e2_roots.py summarize --name candidates --inputs /private/tmp/e2-roots/difficulty.roots.jsonl.gz --audits /private/tmp/e2-roots/original/results.json
+```
+
+Configure `/private/tmp/e2-build` using the build instructions above. Use a fresh output directory
+and unique command names. Run one command at a time; original recordings share
+`/private/tmp/spire-oracle.lock`. The ledger includes all search branches, failed searches,
+difficulty continuations, prefix replays and validation replays. Native runs stop at their
+decision/CPU allocation and preserve the pending prefix in a mapped journal on an assertion.
+`extend --inputs ...` continues from the latest saved boundary in each existing family; its
+prefix replay consumes budget too. `--offset` selects unused train/dev seeds from the inventory;
+locked seeds never enter the engine.
+
+Selection keeps the first boundary reached per family/stage before difficulty is measured.
+Stage/partition groups below 20 families remain diagnostic-only, enforcing the 5% family cap
+without duplicates. Search measurements use four independent policy RNG streams with 512
+decisions each; uniform measurements use sixteen streams with a 2048-decision cap. All share
+the root's fixed game RNG. Search success is a budgeted discovery rate, not a policy label or
+proof that a zero-success root is unwinnable. The first collection added Act 1 boss starts
+after Act 3/Heart proved sparse; [its manifest](inventory/e2-roots.json) records the exact
+budgets, selection changes, coverage, checksums and unresolved original-game differences.
+Any original validation failure blocks release of the collection for curriculum use.
+
 ## Trace replay
 
 ```sh
