@@ -90,13 +90,17 @@ SPIRE_FN inline CardReferences card_references(const Game& g) {
     return refs;
 }
 
-SPIRE_FN inline void collect_cards(Game& g) {
+SPIRE_FN inline void prune_detached_master_cards(Game& g) {
     for (int i = g.detached_master_cards.size - 1; i >= 0; --i) {
         const uint32_t uuid = g.cards[g.detached_master_cards[i]].uuid;
         bool referenced = g.event.id != EventId::Count && event_referencesMasterCard(g, uuid);
         for (int r = 0; r < g.run.relics.size; ++r) referenced |= relic_referencesMasterCard(g, r, uuid);
         if (!referenced) g.detached_master_cards.erase(i);
     }
+}
+
+SPIRE_FN inline void collect_cards(Game& g) {
+    prune_detached_master_cards(g);
     const CardReferences refs = card_references(g);
     for (int word = 0; word < (card_capacity + 63) / 64; ++word) {
         SPIRE_ASSERT((refs.words[word] & ~g.cards.used[word]) == 0);

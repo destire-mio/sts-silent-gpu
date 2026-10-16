@@ -337,7 +337,9 @@ Allocation counters over the 119 whole-game inputs in `inventory/deep-neow.json`
 card allocations in one decision, including combat initialization. The margin leaves 15
 additional slots above that measured peak. This is an execution budget, not a Java bound;
 capacity assertions remain active. The reference scan, ordered references and released-slot
-poisoning are unchanged. Slot occupancy is not part of the snapshot.
+poisoning are unchanged. Detached master references are pruned at every decision boundary,
+so dead entries cannot fill that index list or survive the next battle's retention copy.
+Slot occupancy is not part of the snapshot.
 
 Card damage/block, power amounts, orb amounts and player energy keep Java's 32-bit range.
 Immutable CardDef constructor values and upgrade deltas use 8 bits in a 20-byte table row;
