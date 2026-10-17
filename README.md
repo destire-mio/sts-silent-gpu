@@ -77,6 +77,7 @@ The conditional `spire_gpu.TrainingBatch(size, decision_cap, seeds)` exposes the
 observation arrays, counts, rewards, done/truncated/fault/reset/advanced flags, seed indices
 and decision counts in device memory. The returned objects implement CUDA Array Interface;
 `torch.as_tensor(batch.tags, device="cuda")` creates a view that keeps its owner alive.
+Use these tensors for reading; writes modify the batch buffers.
 `batch.step(indices)` takes a contiguous CUDA `torch.int32` vector on the batch device,
 launches on PyTorch's current stream and waits for completion. Observations are reused on
 the next operation. Consume them on that stream before stepping; clone tensors to retain

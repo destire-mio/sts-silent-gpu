@@ -22,7 +22,7 @@ PYBIND11_MODULE(spire_gpu, module) {
     py::class_<DeviceArray>(module, "DeviceArray")
         .def_property_readonly("__cuda_array_interface__", [](const DeviceArray& a) {
             return py::dict("shape"_a=py::tuple(py::cast(a.shape)), "typestr"_a=a.typestr,
-                            "data"_a=py::make_tuple(a.pointer, true), "version"_a=3);
+                            "data"_a=py::make_tuple(a.pointer, false), "version"_a=3);
         });
     auto cls = py::class_<TrainingBatch>(module, "TrainingBatch");
     cls.def(py::init<int, uint64_t, const std::vector<int64_t>&>(), "size"_a, "decision_cap"_a, "seeds"_a)

@@ -62,7 +62,7 @@ target_include_directories(spire_core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "$
 target_compile_features(spire_core INTERFACE cxx_std_17)
 target_compile_options(spire_core INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>
-    $<$<COMPILE_LANGUAGE:CUDA>:--fmad=false;-Xcompiler=-ffp-contract=off>)
+    "$<$<COMPILE_LANGUAGE:CUDA>:--fmad=false;-Xcompiler=-ffp-contract=off>")
 
 pybind11_add_module(spire host/bindings.cpp)
 target_link_libraries(spire PRIVATE spire_core)
