@@ -311,6 +311,9 @@ trajectories from PPO, preserving their separate budget-cutoff outcomes. It rese
 minutes before the wall deadline and stops on any fault or per-episode truncation.
 Repeated attempts measure these fixed roots, not independent game-seed coverage.
 
+The [E1 pilot inventory](inventory/e1.json) records the frozen protocol, root hashes,
+three initializations, learning curves, throughput, original-game checks and artifact paths.
+
 ## Trace replay
 
 ```sh
