@@ -32,10 +32,48 @@ def network_inputs(arrays, device, slots):
     for name in FIELDS[:5]:
         width = candidates if name.startswith("candidate") else entities
         dtype = torch.float32 if name == "values" else torch.long
-        result[name] = torch.tensor(arrays[name][slots][..., :width], device=device, dtype=dtype)
+        result[name] = torch.tensor(arrays[name][..., :width][slots], device=device, dtype=dtype)
     result["entity_mask"] = torch.tensor(entity_mask[:, :entities], device=device)
     result["candidate_mask"] = torch.tensor(candidate_mask[:, :candidates], device=device)
     return result
+
+
+def record_lengths(data, offsets, indices):
+    starts = offsets[indices].astype(np.int64)
+    return (data[starts].astype(np.int32) + 256 * data[starts + 1].astype(np.int32),
+            data[starts + 2].astype(np.int32) + 256 * data[starts + 3].astype(np.int32))
+
+
+def packed_inputs(data, offsets, indices, device):
+    entities, candidates = record_lengths(data, offsets, indices)
+    count, ne, nc = len(indices), int(entities.max()), max(1, int(candidates.max()))
+    arrays = dict(tags=np.zeros((count, 4, ne), dtype=np.uint8),
+                  ids=np.zeros((count, 4, ne), dtype=np.int16),
+                  values=np.zeros((count, 6, ne), dtype=np.int16),
+                  candidate_kinds=np.zeros((count, nc), dtype=np.uint8),
+                  candidate_refs=np.zeros((count, 3, nc), dtype=np.int16))
+    for row, (index, e, c) in enumerate(zip(indices, entities, candidates)):
+        cursor = int(offsets[index]) + 4
+        for name, rows, width, dtype in (("tags", 4, e, "u1"), ("ids", 4, e, "<i2"),
+                                        ("values", 6, e, "<i2"), ("candidate_kinds", 1, c, "u1"),
+                                        ("candidate_refs", 3, c, "<i2")):
+            length = int(rows * width)
+            source = np.frombuffer(data, dtype=dtype, count=length, offset=cursor)
+            arrays[name][row, ..., :width] = source.reshape(arrays[name][row, ..., :width].shape)
+            cursor += length * np.dtype(dtype).itemsize
+    result = {name: torch.tensor(array, device=device, dtype=torch.float32 if name == "values" else torch.long)
+              for name, array in arrays.items()}
+    result["entity_mask"] = torch.tensor(np.arange(ne) < entities[:, None], device=device)
+    result["candidate_mask"] = torch.tensor(np.arange(nc) < candidates[:, None], device=device)
+    return result
+
+
+def length_batches(indices, entities, candidates, size, rng):
+    shuffled = rng.permutation(indices)
+    order = np.lexsort((candidates[shuffled], entities[shuffled] // 16))
+    ordered = shuffled[order]
+    batches = [ordered[begin:begin + size] for begin in range(0, len(ordered), size)]
+    return [batches[i] for i in rng.permutation(len(batches))]
 
 
 class Policy(nn.Module):

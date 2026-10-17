@@ -201,7 +201,15 @@ rebuilds the encoder's visible-history sidecar, then the network first observes 
 Both heads receive only the seven observation arrays. `train/` has no search, game save/load,
 reward shaping or hidden-state input.
 
-The collector finishes a fixed group of starts under one frozen policy before PPO updates.
+Actor processes own independent `TrainingBatch` instances and a frozen policy copy. A separate
+learner process group uses PyTorch DDP, one rank per device. The coordinator passes compact
+observations and CPU policy snapshots through shared-memory tensors and bounded pipe messages.
+It waits for every actor in version v, runs one PPO update on that rollout, then publishes v+1.
+Every sample and episode records its policy version; the learner rejects a mismatched version.
+The lag is zero: collecting during an update would change the behavior distribution without
+an off-policy correction. Actors run concurrently on CUDA, but collection and learning remain
+separate phases. This is a single-node pipeline, including the eight-GPU case.
+
 Completed episodes use full-episode Monte-Carlo value targets with gamma=1; default GAE
 lambda=1 gives advantage `outcome - old_value`. `--gae-lambda` changes advantages only;
 completed value targets remain the actual 0/1 result. A decision-cap cut bootstraps the
@@ -210,11 +218,23 @@ Faulted trajectories are excluded from PPO and retained in episode logs. Host co
 still abort the process; there is no signal recovery.
 
 PPO stores old chosen-action log probabilities and complete legal candidate sets in compact
-observation records. Only selected minibatches are padded by `ObservationBatch`. The clipped
+observation records. Inference crops both entity and candidate dimensions before copying to
+the device. The learner decodes compact records into the selected batch's actual maximum
+lengths, with attention and candidate masks. It never expands records to schema capacities.
+Each epoch shuffles ties, orders records by 16-entity length bands and candidate counts, then
+shuffles the resulting minibatches. Bucketing changes minibatch membership, not the objective
+for a fixed batch. The clipped
 policy objective uses advantage normalization, value MSE, entropy divided by log(legal
 candidate count), and gradient clipping. Single-candidate entropy is zero. `ppo.kl` is the
 nonnegative sampled approximation `mean(ratio - 1 - log_ratio)` across minibatches, not an
 exact distribution KL or an automatic stopping rule.
+
+`--minibatch-size` is the global sample count, independent of learner count. All ranks use the
+same global sample order and rollout-wide advantage normalization. Rank r receives every
+world-size-th sample starting at r. Its mean loss is weighted by
+`local_count * world_size / global_count` before DDP averages gradients; clipping and Adam
+follow the reduction. An empty tail shard participates with a zero-weight graph, without
+adding a training sample. This preserves unequal tails and batches smaller than world size.
 
 Use `--torch-threads` to set PyTorch's CPU worker count (default four). Keep generated artifacts outside the checkout:
 
@@ -228,6 +248,16 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
 "$SPIRE_PYTHON" -m train.roots --output /private/tmp/trainer-runs/roots.json
 "$SPIRE_PYTHON" -m train.run --roots /private/tmp/trainer-runs/roots.json \
   --output /private/tmp/trainer-runs/deep --updates 2 --episodes 6 --batch-size 3
+
+# Local distributed smoke (two learner ranks, two actors).
+"$SPIRE_PYTHON" -m train.run --roots /private/tmp/e1-runs/roots/train.json \
+  --output /private/tmp/trainer-runs/ddp --updates 1 --episodes 48 \
+  --actors 2 --learners 2 --batch-size 32 --device cpu --backend gloo
+
+# Same launcher on one machine with eight CUDA devices.
+"$SPIRE_PYTHON" -m train.run --roots /private/tmp/e1-runs/roots/train.json \
+  --output /private/tmp/trainer-runs/cuda --updates 1 --episodes 48 \
+  --actors 8 --learners 8 --batch-size 32 --device cuda --backend nccl
 ```
 
 The build commands above can use `/private/tmp/trainer-runs/build` in place of
@@ -248,9 +278,10 @@ Training cycles supplied roots in order. Natural starts use consecutive train se
 updates use new seeds. Except for the historical E1 winning route, training rejects roots
 outside the train partition. `--init-seed` controls initialization, policy sampling and
 minibatch shuffling; planned independent initializations are 1729, 2718 and 31415.
-`--episodes` is starts per update, `--minibatch-size` is decisions per gradient minibatch.
+`--episodes` is total starts per update, `--batch-size` is lanes per actor,
+and `--minibatch-size` is decisions per global gradient minibatch.
 `--decision-cap` counts continuation decisions, excluding prefix replay. Compact storage has
-a fixed `--storage-mib` budget; exhaustion aborts without a partial update. The defaults are
+a fixed `--storage-mib` budget divided equally among actors; exhaustion aborts without a partial update. The defaults are
 for small runs, not a pre-approved large experiment.
 
 Each fresh output directory contains config/root inputs, initial and latest checkpoints,
@@ -258,10 +289,22 @@ update JSONL metrics and episode candidate-index logs for replay/audit. Checkpoi
 model, optimizer, configuration, observation version and engine Git commit. Logs report
 starts/completions/wins, independent families won, natural starts, faults/truncations, new and
 replay decisions, per-screen normalized entropy, sampled KL, start/decision value calibration
-with screen/act breakdowns, compact bytes and peak RSS. Wall-time buckets are engine+encode
-(including root replay), inference (including tensor transfer/sampling), storage, PPO update
-(including padding/transfer), and other work. Worker reset/step/encode times are additional
-detail, not added again to wall time.
+with screen/act breakdowns, compact bytes and coordinator peak RSS. Wall-time buckets are
+collection (including transport), learner (including transport, update and checkpoint), and
+coordinator work. Process startup is reported separately. Engine+encode, inference and
+storage are sums of actor work and can overlap on CUDA; they are not additional wall-time
+buckets. PPO time is part of learner time. Worker reset/step/encode times are additional
+detail. The reported coordinator RSS excludes the worker processes.
+
+CPU execution shares a compute semaphore among actors and learners to respect the Mac's
+one-heavy-process-per-agent budget. A learner releases it when its final DDP gradient bucket
+is ready, before waiting for other ranks; optimizer steps acquire it again. CUDA workers use
+their assigned devices without that CPU scheduling constraint. CPU gloo runs establish
+correctness, not multi-device scaling. `tests/test_train_packing.py` compares capacity-padded
+and packed logits, loss and every gradient. `tests/test_train_distributed.py` compares 2/3
+ranks to one process with unequal and empty shards, SGD and Adam. In float32, Adam can amplify
+roundoff in the mathematically zero gradient of the shared final score bias; its constant
+logit shift is checked separately, alongside probabilities, values, losses and gradients.
 
 Frozen evaluation samples one continuation per root seed using an independent per-seed PCG64
 stream. It retains faults/truncations in the denominator; ordinary Wilson intervals are
@@ -285,9 +328,10 @@ to development seeds; sealed evaluation requires an explicit partition and seed 
 after policy/configuration freeze. These smoke commands do not execute the E1 three-seed
 learning experiment or establish its success thresholds.
 
-`--device cuda` or `--device mps` moves the same network and optimizer code to that device.
-Tensor allocation and timing synchronization use that device. The current `TrainingBatch` engine remains on CPU;
-GPU-resident engine integration and CUDA execution/parity measurements are separate work.
+`--device cuda --backend nccl` moves the same actor network and learner optimizer code to CUDA.
+Actor i uses device `i % learners`; learner r uses device r. Tensor allocation and timing
+synchronization use that device. The current `TrainingBatch` engine remains on CPU;
+GPU-resident engine integration and CUDA execution/scaling measurements are separate work.
 
 `spire_collect_roots winning` accepts the same root-prefix input as `evaluate`; its family
 budget is per search attempt and its trial argument is the number of independent search
@@ -410,7 +454,7 @@ in `inventory/deep-neow.json`. These are input actions, not replacement oracle s
 - `core/`: fixed-capacity C++17 run and combat state, RNG, queues and per-unit content.
 - `obs/`: device-C++ visible-information encoder and fixed numeric schema.
 - `host/`: CPU batch driver, Python binding, snapshot serialization and benchmark.
-- `train/`: visible-observation entity policy, synchronous PPO, roots and frozen evaluation.
+- `train/`: visible-observation entity policy, versioned actors, DDP PPO, roots and frozen evaluation.
 - `cuda/`: conditional CUDA batch kernel.
 - `tests/`: native checks, device discipline checker and strict trace replayer.
 - `oracle/`: original-game trace recorder developed on its own branch.

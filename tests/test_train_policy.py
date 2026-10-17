@@ -79,12 +79,13 @@ class TrainerTests(unittest.TestCase):
         roots = [dict(seed=1000000000 + i, candidates=[]) for i in range(5)]
         collector = Collector(2, 3, 2, self.device, 1)
         before = {key: tensor.clone() for key, tensor in self.model.state_dict().items()}
-        rollout = collector.collect(self.model, roots, 1729, range(5))
+        rollout = collector.collect(self.model, roots, 1729, range(5), policy_version=7)
         self.assertEqual(rollout.count, 15)
         self.assertEqual(len(rollout.episodes), 5)
         self.assertTrue(all(e["outcome"] == "truncated" for e in rollout.episodes))
         self.assertTrue((rollout.returns[:15] > 0).all())
         self.assertFalse(rollout.complete.any())
+        np.testing.assert_array_equal(rollout.policy_versions[:15], np.full(15, 7))
         for key, tensor in self.model.state_dict().items():
             torch.testing.assert_close(before[key], tensor, rtol=0, atol=0)
         padded = spire.ObservationBatch(15)
@@ -98,14 +99,14 @@ class TrainerTests(unittest.TestCase):
         np.testing.assert_allclose(value.numpy(), rollout.values[:15], atol=2e-6)
         config = PPOConfig(epochs=2, minibatch_size=4)
         result = update(self.model, torch.optim.Adam(self.model.parameters(), lr=config.learning_rate),
-                        rollout, config, self.device, np.random.default_rng(1))
+                        rollout, config, self.device, np.random.default_rng(1), policy_version=7)
         self.assertEqual(result["samples"], 15)
         self.assertEqual(result["minibatches"], 8)
         self.assertTrue(np.isfinite(result["loss"]))
 
     def test_fault_is_quarantined_without_losing_other_episode(self):
         roots = [dict(seed=1000000000, candidates=[999]), dict(seed=1000000001, candidates=[])]
-        rollout = Collector(2, 1, 1, self.device, 1).collect(self.model, roots, 1729, [0, 1])
+        rollout = Collector(2, 1, 1, self.device, 1).collect(self.model, roots, 1729, [0, 1], policy_version=0)
         self.assertEqual([e["outcome"] for e in rollout.episodes], ["fault", "truncated"])
         self.assertEqual(rollout.count, 1)
         self.assertEqual(int(rollout.valid.sum()), 1)
@@ -114,11 +115,11 @@ class TrainerTests(unittest.TestCase):
     def test_decision_budget_keeps_terminal_targets_and_excludes_unfinished_episode(self):
         roots = [dict(seed=1000000000 + i, candidates=[]) for i in range(2)]
         collector = Collector(2, 4096, 8, self.device, 1)
-        full = collector.collect(self.model, roots, 1729, [0, 1])
+        full = collector.collect(self.model, roots, 1729, [0, 1], policy_version=0)
         first = min(full.episodes, key=lambda e: e["records"][-1])
         budget = first["records"][-1] + 1
         self.assertLess(budget, full.count)
-        partial = collector.collect(self.model, roots, 1729, [0, 1], budget)
+        partial = collector.collect(self.model, roots, 1729, [0, 1], budget, policy_version=0)
         self.assertEqual(partial.count, budget)
         terminal = next(e for e in partial.episodes if e["seed"] == first["seed"])
         self.assertEqual(terminal["outcome"], first["outcome"])

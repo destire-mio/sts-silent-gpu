@@ -12,7 +12,7 @@ from tools.evaluation import paired_counts, wilson
 from .model import ModelConfig, Policy, distribution, network_inputs, views
 from .rollout import policy_rng, root_key, sample, synchronize
 from .roots import natural_roots, read_roots
-from .run import engine_commit
+from .checkpoint import engine_commit
 
 
 def outcome_summary(episodes):
