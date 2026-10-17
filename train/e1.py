@@ -83,7 +83,7 @@ def main():
     collector = Collector(32, 4096, 256, device, 1)
     sampling_rng = np.random.default_rng(np.random.SeedSequence([args.init_seed, 1]))
     update_rng = np.random.default_rng(args.init_seed)
-    total = episodes = wins = iteration = 0
+    total = episodes = wins = iteration = ppo_decisions = budget_cutoffs = 0
     next_evaluation = 50000
     started, cpu_started = time.perf_counter(), time.process_time()
     evaluation_decisions = evaluation_replays = 0
@@ -133,6 +133,8 @@ def main():
         total += rollout.count
         episodes += len(rollout.episodes)
         wins += result["wins"]
+        ppo_decisions += result["training_decisions"]
+        budget_cutoffs += result["budget_cutoffs"]
         assert total <= args.decisions
         result.update(update=iteration, cumulative_decisions=total, cumulative_episodes=episodes, cumulative_wins=wins)
         result["timing"] = dict(**rollout.timing, update_seconds=result["ppo"]["update_seconds"],
@@ -142,12 +144,13 @@ def main():
             output.write(json.dumps(result, allow_nan=False) + "\n")
         save_checkpoint(args.output / "checkpoint.pt", model, optimizer, config, iteration)
         print(json.dumps(dict(event="update", **result)), flush=True)
-        if total >= next_evaluation:
+        if total >= next_evaluation and total < args.decisions:
             assess(str(next_evaluation), False)
             next_evaluation += 50000
     save_checkpoint(args.output / "checkpoint.pt", model, optimizer, config, iteration)
     assess("final", True)
-    result = dict(decisions=total, episodes=episodes, wins=wins, updates=iteration,
+    result = dict(decisions=total, ppo_decisions=ppo_decisions, episodes=episodes, wins=wins, updates=iteration,
+                  budget_cutoffs=budget_cutoffs,
                   evaluation_decisions=evaluation_decisions, evaluation_replay_decisions=evaluation_replays,
                   wall_seconds=time.perf_counter() - started, cpu_seconds=time.process_time() - cpu_started,
                   peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
