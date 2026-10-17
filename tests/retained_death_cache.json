@@ -1,0 +1,74 @@
+{
+  "seed": 1000042012,
+  "scenario": {
+    "deck": [
+      {
+        "id": "Well Laid Plans",
+        "upgrades": 1
+      },
+      {
+        "id": "Leg Sweep",
+        "upgrades": 1
+      },
+      {
+        "id": "Strike_G",
+        "upgrades": 0
+      },
+      {
+        "id": "Strike_G",
+        "upgrades": 0
+      },
+      {
+        "id": "Strike_G",
+        "upgrades": 0
+      },
+      {
+        "id": "Strike_G",
+        "upgrades": 0
+      },
+      {
+        "id": "Strike_G",
+        "upgrades": 0
+      }
+    ],
+    "relics": [
+      "Ring of the Snake",
+      "Bag of Preparation",
+      "Snecko Eye"
+    ],
+    "potions": [
+      null,
+      null
+    ],
+    "hp": 1,
+    "max_hp": 66,
+    "encounter": "Snake Plant",
+    "actions": [
+      {
+        "type": "play",
+        "card": 4,
+        "target": -1
+      },
+      {
+        "type": "end_turn"
+      },
+      {
+        "type": "choose",
+        "option": 3
+      },
+      {
+        "type": "proceed"
+      },
+      {
+        "type": "end_turn"
+      },
+      {
+        "type": "choose",
+        "option": 0
+      },
+      {
+        "type": "proceed"
+      }
+    ]
+  }
+}

@@ -180,6 +180,13 @@ validation, both replay scopes and the 13-idle-frame check gate release. The
 [collection manifest](inventory/e2-roots.json) records coverage, distributions, checksums,
 validation and remaining gaps.
 
+`PYTHONPATH=/private/tmp/e2-r3-build "$SPIRE_PYTHON" tests/check_retained_death.py --output /private/tmp/retained-death-check`
+records the focused seed-1000042012 input in `tests/retained_death_cache.json`, replays both
+scopes, and compares another original recording with 13 extra idle frames. It serializes JVMs
+with the oracle lock and requires a fresh output directory. The original's death-terminal
+Leg Sweep block changes from 14 to 10 in this pair; the check fails under the frozen snapshot
+contract. The manifest retains that failure as a release blocker.
+
 ## E1 training and evaluation
 
 `train/` uses one shared PyTorch policy for all screens. Each tag and ID row has an embedding;
