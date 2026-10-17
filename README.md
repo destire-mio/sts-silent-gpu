@@ -23,15 +23,18 @@ globals, missing `SPIRE_FN`, heap allocation, exceptions, function pointers and 
 checks cover RNG vectors, monster behavior and combat; Python checks cover the host API and trace
 comparison. Host floating point contraction is disabled. `cuda/batch.cu` provides one thread per
 `Game`, stepping a batch of actions, and is built only when CMake finds a CUDA compiler.
-Clang's device-LLVM smoke check covers the engine and observation encoder. NVCC compilation
-and execution on GPU hardware have not been tested on this machine.
+Clang's device-LLVM smoke check covers the engine and observation encoder. CUDA sources are
+compiled by clang++ (CMake `CMAKE_CUDA_COMPILER=clang++`), the same front end as that check; NVCC
+rejects the engine's namespace-scope constexpr tables in device code. Execution on GPU hardware
+has not been tested on this machine.
 
 ## V100 day-one check
 
 Server target: Linux x86_64 (Ubuntu 22.04 or 24.04), eight V100 GPUs (`sm_70`, 16 GB each),
-CUDA Toolkit **12.8.x or 12.9.x** including NVCC and development headers (CUDA 13 no longer
-compiles for `sm_70`), NVIDIA driver **570.124.06 or newer** (the cluster has 580.105.08),
-Clang **17 or 18** with libstdc++ development headers, CMake **3.24 or newer**,
+CUDA Toolkit **12.8.x or 12.9.x** with development headers (CUDA 13 no longer
+compiles for `sm_70`; `nvcc` on `PATH` only locates the toolkit), NVIDIA driver **570.124.06 or
+newer** (the cluster has 580.105.08), Clang with the NVPTX backend and libstdc++ development headers
+as both C++ and CUDA compiler (the cluster has Clang 21.1.7), CMake **3.24 or newer**,
 Make, rsync, and Python **3.12** with development headers. These are the intended toolchain
 bounds, not a GPU validation claim. NVIDIA documents the
 [CUDA 12.8 compiler/OS requirements](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-installation-guide-linux/index.html)
@@ -132,7 +135,7 @@ because their global batches contain different attempts. Policy inference, gradi
 normalization accumulators use float64 to preserve their scalar-reference arithmetic.
 
 Configure, the single-process build and CTest run first without the measurement budget (limits
-600, 7200 and 3600 seconds), because NVCC time on the server is unknown. The measurements after
+600, 7200 and 3600 seconds), because CUDA compile time on the server is unknown. The measurements after
 CTest share a **1800-second budget**: parity gets 300 seconds, calibration 180, and each small
 exact run 180. The grid gets at most 720 seconds and 150 seconds per cell, retaining at least
 720 seconds for weak scaling; its time budget may leave cells unmeasured. Probes and weak scaling
@@ -146,7 +149,7 @@ JSON is the final table, also saved as `training-throughput.json`, with grid sta
 largest fitting size, 1/2/8-GPU rates and efficiencies. The fresh build directory retains
 `profile.json`, `probe-*.json`, stage `*.log`, `exact-*/result.json` and `ddp-*/result.json` (including
 each warmup/measured version). The supplied roots' SHA256 identifies the workload. No GPU result is asserted by the
-Mac's CPU and device-LLVM tests; NVCC, CUDA execution, memory bounds and NCCL scaling require
+Mac's CPU and device-LLVM tests; the server CUDA build, CUDA execution, memory bounds and NCCL scaling require
 this command on the target server.
 
 The original `gpu_check.sh` build directory must be fresh. That script selects GPU 0, requires CUDA, builds with one
@@ -183,7 +186,7 @@ exposes these same methods for reference tests, with NumPy observation buffers v
 Only read from these views; the native batch owns and mutates them.
 
 The Mac checks restricted C++ and CUDA device LLVM generation, plus CPU execution of the
-same kernel bodies. NVCC compilation, GPU byte parity, device stack/resource use and V100
+same kernel bodies. The server CUDA build, GPU byte parity, device stack/resource use and V100
 throughput remain day-one checks.
 
 ## Python API

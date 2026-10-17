@@ -12,12 +12,13 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 python=${SPIRE_PYTHON:?set SPIRE_PYTHON to the server venv Python}
 nvcc=$(command -v nvcc)
 clang=$(command -v clang++)
+cuda=$(dirname "$(dirname "$(realpath "$nvcc")")")
 "$nvcc" --version
 "$clang" --version
 nvidia-smi
 "$python" -c 'import torch; assert torch.cuda.is_available() and torch.cuda.device_count() == 1; assert "sm_70" in torch.cuda.get_arch_list(), torch.cuda.get_arch_list(); print(torch.__version__, torch.version.cuda, torch.cuda.get_device_name())'
 cmake -S . -B "$build" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER="$clang" \
-    -DCMAKE_CUDA_COMPILER="$nvcc" -DCMAKE_CUDA_HOST_COMPILER="$clang" \
+    -DCMAKE_CUDA_COMPILER="$clang" -DCUDAToolkit_ROOT="$cuda" \
     -DCMAKE_CUDA_ARCHITECTURES=70 -DPython_EXECUTABLE="$python" -DBUILD_TESTING=ON
 cmake --build "$build" --parallel 1
 export PYTHONPATH="$build:$repo"

@@ -62,7 +62,7 @@ target_include_directories(spire_core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "$
 target_compile_features(spire_core INTERFACE cxx_std_17)
 target_compile_options(spire_core INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>
-    "$<$<COMPILE_LANGUAGE:CUDA>:--fmad=false;-Xcompiler=-ffp-contract=off>")
+    $<$<COMPILE_LANGUAGE:CUDA>:-ffp-contract=off>)
 
 pybind11_add_module(spire host/bindings.cpp)
 target_link_libraries(spire PRIVATE spire_core)
@@ -88,6 +88,9 @@ include(CheckLanguage)
 check_language(CUDA)
 if(CMAKE_CUDA_COMPILER)
     enable_language(CUDA)
+    if(NOT CMAKE_CUDA_COMPILER_ID STREQUAL "Clang")
+        message(FATAL_ERROR "CUDA must be compiled by clang++, the compiler checked by check_device_core")
+    endif()
     find_package(CUDAToolkit REQUIRED)
     add_library(spire_cuda STATIC cuda/batch.cu cuda/training_batch.cu)
     target_link_libraries(spire_cuda PUBLIC spire_core CUDA::cudart)

@@ -305,8 +305,8 @@ def suite(roots, output):
         require(stage('preflight', [sys.executable, '-c', preflight], 30))
         require(stage('hardware', ['nvidia-smi'], 30))
         require(stage('configure', ['cmake', '-S', str(repo), '-B', str(output), '-DCMAKE_BUILD_TYPE=Release',
-            f'-DCMAKE_CXX_COMPILER={shutil.which("clang++")}', f'-DCMAKE_CUDA_COMPILER={shutil.which("nvcc")}',
-            f'-DCMAKE_CUDA_HOST_COMPILER={shutil.which("clang++")}', '-DCMAKE_CUDA_ARCHITECTURES=70',
+            f'-DCMAKE_CXX_COMPILER={shutil.which("clang++")}', f'-DCMAKE_CUDA_COMPILER={shutil.which("clang++")}',
+            f'-DCUDAToolkit_ROOT={Path(shutil.which("nvcc")).resolve().parents[1]}', '-DCMAKE_CUDA_ARCHITECTURES=70',
             f'-DPython_EXECUTABLE={sys.executable}', '-DBUILD_TESTING=ON'], 600))
         require(stage('build', ['cmake', '--build', str(output), '--parallel', '1'], 7200))
         require(stage('ctest', ['ctest', '--test-dir', str(output), '--output-on-failure', '--no-tests=error', '-j1'],
