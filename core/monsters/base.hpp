@@ -4,13 +4,14 @@
 #include "../actions/intent_flash.hpp"
 
 namespace spire {
+constexpr Monster initial_monster{};
 SPIRE_FN inline void position_monster(Monster& monster, float offset_x) {
     monster.offset_x = offset_x;
     monster.creature.draw_x = 1280.0f * 0.75f + offset_x * (1280.0f / 1920.0f);
 }
 
 SPIRE_FN inline Monster make_monster(Game& g, MonsterId id, const MonsterData& data, int hp_override) {
-    Monster m{};
+    Monster m = initial_monster;
     m.id = id;
     position_monster(m, 0.0f);
     monster_initialize_state(m);

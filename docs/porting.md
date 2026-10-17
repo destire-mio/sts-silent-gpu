@@ -681,3 +681,12 @@ Keep the audited game patches and rule/presentation RNG split unchanged. Report 
 problem in those contracts with the JSON path and Java evidence while continuing other work.
 If engine state is missing, implement its source behavior; do not substitute a trace value or
 invent a default.
+
+The CUDA parity gate compares all 37,872 Game bytes, including unused storage. Independent
+host dispatch paths exposed uninitialized padding at orb reset, monster construction,
+card/effect bitfields, relic alignment and the Game tail. Orb reset and monster construction
+copy constant initial objects; Card, Effect, Relic and Game name and initialize the affected
+padding without increasing their sizes. These bytes carry no Java rule state. The native
+`test_cuda_dispatch` runs the CUDA kernel bodies on the CPU and checks full Game bytes,
+observations and episode outputs after the 12 deep routes and a seeded 33-slot random batch;
+`test_cuda_parity` performs the hardware check without masking padding or unused fields.
