@@ -197,9 +197,23 @@ card damage/block outside combat. `AbstractPlayer.preBattlePrep` clears combat p
 copies baseDamage/baseBlock, not damage/block. `DrawCardAction` replaces drawnCards before
 EscapePlan/Scrape can read it, and `useCard` recalculates before using a card. Acquisition and
 upgrade paths retain base stats and recompute their caches. Therefore these remnants cannot
-supply a later rule value. This does not exclude any real damage/block cache during COMBAT:
+supply a later rule value. This preserves real hand damage/block caches during COMBAT:
 Codex's ShowCardAndAddToDrawPileEffect/Soul hand refresh must run at hand-selection decisions,
 including the 9-versus-11 and 7-versus-5 regressions on seed 202610141365.
+
+The discard pile's `damage` cache is observed as `baseDamage`. On seed 2000003426,
+duplicated Glass Knife reaches baseDamage 4 with cached damage 6. `ModifyDamageAction.update`
+changes the base stat of every matching UUID; `Soul.update` can call `clearPowers` between
+the two modifications. Adding 120 frames of flight delay changes only damage 6 to 4 at
+two decisions; actions, legal actions, RNG and every other field agree. Single Glass Knife
+and duplicated Rampage are controls. `AbstractCard.renderDynamicVariable` uses baseDamage
+when isDamageModified is false; clearPowers clears that flag. `AbstractPlayer.useCard` and
+`AttackDamageRandomEnemyAction.update` recalculate before reading damage, and
+`makeStatEquivalentCopy` copies base stats. The policy uses baseDamage for both discard
+entities and grids sourced from discard. Hand, draw and limbo caches retain their existing
+meaning. This projection changes no original object, rule, game patch, RNG or comparator.
+`tests/check_discard_damage.py` records the four scenarios with ordinary Soul timing, 120
+frames of flight delay and 13 extra idle frames; the recordings must be byte-identical.
 
 Power, relic and monster fields include private subclass counters/references as well as
 base state. `manager.currentAction` and all rule actions in queues are recorded even at interrupted

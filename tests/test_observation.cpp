@@ -82,6 +82,26 @@ static void dome() {
     unequip_relic(a, RelicId::RunicDome); unequip_relic(b, RelicId::RunicDome);
     different(a, b);
 }
+static void discard_damage() {
+    Game a = combat();
+    const int index = a.hand.pop_back();
+    a.cards[index] = make_card(CardId::GlassKnife);
+    a.cards[index].base_damage = 4; a.cards[index].damage = 6;
+    a.discard.push_back(index);
+    Game b = a; b.cards[index].damage = 4;
+    equal(a, b);
+    b.cards[index].base_damage = 6; different(a, b);
+    b.cards[index].base_damage = 4;
+    open_grid_selection(a, PileId::Discard, 1, false);
+    open_grid_selection(b, PileId::Discard, 1, false);
+    equal(a, b);
+    b.cards[index].base_damage = 6; different(a, b);
+    b.cards[index].base_damage = 4;
+    a.discard.clear(); b.discard.clear();
+    a.hand.push_back(index); b.hand.push_back(index);
+    a.screen = b.screen = Screen::Combat;
+    different(a, b);
+}
 static Game event(EventId id) {
     Game g; reset(g, 101);
     g.event = {}; g.event.id = id; event_initialize_state(g.event);
@@ -233,7 +253,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    draw_and_identity(); dome(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    draw_and_identity(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

@@ -19,7 +19,9 @@ SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int po
         (c.free_to_play_once || (g.room_phase == RoomPhase::Combat && d.type == CardType::Attack &&
          has_power(g, g.player.creature, PowerId::FreeAttack))) ? 0 : c.cost_for_turn;
     t.values[2] = variables;
-    if (variables & 1) t.values[3] = live ? c.damage : c.base_damage;
+    // Soul.update may clear GlassKnife damage between duplicate ModifyDamageAction.update calls.
+    const bool discard = zone == Zone::Discard || (zone == Zone::Grid && g.grid_source == PileId::Discard);
+    if (variables & 1) t.values[3] = live && !discard ? c.damage : c.base_damage;
     if (variables & 2) t.values[4] = live ? c.block : card_baseBlock(c);
     if (variables & 4) t.values[5] = live ? c.magic : c.base_magic;
     t.values[6] = c.bottle_flame; t.values[7] = c.bottle_lightning; t.values[8] = c.bottle_tornado;

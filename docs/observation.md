@@ -71,7 +71,9 @@ it records only the visible RestOption label in history. Copy history with a tra
 | Cards | upgrades, displayed cost, damage/block/magic only for description variables; bottle badges | `cards/AbstractCard.render/renderEnergy/renderDescription/renderDynamicVariable`; UUID, misc and internal flags denied |
 
 Card dynamic variables use a source-audited per-card variable mask. Noncombat/deck displays
-use base numbers; combat hand/draw/discard use displayed caches. Exhaust inspection uses
+use base numbers; combat hand/draw use displayed caches. Discard damage uses baseDamage, including
+discard-source grids, because Soul.update can clear a duplicated Glass Knife between its two
+base-damage changes; discard block/magic retain displayed caches. Exhaust inspection uses
 stat-equivalent copies (`ExhaustPileViewScreen.open`), not the exhausted card's stale cache.
 X and unplayable costs retain their UI meaning. Free attack/one-use free effects are reflected
 in the rendered cost (`AbstractCard.getCost/freeToPlay`).
