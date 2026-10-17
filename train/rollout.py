@@ -85,10 +85,12 @@ class Collector:
         self.size = size
 
     @torch.no_grad()
-    def collect(self, model, roots, sampling_seed, attempts):
+    def collect(self, model, roots, sampling_seed, attempts, decision_budget=None):
         model.eval()
         start = time.perf_counter()
-        rollout = Rollout.allocate(len(roots) * self.cap, self.storage_mib)
+        budget = len(roots) * self.cap if decision_budget is None else decision_budget
+        assert budget > 0
+        rollout = Rollout.allocate(min(len(roots) * self.cap, budget), self.storage_mib)
         episodes = [dict(seed=root["seed"], root_key=root_key(root), prefix_decisions=len(root["candidates"]),
                          candidates=[], records=[], outcome=None, fault=0) for root in roots]
         generators = [policy_rng(sampling_seed, root["seed"], attempt) for root, attempt in zip(roots, attempts)]
@@ -106,12 +108,16 @@ class Collector:
 
         engine_seconds += reset(slots, slots)
         while current:
+            if rollout.count == budget:
+                for episode_id in current.values():
+                    episodes[episode_id].update(outcome="budget_cutoff")
+                break
             active = np.array(list(current), dtype=np.int32)
             failed = [int(slot) for slot in active if self.batch.faults[slot]]
             for slot in failed:
                 episode = episodes[current.pop(slot)]
                 episode.update(outcome="fault", fault=int(self.batch.faults[slot]))
-            active = np.array(list(current), dtype=np.int32)
+            active = np.array(list(current)[:budget - rollout.count], dtype=np.int32)
             if len(active):
                 begin, end = rollout.count, rollout.count + len(active)
                 before = time.perf_counter()
@@ -170,12 +176,12 @@ class Collector:
                         del current[slot]
             available = [slot for slot in range(self.size) if slot not in current]
             assigned = list(range(next_episode, min(len(roots), next_episode + len(available))))
-            if assigned:
+            if assigned and rollout.count < budget:
                 refill = available[:len(assigned)]
                 engine_seconds += reset(refill, assigned)
                 current.update(zip(refill, assigned))
                 next_episode += len(assigned)
-        rollout.episodes = episodes
+        rollout.episodes = [episode for episode in episodes if episode["outcome"] is not None]
         rollout.timing = dict(collection_seconds=time.perf_counter() - start,
                               engine_encode_seconds=engine_seconds, inference_seconds=inference_seconds,
                               storage_seconds=storage_seconds,

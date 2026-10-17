@@ -111,6 +111,24 @@ class TrainerTests(unittest.TestCase):
         self.assertEqual(int(rollout.valid.sum()), 1)
         self.assertEqual(int(rollout.complete.sum()), 0)
 
+    def test_decision_budget_keeps_terminal_targets_and_excludes_unfinished_episode(self):
+        roots = [dict(seed=1000000000 + i, candidates=[]) for i in range(2)]
+        collector = Collector(2, 4096, 8, self.device, 1)
+        full = collector.collect(self.model, roots, 1729, [0, 1])
+        first = min(full.episodes, key=lambda e: e["records"][-1])
+        budget = first["records"][-1] + 1
+        self.assertLess(budget, full.count)
+        partial = collector.collect(self.model, roots, 1729, [0, 1], budget)
+        self.assertEqual(partial.count, budget)
+        terminal = next(e for e in partial.episodes if e["seed"] == first["seed"])
+        self.assertEqual(terminal["outcome"], first["outcome"])
+        self.assertEqual(terminal["candidates"], first["candidates"])
+        np.testing.assert_array_equal(partial.returns[terminal["records"]], full.returns[first["records"]])
+        unfinished = next(e for e in partial.episodes if e["seed"] != first["seed"])
+        self.assertEqual(unfinished["outcome"], "budget_cutoff")
+        self.assertFalse(partial.valid[unfinished["records"]].any())
+        self.assertTrue(partial.valid[terminal["records"]].all())
+
     def test_evaluation_stream_is_per_seed_not_batch_order(self):
         roots = [dict(seed=2000000000 + i, candidates=[]) for i in range(3)]
         first = evaluate(self.model, roots, self.device, 5, 2, 2718)

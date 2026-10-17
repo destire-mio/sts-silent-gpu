@@ -41,6 +41,7 @@ def summarize(rollout):
                 natural_starts=sum(e["prefix_decisions"] == 0 for e in episodes),
                 completed_natural_starts=sum(e["prefix_decisions"] == 0 for e in completed),
                 truncated=sum(e["outcome"] == "truncated" for e in episodes),
+                budget_cutoffs=sum(e["outcome"] == "budget_cutoff" for e in episodes),
                 faults=sum(e["outcome"] == "fault" for e in episodes),
                 decisions=n, training_decisions=int(valid.sum()),
                 replay_decisions=sum(e["prefix_decisions"] for e in episodes),

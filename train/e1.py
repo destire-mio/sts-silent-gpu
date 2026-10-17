@@ -75,7 +75,8 @@ def main():
                   policy_sampling="PCG64(init_seed, seed low32, seed high32, episode ordinal), inverse CDF",
                   evaluation="200 independent policy attempts per set; fixed root mixture and RNG before/after",
                   decision_cap=4096, batch_size=32, episodes_per_update=48, storage_mib=256,
-                  truncation="stop; E1 requires complete terminal Monte-Carlo targets", faults="stop and retain trajectory")
+                  truncation="stop at per-episode cap; final decision-budget cutoffs are excluded from PPO",
+                  faults="stop and retain trajectory")
     (args.output / "config.json").write_text(json.dumps(config, indent=2) + "\n")
     (args.output / "evaluation-roots.json").write_text(json.dumps(schedules) + "\n")
     save_checkpoint(args.output / "initial.pt", model, optimizer, config, 0)
@@ -113,11 +114,11 @@ def main():
                 assert result["summary"]["faults"] == 0 and result["summary"]["truncated"] == 0
 
     assess("initial", True)
-    while args.decisions - total >= 4096 and time.time() < args.deadline_epoch - 900:
-        count = min(48, (args.decisions - total) // 4096)
+    while total < args.decisions and time.time() < args.deadline_epoch - 900:
+        count = 48
         group = sample_roots(groups, count, sampling_rng)
         begin = time.perf_counter()
-        rollout = collector.collect(model, group, args.init_seed, range(episodes, episodes + count))
+        rollout = collector.collect(model, group, args.init_seed, range(episodes, episodes + count), args.decisions - total)
         iteration += 1
         result = summarize(rollout)
         with (args.output / "episodes.jsonl").open("a") as output:
@@ -125,11 +126,12 @@ def main():
                 output.write(json.dumps(dict(update=iteration, distance=root["distance_to_win"],
                                             **{k: v for k, v in episode.items() if k != "records"})) + "\n")
         assert result["faults"] == 0 and result["truncated"] == 0, result
-        assert np.array_equal(rollout.returns[:rollout.count], np.round(rollout.returns[:rollout.count]))
-        assert ((rollout.returns[:rollout.count] >= 0) & (rollout.returns[:rollout.count] <= 1)).all()
+        targets = rollout.returns[:rollout.count][rollout.valid[:rollout.count]]
+        assert np.array_equal(targets, np.round(targets))
+        assert ((targets >= 0) & (targets <= 1)).all()
         result["ppo"] = update(model, optimizer, rollout, ppo_config, device, update_rng)
         total += rollout.count
-        episodes += count
+        episodes += len(rollout.episodes)
         wins += result["wins"]
         assert total <= args.decisions
         result.update(update=iteration, cumulative_decisions=total, cumulative_episodes=episodes, cumulative_wins=wins)
@@ -149,7 +151,7 @@ def main():
                   evaluation_decisions=evaluation_decisions, evaluation_replay_decisions=evaluation_replays,
                   wall_seconds=time.perf_counter() - started, cpu_seconds=time.process_time() - cpu_started,
                   peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
-                  stop_reason="decision_budget" if args.decisions - total < 4096 else "wall_budget",
+                  stop_reason="decision_budget" if total == args.decisions else "wall_budget",
                   needs_closer_roots=wins < 100)
     (args.output / "summary.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result), flush=True)

@@ -306,9 +306,10 @@ untrained and uniform policies. Its selected train/dev JSON files feed `python -
 Set `E1_DEADLINE_EPOCH` to the experiment's absolute Unix deadline. E1 samples families uniformly, then their
 available distance bands uniformly. It records 200 independent policy attempts per fixed
 train/dev evaluation set, with separate distance bands before and after training and overall
-curves at 50k-decision intervals. It stops below the decision budget to finish complete
-episodes, reserves fifteen minutes before the wall deadline, and stops on any fault or
-truncation. Repeated attempts measure these fixed roots, not independent game-seed coverage.
+curves at 50k-decision intervals. At the exact decision budget it excludes unfinished
+trajectories from PPO, preserving their separate budget-cutoff outcomes. It reserves fifteen
+minutes before the wall deadline and stops on any fault or per-episode truncation.
+Repeated attempts measure these fixed roots, not independent game-seed coverage.
 
 ## Trace replay
 
