@@ -17,14 +17,9 @@ struct ObservationBatch {
           entity_counts(size), candidate_counts(size) { SPIRE_ASSERT(size > 0); }
 
     obs::View view(int i) {
-        return {tags.data() + i * obs::tag_rows * obs::entity_capacity,
-            ids.data() + i * obs::id_rows * obs::entity_capacity,
-            values.data() + i * obs::value_rows * obs::entity_capacity,
-            candidate_kinds.data() + i * obs::candidate_capacity,
-            candidate_refs.data() + i * obs::candidate_rows * obs::candidate_capacity,
-            entity_mask.data() + i * obs::entity_mask_bytes,
-            candidate_mask.data() + i * obs::candidate_mask_bytes,
-            &entity_counts[i], &candidate_counts[i]};
+        return obs::BatchView{tags.data(), ids.data(), values.data(), candidate_kinds.data(),
+            candidate_refs.data(), entity_mask.data(), candidate_mask.data(),
+            entity_counts.data(), candidate_counts.data()}.view(i);
     }
     uint32_t store(const int32_t* slots, int count, uint8_t* data, uint64_t capacity, uint64_t* offsets) {
         uint64_t bytes = 0;
