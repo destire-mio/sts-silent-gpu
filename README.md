@@ -26,6 +26,70 @@ comparison. Host floating point contraction is disabled. `cuda/batch.cu` provide
 Clang's device-LLVM smoke check covers the engine and observation encoder. NVCC compilation
 and execution on GPU hardware have not been tested on this machine.
 
+## A100 day-one check
+
+Server target: Linux x86_64 (Ubuntu 22.04 or 24.04), one visible A100 (`sm_80`),
+CUDA Toolkit **12.8.x** including NVCC and development headers, NVIDIA driver **570.124.06
+or newer**, Clang **17 or 18** with libstdc++ development headers, CMake **3.24 or newer**,
+Make, rsync, and Python **3.12** with development headers. These are the intended toolchain
+bounds, not a GPU validation claim. NVIDIA documents the
+[CUDA 12.8 compiler/OS requirements](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-installation-guide-linux/index.html)
+and [driver versions](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-toolkit-release-notes/index.html).
+
+The local venv has Python **3.12.13**, `numpy==2.5.3`, `pybind11==3.1.0`, and
+`torch==2.14.0`. Recreate these package versions in a Linux venv; PyTorch must be a CUDA-enabled
+build compatible with the installed driver (check `torch.version.cuda` and
+`torch.cuda.is_available()`). Do not copy the macOS venv. Game JARs, Java, Steam and oracle
+runtime assets are not needed to build, replay the committed recordings or run GPU checks.
+No dependencies are downloaded by the check script.
+
+From the Mac, after choosing the SSH alias and the accepted E2 root file:
+
+```sh
+GPU_HOST=your-a100-alias
+E2_ROOTS=/private/tmp/e2-roots/round3/native-audit.roots.jsonl.gz
+rsync -az --exclude='.git/' --exclude='oracle/instance' --exclude='build*/' \
+  --exclude='__pycache__/' --exclude='/traces/' \
+  ./ "$GPU_HOST:sts-silent-gpu/"
+rsync -av "$E2_ROOTS" "$GPU_HOST:spire-e2.roots.jsonl.gz"
+```
+
+Keep `tests/traces/` in the transfer (do not exclude it); the root-level ignored `traces/`
+contains generated recordings. On the server, in the synced checkout:
+
+```sh
+export SPIRE_PYTHON="$HOME/spire-venv/bin/python"
+tools/gpu_check.sh "$HOME/spire-gpu-build" "$HOME/spire-e2.roots.jsonl.gz"
+```
+
+The build directory must be fresh. The script selects GPU 0, requires CUDA, builds with one
+compiler process, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
+and the Python CUDA test, replays the supplied E2 prefixes on both batch implementations,
+then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048.
+`test_cuda_parity` compares every `Game` byte and every observation/status byte after each
+step of the 12 deep routes and seeded random trajectories, including reset, cap, clone,
+invalid actions and seed exhaustion. Full Game downloads occur in parity tests only.
+The throughput output records selection, reset, step, encode and synchronization time;
+it excludes policy inference and learning. Results are saved as `BUILD_DIR/throughput.jsonl`.
+
+The conditional `spire_gpu.TrainingBatch(size, decision_cap, seeds)` exposes the same seven
+observation arrays, counts, rewards, done/truncated/fault/reset/advanced flags, seed indices
+and decision counts in device memory. The returned objects implement CUDA Array Interface;
+`torch.as_tensor(batch.tags, device="cuda")` creates a view that keeps its owner alive.
+`batch.step(indices)` takes a contiguous CUDA `torch.int32` vector on the batch device,
+launches on PyTorch's current stream and waits for completion. Observations are reused on
+the next operation. Consume them on that stream before stepping; clone tensors to retain
+an observation. CPU worker timing and compact rollout storage are not part of this interface.
+`step_slots`, `reset_to`, `reset_to_many`, `clone` and `extend_seeds` take the host arguments
+used by `spire.TrainingBatch`; root seeds/actions are uploaded and replayed on the GPU.
+Use these administrative calls between completed policy operations on the default stream.
+The existing `train/` collector still constructs the CPU batch; this API is the integration
+entry point, not a claim that the collector has been migrated.
+
+The Mac checks restricted C++ and CUDA device LLVM generation, plus CPU execution of the
+same kernel bodies. NVCC compilation, GPU byte parity, device stack/resource use and A100
+throughput remain day-one checks.
+
 ## Python API
 
 Add the build directory to `PYTHONPATH` and import `spire`:
