@@ -102,11 +102,16 @@ static void test_draw_follow_up() {
     require(g.hand.size == 3 && g.drawn_cards.size == 3 && g.drawn_cards[0] == top &&
             g.player.creature.block == 3 && g.rng.shuffle.counter == 1,
             "shuffle continuation preserves draw history and executes follow-up once");
+    require(!g.action_objects.contains(follow), "completed follow-up releases its arena slot");
     apply_power(g, player_target, player_target, PowerId::NoDraw, -1);
-    add_bottom(g, Draw::construct(4, true, follow));
+    Effect completed = LoseBlock::construct(player_target, player_target, 2);
+    completed.done = true;
+    const int completed_follow = hold_action(g, completed);
+    add_bottom(g, Draw::construct(4, true, completed_follow));
     run_until_decision(g);
-    require(g.drawn_cards.empty() && g.player.creature.block == 3 && g.hand.size == 3,
-            "GameActionManager skips the same completed follow-up object");
+    require(g.drawn_cards.empty() && g.player.creature.block == 3 && g.hand.size == 3 &&
+            !g.action_objects.contains(completed_follow),
+            "GameActionManager skips a completed follow-up and releases it");
     add_bottom(g, Draw::construct(g, 4, LoseBlock::construct(player_target, player_target, 2)));
     run_until_decision(g);
     require(g.drawn_cards.empty() && g.player.creature.block == 1 && g.hand.size == 3,

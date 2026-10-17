@@ -188,8 +188,16 @@ void looter_bookkeeping() {
     monster_take_turn(g, 0);
     CHECK(g.mugged);
     CHECK(!g.monsters[0].creature.escaped);
+    CHECK(g.manager.actions.size == 3);
+    CHECK(g.action_objects[g.manager.actions[0]].kind == EffectKind::VFX);
+    CHECK(g.action_objects[g.manager.actions[1]].kind == EffectKind::Escape);
+    CHECK(g.action_objects[g.manager.actions[2]].kind == EffectKind::SetMove);
+    execute_next(g);
+    CHECK(!g.monsters[0].creature.escaped);
     execute_next(g);
     CHECK(g.monsters[0].creature.escaped);
+    CHECK(g.manager.actions.size == 1);
+    CHECK(g.action_objects[g.manager.actions[0]].kind == EffectKind::SetMove);
 }
 
 void suicide_preserves_boss_progress() {
