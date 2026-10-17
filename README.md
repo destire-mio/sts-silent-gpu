@@ -28,7 +28,7 @@ and execution on GPU hardware have not been tested on this machine.
 
 ## V100 day-one check
 
-Server target: Linux x86_64 (Ubuntu 22.04 or 24.04), one visible V100 (`sm_70`, 16 GB),
+Server target: Linux x86_64 (Ubuntu 22.04 or 24.04), eight V100 GPUs (`sm_70`, 16 GB each),
 CUDA Toolkit **12.8.x or 12.9.x** including NVCC and development headers (CUDA 13 no longer
 compiles for `sm_70`), NVIDIA driver **570.124.06 or newer** (the cluster has 580.105.08),
 Clang **17 or 18** with libstdc++ development headers, CMake **3.24 or newer**,
@@ -62,9 +62,40 @@ contains generated recordings. On the server, in the synced checkout:
 ```sh
 export SPIRE_PYTHON="$HOME/spire-venv/bin/python"
 tools/gpu_check.sh "$HOME/spire-gpu-build" "$HOME/spire-e2.roots.jsonl.gz"
+
+# Complete training path: all eight devices, a separate fresh directory.
+tools/gpu_train_check.sh "$HOME/spire-train-build" "$HOME/spire-e2.roots.jsonl.gz"
 ```
 
-The build directory must be fresh. The script selects GPU 0, requires CUDA, builds with one
+`gpu_train_check.sh` requires eight visible V100s and builds for `sm_70` with one compiler
+process; it downloads nothing. E1 `train.json` can replace the E2 root file for this check.
+It runs full CTest, then compares the same fp32 policy on CPU and GPU batches: counter words,
+actions, episode outcomes, compact observation bytes, masks and policy versions must agree
+exactly; log probabilities, values, returns and advantages use `atol=rtol=3e-5`.
+It also tests a non-default CUDA stream, invalid-prefix isolation, refill and permuted lanes.
+The supplied prefixes and 32 continuation decisions per root exercise the rooted workload;
+this is separate from original-game trace acceptance.
+
+Single-GPU probes use the default 128-wide, four-layer policy, four continuation decisions
+from natural roots, one PPO epoch and global minibatches of 256. Sizes are
+32/128/512/2048/8192/32768/65536/131072/262144, ending at the first memory exhaustion. Each size
+runs in a fresh process after warmup. An OOM is recorded as the memory boundary; any other
+failure aborts. The last successful size is a measured bound for this workload, not a capacity
+promise for longer episodes. JSON records contain collect/update seconds, end-to-end decisions/s,
+CUDA-event engine/encode/inference/storage times, PyTorch peak allocation and device free memory
+(the PyTorch peak excludes native simulator allocation).
+
+The 1/2/8-GPU checks use the same 512 rooted attempts and initialization, cap 16, and two
+collect/update versions. They compare version-0 actions/outcomes across GPU counts, assert zero
+faults and version progression, and report strong scaling against the 1-GPU run, including root
+replay, diagnostics and checkpoint time. Policy inference, gradients and Adam use fp32; V100 bf16 is not used. CDFs, target scans and
+normalization accumulators use float64 to preserve their scalar-reference arithmetic.
+Logs and JSON are under the supplied build directory (`training-check.jsonl`,
+`training-throughput.json`, `probe-*.log`, `ddp-*/result.json`). No GPU result is asserted by the
+Mac's CPU and device-LLVM tests; NVCC, CUDA execution, memory bounds and NCCL scaling require
+this command on the target server.
+
+The original `gpu_check.sh` build directory must be fresh. That script selects GPU 0, requires CUDA, builds with one
 compiler process, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
 and the Python CUDA test, replays the supplied E2 prefixes on both batch implementations,
 then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048/8192/32768.
@@ -82,12 +113,20 @@ Use these tensors for reading; writes modify the batch buffers.
 `batch.step(indices)` takes a contiguous CUDA `torch.int32` vector on the batch device,
 launches on PyTorch's current stream and waits for completion. Observations are reused on
 the next operation. Consume them on that stream before stepping; clone tensors to retain
-an observation. CPU worker timing and compact rollout storage are not part of this interface.
+an observation. The trainer computes int64 offsets with tensors and packs observations into device uint8 records;
+it does not call the host `store` method or read CPU worker timing.
 `step_slots`, `reset_to`, `reset_to_many`, `clone` and `extend_seeds` take the host arguments
 used by `spire.TrainingBatch`; root seeds/actions are uploaded and replayed on the GPU.
 Use these administrative calls between completed policy operations on the default stream.
-The existing `train/` collector still constructs the CPU batch; this API is the integration
-entry point, not a claim that the collector has been migrated.
+The trainer uses `step_tensors(int32 choices[size], uint8 active[size])` and
+`reset_tensors(int64 slots, int64 root_indices, int64 seeds, int64 offsets, int32 prefixes)`.
+`store_tensors(int64 slots, uint8 data, int64 offsets)` writes the existing compact byte format
+with one device thread per record. All inputs reside on the batch device. These calls enqueue
+work on PyTorch's current stream without a device synchronization; consume observations and
+retain input tensors on that stream.
+Roots are uploaded once per collection and replayed on the device during refill. The CPU batch
+exposes these same methods for reference tests, with NumPy observation buffers viewed as tensors.
+Only read from these views; the native batch owns and mutates them.
 
 The Mac checks restricted C++ and CUDA device LLVM generation, plus CPU execution of the
 same kernel bodies. NVCC compilation, GPU byte parity, device stack/resource use and V100
@@ -268,14 +307,39 @@ rebuilds the encoder's visible-history sidecar, then the network first observes 
 Both heads receive only the seven observation arrays. `train/` has no search, game save/load,
 reward shaping or hidden-state input.
 
-Actor processes own independent `TrainingBatch` instances and a frozen policy copy. A separate
-learner process group uses PyTorch DDP, one rank per device. The coordinator passes compact
-observations and CPU policy snapshots through shared-memory tensors and bounded pipe messages.
-It waits for every actor in version v, runs one PPO update on that rollout, then publishes v+1.
-Every sample and episode records its policy version; the learner rejects a mismatched version.
-The lag is zero: collecting during an update would change the behavior distribution without
-an off-policy correction. Actors run concurrently on CUDA, but collection and learning remain
-separate phases. This is a single-node pipeline, including the eight-GPU case.
+One process owns each GPU's simulator, policy, optimizer and compact rollout. The same process
+collects version v and runs its local DDP shard; PPO reads observations and sample tensors from
+that GPU's storage. A barrier follows the update, then all ranks publish v+1. There are no separate
+actors, policy-copy broadcasts or overlapping policy versions. Every sample and episode carries
+its version; all ranks check versions before the update. This single-node design avoids copying
+large observations between processes and allocates the same GPUs to inference and learning in
+successive phases. DDP exchanges gradients, global sample IDs/lengths and advantage statistics.
+The coordinator receives action audit logs and copies of scalar sample fields for reporting once
+per collection; these host copies never feed PPO. Observation bytes stay on the collecting GPU.
+Rank zero writes checkpoints after updates.
+
+CUDA is the training default and requires `spire_gpu`. CPU is a reference/test device for this
+same collector and tensor storage path, not a production simulator backend or an automatic
+fallback. CPU tests use gloo; CUDA uses NCCL. CPU test runs allow at most three workers.
+Episode identity, decision counts, fault/terminal/truncation handling, refill, budget selection
+and segmented return/GAE scans use device tensors. No per-decision observations, logits, actions
+or episode status arrays are downloaded. Python schedules batched operations; dynamic counts,
+maximum lengths and storage-capacity scalars still synchronize at batch/chunk boundaries.
+Inference uses chunks of at most 256 lanes to bound attention memory, followed by one simulator
+step for the whole wave. There are no Python slot loops during stepping.
+
+Sampling uses Philox4x32-10 computed with integer tensor operations on the device. SHA256 of the
+canonical JSON `[signed_seed,candidate_prefix]` supplies two key words (the first two eight-digit
+hex groups); XOR these with the low/high words of the sampling seed. Counter words are decision
+low/high then attempt low/high; all words are uint32. Ten rounds use multipliers `D2511F53` and
+`CD9E8D57`, and key increments `9E3779B9` and `BB67AE85`. The first output word gives the double
+uniform `(word+0.5)/2^32`; inverse CDF uses the policy's fp32 probabilities accumulated and
+renormalized in float64. A root's metadata and its lane/rank do not enter the key. The same
+sampling seed, root, attempt and decision therefore generate the same random choice for the
+same probabilities across batch sizes, slot orders and devices. CPU/GPU floating-point policy
+outputs are checked with tolerance and sampled paths with exact equality on the server;
+integer RNG equality alone cannot guarantee equal paths if floating-point CDFs straddle a draw.
+This scheme intentionally replaces NumPy PCG64; old sampled trajectories are not reproduced.
 
 Completed episodes use full-episode Monte-Carlo value targets with gamma=1; default GAE
 lambda=1 gives advantage `outcome - old_value`. `--gae-lambda` changes advantages only;
@@ -285,8 +349,8 @@ Faulted trajectories are excluded from PPO and retained in episode logs. Host co
 still abort the process; there is no signal recovery.
 
 PPO stores old chosen-action log probabilities and complete legal candidate sets in compact
-observation records. Inference crops both entity and candidate dimensions before copying to
-the device. The learner decodes compact records into the selected batch's actual maximum
+observation records on the device. Inference crops both entity and candidate dimensions on
+that device. The learner decodes compact records into the selected batch's actual maximum
 lengths, with attention and candidate masks. It never expands records to schema capacities.
 Each epoch shuffles ties, orders records by 16-entity length bands and candidate counts, then
 shuffles the resulting minibatches. Bucketing changes minibatch membership, not the objective
@@ -297,34 +361,36 @@ nonnegative sampled approximation `mean(ratio - 1 - log_ratio)` across minibatch
 exact distribution KL or an automatic stopping rule.
 
 `--minibatch-size` is the global sample count, independent of learner count. All ranks use the
-same global sample order and rollout-wide advantage normalization. Rank r receives every
-world-size-th sample starting at r. Its mean loss is weighted by
+same global sample order and rollout-wide advantage normalization. Sample IDs are
+`attempt * decision_cap + decision_index`; training attempts must be globally unique ordinals.
+A sample remains on the rank that collected it. Each rank selects its members of the shared
+length-bucketed minibatch. Its mean loss is weighted by
 `local_count * world_size / global_count` before DDP averages gradients; clipping and Adam
 follow the reduction. An empty tail shard participates with a zero-weight graph, without
 adding a training sample. This preserves unequal tails and batches smaller than world size.
 
-Use `--torch-threads` to set PyTorch's CPU worker count (default four). Keep generated artifacts outside the checkout:
+Use `--torch-threads` to set PyTorch's thread count per process (default one). Keep generated artifacts outside the checkout:
 
 ```sh
 export SPIRE_PYTHON=/Users/destire/Documents/Codex/2026-09-10/new-chat-2/outputs/spire-lab/.venv/bin/python
 export PYTHONPATH=/private/tmp/trainer-runs/build:.
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
 "$SPIRE_PYTHON" -m train.run --output /private/tmp/trainer-runs/natural \
-  --updates 2 --episodes 12 --batch-size 4
+  --updates 2 --episodes 12 --batch-size 4 --device cpu
 
 "$SPIRE_PYTHON" -m train.roots --output /private/tmp/trainer-runs/roots.json
 "$SPIRE_PYTHON" -m train.run --roots /private/tmp/trainer-runs/roots.json \
-  --output /private/tmp/trainer-runs/deep --updates 2 --episodes 6 --batch-size 3
+  --output /private/tmp/trainer-runs/deep --updates 2 --episodes 6 --batch-size 3 --device cpu
 
-# Local distributed smoke (two learner ranks, two actors).
+# Local reference smoke (two collecting/DDP test processes).
 "$SPIRE_PYTHON" -m train.run --roots /private/tmp/e1-runs/roots/train.json \
   --output /private/tmp/trainer-runs/ddp --updates 1 --episodes 48 \
-  --actors 2 --learners 2 --batch-size 32 --device cpu --backend gloo
+  --workers 2 --batch-size 32 --device cpu
 
 # Same launcher on one machine with eight CUDA devices.
 "$SPIRE_PYTHON" -m train.run --roots /private/tmp/e1-runs/roots/train.json \
   --output /private/tmp/trainer-runs/cuda --updates 1 --episodes 48 \
-  --actors 8 --learners 8 --batch-size 32 --device cuda --backend nccl
+  --workers 8 --batch-size 32 --device cuda
 ```
 
 The build commands above can use `/private/tmp/trainer-runs/build` in place of
@@ -345,10 +411,12 @@ Training cycles supplied roots in order. Natural starts use consecutive train se
 updates use new seeds. Except for the historical E1 winning route, training rejects roots
 outside the train partition. `--init-seed` controls initialization, policy sampling and
 minibatch shuffling; planned independent initializations are 1729, 2718 and 31415.
-`--episodes` is total starts per update, `--batch-size` is lanes per actor,
+`--episodes` is total starts per update, `--batch-size` is lanes per GPU,
 and `--minibatch-size` is decisions per global gradient minibatch.
 `--decision-cap` counts continuation decisions, excluding prefix replay. Compact storage has
-a fixed `--storage-mib` budget divided equally among actors; exhaustion aborts without a partial update. The defaults are
+a fixed `--storage-mib` budget per GPU; exhaustion aborts without a partial update. Scalar record capacity is bounded by the storage
+budget divided by the smallest legal record (4-byte header, one 24-byte entity, one 7-byte candidate),
+avoiding a worst-case `episodes * decision_cap` metadata allocation. The defaults are
 for small runs, not a pre-approved large experiment.
 
 Each fresh output directory contains config/root inputs, initial and latest checkpoints,
@@ -359,34 +427,33 @@ replay decisions, per-screen normalized entropy, sampled KL, start/decision valu
 with screen/act breakdowns, compact bytes and coordinator peak RSS. Wall-time buckets are
 collection (including transport), learner (including transport, update and checkpoint), and
 coordinator work. Process startup is reported separately. Engine+encode, inference and
-storage are sums of actor work and can overlap on CUDA; they are not additional wall-time
-buckets. PPO time is part of learner time. Worker reset/step/encode times are additional
-detail. The reported coordinator RSS excludes the worker processes.
+storage are sums of per-device work measured with CUDA events; they are not additional wall-time
+buckets. PPO time is part of learner time. The reported coordinator RSS excludes workers.
 
-CPU execution shares a compute semaphore among actors and learners to respect the Mac's
-one-heavy-process-per-agent budget. A learner releases it when its final DDP gradient bucket
-is ready, before waiting for other ranks; optimizer steps acquire it again. CUDA workers use
-their assigned devices without that CPU scheduling constraint. CPU gloo runs establish
-correctness, not multi-device scaling. `tests/test_train_packing.py` compares capacity-padded
-and packed logits, loss and every gradient. `tests/test_train_distributed.py` compares 2/3
-ranks to one process with unequal and empty shards, SGD and Adam. In float32, Adam can amplify
-roundoff in the mathematically zero gradient of the shared final score bias; its constant
-logit shift is checked separately, alongside probabilities, values, losses and gradients.
+`tests/test_train_policy.py` compares the tensor collector against a scalar reference, including
+exact packed bytes, actions, outcomes, faults, budget cuts, refill, truncation and GAE.
+`tests/test_train_packing.py` compares capacity-padded and packed logits, loss and every gradient.
+`tests/test_train_distributed.py` compares 2/3 gloo ranks to one process with unequal/empty shards,
+SGD and Adam. Adam can amplify roundoff in mathematically zero gradients of the final score bias
+and attention key biases; those null directions are reported separately while identifiable
+parameters, probabilities, values, losses, gradients and optimizer moments remain checked.
+`tests/test_train_pipeline.py` covers multiple policy versions, zero-sample updates, an empty
+rank, checkpoint publication and retained audit trajectories. CPU tests establish those
+contracts; they do not measure GPU scaling.
 
-Frozen evaluation samples one continuation per root seed using an independent per-seed PCG64
-stream. It retains faults/truncations in the denominator; ordinary Wilson intervals are
+Frozen evaluation uses the same Collector and counter sampler, with an independent sampling seed. It retains faults/truncations in the denominator; ordinary Wilson intervals are
 reported only if every attempt terminates, otherwise it reports bounds with unresolved
 outcomes. Paired reports require identical roots, sampling stream, cap and evaluation engine.
 
 ```sh
 "$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/natural/initial.pt \
-  --episodes 8 --output /private/tmp/trainer-runs/before.json
+  --episodes 8 --output /private/tmp/trainer-runs/before.json --device cpu
 "$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/natural/checkpoint.pt \
   --episodes 8 --reference /private/tmp/trainer-runs/before.json \
-  --output /private/tmp/trainer-runs/after.json
+  --output /private/tmp/trainer-runs/after.json --device cpu
 "$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/deep/checkpoint.pt \
   --roots /private/tmp/trainer-runs/roots.json --root-index 1 \
-  --output /private/tmp/trainer-runs/deep-32-eval.json
+  --output /private/tmp/trainer-runs/deep-32-eval.json --device cpu
 ```
 
 Duplicate seed families require explicit independent attempt IDs in the Python evaluator.
@@ -394,11 +461,6 @@ Repeated policy-stream trials on that root are not independent game seeds. The C
 to development seeds; sealed evaluation requires an explicit partition and seed selection
 after policy/configuration freeze. These smoke commands do not execute the E1 three-seed
 learning experiment or establish its success thresholds.
-
-`--device cuda --backend nccl` moves the same actor network and learner optimizer code to CUDA.
-Actor i uses device `i % learners`; learner r uses device r. Tensor allocation and timing
-synchronization use that device. The current `TrainingBatch` engine remains on CPU;
-GPU-resident engine integration and CUDA execution/scaling measurements are separate work.
 
 `spire_collect_roots winning` accepts the same root-prefix input as `evaluate`; its family
 budget is per search attempt and its trial argument is the number of independent search
@@ -521,7 +583,7 @@ in `inventory/deep-neow.json`. These are input actions, not replacement oracle s
 - `core/`: fixed-capacity C++17 run and combat state, RNG, queues and per-unit content.
 - `obs/`: device-C++ visible-information encoder and fixed numeric schema.
 - `host/`: CPU batch driver, Python binding, snapshot serialization and benchmark.
-- `train/`: visible-observation entity policy, versioned actors, DDP PPO, roots and frozen evaluation.
+- `train/`: visible-observation entity policy, device collectors, DDP PPO, roots and frozen evaluation.
 - `cuda/`: conditional CUDA batch kernel.
 - `tests/`: native checks, device discipline checker and strict trace replayer.
 - `oracle/`: original-game trace recorder developed on its own branch.
