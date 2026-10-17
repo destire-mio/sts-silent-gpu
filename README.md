@@ -314,6 +314,46 @@ Repeated attempts measure these fixed roots, not independent game-seed coverage.
 The [E1 pilot inventory](inventory/e1.json) records the frozen protocol, root hashes,
 three initializations, learning curves, throughput, original-game checks and artifact paths.
 
+## Watch a checkpoint in the original game
+
+`watch/` connects a thin ModTheSpire adapter to one Python `spire.Game`. Every decision and
+terminal compares both full oracle snapshot scopes and canonical legal actions before another
+action is sent. Only the existing seven visible-observation arrays reach `train.model.Policy`;
+the game seed and RNG remain in the synchronizer. Sampling uses an independent PCG64 stream.
+
+Use the build commands above with `/private/tmp/mod-work/build` as the build directory, then
+run from this checkout:
+
+```sh
+export PYTHONPATH=/private/tmp/mod-work/build:.
+python3 -m watch.build --output /private/tmp/mod-work/mod
+"$SPIRE_PYTHON" -m watch.check --mod /private/tmp/mod-work/mod/Watch.jar --output /private/tmp/mod-work/check
+"$SPIRE_PYTHON" -m watch.run --mod /private/tmp/mod-work/mod/Watch.jar \
+  --checkpoint /private/tmp/e1-runs/init-2718/checkpoint.pt \
+  --roots /private/tmp/e1-runs/roots/train.json --root-index 7 \
+  --delay 0.5 --output /private/tmp/mod-work/watch
+```
+
+Use `--seed 1` in place of `--roots ... --root-index ...` to begin at Neow. E1 JSON root lists
+and E2 `.roots.jsonl.gz` records are accepted; indices start at zero. Prefixes replay from
+Neow with graphics at accelerated speed. Policy play uses 60 FPS and `--delay` seconds before
+each action. Waiting freezes game updates, preserving the compared state. This avoids spending
+the viewing session watching the training root's long prefix. Graphics are silent and inputs
+are controlled by the adapter; closing the window stops the run.
+
+Each output directory must be fresh. It owns the game's working directory, home, preferences,
+saves and temporary files; installed JARs/runtime are read-only links. The build reuses
+`Actions`, `Choices`, `Snapshot` and the recorder's start/settlement, and redirects only adapter
+classes, preserving the 18 audited game-class patches and RNG split. `watch.check` runs seed 1's
+30 scripted decisions headless and replays the resulting trace through both scopes.
+`result.json`, `trace.jsonl.gz`, `input.json` and `game.log` retain the outcome and inputs.
+A divergence stops action execution, prints the JSON path, retains both states in
+`difference.json`, and holds the game window with the difference until closed. Successful
+terminal comparison displays the outcome for five seconds before exit. An unfinished trace
+from a divergence is not a passing replay.
+The [watch validation inventory](inventory/watch.json) records the seed-1 check and the E1
+root-7 Heart victory, including checkpoint/trace hashes and fresh-build replay results.
+
 ## Trace replay
 
 ```sh
@@ -374,4 +414,5 @@ in `inventory/deep-neow.json`. These are input actions, not replacement oracle s
 - `cuda/`: conditional CUDA batch kernel.
 - `tests/`: native checks, device discipline checker and strict trace replayer.
 - `oracle/`: original-game trace recorder developed on its own branch.
+- `watch/`: original-game checkpoint viewer, reusing the oracle adapter and comparator.
 - `inventory/`: content inventory and trace-derived status developed on its own branch.

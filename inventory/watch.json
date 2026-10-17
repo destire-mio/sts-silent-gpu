@@ -1,0 +1,71 @@
+{
+  "engine_base": "cc15388a4dbead32ebeba7c2e9cf7776b22ebd8e",
+  "date": "2026-10-17",
+  "scope": "Silent A20 original-game viewer; one E1 train-root demonstration, not unseen-seed policy evaluation",
+  "checkpoint": {
+    "path": "/private/tmp/e1-runs/init-2718/checkpoint.pt",
+    "sha256": "2f97c69ea00e00afa843160c61e8da3627151bb7d033b6a0448c10eceb92ddce",
+    "observation_version": 2,
+    "sampling_seed": 2718,
+    "sampling": "PCG64(sampling_seed), inverse CDF; independent of game seed"
+  },
+  "root": {
+    "path": "/private/tmp/e1-runs/roots/train.json",
+    "sha256": "2dfaf78c192379556ca8ebebaa739c379b0e9a4b4a48c42246f3f0c48ca21e25",
+    "index": 7,
+    "selection": "Shortest prefix in the E1 train root list",
+    "seed": 1000002554,
+    "prefix_decisions": 1263,
+    "encounter_at_takeover": "The Heart",
+    "floor_at_takeover": 55
+  },
+  "scripted_check": {
+    "command": "python -m watch.check --mod /private/tmp/mod-work/mod-built/Watch.jar --output /private/tmp/mod-work/headless",
+    "seed": 1,
+    "decisions": 30,
+    "terminal": "death",
+    "combat": "PASS",
+    "run": "PASS",
+    "trace": "/private/tmp/mod-work/headless/trace.jsonl.gz"
+  },
+  "graphics": {
+    "command": "python -m watch.run --mod /private/tmp/mod-work/mod-built/Watch.jar --checkpoint /private/tmp/e1-runs/init-2718/checkpoint.pt --roots /private/tmp/e1-runs/roots/train.json --root-index 7 --delay 0.5 --output /private/tmp/mod-work/e1-watch",
+    "decisions": 1270,
+    "policy_decisions": 7,
+    "terminal": "victory",
+    "terminal_floor": 56,
+    "combat": "PASS",
+    "run": "PASS",
+    "seconds": 503.23284254199825,
+    "trace": "/private/tmp/mod-work/e1-watch/trace.jsonl.gz",
+    "trace_sha256": "3083a9988e9fd9f28fedf2f891849c95505a47656a8ccc5be550ec1b8cc41f95"
+  },
+  "final_controller_check": {
+    "reason": "Encode every prefix decision to preserve displayed rest-heal history",
+    "regression": "Fruit Juice after opening rest options: pre-fix 21 versus displayed 19; fixed controller retains 19",
+    "headless_trace": "/private/tmp/mod-work/e1-headless/trace.jsonl.gz",
+    "headless_trace_sha256": "a155642bfdf6a76082d6fc54bd26d616373bc5ba81c1f9ef98dc227fa5f7114a",
+    "graphics_and_headless_original_records_identical": true,
+    "decisions": 1270,
+    "terminal": "victory",
+    "combat": "PASS",
+    "run": "PASS"
+  },
+  "oracle_audit": {
+    "loaded_game_classes": 2306,
+    "patched_game_classes": 18,
+    "all_patched_class_hashes_equal_fresh_oracle_baseline": true,
+    "seed_1_records_equal_fresh_oracle_baseline": true,
+    "evidence": "/private/tmp/mod-work/validation.log"
+  },
+  "fresh_build": {
+    "directory": "/private/tmp/mod-work/build",
+    "ctest_command": "ctest --test-dir /private/tmp/mod-work/build --output-on-failure --parallel 1",
+    "ctest_summary": "100% tests passed out of 48",
+    "ctest_seconds": 94.94,
+    "combat_replay": "849/849 traces passed, 19341/19341 matched decisions",
+    "run_replay": "849/849 traces passed, 19341/19341 matched decisions",
+    "log": "/private/tmp/mod-work/build/Testing/Temporary/LastTest.log"
+  },
+  "remaining_coverage": ["Independent E2 root watch run", "Other seeds and checkpoints"]
+}
