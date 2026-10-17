@@ -62,6 +62,7 @@ class Rollout:
     entropy: np.ndarray
     complete: np.ndarray
     valid: np.ndarray
+    policy_versions: np.ndarray
     episodes: list
     timing: dict
     count: int = 0
@@ -73,7 +74,7 @@ class Rollout:
                    *[np.empty(decisions, dtype=np.float32) for _ in range(5)],
                    np.empty(decisions, dtype=np.uint8), np.empty(decisions, dtype=np.uint8),
                    np.empty(decisions, dtype=np.float32), np.zeros(decisions, dtype=bool),
-                   np.zeros(decisions, dtype=bool), [], {})
+                   np.zeros(decisions, dtype=bool), np.empty(decisions, dtype=np.int64), [], {})
 
 
 class Collector:
@@ -85,14 +86,16 @@ class Collector:
         self.size = size
 
     @torch.no_grad()
-    def collect(self, model, roots, sampling_seed, attempts, decision_budget=None):
+    def collect(self, model, roots, sampling_seed, attempts, decision_budget=None, *, policy_version):
         model.eval()
         start = time.perf_counter()
         budget = len(roots) * self.cap if decision_budget is None else decision_budget
         assert budget > 0
         rollout = Rollout.allocate(min(len(roots) * self.cap, budget), self.storage_mib)
+        attempts = list(attempts)
         episodes = [dict(seed=root["seed"], root_key=root_key(root), prefix_decisions=len(root["candidates"]),
-                         candidates=[], records=[], outcome=None, fault=0) for root in roots]
+                         attempt=attempt, policy_version=policy_version, candidates=[], records=[], outcome=None, fault=0)
+                    for root, attempt in zip(roots, attempts)]
         generators = [policy_rng(sampling_seed, root["seed"], attempt) for root, attempt in zip(roots, attempts)]
         slots = list(range(min(self.size, len(roots))))
         current = dict(zip(slots, slots))
@@ -120,6 +123,7 @@ class Collector:
             active = np.array(list(current)[:budget - rollout.count], dtype=np.int32)
             if len(active):
                 begin, end = rollout.count, rollout.count + len(active)
+                rollout.policy_versions[begin:end] = policy_version
                 before = time.perf_counter()
                 code = self.batch.store(active, rollout.data, rollout.offsets[begin:end + 1])
                 assert code == 0, f"Compact rollout storage exhausted: {code:#x}; increase storage_mib"

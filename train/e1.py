@@ -118,7 +118,8 @@ def main():
         count = 48
         group = sample_roots(groups, count, sampling_rng)
         begin = time.perf_counter()
-        rollout = collector.collect(model, group, args.init_seed, range(episodes, episodes + count), args.decisions - total)
+        rollout = collector.collect(model, group, args.init_seed, range(episodes, episodes + count), args.decisions - total,
+                                    policy_version=iteration)
         iteration += 1
         result = summarize(rollout)
         with (args.output / "episodes.jsonl").open("a") as output:
@@ -129,7 +130,7 @@ def main():
         targets = rollout.returns[:rollout.count][rollout.valid[:rollout.count]]
         assert np.array_equal(targets, np.round(targets))
         assert ((targets >= 0) & (targets <= 1)).all()
-        result["ppo"] = update(model, optimizer, rollout, ppo_config, device, update_rng)
+        result["ppo"] = update(model, optimizer, rollout, ppo_config, device, update_rng, policy_version=iteration - 1)
         total += rollout.count
         episodes += len(rollout.episodes)
         wins += result["wins"]

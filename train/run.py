@@ -81,9 +81,9 @@ def main():
         start = time.perf_counter()
         first = (iteration - 1) * args.episodes
         group = [roots[i % len(roots)] for i in range(first, first + args.episodes)]
-        rollout = collector.collect(model, group, args.init_seed, range(first, first + args.episodes))
+        rollout = collector.collect(model, group, args.init_seed, range(first, first + args.episodes), policy_version=iteration - 1)
         result = summarize(rollout)
-        result["ppo"] = update(model, optimizer, rollout, ppo_config, device, rng)
+        result["ppo"] = update(model, optimizer, rollout, ppo_config, device, rng, policy_version=iteration - 1)
         result.update(update=iteration, engine_commit=config["engine_commit"])
         result["timing"] = dict(**rollout.timing, update_seconds=result["ppo"]["update_seconds"])
         save_checkpoint(args.output / "checkpoint.pt", model, optimizer, config, iteration)
