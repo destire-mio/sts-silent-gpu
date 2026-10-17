@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <type_traits>
 
+#include "tensor_binding.hpp"
+
 namespace py = pybind11;
 using namespace pybind11::literals;
 
@@ -307,6 +309,32 @@ PYBIND11_MODULE(spire, module) {
         .def("__len__", [](const EnvironmentBatch& batch) { return batch.games.size(); });
     module.attr("encounters") = py::cast(std::vector<std::string>(std::begin(encounter_names), std::end(encounter_names)));
     auto training = py::class_<TrainingBatch>(module, "TrainingBatch");
+    tensor_methods(training,
+        [](TrainingBatch& b, py::object choices, py::object active) {
+            auto* c = tensor_pointer<int32_t>(choices, "int32", -1);
+            auto* a = tensor_pointer<uint8_t>(active, "uint8", -1);
+            py::gil_scoped_release release;
+            b.step_tensors(c, a);
+        },
+        [](TrainingBatch& b, py::object slots, py::object roots, py::object seeds,
+           py::object offsets, py::object candidates) {
+            const int count = slots.attr("numel")().cast<int>();
+            auto* s = tensor_pointer<int64_t>(slots, "int64", -1);
+            auto* r = tensor_pointer<int64_t>(roots, "int64", -1);
+            auto* e = tensor_pointer<int64_t>(seeds, "int64", -1);
+            auto* o = tensor_pointer<int64_t>(offsets, "int64", -1);
+            auto* c = tensor_pointer<int32_t>(candidates, "int32", -1);
+            py::gil_scoped_release release;
+            b.reset_tensors(s, r, count, e, o, c);
+        },
+        [](TrainingBatch& b, py::object slots, py::object data, py::object offsets) {
+            const int count = slots.attr("numel")().cast<int>();
+            auto* s = tensor_pointer<int64_t>(slots, "int64", -1);
+            auto* d = tensor_pointer<uint8_t>(data, "uint8", -1);
+            auto* o = tensor_pointer<int64_t>(offsets, "int64", -1);
+            py::gil_scoped_release release;
+            b.store_tensors(s, count, d, o);
+        });
     observation_arrays(training);
     training
         .def(py::init([](int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds) {

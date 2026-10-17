@@ -61,6 +61,24 @@ struct TrainingBatch : ObservationBatch {
         selected_ = selected;
         dispatch();
     }
+    void store_tensors(const int64_t* slots, int count, uint8_t* data, const int64_t* offsets) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int i = 0; i < count; ++i) obs::store(view(slots[i]), data + offsets[i]);
+    }
+    void step_tensors(const int32_t* selected, const uint8_t* active) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int i = 0; i < size; ++i) active_[i] = active[i];
+        selected_ = selected;
+        dispatch();
+    }
+    void reset_tensors(const int64_t* slots, const int64_t* roots, int count,
+                       const int64_t* seeds, const int64_t* offsets, const int32_t* candidates) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int j = 0; j < count; ++j) {
+            const auto root = roots[j];
+            replay(slots[j], seeds[root], candidates + offsets[root], offsets[root + 1] - offsets[root]);
+        }
+    }
     void step_slots(const std::vector<int32_t>& slots, const std::vector<int32_t>& selected) {
         std::lock_guard<std::mutex> operation(operation_mutex_);
         SPIRE_ASSERT(slots.size() == selected.size());
@@ -164,6 +182,9 @@ private:
         view(i).finish(0, 0); actions[i].clear();
     }
     void replay(int i, int64_t seed, const std::vector<int32_t>& candidates) {
+        replay(i, seed, candidates.data(), candidates.size());
+    }
+    void replay(int i, int64_t seed, const int32_t* candidates, int count) {
         SPIRE_ASSERT(i >= 0 && i < size);
         const auto start = Clock::now();
         spire::reset(games[i], seed);
@@ -173,7 +194,8 @@ private:
         seed_indices[i] = -1; decision_counts[i] = 0;
         rewards[i] = 0; done[i] = truncated[i] = advanced[i] = 0; reset_mask[i] = 1; faults[i] = 0;
         publish(i);
-        for (const int candidate : candidates) {
+        for (int j = 0; j < count; ++j) {
+            const int candidate = candidates[j];
             if (faults[i]) return;
             if (candidate < 0 || candidate >= actions[i].size) {
                 fail(i, static_cast<uint32_t>(obs::Fault::InvalidCandidate)); return;

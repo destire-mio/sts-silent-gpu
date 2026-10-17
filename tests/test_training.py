@@ -9,6 +9,22 @@ import training_state
 
 
 class TrainingTests(unittest.TestCase):
+    def test_tensor_interface_matches_reference_subset_and_roots(self):
+        import torch
+        tensor = spire.TrainingBatch(3, 1, 2, [])
+        reference = spire.TrainingBatch(3, 1, 2, [])
+        args = [torch.tensor(v, dtype=t) for v, t in (([2, 0, 1], torch.int64), ([1, 0, 2], torch.int64),
+            ([1000000001, 1000000002, 1000000003], torch.int64), ([0, 1, 3, 4], torch.int64),
+            ([0, 0, 0, 999], torch.int32))]
+        tensor.reset_tensors(*args)
+        reference.reset_to_many([2, 0, 1], [1000000002, 1000000001, 1000000003], [[0, 0], [0], [999]])
+        for _ in range(2):
+            tensor.step_tensors(torch.tensor([0, 999, 0], dtype=torch.int32), torch.tensor([1, 0, 1], dtype=torch.uint8))
+            reference.step_slots([0, 2], [0, 0])
+            for name in ("tags", "ids", "values", "candidate_kinds", "candidate_refs", "entity_mask", "candidate_mask",
+                         "done", "truncated", "faults", "rewards", "decision_counts", "advanced", "reset_mask"):
+                np.testing.assert_array_equal(getattr(tensor, name), getattr(reference, name), err_msg=name)
+
     def test_preallocated_thread_determinism_and_clone(self):
         seeds = list(range(1000000000, 1000001000))
         a = spire.TrainingBatch(8, 1, 20, seeds)

@@ -42,6 +42,29 @@ void TrainingBatch::step(const int32_t* selected, cudaStream_t stream) {
     check(cudaMemsetAsync(active.data, 1, size, stream));
     dispatch(selected, stream);
 }
+void TrainingBatch::store_tensors(const int64_t* slots, int count, uint8_t* data, const int64_t* offsets, cudaStream_t stream) {
+    spire_training_store<<<(count + 31) / 32, 32, 0, stream>>>(state(), slots, count, data, offsets);
+    check(cudaGetLastError());
+}
+void TrainingBatch::step_tensors(const int32_t* selected, const uint8_t* mask, cudaStream_t stream) {
+    const auto b = state();
+    spire_training_select<<<(size + 31) / 32, 32, 0, stream>>>(b, mask);
+    check(cudaGetLastError());
+    spire_training_step<<<(size + 31) / 32, 32, 0, stream>>>(b, selected);
+    check(cudaGetLastError());
+    spire_training_publish<<<(size + 31) / 32, 32, 0, stream>>>(b);
+    check(cudaGetLastError());
+    spire_training_faults<<<(size + 31) / 32, 32, 0, stream>>>(b);
+    check(cudaGetLastError());
+}
+void TrainingBatch::reset_tensors(const int64_t* slots, const int64_t* roots, int count,
+    const int64_t* seeds, const int64_t* offsets, const int32_t* candidates, cudaStream_t stream) {
+    if (!count) return;
+    spire_training_refill<<<(count + 31) / 32, 32, 0, stream>>>(state(), slots, roots, count, seeds, offsets, candidates);
+    check(cudaGetLastError());
+    spire_training_faults<<<(size + 31) / 32, 32, 0, stream>>>(state());
+    check(cudaGetLastError());
+}
 void TrainingBatch::step_slots(const std::vector<int32_t>& slots, const std::vector<int32_t>& selected) {
     SPIRE_ASSERT(slots.size() == selected.size());
     std::vector<uint8_t> mask(size);
