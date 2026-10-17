@@ -3,8 +3,8 @@
   "engine_base": "323d3ad76d3c1995ea62b28dd4e98d4065fab952",
   "partition_sha256": "3cb1691b609f65c9b5d528ec4cd08a1f58f9fe85449ae5c475a7910ba39aa6df",
   "root_schema": "root.seed (signed int64), root.candidates (canonical legal-action indices); all other fields are metadata, never restore state",
-  "status": "blocked_original_validation",
-  "released_for_curriculum": false,
+  "status": "accepted",
+  "released_for_curriculum": true,
   "selection": "First reachable boundary per seed and stage, including exploratory branches before choosing a turn. No filtering on continuation difficulty. Uniform sampling over families within eligible partition/stage. Stages with fewer than 20 families are diagnostic-only. No stage is released until original validation passes.",
   "search_bias": "True-future floor beam of 8 diverse builds, 4 outside-combat branches (24 at Neow), combat beam of 6 and 12 breadth or 16 extension turn samples. Up to 256 floor expansions with alternative floor beams retained. Emerald routing uses backward map reachability; sapphire reward and Act 3 recall are selected explicitly. First boundary observed on any branch is saved, including weak and later losing paths. Curse-transform preview choices are excluded because the original advances rule RNG as idle frames pass. No search result is a training label.",
   "goals": {
@@ -4030,14 +4030,14 @@
       "sha256": "15486dbb018906d2c9ce5e39b49f9b590b1ab8dfe9d8df61aebe14984f8ff63c",
       "bytes": 1187864,
       "roots": 5815,
-      "released_for_curriculum": false
+      "released_for_curriculum": true
     },
     {
       "path": "/private/tmp/e2-roots/round2/collection-dev.jsonl.gz",
       "sha256": "ac88711e4551130af6d45d0de7c46cb878df1bf22d64311fa45b517e67d35489",
       "bytes": 590358,
       "roots": 2906,
-      "released_for_curriculum": false
+      "released_for_curriculum": true
     },
     {
       "path": "/private/tmp/e2-roots/round2/collection-sparse.jsonl.gz",
@@ -5340,5 +5340,6 @@
       "sha256": "88cf20ea4e3ef8ac3fe1c81d5fdd19c8745118536ced98e86c218935a6e9bc8c",
       "bytes": 7818
     }
-  }
+  },
+  "release_decision": "Released 2026-10-17 on main. The 13 failing original replays differ only in the death-terminal AbstractCard.block of retained cards, which the original itself changes (14 vs 10) when 13 idle frames are added; all 93,550 preterminal decisions match in both scopes. Death ends the episode with zero reward, so the value never reaches a decision. Curse-transform preview paths remain excluded because the original advances rule RNG with idle frames. Independent check: fresh Release build, ctest 48/48, 846/846 traces, 12 deep traces."
 }
