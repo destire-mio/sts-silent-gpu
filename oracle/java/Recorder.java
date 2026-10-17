@@ -191,15 +191,12 @@ public final class Recorder {
         CardCrawlGame.dungeon.nextRoomTransition();
     }
 
-    static void record(JsonObject job) throws Exception {
+    static void start(JsonObject job) throws Exception {
         long seed = job.get("seed").getAsLong();
         boolean isScenario = !job.get("scenario").isJsonNull();
         boolean setupScenario = isScenario && job.getAsJsonObject("scenario").has("encounter");
-        boolean combatScenario = setupScenario && !job.getAsJsonObject("scenario").has("start");
         playtimeAtLeast800 = isScenario && job.getAsJsonObject("scenario").has("playtime_at_least_800")
             && job.getAsJsonObject("scenario").get("playtime_at_least_800").getAsBoolean();
-        JsonArray inputs = isScenario && job.getAsJsonObject("scenario").has("actions")
-            ? job.getAsJsonObject("scenario").getAsJsonArray("actions") : new JsonArray();
         Unseeded.rng = new Unseeded.Stream(seed);
         MathUtils.random = new RandomXS128(seed);
         CardCrawlGame.tips = new com.megacrit.cardcrawl.helpers.GameTips();
@@ -228,6 +225,16 @@ public final class Recorder {
         while (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) tick();
         settle();
         if (setupScenario) { scenario(job.getAsJsonObject("scenario"), seed); settle(); }
+    }
+
+    static void record(JsonObject job) throws Exception {
+        start(job);
+        long seed = job.get("seed").getAsLong();
+        boolean isScenario = !job.get("scenario").isJsonNull();
+        boolean combatScenario = isScenario && job.getAsJsonObject("scenario").has("encounter")
+            && !job.getAsJsonObject("scenario").has("start");
+        JsonArray inputs = isScenario && job.getAsJsonObject("scenario").has("actions")
+            ? job.getAsJsonObject("scenario").getAsJsonArray("actions") : new JsonArray();
         RandomXS128 policy = new RandomXS128(seed);
         Path output = Paths.get(job.get("output").getAsString());
         OutputStream bytes = Files.newOutputStream(output);
@@ -269,7 +276,7 @@ public final class Recorder {
         }
     }
 
-    public static void run() throws Exception {
+    static void initialize() throws Exception {
         try (java.util.jar.JarFile jar = new java.util.jar.JarFile("desktop-1.0.jar")) {
             Enumeration<java.util.jar.JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
@@ -286,6 +293,10 @@ public final class Recorder {
         settle();
         initialRelicExclusions = new ArrayList<String>(AbstractDungeon.relicsToRemoveOnStart);
         initialBossSeen = new HashMap<String, String>(com.megacrit.cardcrawl.unlock.UnlockTracker.bossSeenPref.data);
+    }
+
+    public static void run() throws Exception {
+        initialize();
         JsonArray jobs;
         try (Reader reader = Files.newBufferedReader(Paths.get(System.getProperty("oracle.jobs")), StandardCharsets.UTF_8)) {
             jobs = new JsonParser().parse(reader).getAsJsonArray();
