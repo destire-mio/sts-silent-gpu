@@ -77,9 +77,11 @@ def native(args, mode, input_path):
                str(prefix.with_suffix('.journal')), str(input_path)]
     config = dict(command=command, mode=mode, engine=subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-        source_sha256=digest(ROOT / 'tools/collect_roots.cpp'), input_sha256=digest(input_path))
+        source_sha256=digest(ROOT / 'tools/collect_roots.cpp'), driver_sha256=digest(__file__),
+        input_sha256=digest(input_path))
     patch = prefix.with_suffix('.source.patch')
-    patch.write_bytes(subprocess.check_output(['git', 'diff', 'HEAD', '--', 'core', 'obs', 'host', 'tools/collect_roots.cpp'], cwd=ROOT))
+    patch.write_bytes(subprocess.check_output(['git', 'diff', 'HEAD', '--', 'core', 'obs', 'host',
+        'tools/collect_roots.cpp', 'tools/e2_roots.py'], cwd=ROOT))
     config['source_patch'] = dict(path=str(patch), sha256=digest(patch))
     config['binary_sha256'] = digest(args.build / 'spire_collect_roots')
     prefix.with_suffix('.config.json').write_text(json.dumps(config, indent=2) + '\n')
@@ -189,19 +191,27 @@ def extend(args):
         for row in rows(file):
             assert partition(row['root']['seed']) == row['partition']
             families[row['root']['seed']].append(row)
+    priority = {stage: rank for rank, stage in enumerate(
+        ('heart_turn3', 'heart_turn2', 'heart_start', 'act4_entry', 'act3_boss', 'act3_entry'))}
+    selected = []
+    for found in families.values():
+        if any(row['stage'] == 'heart_turn5' for row in found):
+            continue
+        candidates = [row for row in found if row['stage'] in priority and
+                      (row['stage'] != 'act3_boss' or row['keys'] == [1, 1, 1])]
+        if not candidates:
+            continue
+        row = min(candidates, key=lambda item: priority[item['stage']])
+        excluded = 0
+        for item in found:
+            excluded |= 1 << STAGES.index(item['stage'])
+        selected.append((row, excluded))
+    selected.sort(key=lambda item: priority[item[0]['stage']])
     input_path = args.output / f'{args.name}.inputs'
     with input_path.open('x') as stream:
-        for seed, found in families.items():
-            if any(row['stage'] == 'heart_turn5' for row in found):
-                continue
-            row = next((row for row in found if row['stage'] == 'act3_entry'), None)
-            if row is None:
-                continue
-            excluded = 0
-            for item in found:
-                excluded |= 1 << STAGES.index(item['stage'])
+        for row, excluded in selected:
             prefix = row['root']['candidates']
-            stream.write(f"{row['partition']} {seed} {excluded} {len(prefix)} " + ' '.join(map(str, prefix)) + '\n')
+            stream.write(f"{row['partition']} {row['root']['seed']} {excluded} {len(prefix)} " + ' '.join(map(str, prefix)) + '\n')
     records = native(args, 'extend', input_path)
     roots = [row for row in records if row['kind'] == 'root']
     write_gzip(args.output / f'{args.name}.roots.jsonl.gz', roots)

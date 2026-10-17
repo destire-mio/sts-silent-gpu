@@ -160,8 +160,9 @@ Search keeps eight floor candidates, preferring distinct builds, and up to six d
 combat-turn candidates. It saves the first observed boundary on any branch, including weak
 states and branches that later die. Burning-elite reachability directs emerald routing;
 sapphire trades and Act 3 campfire recall are explicit choices. Search bias and exact budgets
-belong in the manifest. `extend` resumes Act 3 entry roots for families without a saved Heart
-turn 5, retaining existing boundaries and spending its family budget on later stages.
+belong in the manifest. `extend` resumes the furthest saved boundary for families without a
+Heart turn 5, prioritizing Heart positions, Act 4, then Act 3. An Act 3 boss root is eligible only with all
+three keys; otherwise extension starts before the boss. Existing boundaries remain retained.
 Each root receives 16 uniform continuations (4096 decisions each) and
 four search continuations (16384 decisions each). Success, death and live budget cuts remain
 separate metadata. No filtering uses these difficulty outcomes.
