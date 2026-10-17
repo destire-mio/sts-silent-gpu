@@ -64,6 +64,7 @@ def account(output, item):
 
 
 def native(args, mode, input_path):
+    cpu_begin = cpu_seconds()
     prefix = args.output / args.name
     assert not prefix.with_suffix('.jsonl').exists()
     deadline_file = args.output / 'budget.json'
@@ -104,12 +105,12 @@ def native(args, mode, input_path):
             candidates = list(struct.unpack(f'{length}H', stream.read(length * 2)))
         prefix.with_suffix('.failure.json').write_text(json.dumps(dict(seed=seed, candidates=candidates)))
         account(args.output, dict(name=args.name, kind=mode, decisions=count,
-                                  cpu_seconds=cpu_seconds(), failed=True))
+                                  cpu_seconds=cpu_seconds() - cpu_begin, failed=True))
         raise RuntimeError(f'Native collector exited {process.returncode}; preserved {prefix}.failure.json')
     result = records[-1]
     assert result['kind'] == 'cost'
     account(args.output, dict(name=args.name, kind=mode, decisions=result['decisions'],
-                              cpu_seconds=cpu_seconds(), failed=False))
+                              cpu_seconds=cpu_seconds() - cpu_begin, failed=False))
     print(json.dumps(result), flush=True)
     return records
 
