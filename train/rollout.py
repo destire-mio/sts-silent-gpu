@@ -13,6 +13,8 @@ from .model import distribution, network_inputs, views
 def synchronize(device):
     if device.type == "cuda":
         torch.cuda.synchronize(device)
+    elif device.type == "mps":
+        torch.mps.synchronize()
 
 
 def root_key(root):

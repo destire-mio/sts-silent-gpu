@@ -38,6 +38,7 @@ def main():
     parser.add_argument("--storage-mib", type=int, default=256)
     parser.add_argument("--init-seed", type=int, default=1729)
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--torch-threads", type=int, default=4)
     parser.add_argument("--width", type=int, default=128)
     parser.add_argument("--layers", type=int, default=4)
     parser.add_argument("--heads", type=int, default=4)
@@ -50,7 +51,8 @@ def main():
     args = parser.parse_args()
     assert args.updates > 0 and args.episodes > 0 and args.batch_size > 0 and args.decision_cap > 0
     assert args.epochs > 0 and args.minibatch_size > 0 and 0 <= args.gae_lambda <= 1
-    torch.set_num_threads(1)
+    assert args.torch_threads > 0
+    torch.set_num_threads(args.torch_threads)
     torch.set_num_interop_threads(1)
     torch.manual_seed(args.init_seed)
     device = torch.device(args.device)
