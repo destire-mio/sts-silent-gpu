@@ -46,7 +46,7 @@ class PackingTests(unittest.TestCase):
         torch.set_num_threads(1)
         torch.manual_seed(77)
         arrays, data, offsets = fixed_observations()
-        model = Policy(ModelConfig(width=32, layers=2, heads=4, feedforward=64))
+        model = Policy(ModelConfig())
         packed = packed_inputs(data, offsets, np.arange(5), torch.device("cpu"))
         cropped = network_inputs(arrays, torch.device("cpu"), np.arange(5))
         for name in FIELDS:
