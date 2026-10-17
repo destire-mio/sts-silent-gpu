@@ -490,6 +490,35 @@ void collect(int64_t seed, const std::string& partition, Budget& budget, uint64_
               << ",\"max_floor\":" << max_floor << ",\"deaths\":" << deaths << ",\"wins\":" << wins
               << ",\"rollbacks\":" << rollbacks << ",\"budget_cutoff\":" << (!budget.available(end) ? "true" : "false") << "}\n" << std::flush;
 }
+void winning(int64_t seed, const std::string& partition, int stage,
+             const std::vector<uint16_t>& prefix, Budget& budget, uint64_t run_limit, int runs) {
+    SPIRE_ASSERT(stage >= 4 && stage <= 7);
+    Node root{}; reset(root.game, seed);
+    for (auto candidate : prefix) {
+        ActionSet actions; legal_actions(root.game, actions);
+        SPIRE_ASSERT(candidate < actions.size);
+        budget.step(root, candidate, actions);
+    }
+    SPIRE_ASSERT(at_stage(root.game, stage));
+    for (int run = 0; run < runs && budget.available(budget.limit); ++run) {
+        Node node = root;
+        RandomXS128 rng(uint64_t(seed) ^ (uint64_t(stage + 1) << 32) ^ (uint64_t(2) << 48) ^ uint64_t(run + 1729));
+        const uint64_t begin = budget.used, end = begin + run_limit;
+        while (!terminal(node.game) && node.path.size() < path_cap && budget.available(end)) {
+            if (!advance(node, rng, budget, end, run < 4 ? 4 : 16, nullptr)) break;
+        }
+        std::cout << "{\"kind\":\"winning_search\",\"partition\":\"" << partition
+                  << "\",\"seed\":" << seed << ",\"stage\":\"" << stages[stage]
+                  << "\",\"attempt\":" << run << ",\"decisions\":" << budget.used - begin
+                  << ",\"prefix_decisions\":" << prefix.size() << ",\"continuation_decisions\":" << node.path.size() - prefix.size()
+                  << ",\"outcome\":\"" << (node.game.screen == Screen::Victory ? "victory" :
+                      node.game.screen == Screen::Death ? "death" : "cutoff") << '"';
+        if (node.game.screen == Screen::Victory) {
+            std::cout << ",\"candidates\":"; path_json(node.path);
+        }
+        std::cout << "}\n" << std::flush;
+    }
+}
 void evaluate(int64_t seed, int stage, const std::vector<uint16_t>& prefix, Budget& budget) {
     Node root{}; reset(root.game, seed);
     uint64_t begin = budget.used;
@@ -556,12 +585,13 @@ int main(int argc, char** argv) {
                      (partition == "dev" && seed >= 2000000000 && seed <= 2000004095));
         if (mode == "collect") collect(seed, partition, budget, family_limit, trials, {}, 0);
         else {
-            SPIRE_ASSERT(mode == "evaluate" || mode == "extend" || mode == "replay");
+            SPIRE_ASSERT(mode == "evaluate" || mode == "extend" || mode == "replay" || mode == "winning");
             int stage, count; input >> stage >> count;
             std::vector<uint16_t> prefix(count);
             for (auto& c : prefix) input >> c;
             SPIRE_ASSERT(input.good());
             if (mode == "evaluate") evaluate(seed, stage, prefix, budget);
+            else if (mode == "winning") winning(seed, partition, stage, prefix, budget, family_limit, trials);
             else if (mode == "replay") replay_root(seed, partition, stage, prefix, budget);
             else collect(seed, partition, budget, family_limit, trials, prefix, stage);
         }
