@@ -281,6 +281,13 @@ retains the previous draw's card objects, including multiDamage, across combat s
 the next draw replaces the history (202610141141, floor 50). These remain distinct from the
 new combat copies with the same UUIDs.
 
+DrawCardAction.endActionWithFollowUp hands its buffered action to the action-manager queue.
+The engine clears the buffer's ownership flag at that handoff, as NotStanceCheckAction does.
+Keeping completed EscapePlanAction objects held leaks one slot per play; seed 1000002389
+reached 44 such objects on floor 50, turn 81, before Calculated Gamble and Tough Bandages
+exhausted the 64-slot pool. The original 2955-action prefix is the regression; pool capacity
+and Game size stay unchanged.
+
 CardGroup.initializeDeck constructs makeSameInstanceOf copies, whose makeStatEquivalentCopy
 copies base stats but leaves damage/block caches at their constructor or upgrade values.
 Copying the whole master-card struct incorrectly carries Ritual Dagger's computed block 18

@@ -528,8 +528,11 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
     if (blocked || effect.amount <= 0 ||
         g.draw.size + g.discard.size == 0 || g.hand.size == hand_limit) {
         effect.done = true;
-        if (effect.payload.state.Draw.follow_up_action != 0)
+        if (effect.payload.state.Draw.follow_up_action != 0) {
+            // DrawCardAction.endActionWithFollowUp transfers the buffered action to the manager queue.
+            g.action_objects[effect.payload.state.Draw.follow_up_action - 1].held = false;
             g.manager.actions.push_front(effect.payload.state.Draw.follow_up_action - 1);
+        }
         return;
     }
     if (!effect.payload.state.Draw.shuffle_check) {
@@ -567,13 +570,17 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
         refresh_hand(g);
     } else {
         effect.done = true;
-        if (effect.payload.state.Draw.follow_up_action != 0)
+        if (effect.payload.state.Draw.follow_up_action != 0) {
+            g.action_objects[effect.payload.state.Draw.follow_up_action - 1].held = false;
             g.manager.actions.push_front(effect.payload.state.Draw.follow_up_action - 1);
+        }
     }
     if (effect.amount == 0) {
         effect.done = true;
-        if (effect.payload.state.Draw.follow_up_action != 0)
+        if (effect.payload.state.Draw.follow_up_action != 0) {
+            g.action_objects[effect.payload.state.Draw.follow_up_action - 1].held = false;
             g.manager.actions.push_front(effect.payload.state.Draw.follow_up_action - 1);
+        }
     }
 }
 SPIRE_FN inline void execute_effect(Game& g, Effect& e) {
