@@ -44,6 +44,10 @@ struct TrainingBatch {
     ~TrainingBatch();
     TrainingState state();
     void step(const int32_t* selected, cudaStream_t stream);
+    void store_tensors(const int64_t* slots, int count, uint8_t* data, const int64_t* offsets, cudaStream_t stream);
+    void step_tensors(const int32_t* selected, const uint8_t* active, cudaStream_t stream);
+    void reset_tensors(const int64_t* slots, const int64_t* roots, int count, const int64_t* seeds,
+                       const int64_t* offsets, const int32_t* candidates, cudaStream_t stream);
     void step_slots(const std::vector<int32_t>& slots, const std::vector<int32_t>& selected);
     void reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates);
     void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,

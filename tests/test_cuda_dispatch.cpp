@@ -113,4 +113,33 @@ static void random_steps() {
     }
     std::puts("CUDA kernel bodies on CPU: 8448 random batch slots, full Game/observation/status bytes match");
 }
-int main() { routes(); lifecycle(); random_steps(); }
+static void tensor_dispatch() {
+    host::TrainingBatch cpu(3, 1, 2, {}); Dispatch gpu(3, 2, {});
+    int64_t slots[]{2, 0, 1}, roots[]{1, 0, 2}, seeds[]{1000000001, 1000000002, 1000000003};
+    int64_t offsets[]{0, 1, 3, 4};
+    int32_t candidates[]{0, 0, 0, 999};
+    cpu.reset_tensors(slots, roots, 3, seeds, offsets, candidates);
+    for (threadIdx.x = 0; threadIdx.x < 6; ++threadIdx.x)
+        spire_training_refill(gpu.state(), slots, roots, 3, seeds, offsets, candidates);
+    threadIdx.x = 0; gpu.compare(cpu);
+    int64_t stored_slots[]{2, 0}, stored_offsets[3]{0};
+    for (int i = 0; i < 2; ++i) stored_offsets[i + 1] = stored_offsets[i] + obs::stored_bytes(
+        cpu.entity_counts[stored_slots[i]], cpu.candidate_counts[stored_slots[i]]);
+    std::vector<uint8_t> stored(stored_offsets[2]), expected(stored.size());
+    cpu.store_tensors(stored_slots, 2, expected.data(), stored_offsets);
+    for (threadIdx.x = 0; threadIdx.x < 6; ++threadIdx.x)
+        spire_training_store(gpu.state(), stored_slots, 2, stored.data(), stored_offsets);
+    threadIdx.x = 0;
+    require(stored == expected, "CUDA tensor compact records differ");
+    int32_t choices[]{0, 999, 0}; uint8_t mask[]{1, 0, 1};
+    for (int step = 0; step < 2; ++step) {
+        cpu.step_tensors(choices, mask);
+        for (threadIdx.x = 0; threadIdx.x < 6; ++threadIdx.x) spire_training_select(gpu.state(), mask);
+        for (threadIdx.x = 0; threadIdx.x < 6; ++threadIdx.x) spire_training_step(gpu.state(), choices);
+        for (threadIdx.x = 0; threadIdx.x < 6; ++threadIdx.x) spire_training_publish(gpu.state());
+        for (threadIdx.x = 0; threadIdx.x < 6; ++threadIdx.x) spire_training_faults(gpu.state());
+        threadIdx.x = 0; gpu.compare(cpu);
+    }
+    std::puts("CUDA tensor dispatch on CPU: shuffled roots, inactive fault isolation and cap bytes match");
+}
+int main() { routes(); lifecycle(); random_steps(); tensor_dispatch(); }

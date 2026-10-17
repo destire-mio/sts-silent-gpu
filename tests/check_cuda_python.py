@@ -31,6 +31,28 @@ def check():
     gpu.step_slots([32], [0]); cpu.step_slots([32], [0])
     for field, value in arrays.items():
         assert value.cpu().numpy().tobytes() == getattr(cpu, field).tobytes(), field
+    with torch.cuda.stream(stream):
+        cpu_args = [torch.tensor(x, dtype=t) for x, t in (([32, 0], torch.int64), ([1, 0], torch.int64),
+            ([123, -1], torch.int64), ([0, 1, 3], torch.int64), ([0, 0, 0], torch.int32))]
+        gpu_args = [x.cuda() for x in cpu_args]
+        gpu.reset_tensors(*gpu_args)
+        cpu.reset_tensors(*cpu_args)
+        mask = torch.zeros(33, dtype=torch.uint8); mask[[0, 32]] = 1
+        choices = torch.zeros(33, dtype=torch.int32)
+        gpu.step_tensors(choices.cuda(), mask.cuda())
+        cpu.step_tensors(choices, mask)
+        slots = torch.tensor([32, 0], dtype=torch.int64)
+        offsets = torch.zeros(3, dtype=torch.int64)
+        lengths = 4 + 24 * cpu.entity_counts[[32, 0]] + 7 * cpu.candidate_counts[[32, 0]]
+        offsets[1:] = torch.as_tensor(lengths).cumsum(0)
+        host_data = torch.empty(int(offsets[-1]), dtype=torch.uint8)
+        device_data = torch.empty_like(host_data, device='cuda')
+        cpu.store_tensors(slots, host_data, offsets)
+        gpu.store_tensors(slots.cuda(), device_data, offsets.cuda())
+    stream.synchronize()
+    torch.testing.assert_close(host_data, device_data.cpu(), atol=0, rtol=0)
+    for field, value in arrays.items():
+        assert value.cpu().numpy().tobytes() == getattr(cpu, field).tobytes(), field
     del gpu
     gc.collect()
     assert arrays['tags'].cpu().numpy().tobytes() == cpu.tags.tobytes()

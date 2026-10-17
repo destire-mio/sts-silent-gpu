@@ -1,8 +1,6 @@
 from dataclasses import dataclass
-from contextlib import nullcontext
 import time
 
-import numpy as np
 import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
@@ -37,51 +35,89 @@ def objective(logits, values, legal, actions, old_log_probs, returns, advantages
                       clip_fraction=((ratio - 1).abs() > config.clip).float().mean())
 
 
-def update(model, optimizer, rollout, config, device, rng, *, policy_version, optimizer_context=nullcontext()):
+def gather_rows(rows):
+    if not dist.is_initialized():
+        return rows
+    count = torch.tensor([len(rows)], device=rows.device, dtype=torch.int64)
+    counts = [torch.empty_like(count) for _ in range(dist.get_world_size())]
+    dist.all_gather(counts, count)
+    sizes = [int(c) for c in counts]
+    padded = torch.zeros(max(sizes), rows.shape[1], device=rows.device, dtype=rows.dtype)
+    padded[:len(rows)] = rows
+    gathered = [torch.empty_like(padded) for _ in sizes]
+    dist.all_gather(gathered, padded)
+    return torch.cat([r[:n] for r, n in zip(gathered, sizes)])
+
+
+def empty_inputs(device):
+    return dict(tags=torch.zeros(1, 4, 1, dtype=torch.long, device=device),
+                ids=torch.zeros(1, 4, 1, dtype=torch.long, device=device),
+                values=torch.zeros(1, 6, 1, device=device),
+                candidate_kinds=torch.ones(1, 1, dtype=torch.long, device=device),
+                candidate_refs=torch.zeros(1, 3, 1, dtype=torch.long, device=device),
+                entity_mask=torch.ones(1, 1, dtype=torch.bool, device=device),
+                candidate_mask=torch.ones(1, 1, dtype=torch.bool, device=device))
+
+
+def update(model, optimizer, rollout, config, device, rng, *, policy_version):
     assert config.gamma == 1 and 0 <= config.gae_lambda <= 1
-    assert np.all(rollout.policy_versions[:rollout.count] == policy_version), "Stale policy samples"
     distributed = isinstance(model, DistributedDataParallel)
     rank, world = (dist.get_rank(), dist.get_world_size()) if distributed else (0, 1)
-    indices = np.flatnonzero(rollout.valid[:rollout.count]).astype(np.int32)
-    if not len(indices):
+    version_ok = (rollout.policy_versions[:rollout.count] == policy_version).all().int()
+    if distributed:
+        dist.all_reduce(version_ok, op=dist.ReduceOp.MIN)
+    assert bool(version_ok), "Stale policy samples"
+    indices = torch.nonzero(rollout.valid[:rollout.count]).flatten()
+    entities, candidates = record_lengths(rollout.data, rollout.offsets, indices)
+    metadata = torch.stack((rollout.global_ids[indices], entities, candidates,
+                            torch.full_like(indices, rank), indices), dim=1)
+    if distributed:
+        metadata = gather_rows(metadata)
+    metadata = metadata[torch.argsort(metadata[:, 0])]
+    if not len(metadata):
         return dict(samples=0, minibatches=0, update_seconds=0.0)
+    assert len(torch.unique(metadata[:, 0])) == len(metadata), "Duplicate global sample IDs"
     synchronize(device)
     start = time.perf_counter()
-    advantages = rollout.advantages[indices]
-    normalized = np.zeros(rollout.count, dtype=np.float32)
-    normalized[indices] = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-    entities, candidates = record_lengths(rollout.data, rollout.offsets, np.arange(rollout.count))
+    advantages = rollout.advantages[indices].double()
+    moments = torch.stack((advantages.sum(), advantages.square().sum(), advantages.new_tensor(len(indices))))
+    if distributed:
+        dist.all_reduce(moments)
+    mean = moments[0] / moments[2]
+    std = (moments[1] / moments[2] - mean.square()).clamp_min(0).sqrt()
+    normalized = torch.zeros(rollout.count, device=device)
+    normalized[indices] = ((advantages - mean) / (std + 1e-8)).float()
     totals, weight, minibatches = {}, 0, 0
     model.train()
     for _ in range(config.epochs):
-        for global_indices in length_batches(indices, entities, candidates, config.minibatch_size, rng):
-            selected = global_indices[rank::world]
+        for global_indices in length_batches(torch.arange(len(metadata), device=device), metadata[:, 1],
+                                             metadata[:, 2], config.minibatch_size, rng):
+            records = metadata[global_indices]
+            selected = records[records[:, 3] == rank, 4]
             local_count = len(selected)
-            if local_count == 0:
-                selected = global_indices[:1]
-            inputs = packed_inputs(rollout.data, rollout.offsets, selected, device)
+            inputs = packed_inputs(rollout.data, rollout.offsets, selected, device) if local_count else empty_inputs(device)
             optimizer.zero_grad(set_to_none=True)
             logits, value = model(inputs)
-            loss, metrics = objective(logits, value, inputs["candidate_mask"],
-                                      torch.tensor(rollout.actions[selected], device=device, dtype=torch.long),
-                                      torch.tensor(rollout.log_probs[selected], device=device),
-                                      torch.tensor(rollout.returns[selected], device=device),
-                                      torch.tensor(normalized[selected], device=device), config)
+            if local_count:
+                loss, metrics = objective(logits, value, inputs["candidate_mask"],
+                    rollout.actions[selected].long(), rollout.log_probs[selected],
+                    rollout.returns[selected], normalized[selected], config)
+            else:
+                loss = (logits.sum() + value.sum()) * 0
+                metrics = {name: loss for name in ("policy_loss", "value_loss", "entropy", "kl", "clip_fraction")}
             assert torch.isfinite(loss).item(), "Non-finite PPO loss"
             (loss * (local_count * world / len(global_indices))).backward()
-            with optimizer_context:
-                norm = torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm, error_if_nonfinite=True)
-                optimizer.step()
+            norm = torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm, error_if_nonfinite=True)
+            optimizer.step()
             metrics.update(loss=loss, grad_norm=norm)
             for name, value in metrics.items():
-                totals[name] = totals.get(name, 0.0) + float(value.detach().item()) * local_count
+                totals[name] = totals.get(name, 0.) + value.detach().double() * local_count
             weight += local_count
             minibatches += 1
-    synchronize(device)
+    combined = torch.stack([*totals.values(), torch.tensor(weight, device=device, dtype=torch.float64)])
     if distributed:
-        combined = torch.tensor([*totals.values(), weight], device=device, dtype=torch.float64)
         dist.all_reduce(combined)
-        totals = dict(zip(totals, combined[:-1].tolist()))
-        weight = combined[-1].item()
-    return dict(samples=len(indices), minibatches=minibatches, update_seconds=time.perf_counter() - start,
-                **{name: value / weight for name, value in totals.items()})
+    synchronize(device)
+    values = combined.cpu().tolist()
+    return dict(samples=len(metadata), minibatches=minibatches, update_seconds=time.perf_counter() - start,
+                **{name: value / values[-1] for name, value in zip(totals, values[:-1])})

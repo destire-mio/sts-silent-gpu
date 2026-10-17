@@ -45,7 +45,7 @@ def summarize(rollout):
                 faults=sum(e["outcome"] == "fault" for e in episodes),
                 decisions=n, training_decisions=int(valid.sum()),
                 replay_decisions=sum(e["prefix_decisions"] for e in episodes),
-                compact_bytes=int(rollout.offsets[n]) + (n + 1) * 8,
+                compact_bytes=rollout.compact_bytes,
                 per_screen_entropy=entropy,
                 value_calibration=dict(episode_start=calibration(rollout.values[starts], rollout.returns[starts]),
                                        decision_weighted=calibration(rollout.values[:n][complete], rollout.returns[:n][complete]),

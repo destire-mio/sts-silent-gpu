@@ -19,28 +19,28 @@ def fixed_rollout(model):
     _, data, offsets = fixed_observations()
     rollout = Rollout.allocate(5, 1)
     rollout.count = 5
-    rollout.data[:len(data)] = data
-    rollout.offsets[:] = offsets
-    rollout.actions[:] = [0, 3, 30, 1, 8]
-    rollout.returns[:] = [0, 1, 0, 1, 0]
+    rollout.data[:len(data)] = torch.tensor(data.copy())
+    rollout.offsets[:] = torch.tensor(offsets.astype(np.int64))
+    rollout.actions[:] = torch.tensor([0, 3, 30, 1, 8])
+    rollout.returns[:] = torch.tensor([0, 1, 0, 1, 0])
     rollout.valid[:] = True
+    rollout.global_ids[:] = torch.arange(5)
     rollout.policy_versions[:] = 3
     with torch.no_grad():
         inputs = packed_inputs(data, offsets, np.arange(5), torch.device("cpu"))
         logits, values = model(inputs)
         policy, _ = distribution(logits, inputs["candidate_mask"])
-        rollout.log_probs[:] = policy.log_prob(torch.tensor(rollout.actions)).numpy()
-        rollout.values[:] = values.numpy()
+        rollout.log_probs[:] = policy.log_prob(rollout.actions)
+        rollout.values[:] = values
     rollout.advantages[:] = rollout.returns - rollout.values
     return rollout
 
 
-def train_fixed(model, rollout, gate=None, optimizer_type=torch.optim.Adam):
+def train_fixed(model, rollout, optimizer_type=torch.optim.Adam):
     config = PPOConfig(epochs=2, minibatch_size=4)
     optimizer = optimizer_type(model.parameters(), lr=config.learning_rate)
-    kwargs = {} if gate is None else dict(optimizer_context=gate)
-    metrics = update(model, optimizer, rollout, config, torch.device("cpu"), np.random.default_rng(17),
-                     policy_version=3, **kwargs)
+    metrics = update(model, optimizer, rollout, config, torch.device("cpu"), torch.Generator().manual_seed(17),
+                     policy_version=3)
     raw = model.module if isinstance(model, torch.nn.parallel.DistributedDataParallel) else model
     return dict(model=raw.state_dict(), gradients={name: p.grad for name, p in raw.named_parameters()},
                 optimizer=optimizer.state_dict(), metrics=metrics)
@@ -55,8 +55,9 @@ def ddp_worker(rank, world, directory, gate, optimizer_type):
         rollout = fixed_rollout(model)
     dist.init_process_group("gloo", init_method=(Path(directory) / "rendezvous").as_uri(), rank=rank,
                             world_size=world, timeout=timedelta(seconds=30))
-    wrapped = distributed_policy(model, torch.device("cpu"), gate)
-    result = train_fixed(wrapped, rollout, gate, optimizer_type)
+    wrapped = distributed_policy(model, torch.device("cpu"))
+    rollout.valid[:] = torch.tensor([0, 0, 1, 1, 1]) == rank
+    result = train_fixed(wrapped, rollout, optimizer_type)
     torch.save(result, Path(directory) / f"rank-{rank}.pt")
     dist.destroy_process_group()
 
@@ -81,8 +82,14 @@ class DistributedTests(unittest.TestCase):
                     for name, tensor in expected["model"].items():
                         if name == "score.2.bias" and optimizer_type is torch.optim.Adam:
                             continue
-                        torch.testing.assert_close(result["model"][name], tensor, atol=1e-5, rtol=3e-5, msg=name)
-                        max_parameter_error = max(max_parameter_error, float((result["model"][name] - tensor).abs().max()))
+                        actual = result["model"][name]
+                        if name.endswith("self_attn.in_proj_bias") and optimizer_type is torch.optim.Adam:
+                            width = tensor.numel() // 3
+                            print(f"Adam null key bias {name}: {float((actual[width:2*width] - tensor[width:2*width]).abs().max()):.3g}")
+                            actual = torch.cat((actual[:width], actual[2*width:]))
+                            tensor = torch.cat((tensor[:width], tensor[2*width:]))
+                        torch.testing.assert_close(actual, tensor, atol=1e-5, rtol=3e-5, msg=name)
+                        max_parameter_error = max(max_parameter_error, float((actual - tensor).abs().max()))
                     for name, tensor in expected["gradients"].items():
                         torch.testing.assert_close(result["gradients"][name], tensor, atol=3e-6, rtol=3e-5)
                         max_gradient_error = max(max_gradient_error, float((result["gradients"][name] - tensor).abs().max()))

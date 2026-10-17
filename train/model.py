@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-import numpy as np
 import torch
 from torch import nn
 from torch.distributions import Categorical
@@ -19,61 +18,74 @@ class ModelConfig:
     feedforward: int = 256
 
 
-def views(batch):
-    return {name: getattr(batch, name) for name in FIELDS}
+def views(batch, device=torch.device("cpu")):
+    return {name: torch.as_tensor(getattr(batch, name), device=device) for name in FIELDS}
 
 
 def network_inputs(arrays, device, slots):
-    entity_mask = np.unpackbits(arrays["entity_mask"][slots], axis=-1, bitorder="little").astype(bool)
-    candidate_mask = np.unpackbits(arrays["candidate_mask"][slots], axis=-1, bitorder="little").astype(bool)
-    entities = int(entity_mask.sum(axis=1).max())
-    candidates = max(1, int(candidate_mask.sum(axis=1).max()))
-    result = {}
-    for name in FIELDS[:5]:
-        width = candidates if name.startswith("candidate") else entities
-        dtype = torch.float32 if name == "values" else torch.long
-        result[name] = torch.tensor(arrays[name][..., :width][slots], device=device, dtype=dtype)
-    result["entity_mask"] = torch.tensor(entity_mask[:, :entities], device=device)
-    result["candidate_mask"] = torch.tensor(candidate_mask[:, :candidates], device=device)
+    arrays = {name: torch.as_tensor(array, device=device) for name, array in arrays.items()}
+    masks = {}
+    for name in FIELDS[5:]:
+        packed = arrays[name][slots]
+        masks[name] = ((packed[..., None].long() >> torch.arange(8, device=device)) & 1).flatten(1).bool()
+    ne = int(masks["entity_mask"].sum(-1).max())
+    nc = max(1, int(masks["candidate_mask"].sum(-1).max()))
+    result = {name: arrays[name][slots][..., :nc if name.startswith("candidate") else ne].to(
+        torch.float32 if name == "values" else torch.long) for name in FIELDS[:5]}
+    result.update(entity_mask=masks["entity_mask"][:, :ne], candidate_mask=masks["candidate_mask"][:, :nc])
     return result
 
 
 def record_lengths(data, offsets, indices):
-    starts = offsets[indices].astype(np.int64)
-    return (data[starts].astype(np.int32) + 256 * data[starts + 1].astype(np.int32),
-            data[starts + 2].astype(np.int32) + 256 * data[starts + 3].astype(np.int32))
+    data = torch.as_tensor(data)
+    offsets = torch.as_tensor(offsets, device=data.device, dtype=torch.int64)
+    starts = offsets[indices]
+    return (data[starts].long() + 256 * data[starts + 1].long(),
+            data[starts + 2].long() + 256 * data[starts + 3].long())
 
 
 def packed_inputs(data, offsets, indices, device):
+    data = torch.as_tensor(data, device=device)
+    offsets = torch.as_tensor(offsets, device=device, dtype=torch.int64)
     entities, candidates = record_lengths(data, offsets, indices)
-    count, ne, nc = len(indices), int(entities.max()), max(1, int(candidates.max()))
-    arrays = dict(tags=np.zeros((count, 4, ne), dtype=np.uint8),
-                  ids=np.zeros((count, 4, ne), dtype=np.int16),
-                  values=np.zeros((count, 6, ne), dtype=np.int16),
-                  candidate_kinds=np.zeros((count, nc), dtype=np.uint8),
-                  candidate_refs=np.zeros((count, 3, nc), dtype=np.int16))
-    for row, (index, e, c) in enumerate(zip(indices, entities, candidates)):
-        cursor = int(offsets[index]) + 4
-        for name, rows, width, dtype in (("tags", 4, e, "u1"), ("ids", 4, e, "<i2"),
-                                        ("values", 6, e, "<i2"), ("candidate_kinds", 1, c, "u1"),
-                                        ("candidate_refs", 3, c, "<i2")):
-            length = int(rows * width)
-            source = np.frombuffer(data, dtype=dtype, count=length, offset=cursor)
-            arrays[name][row, ..., :width] = source.reshape(arrays[name][row, ..., :width].shape)
-            cursor += length * np.dtype(dtype).itemsize
-    result = {name: torch.tensor(array, device=device, dtype=torch.float32 if name == "values" else torch.long)
-              for name, array in arrays.items()}
-    result["entity_mask"] = torch.tensor(np.arange(ne) < entities[:, None], device=device)
-    result["candidate_mask"] = torch.tensor(np.arange(nc) < candidates[:, None], device=device)
+    ne, nc = int(entities.max()), max(1, int(candidates.max()))
+    cursor = offsets[indices] + 4
+    result = {}
+    for name, rows, lengths, width, word in (("tags", 4, entities, ne, 1), ("ids", 4, entities, ne, 2),
+            ("values", 6, entities, ne, 2), ("candidate_kinds", 1, candidates, nc, 1),
+            ("candidate_refs", 3, candidates, nc, 2)):
+        col = torch.arange(width, device=device)
+        positions = cursor[:, None, None] + word * (torch.arange(rows, device=device)[None, :, None] *
+                                                    lengths[:, None, None] + col)
+        valid = col[None, None, :] < lengths[:, None, None]
+        positions = torch.where(valid, positions, 0)
+        value = data[positions].long()
+        if word == 2:
+            value = value + 256 * data[positions + 1].long()
+            value = torch.where(value >= 32768, value - 65536, value)
+        value = torch.where(valid, value, 0)
+        result[name] = value[:, 0] if rows == 1 else value
+        cursor = cursor + rows * word * lengths
+    result["values"] = result["values"].float()
+    result["entity_mask"] = torch.arange(ne, device=device) < entities[:, None]
+    result["candidate_mask"] = torch.arange(nc, device=device) < candidates[:, None]
     return result
 
 
+def store_inputs(batch, arrays, slots, data, offsets):
+    e = arrays["entity_counts"][slots].long()
+    c = arrays["candidate_counts"][slots].long()
+    offsets[1:] = offsets[0] + (4 + 24 * e + 7 * c).cumsum(0)
+    assert int(offsets[-1]) <= len(data), "Compact rollout storage exhausted; increase storage_mib"
+    batch.store_tensors(slots, data, offsets)
+
+
 def length_batches(indices, entities, candidates, size, rng):
-    shuffled = rng.permutation(indices)
-    order = np.lexsort((candidates[shuffled], entities[shuffled] // 16))
-    ordered = shuffled[order]
-    batches = [ordered[begin:begin + size] for begin in range(0, len(ordered), size)]
-    return [batches[i] for i in rng.permutation(len(batches))]
+    shuffled = indices[torch.randperm(len(indices), generator=rng, device=indices.device)]
+    key = (entities[shuffled] // 16) * 129 + candidates[shuffled]
+    ordered = shuffled[torch.argsort(key, stable=True)]
+    batches = list(ordered.split(size))
+    return [batches[i] for i in torch.randperm(len(batches), generator=rng, device=indices.device).tolist()]
 
 
 class Policy(nn.Module):
@@ -116,7 +128,7 @@ class Policy(nn.Module):
 
 
 def distribution(logits, legal):
-    policy = Categorical(logits=logits)
+    policy = Categorical(logits=logits, validate_args=False)
     count = legal.sum(-1)
     entropy = policy.entropy() / count.clamp_min(2).float().log()
     return policy, entropy

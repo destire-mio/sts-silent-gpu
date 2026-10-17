@@ -1,4 +1,5 @@
 #include "batch.cuh"
+#include "obs/storage.hpp"
 
 extern "C" __global__ void spire_step_batch(spire::Game* games, const spire::Action* actions,
                                             std::size_t count) {
@@ -99,18 +100,15 @@ extern "C" __global__ void spire_training_faults(spire::cuda::TrainingState b) {
     if (i < b.size && b.active[i] && !b.faults[i] && b.games[i].fault) b.fail(i, b.games[i].fault);
 }
 
-extern "C" __global__ void spire_training_roots(spire::cuda::TrainingState b, const int32_t* slots,
-    const int64_t* seeds, const int32_t* offsets, const int32_t* candidates, int count) {
-    const int j = blockIdx.x * blockDim.x + threadIdx.x;
-    if (j >= count) return;
-    const int i = slots[j];
+static SPIRE_FN void replay_root(spire::cuda::TrainingState b, int i, int64_t seed,
+                                  int64_t begin, int64_t end, const int32_t* candidates) {
     b.histories[i] = {};
     b.seed_indices[i] = -1; b.decision_counts[i] = 0; b.finished[i] = 0;
     b.rewards[i] = 0; b.done[i] = b.truncated[i] = b.advanced[i] = 0;
     b.reset_mask[i] = 1; b.faults[i] = 0;
-    spire::reset(b.games[i], seeds[j]);
+    spire::reset(b.games[i], seed);
     b.publish(i);
-    for (int k = offsets[j]; k < offsets[j + 1]; ++k) {
+    for (int64_t k = begin; k < end; ++k) {
         if (b.faults[i]) return;
         const int candidate = candidates[k];
         if (candidate < 0 || candidate >= b.actions[i].size) {
@@ -123,6 +121,14 @@ extern "C" __global__ void spire_training_roots(spire::cuda::TrainingState b, co
     if (!b.faults[i] && b.actions[i].empty()) b.fail(i, static_cast<uint32_t>(spire::obs::Fault::NoDecision));
 }
 
+extern "C" __global__ void spire_training_roots(spire::cuda::TrainingState b, const int32_t* slots,
+    const int64_t* seeds, const int32_t* offsets, const int32_t* candidates, int count) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j >= count) return;
+    const int i = slots[j];
+    replay_root(b, i, seeds[j], offsets[j], offsets[j + 1], candidates);
+}
+
 extern "C" __global__ void spire_training_clone(spire::cuda::TrainingState b, int source, int target) {
     b.games[target] = b.games[source]; b.histories[target] = b.histories[source];
     b.finished[target] = b.finished[source]; b.done[target] = b.done[source];
@@ -131,4 +137,27 @@ extern "C" __global__ void spire_training_clone(spire::cuda::TrainingState b, in
     b.rewards[target] = 0; b.reset_mask[target] = b.advanced[target] = 0;
     if (b.faults[target]) b.fail(target, b.faults[target]);
     else b.publish(target);
+}
+
+extern "C" __global__ void spire_training_select(spire::cuda::TrainingState b, const uint8_t* active) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= b.size) return;
+    b.active[i] = active[i]; b.next_seeds[i] = -1;
+    b.rewards[i] = 0; b.advanced[i] = b.reset_mask[i] = 0;
+}
+
+extern "C" __global__ void spire_training_refill(spire::cuda::TrainingState b, const int64_t* slots,
+    const int64_t* roots, int count, const int64_t* seeds, const int64_t* offsets, const int32_t* candidates) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j >= count) return;
+    const int i = slots[j];
+    const auto root = roots[j];
+    b.active[i] = 1;
+    replay_root(b, i, seeds[root], offsets[root], offsets[root + 1], candidates);
+}
+
+extern "C" __global__ void spire_training_store(spire::cuda::TrainingState b, const int64_t* slots,
+    int count, uint8_t* data, const int64_t* offsets) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j < count) spire::obs::store(b.observations.view(slots[j]), data + offsets[j]);
 }
