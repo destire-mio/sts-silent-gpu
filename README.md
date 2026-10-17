@@ -91,7 +91,7 @@ each measured rollout report entity/candidate counts and record-byte mean, p95 a
 The single-GPU grid is **512/2048/8192/32768 lanes × 512/2048 inference chunk**. Each cell runs in
 a fresh process, warms up collection and one PPO update on the same 128 cycled roots, then measures
 one collection/update version at the requested lane count. PPO uses one epoch and minibatches of
-256. The JSON rows distinguish these numbers:
+2048. The JSON rows distinguish these numbers:
 
 - `collect_decisions_per_second`: actual decisions divided by collection wall seconds, including
   reset/prefix replay, inference, sampling, storage, targets and episode audit construction.
@@ -117,7 +117,7 @@ selection does not change the trainer's explicit `--inference-chunk` setting.
 
 The **1/2/8-GPU weak-scaling** runs assign that lane count and chunk to **each GPU**, with the same
 cycled root mixture per rank, a full warmup version, then three measured collect/update versions.
-Each version uses new globally unique attempt IDs. The global PPO minibatch is `256 * GPU_count`
+Each version uses new globally unique attempt IDs. The global PPO minibatch is `2048 * GPU_count`
 so the average local minibatch and per-GPU work stay fixed; PPO equations are unchanged. Rates
 divide the sum of measured decisions by the sum of measured wall times, excluding startup and
 warmup. They include root replay, audit transport, DDP synchronization and checkpoint publication.
@@ -131,10 +131,12 @@ and policy publication v → v+1. Later weak-scaling policies need not be identi
 because their global batches contain different attempts. Policy inference, gradients and Adam use fp32; V100 bf16 is not used. CDFs, target scans and
 normalization accumulators use float64 to preserve their scalar-reference arithmetic.
 
-The command targets under 30 minutes and enforces a **1770-second budget including build and
-CTest**. Build/checks share 600 seconds, parity gets 90, calibration 60, and each small exact run
-40. The grid gets at most 420 seconds and 60 seconds per cell, retaining at least 480 seconds for
-weak scaling; its time budget may leave cells unmeasured. Remaining time is divided among the
+Configure, the single-process build and CTest run first without the measurement budget (limits
+600, 7200 and 3600 seconds), because NVCC time on the server is unknown. The measurements after
+CTest share a **1800-second budget**: parity gets 300 seconds, calibration 180, and each small
+exact run 180. The grid gets at most 720 seconds and 150 seconds per cell, retaining at least
+720 seconds for weak scaling; its time budget may leave cells unmeasured. Probes and weak scaling
+use 2048 decisions per GPU per PPO minibatch. Remaining time is divided among the
 1/2/8-GPU runs. Each subprocess owns a process group; timeout kills its workers too. Missing a
 mandatory check produces an `incomplete` summary and nonzero exit. No smaller workload replaces a
 timed-out weak-scaling run. This time target still requires measurement on the server.

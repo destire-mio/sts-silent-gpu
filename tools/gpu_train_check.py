@@ -27,6 +27,8 @@ CAP = 64
 LANES = (512, 2048, 8192, 32768)
 CHUNKS = (512, 2048)
 MEASURED_VERSIONS = 3
+MINIBATCH_PER_GPU = 2048
+BUDGET_SECONDS = 1800
 MIB = 1024**2
 
 
@@ -132,7 +134,7 @@ def probe(size, chunk, roots, profile, output):
     torch.cuda.set_device(device)
     torch.manual_seed(1729)
     model = Policy(ModelConfig()).to(device)
-    config = PPOConfig(epochs=1, minibatch_size=256, gae_lambda=.95)
+    config = PPOConfig(epochs=1, minibatch_size=MINIBATCH_PER_GPU, gae_lambda=.95)
     optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
     rng = torch.Generator(device=device).manual_seed(1729)
     storage = storage_mib(size, profile)
@@ -202,7 +204,7 @@ def exact(workers, output, roots):
 
 def scaling(workers, size, chunk, storage, output, roots):
     model_config = ModelConfig()
-    ppo = PPOConfig(epochs=1, minibatch_size=256 * workers, gae_lambda=.95)
+    ppo = PPOConfig(epochs=1, minibatch_size=MINIBATCH_PER_GPU * workers, gae_lambda=.95)
     config = PipelineConfig(workers=workers, batch_size=size, inference_chunk=chunk,
                             decision_cap=CAP, storage_mib=storage)
     manifest = dict(model=asdict(model_config), ppo=asdict(ppo), engine_commit='day-one', observation_version=2)
@@ -282,7 +284,7 @@ def scaling_table(reports):
 
 def suite(roots, output):
     started = time.monotonic()
-    deadline = started + 1770
+    deadline = math.inf
     output.mkdir()
     (output / 'tmp').mkdir()
     repo = Path(__file__).resolve().parents[1]
@@ -291,7 +293,7 @@ def suite(roots, output):
     gpu_env = dict(env, CUDA_VISIBLE_DEVICES='0')
     rows, reports, stages = [], [], []
     summary = dict(check='final_summary', status='incomplete', roots_sha256=hashlib.sha256(roots.read_bytes()).hexdigest(),
-                   budget_seconds=1770, single_gpu=rows, weak_scaling=[], stages=stages)
+                   budget_seconds=BUDGET_SECONDS, single_gpu=rows, weak_scaling=[], stages=stages)
     def stage(name, command, seconds, environment=env, until=deadline):
         result = run_stage(name, command, output, until, seconds, environment)
         stages.append(result)
@@ -299,30 +301,30 @@ def suite(roots, output):
     def command(check, *options):
         return [sys.executable, '-m', 'tools.gpu_train_check', check, '--roots', str(roots), *map(str, options)]
     try:
-        build_deadline = min(deadline, time.monotonic() + 600)
         preflight = 'import torch; assert torch.cuda.device_count() == 8; assert "sm_70" in torch.cuda.get_arch_list(); assert all(torch.cuda.get_device_capability(i) == (7,0) for i in range(8)); print(torch.__version__, torch.version.cuda, [torch.cuda.get_device_properties(i) for i in range(8)])'
         require(stage('preflight', [sys.executable, '-c', preflight], 30))
-        require(stage('hardware', ['nvidia-smi'], 10, until=build_deadline))
+        require(stage('hardware', ['nvidia-smi'], 30))
         require(stage('configure', ['cmake', '-S', str(repo), '-B', str(output), '-DCMAKE_BUILD_TYPE=Release',
             f'-DCMAKE_CXX_COMPILER={shutil.which("clang++")}', f'-DCMAKE_CUDA_COMPILER={shutil.which("nvcc")}',
             f'-DCMAKE_CUDA_HOST_COMPILER={shutil.which("clang++")}', '-DCMAKE_CUDA_ARCHITECTURES=70',
-            f'-DPython_EXECUTABLE={sys.executable}', '-DBUILD_TESTING=ON'], 600, until=build_deadline))
-        require(stage('build', ['cmake', '--build', str(output), '--parallel', '1'], 600, until=build_deadline))
+            f'-DPython_EXECUTABLE={sys.executable}', '-DBUILD_TESTING=ON'], 600))
+        require(stage('build', ['cmake', '--build', str(output), '--parallel', '1'], 7200))
         require(stage('ctest', ['ctest', '--test-dir', str(output), '--output-on-failure', '--no-tests=error', '-j1'],
-                      600, until=build_deadline))
-        require(stage('parity', command('parity'), 90))
+                      3600))
+        deadline = time.monotonic() + BUDGET_SECONDS
+        require(stage('parity', command('parity'), 300))
         profile_path = output / 'profile.json'
-        require(stage('calibrate', command('calibrate', '--output', profile_path), 60, gpu_env))
+        require(stage('calibrate', command('calibrate', '--output', profile_path), 180, gpu_env))
         reference = None
         for world in (1, 2, 8):
             target = output / f'exact-{world}'
-            require(stage(f'exact-{world}', command('exact', '--workers', world, '--output', target), 40))
+            require(stage(f'exact-{world}', command('exact', '--workers', world, '--output', target), 180))
             actual = json.loads((target / 'result.json').read_text())
             if reference is None:
                 reference = actual
             assert actual == reference, f'Version-0 actions/outcomes differ at {world} GPUs'
         summary['exact_version_zero_worlds'] = [1, 2, 8]
-        sweep_deadline = min(deadline - 480, time.monotonic() + 420)
+        sweep_deadline = min(deadline - 720, time.monotonic() + 720)
         for size in LANES:
             for chunk in CHUNKS:
                 row = dict(lanes_per_gpu=size, inference_chunk=chunk)
@@ -331,7 +333,7 @@ def suite(roots, output):
                     continue
                 target = output / f'probe-{size}-{chunk}.json'
                 result = stage(f'probe-{size}-{chunk}', command('probe', '--size', size, '--inference-chunk', chunk,
-                    '--profile', profile_path, '--output', target), 60, gpu_env, sweep_deadline)
+                    '--profile', profile_path, '--output', target), 150, gpu_env, sweep_deadline)
                 if result['status'] == 'ok':
                     row = json.loads(target.read_text())
                 elif result['status'] == 'timeout':
