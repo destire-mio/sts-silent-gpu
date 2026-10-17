@@ -62,6 +62,8 @@ public final class Recorder {
         if (CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY) return CardCrawlGame.mode == CardCrawlGame.GameMode.CHAR_SELECT && !CardCrawlGame.mainMenuScreen.isFadingOut;
         if (AbstractDungeon.isFadingOut || AbstractDungeon.isFadingIn || AbstractDungeon.player == null) return false;
         if (terminal(false)) return true;
+        // TrueVictoryRoom.update advances Cutscene until it opens the victory screen.
+        if (AbstractDungeon.getCurrRoom() instanceof TrueVictoryRoom) return false;
         // AbstractRoom.update opens rewards after endBattle changes isBattleOver.
         if (AbstractDungeon.getCurrRoom().isBattleOver && AbstractDungeon.getCurrRoom().phase == AbstractRoom.RoomPhase.COMBAT) return false;
         // ShopScreen.updatePurge consumes the GRID result on the next SHOP update.
