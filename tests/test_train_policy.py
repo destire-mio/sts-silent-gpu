@@ -123,8 +123,22 @@ class TrainerTests(unittest.TestCase):
             evaluate(self.model, [roots[0], roots[0]], self.device, 5, 1, 2718)
         common = dict(sampling_seed=2718, decision_cap=5, sampling="test", observation_version=2, evaluation_engine_commit="test")
         self.assertEqual(compare(dict(**first, **common), dict(**second, **common))["truncated_pairs"], 3)
-        episodes = [dict(outcome="victory"), dict(outcome="death")]
+        episodes = [dict(seed=1, outcome="victory"), dict(seed=2, outcome="death")]
         self.assertIsNotNone(outcome_summary(episodes)["wilson95"])
+
+    def test_repeated_roots_keep_independent_paired_attempts(self):
+        roots = [dict(seed=2000000000, candidates=[])] * 4
+        attempts = [11, 12, 13, 14]
+        first = evaluate(self.model, roots, self.device, 8, 4, 2718, attempts)
+        second = evaluate(self.model, roots, self.device, 8, 1, 2718, list(reversed(attempts)))
+        a = {e["attempt"]: e["candidates"] for e in first["episodes"]}
+        b = {e["attempt"]: e["candidates"] for e in second["episodes"]}
+        self.assertEqual(a, b)
+        self.assertGreater(len({tuple(path) for path in a.values()}), 1)
+        common = dict(sampling_seed=2718, decision_cap=8, sampling="test", observation_version=2, evaluation_engine_commit="test")
+        self.assertEqual(compare(dict(**first, **common), dict(**second, **common))["truncated_pairs"], 4)
+        repeated = [dict(seed=1, outcome="victory")] * 3
+        self.assertEqual(outcome_summary(repeated)["independent_root_families_won"], 1)
 
     def test_training_inputs_never_call_hidden_state_api(self):
         for path in (ROOT / "train").glob("*.py"):

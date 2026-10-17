@@ -20,7 +20,8 @@ def outcome_summary(episodes):
     wins, deaths = outcomes.count("victory"), outcomes.count("death")
     unknown = len(outcomes) - wins - deaths
     return dict(attempts=len(outcomes), wins=wins, deaths=deaths, faults=outcomes.count("fault"),
-                truncated=outcomes.count("truncated"), independent_root_families_won=wins,
+                truncated=outcomes.count("truncated"),
+                independent_root_families_won=len({e["seed"] for e in episodes if e["outcome"] == "victory"}),
                 wilson95=wilson(wins, len(outcomes)) if not unknown else None,
                 unresolved_win_rate_bounds=[wins / len(outcomes), (wins + unknown) / len(outcomes)],
                 wilson95_with_unresolved_bounds=[wilson(wins, len(outcomes))[0], wilson(wins + unknown, len(outcomes))[1]])
@@ -29,8 +30,8 @@ def outcome_summary(episodes):
 def compare(reference, candidate):
     for key in ("sampling_seed", "decision_cap", "sampling", "observation_version", "evaluation_engine_commit"):
         assert reference[key] == candidate[key], f"Paired evaluation differs in {key}"
-    old = {e["seed"]: e for e in reference["episodes"]}
-    new = {e["seed"]: e for e in candidate["episodes"]}
+    old = {(e["root_key"], e["attempt"]): e for e in reference["episodes"]}
+    new = {(e["root_key"], e["attempt"]): e for e in candidate["episodes"]}
     assert old.keys() == new.keys()
     assert all(old[seed]["root_key"] == new[seed]["root_key"] for seed in old)
     return paired_counts({seed: e["outcome"] for seed, e in old.items()},
@@ -38,14 +39,19 @@ def compare(reference, candidate):
 
 
 @torch.no_grad()
-def evaluate(model, roots, device, decision_cap, batch_size, sampling_seed):
-    assert roots and len({root["seed"] for root in roots}) == len(roots), "One root per seed; select one E1 distance per evaluation"
+def evaluate(model, roots, device, decision_cap, batch_size, sampling_seed, attempts=None):
+    assert roots
+    if attempts is None:
+        assert len({root["seed"] for root in roots}) == len(roots), "Repeated roots require independent attempt IDs"
+        attempts = [0] * len(roots)
+    assert len(attempts) == len(roots)
+    assert len({(root_key(root), attempt) for root, attempt in zip(roots, attempts)}) == len(roots)
     model.eval()
     batch = spire.TrainingBatch(min(batch_size, len(roots)), 1, decision_cap, [])
     arrays = views(batch)
-    episodes = [dict(seed=root["seed"], root_key=root_key(root), prefix_decisions=len(root["candidates"]),
-                     candidates=[], outcome=None, fault=0) for root in roots]
-    generators = [policy_rng(sampling_seed, root["seed"]) for root in roots]
+    episodes = [dict(seed=root["seed"], root_key=root_key(root), attempt=attempt, prefix_decisions=len(root["candidates"]),
+                     candidates=[], outcome=None, fault=0) for root, attempt in zip(roots, attempts)]
+    generators = [policy_rng(sampling_seed, root["seed"], attempt) for root, attempt in zip(roots, attempts)]
     active, next_episode = {}, 0
     engine_seconds = inference_seconds = 0.0
     start = time.perf_counter()
