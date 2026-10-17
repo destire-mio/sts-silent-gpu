@@ -4128,9 +4128,9 @@
       }
     },
     "latest_engine_replay": {
-      "path": "/private/tmp/e2-roots/round2/acceptance-replay.json",
-      "sha256": "e8bf8c1e1cadbd16a5167a80a20d77e9a2eb9e16816fbe13ae37f2c7c541371b",
-      "bytes": 92202,
+      "path": "/private/tmp/e2-roots/round3/acceptance-replay.json",
+      "sha256": "695ec56743a64fa6580b018db03a44d9a66e4bf877e971b9857fc520571eefdc",
+      "bytes": 107642,
       "recordings": 183,
       "decisions": 93550,
       "full_passed": 170,
@@ -4139,6 +4139,7 @@
         {
           "seed": 1000002317,
           "path": "/private/tmp/e2-roots/round2/fresh-safe/25.jsonl.gz",
+          "sha256": "c7813a4648623db1f95cd780544b8590f2775e43b3165939341f9cee7407ff50",
           "decisions": 1491,
           "stopped": null,
           "scopes": {
@@ -4163,6 +4164,7 @@
         {
           "seed": 1000041000,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-5-1000041000.jsonl.gz",
+          "sha256": "d6fe0864bf4f90e71b122cb632477f250fffc6f0b9545fcab133a77800c5de2f",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4185,6 +4187,7 @@
         {
           "seed": 1000041011,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-5-1000041011.jsonl.gz",
+          "sha256": "bb12370bf0025d528f235388c69a3f45014a3c4563ea5894da238f80156be1a4",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4207,6 +4210,7 @@
         {
           "seed": 1000041014,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-5-1000041014.jsonl.gz",
+          "sha256": "50993d7b35011b94d8f695a917e6468370e8e149534ee1cc288fa0785f55e636",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4229,6 +4233,7 @@
         {
           "seed": 1000041000,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-6-1000041000.jsonl.gz",
+          "sha256": "4768a7ebb197756b4e82bdcb240b63fadae782de027b466f03c90fce6078f818",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4251,6 +4256,7 @@
         {
           "seed": 1000041011,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-6-1000041011.jsonl.gz",
+          "sha256": "8a85905e97e6ec746e316c043e941b3c1147acb2c816bc6fd9e2c9b7d203ca24",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4273,6 +4279,7 @@
         {
           "seed": 1000041014,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-6-1000041014.jsonl.gz",
+          "sha256": "27902d5dc8ba6660dc09b4dc0d8a553fd9ae0f8149092a7294f8b3c9f43f8ba9",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4295,6 +4302,7 @@
         {
           "seed": 1000041000,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-7-1000041000.jsonl.gz",
+          "sha256": "fcb9f95aeff9f0fe5f66d99633aa05ac88edf6efbf47e9d2de4f4e1b8e3c0816",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4317,6 +4325,7 @@
         {
           "seed": 1000041011,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-7-1000041011.jsonl.gz",
+          "sha256": "71b82854b17031aebc63da7c3f6456ecf991234b0342fa0b647a3cae854f1a23",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4339,6 +4348,7 @@
         {
           "seed": 1000041014,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-7-1000041014.jsonl.gz",
+          "sha256": "5196b7038e2aee80e4b56686bc0b176c3bf2fb6dc003b798888a7fc4cb61581f",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4361,6 +4371,7 @@
         {
           "seed": 1000041000,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-8-1000041000.jsonl.gz",
+          "sha256": "7512b274986c50ecd4233887357cfd3e130f484e334d4cce518d90b4d146ec64",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4383,6 +4394,7 @@
         {
           "seed": 1000041011,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-8-1000041011.jsonl.gz",
+          "sha256": "7610e402ff1897e55cd6ae8f562333c71dbdca77147c9f73aa4018848a7c25ad",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4405,6 +4417,7 @@
         {
           "seed": 1000041014,
           "path": "/private/tmp/e2-roots/round2/retained-cache/retain-frail-8-1000041014.jsonl.gz",
+          "sha256": "818ddf81da4c0fce1ee5f342703cd59c20237750be93cfa2c7634d7efc6517a3",
           "decisions": 7,
           "stopped": null,
           "scopes": {
@@ -4773,9 +4786,9 @@
     "obs/schema.hpp": "5b09da2f1b1ebf1efa2a5a9fe8b6d2bb8b17e241faf165d132b2623fd87b8c4e"
   },
   "training_batch_reset_to": {
-    "path": "/private/tmp/e2-roots/round2/batch-all.json",
-    "sha256": "f8176e1388a75ec59558c0062502006d5ac6974668d93cfdf21c4befb0464055",
-    "bytes": 620226,
+    "path": "/private/tmp/e2-roots/round3/batch-check.json",
+    "sha256": "e315db6777785c8e2b8c8d242c75bfc53b519dfec9c1d18bc14f6719c5bf4f68",
+    "bytes": 881858,
     "roots": 8721,
     "prefix_decisions": 6841444,
     "engine_decisions": 13682888,
@@ -5046,7 +5059,7 @@
     }
   ],
   "gaps": [
-    "Retained-card block caches after player death do not match the original on seed 1000002317 and 12 of 27 focused scenarios. Every preterminal decision matches in those reproductions, but terminal parity remains a failed acceptance gate. Soul.update clears moving-card powers and refreshes the hand when a presentation-dependent flight ends; RestoreRetainedCardsAction does not apply powers. The engine currently settles pending moves after restoration. No threshold heuristic, snapshot exclusion or comparator change was applied.",
+    "Death-terminal retained-card caches are not frame-independent in the original. Round 3 recorded 64 fresh focused scenarios plus seed 1000002317; four focused scenarios change only terminal AbstractCard.block between 14 and 10 with 13 extra idle frames, while all 1939 preterminal decisions remain byte-identical. Soul.update applies hand powers after a presentation-dependent flight; RestoreRetainedCardsAction restores reset cards without applying powers. A seed/action-only engine cannot satisfy both original snapshots under the frozen observation contract. No count threshold, snapshot exclusion, comparison change or presentation-RNG patch was applied. The original 183 replays remain 170 full passes and 13 terminal failures; release remains blocked.",
     "Curse-transform preview paths fail the original 13-idle-frame invariant; excluded from roots and discovery without changing the RNG split or comparator. Uniform continuation draws that choose this path are censored and counted separately.",
     "Original-game validation samples root prefixes; native replay and TrainingBatch.reset_to cover the full exported collection.",
     "Difficulty rates are bounded continuation estimates in the same game RNG world. Cutoffs and censored continuations prevent interpreting zero success as impossibility.",
@@ -5086,5 +5099,246 @@
     "full_passed": 35,
     "all_preterminal_decisions_exact": true,
     "idle_byte_identical": 36
+  },
+  "round3": {
+    "verified_commit": "5e6934ed8f6c955eb52d557e78b8ba4feb693df6",
+    "base": "22b8045",
+    "full_ctest": {
+      "path": "/private/tmp/e2-roots/round3/ctest-final.log",
+      "sha256": "6c0c90059a1a09a53293d1e137f345c23c2cf6da6eead38dc8deb41eeccbb841",
+      "bytes": 5092,
+      "summary": "100% tests passed out of 48",
+      "tests": 48,
+      "failed": 0,
+      "fresh_build": "/private/tmp/e2-r3-build",
+      "configuration": "Release, clang++, Python 3.12",
+      "configure": {
+        "path": "/private/tmp/e2-roots/round3/configure.log",
+        "sha256": "4534fb508b73d707135a9019b701bea21b2d591cabb5ea0f874b28c0310321f3",
+        "bytes": 955
+      },
+      "build": {
+        "path": "/private/tmp/e2-roots/round3/build-all.log",
+        "sha256": "f492aeb74769b407b974cc2ea32260f7cd0e6b90716829d4457148a3e4926fab",
+        "bytes": 34686
+      }
+    },
+    "stale_tests": {
+      "test_action_04": "The test reused an arena handle after the completed Draw follow-up was released. It now asserts release, holds a completed action explicitly, checks that it is skipped and released, and retains the fresh NoDraw continuation checks. No engine change.",
+      "test_monsters": "Looter escape now asserts the exact VFX/Escape/SetMove queue and the before/after escape state at each of the first two actions. No engine change."
+    },
+    "java_basis": {
+      "monsters/exordium/Looter.java": {
+        "sha256": "8e4a94a8f8404a3ed64f5fa12dd301d597bc86abc0d750d7b296daf5663ce0cc",
+        "methods": [
+          "takeTurn, case 3: VFXAction, EscapeAction, SetMoveAction"
+        ]
+      },
+      "actions/common/DrawCardAction.java": {
+        "sha256": "67d02ba84c1d7e60fbb2a4a83f2b2d3ebbd81a84d29c16ccb98ecc9dd1a17e18",
+        "methods": [
+          "endActionWithFollowUp transfers the buffered action to the manager"
+        ]
+      },
+      "actions/GameActionManager.java": {
+        "sha256": "a47d1ee9c6b2e194b7d3ef311328f2a15e38f5630330689e438e46685b94d6c3",
+        "methods": [
+          "update skips completed current actions and drops its reference"
+        ]
+      },
+      "actions/common/DiscardAtEndOfTurnAction.java": {
+        "sha256": "d80e3ae091de4bc4e74879f195b5ec2d1bb7e7c7e92eac636bf452d61e4bebf0",
+        "methods": [
+          "update moves retained cards to limbo and queues one DiscardAction per remaining card before RestoreRetainedCardsAction"
+        ]
+      },
+      "actions/unique/RestoreRetainedCardsAction.java": {
+        "sha256": "8bed1c15e51dac6ce10baf7cfd50a51220552274f620adeb8eeef5e7667e3adc",
+        "methods": [
+          "update restores cards and refreshes layout without applying powers"
+        ]
+      },
+      "cards/Soul.java": {
+        "sha256": "8e4105a9df83d93ad4f66d35c54b63720e90f71b80c7594a6faa454d19b545c0",
+        "methods": [
+          "discard and setSharedVariables consume presentation randomness; updateMovement uses position and frame delta; update refreshes hand powers on flight completion"
+        ]
+      },
+      "screens/select/GridCardSelectScreen.java": {
+        "sha256": "1793bb4449bc7046d3e5477d1fdd4ad39f0a4d3d9582309ceb59595be8b130bc",
+        "methods": [
+          "update refreshes transform previews every 0.1 seconds"
+        ]
+      },
+      "dungeons/AbstractDungeon.java": {
+        "sha256": "8fa0712818487a360c72950d053fe77e1a35efa967080723d15c69037092fd26",
+        "methods": [
+          "returnTrulyRandomCardFromAvailable CURSE branch ignores its RNG parameter"
+        ]
+      },
+      "helpers/CardLibrary.java": {
+        "sha256": "ac123d5376862fb1d1d382284e14a9dc0e955395f415265ae29f9aa8a2b6237a",
+        "methods": [
+          "getCurse consumes AbstractDungeon.cardRng"
+        ]
+      }
+    },
+    "retained_death": {
+      "path": "/private/tmp/e2-roots/round3/retained-probe/results.json",
+      "sha256": "8aceaa05490b6d27e95392808320209ef7bbbb1d48b6c66390202da2d76fb1df",
+      "bytes": 61136,
+      "recordings": 65,
+      "new_scenarios": 64,
+      "preterminal_decisions": 1939,
+      "all_preterminal_exact_both_scopes": true,
+      "full_replay_passed": 33,
+      "idle_frames": 13,
+      "byte_identical": 61,
+      "invariant_evidence": {
+        "path": "/private/tmp/e2-roots/round3/retained-invariant.json",
+        "sha256": "2123df057a93043ffeea0d5412ae3eec9d24bc76eb07f16fa12afa49dcaee905",
+        "bytes": 2520
+      },
+      "counterexamples": [
+        {
+          "seed": 1000042012,
+          "baseline_path": "/private/tmp/e2-roots/round3/retained-probe/cards-5-seed1000042012.jsonl.gz",
+          "baseline_sha256": "22fb7ab91a4522ee67b0a3dcb1a12e6a6e1ef48324ddc7ba040db8430762b6f7",
+          "idle_path": "/private/tmp/e2-roots/round3/retained-probe/idle-frames/36.jsonl.gz",
+          "idle_sha256": "46645c680bbad85ed1b031f1b0360a11acce23ca80acecbbab9cdd2522a1822e",
+          "terminal_changes": [
+            {
+              "path": "$.snapshot.objects[15].fields.AbstractCard.block",
+              "baseline": 14,
+              "idle": 10
+            }
+          ]
+        },
+        {
+          "seed": 1000042048,
+          "baseline_path": "/private/tmp/e2-roots/round3/retained-probe/cards-5-seed1000042048.jsonl.gz",
+          "baseline_sha256": "1af80a50f164bcea016c4bf4e6396a32988e479f832b517b9638ad63f51cf557",
+          "idle_path": "/private/tmp/e2-roots/round3/retained-probe/idle-frames/50.jsonl.gz",
+          "idle_sha256": "c337b0035506324436fa8d406272333ddac6b210c8a12a191bd2a2c54349cd50",
+          "terminal_changes": [
+            {
+              "path": "$.snapshot.objects[15].fields.AbstractCard.block",
+              "baseline": 10,
+              "idle": 14
+            }
+          ]
+        },
+        {
+          "seed": 1000042050,
+          "baseline_path": "/private/tmp/e2-roots/round3/retained-probe/cards-5-seed1000042050.jsonl.gz",
+          "baseline_sha256": "1f62571563b708acb1bcae71f7ebe3f7ab62a25ad7cccf360bdea90e5faad35d",
+          "idle_path": "/private/tmp/e2-roots/round3/retained-probe/idle-frames/52.jsonl.gz",
+          "idle_sha256": "69ced0c799b653fa42fe3345a88d779f84a0e6defe4068539b81867e74a44857",
+          "terminal_changes": [
+            {
+              "path": "$.snapshot.objects[15].fields.AbstractCard.block",
+              "baseline": 14,
+              "idle": 10
+            }
+          ]
+        },
+        {
+          "seed": 1000042073,
+          "baseline_path": "/private/tmp/e2-roots/round3/retained-probe/cards-5-seed1000042073.jsonl.gz",
+          "baseline_sha256": "254863ddf957aaa0dd5514722d26a143ad9a095c18b158e9ae42e873673c3884",
+          "idle_path": "/private/tmp/e2-roots/round3/retained-probe/idle-frames/61.jsonl.gz",
+          "idle_sha256": "e916f9c007db3171dc0918fee8a0aeece67cf120542bd073f9c01c791bb4c157",
+          "terminal_changes": [
+            {
+              "path": "$.snapshot.objects[15].fields.AbstractCard.block",
+              "baseline": 14,
+              "idle": 10
+            }
+          ]
+        }
+      ],
+      "focused_input": {
+        "path": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/e2/tests/retained_death_cache.json",
+        "sha256": "336c233ffcff4119adeeff5c4b07b0a07c2744cd9f8dc3fce4d2740af136e635",
+        "bytes": 1139
+      },
+      "focused_checker": {
+        "path": "/Users/destire/Documents/ChatGPT/sljt/sts-silent-gpu-agents/e2/tests/check_retained_death.py",
+        "sha256": "d6ae05d245fb220d5b329482b0b864c7e9ddc405d2a9cadf1d8d2f429fb5e014",
+        "bytes": 1619
+      },
+      "focused_check_log": {
+        "path": "/private/tmp/e2-roots/round3/retained-regression.log",
+        "sha256": "2b39ade96dfa241709ff410a3f14ac1b1909985f06cbf296f1009467e2a3a3e8",
+        "bytes": 1705
+      },
+      "focused_check_passed": false,
+      "read_only_timeline": {
+        "path": "/private/tmp/e2-roots/round3/timeline-frames.log",
+        "sha256": "a525830be1e212c181129f29d10bc5ed11be8c867377c7474125056456269c67",
+        "bytes": 73867
+      },
+      "timeline_recordings_unchanged": {
+        "path": "/private/tmp/e2-roots/round3/timeline/check.json",
+        "sha256": "cc21c607c298ee0291934e7c829a58d08cba540393d48720d302b50370cc90f8",
+        "bytes": 605
+      }
+    },
+    "curse_preview": {
+      "path": "/private/tmp/e2-roots/round3/curse-preview/results.json",
+      "sha256": "cd0df6d87d75f634f9eba00b2740b56dc3a91072d5990814da3ab0e8ae31fcf5",
+      "bytes": 312,
+      "result": {
+        "baseline": "/private/tmp/e2-roots/round3/curse-preview/baseline.jsonl.gz",
+        "idle": "/private/tmp/e2-roots/round3/curse-preview/idle-frames/delayed.jsonl.gz",
+        "idle_frames": 13,
+        "first_difference": {
+          "line": 217,
+          "difference": [
+            "$.snapshot.rng.cardRng[0]",
+            64,
+            65
+          ]
+        }
+      },
+      "fixed": false,
+      "reason": "The original preview changes rule cardRng with idle time. Removing this divergence requires changing the frozen rule/presentation RNG split or the original preview behavior; neither is allowed."
+    },
+    "native_root_replay": {
+      "path": "/private/tmp/e2-roots/round3/native-audit.roots.jsonl.gz",
+      "sha256": "43eb580745d14a387d2ad955a6c5c6d294c3398e8a8480c8fca1301eff41b4e2",
+      "bytes": 1777604,
+      "roots": 8721,
+      "accepted": 8721,
+      "dropped": 0,
+      "quarantine": {
+        "path": "/private/tmp/e2-roots/round3/native-audit.quarantine.jsonl.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      }
+    },
+    "root_files_unchanged": true,
+    "engine_rules_snapshot_comparison_and_rng_unchanged_from_base": true,
+    "completed_items": [
+      1,
+      4
+    ],
+    "incomplete_items": [
+      2,
+      3
+    ],
+    "elapsed_wall_seconds": 1056.2327704429626,
+    "extra_disk_bytes": 247446192,
+    "cpu_heavy_process_limit": 2,
+    "jvm_limit": 1,
+    "commits": [
+      "5e6934e Add original retained-death frame-invariance reproduction",
+      "bccc243 Align action tests with queued effects and follow-up lifetime"
+    ],
+    "manifest_assembly": {
+      "path": "/private/tmp/e2-roots/round3/update-manifest.py",
+      "sha256": "88cf20ea4e3ef8ac3fe1c81d5fdd19c8745118536ced98e86c218935a6e9bc8c",
+      "bytes": 7818
+    }
   }
 }
