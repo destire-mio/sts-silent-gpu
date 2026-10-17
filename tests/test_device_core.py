@@ -34,6 +34,20 @@ class DeviceDiscipline(unittest.TestCase):
     def test_unannotated_function(self):
         self.assertTrue(self.inspect("int f() { return 1; }"))
 
+    def test_observation_extra_root_is_checked(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "core").mkdir()
+            (root / "obs").mkdir()
+            (root / "core/platform.hpp").write_text("#define SPIRE_FN\n")
+            source = root / "obs/encode.hpp"
+            source.write_text('#include "core/platform.hpp"\nint encode() { return 1; }\n')
+            errors = check(root / "core", shutil.which("clang++"), extra_roots=[root / "obs"])
+            self.assertTrue(any("encode lacks SPIRE_FN" in error for error in errors))
+            source.write_text('#include "core/platform.hpp"\n#include <vector>\n')
+            errors = check(root / "core", shutil.which("clang++"), extra_roots=[root / "obs"])
+            self.assertTrue(any("forbidden header vector" in error for error in errors))
+
     def test_mutable_global(self):
         self.assertTrue(self.inspect("int counter = 0;"))
 

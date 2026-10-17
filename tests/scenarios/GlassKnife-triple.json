@@ -1,0 +1,47 @@
+{
+  "deck": [
+    {
+      "id": "Glass Knife",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "SacredBark"
+  ],
+  "potions": [
+    "DuplicationPotion",
+    null
+  ],
+  "hp": 66,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 3,
+      "target": 0
+    }
+  ]
+}

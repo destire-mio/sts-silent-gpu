@@ -122,6 +122,9 @@ struct SnapshotGraph {
             }
             if (field == "damage") {
                 if (!game.room_in_combat || (definition.damage == -1 && card.base_damage == -1)) return py::none();
+                if (!master)
+                    for (int i = 0; i < game.discard.size; ++i)
+                        if (game.discard[i] == index) return py::int_(card.base_damage);
                 return py::int_(card.damage);
             }
             if (field == "magicNumber") return py::int_(card.magic);

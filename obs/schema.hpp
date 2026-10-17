@@ -64,6 +64,25 @@ struct Observation {
     int32_t entities = 0, candidates = 0;
     SPIRE_FN View view() { return {tags, ids, values, candidate_kinds, candidate_refs, entity_mask, candidate_mask, &entities, &candidates}; }
 };
+struct BatchView {
+    uint8_t* tags;
+    int16_t* ids;
+    int16_t* values;
+    uint8_t* candidate_kinds;
+    int16_t* candidate_refs;
+    uint8_t* entity_mask;
+    uint8_t* candidate_mask;
+    int32_t* entity_counts;
+    int32_t* candidate_counts;
+
+    SPIRE_FN View view(int i) const {
+        return {tags + i * tag_rows * entity_capacity, ids + i * id_rows * entity_capacity,
+            values + i * value_rows * entity_capacity, candidate_kinds + i * candidate_capacity,
+            candidate_refs + i * candidate_rows * candidate_capacity,
+            entity_mask + i * entity_mask_bytes, candidate_mask + i * candidate_mask_bytes,
+            entity_counts + i, candidate_counts + i};
+    }
+};
 struct Result { uint32_t fault = 0; int entities = 0; int candidates = 0; };
 struct Writer {
     View view;

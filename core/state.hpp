@@ -42,13 +42,14 @@ struct Card {
     bool is_flipped : 1;
     bool priced : 1;
     bool master_reference : 1;
+    uint8_t padding : 1;
     CardState state{};
     SPIRE_FN constexpr Card()
         : id(CardId::Strike_G), multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false),
-          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), priced(false), master_reference(false) {}
+          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), priced(false), master_reference(false), padding(0) {}
 };
 struct CardArena {
     Card values[card_capacity]{};
@@ -118,6 +119,7 @@ struct Relic {
     RelicId id;
     bool grayscale = false;
     bool used_up = false;
+    uint8_t padding = 0;
     int counter;
     RelicState state{};
     SPIRE_FN constexpr Relic(RelicId id = RelicId::SnakeRing, int counter = -1) : id(id), counter(counter) {}
@@ -280,7 +282,8 @@ struct Effect {
     bool held : 1;
     bool flag : 1;
     bool end_turn_draw : 1;
-    SPIRE_FN constexpr Effect() : power_constructed(false), done(false), held(false), flag(false), end_turn_draw(false) {}
+    uint8_t padding : 3;
+    SPIRE_FN constexpr Effect() : power_constructed(false), done(false), held(false), flag(false), end_turn_draw(false), padding(0) {}
 };
 using DamageInfo = Effect;
 struct CardQueueItem {
@@ -520,6 +523,7 @@ struct Game {
     bool mugged = false;
     bool smoked = false;
     int bomb_id_offset = 0;
+    uint32_t padding = 0;
     SPIRE_FN constexpr Game()
         : grid_can_cancel(true), selection_confirmation(false), selected_cards_retrieved(false), end_turn_enabled(true), selection_up_to(false),
           reward_skippable(false), combat_reward_skippable(false), reward_proceed_visible(false), reward_has_taken_all(false), reward_relic_warning_seen(false),
