@@ -52,7 +52,7 @@ class TrainerTests(unittest.TestCase):
                 rollout, torch.zeros(n, dtype=torch.int64), torch.arange(n),
                 torch.tensor([3 if bootstrap else 1]), torch.tensor([bootstrap]))
             return rollout.returns, rollout.advantages
-        values = np.array([0.2, 0.4, 0.8])
+        values = np.array([0.2, 0.4, 0.8], dtype=np.float32)
         returns, advantages = episode_targets([0, 0, 1], values, 0, 1)
         np.testing.assert_allclose(returns, [1, 1, 1])
         np.testing.assert_allclose(advantages, 1 - values)
