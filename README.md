@@ -71,7 +71,7 @@ tools/gpu_train_check.sh "$HOME/spire-train-build" "$HOME/spire-e2.roots.jsonl.g
 ```
 
 `gpu_train_check.sh` requires eight V100s and builds for `sm_70` with one compiler
-process; it downloads nothing. Supply the audited E2 roots (Act 3, Act 4 and Heart starts).
+process per allocated CPU (each needs about 0.4 GB); it downloads nothing. Supply the audited E2 roots (Act 3, Act 4 and Heart starts).
 It runs full CTest, then compares the same fp32 policy on CPU and GPU batches: counter words,
 actions, episode outcomes, compact observation bytes, masks and policy versions must agree
 exactly; log probabilities, values, returns and advantages use `atol=rtol=3e-5`.
@@ -134,7 +134,7 @@ and policy publication v → v+1. Later weak-scaling policies need not be identi
 because their global batches contain different attempts. Policy inference, gradients and Adam use fp32; V100 bf16 is not used. CDFs, target scans and
 normalization accumulators use float64 to preserve their scalar-reference arithmetic.
 
-Configure, the single-process build and CTest run first without the measurement budget (limits
+Configure, the build and CTest run first without the measurement budget (limits
 600, 7200 and 3600 seconds), because CUDA compile time on the server is unknown. The measurements after
 CTest share a **1800-second budget**: parity gets 300 seconds, calibration 180, and each small
 exact run 180. The grid gets at most 720 seconds and 150 seconds per cell, retaining at least
@@ -153,7 +153,7 @@ Mac's CPU and device-LLVM tests; the server CUDA build, CUDA execution, memory b
 this command on the target server.
 
 The original `gpu_check.sh` build directory must be fresh. That script selects GPU 0, requires CUDA, builds with one
-compiler process, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
+compiler process per allocated CPU, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
 and the Python CUDA test, replays the supplied E2 prefixes on both batch implementations,
 then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048/8192/32768.
 `test_cuda_parity` compares every `Game` byte and every observation/status byte after each
