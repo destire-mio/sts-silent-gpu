@@ -9,7 +9,7 @@ import torch
 from train.evaluate import compare, evaluate, outcome_summary
 from train.model import ModelConfig, Policy, distribution, network_inputs, packed_inputs, views
 from train.ppo import PPOConfig, objective, update
-from train.rollout import Collector, episode_targets
+from train.rollout import Collector, Rollout
 
 
 torch.set_num_threads(1)
@@ -42,6 +42,16 @@ class TrainerTests(unittest.TestCase):
         print(f"synthetic rewarded candidate: 0.500000 -> {probability:.6f}")
 
     def test_returns_truncation_and_lambda(self):
+        def episode_targets(rewards, values, bootstrap, gae_lambda):
+            n = len(rewards)
+            rollout = Rollout.allocate(n, 1)
+            rollout.count = n
+            rollout.rewards[:] = torch.tensor(rewards)
+            rollout.values[:] = torch.as_tensor(values)
+            Collector(1, n, 1, self.device, gae_lambda).finish_targets(
+                rollout, torch.zeros(n, dtype=torch.int64), torch.arange(n),
+                torch.tensor([3 if bootstrap else 1]), torch.tensor([bootstrap]))
+            return rollout.returns, rollout.advantages
         values = np.array([0.2, 0.4, 0.8])
         returns, advantages = episode_targets([0, 0, 1], values, 0, 1)
         np.testing.assert_allclose(returns, [1, 1, 1])

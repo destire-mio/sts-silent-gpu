@@ -21,21 +21,6 @@ def make_batch(size, cap, device):
     return spire.TrainingBatch(size, 1, cap, [])
 
 
-def episode_targets(rewards, values, bootstrap, gae_lambda):
-    rewards, values = torch.as_tensor(rewards), torch.as_tensor(values)
-    n = len(rewards)
-    tails = torch.cat((values[1:], torch.as_tensor(bootstrap, device=values.device).reshape(1)))
-    returns = rewards.double()
-    returns[-1] += bootstrap
-    advantages = rewards.double() + tails.double() - values.double()
-    step = 1
-    while step < n:
-        returns = returns + torch.cat((returns[step:], returns.new_zeros(step)))
-        advantages = advantages + gae_lambda ** step * torch.cat((advantages[step:], advantages.new_zeros(step)))
-        step *= 2
-    return returns.float(), advantages.float()
-
-
 @dataclass
 class Rollout:
     data: torch.Tensor
