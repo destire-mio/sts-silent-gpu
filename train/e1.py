@@ -16,6 +16,7 @@ from .metrics import summarize
 from .model import ModelConfig, Policy
 from .pipeline import Pipeline, PipelineConfig
 from .ppo import PPOConfig
+from .sampling import SCHEME
 from .roots import read_roots, validate_training_roots
 from .checkpoint import engine_commit
 
@@ -48,11 +49,9 @@ def main():
     parser.add_argument("--dev-roots", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--init-seed", type=int, required=True)
-    parser.add_argument("--torch-threads", type=int, default=4)
-    parser.add_argument("--actors", type=int, default=2)
-    parser.add_argument("--learners", type=int, default=1)
-    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
-    parser.add_argument("--backend", choices=("gloo", "nccl"), default="gloo")
+    parser.add_argument("--torch-threads", type=int, default=1)
+    parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--decisions", type=int, default=200000)
     parser.add_argument("--deadline-epoch", type=float, required=True)
     args = parser.parse_args()
@@ -62,8 +61,7 @@ def main():
     device = torch.device(args.device)
     model_config, ppo_config = ModelConfig(), PPOConfig()
     model = Policy(model_config).to(device)
-    pipeline_config = PipelineConfig(actors=args.actors, learners=args.learners, device=args.device,
-                                     backend=args.backend, torch_threads=args.torch_threads)
+    pipeline_config = PipelineConfig(workers=args.workers, device=args.device, torch_threads=args.torch_threads)
     roots, dev = read_roots(args.roots), read_roots(args.dev_roots)
     validate_training_roots(roots)
     assert all(partition(root["seed"]) == "dev" for root in dev)
@@ -77,12 +75,12 @@ def main():
                   run={name: str(value) if isinstance(value, Path) else value for name, value in vars(args).items()},
                   root_hashes={str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in (args.roots, args.dev_roots)},
                   train_sampling="uniform family, uniform available exact-distance root within family",
-                  policy_sampling="PCG64(init_seed, seed low32, seed high32, episode ordinal), inverse CDF",
+                  policy_sampling=SCHEME,
                   evaluation="200 independent policy attempts per set; fixed root mixture and RNG before/after",
                   decision_cap=4096, batch_size=32, episodes_per_update=48, storage_mib=256,
                   truncation="stop at per-episode cap; final decision-budget cutoffs are excluded from PPO",
                   faults="stop and retain trajectory", pipeline=asdict(pipeline_config), policy_lag=0,
-                  policy_versions="collect v, join all actors, update v once, publish v+1")
+                  policy_versions="collect v locally, DDP update v, barrier, publish v+1")
     (args.output / "config.json").write_text(json.dumps(config, indent=2) + "\n")
     (args.output / "evaluation-roots.json").write_text(json.dumps(schedules) + "\n")
     pipeline = Pipeline(model_config, ppo_config, pipeline_config, args.init_seed, args.output, config)
@@ -101,7 +99,7 @@ def main():
                 if not full and name != "all":
                     continue
                 result = evaluate(model, schedule, device, 4096, 32, 62001, list(range(200)))
-                result.update(sampling_seed=62001, decision_cap=4096, sampling="PCG64 per seed and attempt",
+                result.update(sampling_seed=62001, decision_cap=4096, sampling=SCHEME,
                               observation_version=2, evaluation_engine_commit=config["engine_commit"],
                               train_decisions=total, partition=part, band=name, label=label)
                 if label == "initial":

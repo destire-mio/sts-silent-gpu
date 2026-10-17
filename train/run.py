@@ -13,25 +13,24 @@ from .metrics import summarize
 from .model import ModelConfig, Policy
 from .pipeline import Pipeline, PipelineConfig
 from .ppo import PPOConfig
+from .sampling import SCHEME
 from .roots import natural_roots, read_roots, validate_training_roots
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Version-synchronous actor/learner PPO with a single-node DDP learner")
+    parser = argparse.ArgumentParser(description="Device-local collection and synchronous single-node DDP PPO")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--roots", type=Path)
     parser.add_argument("--first-seed", type=int, default=1000000000)
     parser.add_argument("--updates", type=int, default=2)
     parser.add_argument("--episodes", type=int, default=16, help="Fixed number of episode starts per update")
-    parser.add_argument("--batch-size", type=int, default=8, help="Environment lanes per actor")
-    parser.add_argument("--actors", type=int, default=2)
-    parser.add_argument("--learners", type=int, default=1)
-    parser.add_argument("--backend", choices=("gloo", "nccl"), default="gloo")
+    parser.add_argument("--batch-size", type=int, default=8, help="Environment lanes per GPU")
+    parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--decision-cap", type=int, default=3000)
     parser.add_argument("--storage-mib", type=int, default=256)
     parser.add_argument("--init-seed", type=int, default=1729)
-    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
-    parser.add_argument("--torch-threads", type=int, default=4)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
+    parser.add_argument("--torch-threads", type=int, default=1)
     parser.add_argument("--width", type=int, default=128)
     parser.add_argument("--layers", type=int, default=4)
     parser.add_argument("--heads", type=int, default=4)
@@ -51,8 +50,8 @@ def main():
     model_config = ModelConfig(args.width, args.layers, args.heads, args.feedforward)
     ppo_config = PPOConfig(learning_rate=args.learning_rate, epochs=args.epochs, minibatch_size=args.minibatch_size,
                            gae_lambda=args.gae_lambda, entropy_coefficient=args.entropy_coefficient)
-    pipeline_config = PipelineConfig(args.actors, args.learners, args.batch_size, args.decision_cap,
-                                     args.storage_mib, args.device, args.backend, args.torch_threads)
+    pipeline_config = PipelineConfig(args.workers, args.batch_size, args.decision_cap,
+                                     args.storage_mib, args.device, args.torch_threads)
     roots = read_roots(args.roots) if args.roots else natural_roots(args.first_seed, args.updates * args.episodes, "train")
     validate_training_roots(roots)
     args.output.mkdir(parents=True, exist_ok=False)
@@ -60,12 +59,12 @@ def main():
                   engine_commit=engine_commit(), torch_version=str(torch.__version__),
                   parameters=sum(p.numel() for p in Policy(model_config).parameters()), pipeline=asdict(pipeline_config),
                   run={name: str(value) if isinstance(value, Path) else value for name, value in vars(args).items()},
-                  sampling="PCG64 SeedSequence(init_seed, root_seed low32, root_seed high32, episode ordinal); inverse CDF",
+                  sampling=SCHEME,
                   truncation="bootstrap frozen final-observation value; exclude from win/loss calibration",
                   faults="exclude entire trajectory from PPO; retain outcome and candidate prefix",
-                  policy_lag=0, policy_versions="collect v, join all actors, update v once, publish v+1",
+                  policy_lag=0, policy_versions="collect v locally, DDP update v, barrier, publish v+1",
                   minibatch="global decisions across all learner ranks; normalize advantages over the complete rollout",
-                  cpu_schedule="one compute process at a time; release CPU lease before gradient communication")
+                  cpu_schedule="at most three test workers")
     (args.output / "config.json").write_text(json.dumps(config, indent=2) + "\n")
     (args.output / "roots.json").write_text(json.dumps(dict(observation_version=2, roots=roots)) + "\n")
     print(json.dumps(dict(config=config)), flush=True)

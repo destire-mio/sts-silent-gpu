@@ -90,7 +90,7 @@ class PackingTests(unittest.TestCase):
         for name in FIELDS:
             torch.testing.assert_close(packed[name], expected[name], atol=0, rtol=0)
         entities, candidates = record_lengths(data, offsets, np.arange(5))
-        batches = length_batches(np.arange(5), entities, candidates, 2, np.random.default_rng(9))
+        batches = length_batches(torch.arange(5), entities, candidates, 2, torch.Generator().manual_seed(9))
         np.testing.assert_array_equal(np.sort(np.concatenate(batches)), np.arange(5))
         self.assertEqual(sorted(map(len, batches)), [1, 2, 2])
 

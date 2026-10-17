@@ -1,193 +1,239 @@
-from dataclasses import dataclass
-import hashlib
-import json
+from dataclasses import dataclass, fields
 import time
 
-import numpy as np
-import spire
 import torch
 
-from .model import distribution, network_inputs, views
+from .model import FIELDS, distribution, network_inputs, store_inputs, views
+from .sampling import root_key, root_words, sample, uniforms
 
 
 def synchronize(device):
     if device.type == "cuda":
         torch.cuda.synchronize(device)
-    elif device.type == "mps":
-        torch.mps.synchronize()
 
 
-def root_key(root):
-    payload = json.dumps([root["seed"], root["candidates"]], separators=(",", ":")).encode()
-    return hashlib.sha256(payload).hexdigest()
-
-
-def policy_rng(stream, seed, attempt=0):
-    unsigned = seed & ((1 << 64) - 1)
-    return np.random.default_rng(np.random.SeedSequence([stream, unsigned & 0xffffffff, unsigned >> 32, attempt]))
-
-
-def sample(policy, generators):
-    probabilities = policy.probs.cpu().numpy()
-    uniforms = np.array([rng.random() for rng in generators])
-    cumulative = probabilities.cumsum(axis=1, dtype=np.float64)
-    cumulative /= cumulative[:, -1:]
-    return (uniforms[:, None] >= cumulative).sum(axis=1).astype(np.int32)
+def make_batch(size, cap, device):
+    if device.type == "cuda":
+        import spire_gpu
+        return spire_gpu.TrainingBatch(size, cap, [])
+    import spire
+    assert device.type == "cpu"
+    return spire.TrainingBatch(size, 1, cap, [])
 
 
 def episode_targets(rewards, values, bootstrap, gae_lambda):
-    returns = np.empty(len(rewards), dtype=np.float32)
-    advantages = np.empty_like(returns)
-    target, advantage, next_value = bootstrap, 0.0, bootstrap
-    for i in range(len(rewards) - 1, -1, -1):
-        target = float(rewards[i]) + target
-        advantage = float(rewards[i]) + next_value - float(values[i]) + gae_lambda * advantage
-        returns[i], advantages[i] = target, advantage
-        next_value = float(values[i])
-    return returns, advantages
+    rewards, values = torch.as_tensor(rewards), torch.as_tensor(values)
+    n = len(rewards)
+    tails = torch.cat((values[1:], torch.as_tensor(bootstrap, device=values.device).reshape(1)))
+    returns = rewards.double()
+    returns[-1] += bootstrap
+    advantages = rewards.double() + tails.double() - values.double()
+    step = 1
+    while step < n:
+        returns = returns + torch.cat((returns[step:], returns.new_zeros(step)))
+        advantages = advantages + gae_lambda ** step * torch.cat((advantages[step:], advantages.new_zeros(step)))
+        step *= 2
+    return returns.float(), advantages.float()
 
 
 @dataclass
 class Rollout:
-    data: np.ndarray
-    offsets: np.ndarray
-    actions: np.ndarray
-    log_probs: np.ndarray
-    values: np.ndarray
-    rewards: np.ndarray
-    returns: np.ndarray
-    advantages: np.ndarray
-    screens: np.ndarray
-    acts: np.ndarray
-    entropy: np.ndarray
-    complete: np.ndarray
-    valid: np.ndarray
-    policy_versions: np.ndarray
+    data: torch.Tensor
+    offsets: torch.Tensor
+    actions: torch.Tensor
+    log_probs: torch.Tensor
+    values: torch.Tensor
+    rewards: torch.Tensor
+    returns: torch.Tensor
+    advantages: torch.Tensor
+    screens: torch.Tensor
+    acts: torch.Tensor
+    entropy: torch.Tensor
+    complete: torch.Tensor
+    valid: torch.Tensor
+    policy_versions: torch.Tensor
+    global_ids: torch.Tensor
     episodes: list
     timing: dict
     count: int = 0
 
     @classmethod
-    def allocate(cls, decisions, storage_mib):
-        return cls(np.empty(storage_mib * 1024 * 1024, dtype=np.uint8),
-                   np.zeros(decisions + 1, dtype=np.uint64), np.empty(decisions, dtype=np.int32),
-                   *[np.empty(decisions, dtype=np.float32) for _ in range(5)],
-                   np.empty(decisions, dtype=np.uint8), np.empty(decisions, dtype=np.uint8),
-                   np.empty(decisions, dtype=np.float32), np.zeros(decisions, dtype=bool),
-                   np.zeros(decisions, dtype=bool), np.empty(decisions, dtype=np.int64), [], {})
+    def allocate(cls, decisions, storage_mib, device=torch.device("cpu")):
+        decisions = min(decisions, storage_mib * 1024 * 1024 // 35)
+        def zeros(dtype):
+            return torch.zeros(decisions, device=device, dtype=dtype)
+        return cls(torch.empty(storage_mib * 1024 * 1024, dtype=torch.uint8, device=device),
+                   torch.zeros(decisions + 1, dtype=torch.int64, device=device), zeros(torch.int32),
+                   *[zeros(torch.float32) for _ in range(5)], zeros(torch.uint8), zeros(torch.uint8),
+                   zeros(torch.float32), zeros(torch.bool), zeros(torch.bool), zeros(torch.int64),
+                   zeros(torch.int64), [], {})
+
+    def metrics_host(self):
+        return {f.name: getattr(self, f.name)[:self.count].cpu().numpy() for f in fields(self)
+                if f.name not in ("data", "offsets", "episodes", "timing", "count")}
 
 
 class Collector:
-    def __init__(self, size, decision_cap, storage_mib, device, gae_lambda):
-        self.batch = spire.TrainingBatch(size, 1, decision_cap, [])
-        self.arrays = views(self.batch)
+    def __init__(self, size, decision_cap, storage_mib, device, gae_lambda, *, batch=None):
+        self.batch = make_batch(size, decision_cap, device) if batch is None else batch
+        self.arrays = views(self.batch, device)
+        for name in ("entity_counts", "candidate_counts", "faults", "done", "truncated", "rewards"):
+            self.arrays[name] = torch.as_tensor(getattr(self.batch, name), device=device)
         self.cap, self.storage_mib = decision_cap, storage_mib
-        self.device, self.gae_lambda = device, gae_lambda
-        self.size = size
+        self.device, self.gae_lambda, self.size = device, gae_lambda, size
 
     @torch.no_grad()
     def collect(self, model, roots, sampling_seed, attempts, decision_budget=None, *, policy_version):
         model.eval()
+        synchronize(self.device)
         start = time.perf_counter()
-        budget = len(roots) * self.cap if decision_budget is None else decision_budget
-        assert budget > 0
-        rollout = Rollout.allocate(min(len(roots) * self.cap, budget), self.storage_mib)
+        n = len(roots)
+        budget = min(n * self.cap, n * self.cap if decision_budget is None else decision_budget)
         attempts = list(attempts)
-        episodes = [dict(seed=root["seed"], root_key=root_key(root), prefix_decisions=len(root["candidates"]),
-                         attempt=attempt, policy_version=policy_version, candidates=[], records=[], outcome=None, fault=0)
-                    for root, attempt in zip(roots, attempts)]
-        generators = [policy_rng(sampling_seed, root["seed"], attempt) for root, attempt in zip(roots, attempts)]
-        slots = list(range(min(self.size, len(roots))))
-        current = dict(zip(slots, slots))
-        next_episode = len(slots)
-        engine_seconds = inference_seconds = storage_seconds = 0.0
-        worker_before = self.batch.timing_ns.sum(axis=0).copy()
+        assert len(attempts) == n and (budget > 0 or n == 0)
+        device = self.device
+        rollout = Rollout.allocate(budget, self.storage_mib, device)
+        def tensor(x, dtype=torch.int64):
+            return torch.tensor(x, device=device, dtype=dtype)
+        seeds = tensor([r["seed"] for r in roots])
+        offsets = tensor([0] + [len(r["candidates"]) for r in roots]).cumsum(0)
+        prefixes = tensor([c for r in roots for c in r["candidates"]] + [0], torch.int32)
+        keys, attempts_tensor = root_words(roots, device), tensor(attempts)
+        current = torch.full((self.size,), -1, device=device, dtype=torch.int64)
+        admission = torch.zeros_like(current)
+        outcomes = torch.zeros(n, device=device, dtype=torch.int64)
+        faults = torch.zeros_like(outcomes)
+        decisions = torch.zeros_like(outcomes)
+        bootstrap = torch.zeros(n, device=device)
+        record_episode = torch.empty(len(rollout.actions), device=device, dtype=torch.int64)
+        record_decision = torch.empty_like(record_episode)
+        next_episode = 0
+        timers = {k: [] for k in ("engine_encode_seconds", "inference_seconds", "storage_seconds")}
 
-        def reset(indices, episode_ids):
-            before = time.perf_counter()
-            self.batch.reset_to_many(indices, [roots[i]["seed"] for i in episode_ids],
-                                     [roots[i]["candidates"] for i in episode_ids])
-            return time.perf_counter() - before
+        def timed(name, operation):
+            if device.type == "cuda":
+                before, after = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+                before.record()
+                result = operation()
+                after.record()
+                timers[name].append((before, after))
+            else:
+                before = time.perf_counter()
+                result = operation()
+                timers[name].append(time.perf_counter() - before)
+            return result
 
-        engine_seconds += reset(slots, slots)
-        while current:
-            if rollout.count == budget:
-                for episode_id in current.values():
-                    episodes[episode_id].update(outcome="budget_cutoff")
-                break
-            active = np.array(list(current), dtype=np.int32)
-            failed = [int(slot) for slot in active if self.batch.faults[slot]]
-            for slot in failed:
-                episode = episodes[current.pop(slot)]
-                episode.update(outcome="fault", fault=int(self.batch.faults[slot]))
-            active = np.array(list(current)[:budget - rollout.count], dtype=np.int32)
-            if len(active):
+        while rollout.count < budget:
+            free = torch.nonzero(current < 0).flatten()
+            count = min(len(free), n - next_episode)
+            if count:
+                slots = free[:count]
+                assigned = torch.arange(next_episode, next_episode + count, device=device)
+                current[slots], admission[slots] = assigned, assigned
+                timed("engine_encode_seconds", lambda: self.batch.reset_tensors(slots, assigned, seeds, offsets, prefixes))
+                next_episode += count
+            failed = torch.nonzero((current >= 0) & (self.arrays["faults"].long() != 0)).flatten()
+            outcomes[current[failed]] = 4
+            faults[current[failed]] = self.arrays["faults"].long()[failed]
+            current[failed] = -1
+            slots = torch.nonzero(current >= 0).flatten()
+            slots = slots[torch.argsort(admission[slots])][:budget - rollout.count]
+            if not len(slots):
+                if next_episode == n:
+                    break
+                continue
+            wave_begin = rollout.count
+            assert wave_begin + len(slots) <= len(rollout.actions), "Compact rollout storage exhausted; increase storage_mib"
+            ids = current[slots]
+            draws = timed("inference_seconds", lambda: uniforms(sampling_seed, keys[ids], attempts_tensor[ids], decisions[ids]))
+            timed("storage_seconds", lambda: store_inputs(self.batch, self.arrays, slots, rollout.data,
+                                                          rollout.offsets[wave_begin:wave_begin + len(slots) + 1]))
+            choices = torch.zeros(self.size, device=device, dtype=torch.int32)
+            mask = torch.zeros(self.size, device=device, dtype=torch.uint8)
+            for active in slots.split(256):
+                ids = current[active]
                 begin, end = rollout.count, rollout.count + len(active)
-                rollout.policy_versions[begin:end] = policy_version
-                before = time.perf_counter()
-                code = self.batch.store(active, rollout.data, rollout.offsets[begin:end + 1])
-                assert code == 0, f"Compact rollout storage exhausted: {code:#x}; increase storage_mib"
-                storage_seconds += time.perf_counter() - before
-                synchronize(self.device)
-                before = time.perf_counter()
-                inputs = network_inputs(self.arrays, self.device, active)
-                logits, value = model(inputs)
-                policy, entropy = distribution(logits, inputs["candidate_mask"])
-                selected = sample(policy, [generators[current[int(slot)]] for slot in active])
-                log_prob = policy.log_prob(torch.tensor(selected, device=self.device)).cpu().numpy()
-                rollout.values[begin:end] = value.cpu().numpy()
-                rollout.entropy[begin:end] = entropy.cpu().numpy()
-                synchronize(self.device)
-                inference_seconds += time.perf_counter() - before
+
+                def infer():
+                    inputs = network_inputs({k: self.arrays[k] for k in FIELDS}, device, active)
+                    logits, value = model(inputs)
+                    policy, entropy = distribution(logits, inputs["candidate_mask"])
+                    choices = sample(policy, draws[begin - wave_begin:end - wave_begin])
+                    rollout.values[begin:end] = value
+                    rollout.entropy[begin:end] = entropy
+                    rollout.log_probs[begin:end] = policy.log_prob(choices)
+                    return choices
+
+                selected = timed("inference_seconds", infer)
                 rollout.actions[begin:end] = selected
-                rollout.log_probs[begin:end] = log_prob
+                rollout.policy_versions[begin:end] = policy_version
+                rollout.global_ids[begin:end] = attempts_tensor[ids] * self.cap + decisions[ids]
                 rollout.screens[begin:end] = self.arrays["ids"][active, 0, 0] - 1
                 rollout.acts[begin:end] = self.arrays["values"][active, 0, 0]
-                for index, slot, choice in zip(range(begin, end), active, selected):
-                    episode = episodes[current[int(slot)]]
-                    episode["records"].append(index)
-                    episode["candidates"].append(int(choice))
-                before = time.perf_counter()
-                self.batch.step_slots(active.tolist(), selected.tolist())
-                engine_seconds += time.perf_counter() - before
-                rollout.rewards[begin:end] = self.batch.rewards[active]
+                record_episode[begin:end], record_decision[begin:end] = ids, decisions[ids]
+                decisions[ids] += 1
+                choices[active], mask[active] = selected, 1
                 rollout.count = end
-                for slot in active:
-                    slot = int(slot)
-                    episode = episodes[current[slot]]
-                    if self.batch.faults[slot]:
-                        episode.update(outcome="fault", fault=int(self.batch.faults[slot]))
-                    elif self.batch.done[slot] or self.batch.truncated[slot]:
-                        bootstrap = 0.0
-                        if self.batch.truncated[slot]:
-                            synchronize(self.device)
-                            before = time.perf_counter()
-                            _, tail_value = model(network_inputs(self.arrays, self.device, [slot]))
-                            bootstrap = float(tail_value.item())
-                            synchronize(self.device)
-                            inference_seconds += time.perf_counter() - before
-                            outcome = "truncated"
-                        else:
-                            outcome = "victory" if self.batch.rewards[slot] == 1 else "death"
-                        episode.update(outcome=outcome, bootstrap=bootstrap)
-                        indices = np.array(episode["records"], dtype=np.int32)
-                        targets, advantages = episode_targets(rollout.rewards[indices], rollout.values[indices],
-                                                              bootstrap, self.gae_lambda)
-                        rollout.returns[indices], rollout.advantages[indices] = targets, advantages
-                        rollout.complete[indices] = outcome != "truncated"
-                        rollout.valid[indices] = True
-                    if episode["outcome"] is not None:
-                        del current[slot]
-            available = [slot for slot in range(self.size) if slot not in current]
-            assigned = list(range(next_episode, min(len(roots), next_episode + len(available))))
-            if assigned and rollout.count < budget:
-                refill = available[:len(assigned)]
-                engine_seconds += reset(refill, assigned)
-                current.update(zip(refill, assigned))
-                next_episode += len(assigned)
-        rollout.episodes = [episode for episode in episodes if episode["outcome"] is not None]
-        rollout.timing = dict(collection_seconds=time.perf_counter() - start,
-                              engine_encode_seconds=engine_seconds, inference_seconds=inference_seconds,
-                              storage_seconds=storage_seconds,
-                              worker_seconds=((self.batch.timing_ns.sum(axis=0) - worker_before) / 1e9).tolist())
+            timed("engine_encode_seconds", lambda: self.batch.step_tensors(choices, mask))
+            rollout.rewards[wave_begin:rollout.count] = self.arrays["rewards"][slots]
+            ids = current[slots]
+            failed = self.arrays["faults"].long()[slots] != 0
+            truncated = self.arrays["truncated"][slots].bool() & ~failed
+            done = self.arrays["done"][slots].bool() & ~failed
+            finished = failed | truncated | done
+            outcomes[ids] = torch.where(failed, 4, torch.where(truncated, 3,
+                torch.where(done, torch.where(self.arrays["rewards"][slots] == 1, 1, 2), 0)))
+            faults[ids] = self.arrays["faults"].long()[slots]
+            for tail in slots[truncated].split(256):
+                if len(tail):
+                    def infer_tail():
+                        _, value = model(network_inputs({k: self.arrays[k] for k in FIELDS}, device, tail))
+                        bootstrap[current[tail]] = value
+                    timed("inference_seconds", infer_tail)
+            current[slots[finished]] = -1
+        live = current[current >= 0]
+        outcomes[live] = 5
+        self.finish_targets(rollout, record_episode, record_decision, outcomes, bootstrap)
+        synchronize(device)
+        outcome_names = (None, "victory", "death", "truncated", "fault", "budget_cutoff")
+        host_outcomes, host_faults, host_bootstrap = outcomes.cpu().tolist(), faults.cpu().tolist(), bootstrap.cpu().tolist()
+        episodes = [dict(seed=r["seed"], root_key=root_key(r), prefix_decisions=len(r["candidates"]),
+                         attempt=a, policy_version=policy_version, candidates=[], records=[],
+                         outcome=outcome_names[o], fault=f)
+                    for r, a, o, f in zip(roots, attempts, host_outcomes, host_faults)]
+        for i, (ep, choice) in enumerate(zip(record_episode[:rollout.count].cpu().tolist(),
+                                            rollout.actions[:rollout.count].cpu().tolist())):
+            episodes[ep]["records"].append(i)
+            episodes[ep]["candidates"].append(choice)
+        for i, episode in enumerate(episodes):
+            if host_outcomes[i] in (1, 2, 3):
+                episode["bootstrap"] = host_bootstrap[i]
+        rollout.episodes = [e for e in episodes if e["outcome"] is not None]
+        rollout.timing = {name: sum(a.elapsed_time(b) / 1000 for a, b in times) if device.type == "cuda"
+                          else sum(times) for name, times in timers.items()}
+        rollout.timing["collection_seconds"] = time.perf_counter() - start
         return rollout
+
+    def finish_targets(self, rollout, episode, decision, outcomes, bootstrap):
+        n = rollout.count
+        if not n:
+            return
+        episode, decision = episode[:n], decision[:n]
+        order = torch.argsort(episode * self.cap + decision)
+        ep = episode[order]
+        rewards, values = rollout.rewards[order].double(), rollout.values[order].double()
+        successor = torch.cat((ep[1:] == ep[:-1], torch.zeros(1, device=self.device, dtype=torch.bool)))
+        tails = torch.where(successor, torch.cat((values[1:], values.new_zeros(1))), bootstrap[ep].double())
+        returns = rewards + torch.where(successor, 0., bootstrap[ep].double())
+        advantages = rewards + tails - values
+        step = 1
+        while step < min(self.cap, n):
+            same = ep[:-step] == ep[step:]
+            r, a = torch.zeros_like(returns), torch.zeros_like(advantages)
+            r[:-step] = torch.where(same, returns[step:], 0.)
+            a[:-step] = torch.where(same, advantages[step:] * self.gae_lambda ** step, 0.)
+            returns, advantages = returns + r, advantages + a
+            step *= 2
+        rollout.returns[order], rollout.advantages[order] = returns.float(), advantages.float()
+        rollout.valid[:n] = (outcomes[episode] >= 1) & (outcomes[episode] <= 3)
+        rollout.complete[:n] = (outcomes[episode] == 1) | (outcomes[episode] == 2)

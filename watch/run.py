@@ -55,7 +55,6 @@ def checkpoint_policy(path, sampling_seed):
     import numpy as np
     import torch
     from train.model import FIELDS, ModelConfig, Policy, distribution, network_inputs
-    from train.rollout import sample
 
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
@@ -73,7 +72,8 @@ def checkpoint_policy(path, sampling_seed):
         inputs = network_inputs(arrays, torch.device("cpu"), np.array([0]))
         logits, _ = model(inputs)
         policy, _ = distribution(logits, inputs["candidate_mask"])
-        return int(sample(policy, [generator])[0])
+        cumulative = policy.probs[0].double().cumsum(0).numpy()
+        return int(np.searchsorted(cumulative / cumulative[-1], generator.random(), side="right"))
 
     return select
 

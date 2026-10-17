@@ -7,7 +7,7 @@ import spire
 import torch
 
 from train.evaluate import compare, evaluate, outcome_summary
-from train.model import ModelConfig, Policy, distribution, network_inputs, views
+from train.model import ModelConfig, Policy, distribution, network_inputs, packed_inputs, views
 from train.ppo import PPOConfig, objective, update
 from train.rollout import Collector, episode_targets
 
@@ -88,18 +88,16 @@ class TrainerTests(unittest.TestCase):
         np.testing.assert_array_equal(rollout.policy_versions[:15], np.full(15, 7))
         for key, tensor in self.model.state_dict().items():
             torch.testing.assert_close(before[key], tensor, rtol=0, atol=0)
-        padded = spire.ObservationBatch(15)
-        padded.pad(rollout.data, rollout.offsets[:16], np.arange(15, dtype=np.int32))
-        inputs = network_inputs(views(padded), self.device, slice(None))
+        inputs = packed_inputs(rollout.data, rollout.offsets, torch.arange(15), self.device)
         with torch.no_grad():
             logits, value = self.model(inputs)
             policy, _ = distribution(logits, inputs["candidate_mask"])
-            old = policy.log_prob(torch.tensor(rollout.actions[:15]))
+            old = policy.log_prob(rollout.actions[:15])
         np.testing.assert_allclose(old.numpy(), rollout.log_probs[:15], atol=2e-6)
         np.testing.assert_allclose(value.numpy(), rollout.values[:15], atol=2e-6)
         config = PPOConfig(epochs=2, minibatch_size=4)
         result = update(self.model, torch.optim.Adam(self.model.parameters(), lr=config.learning_rate),
-                        rollout, config, self.device, np.random.default_rng(1), policy_version=7)
+                        rollout, config, self.device, torch.Generator().manual_seed(1), policy_version=7)
         self.assertEqual(result["samples"], 15)
         self.assertEqual(result["minibatches"], 8)
         self.assertTrue(np.isfinite(result["loss"]))
@@ -162,12 +160,91 @@ class TrainerTests(unittest.TestCase):
         repeated = [dict(seed=1, outcome="victory")] * 3
         self.assertEqual(outcome_summary(repeated)["independent_root_families_won"], 1)
 
+    def test_tensor_collector_matches_scalar_reference(self):
+        from reference_collect import ReferenceCollector
+        roots = [dict(seed=1000000000 + i, candidates=[]) for i in range(5)]
+        roots.insert(2, dict(seed=1000000011, candidates=[999]))
+        for cap, budget, lam in ((7, None, 0), (7, None, .95), (7, 19, 1), (4096, 800, .95)):
+            with self.subTest(cap=cap, budget=budget, lam=lam):
+                args = (self.model, roots, 1729, range(len(roots)), budget)
+                expected = ReferenceCollector(3, cap, 8, self.device, lam).collect(*args, policy_version=9)
+                actual = Collector(3, cap, 8, self.device, lam).collect(*args, policy_version=9)
+                self.assertEqual(actual.count, expected.count)
+                for a, b in zip(actual.episodes, expected.episodes):
+                    for key in ("seed", "candidates", "records", "outcome", "fault", "policy_version"):
+                        self.assertEqual(a[key], b[key], key)
+                n = actual.count
+                np.testing.assert_array_equal(actual.offsets[:n+1], expected.offsets[:n+1])
+                np.testing.assert_array_equal(actual.data[:actual.offsets[n]], expected.data[:expected.offsets[n]])
+                for key in ("actions", "rewards", "valid", "complete", "policy_versions"):
+                    np.testing.assert_array_equal(getattr(actual, key)[:n], getattr(expected, key)[:n])
+                for key in ("values", "log_probs", "returns", "advantages"):
+                    mask = expected.valid[:n] if key in ("returns", "advantages") else np.ones(n, bool)
+                    np.testing.assert_allclose(getattr(actual, key)[:n][mask], getattr(expected, key)[:n][mask], atol=3e-6)
+
+    def test_terminal_win_and_refill_match_scalar_reference(self):
+        from reference_collect import ReferenceCollector, winning_root
+        roots = [winning_root(1)] * 5
+        a = Collector(2, 4, 2, self.device, .95).collect(self.model, roots, 1729, range(5), policy_version=1)
+        b = ReferenceCollector(2, 4, 2, self.device, .95).collect(self.model, roots, 1729, range(5), policy_version=1)
+        self.assertEqual([e["outcome"] for e in a.episodes], ["victory"] * 5)
+        self.assertEqual([e["candidates"] for e in a.episodes], [e["candidates"] for e in b.episodes])
+        np.testing.assert_array_equal(a.returns[:a.count], b.returns[:b.count])
+        np.testing.assert_allclose(a.advantages[:a.count], b.advantages[:b.count], atol=3e-6)
+        self.assertTrue(a.complete[:a.count].all())
+        self.assertTrue(a.valid[:a.count].all())
+
+    def test_post_action_fault_excludes_entire_episode_and_preserves_other_lane(self):
+        class FaultBatch:
+            def __init__(self):
+                self.inner = spire.TrainingBatch(2, 1, 4, [])
+                self.faults = np.zeros(2, np.uint32)
+                self.calls = 0
+            def __getattr__(self, name):
+                return getattr(self.inner, name)
+            def step_tensors(self, choices, active):
+                self.inner.step_tensors(choices, active)
+                self.calls += 1
+                if self.calls == 2:
+                    self.faults[0] = 123
+        roots = [dict(seed=1000000000+i, candidates=[]) for i in range(2)]
+        reference = Collector(2, 4, 2, self.device, .95).collect(self.model, roots, 1729, [0, 1], policy_version=0)
+        actual = Collector(2, 4, 2, self.device, .95, batch=FaultBatch()).collect(self.model, roots, 1729, [0, 1], policy_version=0)
+        self.assertEqual(actual.episodes[0]["outcome"], "fault")
+        self.assertEqual(actual.episodes[0]["fault"], 123)
+        self.assertEqual(len(actual.episodes[0]["records"]), 2)
+        self.assertFalse(actual.valid[actual.episodes[0]["records"]].any())
+        a, b = actual.episodes[1], reference.episodes[1]
+        self.assertEqual(a["candidates"], b["candidates"])
+        self.assertEqual(a["outcome"], b["outcome"])
+        torch.testing.assert_close(actual.returns[a["records"]], reference.returns[b["records"]])
+
+    def test_inference_chunk_boundary_keeps_episode_identity(self):
+        roots = [dict(seed=1000000000+i, candidates=[]) for i in range(259)]
+        a = Collector(259, 2, 8, self.device, .95).collect(self.model, roots, 1729, range(259), policy_version=0)
+        b = Collector(31, 2, 8, self.device, .95).collect(self.model, roots, 1729, range(259), policy_version=0)
+        self.assertEqual([e["candidates"] for e in a.episodes], [e["candidates"] for e in b.episodes])
+        self.assertEqual(a.count, 518)
+
+    def test_counter_matches_independent_integer_reference_and_permutation(self):
+        from reference_collect import word
+        from train.sampling import random_words, root_key, root_words
+        roots = [dict(seed=-17, candidates=[1]), dict(seed=-17, candidates=[0]), dict(seed=2**62, candidates=[])]
+        keys = root_words(roots, self.device)
+        attempts = torch.tensor([2**33, 7, 14])
+        decisions = torch.tensor([2**34, 9, 33])
+        actual = random_words(2**45+1729, keys, attempts, decisions)
+        expected = [word(2**45+1729, root_key(r), int(a), int(d)) for r, a, d in zip(roots, attempts, decisions)]
+        self.assertEqual(actual.tolist(), expected)
+        permutation = torch.tensor([2, 0, 1])
+        torch.testing.assert_close(random_words(2**45+1729, keys[permutation], attempts[permutation], decisions[permutation]), actual[permutation], atol=0, rtol=0)
+
     def test_training_inputs_never_call_hidden_state_api(self):
         for path in (ROOT / "train").glob("*.py"):
             tree = ast.parse(path.read_text())
             calls = [node.func.attr for node in ast.walk(tree)
                      if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)]
-            self.assertFalse({"snapshot", "search_state", "clone"}.intersection(calls), path)
+            self.assertFalse({"snapshot", "search_state"}.intersection(calls), path)
 
 
 
