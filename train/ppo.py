@@ -2,10 +2,9 @@ from dataclasses import dataclass
 import time
 
 import numpy as np
-import spire
 import torch
 
-from .model import distribution, network_inputs, views
+from .model import distribution, length_batches, packed_inputs, record_lengths
 from .rollout import synchronize
 
 
@@ -45,20 +44,12 @@ def update(model, optimizer, rollout, config, device, rng):
     advantages = rollout.advantages[indices]
     normalized = np.zeros(rollout.count, dtype=np.float32)
     normalized[indices] = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-    width = min(config.minibatch_size, len(indices))
-    full = spire.ObservationBatch(width)
-    remainder = len(indices) % width
-    tail = spire.ObservationBatch(remainder) if remainder else full
-    full_views, tail_views = views(full), views(tail)
+    entities, candidates = record_lengths(rollout.data, rollout.offsets, np.arange(rollout.count))
     totals, weight, minibatches = {}, 0, 0
     model.train()
     for _ in range(config.epochs):
-        rng.shuffle(indices)
-        for begin in range(0, len(indices), config.minibatch_size):
-            selected = indices[begin:begin + config.minibatch_size]
-            padded, arrays = (full, full_views) if len(selected) == width else (tail, tail_views)
-            padded.pad(rollout.data, rollout.offsets[:rollout.count + 1], selected)
-            inputs = network_inputs(arrays, device, slice(None))
+        for selected in length_batches(indices, entities, candidates, config.minibatch_size, rng):
+            inputs = packed_inputs(rollout.data, rollout.offsets, selected, device)
             logits, value = model(inputs)
             loss, metrics = objective(logits, value, inputs["candidate_mask"],
                                       torch.tensor(rollout.actions[selected], device=device, dtype=torch.long),
