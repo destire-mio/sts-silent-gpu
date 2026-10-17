@@ -216,7 +216,7 @@ candidate count), and gradient clipping. Single-candidate entropy is zero. `ppo.
 nonnegative sampled approximation `mean(ratio - 1 - log_ratio)` across minibatches, not an
 exact distribution KL or an automatic stopping rule.
 
-Use one CPU thread and keep generated artifacts outside the checkout:
+Use `--torch-threads` to set PyTorch's CPU worker count (default four). Keep generated artifacts outside the checkout:
 
 ```sh
 export SPIRE_PYTHON=/Users/destire/Documents/Codex/2026-09-10/new-chat-2/outputs/spire-lab/.venv/bin/python
@@ -279,15 +279,36 @@ outcomes. Paired reports require identical roots, sampling stream, cap and evalu
   --output /private/tmp/trainer-runs/deep-32-eval.json
 ```
 
-Duplicate seed families are rejected in one evaluation; use one distance per E1 root task.
+Duplicate seed families require explicit independent attempt IDs in the Python evaluator.
 Repeated policy-stream trials on that root are not independent game seeds. The CLI defaults
 to development seeds; sealed evaluation requires an explicit partition and seed selection
 after policy/configuration freeze. These smoke commands do not execute the E1 three-seed
 learning experiment or establish its success thresholds.
 
-`--device cuda` moves the same network and optimizer code to CUDA. Tensor allocation and
-timing synchronization use that device. The current `TrainingBatch` engine remains on CPU;
+`--device cuda` or `--device mps` moves the same network and optimizer code to that device.
+Tensor allocation and timing synchronization use that device. The current `TrainingBatch` engine remains on CPU;
 GPU-resident engine integration and CUDA execution/parity measurements are separate work.
+
+`spire_collect_roots winning` accepts the same root-prefix input as `evaluate`; its family
+budget is per search attempt and its trial argument is the number of independent search
+streams. It emits successful legal prefixes and every attempt's outcome and decision cost.
+The first four streams reproduce E2's four-sample combat search; later streams use sixteen
+samples per beam member. These prefixes discover curriculum roots, never PPO action labels.
+`tools/e1_roots.py --inputs ... --output ...` cuts exact 8/32/128-decision prefixes and measures
+untrained and uniform policies. Its selected train/dev JSON files feed `python -m train.e1`:
+
+```sh
+"$SPIRE_PYTHON" -m train.e1 --roots /private/tmp/e1-runs/roots/train.json \
+  --dev-roots /private/tmp/e1-runs/roots/dev.json --output /private/tmp/e1-runs/init-1729 \
+  --init-seed 1729 --decisions 200000 --deadline-epoch "$E1_DEADLINE_EPOCH"
+```
+
+Set `E1_DEADLINE_EPOCH` to the experiment's absolute Unix deadline. E1 samples families uniformly, then their
+available distance bands uniformly. It records 200 independent policy attempts per fixed
+train/dev evaluation set, with separate distance bands before and after training and overall
+curves at 50k-decision intervals. It stops below the decision budget to finish complete
+episodes, reserves fifteen minutes before the wall deadline, and stops on any fault or
+truncation. Repeated attempts measure these fixed roots, not independent game-seed coverage.
 
 ## Trace replay
 
