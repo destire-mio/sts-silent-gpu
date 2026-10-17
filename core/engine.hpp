@@ -212,7 +212,8 @@ SPIRE_FN inline void open_hand_selection(Game& g, int amount, bool any_number, b
         for (int j = 0; j < g.hand.size; ++j) if (g.hand[j] == item.card) in_hand = true;
         if (!in_hand) g.manager.card_queue.push_back(item);
     }
-
+    // HandCardSelectScreen.prep calls releaseCard, which refreshes the hand.
+    refresh_hand(g);
     g.discard_remaining = amount;
     g.selection_amount = amount;
     g.selection_for_upgrade = for_upgrade;
@@ -222,6 +223,8 @@ SPIRE_FN inline void open_hand_selection(Game& g, int amount, bool any_number, b
     g.selected_cards.clear();
     g.selected_cards_retrieved = false;
     g.screen = Screen::Discard;
+    // HandCardSelectScreen.prep refreshes the hand again after opening the screen.
+    refresh_hand(g);
 }
 SPIRE_FN inline void discard_card(Game& g, int hand_index, bool end_turn) {
     const int card = g.hand.erase(hand_index);
@@ -468,7 +471,8 @@ SPIRE_FN inline void monster_apply_powers(Game& g, int owner) {
             e.source = no_target;
             e.target = owner;
             e.power = id;
-            e.amount = 1;
+            // AbstractMonster.applyPowers uses BackAttackPower.amount as the action amount.
+            e.amount = -1;
             add_top(g, e);
         }
     }
@@ -1654,7 +1658,10 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
     if (g.screen == Screen::Discard) {
         if (action.kind == ActionKind::Choose) {
             SPIRE_ASSERT(g.selected_cards.size < g.selection_amount);
-            g.selected_cards.push_back(g.hand.erase(action.index));
+            const int selected = g.hand.erase(action.index);
+            // HandCardSelectScreen.selectHoveredCard refreshes before moving the selection.
+            refresh_hand(g);
+            g.selected_cards.push_back(selected);
             --g.discard_remaining;
             return;
         }
