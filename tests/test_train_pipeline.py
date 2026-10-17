@@ -18,7 +18,8 @@ class PipelineTests(unittest.TestCase):
         torch.manual_seed(1729)
         model_config = ModelConfig(width=32, layers=1, heads=4, feedforward=64)
         ppo_config = PPOConfig(epochs=2, minibatch_size=7)
-        config = PipelineConfig(workers=2, device="cpu", batch_size=2, decision_cap=4, storage_mib=8, torch_threads=1)
+        config = PipelineConfig(workers=2, device="cpu", batch_size=2, decision_cap=4, storage_mib=8,
+                                torch_threads=1, inference_chunk=1)
         model = Policy(model_config)
         roots = [dict(seed=1000000000 + i, candidates=[]) for i in range(5)]
         expected = Collector(2, 4, 4, torch.device("cpu"), 1).collect(model, roots, 1729, range(5), policy_version=0)

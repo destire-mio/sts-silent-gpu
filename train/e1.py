@@ -15,6 +15,7 @@ from .evaluate import compare, evaluate
 from .metrics import summarize
 from .model import ModelConfig, Policy
 from .pipeline import Pipeline, PipelineConfig
+from .rollout import DEFAULT_INFERENCE_CHUNK
 from .ppo import PPOConfig
 from .sampling import SCHEME
 from .roots import read_roots, validate_training_roots
@@ -51,6 +52,7 @@ def main():
     parser.add_argument("--init-seed", type=int, required=True)
     parser.add_argument("--torch-threads", type=int, default=1)
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--inference-chunk", type=int, default=DEFAULT_INFERENCE_CHUNK)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--decisions", type=int, default=200000)
     parser.add_argument("--deadline-epoch", type=float, required=True)
@@ -61,7 +63,8 @@ def main():
     device = torch.device(args.device)
     model_config, ppo_config = ModelConfig(), PPOConfig()
     model = Policy(model_config).to(device)
-    pipeline_config = PipelineConfig(workers=args.workers, device=args.device, torch_threads=args.torch_threads)
+    pipeline_config = PipelineConfig(workers=args.workers, device=args.device, torch_threads=args.torch_threads,
+                                     inference_chunk=args.inference_chunk)
     roots, dev = read_roots(args.roots), read_roots(args.dev_roots)
     validate_training_roots(roots)
     assert all(partition(root["seed"]) == "dev" for root in dev)
@@ -98,7 +101,8 @@ def main():
             for name, schedule in sets.items():
                 if not full and name != "all":
                     continue
-                result = evaluate(model, schedule, device, 4096, 32, 62001, list(range(200)))
+                result = evaluate(model, schedule, device, 4096, 32, 62001, list(range(200)),
+                                  inference_chunk=args.inference_chunk)
                 result.update(sampling_seed=62001, decision_cap=4096, sampling=SCHEME,
                               observation_version=2, evaluation_engine_commit=config["engine_commit"],
                               train_decisions=total, partition=part, band=name, label=label)

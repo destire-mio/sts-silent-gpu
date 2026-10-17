@@ -325,8 +325,14 @@ Episode identity, decision counts, fault/terminal/truncation handling, refill, b
 and segmented return/GAE scans use device tensors. No per-decision observations, logits, actions
 or episode status arrays are downloaded. Python schedules batched operations; dynamic counts,
 maximum lengths and storage-capacity scalars still synchronize at batch/chunk boundaries.
-Inference uses chunks of at most 256 lanes to bound attention memory, followed by one simulator
-step for the whole wave. There are no Python slot loops during stepping.
+`--inference-chunk` (default 1024, also `PipelineConfig.inference_chunk`) bounds policy and
+truncation-bootstrap batches. Each wave selects lanes in admission order for the decision budget,
+then sorts the selected lanes by entity count before chunking to reduce attention padding.
+Outputs scatter back to their original record positions before one simulator step for the whole
+wave. This is one explicit setting, with no production autotuning. There are no Python slot loops
+during stepping. CPU tests compare chunks 2 and 5 on mixed roots, refill, truncation and budget cuts:
+actions, outcomes, observation bytes, record order and versions agree exactly; network floats and
+derived targets use the existing floating-point tolerance.
 
 Sampling uses Philox4x32-10 computed with integer tensor operations on the device. SHA256 of the
 canonical JSON `[signed_seed,candidate_prefix]` supplies two key words (the first two eight-digit

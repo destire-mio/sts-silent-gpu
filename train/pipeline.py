@@ -13,7 +13,7 @@ from .checkpoint import save_checkpoint
 from .distributed import distributed_policy, worker_device
 from .model import Policy
 from .ppo import update
-from .rollout import Collector
+from .rollout import Collector, DEFAULT_INFERENCE_CHUNK
 
 
 @dataclass
@@ -24,6 +24,7 @@ class PipelineConfig:
     storage_mib: int = 256
     device: str = "cuda"
     torch_threads: int = 1
+    inference_chunk: int = DEFAULT_INFERENCE_CHUNK
 
 
 def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous, output, manifest):
@@ -33,7 +34,8 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
     device = worker_device(config.device, rank)
     model = Policy(model_config).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=ppo_config.learning_rate)
-    collector = Collector(config.batch_size, config.decision_cap, config.storage_mib, device, ppo_config.gae_lambda)
+    collector = Collector(config.batch_size, config.decision_cap, config.storage_mib, device, ppo_config.gae_lambda,
+                          inference_chunk=config.inference_chunk)
     dist.init_process_group("nccl" if device.type == "cuda" else "gloo", init_method=rendezvous,
                             rank=rank, world_size=config.workers, timeout=timedelta(seconds=300))
     wrapped = distributed_policy(model, device)

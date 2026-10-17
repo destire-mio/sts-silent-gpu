@@ -7,7 +7,7 @@ import torch
 
 from tools.evaluation import paired_counts, wilson
 from .model import ModelConfig, Policy
-from .rollout import Collector
+from .rollout import Collector, DEFAULT_INFERENCE_CHUNK
 from .sampling import SCHEME, root_key
 from .roots import natural_roots, read_roots
 from .checkpoint import engine_commit
@@ -40,14 +40,16 @@ def compare(reference, candidate):
 
 
 @torch.no_grad()
-def evaluate(model, roots, device, decision_cap, batch_size, sampling_seed, attempts=None):
+def evaluate(model, roots, device, decision_cap, batch_size, sampling_seed, attempts=None, *,
+             inference_chunk=DEFAULT_INFERENCE_CHUNK):
     assert roots
     if attempts is None:
         assert len({root["seed"] for root in roots}) == len(roots), "Repeated roots require independent attempt IDs"
         attempts = [0] * len(roots)
     assert len(attempts) == len(roots)
     assert len({(root_key(root), attempt) for root, attempt in zip(roots, attempts)}) == len(roots)
-    collector = Collector(min(batch_size, len(roots)), decision_cap, 256, device, 1)
+    collector = Collector(min(batch_size, len(roots)), decision_cap, 256, device, 1,
+                          inference_chunk=inference_chunk)
     rollout = collector.collect(model, roots, sampling_seed, attempts, policy_version=0)
     elapsed = rollout.timing["collection_seconds"]
     return dict(episodes=rollout.episodes, summary=outcome_summary(rollout.episodes), decisions=rollout.count,
@@ -67,6 +69,7 @@ def main():
     parser.add_argument("--sampling-seed", type=int, default=2718)
     parser.add_argument("--decision-cap", type=int, default=3000)
     parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument("--inference-chunk", type=int, default=DEFAULT_INFERENCE_CHUNK)
     parser.add_argument("--device", default="cuda")
     args = parser.parse_args()
     torch.set_num_threads(1)
@@ -79,7 +82,8 @@ def main():
     roots = read_roots(args.roots) if args.roots else natural_roots(args.first_seed, args.episodes, args.partition)
     if args.root_index is not None:
         roots = [roots[args.root_index]]
-    result = evaluate(model, roots, device, args.decision_cap, args.batch_size, args.sampling_seed)
+    result = evaluate(model, roots, device, args.decision_cap, args.batch_size, args.sampling_seed,
+                      inference_chunk=args.inference_chunk)
     result.update(checkpoint=str(args.checkpoint), checkpoint_sha256=hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
                   training_engine_commit=checkpoint["engine_commit"], evaluation_engine_commit=engine_commit(),
                   observation_version=2, sampling_seed=args.sampling_seed, decision_cap=args.decision_cap,

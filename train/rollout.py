@@ -7,6 +7,9 @@ from .model import FIELDS, distribution, network_inputs, store_inputs, views
 from .sampling import root_key, root_words, sample, uniforms
 
 
+DEFAULT_INFERENCE_CHUNK = 1024
+
+
 def synchronize(device):
     if device.type == "cuda":
         torch.cuda.synchronize(device)
@@ -59,13 +62,19 @@ class Rollout:
 
 
 class Collector:
-    def __init__(self, size, decision_cap, storage_mib, device, gae_lambda, *, batch=None):
+    def __init__(self, size, decision_cap, storage_mib, device, gae_lambda, *,
+                 inference_chunk=DEFAULT_INFERENCE_CHUNK, batch=None):
+        assert inference_chunk > 0
         self.batch = make_batch(size, decision_cap, device) if batch is None else batch
         self.arrays = views(self.batch, device)
         for name in ("entity_counts", "candidate_counts", "faults", "done", "truncated", "rewards"):
             self.arrays[name] = torch.as_tensor(getattr(self.batch, name), device=device)
         self.cap, self.storage_mib = decision_cap, storage_mib
         self.device, self.gae_lambda, self.size = device, gae_lambda, size
+        self.inference_chunk = inference_chunk
+
+    def inference_order(self, slots):
+        return torch.argsort(self.arrays["entity_counts"][slots].long(), stable=True).split(self.inference_chunk)
 
     @torch.no_grad()
     def collect(self, model, roots, sampling_seed, attempts, decision_budget=None, *, policy_version):
@@ -135,30 +144,31 @@ class Collector:
                                                           rollout.offsets[wave_begin:wave_begin + len(slots) + 1]))
             choices = torch.zeros(self.size, device=device, dtype=torch.int32)
             mask = torch.zeros(self.size, device=device, dtype=torch.uint8)
-            for active in slots.split(256):
-                ids = current[active]
-                begin, end = rollout.count, rollout.count + len(active)
+            for order in self.inference_order(slots):
+                active = slots[order]
+                records = wave_begin + order
 
                 def infer():
                     inputs = network_inputs({k: self.arrays[k] for k in FIELDS}, device, active)
                     logits, value = model(inputs)
                     policy, entropy = distribution(logits, inputs["candidate_mask"])
-                    choices = sample(policy, draws[begin - wave_begin:end - wave_begin])
-                    rollout.values[begin:end] = value
-                    rollout.entropy[begin:end] = entropy
-                    rollout.log_probs[begin:end] = policy.log_prob(choices)
+                    choices = sample(policy, draws[order])
+                    rollout.values[records] = value
+                    rollout.entropy[records] = entropy
+                    rollout.log_probs[records] = policy.log_prob(choices)
                     return choices
 
                 selected = timed("inference_seconds", infer)
-                rollout.actions[begin:end] = selected
-                rollout.policy_versions[begin:end] = policy_version
-                rollout.global_ids[begin:end] = attempts_tensor[ids] * self.cap + decisions[ids]
-                rollout.screens[begin:end] = self.arrays["ids"][active, 0, 0] - 1
-                rollout.acts[begin:end] = self.arrays["values"][active, 0, 0]
-                record_episode[begin:end], record_decision[begin:end] = ids, decisions[ids]
-                decisions[ids] += 1
+                rollout.actions[records] = selected
                 choices[active], mask[active] = selected, 1
-                rollout.count = end
+            rollout.count += len(slots)
+            records = slice(wave_begin, rollout.count)
+            rollout.policy_versions[records] = policy_version
+            rollout.global_ids[records] = attempts_tensor[ids] * self.cap + decisions[ids]
+            rollout.screens[records] = self.arrays["ids"][slots, 0, 0] - 1
+            rollout.acts[records] = self.arrays["values"][slots, 0, 0]
+            record_episode[records], record_decision[records] = ids, decisions[ids]
+            decisions[ids] += 1
             timed("engine_encode_seconds", lambda: self.batch.step_tensors(choices, mask))
             rollout.rewards[wave_begin:rollout.count] = self.arrays["rewards"][slots]
             ids = current[slots]
@@ -169,7 +179,9 @@ class Collector:
             outcomes[ids] = torch.where(failed, 4, torch.where(truncated, 3,
                 torch.where(done, torch.where(self.arrays["rewards"][slots] == 1, 1, 2), 0)))
             faults[ids] = self.arrays["faults"].long()[slots]
-            for tail in slots[truncated].split(256):
+            tails = slots[truncated]
+            for order in self.inference_order(tails):
+                tail = tails[order]
                 if len(tail):
                     def infer_tail():
                         _, value = model(network_inputs({k: self.arrays[k] for k in FIELDS}, device, tail))

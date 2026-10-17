@@ -236,6 +236,32 @@ class TrainerTests(unittest.TestCase):
         self.assertEqual([e["candidates"] for e in a.episodes], [e["candidates"] for e in b.episodes])
         self.assertEqual(a.count, 518)
 
+    def test_entity_order_and_chunk_sizes_preserve_rollout(self):
+        from reference_collect import winning_root
+        roots = [dict(seed=1000000000, candidates=[]), winning_root(8), winning_root(1),
+                 dict(seed=1000000001, candidates=[]), dict(seed=1000000020, candidates=[999])] * 3
+        for budget in (None, 17):
+            a = Collector(7, 4, 8, self.device, .95, inference_chunk=2)
+            b = Collector(7, 4, 8, self.device, .95, inference_chunk=5)
+            counts = a.arrays["entity_counts"]
+            a.arrays["entity_counts"] = torch.tensor([80, 16, 90, 32, 17, 60, 18])
+            order = a.inference_order(torch.arange(7))
+            self.assertEqual([part.tolist() for part in order], [[1, 4], [6, 3], [5, 0], [2]])
+            a.arrays["entity_counts"] = counts
+            x = a.collect(self.model, roots, 1729, range(len(roots)), budget, policy_version=7)
+            y = b.collect(self.model, roots, 1729, range(len(roots)), budget, policy_version=7)
+            self.assertEqual(x.count, y.count)
+            for left, right in zip(x.episodes, y.episodes):
+                self.assertEqual({k: v for k, v in left.items() if k != "bootstrap"},
+                                 {k: v for k, v in right.items() if k != "bootstrap"})
+            for name in ("offsets", "actions", "rewards", "screens", "acts", "complete", "valid",
+                         "policy_versions", "global_ids"):
+                n = x.count + (name == "offsets")
+                torch.testing.assert_close(getattr(x, name)[:n], getattr(y, name)[:n], atol=0, rtol=0)
+            torch.testing.assert_close(x.data[:x.offsets[x.count]], y.data[:y.offsets[y.count]], atol=0, rtol=0)
+            for name in ("values", "log_probs", "returns", "advantages", "entropy"):
+                torch.testing.assert_close(getattr(x, name)[:x.count], getattr(y, name)[:y.count], atol=3e-6, rtol=3e-6)
+
     def test_counter_matches_independent_integer_reference_and_permutation(self):
         from reference_collect import word
         from train.sampling import random_words, root_key, root_words

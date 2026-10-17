@@ -14,6 +14,7 @@ from .model import ModelConfig, Policy
 from .pipeline import Pipeline, PipelineConfig
 from .ppo import PPOConfig
 from .sampling import SCHEME
+from .rollout import DEFAULT_INFERENCE_CHUNK
 from .roots import natural_roots, read_roots, validate_training_roots
 
 
@@ -28,6 +29,7 @@ def main():
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--decision-cap", type=int, default=3000)
     parser.add_argument("--storage-mib", type=int, default=256)
+    parser.add_argument("--inference-chunk", type=int, default=DEFAULT_INFERENCE_CHUNK)
     parser.add_argument("--init-seed", type=int, default=1729)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--torch-threads", type=int, default=1)
@@ -51,7 +53,7 @@ def main():
     ppo_config = PPOConfig(learning_rate=args.learning_rate, epochs=args.epochs, minibatch_size=args.minibatch_size,
                            gae_lambda=args.gae_lambda, entropy_coefficient=args.entropy_coefficient)
     pipeline_config = PipelineConfig(args.workers, args.batch_size, args.decision_cap,
-                                     args.storage_mib, args.device, args.torch_threads)
+                                     args.storage_mib, args.device, args.torch_threads, args.inference_chunk)
     roots = read_roots(args.roots) if args.roots else natural_roots(args.first_seed, args.updates * args.episodes, "train")
     validate_training_roots(roots)
     args.output.mkdir(parents=True, exist_ok=False)
