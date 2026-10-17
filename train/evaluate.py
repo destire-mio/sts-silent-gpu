@@ -34,8 +34,11 @@ def compare(reference, candidate):
     new = {(e["root_key"], e["attempt"]): e for e in candidate["episodes"]}
     assert old.keys() == new.keys()
     assert all(old[seed]["root_key"] == new[seed]["root_key"] for seed in old)
-    return paired_counts({seed: e["outcome"] for seed, e in old.items()},
-                         {seed: e["outcome"] for seed, e in new.items()})
+    result = paired_counts({key: e["outcome"] for key, e in old.items()},
+                           {key: e["outcome"] for key, e in new.items()})
+    result["attempt_pairs"] = result.pop("roots")
+    result["root_families"] = len({e["seed"] for e in reference["episodes"]})
+    return result
 
 
 @torch.no_grad()

@@ -136,7 +136,10 @@ class TrainerTests(unittest.TestCase):
         self.assertEqual(a, b)
         self.assertGreater(len({tuple(path) for path in a.values()}), 1)
         common = dict(sampling_seed=2718, decision_cap=8, sampling="test", observation_version=2, evaluation_engine_commit="test")
-        self.assertEqual(compare(dict(**first, **common), dict(**second, **common))["truncated_pairs"], 4)
+        paired = compare(dict(**first, **common), dict(**second, **common))
+        self.assertEqual(paired["truncated_pairs"], 4)
+        self.assertEqual(paired["attempt_pairs"], 4)
+        self.assertEqual(paired["root_families"], 1)
         repeated = [dict(seed=1, outcome="victory")] * 3
         self.assertEqual(outcome_summary(repeated)["independent_root_families_won"], 1)
 
