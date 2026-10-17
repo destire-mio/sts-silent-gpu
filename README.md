@@ -48,7 +48,7 @@ From the Mac, after choosing the SSH alias and the accepted E2 root file:
 
 ```sh
 GPU_HOST=your-gpu-alias
-E2_ROOTS=../sts-silent-gpu-agents/artifacts/e2-roots/native-audit.roots.jsonl.gz
+E2_ROOTS=../artifacts/e2-roots/native-audit.roots.jsonl.gz
 rsync -az --exclude='.git/' --exclude='oracle/instance' --exclude='build*/' \
   --exclude='.venv/' --exclude='*.so' --exclude='*.o' \
   --exclude='__pycache__/' --exclude='/traces/' \
@@ -67,8 +67,8 @@ tools/gpu_check.sh "$HOME/spire-gpu-build" "$HOME/spire-e2.roots.jsonl.gz"
 tools/gpu_train_check.sh "$HOME/spire-train-build" "$HOME/spire-e2.roots.jsonl.gz"
 ```
 
-`gpu_train_check.sh` requires eight visible V100s and builds for `sm_70` with one compiler
-process; it downloads nothing. E1 `train.json` can replace the E2 root file for this check.
+`gpu_train_check.sh` requires eight V100s and builds for `sm_70` with one compiler
+process; it downloads nothing. Supply the audited E2 roots (Act 3, Act 4 and Heart starts).
 It runs full CTest, then compares the same fp32 policy on CPU and GPU batches: counter words,
 actions, episode outcomes, compact observation bytes, masks and policy versions must agree
 exactly; log probabilities, values, returns and advantages use `atol=rtol=3e-5`.
@@ -76,22 +76,74 @@ It also tests a non-default CUDA stream, invalid-prefix isolation, refill and pe
 The supplied prefixes and 32 continuation decisions per root exercise the rooted workload;
 this is separate from original-game trace acceptance.
 
-Single-GPU probes use the default 128-wide, four-layer policy, four continuation decisions
-from natural roots, one PPO epoch and global minibatches of 256. Sizes are
-32/128/512/2048/8192/32768/65536/131072/262144, ending at the first memory exhaustion. Each size
-runs in a fresh process after warmup. An OOM is recorded as the memory boundary; any other
-failure aborts. The last successful size is a measured bound for this workload, not a capacity
-promise for longer episodes. JSON records contain collect/update seconds, end-to-end decisions/s,
-CUDA-event engine/encode/inference/storage times, PyTorch peak allocation and device free memory
-(the PyTorch peak excludes native simulator allocation).
+The measurement workload uses the default 128-wide, four-layer policy and **64 continuation
+decisions per attempt**, stopping earlier on terminal outcomes. Supplied roots cycle to the lane
+count. Root replay is included in collection time, but only continuation decisions enter the rate
+numerator. A calibration collection spreads 128 starts across the supplied root list and measures
+compact record sizes along those continuations. Set
+`bytes_per_decision = ceil(1.25 * largest_calibration_record_bytes)`; each probe reserves
+`ceil(lanes * 64 * bytes_per_decision / MiB)` for observation storage.
+Metadata, simulator, policy, optimizer and temporary tensors occupy additional memory. This is a
+measured workload estimate with 25% record-size headroom, not the schema's 10180-byte maximum.
+Storage overflow is an error, not a truncated or discarded rollout. The calibration profile and
+each measured rollout report entity/candidate counts and record-byte mean, p95 and maximum.
 
-The 1/2/8-GPU checks use the same 512 rooted attempts and initialization, cap 16, and two
-collect/update versions. They compare version-0 actions/outcomes across GPU counts, assert zero
-faults and version progression, and report strong scaling against the 1-GPU run, including root
-replay, diagnostics and checkpoint time. Policy inference, gradients and Adam use fp32; V100 bf16 is not used. CDFs, target scans and
+The single-GPU grid is **512/2048/8192/32768 lanes × 512/2048 inference chunk**. Each cell runs in
+a fresh process, warms up collection and one PPO update on the same 128 cycled roots, then measures
+one collection/update version at the requested lane count. PPO uses one epoch and minibatches of
+256. The JSON rows distinguish these numbers:
+
+- `collect_decisions_per_second`: actual decisions divided by collection wall seconds, including
+  reset/prefix replay, inference, sampling, storage, targets and episode audit construction.
+- `total_decisions_per_second`: actual decisions divided by collect-plus-update wall seconds.
+  Single-GPU probes exclude process startup, construction, calibration, warmup and checkpoint I/O.
+- `cuda_event_seconds`: engine/encode (including prefix replay), inference (including sampling and
+  truncation bootstrap), compact storage, and the entire PPO update interval on the CUDA stream.
+  These event intervals include gaps between queued work; they are not a kernel profiler and do
+  not sum to the host wall time. Tensor bookkeeping and host audit work also take time.
+- `native_batch_bytes`: free-memory decrease from `torch.cuda.mem_get_info()` immediately before
+  and after constructing the simulator, after initializing the CUDA context and policy.
+  `native_plus_torch_peak_allocated_bytes` adds this native allocation to PyTorch's measured peak
+  during collect/update. `torch_peak_reserved_bytes` includes allocator caching;
+  `device_peak_used_estimate_bytes` adds that peak and the native batch to pre-batch non-PyTorch
+  device usage. This last field is an estimate, not a sampled device-wide high-water mark.
+  Free bytes before/after batch construction and after collect/update are also retained.
+
+OOM and timed-out cells are labeled separately. A successful top grid row is success; the summary
+records `largest_fitting_lanes` even when no OOM was reached. It is a bound for this root mixture,
+cap and tested chunks, not a capacity promise. The highest **collect-plus-update** rate among
+completed cells selects one lane/chunk pair for all subsequent weak-scaling runs. This benchmark
+selection does not change the trainer's explicit `--inference-chunk` setting.
+
+The **1/2/8-GPU weak-scaling** runs assign that lane count and chunk to **each GPU**, with the same
+cycled root mixture per rank, a full warmup version, then three measured collect/update versions.
+Each version uses new globally unique attempt IDs. The global PPO minibatch is `256 * GPU_count`
+so the average local minibatch and per-GPU work stay fixed; PPO equations are unchanged. Rates
+divide the sum of measured decisions by the sum of measured wall times, excluding startup and
+warmup. They include root replay, audit transport, DDP synchronization and checkpoint publication.
+The summary gives total and average-per-GPU collect and end-to-end rates. `efficiency` is the
+per-GPU end-to-end rate divided by the measured 1-GPU pipeline rate (1 means perfect weak scaling).
+This baseline uses the same pipeline as 2/8 GPUs, rather than the single-process sweep timer.
+
+A separate small check runs the **same 32 attempts, cap 16, version 0** on 1/2/8 GPUs and compares
+actions/outcomes exactly. It supplies no throughput result. Every measured version checks faults
+and policy publication v → v+1. Later weak-scaling policies need not be identical across world sizes
+because their global batches contain different attempts. Policy inference, gradients and Adam use fp32; V100 bf16 is not used. CDFs, target scans and
 normalization accumulators use float64 to preserve their scalar-reference arithmetic.
-Logs and JSON are under the supplied build directory (`training-check.jsonl`,
-`training-throughput.json`, `probe-*.log`, `ddp-*/result.json`). No GPU result is asserted by the
+
+The command targets under 30 minutes and enforces a **1770-second budget including build and
+CTest**. Build/checks share 600 seconds, parity gets 90, calibration 60, and each small exact run
+40. The grid gets at most 420 seconds and 60 seconds per cell, retaining at least 480 seconds for
+weak scaling; its time budget may leave cells unmeasured. Remaining time is divided among the
+1/2/8-GPU runs. Each subprocess owns a process group; timeout kills its workers too. Missing a
+mandatory check produces an `incomplete` summary and nonzero exit. No smaller workload replaces a
+timed-out weak-scaling run. This time target still requires measurement on the server.
+
+Progress JSON prints stage starts, completion and a heartbeat every 15 seconds. The last stdout
+JSON is the final table, also saved as `training-throughput.json`, with grid statuses, selection,
+largest fitting size, 1/2/8-GPU rates and efficiencies. The fresh build directory retains
+`profile.json`, `probe-*.json`, stage `*.log`, `exact-*/result.json` and `ddp-*/result.json` (including
+each warmup/measured version). The supplied roots' SHA256 identifies the workload. No GPU result is asserted by the
 Mac's CPU and device-LLVM tests; NVCC, CUDA execution, memory bounds and NCCL scaling require
 this command on the target server.
 
