@@ -90,5 +90,28 @@ int main() {
     settle_card_obtains(g);
     require(g.run.master_deck.size == 2 && g.run.relics[0].counter == 2 && g.pending_obtains.empty(),
         "scheduled curse acquisition invokes deck hooks on settlement");
+    reset(g, 101);
+    g.run.relics.clear();
+    g.run.master_deck.clear();
+    obtain_card_object(g, create_card(g, make_card(CardId::Strike_G, 1)));
+    obtain_card_object(g, create_card(g, make_card(CardId::Defend_G)));
+    obtain_card_object(g, create_card(g, make_card(CardId::Neutralize)));
+    const uint32_t bottled = g.run.master_deck[0].uuid;
+    const uint32_t remaining = g.run.master_deck[2].uuid;
+    equip_relic(g, RelicId::BottledFlame);
+    g.selected_cards.push_back(0);
+    relic_update(g, 0);
+    equip_relic(g, RelicId::PandorasBox);
+    require(g.run.master_deck.size == 1 && g.run.master_deck[0].uuid == remaining,
+        "Pandora removes starter cards and preserves the other master-card identity");
+    collect_cards(g);
+    const Card& detached = master_card_by_uuid(g, bottled);
+    require(detached.id == CardId::Strike_G && detached.upgrades == 1 && detached.bottle_flame,
+        "the bottle retains its removed upgraded Strike through card collection");
+    require(g.detached_master_cards.size == 1 && g.grid_cards.size == 2,
+        "Pandora retains the referenced card and creates two replacements");
+    unequip_relic(g, RelicId::BottledFlame);
+    collect_cards(g);
+    require(g.detached_master_cards.empty(), "removing the bottle releases its detached card");
     std::printf("sizeof(Game)=%zu\n", sizeof(Game));
 }

@@ -12,7 +12,8 @@ struct PandorasBox : RelicHooks {
         s.calledTransform = false;
         for (int i = 0; i < g.run.master_deck.size;) {
             if (g.run.master_deck[i].id != CardId::Strike_G && g.run.master_deck[i].id != CardId::Defend_G) { ++i; continue; }
-            g.run.master_deck.erase(i);
+            // PandorasBox.onEquip uses Iterator.remove without master-deck callbacks.
+            detach_master_card(g, i);
             ++s.count;
         }
         if (s.count == 0) return;

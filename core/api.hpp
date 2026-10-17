@@ -170,6 +170,7 @@ SPIRE_FN inline void obtain_relic_object(Game&, int);
 SPIRE_FN inline void preview_card_obtain(Game&, Card&);
 SPIRE_FN inline int obtain_card(Game&, Card);
 SPIRE_FN inline void obtain_card_object(Game&, int);
+SPIRE_FN inline Card detach_master_card(Game&, int);
 SPIRE_FN inline void remove_master_card(Game&, int);
 SPIRE_FN inline void increase_max_hp(Game&, int);
 SPIRE_FN inline void decrease_max_hp(Game&, int);

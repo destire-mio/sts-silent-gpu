@@ -278,7 +278,7 @@ SPIRE_FN inline void remove_room_relic_reward(Game& g) {
         break;
     }
 }
-SPIRE_FN inline void remove_master_card(Game& g, int index) {
+SPIRE_FN inline Card detach_master_card(Game& g, int index) {
     Card removed = g.run.master_deck.erase(index);
     bool referenced = g.event.id != EventId::Count && event_referencesMasterCard(g, removed.uuid);
     for (int i = 0; i < g.run.relics.size; ++i) referenced |= relic_referencesMasterCard(g, i, removed.uuid);
@@ -292,6 +292,10 @@ SPIRE_FN inline void remove_master_card(Game& g, int index) {
     } else if (referenced) {
         g.detached_master_cards.push_back(g.cards.add(removed));
     }
+    return removed;
+}
+SPIRE_FN inline void remove_master_card(Game& g, int index) {
+    Card removed = detach_master_card(g, index);
     card_onRemoveFromMasterDeck(g, removed);
     for (int i = next_relic_onMasterDeckChange(g, 0); i < g.run.relics.size; i = next_relic_onMasterDeckChange(g, i + 1)) relic_onMasterDeckChange(g, i);
 }
