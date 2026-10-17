@@ -26,11 +26,12 @@ comparison. Host floating point contraction is disabled. `cuda/batch.cu` provide
 Clang's device-LLVM smoke check covers the engine and observation encoder. NVCC compilation
 and execution on GPU hardware have not been tested on this machine.
 
-## A100 day-one check
+## V100 day-one check
 
-Server target: Linux x86_64 (Ubuntu 22.04 or 24.04), one visible A100 (`sm_80`),
-CUDA Toolkit **12.8.x** including NVCC and development headers, NVIDIA driver **570.124.06
-or newer**, Clang **17 or 18** with libstdc++ development headers, CMake **3.24 or newer**,
+Server target: Linux x86_64 (Ubuntu 22.04 or 24.04), one visible V100 (`sm_70`, 16 GB),
+CUDA Toolkit **12.8.x or 12.9.x** including NVCC and development headers (CUDA 13 no longer
+compiles for `sm_70`), NVIDIA driver **570.124.06 or newer** (the cluster has 580.105.08),
+Clang **17 or 18** with libstdc++ development headers, CMake **3.24 or newer**,
 Make, rsync, and Python **3.12** with development headers. These are the intended toolchain
 bounds, not a GPU validation claim. NVIDIA documents the
 [CUDA 12.8 compiler/OS requirements](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-installation-guide-linux/index.html)
@@ -38,16 +39,16 @@ and [driver versions](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-toolkit-r
 
 The local venv has Python **3.12.13**, `numpy==2.5.3`, `pybind11==3.1.0`, and
 `torch==2.14.0`. Recreate these package versions in a Linux venv; PyTorch must be a CUDA-enabled
-build compatible with the installed driver (check `torch.version.cuda` and
-`torch.cuda.is_available()`). Do not copy the macOS venv. Game JARs, Java, Steam and oracle
+build compatible with the installed driver whose kernels include V100 (check `torch.version.cuda`,
+`torch.cuda.is_available()` and that `torch.cuda.get_arch_list()` contains `sm_70`). Do not copy the macOS venv. Game JARs, Java, Steam and oracle
 runtime assets are not needed to build, replay the committed recordings or run GPU checks.
 No dependencies are downloaded by the check script.
 
 From the Mac, after choosing the SSH alias and the accepted E2 root file:
 
 ```sh
-GPU_HOST=your-a100-alias
-E2_ROOTS=/private/tmp/e2-roots/round3/native-audit.roots.jsonl.gz
+GPU_HOST=your-gpu-alias
+E2_ROOTS=../sts-silent-gpu-agents/artifacts/e2-roots/native-audit.roots.jsonl.gz
 rsync -az --exclude='.git/' --exclude='oracle/instance' --exclude='build*/' \
   --exclude='.venv/' --exclude='*.so' --exclude='*.o' \
   --exclude='__pycache__/' --exclude='/traces/' \
@@ -66,7 +67,7 @@ tools/gpu_check.sh "$HOME/spire-gpu-build" "$HOME/spire-e2.roots.jsonl.gz"
 The build directory must be fresh. The script selects GPU 0, requires CUDA, builds with one
 compiler process, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
 and the Python CUDA test, replays the supplied E2 prefixes on both batch implementations,
-then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048.
+then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048/8192/32768.
 `test_cuda_parity` compares every `Game` byte and every observation/status byte after each
 step of the 12 deep routes and seeded random trajectories, including reset, cap, clone,
 invalid actions and seed exhaustion. Full Game downloads occur in parity tests only.
@@ -89,7 +90,7 @@ The existing `train/` collector still constructs the CPU batch; this API is the 
 entry point, not a claim that the collector has been migrated.
 
 The Mac checks restricted C++ and CUDA device LLVM generation, plus CPU execution of the
-same kernel bodies. NVCC compilation, GPU byte parity, device stack/resource use and A100
+same kernel bodies. NVCC compilation, GPU byte parity, device stack/resource use and V100
 throughput remain day-one checks.
 
 ## Python API
