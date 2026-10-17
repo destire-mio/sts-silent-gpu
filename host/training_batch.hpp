@@ -27,7 +27,7 @@ struct TrainingBatch : ObservationBatch {
     std::vector<int64_t> seed_indices, decision_counts, timing_ns;
 
     TrainingBatch(int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds)
-        : ObservationBatch(size), threads(threads), decision_cap(cap), games(size), actions(size), episodes(size), reveals(size),
+        : ObservationBatch(size), threads(threads), decision_cap(cap), games(size, initial_game), actions(size), episodes(size), reveals(size),
           done(size), truncated(size), reset_mask(size), advanced(size), rewards(size), faults(size),
           seed_indices(size), decision_counts(size), timing_ns(size * 3),
           seeds_(seeds), next_seeds_(size), active_(size), slot_choices_(size) {

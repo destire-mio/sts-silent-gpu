@@ -20,6 +20,8 @@ struct Dispatch {
     uint64_t next_seed = 0;
     Dispatch(int size, uint64_t cap, const std::vector<int64_t>& input)
         : buffers(size, 1, cap, {}), finished(size, 1), active(size, 1), next_seeds(size), seeds(input) {
+        for (threadIdx.x = 0; threadIdx.x < unsigned(size); ++threadIdx.x) spire_training_initialize(state());
+        threadIdx.x = 0;
         step(nullptr);
     }
     cuda::TrainingState state() {
@@ -87,6 +89,7 @@ static void routes() {
     std::puts("CUDA kernel bodies on CPU: 12 routes, 15038 decisions, full Game/observation/status bytes match");
 }
 static void lifecycle() {
+    host::TrainingBatch empty(2, 1, 1, {}); Dispatch no_seeds(2, 1, {}); no_seeds.compare(empty);
     host::TrainingBatch cpu(2, 1, 1, {1, 2}); Dispatch gpu(2, 1, {1, 2});
     int32_t choices[]{-1, 0};
     for (int i = 0; i < 3; ++i) { cpu.step(choices); gpu.step(choices); gpu.compare(cpu); }

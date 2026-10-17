@@ -49,6 +49,7 @@ From the Mac, after choosing the SSH alias and the accepted E2 root file:
 GPU_HOST=your-a100-alias
 E2_ROOTS=/private/tmp/e2-roots/round3/native-audit.roots.jsonl.gz
 rsync -az --exclude='.git/' --exclude='oracle/instance' --exclude='build*/' \
+  --exclude='.venv/' --exclude='*.so' --exclude='*.o' \
   --exclude='__pycache__/' --exclude='/traces/' \
   ./ "$GPU_HOST:sts-silent-gpu/"
 rsync -av "$E2_ROOTS" "$GPU_HOST:spire-e2.roots.jsonl.gz"

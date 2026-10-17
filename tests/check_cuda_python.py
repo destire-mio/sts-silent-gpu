@@ -31,7 +31,6 @@ def check():
     gpu.step_slots([32], [0]); cpu.step_slots([32], [0])
     for field, value in arrays.items():
         assert value.cpu().numpy().tobytes() == getattr(cpu, field).tobytes(), field
-    # A tensor view must keep the allocation owner alive after the batch variable is dropped.
     del gpu
     gc.collect()
     assert arrays['tags'].cpu().numpy().tobytes() == cpu.tags.tobytes()

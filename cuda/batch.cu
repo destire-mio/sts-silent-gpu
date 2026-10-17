@@ -35,6 +35,14 @@ extern "C" __global__ void spire_encode_batch(spire::Game* games, spire::obs::Hi
     faults[i] = spire::obs::encode(games[i], histories[i], observations.view(i), actions[i]).fault;
 }
 
+extern "C" __global__ void spire_training_initialize(spire::cuda::TrainingState b) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= b.size) return;
+    b.games[i] = spire::initial_game;
+    b.histories[i] = {};
+    b.finished[i] = 1;
+}
+
 extern "C" __global__ void spire_training_prepare(spire::cuda::TrainingState b) {
     for (int i = 0; i < b.size; ++i) {
         b.next_seeds[i] = -1;

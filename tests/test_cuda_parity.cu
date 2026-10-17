@@ -76,6 +76,8 @@ static void routes() {
     require(games == 12 && total == 15038, "deep corpus changed");
 }
 static void random_and_lifecycle() {
+    host::TrainingBatch empty(2, 1, 1, {});
+    device::TrainingBatch no_seeds(2, 1, {}); compare(no_seeds, empty);
     std::vector<int64_t> seeds;
     for (int i = 0; i < 4096; ++i) seeds.push_back(1000000000LL + i);
     host::TrainingBatch cpu(33, 1, 97, seeds);
@@ -96,7 +98,7 @@ static void random_and_lifecycle() {
     advance(device_capped, capped, {0, 0}); advance(device_capped, capped, {-1, -1});
     capped.extend_seeds({3, 4}); device_capped.extend_seeds({3, 4});
     advance(device_capped, capped, {-1, -1});
-    std::puts("CUDA random/lifecycle: 8448 decisions, cap/reset/fault isolation/clone/root replay/seed exhaustion PASS");
+    std::puts("CUDA random/lifecycle: 8448 batch slots, cap/reset/fault isolation/clone/root replay/seed exhaustion PASS");
 }
 int main() {
     int devices; device::check(cudaGetDeviceCount(&devices)); require(devices > 0, "CUDA parity requires a GPU");

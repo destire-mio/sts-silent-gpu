@@ -13,7 +13,8 @@ TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& se
       seed_indices(n), decision_counts(n), next_seeds(n), next_seed(1) {
     SPIRE_ASSERT(n > 0 && cap > 0);
     extend_seeds(seeds);
-    check(cudaMemset(finished.data, 1, n));
+    spire_training_initialize<<<(size + 31) / 32, 32>>>(state());
+    check(cudaGetLastError());
     step(nullptr, nullptr);
 }
 TrainingBatch::~TrainingBatch() { if (device_seeds_) check(cudaFree(device_seeds_)); }
