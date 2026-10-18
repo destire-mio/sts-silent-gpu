@@ -153,6 +153,7 @@ def main():
             unit = Path(temporary) / "batch.cu"
             unit.write_text('''#define __CUDACC__ 1
 #define __device__ __attribute__((device))
+#define __constant__ __attribute__((constant))
 #define __host__ __attribute__((host))
 #define __global__ __attribute__((global))
 #define __shared__ __attribute__((shared))
