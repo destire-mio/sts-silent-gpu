@@ -20,7 +20,7 @@ from train.pipeline import Pipeline, PipelineConfig
 from train.ppo import PPOConfig, update
 from train.rollout import Collector, synchronize
 from train.roots import read_roots
-from train.sampling import random_words, root_words
+from train.sampling import random_words, root_key, root_words
 
 
 CAP = 64
@@ -146,6 +146,11 @@ def probe(size, chunk, roots, profile, output):
     synchronize(device)
     free_after, _ = torch.cuda.mem_get_info()
     native = free_before - free_after
+    group = cycled_roots(roots, size)
+    preparation_start = time.perf_counter()
+    collector.prepare_roots(group, [root_key(root) for root in group])
+    synchronize(device)
+    preparation_seconds = time.perf_counter() - preparation_start
     warm = collector.collect(model, cycled_roots(roots, 128), 1729, range(128), policy_version=0)
     assert not any(e['outcome'] == 'fault' for e in warm.episodes)
     update(model, optimizer, warm, config, device, rng, policy_version=0)
@@ -154,7 +159,7 @@ def probe(size, chunk, roots, profile, output):
     torch.cuda.reset_peak_memory_stats()
     synchronize(device)
     before = time.perf_counter()
-    rollout = collector.collect(model, cycled_roots(roots, size), 1729, range(128, 128 + size), policy_version=1)
+    rollout = collector.collect(model, group, 1729, range(128, 128 + size), policy_version=1)
     collected = time.perf_counter()
     free_collected, _ = torch.cuda.mem_get_info()
     event_start, event_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
@@ -168,7 +173,7 @@ def probe(size, chunk, roots, profile, output):
     peak_allocated, peak_reserved = torch.cuda.max_memory_allocated(), torch.cuda.max_memory_reserved()
     cache_bytes = sum(cache.bytes for cache in collector.root_caches)
     record = dict(check='single_gpu', status='fit', lanes_per_gpu=size, inference_chunk=chunk,
-        decisions=rollout.count, decision_cap=CAP, policy_version=1,
+        decisions=rollout.count, decision_cap=CAP, policy_version=1, root_preparation_seconds=preparation_seconds,
         **rates(rollout.count, collected - before, elapsed), collection_seconds=collected - before,
         update_seconds=elapsed - (collected - before), total_seconds=elapsed,
         cuda_event_seconds={**{k: v for k, v in rollout.timing.items() if k != 'collection_seconds'},
