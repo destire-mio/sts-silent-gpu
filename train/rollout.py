@@ -86,7 +86,7 @@ class Collector:
     def prepare_roots(self, roots, keys):
         fresh = {}
         for key, root in zip(keys, roots):
-            if key not in self.root_locations:
+            if root["candidates"] and key not in self.root_locations:
                 fresh[key] = root
         if not fresh:
             return
@@ -107,13 +107,25 @@ class Collector:
         self.root_caches.append(cache)
         self.root_locations.update((key, (index, i)) for i, key in enumerate(fresh))
 
-    def reset_roots(self, slots, keys):
+    def reset_roots(self, slots, roots, keys):
         groups = {}
-        for i, key in enumerate(keys):
-            cache, root = self.root_locations[key]
+        natural, seeds = [], []
+        for i, (root, key) in enumerate(zip(roots, keys)):
+            if not root["candidates"]:
+                natural.append(i)
+                seeds.append(root["seed"])
+                continue
+            cache, index = self.root_locations[key]
             positions, indices = groups.setdefault(cache, ([], []))
             positions.append(i)
-            indices.append(root)
+            indices.append(index)
+        if natural:
+            positions = torch.tensor(natural, device=self.device)
+            indices = torch.arange(len(natural), device=self.device)
+            seeds = torch.tensor(seeds, device=self.device, dtype=torch.int64)
+            offsets = torch.zeros(len(natural) + 1, device=self.device, dtype=torch.int64)
+            prefixes = torch.zeros(1, device=self.device, dtype=torch.int32)
+            self.batch.reset_tensors(slots[positions], indices, seeds, offsets, prefixes)
         for cache, (positions, indices) in groups.items():
             positions = torch.tensor(positions, device=self.device)
             indices = torch.tensor(indices, device=self.device)
@@ -170,7 +182,8 @@ class Collector:
                 slots = free[:count]
                 assigned = torch.arange(next_episode, next_episode + count, device=device)
                 current[slots], admission[slots] = assigned, assigned
-                timed("reset_seconds", lambda: self.reset_roots(slots, root_keys[next_episode:next_episode + count]))
+                timed("reset_seconds", lambda: self.reset_roots(slots, roots[next_episode:next_episode + count],
+                                                               root_keys[next_episode:next_episode + count]))
                 next_episode += count
             failed = torch.nonzero((current >= 0) & (self.arrays["faults"].long() != 0)).flatten()
             outcomes[current[failed]] = 4

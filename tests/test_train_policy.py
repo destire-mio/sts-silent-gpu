@@ -130,7 +130,7 @@ class TrainerTests(unittest.TestCase):
         collector = Collector(2, 4, 2, self.device, .95)
         first = collector.collect(self.model, roots * 2, 1729, range(4), policy_version=0)
         second = collector.collect(self.model, roots * 2, 1729, range(4), policy_version=0)
-        self.assertEqual([cache.size for cache in collector.root_caches], [2])
+        self.assertEqual([cache.size for cache in collector.root_caches], [1])
         self.assertEqual(first.episodes, second.episodes)
         for name, value in first.metrics_host().items():
             self.assertEqual(value.tobytes(), second.metrics_host()[name].tobytes(), name)
@@ -140,10 +140,20 @@ class TrainerTests(unittest.TestCase):
         changed = [roots[1], dict(seed=1000000001, candidates=[]), roots[0]]
         actual = collector.collect(self.model, changed, 1729, range(3), policy_version=0)
         expected = Collector(2, 4, 2, self.device, .95).collect(self.model, changed, 1729, range(3), policy_version=0)
-        self.assertEqual([cache.size for cache in collector.root_caches], [2, 1])
+        self.assertEqual([cache.size for cache in collector.root_caches], [1])
         self.assertEqual(actual.episodes, expected.episodes)
         for name, value in actual.metrics_host().items():
             self.assertEqual(value.tobytes(), expected.metrics_host()[name].tobytes(), name)
+
+    def test_natural_roots_do_not_grow_the_cache(self):
+        collector = Collector(3, 4, 2, self.device, .95)
+        for version in range(8):
+            roots = [dict(seed=1000000000 + 8 * version + i, candidates=[]) for i in range(8)]
+            rollout = collector.collect(self.model, roots, 1729, range(8), policy_version=version)
+            self.assertEqual(rollout.count, 32)
+            self.assertEqual(len(rollout.episodes), 8)
+            self.assertEqual(collector.root_caches, [])
+            self.assertEqual(collector.root_locations, {})
 
     def test_fault_is_quarantined_without_losing_other_episode(self):
         roots = [dict(seed=1000000000, candidates=[999]), dict(seed=1000000001, candidates=[])]
