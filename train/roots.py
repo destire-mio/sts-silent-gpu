@@ -3,8 +3,6 @@ import hashlib
 import json
 from pathlib import Path
 
-import spire
-
 from tools.evaluation import partition
 
 
@@ -29,6 +27,8 @@ def validate_training_roots(roots):
 
 
 def route_roots(inventory, seed, distances):
+    import spire
+
     entry = next(game for game in json.loads(Path(inventory).read_text())["games"] if game["seed"] == seed)
     assert entry["terminal"] == "victory"
     source = Path(entry["scenario"]).read_bytes()
