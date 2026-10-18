@@ -1,15 +1,20 @@
 from collections import Counter
 from dataclasses import asdict
+import gzip
+import json
 from pathlib import Path
 import tempfile
+import time
+from types import SimpleNamespace
 import unittest
 
 import torch
 
-from train.curriculum import Curriculum, family_statistics, paired_statistics
+from train.curriculum import Curriculum, assess, family_statistics, paired_statistics
 from train.model import ModelConfig
 from train.pipeline import Pipeline, PipelineConfig
 from train.ppo import PPOConfig
+from train.sampling import root_key
 
 
 def roots():
@@ -74,6 +79,41 @@ class CurriculumTests(unittest.TestCase):
         self.assertEqual(paired_statistics(summary, summary)["mean_change"], 0)
         with self.assertRaises(AssertionError):
             family_statistics([dict(seed=3000000000, outcome="victory")])
+
+    def test_assessment_preserves_fault_reproduction_before_aborting(self):
+        root = dict(seed=1000000000, candidates=[1, 2])
+        episode = dict(seed=root["seed"], root_key=root_key(root), attempt=0, candidates=[3], records=[0],
+                       outcome="fault", fault=17)
+        pipeline = SimpleNamespace(config=SimpleNamespace(workers=1), version=0,
+            evaluate=lambda *_: dict(episodes=[episode], decisions=1, seconds=0., memory=[dict(rank=0)]))
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            with self.assertRaisesRegex(AssertionError, "Evaluation engine fault"):
+                assess(pipeline, {"train/k8": [root]}, output, "initial", 0, {}, time.time() + 3600)
+            saved = json.loads((output / "fault-initial-train-k8-0.json").read_text())
+            self.assertEqual(saved[0]["root"], root)
+            self.assertEqual(saved[0]["episode"]["candidates"], [3])
+            self.assertEqual(saved[0]["episode"]["fault"], 17)
+
+    def test_assessment_writes_statistics_and_complete_policy_paths(self):
+        root = dict(seed=1000000000, candidates=[1, 2])
+        episodes = [dict(seed=root["seed"], root_key=root_key(root), attempt=i, candidates=[3], records=[i],
+                         outcome="death", fault=0) for i in range(4)]
+        pipeline = SimpleNamespace(config=SimpleNamespace(workers=1), version=0,
+            evaluate=lambda *_: dict(episodes=episodes, decisions=4, seconds=.1, memory=[dict(rank=0, peak_allocated_bytes=128)]))
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            statistics, decisions, seconds, complete = assess(
+                pipeline, {"train/k8": [root]}, output, "initial", 0, {}, time.time() + 3600)
+            self.assertTrue(complete)
+            self.assertEqual((decisions, seconds), (4, .1))
+            self.assertEqual(statistics["train/k8"]["attempts"], 4)
+            record = json.loads((output / "learning-curve.jsonl").read_text())
+            self.assertEqual(record["peak_allocated_bytes_by_rank"], [128])
+            with gzip.open(output / "eval-initial-train-k8.jsonl.gz", "rt") as stream:
+                paths = [json.loads(line) for line in stream]
+            self.assertEqual([e["candidates"] for e in paths], [[3]] * 4)
+            self.assertTrue(all("records" not in e for e in paths))
 
     def test_pipeline_evaluation_and_curriculum_resume(self):
         torch.set_num_threads(1)

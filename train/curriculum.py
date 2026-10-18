@@ -189,7 +189,12 @@ def assess(pipeline, sets, output, label, total, initial, deadline):
             for memory in result["memory"]:
                 peaks[memory["rank"]] = max(peaks[memory["rank"]], memory.get("peak_allocated_bytes", 0))
             episodes.extend({k: v for k, v in e.items() if k != "records"} for e in result["episodes"])
-            assert not any(e["fault"] for e in result["episodes"]), "Evaluation engine fault; stop before training"
+            faults = [dict(episode={k: v for k, v in e.items() if k != "records"},
+                           root=next(r for r, _ in group if root_key(r) == e["root_key"]))
+                      for e in result["episodes"] if e["fault"]]
+            if faults:
+                (output / f"fault-{label}-{name.replace('/', '-')}-{begin}.json").write_text(json.dumps(faults) + "\n")
+            assert not faults, "Evaluation engine fault; stop before training"
         summary = family_statistics(episodes)
         if name in initial:
             summary["paired_initial"] = paired_statistics(initial[name], summary)
@@ -202,7 +207,7 @@ def assess(pipeline, sets, output, label, total, initial, deadline):
             for episode in episodes:
                 stream.write(json.dumps(episode) + "\n")
         results[name] = summary
-        print(json.dumps(dict(event="evaluation", **record, summary={k: v for k, v in summary.items() if k != "per_family"})), flush=True)
+        print(json.dumps(dict(record, event="evaluation", summary={k: v for k, v in summary.items() if k != "per_family"})), flush=True)
     return results, count, seconds, True
 
 
