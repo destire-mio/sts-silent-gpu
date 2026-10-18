@@ -309,6 +309,21 @@ PYBIND11_MODULE(spire, module) {
         .def("__len__", [](const EnvironmentBatch& batch) { return batch.games.size(); });
     module.attr("encounters") = py::cast(std::vector<std::string>(std::begin(encounter_names), std::end(encounter_names)));
     auto training = py::class_<TrainingBatch>(module, "TrainingBatch");
+    root_cache_methods<spire::host::RootCache>(module, training,
+        [](TrainingBatch& b, spire::host::RootCache& cache, py::object slots, py::object roots) {
+            const int count = slots.attr("numel")().cast<int>();
+            auto* s = tensor_pointer<int64_t>(slots, "int64", -1);
+            auto* r = tensor_pointer<int64_t>(roots, "int64", -1);
+            py::gil_scoped_release release;
+            b.cache_roots(cache, s, r, count);
+        },
+        [](TrainingBatch& b, const spire::host::RootCache& cache, py::object slots, py::object roots) {
+            const int count = slots.attr("numel")().cast<int>();
+            auto* s = tensor_pointer<int64_t>(slots, "int64", -1);
+            auto* r = tensor_pointer<int64_t>(roots, "int64", -1);
+            py::gil_scoped_release release;
+            b.reset_cached(cache, s, r, count);
+        });
     tensor_methods(training,
         [](TrainingBatch& b, py::object choices, py::object active) {
             auto* c = tensor_pointer<int32_t>(choices, "int32", -1);

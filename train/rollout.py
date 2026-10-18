@@ -24,6 +24,15 @@ def make_batch(size, cap, device):
     return spire.TrainingBatch(size, 1, cap, [])
 
 
+def make_root_cache(size, device):
+    if device.type == "cuda":
+        import spire_gpu
+        return spire_gpu.RootCache(size)
+    import spire
+    assert device.type == "cpu"
+    return spire.RootCache(size)
+
+
 @dataclass
 class Rollout:
     data: torch.Tensor
@@ -72,6 +81,43 @@ class Collector:
         self.cap, self.storage_mib = decision_cap, storage_mib
         self.device, self.gae_lambda, self.size = device, gae_lambda, size
         self.inference_chunk = inference_chunk
+        self.root_caches, self.root_locations = [], {}
+
+    def prepare_roots(self, roots, keys):
+        fresh = {}
+        for key, root in zip(keys, roots):
+            if key not in self.root_locations:
+                fresh[key] = root
+        if not fresh:
+            return
+        index = len(self.root_caches)
+        cache = make_root_cache(len(fresh), self.device)
+        new_roots = list(fresh.values())
+        seeds = torch.tensor([r["seed"] for r in new_roots], device=self.device, dtype=torch.int64)
+        offsets = torch.tensor([0] + [len(r["candidates"]) for r in new_roots],
+                               device=self.device, dtype=torch.int64).cumsum(0)
+        prefixes = torch.tensor([c for r in new_roots for c in r["candidates"]] + [0],
+                                device=self.device, dtype=torch.int32)
+        for begin in range(0, len(new_roots), self.size):
+            count = min(self.size, len(new_roots) - begin)
+            slots = torch.arange(count, device=self.device)
+            indices = torch.arange(begin, begin + count, device=self.device)
+            self.batch.reset_tensors(slots, indices, seeds, offsets, prefixes)
+            self.batch.cache_roots_tensors(cache, slots, indices)
+        self.root_caches.append(cache)
+        self.root_locations.update((key, (index, i)) for i, key in enumerate(fresh))
+
+    def reset_roots(self, slots, keys):
+        groups = {}
+        for i, key in enumerate(keys):
+            cache, root = self.root_locations[key]
+            positions, indices = groups.setdefault(cache, ([], []))
+            positions.append(i)
+            indices.append(root)
+        for cache, (positions, indices) in groups.items():
+            positions = torch.tensor(positions, device=self.device)
+            indices = torch.tensor(indices, device=self.device)
+            self.batch.reset_cached_tensors(self.root_caches[cache], slots[positions], indices)
 
     def inference_order(self, slots):
         return torch.argsort(self.arrays["entity_counts"][slots].long(), stable=True).split(self.inference_chunk)
@@ -89,9 +135,7 @@ class Collector:
         rollout = Rollout.allocate(budget, self.storage_mib, device)
         def tensor(x, dtype=torch.int64):
             return torch.tensor(x, device=device, dtype=dtype)
-        seeds = tensor([r["seed"] for r in roots])
-        offsets = tensor([0] + [len(r["candidates"]) for r in roots]).cumsum(0)
-        prefixes = tensor([c for r in roots for c in r["candidates"]] + [0], torch.int32)
+        root_keys = [root_key(root) for root in roots]
         keys, attempts_tensor = root_words(roots, device), tensor(attempts)
         current = torch.full((self.size,), -1, device=device, dtype=torch.int64)
         admission = torch.zeros_like(current)
@@ -102,7 +146,8 @@ class Collector:
         record_episode = torch.empty(len(rollout.actions), device=device, dtype=torch.int64)
         record_decision = torch.empty_like(record_episode)
         next_episode = 0
-        timers = {k: [] for k in ("reset_seconds", "step_encode_seconds", "inference_seconds", "storage_seconds")}
+        timers = {k: [] for k in ("root_prepare_seconds", "reset_seconds", "step_encode_seconds",
+                                "inference_seconds", "storage_seconds")}
 
         def timed(name, operation):
             if device.type == "cuda":
@@ -117,6 +162,7 @@ class Collector:
                 timers[name].append(time.perf_counter() - before)
             return result
 
+        timed("root_prepare_seconds", lambda: self.prepare_roots(roots, root_keys))
         while rollout.count < budget:
             free = torch.nonzero(current < 0).flatten()
             count = min(len(free), n - next_episode)
@@ -124,7 +170,7 @@ class Collector:
                 slots = free[:count]
                 assigned = torch.arange(next_episode, next_episode + count, device=device)
                 current[slots], admission[slots] = assigned, assigned
-                timed("reset_seconds", lambda: self.batch.reset_tensors(slots, assigned, seeds, offsets, prefixes))
+                timed("reset_seconds", lambda: self.reset_roots(slots, root_keys[next_episode:next_episode + count]))
                 next_episode += count
             failed = torch.nonzero((current >= 0) & (self.arrays["faults"].long() != 0)).flatten()
             outcomes[current[failed]] = 4

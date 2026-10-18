@@ -14,6 +14,16 @@ struct Episode {
     bool finished = false;
 };
 
+struct RootCache {
+    const int size;
+    std::vector<Game> games;
+    std::vector<obs::History> histories;
+    std::vector<uint32_t> faults;
+    explicit RootCache(int count) : size(count), games(count), histories(count), faults(count) {
+        SPIRE_ASSERT(count > 0);
+    }
+};
+
 struct TrainingBatch : ObservationBatch {
     const int threads;
     const uint64_t decision_cap;
@@ -104,6 +114,27 @@ struct TrainingBatch : ObservationBatch {
             replay(slots[j], seeds[j], candidates[j]);
         }
     }
+    void cache_roots(RootCache& cache, const int64_t* slots, const int64_t* roots, int count) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int j = 0; j < count; ++j) {
+            const auto i = slots[j], root = roots[j];
+            cache.games[root] = games[i]; cache.histories[root] = reveals[i]; cache.faults[root] = faults[i];
+        }
+    }
+    void reset_cached(const RootCache& cache, const int64_t* slots, const int64_t* roots, int count) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int j = 0; j < count; ++j) {
+            const auto i = slots[j], root = roots[j];
+            const auto start = Clock::now();
+            games[i] = cache.games[root]; reveals[i] = cache.histories[root];
+            episodes[i] = Episode{}; seed_indices[i] = -1; decision_counts[i] = 0;
+            rewards[i] = 0; done[i] = truncated[i] = advanced[i] = 0; reset_mask[i] = 1; faults[i] = 0;
+            timing_ns[i * 3] += elapsed(start);
+            if (cache.faults[root]) fail(i, cache.faults[root]);
+            else publish(i);
+        }
+    }
+
 private:
     void dispatch() {
         for (int i = 0; i < size; ++i) {

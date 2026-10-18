@@ -22,6 +22,14 @@ template<class T> struct Buffer {
     void download(T* target) const { if (size) check(cudaMemcpy(target, data, size * sizeof(T), cudaMemcpyDeviceToHost)); }
 };
 
+struct RootCache {
+    const int size, device;
+    Buffer<Game> games;
+    Buffer<obs::History> histories;
+    Buffer<uint32_t> faults;
+    explicit RootCache(int size);
+};
+
 struct TrainingBatch {
     const int size;
     const uint64_t decision_cap;
@@ -48,6 +56,8 @@ struct TrainingBatch {
     void step_tensors(const int32_t* selected, const uint8_t* active, cudaStream_t stream);
     void reset_tensors(const int64_t* slots, const int64_t* roots, int count, const int64_t* seeds,
                        const int64_t* offsets, const int32_t* candidates, cudaStream_t stream);
+    void cache_roots(RootCache& cache, const int64_t* slots, const int64_t* roots, int count, cudaStream_t stream);
+    void reset_cached(const RootCache& cache, const int64_t* slots, const int64_t* roots, int count, cudaStream_t stream);
     void step_slots(const std::vector<int32_t>& slots, const std::vector<int32_t>& selected);
     void reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates);
     void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,

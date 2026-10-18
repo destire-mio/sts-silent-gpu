@@ -145,7 +145,7 @@ class Pipeline:
             records += part["count"]
         metrics = {name: np.concatenate([p["metrics"][name] for p in parts]) for name in parts[0]["metrics"]}
         timing = {name: sum(p["timing"][name] for p in parts) for name in
-                  ("reset_seconds", "step_encode_seconds", "inference_seconds", "storage_seconds")}
+                  ("root_prepare_seconds", "reset_seconds", "step_encode_seconds", "inference_seconds", "storage_seconds")}
         timing["collection_seconds"] = time.perf_counter() - start
         result = SimpleNamespace(**metrics, count=records, next_attempt=max(attempts) + 1,
                                  episodes=sorted(episodes, key=lambda e: e["attempt"]),

@@ -59,5 +59,35 @@ def check():
     print('CUDA Python: zero-copy tensors, non-default stream, lifecycle, roots and owner lifetime PASS')
 
 
+def check_root_cache():
+    cpu = spire.TrainingBatch(3, 1, 64, [])
+    gpu = spire_gpu.TrainingBatch(3, 64, [])
+    host_cache, device_cache = spire.RootCache(3), spire_gpu.RootCache(3)
+    stream = torch.cuda.Stream()
+    host_args = [torch.tensor(x, dtype=t) for x, t in (([0, 1, 2], torch.int64), ([0, 1, 2], torch.int64),
+        ([123, -1, 1], torch.int64), ([0, 1, 2, 3], torch.int64), ([0, 0, 999], torch.int32))]
+    cpu.reset_tensors(*host_args)
+    cpu.cache_roots_tensors(host_cache, *host_args[:2])
+    with torch.cuda.stream(stream):
+        gpu_args = [x.cuda() for x in host_args]
+        gpu.reset_tensors(*gpu_args)
+        gpu.cache_roots_tensors(device_cache, *gpu_args[:2])
+    stream.synchronize()
+    expected = {field: getattr(cpu, field).copy() for field in FIELDS}
+    for roots in ([2, 0, 1], [0, 0, 2], [0, 1, 2]):
+        slots, indices = torch.arange(3), torch.tensor(roots)
+        cpu.reset_cached_tensors(host_cache, slots, indices)
+        with torch.cuda.stream(stream):
+            gpu.reset_cached_tensors(device_cache, slots.cuda(), indices.cuda())
+        stream.synchronize()
+        for field in FIELDS:
+            reference = expected[field][roots]
+            assert getattr(cpu, field).tobytes() == reference.tobytes(), field
+            assert torch.as_tensor(getattr(gpu, field), device='cuda').cpu().numpy().tobytes() == reference.tobytes(), field
+    assert host_cache.bytes == device_cache.bytes
+    print('CUDA root cache Python: permutation, repeated roots, faults and non-default stream PASS')
+
+
 if __name__ == '__main__':
     check()
+    check_root_cache()

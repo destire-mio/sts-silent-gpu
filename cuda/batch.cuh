@@ -23,3 +23,7 @@ extern "C" __global__ void spire_training_refill(spire::cuda::TrainingState, con
     int, const int64_t*, const int64_t*, const int32_t*);
 extern "C" __global__ void spire_training_store(spire::cuda::TrainingState, const int64_t*, int,
     uint8_t*, const int64_t*);
+extern "C" __global__ void spire_training_cache_roots(spire::cuda::TrainingState, spire::Game*,
+    spire::obs::History*, uint32_t*, const int64_t*, const int64_t*, int);
+extern "C" __global__ void spire_training_reset_cached(spire::cuda::TrainingState, const spire::Game*,
+    const spire::obs::History*, const uint32_t*, const int64_t*, const int64_t*, int);

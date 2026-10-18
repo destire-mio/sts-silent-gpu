@@ -4,6 +4,9 @@
 
 namespace spire::cuda {
 static int current_device() { int device; check(cudaGetDevice(&device)); return device; }
+RootCache::RootCache(int n) : size(n), device(current_device()), games(n), histories(n), faults(n) {
+    SPIRE_ASSERT(n > 0);
+}
 TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& seeds)
     : size(n), decision_cap(cap), device(current_device()), games(n), actions(n), histories(n),
       tags(n * obs::tag_rows * obs::entity_capacity), candidate_kinds(n * obs::candidate_capacity),
@@ -62,6 +65,24 @@ void TrainingBatch::reset_tensors(const int64_t* slots, const int64_t* roots, in
     const int64_t* seeds, const int64_t* offsets, const int32_t* candidates, cudaStream_t stream) {
     if (!count) return;
     spire_training_refill<<<(count + 31) / 32, 32, 0, stream>>>(state(), slots, roots, count, seeds, offsets, candidates);
+    check(cudaGetLastError());
+    spire_training_faults<<<(size + 31) / 32, 32, 0, stream>>>(state());
+    check(cudaGetLastError());
+}
+void TrainingBatch::cache_roots(RootCache& cache, const int64_t* slots, const int64_t* roots,
+                                int count, cudaStream_t stream) {
+    SPIRE_ASSERT(cache.device == device);
+    if (!count) return;
+    spire_training_cache_roots<<<(count + 31) / 32, 32, 0, stream>>>(state(), cache.games.data,
+        cache.histories.data, cache.faults.data, slots, roots, count);
+    check(cudaGetLastError());
+}
+void TrainingBatch::reset_cached(const RootCache& cache, const int64_t* slots, const int64_t* roots,
+                                 int count, cudaStream_t stream) {
+    SPIRE_ASSERT(cache.device == device);
+    if (!count) return;
+    spire_training_reset_cached<<<(count + 31) / 32, 32, 0, stream>>>(state(), cache.games.data,
+        cache.histories.data, cache.faults.data, slots, roots, count);
     check(cudaGetLastError());
     spire_training_faults<<<(size + 31) / 32, 32, 0, stream>>>(state());
     check(cudaGetLastError());

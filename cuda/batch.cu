@@ -156,6 +156,27 @@ extern "C" __global__ void spire_training_refill(spire::cuda::TrainingState b, c
     replay_root(b, i, seeds[root], offsets[root], offsets[root + 1], candidates);
 }
 
+extern "C" __global__ void spire_training_cache_roots(spire::cuda::TrainingState b, spire::Game* games,
+    spire::obs::History* histories, uint32_t* faults, const int64_t* slots, const int64_t* roots, int count) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j >= count) return;
+    const auto i = slots[j], root = roots[j];
+    games[root] = b.games[i]; histories[root] = b.histories[i]; faults[root] = b.faults[i];
+}
+
+extern "C" __global__ void spire_training_reset_cached(spire::cuda::TrainingState b, const spire::Game* games,
+    const spire::obs::History* histories, const uint32_t* faults, const int64_t* slots, const int64_t* roots, int count) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j >= count) return;
+    const auto i = slots[j], root = roots[j];
+    b.games[i] = games[root]; b.histories[i] = histories[root];
+    b.active[i] = 1; b.seed_indices[i] = -1; b.decision_counts[i] = 0; b.finished[i] = 0;
+    b.rewards[i] = 0; b.done[i] = b.truncated[i] = b.advanced[i] = 0;
+    b.reset_mask[i] = 1; b.faults[i] = 0;
+    if (faults[root]) b.fail(i, faults[root]);
+    else b.publish(i);
+}
+
 extern "C" __global__ void spire_training_store(spire::cuda::TrainingState b, const int64_t* slots,
     int count, uint8_t* data, const int64_t* offsets) {
     const int j = blockIdx.x * blockDim.x + threadIdx.x;

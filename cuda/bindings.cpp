@@ -27,6 +27,24 @@ PYBIND11_MODULE(spire_gpu, module) {
         });
     auto cls = py::class_<TrainingBatch>(module, "TrainingBatch");
     using spire::host::tensor_pointer;
+    using spire::cuda::RootCache;
+    spire::host::root_cache_methods<RootCache>(module, cls,
+        [](TrainingBatch& b, RootCache& cache, py::object slots, py::object roots) {
+            const int count = slots.attr("numel")().cast<int>();
+            auto* s = tensor_pointer<int64_t>(slots, "int64", b.device);
+            auto* r = tensor_pointer<int64_t>(roots, "int64", b.device);
+            auto stream = py::module_::import("torch").attr("cuda").attr("current_stream")(b.device).attr("cuda_stream").cast<uintptr_t>();
+            py::gil_scoped_release release;
+            b.cache_roots(cache, s, r, count, reinterpret_cast<cudaStream_t>(stream));
+        },
+        [](TrainingBatch& b, const RootCache& cache, py::object slots, py::object roots) {
+            const int count = slots.attr("numel")().cast<int>();
+            auto* s = tensor_pointer<int64_t>(slots, "int64", b.device);
+            auto* r = tensor_pointer<int64_t>(roots, "int64", b.device);
+            auto stream = py::module_::import("torch").attr("cuda").attr("current_stream")(b.device).attr("cuda_stream").cast<uintptr_t>();
+            py::gil_scoped_release release;
+            b.reset_cached(cache, s, r, count, reinterpret_cast<cudaStream_t>(stream));
+        });
     spire::host::tensor_methods(cls,
         [](TrainingBatch& b, py::object choices, py::object active) {
             auto* c = tensor_pointer<int32_t>(choices, "int32", b.device);

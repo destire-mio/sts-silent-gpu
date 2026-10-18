@@ -146,6 +146,12 @@ if(BUILD_TESTING)
         set_target_properties(test_cuda_parity PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON
             CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON)
         add_test(NAME test_cuda_parity COMMAND test_cuda_parity)
+        add_executable(test_cuda_root_cache tests/test_cuda_root_cache.cu)
+        target_link_libraries(test_cuda_root_cache PRIVATE spire_cuda)
+        set_target_properties(test_cuda_root_cache PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON
+            CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+        add_test(NAME test_cuda_root_cache COMMAND test_cuda_root_cache)
+        set_tests_properties(test_cuda_root_cache PROPERTIES SKIP_RETURN_CODE 77)
         add_test(NAME cuda_python COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_cuda_python.py")
         set_tests_properties(cuda_python PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:spire>:${CMAKE_CURRENT_SOURCE_DIR}")
     endif()

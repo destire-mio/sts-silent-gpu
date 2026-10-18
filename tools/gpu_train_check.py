@@ -166,18 +166,19 @@ def probe(size, chunk, roots, profile, output):
     free_updated, _ = torch.cuda.mem_get_info()
     assert not any(e['outcome'] == 'fault' for e in rollout.episodes)
     peak_allocated, peak_reserved = torch.cuda.max_memory_allocated(), torch.cuda.max_memory_reserved()
+    cache_bytes = sum(cache.bytes for cache in collector.root_caches)
     record = dict(check='single_gpu', status='fit', lanes_per_gpu=size, inference_chunk=chunk,
         decisions=rollout.count, decision_cap=CAP, policy_version=1,
         **rates(rollout.count, collected - before, elapsed), collection_seconds=collected - before,
         update_seconds=elapsed - (collected - before), total_seconds=elapsed,
         cuda_event_seconds={**{k: v for k, v in rollout.timing.items() if k != 'collection_seconds'},
                             'update_seconds': event_start.elapsed_time(event_end) / 1000},
-        memory=dict(native_batch_bytes=native, free_before_batch_bytes=free_before,
+        memory=dict(native_batch_bytes=native, root_cache_bytes=cache_bytes, free_before_batch_bytes=free_before,
             free_after_batch_bytes=free_after, free_after_collect_bytes=free_collected,
             free_after_update_bytes=free_updated, device_total_bytes=total,
             torch_peak_allocated_bytes=peak_allocated, torch_peak_reserved_bytes=peak_reserved,
-            native_plus_torch_peak_allocated_bytes=native + peak_allocated,
-            device_peak_used_estimate_bytes=total - free_before - reserved_before + native + peak_reserved),
+            native_plus_torch_peak_allocated_bytes=native + cache_bytes + peak_allocated,
+            device_peak_used_estimate_bytes=total - free_before - reserved_before + native + cache_bytes + peak_reserved),
         storage_mib=storage, compact_bytes=int(rollout.offsets[rollout.count]),
         observations=observation_profile(rollout), ppo=result, model=asdict(model.config), fp32=True)
     output.write_text(json.dumps(record) + '\n')

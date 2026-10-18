@@ -25,4 +25,21 @@ template<class Batch, class Step, class Reset, class Store> void tensor_methods(
         reset(b, slots, roots, seeds, offsets, candidates);
     });
 }
+
+template<class Cache, class Batch, class Capture, class Reset> void root_cache_methods(
+    pybind11::module_& module, pybind11::class_<Batch>& cls, Capture capture, Reset reset) {
+    namespace py = pybind11;
+    py::class_<Cache>(module, "RootCache").def(py::init<int>()).def_readonly("size", &Cache::size)
+        .def_property_readonly("bytes", [](const Cache& cache) {
+            return static_cast<std::size_t>(cache.size) * (sizeof(Game) + sizeof(obs::History) + sizeof(uint32_t));
+        });
+    cls.def("cache_roots_tensors", [capture](Batch& b, Cache& cache, py::object slots, py::object roots) {
+        SPIRE_ASSERT(slots.attr("numel")().cast<int>() == roots.attr("numel")().cast<int>());
+        capture(b, cache, slots, roots);
+    });
+    cls.def("reset_cached_tensors", [reset](Batch& b, const Cache& cache, py::object slots, py::object roots) {
+        SPIRE_ASSERT(slots.attr("numel")().cast<int>() == roots.attr("numel")().cast<int>());
+        reset(b, cache, slots, roots);
+    });
+}
 }

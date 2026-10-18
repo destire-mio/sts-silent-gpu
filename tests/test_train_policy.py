@@ -90,7 +90,7 @@ class TrainerTests(unittest.TestCase):
         collector = Collector(2, 3, 2, self.device, 1)
         before = {key: tensor.clone() for key, tensor in self.model.state_dict().items()}
         rollout = collector.collect(self.model, roots, 1729, range(5), policy_version=7)
-        self.assertEqual(set(rollout.timing), {"reset_seconds", "step_encode_seconds", "inference_seconds",
+        self.assertEqual(set(rollout.timing), {"root_prepare_seconds", "reset_seconds", "step_encode_seconds", "inference_seconds",
                                              "storage_seconds", "collection_seconds"})
         self.assertTrue(all(value > 0 for value in rollout.timing.values()))
         self.assertEqual(rollout.count, 15)
@@ -114,6 +114,27 @@ class TrainerTests(unittest.TestCase):
         self.assertEqual(result["samples"], 15)
         self.assertEqual(result["minibatches"], 8)
         self.assertTrue(np.isfinite(result["loss"]))
+
+    def test_root_cache_reuses_prefixes_and_keeps_rollout_bytes(self):
+        from reference_collect import winning_root
+        roots = [dict(seed=1000000000, candidates=[]), winning_root(8)]
+        collector = Collector(2, 4, 2, self.device, .95)
+        first = collector.collect(self.model, roots * 2, 1729, range(4), policy_version=0)
+        second = collector.collect(self.model, roots * 2, 1729, range(4), policy_version=0)
+        self.assertEqual([cache.size for cache in collector.root_caches], [2])
+        self.assertEqual(first.episodes, second.episodes)
+        for name, value in first.metrics_host().items():
+            self.assertEqual(value.tobytes(), second.metrics_host()[name].tobytes(), name)
+        length = int(first.offsets[first.count])
+        self.assertEqual(first.data[:length].numpy().tobytes(), second.data[:length].numpy().tobytes())
+        self.assertEqual(first.offsets[:first.count + 1].numpy().tobytes(), second.offsets[:second.count + 1].numpy().tobytes())
+        changed = [roots[1], dict(seed=1000000001, candidates=[]), roots[0]]
+        actual = collector.collect(self.model, changed, 1729, range(3), policy_version=0)
+        expected = Collector(2, 4, 2, self.device, .95).collect(self.model, changed, 1729, range(3), policy_version=0)
+        self.assertEqual([cache.size for cache in collector.root_caches], [2, 1])
+        self.assertEqual(actual.episodes, expected.episodes)
+        for name, value in actual.metrics_host().items():
+            self.assertEqual(value.tobytes(), expected.metrics_host()[name].tobytes(), name)
 
     def test_fault_is_quarantined_without_losing_other_episode(self):
         roots = [dict(seed=1000000000, candidates=[999]), dict(seed=1000000001, candidates=[])]
