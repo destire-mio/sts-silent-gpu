@@ -164,24 +164,31 @@ def evaluation_sets(train, dev, e2):
 def assess(pipeline, sets, output, label, total, initial, deadline):
     results, count, seconds = {}, 0, 0.
     for name, roots in sets.items():
-        if time.time() >= deadline - 300:
+        if time.time() >= deadline - 600:
             return results, count, seconds, False
         schedule = [(root, attempt) for root in roots for attempt in range(REPEATS)]
         episodes = []
+        set_decisions, set_seconds = 0, 0.
+        peaks = [0] * pipeline.config.workers
         for begin in range(0, len(schedule), 2048):
-            if time.time() >= deadline - 120:
+            if time.time() >= deadline - 300:
                 return results, count, seconds, False
             group = schedule[begin:begin + 2048]
             result = pipeline.evaluate([r for r, _ in group], EVALUATION_STREAM, [a for _, a in group])
             count += result["decisions"]
             seconds += result["seconds"]
+            set_decisions += result["decisions"]
+            set_seconds += result["seconds"]
+            for memory in result["memory"]:
+                peaks[memory["rank"]] = max(peaks[memory["rank"]], memory.get("peak_allocated_bytes", 0))
             episodes.extend({k: v for k, v in e.items() if k != "records"} for e in result["episodes"])
             assert not any(e["fault"] for e in result["episodes"]), "Evaluation engine fault; stop before training"
         summary = family_statistics(episodes)
         if name in initial:
             summary["paired_initial"] = paired_statistics(initial[name], summary)
         record = dict(label=label, set=name, training_decisions=total, summary=summary,
-                      policy_version=pipeline.version, sampling_seed=EVALUATION_STREAM, repeats=REPEATS)
+                      policy_version=pipeline.version, sampling_seed=EVALUATION_STREAM, repeats=REPEATS,
+                      decisions=set_decisions, seconds=set_seconds, peak_allocated_bytes_by_rank=peaks)
         with (output / "learning-curve.jsonl").open("a") as stream:
             stream.write(json.dumps(record) + "\n")
         with gzip.open(output / f"eval-{label}-{name.replace('/', '-')}.jsonl.gz", "wt") as stream:

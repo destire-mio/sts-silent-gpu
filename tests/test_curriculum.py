@@ -90,6 +90,8 @@ class CurriculumTests(unittest.TestCase):
             second.mkdir()
             with Pipeline(model, ppo, config, 1729, first, manifest) as pipeline:
                 pipeline.initialize()
+                pipeline.save_curriculum(curriculum.snapshot())
+                self.assertEqual(torch.load(first / "checkpoint.pt", weights_only=True)["curriculum"], curriculum.snapshot())
                 before = pipeline.state
                 evaluated = pipeline.evaluate(group, 63100, range(4))
                 self.assertEqual(evaluated["decisions"], 12)
