@@ -29,7 +29,7 @@
 | `desktop-1.0.jar` | 主人 Windows 上的 Steam 安装目录，由主人自己拷到服务器 | SHA256 必须是 `dd60a613a6178e08f1a57bcb8d5747e33c21fd49e743b88d76e9d74042803b2a`（同 `oracle/build.py` 的 `GAME_HASH`） |
 | Linux x64 Java 8 | AdoptOpenJDK / Temurin **8u252-b09**，与 Mac 游戏自带的版本相同 | 记录下载地址和 SHA256 |
 | `ModTheSpire.jar` | kiooeht/ModTheSpire 的 GitHub release **3.30.3** | SHA256 `541b5e8a875d2a404a5a6d54f4a6f814284b0cf71acb9245239d9c5ef50ea604` |
-| `ecj-4.8.jar` | Maven Central `org.eclipse.jdt:ecj:3.14.0`（Bundle-Version 3.14.0.v20180528-0519） | SHA256 `5d53b25fd09b8d83157634af682b4c64bce9def70f6533f81d9115526057ae69` |
+| `ecj-4.8.jar` | Eclipse 4.8 正式版的独立编译器（`archive.eclipse.org/eclipse/downloads/drops4/R-4.8-201806110500/ecj-4.8.jar`，Bundle-Version 3.14.0.v20180528-0519） | Mac 上那份的 SHA256 是 `5d53b25fd09b8d83157634af682b4c64bce9def70f6533f81d9115526057ae69`；不一致就记录下来，以下面的轨迹验收为准 |
 
 - Windows 版游戏自带的 Java 是 Windows 程序，在 Linux 上不能用，所以要单独装 Java。
 - 下载很慢或失败就停下来报告，不要换镜像或代理。
