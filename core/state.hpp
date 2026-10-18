@@ -296,10 +296,11 @@ struct CardQueueItem {
     bool autoplay_card : 1;
     bool random_target : 1;
     bool is_end_turn_auto_play : 1;
+    uint8_t padding : 4;
     SPIRE_FN SPIRE_INLINE constexpr CardQueueItem(int card = -1, int target = no_target, int energy = 0,
                                     bool ignore = false, bool autoplay = false, bool random = false, bool end_turn = false)
         : card(card), energy_on_use(energy), target(target), ignore_energy_total(ignore), autoplay_card(autoplay),
-          random_target(random), is_end_turn_auto_play(end_turn) {}
+          random_target(random), is_end_turn_auto_play(end_turn), padding(0) {}
 };
 
 struct PlayedCards {
