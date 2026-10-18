@@ -66,8 +66,8 @@ contains generated recordings. On the server, in the synced checkout:
 export SPIRE_PYTHON="$HOME/spire-venv/bin/python"
 tools/gpu_check.sh "$HOME/spire-gpu-build" "$HOME/spire-e2.roots.jsonl.gz"
 
-# Complete training path: all eight devices, a separate fresh directory.
-tools/gpu_train_check.sh "$HOME/spire-train-build" "$HOME/spire-e2.roots.jsonl.gz"
+# Complete training path: all eight devices; reuses the same build, results go to a fresh directory.
+tools/gpu_train_check.sh "$HOME/spire-gpu-build" "$HOME/spire-train-check" "$HOME/spire-e2.roots.jsonl.gz"
 ```
 
 `gpu_train_check.sh` requires eight V100s and builds for `sm_70` with one compiler
@@ -146,13 +146,13 @@ timed-out weak-scaling run. This time target still requires measurement on the s
 
 Progress JSON prints stage starts, completion and a heartbeat every 15 seconds. The last stdout
 JSON is the final table, also saved as `training-throughput.json`, with grid statuses, selection,
-largest fitting size, 1/2/8-GPU rates and efficiencies. The fresh build directory retains
+largest fitting size, 1/2/8-GPU rates and efficiencies. The fresh output directory retains
 `profile.json`, `probe-*.json`, stage `*.log`, `exact-*/result.json` and `ddp-*/result.json` (including
 each warmup/measured version). The supplied roots' SHA256 identifies the workload. No GPU result is asserted by the
 Mac's CPU and device-LLVM tests; the server CUDA build, CUDA execution, memory bounds and NCCL scaling require
 this command on the target server.
 
-The original `gpu_check.sh` build directory must be fresh. That script selects GPU 0, requires CUDA, builds with one
+Both scripts reuse an existing build directory, so only changed sources are recompiled; `cuda/batch.cu` holds the whole device engine and is the slow file. `gpu_check.sh` selects GPU 0, requires CUDA, builds with one
 compiler process per allocated CPU, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
 and the Python CUDA test, replays the supplied E2 prefixes on both batch implementations,
 then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048/8192/32768.

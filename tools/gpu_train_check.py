@@ -282,13 +282,13 @@ def scaling_table(reports):
                  efficiency=r['per_gpu_decisions_per_second'] / baseline) for r in reports]
 
 
-def suite(roots, output):
+def suite(roots, build, output):
     started = time.monotonic()
     deadline = math.inf
     output.mkdir()
     (output / 'tmp').mkdir()
     repo = Path(__file__).resolve().parents[1]
-    env = dict(os.environ, TMPDIR=str(output / 'tmp'), PYTHONPATH=f'{output}:{repo}',
+    env = dict(os.environ, TMPDIR=str(output / 'tmp'), PYTHONPATH=f'{build}:{repo}',
                CUDA_VISIBLE_DEVICES='0,1,2,3,4,5,6,7')
     gpu_env = dict(env, CUDA_VISIBLE_DEVICES='0')
     rows, reports, stages = [], [], []
@@ -304,12 +304,12 @@ def suite(roots, output):
         preflight = 'import torch; assert torch.cuda.device_count() == 8; assert "sm_70" in torch.cuda.get_arch_list(); assert all(torch.cuda.get_device_capability(i) == (7,0) for i in range(8)); print(torch.__version__, torch.version.cuda, [torch.cuda.get_device_properties(i) for i in range(8)])'
         require(stage('preflight', [sys.executable, '-c', preflight], 30))
         require(stage('hardware', ['nvidia-smi'], 30))
-        require(stage('configure', ['cmake', '-S', str(repo), '-B', str(output), '-DCMAKE_BUILD_TYPE=Release',
+        require(stage('configure', ['cmake', '-S', str(repo), '-B', str(build), '-DCMAKE_BUILD_TYPE=Release',
             f'-DCMAKE_CXX_COMPILER={shutil.which("clang++")}', f'-DCMAKE_CUDA_COMPILER={shutil.which("clang++")}',
             f'-DCUDAToolkit_ROOT={Path(shutil.which("nvcc")).resolve().parents[1]}', '-DCMAKE_CUDA_ARCHITECTURES=70',
             f'-DPython_EXECUTABLE={sys.executable}', '-DBUILD_TESTING=ON'], 600))
-        require(stage('build', ['cmake', '--build', str(output), '--parallel', str(len(os.sched_getaffinity(0)))], 7200))
-        require(stage('ctest', ['ctest', '--test-dir', str(output), '--output-on-failure', '--no-tests=error', '-j1'],
+        require(stage('build', ['cmake', '--build', str(build), '--parallel', str(len(os.sched_getaffinity(0)))], 7200))
+        require(stage('ctest', ['ctest', '--test-dir', str(build), '--output-on-failure', '--no-tests=error', '-j1'],
                       3600))
         deadline = time.monotonic() + BUDGET_SECONDS
         require(stage('parity', command('parity'), 300))
@@ -366,6 +366,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('check', choices=('suite', 'parity', 'calibrate', 'probe', 'exact', 'scaling'))
     parser.add_argument('--roots', type=Path, required=True)
+    parser.add_argument('--build', type=Path)
     parser.add_argument('--output', type=Path)
     parser.add_argument('--profile', type=Path)
     parser.add_argument('--size', type=int)
@@ -376,7 +377,7 @@ def main():
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     if args.check == 'suite':
-        suite(args.roots.resolve(), args.output.resolve())
+        suite(args.roots.resolve(), args.build.resolve(), args.output.resolve())
     else:
         roots = roots_from(args.roots)
         if args.check == 'parity':

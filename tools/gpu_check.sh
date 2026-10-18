@@ -4,7 +4,6 @@ build=$(realpath -m "${1:?usage: tools/gpu_check.sh BUILD_DIR E2_ROOTS_FILE}")
 roots=$(realpath "${2:?supply the audited E2 roots jsonl.gz}")
 repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
-test ! -e "$build/CMakeCache.txt"
 test -f "$roots"
 mkdir -p "$build/tmp"
 export TMPDIR="$build/tmp" CUDA_VISIBLE_DEVICES=0
