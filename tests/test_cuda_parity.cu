@@ -1,3 +1,4 @@
+#if !defined(__CUDA_ARCH__)
 #include "cuda/training_batch.hpp"
 #include "cuda/batch.cuh"
 #include "host/training_batch.hpp"
@@ -105,3 +106,4 @@ int main() {
     routes(); random_and_lifecycle();
     std::puts("CUDA parity: full Game bytes and all observation/status bytes match after every step");
 }
+#endif

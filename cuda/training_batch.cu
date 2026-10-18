@@ -1,3 +1,4 @@
+#if !defined(__CUDA_ARCH__)
 #include "training_batch.hpp"
 #include "batch.cuh"
 
@@ -115,3 +116,4 @@ void TrainingBatch::extend_seeds(const std::vector<int64_t>& seeds) {
     }
 }
 }
+#endif

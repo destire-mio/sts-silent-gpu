@@ -24,6 +24,7 @@ __global__ void second_fault(spire::Game* games) {
     SPIRE_ASSERT(false);
 }
 
+#if !defined(__CUDA_ARCH__)
 int main() {
     int devices = 0;
     if (cudaGetDeviceCount(&devices) != cudaSuccess || devices == 0) return 77;
@@ -86,3 +87,4 @@ int main() {
     cuda_check(cudaFree(indices));
     cuda_check(cudaFree(seeds));
 }
+#endif

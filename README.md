@@ -54,6 +54,10 @@ properties. CUDA compilation selects `--no-offload-new-driver` so Clang emits th
 relocatable fatbins consumed by CMake 3.31's nvlink step. Clang 21's default RDC driver instead
 stores device objects in `.llvm.offloading`, which this CMake device-link rule does not unpack;
 mixing those formats can produce a successful link with an empty GPU image.
+Host launch code is excluded from the device pass with `__CUDA_ARCH__` guards, including
+the CUDA test launchers. Otherwise Clang 21's RDC retention of external kernels used only
+by host code emits `.extern .func` references that conflict with their `.entry` definitions
+at nvlink. Device kernel bodies remain compiled in `cuda/batch.cu` and the fault test.
 `spire_cuda` remains an unresolved RDC static archive; CMake performs the nvlink step
 at each final consumer (`spire_gpu`, `test_cuda_faults`, `test_cuda_parity`), so test kernels join
 the same device link as the engine. See also Clang's
