@@ -28,6 +28,12 @@ Constant tables have one definition per backend. Generated `data()` accessors re
 references to those tables; callers that modify data take a local copy. The CUDA fault-pointer array belongs to the
 single `device_fault_target` definition in `cuda/platform.cu`.
 
+State unions and `EffectPayload` begin with contiguous integer storage at the payload's
+existing alignment. This keeps every payload byte in Clang's aggregate representation;
+otherwise CUDA function returns can omit bytes that one union variant treats as padding.
+For example, the V100 build copied only one byte of `BouncingFlask.amount` when returning an
+`Effect`. See LLVM's [union-copy issue](https://github.com/llvm/llvm-project/issues/53710).
+
 The CPU reference/test library uses ThinLTO (`-flto=thin`), with the Apple linker on macOS and
 `ld.lld` on Linux (two ThinLTO workers). CUDA uses relocatable device code without device LTO.
 Both retain `-ffp-contract=off`. Every build checks restricted C++ and its clang AST for heap

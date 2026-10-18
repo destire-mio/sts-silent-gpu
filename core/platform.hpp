@@ -33,6 +33,9 @@
 
 namespace spire {
 template<class T> struct ReadOnly { const T value; };
+template<int Alignment> struct StateWord;
+template<> struct StateWord<1> { using type = uint8_t; };
+template<> struct StateWord<4> { using type = uint32_t; };
 SPIRE_FN SPIRE_INLINE constexpr uint32_t assertion_id(const char* file, uint32_t line) {
     uint32_t hash = 2166136261u;
     while (*file) hash = (hash ^ static_cast<uint8_t>(*file++)) * 16777619u;

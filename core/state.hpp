@@ -259,6 +259,8 @@ struct Action {
 using ActionSet = List<Action, 128>;
 struct PreparedPotion { PotionState state; PotionId id; };
 union EffectPayload {
+    using Word = StateWord<max(alignof(EffectState), max(alignof(Power), alignof(PreparedPotion)))>::type;
+    Word storage[(max(sizeof(EffectState), max(sizeof(Power), sizeof(PreparedPotion))) + sizeof(Word) - 1) / sizeof(Word)];
     EffectState state;
     Power power;
     PreparedPotion potion;

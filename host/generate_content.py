@@ -325,12 +325,16 @@ def generate(root, output):
         state_type = {"actions": "Effect", "encounters": "Encounter"}.get(kind, prefix.capitalize()) + "State"
         ids.append(f'union {state_type} {{')
         for typename, fields in states[kind].values():
-            ids.append(f'    struct {{ {fields} }} {typename};')
-            ids.append(f'    static_assert(__is_trivially_constructible(decltype({typename})), "Unit state fields need trivial default construction");')
-        size = '1'
+            ids.append(f'    struct {typename}Fields {{ {fields} }};')
+            ids.append(f'    static_assert(__is_trivially_constructible({typename}Fields), "Unit state fields need trivial default construction");')
+        size, alignment = '1', '1'
         for typename, _ in states[kind].values():
-            size = f'max({size}, sizeof(decltype({typename})))'
-        ids.append(f'    uint8_t empty[{size}];')
+            size = f'max({size}, sizeof({typename}Fields))'
+            alignment = f'max({alignment}, alignof({typename}Fields))'
+        ids.append(f'    using Word = StateWord<{alignment}>::type;')
+        ids.append(f'    Word empty[({size} + sizeof(Word) - 1) / sizeof(Word)];')
+        for typename, _ in states[kind].values():
+            ids.append(f'    {typename}Fields {typename};')
         ids.append(f'    SPIRE_FN constexpr {state_type}() : empty{{}} {{}}')
         ids.append('};')
         budget = {"cards": 8, "powers": 8, "relics": 8, "potions": 8, "monsters": 32, "encounters": 16, "events": 64, "actions": 48}[kind]
