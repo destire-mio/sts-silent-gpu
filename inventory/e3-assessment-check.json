@@ -1,0 +1,297 @@
+{
+  "passed": true,
+  "frozen_checkpoint": true,
+  "optimizer_updates": 0,
+  "sets": 21,
+  "evaluation_decisions": 504425,
+  "evaluation_seconds": 155.02818832267076,
+  "elapsed_seconds": 190.55374383926392,
+  "source_commit": "44d39abac0fce01ab3c5e5a2cdcceefb11093e4e",
+  "initial_statistics": {
+    "train/k8": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 38,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.6785714285714286,
+      "interval95": [
+        0.31560353083144466,
+        1.0
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/k32": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 3,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.05357142857142857,
+      "interval95": [
+        0.0,
+        0.4165393263114125
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/k64": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.36296789773998395
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/k128": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.36296789773998395
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/k256": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.36296789773998395
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/k512": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.36296789773998395
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/act4_entry": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.36296789773998395
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/act3_boss": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.36296789773998395
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "train/act3_entry": {
+      "families": 14,
+      "attempts": 56,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.36296789773998395
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/k8": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 9,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.5625,
+      "interval95": [
+        0.0,
+        1.0
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/k32": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/k64": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/k128": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/k256": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/k512": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/act4_entry": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/act3_boss": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/act3_entry": {
+      "families": 4,
+      "attempts": 16,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.6790507578703098
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/e2_all": {
+      "families": 740,
+      "attempts": 11624,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.04992480463301335
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/e2_act3_entry": {
+      "families": 440,
+      "attempts": 1760,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.06474494938282073
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    },
+    "dev/neow": {
+      "families": 1024,
+      "attempts": 4096,
+      "wins": 0,
+      "faults": 0,
+      "truncated": 0,
+      "mean": 0.0,
+      "interval95": [
+        0.0,
+        0.04244067236689436
+      ],
+      "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates"
+    }
+  },
+  "job_id": 3563,
+  "slurm_allocated_seconds": 195,
+  "eight_gpu_node_hours": 0.05416666666666667,
+  "episodes": 18128,
+  "peak_allocated_bytes": 3038517248,
+  "source_root_families": {
+    "train": 14,
+    "dev": 4
+  },
+  "audit_roots": 36,
+  "audit_status": "pending_mac",
+  "evidence_archive_sha256": "b91ae7b3fae525e87fd6626d32646fdd87157c82c022eecc2ab1adcdffbf569c"
+}
