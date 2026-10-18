@@ -13,7 +13,7 @@ import torch.multiprocessing as mp
 from .checkpoint import save_checkpoint
 from .distributed import distributed_policy, worker_device
 from .model import Policy
-from .ppo import update
+from .ppo import empty_inputs, update
 from .rollout import Collector, DEFAULT_INFERENCE_CHUNK
 
 
@@ -52,6 +52,12 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
     dist.init_process_group("nccl" if device.type == "cuda" else "gloo", init_method=rendezvous,
                             rank=rank, world_size=config.workers, timeout=timedelta(seconds=300))
     wrapped = distributed_policy(model, device)
+    # DDP rebuilds its reduction buckets after the first backward. Stabilize
+    # their order before real gradients so fresh and resumed workers agree.
+    for _ in range(2):
+        logits, value = wrapped(empty_inputs(device))
+        ((logits.sum() + value.sum()) * 0).backward()
+        optimizer.zero_grad(set_to_none=True)
     rng = torch.Generator(device=device).manual_seed(seed)
     version, next_attempt = 0, 0
     if checkpoint is not None:

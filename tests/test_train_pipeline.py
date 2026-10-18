@@ -28,6 +28,10 @@ class PipelineTests(unittest.TestCase):
             output = Path(directory)
             with Pipeline(model_config, ppo_config, config, 1729, output, manifest) as pipeline:
                 pipeline.initialize()
+                initial = torch.load(output / "initial.pt", weights_only=True)
+                self.assertEqual(initial["optimizer"]["state"], {})
+                for name, value in model.state_dict().items():
+                    torch.testing.assert_close(initial["model"][name], value, atol=0, rtol=0)
                 first = pipeline.collect(roots, 1729, range(5))
                 self.assertEqual(set(first.timing), {"root_prepare_seconds", "reset_seconds", "step_encode_seconds", "inference_seconds",
                                                      "storage_seconds", "collection_seconds"})
