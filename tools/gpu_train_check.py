@@ -294,9 +294,7 @@ def suite(roots, build, output):
     output.mkdir()
     (output / 'tmp').mkdir()
     repo = Path(__file__).resolve().parents[1]
-    env = dict(os.environ, TMPDIR=str(output / 'tmp'), PYTHONPATH=f'{build}:{repo}',
-               CUDA_VISIBLE_DEVICES='0,1,2,3,4,5,6,7')
-    gpu_env = dict(env, CUDA_VISIBLE_DEVICES='0')
+    env = dict(os.environ, TMPDIR=str(output / 'tmp'), PYTHONPATH=f'{build}:{repo}')
     rows, reports, stages = [], [], []
     summary = dict(check='final_summary', status='incomplete', roots_sha256=hashlib.sha256(roots.read_bytes()).hexdigest(),
                    budget_seconds=BUDGET_SECONDS, single_gpu=rows, weak_scaling=[], stages=stages)
@@ -325,7 +323,7 @@ def suite(roots, build, output):
         deadline = time.monotonic() + BUDGET_SECONDS
         require(stage('parity', command('parity'), 300))
         profile_path = output / 'profile.json'
-        require(stage('calibrate', command('calibrate', '--output', profile_path), 180, gpu_env))
+        require(stage('calibrate', command('calibrate', '--output', profile_path), 180))
         reference = None
         for world in (1, 2, 8):
             target = output / f'exact-{world}'
@@ -344,7 +342,7 @@ def suite(roots, build, output):
                     continue
                 target = output / f'probe-{size}-{chunk}.json'
                 result = stage(f'probe-{size}-{chunk}', command('probe', '--size', size, '--inference-chunk', chunk,
-                    '--profile', profile_path, '--output', target), 150, gpu_env, sweep_deadline)
+                    '--profile', profile_path, '--output', target), 150, env, sweep_deadline)
                 if result['status'] == 'ok':
                     row = json.loads(target.read_text())
                 elif result['status'] == 'timeout':

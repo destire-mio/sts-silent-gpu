@@ -6,7 +6,7 @@ repo=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo"
 test -f "$roots"
 mkdir -p "$build/tmp"
-export TMPDIR="$build/tmp" CUDA_VISIBLE_DEVICES=0
+export TMPDIR="$build/tmp"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 python=${SPIRE_PYTHON:?set SPIRE_PYTHON to the server venv Python}
 nvcc=$(command -v nvcc)
@@ -16,7 +16,7 @@ ld.lld --version
 "$nvcc" --version
 "$clang" --version
 nvidia-smi
-"$python" -c 'import torch; assert torch.cuda.is_available() and torch.cuda.device_count() == 1; assert "sm_70" in torch.cuda.get_arch_list(), torch.cuda.get_arch_list(); print(torch.__version__, torch.version.cuda, torch.cuda.get_device_name())'
+"$python" -c 'import torch; assert torch.cuda.is_available(); assert "sm_70" in torch.cuda.get_arch_list(), torch.cuda.get_arch_list(); print(torch.__version__, torch.version.cuda, torch.cuda.get_device_name())'
 cmake -S . -B "$build" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER="$clang" \
     -DCMAKE_CUDA_COMPILER="$clang" \
     -DCMAKE_CUDA_COMPILER_LAUNCHER="$python;$repo/tools/cuda_compile.py;compile" -DCUDAToolkit_ROOT="$cuda" \

@@ -8,15 +8,32 @@ import tempfile
 import time
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 import torch
 
 from test_train_packing import fixed_observations
 from tools.gpu_train_check import (CAP, MIB, cycled_roots, observation_profile, rates,
-                                   run_stage, scaling_table, select_probe, storage_mib)
+                                   run_stage, scaling_table, select_probe, storage_mib, suite)
 
 
 class GPUCheckTests(unittest.TestCase):
+    def test_suite_preserves_the_allocated_cuda_device_mapping(self):
+        for visible in ('7,3,5,1,6,2,4,0', None):
+            with self.subTest(visible=visible), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                roots = base / 'roots.json'
+                roots.write_text('{}')
+                environment = {} if visible is None else dict(CUDA_VISIBLE_DEVICES=visible)
+                with patch.dict(os.environ, environment, clear=True), redirect_stdout(io.StringIO()), \
+                     patch('tools.gpu_train_check.shutil.which', return_value='/usr/bin/ld.lld'), \
+                     patch('tools.gpu_train_check.run_stage', return_value=dict(status='failed')) as stage:
+                    with self.assertRaises(AssertionError):
+                        suite(roots, base / 'build', base / 'output')
+                    actual = stage.call_args.args[-1]
+                    self.assertEqual(actual.get('CUDA_VISIBLE_DEVICES'), visible)
+                    self.assertEqual('CUDA_VISIBLE_DEVICES' in actual, visible is not None)
+
     def test_storage_uses_measured_compact_lengths(self):
         _, data, offsets = fixed_observations()
         rollout = SimpleNamespace(data=torch.tensor(data), offsets=torch.tensor(offsets.astype('int64')), count=5)
