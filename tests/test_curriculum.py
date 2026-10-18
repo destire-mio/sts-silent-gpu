@@ -52,7 +52,7 @@ class CurriculumTests(unittest.TestCase):
     def test_state_and_next_draws_survive_checkpoint(self):
         curriculum = self.make()
         _, sources = curriculum.draw(137)
-        episodes = [dict(attempt=i, records=list(range(i % 5 + 1))) for i in range(137)]
+        episodes = [dict(attempt=i, records=list(range(i % 5 + 1)), outcome="death") for i in range(137)]
         curriculum.record(episodes, sources, 0)
         curriculum.assess(dict(interval95=[.8, 1.], mean=.9))
         snapshot = curriculum.state_dict()

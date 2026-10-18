@@ -85,6 +85,7 @@ class Curriculum:
         assert all(len(self.groups[band]) >= 20 for band in [*self.bands, "far"]), "A train family may have at most 5% probability"
         self.state = deepcopy(state) if state is not None else dict(frontier=0, learned=[], draws=0,
             sampling_counts={}, decision_counts={}, family_counts={}, queues={}, total_decisions=0,
+            ppo_decisions=0, episodes=0, wins=0, truncated=0, budget_cutoffs=0,
             next_evaluation=EVALUATION_INTERVAL, evaluations=0, stagnant=0, best_lower=-1., stopped=None,
             promoted_at={}, evaluation_decisions=0, evaluation_seconds=0.)
         self.rng = random.Random(seed)
@@ -122,6 +123,12 @@ class Curriculum:
             count = len(episode["records"])
             counts[source] += count
             self.state["sampling_counts"][source] = self.state["sampling_counts"].get(source, 0) + 1
+            self.state["episodes"] += 1
+            self.state["wins"] += episode["outcome"] == "victory"
+            self.state["truncated"] += episode["outcome"] == "truncated"
+            self.state["budget_cutoffs"] += episode["outcome"] == "budget_cutoff"
+            if episode["outcome"] in ("victory", "death", "truncated"):
+                self.state["ppo_decisions"] += count
             self.state["decision_counts"][source] = self.state["decision_counts"].get(source, 0) + count
         self.state["total_decisions"] += sum(counts.values())
         return dict(counts)
@@ -323,6 +330,8 @@ def main():
                 evaluate_current()
         if curriculum.state["stopped"] == "wall_budget" and last_evaluated != curriculum.state["total_decisions"]:
             evaluate_current()
+        if curriculum.state["stopped"] is None and last_evaluated != curriculum.state["total_decisions"]:
+            evaluate_current()
         curriculum.state["stopped"] = curriculum.state["stopped"] or "decision_budget"
         pipeline.save_curriculum(curriculum.state_dict())
         report = dict(group=args.group, init_seed=args.init_seed, decisions=curriculum.state["total_decisions"],
@@ -331,6 +340,7 @@ def main():
             elapsed_seconds=time.time() - started, eight_gpu_node_hours=(time.time() - started) / 3600,
             last_evaluated_decisions=last_evaluated, sampling_counts=curriculum.state["sampling_counts"],
             decision_counts=curriculum.state["decision_counts"], updates=pipeline.version)
+        report.update({name: curriculum.state[name] for name in ("ppo_decisions", "episodes", "wins", "truncated", "budget_cutoffs")})
         (args.output / "summary.json").write_text(json.dumps(report, indent=2) + "\n")
         print(json.dumps(report), flush=True)
 
