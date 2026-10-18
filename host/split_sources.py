@@ -58,12 +58,12 @@ def split(text, origin):
         name = re.search(r'(\w+)\s*$', clean[start:paren])[1]
         if name == 'data' and classes and 'constexpr' in signature and '::units::' in namespace:
             datatype = re.search(r'constexpr (\w+) data', signature)[1]
-            declaration = text[start:body].replace('constexpr ', '').rstrip() + ';'
+            declaration = text[start:body].replace(f'constexpr {datatype}', f'const {datatype}&').rstrip() + ';'
             edits.append((start, end, declaration))
             definition = f'namespace {namespace} {{\nstruct {classes}Data : {classes} {{\n'
             definition += f'static SPIRE_FN SPIRE_INLINE constexpr {datatype} value() ' + text[body:end] + '\n};\n'
             definition += f'SPIRE_CONSTANT const {datatype} {classes}_data = {classes}Data::value();\n'
-            definition += f'SPIRE_FN {datatype} {classes}::data() {{ return {classes}_data; }}\n}}\n'
+            definition += f'SPIRE_FN const {datatype}& {classes}::data() {{ return {classes}_data; }}\n}}\n'
             definitions.append((name, definition))
             class_end = next(b for a,b,k,n in scopes if k == 'struct' and n == classes)
             edits.append((class_end + 2, class_end + 2, f'\nextern SPIRE_CONSTANT const {datatype} {classes}_data;'))

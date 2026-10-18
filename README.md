@@ -24,7 +24,8 @@ directory. Both backends compile those same definitions. Content groups use stab
 filename ranges; core and observation routines use groups of twelve functions; dispatchers have
 separate groups. A card body or data edit changes one group's `.cpp`, leaving declaration headers
 and other groups untouched. Small fixed-container, RNG and constexpr helpers stay inline.
-Constant tables have one definition per backend. The CUDA fault-pointer array belongs to the
+Constant tables have one definition per backend. Generated `data()` accessors return const
+references to those tables; callers that modify data take a local copy. The CUDA fault-pointer array belongs to the
 single `device_fault_target` definition in `cuda/platform.cu`.
 
 The CPU reference/test library uses ThinLTO (`-flto=thin`), with the Apple linker on macOS and
