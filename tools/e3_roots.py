@@ -1,6 +1,5 @@
 import argparse
 from collections import Counter, defaultdict
-import hashlib
 import json
 from pathlib import Path
 import random
@@ -109,7 +108,8 @@ def main():
     try:
         while any(p.poll() is None for p in processes):
             time.sleep(10)
-            records = [json.loads(line) for path in outputs for line in path.read_text().splitlines() if line.endswith("}")]
+            records = [json.loads(line) for path in outputs for line in path.read_text().splitlines(keepends=True)
+                       if line.endswith("\n")]
             won = {part: len({r["seed"] for r in records if r["kind"] == "winning_search" and
                              r["outcome"] == "victory" and r["partition"] == part}) for part in ("train", "dev")}
             failed = [p.returncode for p in processes if p.returncode not in (None, 0)]
