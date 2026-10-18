@@ -1,7 +1,7 @@
 #pragma once
-#include "fixed.hpp"
-#include "random.hpp"
-#include "types.hpp"
+#include "core/fixed.hpp"
+#include "core/random.hpp"
+#include "core/types.hpp"
 #include "spire_generated/ids.hpp"
 
 namespace spire {
@@ -44,7 +44,7 @@ struct Card {
     bool master_reference : 1;
     uint8_t padding : 1;
     CardState state{};
-    SPIRE_FN constexpr Card()
+    SPIRE_FN SPIRE_INLINE constexpr Card()
         : id(CardId::Strike_G), multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
@@ -56,17 +56,17 @@ struct CardArena {
     uint64_t used[(card_capacity + 63) / 64]{};
     uint16_t size = 0;
     uint16_t free_head = card_capacity;
-    SPIRE_FN bool contains(int index) const {
+    SPIRE_FN SPIRE_INLINE bool contains(int index) const {
         return index >= 0 && index < size && (used[index / 64] & (uint64_t{1} << (index % 64))) != 0;
     }
-    SPIRE_FN Card& operator[](int index) { SPIRE_ASSERT(contains(index)); return values[index]; }
-    SPIRE_FN const Card& operator[](int index) const { SPIRE_ASSERT(contains(index)); return values[index]; }
-    SPIRE_FN int count() const {
+    SPIRE_FN SPIRE_INLINE Card& operator[](int index) { SPIRE_ASSERT(contains(index)); return values[index]; }
+    SPIRE_FN SPIRE_INLINE const Card& operator[](int index) const { SPIRE_ASSERT(contains(index)); return values[index]; }
+    SPIRE_FN SPIRE_INLINE int count() const {
         int result = 0;
         for (auto word : used) result += __builtin_popcountll(word);
         return result;
     }
-    SPIRE_FN int add(const Card& card) {
+    SPIRE_FN SPIRE_INLINE int add(const Card& card) {
         const int index = free_head != card_capacity ? free_head : size;
         SPIRE_ASSERT(index < card_capacity);
         if (free_head != card_capacity) free_head = values[index].misc;
@@ -75,7 +75,7 @@ struct CardArena {
         used[index / 64] |= uint64_t{1} << (index % 64);
         return index;
     }
-    SPIRE_FN void release(int index) {
+    SPIRE_FN SPIRE_INLINE void release(int index) {
         SPIRE_ASSERT(contains(index));
         auto* bytes = reinterpret_cast<unsigned char*>(&values[index]);
         for (unsigned i = 0; i < sizeof(Card); ++i) bytes[i] = 0xa5;
@@ -84,7 +84,7 @@ struct CardArena {
         free_head = index;
         used[index / 64] &= ~(uint64_t{1} << (index % 64));
     }
-    SPIRE_FN void clear() {
+    SPIRE_FN SPIRE_INLINE void clear() {
         for (auto& word : used) word = 0;
         size = 0;
         free_head = card_capacity;
@@ -122,7 +122,7 @@ struct Relic {
     uint8_t padding = 0;
     int counter;
     RelicState state{};
-    SPIRE_FN constexpr Relic(RelicId id = RelicId::SnakeRing, int counter = -1) : id(id), counter(counter) {}
+    SPIRE_FN SPIRE_INLINE constexpr Relic(RelicId id = RelicId::SnakeRing, int counter = -1) : id(id), counter(counter) {}
 };
 struct Power {
     int amount;
@@ -134,21 +134,21 @@ struct Power {
     bool just_applied : 1;
     bool triggered : 1;
     bool skip_first : 1;
-    SPIRE_FN constexpr Power(PowerId id = PowerId::Strength, int amount = 0)
+    SPIRE_FN SPIRE_INLINE constexpr Power(PowerId id = PowerId::Strength, int amount = 0)
         : amount(amount), id(id), instance(0), just_applied(false), triggered(false), skip_first(true) {}
 };
 struct Powers {
     uint8_t head = 255;
     uint8_t size = 0;
-    template<class Objects> SPIRE_FN int index(const Objects& objects, int position) const {
+    template<class Objects> SPIRE_FN SPIRE_INLINE int index(const Objects& objects, int position) const {
         SPIRE_ASSERT(position >= 0 && position < size);
         int current = head;
         while (position--) current = objects[current].next;
         return current;
     }
-    template<class Objects> SPIRE_FN auto& at(Objects& objects, int position) { return objects[index(objects, position)]; }
-    template<class Objects> SPIRE_FN const auto& at(const Objects& objects, int position) const { return objects[index(objects, position)]; }
-    template<class Objects> SPIRE_FN void insert(Objects& objects, int position, int value) {
+    template<class Objects> SPIRE_FN SPIRE_INLINE auto& at(Objects& objects, int position) { return objects[index(objects, position)]; }
+    template<class Objects> SPIRE_FN SPIRE_INLINE const auto& at(const Objects& objects, int position) const { return objects[index(objects, position)]; }
+    template<class Objects> SPIRE_FN SPIRE_INLINE void insert(Objects& objects, int position, int value) {
         SPIRE_ASSERT(position >= 0 && position <= size && size < power_capacity);
         if (position == 0) { objects[value].next = head; head = value; }
         else {
@@ -158,15 +158,15 @@ struct Powers {
         }
         ++size;
     }
-    template<class Objects> SPIRE_FN void push_back(Objects& objects, int value) { insert(objects, size, value); }
-    template<class Objects> SPIRE_FN void erase(Objects& objects, int position) {
+    template<class Objects> SPIRE_FN SPIRE_INLINE void push_back(Objects& objects, int value) { insert(objects, size, value); }
+    template<class Objects> SPIRE_FN SPIRE_INLINE void erase(Objects& objects, int position) {
         SPIRE_ASSERT(position >= 0 && position < size);
         if (position == 0) head = objects[head].next;
         else { auto& previous = at(objects, position - 1); previous.next = objects[previous.next].next; }
         --size;
     }
-    SPIRE_FN void clear() { head = 255; size = 0; }
-    SPIRE_FN bool empty() const { return size == 0; }
+    SPIRE_FN SPIRE_INLINE void clear() { head = 255; size = 0; }
+    SPIRE_FN SPIRE_INLINE bool empty() const { return size == 0; }
 };
 struct Creature {
     float draw_x = 0.0f;
@@ -181,7 +181,7 @@ struct Creature {
     bool escaped : 1;
     bool flip_horizontal : 1;
     bool half_dead : 1;
-    SPIRE_FN constexpr Creature() : dead(false), dying(false), escaped(false), flip_horizontal(false), half_dead(false) {}
+    SPIRE_FN SPIRE_INLINE constexpr Creature() : dead(false), dying(false), escaped(false), flip_horizontal(false), half_dead(false) {}
 };
 struct Monster {
     Creature creature{};
@@ -208,7 +208,7 @@ struct Monster {
     bool intent_multi : 1;
     bool cannot_escape : 1;
     bool escape_next : 1;
-    SPIRE_FN constexpr Monster() : damage_count(1), pending_multi(false), intent_multi(false), cannot_escape(false), escape_next(false) {}
+    SPIRE_FN SPIRE_INLINE constexpr Monster() : damage_count(1), pending_multi(false), intent_multi(false), cannot_escape(false), escape_next(false) {}
 };
 struct Orb {
     int passive = 0;
@@ -220,11 +220,11 @@ struct OrbState {
     List<int8_t, 10> slots{};
     List<uint8_t, 256> channeled{};
     uint16_t turn_start = 0;
-    SPIRE_FN OrbKind kind(int index) const {
+    SPIRE_FN SPIRE_INLINE OrbKind kind(int index) const {
         SPIRE_ASSERT(index >= 0 && index < objects.size);
         return static_cast<OrbKind>((kinds[index / 4] >> ((index % 4) * 2)) & 3);
     }
-    SPIRE_FN int add(OrbKind kind, int passive, int evoke) {
+    SPIRE_FN SPIRE_INLINE int add(OrbKind kind, int passive, int evoke) {
         const int index = objects.size;
         objects.push_back({passive, evoke});
         const int shift = (index % 4) * 2;
@@ -262,9 +262,9 @@ union EffectPayload {
     EffectState state;
     Power power;
     PreparedPotion potion;
-    SPIRE_FN constexpr EffectPayload() : state{} {}
-    SPIRE_FN constexpr EffectPayload(const Power& value) : power(value) {}
-    SPIRE_FN constexpr EffectPayload(const PreparedPotion& value) : potion(value) {}
+    SPIRE_FN SPIRE_INLINE constexpr EffectPayload() : state{} {}
+    SPIRE_FN SPIRE_INLINE constexpr EffectPayload(const Power& value) : power(value) {}
+    SPIRE_FN SPIRE_INLINE constexpr EffectPayload(const PreparedPotion& value) : potion(value) {}
 };
 struct Effect {
     int amount = 0;
@@ -283,7 +283,7 @@ struct Effect {
     bool flag : 1;
     bool end_turn_draw : 1;
     uint8_t padding : 3;
-    SPIRE_FN constexpr Effect() : power_constructed(false), done(false), held(false), flag(false), end_turn_draw(false), padding(0) {}
+    SPIRE_FN SPIRE_INLINE constexpr Effect() : power_constructed(false), done(false), held(false), flag(false), end_turn_draw(false), padding(0) {}
 };
 using DamageInfo = Effect;
 struct CardQueueItem {
@@ -294,7 +294,7 @@ struct CardQueueItem {
     bool autoplay_card : 1;
     bool random_target : 1;
     bool is_end_turn_auto_play : 1;
-    SPIRE_FN constexpr CardQueueItem(int card = -1, int target = no_target, int energy = 0,
+    SPIRE_FN SPIRE_INLINE constexpr CardQueueItem(int card = -1, int target = no_target, int energy = 0,
                                     bool ignore = false, bool autoplay = false, bool random = false, bool end_turn = false)
         : card(card), energy_on_use(energy), target(target), ignore_energy_total(ignore), autoplay_card(autoplay),
           random_target(random), is_end_turn_auto_play(end_turn) {}
@@ -304,14 +304,14 @@ struct PlayedCards {
     uint8_t values[1024]{};
     uint16_t size = 0;
     uint16_t turn_start = 0;
-    SPIRE_FN void record(int card) {
+    SPIRE_FN SPIRE_INLINE void record(int card) {
         SPIRE_ASSERT(size < 1024);
         values[size++] = static_cast<uint8_t>(card);
     }
-    SPIRE_FN void begin_turn() {
+    SPIRE_FN SPIRE_INLINE void begin_turn() {
         turn_start = size;
     }
-    SPIRE_FN void clear() {
+    SPIRE_FN SPIRE_INLINE void clear() {
         size = 0;
         begin_turn();
     }
@@ -350,7 +350,7 @@ struct MapNode {
     RoomKind room : 4;
     bool emerald : 1;
     bool taken : 1;
-    SPIRE_FN constexpr MapNode() : room(RoomKind::Empty), emerald(false), taken(false) {}
+    SPIRE_FN SPIRE_INLINE constexpr MapNode() : room(RoomKind::Empty), emerald(false), taken(false) {}
 };
 struct RunProfile {
     int neow_spirits = 1;
@@ -414,14 +414,14 @@ struct RoomReward {
     PotionId potion = PotionId::Empty;
     bool done : 1;
     bool ignored : 1;
-    SPIRE_FN constexpr RoomReward() : done(false), ignored(false) {}
+    SPIRE_FN SPIRE_INLINE constexpr RoomReward() : done(false), ignored(false) {}
 };
 struct CardDamage {
     int base[card_capacity]{};
     uint8_t head[card_capacity]{};
-    SPIRE_FN DamageArray get(int card) const { SPIRE_ASSERT(card >= 0 && card < card_capacity); return {base[card], head[card]}; }
-    SPIRE_FN void set(int card, const DamageArray& damage) { SPIRE_ASSERT(card >= 0 && card < card_capacity); base[card] = damage.base; head[card] = damage.head; }
-    SPIRE_FN void clear() { for (auto& value : head) value = 0; }
+    SPIRE_FN SPIRE_INLINE DamageArray get(int card) const { SPIRE_ASSERT(card >= 0 && card < card_capacity); return {base[card], head[card]}; }
+    SPIRE_FN SPIRE_INLINE void set(int card, const DamageArray& damage) { SPIRE_ASSERT(card >= 0 && card < card_capacity); base[card] = damage.base; head[card] = damage.head; }
+    SPIRE_FN SPIRE_INLINE void clear() { for (auto& value : head) value = 0; }
 };
 
 struct MonsterDamage { int16_t base; int16_t output; };
@@ -524,19 +524,19 @@ struct Game {
     bool smoked = false;
     int bomb_id_offset = 0;
     uint32_t padding = 0;
-    SPIRE_FN constexpr Game()
+    SPIRE_FN SPIRE_INLINE constexpr Game()
         : grid_can_cancel(true), selection_confirmation(false), selected_cards_retrieved(false), end_turn_enabled(true), selection_up_to(false),
           reward_skippable(false), combat_reward_skippable(false), reward_proceed_visible(false), reward_has_taken_all(false), reward_relic_warning_seen(false),
           skip_monster_turn(false), battle_over(false), battle_callbacks_done(false), room_in_combat(false), room_reward_time(false), room_reward_allowed(true), room_has_monsters(false) {}
 };
 static_assert(sizeof(Game) <= 37 * 1024, "Game exceeds the 37 KiB device memory budget; see docs/porting.md");
 
-SPIRE_FN inline uint32_t next_power_identity(Game& g) {
+SPIRE_FN SPIRE_INLINE inline uint32_t next_power_identity(Game& g) {
     SPIRE_ASSERT(g.next_power_instance < (uint32_t{1} << 29));
     return g.next_power_instance++;
 }
 
-SPIRE_FN inline void bind_fault(Game& g) {
+SPIRE_FN SPIRE_INLINE inline void bind_fault(Game& g) {
 #if defined(__CUDA_ARCH__)
     device_fault_target() = &g.fault;
 #else

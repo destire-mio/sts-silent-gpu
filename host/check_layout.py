@@ -11,7 +11,7 @@ def main():
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--generated", type=Path, required=True)
     args = parser.parse_args()
-    flags = [args.compiler, "-std=c++17", "-I", str(args.root), "-I", str(args.generated.parent)]
+    flags = [args.compiler, "-std=c++17", "-I", str(args.root), "-I", str(args.generated), "-I", str(args.generated.parent)]
     with tempfile.TemporaryDirectory(prefix="spire-layout-") as temporary:
         source = Path(temporary) / "layout.cpp"
         source.write_text('#include "core/data.hpp"\n')

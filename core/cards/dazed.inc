@@ -1,0 +1,13 @@
+#pragma once
+#include "core/hooks.hpp"
+
+namespace spire::units::cards {
+struct Dazed : CardHooks {
+    static SPIRE_FN constexpr CardDef data() {
+        return {CardType::Status, CardTarget::None, -2, -1, -1, -1, 0, 0, 0, false, true};
+    }
+    static SPIRE_FN void use(Game&, int, int) {}
+    static SPIRE_FN Card makeCopy(const Game&, int) { return make_card(CardId::Dazed); }
+    static SPIRE_FN void upgrade(Card&) {}
+};
+}

@@ -51,6 +51,12 @@ class DeviceDiscipline(unittest.TestCase):
     def test_mutable_global(self):
         self.assertTrue(self.inspect("int counter = 0;"))
 
+    def test_const_pointee_is_still_a_mutable_global(self):
+        self.assertTrue(self.inspect("const int* pointer;"))
+
+    def test_extern_constant_table(self):
+        self.assertEqual([], self.inspect("extern const int values[2];\nconst int values[2] = {1, 2};"))
+
     def test_static_local(self):
         self.assertTrue(self.inspect("SPIRE_FN int f() { static int x = 0; return ++x; }"))
 

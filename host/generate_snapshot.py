@@ -3,6 +3,7 @@ import argparse
 import json
 import re
 from pathlib import Path
+from split_sources import write
 
 
 
@@ -34,7 +35,7 @@ def unit_snapshot_dispatch(root, units):
         lines.append(f'switch ({selector}) {{')
         rows = re.findall(r'SPIRE_UNIT\((\w+), "([^\"]+)", "([^\"]+)", (\w+)\)', (root / "core" / kind / "catalog.def").read_text())
         for unit, _, header, typename in rows:
-            source = (root / header).read_text()
+            source = (root / header).with_suffix(".inc").read_text()
             body = re.search(r'\bstruct\s+' + typename + r'\s*:[^{]+\{(.*?)^\};', source, re.M | re.S)[1]
             fields = re.findall(r'^\s*SPIRE_SNAPSHOT\("([^\"]+)",\s*(\w+)(?:, (.*))?\)\s*$', body, re.M)
             if not fields:
@@ -47,7 +48,7 @@ def unit_snapshot_dispatch(root, units):
     lines.append('template<class Graph> void snapshot_statics(Graph& graph, pybind11::dict& result) { const Game& game = graph.game;')
     for kind in ('actions', 'powers', 'cards', 'monsters', 'relics', 'potions', 'events'):
         for _, game_id, header, _ in re.findall(r'SPIRE_UNIT\((\w+), "([^"]+)", "([^"]+)", (\w+)\)', (root / 'core' / kind / 'catalog.def').read_text()):
-            for name, expression in re.findall(r'^\s*SPIRE_STATIC\("([^"]+)", (.*)\)\s*$', (root / header).read_text(), re.M):
+            for name, expression in re.findall(r'^\s*SPIRE_STATIC\("([^"]+)", (.*)\)\s*$', (root / header).with_suffix(".inc").read_text(), re.M):
                 cls = game_id if kind == 'actions' else next(u['java_class'].removeprefix('com.megacrit.cardcrawl.') for u in units if u['kind'] == kind[:-1] and u['game_id'] == game_id)
                 lines.append(f'result["{cls}"].cast<pybind11::dict>()["{name}"] = graph.scalar({expression});')
     lines.append('}')
@@ -77,7 +78,7 @@ def generate(root, output):
         metadata[directory] = entries
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps({"schema": schema, "units": metadata, "rewards": reward_templates(units, schema), "globals": unit_inventory["snapshot_statics"]}, separators=(",", ":"))
-    output.write_text('#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n' + unit_snapshot_dispatch(root, units) + '\n}\n')
+    write(output, '#pragma once\nnamespace spire::host {\nconstexpr char snapshot_metadata[] = R"schema(' + payload + ')schema";\n' + unit_snapshot_dispatch(root, units) + '\n}\n')
 
 
 if __name__ == "__main__":

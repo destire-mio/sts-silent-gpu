@@ -1,0 +1,15 @@
+#pragma once
+#include "core/hooks.hpp"
+#include "core/actions/change_stance.hpp"
+
+namespace spire::units::actions {
+struct Indignation : ActionHooks {
+    static SPIRE_FN void execute(Game& g, Effect& e) {
+        if (g.player.stance == Stance::Wrath) {
+            for (int i = 0; i < g.monster_order.size; ++i)
+                queue_power(g, player_target, g.monster_order[i], PowerId::Vulnerable, e.amount);
+        } else
+            add_bottom(g, units::actions::ChangeStance::make(Stance::Wrath));
+    }
+};
+}

@@ -156,10 +156,10 @@ class CatalogExtension(unittest.TestCase):
         return result.stdout
 
     def test_room_text_budget_covers_content(self):
-        headers = {path: path.read_text() for path in (ROOT / "core").rglob("*.hpp")}
+        headers = {path: path.read_text() for path in (ROOT / "core").rglob("*") if path.suffix in {".hpp", ".inc"}}
         writers = {str(path.relative_to(ROOT)) for path, source in headers.items()
                    if ".text.intern(" in source}
-        self.assertEqual({"core/actions/change_state.hpp", "core/event_room.hpp", "core/engine.hpp"}, writers)
+        self.assertEqual({"core/actions/change_state.inc", "core/event_room.inc", "core/engine.inc"}, writers)
         states = set()
         for source in headers.values():
             for call in re.findall(r"ChangeState::make\(([^;]+)\);", source):
@@ -172,7 +172,7 @@ class CatalogExtension(unittest.TestCase):
         capacity = int(re.search(r"struct TextStore \{\s*char values\[(\d+)\]", headers[ROOT / "core/fixed.hpp"]).group(1))
         self.assertLessEqual(required, capacity)
 
-    def test_header_and_catalog_are_sufficient(self):
+    def test_rule_input_and_catalog_are_sufficient(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             shutil.copytree(ROOT / "core", root / "core")
@@ -182,15 +182,15 @@ class CatalogExtension(unittest.TestCase):
             (root / "inventory/units.json").write_text(json.dumps(inventory))
             originals = {p: p.read_bytes() for p in (root / "core").rglob("*") if p.is_file()}
             for kind, (base, methods) in UNITS.items():
-                include = "base.hpp" if kind in ("monsters", "encounters") else "../hooks.hpp"
+                include = f"core/{kind}/base.hpp" if kind in ("monsters", "encounters") else "core/hooks.hpp"
                 inherit = " : " + base if base else ""
-                (root / "core" / kind / "catalog_probe.hpp").write_text(
+                (root / "core" / kind / "catalog_probe.inc").write_text(
                     '#pragma once\n#include "' + include + '"\n'
                     + f"namespace spire::units::{kind} {{\nstruct CatalogProbe{inherit} {{\n"
                     + methods + "};\n}\n")
                 catalog = root / "core" / kind / "catalog.def"
                 with catalog.open("a") as file:
-                    file.write(f'SPIRE_UNIT(CatalogProbe, "CatalogProbe", "core/{kind}/catalog_probe.hpp", CatalogProbe)\n')
+                    file.write(f'SPIRE_UNIT(CatalogProbe, "CatalogProbe", "core/{kind}/catalog_probe.inc", CatalogProbe)\n')
             build = root / "build"
             self.run_command([sys.executable, str(ROOT / "host/generate_content.py"),
                               "--root", str(root), "--output", str(build / "spire_generated")])
@@ -201,9 +201,24 @@ class CatalogExtension(unittest.TestCase):
             source.write_text(PROGRAM)
             executable = root / "probe"
             self.run_command([shutil.which("clang++"), "-std=c++17", "-DNDEBUG", "-Wall", "-Wextra",
-                              "-Werror", "-ffp-contract=off", "-I" + str(root), "-I" + str(build),
-                              "-I" + str(ROOT), str(source), "-o", str(executable)])
+                              "-Werror", "-ffp-contract=off", "-I" + str(build / "spire_generated"), "-I" + str(root), "-I" + str(build),
+                              "-I" + str(ROOT), str(source), *[str(build / "spire_generated" / p) for p in json.loads((build / "spire_generated/sources.json").read_text())], "-o", str(executable)])
             self.assertEqual("all seven catalog extensions dispatched\n", self.run_command([str(executable)]))
+            generated = build / "spire_generated"
+            before = {p: p.read_bytes() for p in generated.rglob("*") if p.is_file()}
+            card = root / "core/cards/catalog_probe.inc"
+            card.write_text(card.read_text().replace("g.run.gold += 1", "g.run.gold += 11"))
+            self.run_command([sys.executable, str(ROOT / "host/generate_content.py"),
+                              "--root", str(root), "--output", str(generated)])
+            changed = {str(p.relative_to(generated)) for p, data in before.items() if p.read_bytes() != data}
+            self.assertEqual(changed, {"sources/cards_00.cpp"})
+            before = {p: p.read_bytes() for p in before}
+            card.write_text(card.read_text().replace("SelfAndEnemy, 0", "SelfAndEnemy, 1"))
+            self.run_command([sys.executable, str(ROOT / "host/generate_content.py"),
+                              "--root", str(root), "--output", str(generated)])
+            changed = {str(p.relative_to(generated)) for p, data in before.items() if p.read_bytes() != data}
+            self.assertEqual(changed, {"sources/cards_00.cpp"})
+
 
 
 if __name__ == "__main__":

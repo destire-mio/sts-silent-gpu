@@ -6,20 +6,20 @@ from a wiki, the displayed description, or another simulator.
 
 ## Files owned by one unit
 
-A catalog row names the enum entry, Java ID, header path from the repository root, and C++ type:
+A catalog row names the enum entry, Java ID, rule input path from the repository root, and C++ type:
 
 ```cpp
-SPIRE_UNIT(Neutralize, "Neutralize", "core/cards/neutralize.hpp", Neutralize)
+SPIRE_UNIT(Neutralize, "Neutralize", "core/cards/neutralize.inc", Neutralize)
 ```
 
-To add a unit that uses existing engine mechanisms, add its header and a row to that category's
+To add a unit that uses existing engine mechanisms, add its `.inc` input and a row to that category's
 `catalog.def`. Append the row without reordering existing IDs. Add its focused trace or test and
 inventory entry. Do not edit the engine's dispatch, a shared list of IDs, or host names.
 
 CMake runs `host/generate_content.py` before compilation. It writes enum IDs, base hooks,
-declarations and switch dispatch into `spire_generated/` inside the build directory. Host names
-read the same catalogs. Unit metadata uses shared constexpr tables built from each unit's
-`data()`; the generated accessors return const references and add no per-Game storage. Units
+declaration headers, split definitions and switch dispatch into `spire_generated/` inside the build directory. Host names
+read the same catalogs. Unit metadata uses a constant owned by each unit's source, initialized from its constexpr
+`data()` body; the generated accessors return const references and add no per-Game storage. Units
 inheriting the same default hook share one dispatch branch. Generated files are build products;
 do not edit or commit them.
 
@@ -38,7 +38,7 @@ same arena links; `find_power` still returns the ordered list position for remov
 
 ## Unit code
 
-Include `../hooks.hpp`, put the type in `spire::units::<category>`, and inherit the category's
+Include `core/hooks.hpp`, put the type in `spire::units::<category>`, and inherit the category's
 static hook base. For example, `Neutralize` inherits `CardHooks` in `spire::units::cards`.
 Every function, including `data()`, carries `SPIRE_FN`.
 
@@ -53,8 +53,8 @@ Every function, including `data()`, carries `SPIRE_FN`.
 | Encounters | No base or metadata type | `build(Game&)` |
 | Actions | `ActionHooks`, `ActionData` | `prepare(Game&, Effect&)` for constructor behavior, `execute(Game&, Effect&)` for queued behavior |
 
-Monster and encounter headers include their local `base.hpp` for construction and encounter
-helpers. Other unit headers include `../hooks.hpp`. `core/api.hpp` and the generator's hook
+Monster and encounter inputs include `core/monsters/base.hpp` or `core/encounters/base.hpp`
+for construction and encounter helpers. Other unit inputs include `core/hooks.hpp`. `core/api.hpp` and the generator's hook
 registry give the exact signatures of additional hooks.
 
 `data()` returns the category's constant metadata. Card metadata contains type, target, cost,
@@ -166,7 +166,7 @@ compilation; it must only read state. Do not implement a choice, consume RNG, or
 in a snapshot expression. GenericEventDialog and RoomEventDialog base objects are emitted by
 the shared serializer. Match the inventory's class and declaring-field names exactly.
 
-Question-mark room selection and event/shrine/one-time list removal live in `event_room.hpp`.
+Question-mark room selection and event/shrine/one-time list removal live in `event_room.inc`.
 Put an appearance condition in the unit's `canSpawn` hook; the selector calls it at the original
 list-filtering site. `EventData.reward_opens_map` describes the original reward-screen departure;
 events that return to their own dialog set it false. Event rewards, purge selections and card
@@ -383,7 +383,7 @@ keeps the fault store before the exit. Earlier mutations in that step are not ro
 `step` then does nothing until `reset` clears the fault; `legal_actions` returns an empty set.
 Fault metadata is outside the oracle snapshot and does not filter the comparison.
 
-The block-shared pointer array in `platform.hpp` binds each CUDA thread to its own fault word.
+The block-shared pointer array owned by `cuda/platform.cu` binds each CUDA thread to its own fault word.
 This is the sole exception to the no-mutable-statics rule, not a content state mechanism.
 `reset`, `start_combat` and `step` bind their Game on entry. Custom kernels must call
 `bind_fault(game)` before other core operations that can assert, including `legal_actions`.
@@ -432,8 +432,8 @@ contains the original foreign library. Add oracle scenarios and evidence separat
 add an ID branch to dispatch, snapshots, pools or the run loop.
 
 Read the matching Java card, action and power together. `core/orbs/` and `core/stances/`
-contain one header for each foreign rule unit; shared dispatch is in `orbs.hpp` and
-`stances.hpp`. The action and power catalogs include the completed cross-colour batches. A header's
+contain one `.inc` input for each foreign rule unit; shared dispatch is in `orbs.inc` and
+`stances.inc`. The action and power catalogs include the completed cross-colour batches. A header's
 `SPIRE_WAITING_RULE` marks missing caller evidence, not a passing port. Remove it only after
 recording the caller on three seeds and replaying both scopes through the terminal record.
 `tests/content.py` generates status from replay outcomes. `matched` requires a scenario or

@@ -32,7 +32,7 @@ struct View {
     int32_t* entity_count;
     int32_t* candidate_count;
 
-    SPIRE_FN void finish(int entities, int candidates, int written_entities = 0, int written_candidates = 0) const {
+    SPIRE_FN SPIRE_INLINE void finish(int entities, int candidates, int written_entities = 0, int written_candidates = 0) const {
         const int used_entities = *entity_count > written_entities ? *entity_count : written_entities;
         const int used_candidates = *candidate_count > written_candidates ? *candidate_count : written_candidates;
         for (int row = 0; row < tag_rows; ++row)
@@ -62,7 +62,7 @@ struct Observation {
     uint8_t entity_mask[entity_mask_bytes]{};
     uint8_t candidate_mask[candidate_mask_bytes]{};
     int32_t entities = 0, candidates = 0;
-    SPIRE_FN View view() { return {tags, ids, values, candidate_kinds, candidate_refs, entity_mask, candidate_mask, &entities, &candidates}; }
+    SPIRE_FN SPIRE_INLINE View view() { return {tags, ids, values, candidate_kinds, candidate_refs, entity_mask, candidate_mask, &entities, &candidates}; }
 };
 struct BatchView {
     uint8_t* tags;
@@ -75,7 +75,7 @@ struct BatchView {
     int32_t* entity_counts;
     int32_t* candidate_counts;
 
-    SPIRE_FN View view(int i) const {
+    SPIRE_FN SPIRE_INLINE View view(int i) const {
         return {tags + i * tag_rows * entity_capacity, ids + i * id_rows * entity_capacity,
             values + i * value_rows * entity_capacity, candidate_kinds + i * candidate_capacity,
             candidate_refs + i * candidate_rows * candidate_capacity,
@@ -87,19 +87,19 @@ struct Result { uint32_t fault = 0; int entities = 0; int candidates = 0; };
 struct Writer {
     View view;
     Result result{};
-    SPIRE_FN uint8_t byte(int value) {
+    SPIRE_FN SPIRE_INLINE uint8_t byte(int value) {
         if (value < 0 || value > 255) { result.fault = static_cast<uint32_t>(Fault::NumericRange); return 0; }
         return static_cast<uint8_t>(value);
     }
-    SPIRE_FN int16_t word(int value) {
+    SPIRE_FN SPIRE_INLINE int16_t word(int value) {
         if (value < -32768 || value > 32767) { result.fault = static_cast<uint32_t>(Fault::NumericRange); return 0; }
         return static_cast<int16_t>(value);
     }
-    SPIRE_FN int bit(int value, int shift) {
+    SPIRE_FN SPIRE_INLINE int bit(int value, int shift) {
         if (value < 0 || value > 1) { result.fault = static_cast<uint32_t>(Fault::NumericRange); return 0; }
         return value << shift;
     }
-    SPIRE_FN int add(const Token& token) {
+    SPIRE_FN SPIRE_INLINE int add(const Token& token) {
         if (result.fault) return 0;
         if (result.entities == entity_capacity) {
             result.fault = static_cast<uint32_t>(Fault::Entities);
@@ -156,13 +156,13 @@ struct Writer {
         return index + 1;
     }
 };
-SPIRE_FN inline Token token(Kind kind, int id = 0, Zone zone = Zone::None, int position = 0, int owner = 0) {
+SPIRE_FN SPIRE_INLINE inline Token token(Kind kind, int id = 0, Zone zone = Zone::None, int position = 0, int owner = 0) {
     Token t{};
     t.ids[0] = static_cast<int>(kind); t.ids[1] = id; t.ids[2] = static_cast<int>(zone);
     t.ids[3] = owner; t.ids[4] = position;
     return t;
 }
-SPIRE_FN inline bool less(const Token& a, const Token& b) {
+SPIRE_FN SPIRE_INLINE inline bool less(const Token& a, const Token& b) {
     for (int i = 0; i < 6; ++i) if (a.ids[i] != b.ids[i]) return a.ids[i] < b.ids[i];
     for (int i = 0; i < 14; ++i) if (a.values[i] != b.values[i]) return a.values[i] < b.values[i];
     return false;

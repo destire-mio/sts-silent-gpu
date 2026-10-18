@@ -20,7 +20,7 @@ def catalogs():
                             (ROOT / "core" / (kind + "s") / "catalog.def").read_text())
             for kind in ("card", "potion", "relic", "monster", "encounter", "power", "action", "event")}
     result["rule"] = [(key.rsplit(":", 1)[-1], key, str(path.relative_to(ROOT)), "")
-                      for path in sorted((ROOT / "core").rglob("*.hpp"))
+                      for path in sorted((ROOT / "core").rglob("*.inc"))
                       for key in re.findall(r'SPIRE_RULE\("([^\"]+)"\)', path.read_text())]
     return result
 
@@ -69,28 +69,28 @@ def content_cases():
 
 
 RULE_CALLERS = {
-    "onEnterRoom": ("core/engine.hpp", "relic_onEnterRoom("),
-    "justEnteredRoom": ("core/engine.hpp", "relic_justEnteredRoom("),
-    "onEnterRestRoom": ("core/campfire.hpp", "relic_onEnterRestRoom("),
-    "onChestOpen": ("core/treasure.hpp", "relic_onChestOpen("),
-    "onChestOpenAfter": ("core/treasure.hpp", "relic_onChestOpenAfter("),
-    "addCampfireOption": ("core/campfire.hpp", "relic_addCampfireOption("),
-    "canUseCampfireOption": ("core/campfire.hpp", "relic_canUseCampfireOption("),
-    "onRest": ("core/campfire.hpp", "relic_onRest("),
-    "onSmith": ("core/campfire.hpp", "relic_onSmith("),
-    "changeNumberOfCardsInReward": ("core/rewards.hpp", "relic_changeNumberOfCardsInReward("),
-    "changeRareCardRewardChance": ("core/lifecycle.hpp", "relic_changeRareCardRewardChance("),
-    "changeUncommonCardRewardChance": ("core/lifecycle.hpp", "relic_changeUncommonCardRewardChance("),
-    "canSpawn": ("core/lifecycle.hpp", "relic_can_spawn_id("),
-    "deathReact": ("core/monsters/bandit_bear.hpp", "monster_deathReact("),
-    "boss room flag": ("core/engine.hpp", "g.room_kind = room;"),
-    "shop_multiplier": ("core/shop.hpp", ".shop_multiplier"),
-    "purge_cost": ("core/shop.hpp", ".purge_cost"),
-    "rest_heal_bonus": ("core/campfire.hpp", ".rest_heal_bonus"),
-    "bowl_hp": ("core/engine.hpp", ".bowl_hp"),
-    "event_chest_interval": ("core/event_room.hpp", ".event_chest_interval"),
-    "crosses_map_paths": ("core/engine.hpp", ".crosses_map_paths"),
-    "stacks_on_obtain": ("core/lifecycle.hpp", ".stacks_on_obtain"),
+    "onEnterRoom": ("core/engine.inc", "relic_onEnterRoom("),
+    "justEnteredRoom": ("core/engine.inc", "relic_justEnteredRoom("),
+    "onEnterRestRoom": ("core/campfire.inc", "relic_onEnterRestRoom("),
+    "onChestOpen": ("core/treasure.inc", "relic_onChestOpen("),
+    "onChestOpenAfter": ("core/treasure.inc", "relic_onChestOpenAfter("),
+    "addCampfireOption": ("core/campfire.inc", "relic_addCampfireOption("),
+    "canUseCampfireOption": ("core/campfire.inc", "relic_canUseCampfireOption("),
+    "onRest": ("core/campfire.inc", "relic_onRest("),
+    "onSmith": ("core/campfire.inc", "relic_onSmith("),
+    "changeNumberOfCardsInReward": ("core/rewards.inc", "relic_changeNumberOfCardsInReward("),
+    "changeRareCardRewardChance": ("core/lifecycle.inc", "relic_changeRareCardRewardChance("),
+    "changeUncommonCardRewardChance": ("core/lifecycle.inc", "relic_changeUncommonCardRewardChance("),
+    "canSpawn": ("core/lifecycle.inc", "relic_can_spawn_id("),
+    "deathReact": ("core/monsters/bandit_bear.inc", "monster_deathReact("),
+    "boss room flag": ("core/engine.inc", "g.room_kind = room;"),
+    "shop_multiplier": ("core/shop.inc", ".shop_multiplier"),
+    "purge_cost": ("core/shop.inc", ".purge_cost"),
+    "rest_heal_bonus": ("core/campfire.inc", ".rest_heal_bonus"),
+    "bowl_hp": ("core/engine.inc", ".bowl_hp"),
+    "event_chest_interval": ("core/event_room.inc", ".event_chest_interval"),
+    "crosses_map_paths": ("core/engine.inc", ".crosses_map_paths"),
+    "stacks_on_obtain": ("core/lifecycle.inc", ".stacks_on_obtain"),
 }
 
 
@@ -113,7 +113,7 @@ def rule_consumers(unit):
         assert matches, (hook, path, expression)
         result[hook] = [f"{path}:{line}" for line in matches]
     if unit["kind"] == "event" and "canSpawn(" in source:
-        path = "core/event_room.hpp"
+        path = "core/event_room.inc"
         result["canSpawn"] = [f"{path}:{index + 1}" for index, line in
                               enumerate((ROOT / path).read_text().splitlines()) if "event_canSpawn(" in line]
     return result
@@ -183,7 +183,7 @@ def source_digest():
     digest = hashlib.sha256()
     files = [p for folder in ("core", "host", "cuda", "oracle/java")
              for p in (ROOT / folder).rglob("*")
-             if p.suffix in (".hpp", ".cpp", ".cuh", ".cu", ".def", ".py", ".java")]
+             if p.suffix in (".hpp", ".inc", ".cpp", ".cuh", ".cu", ".def", ".py", ".java")]
     files += [ROOT / "inventory" / name for name in
               ("units.json", "snapshot-fields.json", "runtime-patches.json")]
     for path in sorted(files):

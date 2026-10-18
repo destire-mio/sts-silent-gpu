@@ -1,0 +1,9 @@
+#pragma once
+#include "core/hooks.hpp"
+
+namespace spire::units::powers {
+struct Regrow : PowerHooks {
+    static SPIRE_FN constexpr PowerData data() { return {}; }
+    static SPIRE_FN void initialPower(Game&, Power& p, int) { p.amount = -1; }
+};
+}

@@ -27,8 +27,9 @@ Device C++: the code under `core/` must compile both as host C++17 and inside CU
 - every function carries `SPIRE_FN` (`__host__ __device__` under CUDA, empty otherwise)
 - no heap, no exceptions, no RTTI, no virtual functions, no recursion, no function pointers
 - no standard library beyond `<cstdint>`, `<cstddef>` and fixed-size helpers defined in `core/`
-- no mutable globals or statics; constant tables are `constexpr` arrays. The sole exception is
-  the per-thread fault-pointer array in CUDA block shared memory in `platform.hpp`; it routes
+- no mutable globals or statics; constant tables have one `const` definition per backend and
+  extern declarations. The sole exception is the per-thread fault-pointer array in CUDA block
+  shared memory owned by `cuda/platform.cu`; its accessor routes
   assertions to the owning `Game` and stores no rule state
 - capacities and their Java basis are documented in `porting.md`. Java growing lists have
   execution budgets, not invented game limits; overflow is `SPIRE_ASSERT`, never truncation
@@ -50,6 +51,13 @@ Faithfulness comes from keeping the game's own structure:
 
 Numbers that are data (cost, damage, block, magic number, upgrade deltas, rarity, type, target)
 live in constant tables. Behaviour is a `switch` on the id that follows the Java method.
+
+Rule inputs use `.inc` files. The content generator emits declaration headers and split C++
+sources in the build directory; CUDA wrappers include those sources and compile with RDC.
+The CPU reference/test backend uses a static library with ThinLTO. Small fixed-state and RNG
+helpers stay inline; behavior hooks, dispatchers, core transitions and observation encoding
+have one out-of-line definition. Final CUDA consumers resolve the static archive at device link.
+This changes compilation boundaries, not rule ordering, observation layout or RNG streams.
 
 ## Snapshot and trace
 A snapshot is the canonical JSON picture of one decision point. The oracle defines it; the engine

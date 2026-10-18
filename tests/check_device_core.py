@@ -8,8 +8,8 @@ from pathlib import Path
 
 
 ALLOWED_HEADERS = {"cstdint", "cstddef"}
-EXTENSIONS = {".h", ".hpp", ".cuh", ".cpp", ".cu", ".def"}
-CATALOG_EXTENSIONS = {".def"}
+EXTENSIONS = {".h", ".hpp", ".cuh", ".cpp", ".cu", ".def", ".inc"}
+CATALOG_EXTENSIONS = {".def", ".inc"}
 FORBIDDEN = re.compile(
     r"\b(new|delete|throw|try|catch|virtual|dynamic_cast|typeid|thread_local|mutable)\b"
     r"|\b(?:__builtin_)?(malloc|calloc|realloc|free|alloca|setjmp|longjmp)\s*\("
@@ -29,6 +29,8 @@ def check(root, compiler, generated=None, extra_roots=()):
     if generated is not None:
         roots.append(generated.resolve())
     include_dirs = [directory.parent for directory in roots]
+    if generated is not None:
+        include_dirs.insert(0, generated.resolve())
     sources = {path.resolve(): path.read_text() for directory in roots
                for path in sorted(directory.rglob("*")) if path.suffix in EXTENSIONS}
     errors = []
@@ -53,7 +55,7 @@ def check(root, compiler, generated=None, extra_roots=()):
         return errors
     with tempfile.TemporaryDirectory(prefix="spire-device-check-") as temporary:
         unit = Path(temporary) / "core.cpp"
-        unit.write_text("".join(f'#include "{path}"\n' for path in sources if path.suffix not in CATALOG_EXTENSIONS))
+        unit.write_text("".join(f'#include "{path}"\n' for path in sources if path.suffix not in CATALOG_EXTENSIONS and path.suffix != ".cu"))
         result = subprocess.run(
             [compiler, "-std=c++17", "-fno-exceptions", "-fno-rtti", "-pedantic-errors", "-x", "c++", "-fsyntax-only", "-Xclang", "-ast-dump=json",
              *[argument for directory in include_dirs for argument in ("-I", str(directory))], str(unit)],
@@ -97,7 +99,9 @@ def check(root, compiler, generated=None, extra_roots=()):
                     errors.append(f"{path}: {name} lacks SPIRE_FN")
         if own and not implicit:
             if kind == "VarDecl" and (function is None or node.get("storageClass") == "static"):
-                if not node.get("constexpr", False):
+                typename = re.sub(r"\[[^]]*\]", "", node.get("type", {}).get("qualType", "")).strip()
+                constant = (typename.startswith("const ") and "*" not in typename) or typename.endswith(" const")
+                if not node.get("constexpr", False) and not constant:
                     errors.append(f"{path}: mutable global or static {node.get('name')}")
             if kind in {"VarDecl", "FieldDecl", "ParmVarDecl", "TypedefDecl", "TypeAliasDecl"}:
                 typename = node.get("type", {}).get("qualType", "")
@@ -171,7 +175,7 @@ __global__ void compact_observation(spire::obs::Observation* input, unsigned cha
             result = subprocess.run(
                 [args.compiler, "-std=c++17", "-x", "cuda", "--cuda-device-only", "-nocudainc",
                  "-nocudalib", "-O1", "-S", "-emit-llvm", "-o", str(Path(temporary) / "batch.ll"), "-I", str(args.root.resolve().parent),
-                 "-I", str(args.generated.resolve().parent), str(unit)], capture_output=True, text=True)
+                 "-I", str(args.generated.resolve()), "-I", str(args.generated.resolve().parent), str(unit)], capture_output=True, text=True)
             if result.returncode:
                 errors.append(result.stderr.rstrip())
     for error in errors:

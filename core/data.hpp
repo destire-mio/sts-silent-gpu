@@ -1,9 +1,9 @@
 #pragma once
-#include "state.hpp"
+#include "core/state.hpp"
 
 namespace spire {
 // Cutscene.update keeps subtracting until the panels finish, then resets their finished flags.
-SPIRE_FN constexpr float victory_switch_timer() {
+SPIRE_FN SPIRE_INLINE constexpr float victory_switch_timer() {
     float timer = 5.0f;
     while (timer >= 0.0f) timer -= 1.0f / 60.0f;
     float alpha = 1.0f;

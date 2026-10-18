@@ -23,7 +23,7 @@ def generate(jar, root):
             masks.append(sum(1 << i for i, key in enumerate(["!D!", "!B!", "!M!"]) if key in text))
         output.append('    {' + ', '.join(map(str, masks)) + '},')
     output.extend(['};', 'static_assert(sizeof(card_variables) / sizeof(*card_variables) == static_cast<int>(CardId::Count));', '}'])
-    (root / "obs/card_variables.hpp").write_text('\n'.join(output) + '\n')
+    (root / "obs/card_variables.inc").write_text('\n'.join(output) + '\n')
 
 
 if __name__ == "__main__":

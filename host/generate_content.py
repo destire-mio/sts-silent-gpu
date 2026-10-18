@@ -3,6 +3,7 @@ import argparse
 import json
 import re
 from pathlib import Path
+from split_sources import close, emit, masked, write
 
 KINDS = {
     "cards": ("CardId", "CardHooks", "card", "get_card(g, card).id"),
@@ -207,14 +208,14 @@ def generate(root, output):
     for kind, entries in catalogs.items():
         states[kind] = {}
         for unit, _, path, typename in entries:
-            match = re.search(r"SPIRE_STATE\(\s*" + typename + r"\s*,(.*?)\)", (root / path).read_text(), re.S)
+            match = re.search(r"SPIRE_STATE\(\s*" + typename + r"\s*,(.*?)\)", (root / path).with_suffix(".inc").read_text(), re.S)
             if match:
                 states[kind][unit] = (typename, match[1].strip())
     ids = ['#pragma once', '#include "core/fixed.hpp"', '#include "core/types.hpp"', 'namespace spire {']
     ids.append('struct UnitStatics {')
     for entries in catalogs.values():
         for _, _, path, typename in entries:
-            match = re.search(r'SPIRE_STATIC_STATE\(\s*' + typename + r'\s*,(.*?)\)', (root / path).read_text(), re.S)
+            match = re.search(r'SPIRE_STATIC_STATE\(\s*' + typename + r'\s*,(.*?)\)', (root / path).with_suffix(".inc").read_text(), re.S)
             if match:
                 ids.append(f'    struct {{ {match[1].strip()} }} {typename}{{}};')
     ids.append('};')
@@ -225,8 +226,9 @@ def generate(root, output):
     bases = ['#pragma once', 'namespace spire {']
     content = ['#pragma once', '#include "core/hooks.hpp"']
     for entries in catalogs.values():
-        content += [f'#include "{path}"' for _, _, path, _ in entries]
+        content += [f'#include "{Path(path).with_suffix(".hpp")}"' for _, _, path, _ in entries]
     content.append('namespace spire {')
+    content.append('constexpr ActionData default_action_data{};')
     inventory = json.loads((root / 'inventory/units.json').read_text())['units']
     events = [unit for unit in inventory if unit['kind'] == 'event']
     ids.append('enum class EventKey : uint8_t { ' + ', '.join(unit['java_class'].rsplit('.', 1)[1] for unit in events) + ', Count };')
@@ -311,12 +313,12 @@ def generate(root, output):
     potion_facts = {unit['game_id']: unit['facts'] for unit in inventory if unit['kind'] == 'potion'}
     potion_pool = next(unit['facts']['silent_pool'] for unit in inventory if unit['key'] == 'rule:helpers.PotionHelper')
     potion_types = {game_id: (unit, typename) for unit, game_id, _, typename in catalogs['potions']}
-    content.append('struct PotionPoolEntry { PotionId id; int rarity; bool limited_exclusion; };')
+    content.append('struct PotionPoolEntry { PotionId id; int rarity; };')
     content.append('constexpr PotionPoolEntry silent_potion_pool[] = {')
     for game_id in potion_pool:
         rarity = {'COMMON': 0, 'UNCOMMON': 1, 'RARE': 2}[potion_facts[game_id]['rarity']]
         unit, typename = potion_types[game_id]
-        content.append('{PotionId::' + unit + ', ' + str(rarity) + ', units::potions::' + typename + '::data().limited_exclusion},')
+        content.append('{PotionId::' + unit + ', ' + str(rarity) + '},')
     content.append('};')
     for kind, (enum, base, prefix, selector) in KINDS.items():
         entries = catalogs[kind]
@@ -382,11 +384,16 @@ def generate(root, output):
         if kind in ("cards", "powers", "relics", "potions", "monsters", "actions", "events"):
             datatype = {"cards": "CardDef", "powers": "PowerData", "relics": "RelicData", "potions": "PotionData", "monsters": "MonsterData", "actions": "ActionData", "events": "EventData"}[kind]
             declarations.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id);')
-            content.append(f'constexpr {datatype} {prefix}_definitions[] = {{')
-            for _, _, _, typename in entries:
-                content.append(f'    units::{kind}::{typename}::data(),')
-            content.append('};')
-            content.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id) {{ SPIRE_ASSERT(id < {enum}::Count); return {prefix}_definitions[static_cast<int>(id)]; }}')
+            content.append(f'SPIRE_FN inline const {datatype}& {prefix}_data({enum} id) {{ switch (id) {{')
+            for unit, _, _, typename in entries:
+                source = (root / next(path for key, _, path, _ in entries if key == unit)).with_suffix('.inc').read_text()
+                body = re.search(r'\bstruct\s+' + typename + r'\s*[^{}]*\{', source).end() - 1
+                own = source[body:close(masked(source), body)]
+                if kind == 'actions' and not re.search(r'\bdata\s*\(', own):
+                    content.append(f'case {enum}::{unit}: return default_action_data;')
+                else:
+                    content.append(f'case {enum}::{unit}: return units::{kind}::{typename}_data;')
+            content.append('default: SPIRE_ASSERT(false); } __builtin_unreachable(); }')
         if base:
             bases.append(f'struct {base} {{')
             if kind == "actions":
@@ -408,7 +415,7 @@ def generate(root, output):
                 call_args.remove('id')
             inherited = []
             for unit, _, path, typename in entries:
-                source = (root / path).read_text()
+                source = (root / path).with_suffix(".inc").read_text()
                 if base and re.search(r'\bstruct\s+' + typename + r'\s*:\s*' + base + r'\s*\{', source) and not re.search(r'\b' + name + r'\s*\(', source):
                     inherited.append(unit)
                     continue
@@ -446,11 +453,10 @@ def generate(root, output):
     for lines in (ids, declarations, bases, content):
         lines.append('}')
     output.mkdir(parents=True, exist_ok=True)
-    for filename, lines in (("ids.hpp", ids), ("bases.hpp", bases), ("declarations.hpp", declarations), ("content.hpp", content)):
-        path = output / filename
-        text = '\n'.join(lines) + '\n'
-        if not path.exists() or path.read_text() != text:
-            path.write_text(text)
+    for filename, lines in (("ids.hpp", ids), ("declarations.hpp", declarations)):
+        write(output / filename, ('\n'.join(lines) + '\n').replace('SPIRE_FN inline', 'SPIRE_FN'))
+    emit(root, output, {"bases.hpp": '\n'.join(bases) + '\n', "content.hpp": '\n'.join(content) + '\n'})
+
 
 
 if __name__ == '__main__':

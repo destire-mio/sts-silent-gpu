@@ -10,6 +10,13 @@
 #define SPIRE_STATIC(...)
 #define SPIRE_STATIC_STATE(type, ...)
 
+#define SPIRE_INLINE __attribute__((always_inline))
+#if defined(__CUDA_ARCH__)
+#define SPIRE_CONSTANT __device__
+#else
+#define SPIRE_CONSTANT
+#endif
+
 #if defined(__CUDACC__)
 #define SPIRE_FN __host__ __device__
 #else
@@ -23,30 +30,26 @@
 #endif
 
 namespace spire {
-SPIRE_FN constexpr uint32_t assertion_id(const char* file, uint32_t line) {
+SPIRE_FN SPIRE_INLINE constexpr uint32_t assertion_id(const char* file, uint32_t line) {
     uint32_t hash = 2166136261u;
     while (*file) hash = (hash ^ static_cast<uint8_t>(*file++)) * 16777619u;
     hash = (hash ^ line) * 16777619u;
     return hash == 0 ? 1 : hash;
 }
-SPIRE_FN inline void record_fault(uint32_t& fault, uint32_t site) {
+SPIRE_FN SPIRE_INLINE inline void record_fault(uint32_t& fault, uint32_t site) {
     if (fault == 0) fault = site;
 }
 #if defined(__CUDA_ARCH__)
-SPIRE_FN inline uint32_t*& device_fault_target() {
-    __shared__ uint32_t* targets[1024];
-    const unsigned thread = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * threadIdx.z);
-    return targets[thread];
-}
-[[noreturn]] SPIRE_FN inline void device_fault(uint32_t site) {
+SPIRE_FN uint32_t*& device_fault_target();
+[[noreturn]] SPIRE_FN SPIRE_INLINE inline void device_fault(uint32_t site) {
     record_fault(*device_fault_target(), site);
     asm volatile("exit;" ::: "memory");
     __builtin_unreachable();
 }
 #endif
-SPIRE_FN constexpr int min(int a, int b) { return a < b ? a : b; }
-SPIRE_FN constexpr int max(int a, int b) { return a > b ? a : b; }
-SPIRE_FN inline int floor_int(float value) {
+SPIRE_FN SPIRE_INLINE constexpr int min(int a, int b) { return a < b ? a : b; }
+SPIRE_FN SPIRE_INLINE constexpr int max(int a, int b) { return a > b ? a : b; }
+SPIRE_FN SPIRE_INLINE inline int floor_int(float value) {
     const int truncated = static_cast<int>(value);
     return truncated - (value < static_cast<float>(truncated) ? 1 : 0);
 }

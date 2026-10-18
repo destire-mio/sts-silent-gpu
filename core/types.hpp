@@ -1,5 +1,5 @@
 #pragma once
-#include "platform.hpp"
+#include "core/platform.hpp"
 
 namespace spire {
 constexpr int card_capacity = 221;

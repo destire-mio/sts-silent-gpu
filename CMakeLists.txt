@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.31)
 project(spire LANGUAGES CXX)
 if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     message(FATAL_ERROR "The host build requires clang for the device-C++ AST check")
@@ -18,28 +18,28 @@ find_package(pybind11 CONFIG REQUIRED)
 set(SPIRE_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/spire_generated")
 file(GLOB_RECURSE content_sources CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/core/*.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/core/*.def")
-set(content_headers
-    "${SPIRE_GENERATED_DIR}/ids.hpp"
-    "${SPIRE_GENERATED_DIR}/bases.hpp"
-    "${SPIRE_GENERATED_DIR}/declarations.hpp"
-    "${SPIRE_GENERATED_DIR}/content.hpp")
-add_custom_command(OUTPUT ${content_headers}
-    COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py"
-        --root "${CMAKE_CURRENT_SOURCE_DIR}" --output "${SPIRE_GENERATED_DIR}"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py"
-        "${CMAKE_CURRENT_SOURCE_DIR}/inventory/units.json" ${content_sources}
-    VERBATIM)
-add_custom_target(generate_content DEPENDS ${content_headers})
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/*.inc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/*.def"
+    "${CMAKE_CURRENT_SOURCE_DIR}/obs/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/obs/*.inc")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${content_sources}
+    host/generate_content.py host/split_sources.py inventory/units.json)
+execute_process(COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_content.py"
+    --root "${CMAKE_CURRENT_SOURCE_DIR}" --output "${SPIRE_GENERATED_DIR}"
+    COMMAND_ERROR_IS_FATAL ANY)
+include("${SPIRE_GENERATED_DIR}/sources.cmake")
+add_custom_target(generate_content)
 
-add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.hpp"
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.stamp"
+    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.hpp"
     COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_snapshot.py"
         --root "${CMAKE_CURRENT_SOURCE_DIR}" --output "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.hpp"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_snapshot.py"
+    COMMAND "${CMAKE_COMMAND}" -E touch "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.stamp"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/host/generate_snapshot.py" "${CMAKE_CURRENT_SOURCE_DIR}/host/split_sources.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/inventory/snapshot-fields.json"
         "${CMAKE_CURRENT_SOURCE_DIR}/inventory/units.json" ${content_sources}
     VERBATIM)
-add_custom_target(generate_snapshot DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.hpp")
+add_custom_target(generate_snapshot DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/spire_host_generated/snapshot.stamp")
 
 add_custom_target(check_device_core ALL
     COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_device_core.py"
@@ -56,18 +56,26 @@ add_custom_target(check_game_layout ALL
     VERBATIM)
 add_dependencies(check_game_layout generate_content)
 
-add_library(spire_core INTERFACE)
+add_library(spire_options INTERFACE)
+add_library(spire_core STATIC ${SPIRE_ENGINE_SOURCES})
+target_link_libraries(spire_core PUBLIC spire_options)
+set_target_properties(spire_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 add_dependencies(spire_core check_game_layout)
-target_include_directories(spire_core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
-target_compile_features(spire_core INTERFACE cxx_std_17)
+target_include_directories(spire_options INTERFACE "${SPIRE_GENERATED_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
+target_compile_features(spire_options INTERFACE cxx_std_17)
 set(SPIRE_CUDA_INLINE_THRESHOLD 5 CACHE STRING "LLVM device inlining threshold")
-target_compile_options(spire_core INTERFACE
+target_compile_options(spire_options INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>
     $<$<COMPILE_LANGUAGE:CUDA>:-ffp-contract=off>
-    "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xcuda-ptxas --split-compile=1>"
     "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xarch_device -mllvm=-inline-threshold=${SPIRE_CUDA_INLINE_THRESHOLD}>")
 
-pybind11_add_module(spire host/bindings.cpp)
+target_compile_options(spire_core PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-flto=thin>)
+target_link_options(spire_core PUBLIC -flto=thin)
+if(NOT APPLE)
+    target_link_options(spire_core PUBLIC -fuse-ld=lld "LINKER:--thinlto-jobs=2")
+endif()
+
+pybind11_add_module(spire NO_EXTRAS host/bindings.cpp)
 target_link_libraries(spire PRIVATE spire_core)
 add_dependencies(spire check_device_core)
 add_dependencies(spire generate_snapshot)
@@ -95,32 +103,41 @@ if(CMAKE_CUDA_COMPILER)
         message(FATAL_ERROR "CUDA must be compiled by clang++, the compiler checked by check_device_core")
     endif()
     find_package(CUDAToolkit REQUIRED)
-    add_library(spire_cuda STATIC cuda/batch.cu cuda/training_batch.cu)
-    target_link_libraries(spire_cuda PUBLIC spire_core CUDA::cudart)
+    set(cuda_engine_sources ${SPIRE_ENGINE_SOURCES})
+    list(TRANSFORM cuda_engine_sources REPLACE "\\.cpp$" ".cu")
+    add_library(spire_cuda STATIC ${cuda_engine_sources} cuda/platform.cu cuda/batch.cu cuda/training_batch.cu)
+    target_link_libraries(spire_cuda PUBLIC spire_options CUDA::cudart)
     set_target_properties(spire_cuda PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON
-        POSITION_INDEPENDENT_CODE ON)
+        POSITION_INDEPENDENT_CODE ON CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS OFF)
     add_dependencies(spire_cuda check_device_core)
-    pybind11_add_module(spire_gpu cuda/bindings.cpp)
+    pybind11_add_module(spire_gpu NO_EXTRAS cuda/bindings.cpp)
     target_link_libraries(spire_gpu PRIVATE spire_cuda)
+    set_target_properties(spire_gpu PROPERTIES CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON LINKER_LANGUAGE CUDA)
 endif()
 
 include(CTest)
 if(BUILD_TESTING)
-    pybind11_add_module(training_state tests/training_state.cpp)
+    find_program(SPIRE_PTX_COMPILER NAMES clang++ HINTS /opt/homebrew/opt/llvm/bin REQUIRED)
+    add_test(NAME device_link COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_device_link.py"
+        --root "${CMAKE_CURRENT_SOURCE_DIR}" --generated "${SPIRE_GENERATED_DIR}" --compiler "${SPIRE_PTX_COMPILER}")
+    set_tests_properties(device_link PROPERTIES PROCESSORS 2)
+    pybind11_add_module(training_state NO_EXTRAS tests/training_state.cpp)
     target_link_libraries(training_state PRIVATE spire_core)
     add_dependencies(training_state check_device_core generate_snapshot)
     add_test(NAME deep_benchmark_inputs COMMAND spire_deep_benchmark 1)
     if(CMAKE_CUDA_COMPILER)
         add_executable(test_cuda_faults tests/test_cuda_faults.cu)
         target_link_libraries(test_cuda_faults PRIVATE spire_cuda)
-        set_target_properties(test_cuda_faults PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON)
+        set_target_properties(test_cuda_faults PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON
+            CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON)
         add_test(NAME test_cuda_faults COMMAND test_cuda_faults)
         set_tests_properties(test_cuda_faults PROPERTIES SKIP_RETURN_CODE 77)
         add_executable(test_cuda_parity tests/test_cuda_parity.cu)
         target_link_libraries(test_cuda_parity PRIVATE spire_cuda)
         target_compile_definitions(test_cuda_parity PRIVATE
             SPIRE_DEEP_ACTIONS="${CMAKE_CURRENT_SOURCE_DIR}/tests/deep_benchmark.actions")
-        set_target_properties(test_cuda_parity PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON)
+        set_target_properties(test_cuda_parity PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON
+            CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON)
         add_test(NAME test_cuda_parity COMMAND test_cuda_parity)
         add_test(NAME cuda_python COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/check_cuda_python.py")
         set_tests_properties(cuda_python PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:spire>:${CMAKE_CURRENT_SOURCE_DIR}")
