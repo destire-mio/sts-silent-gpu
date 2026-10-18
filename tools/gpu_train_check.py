@@ -308,7 +308,7 @@ def suite(roots, build, output):
             f'-DCMAKE_CXX_COMPILER={shutil.which("clang++")}', f'-DCMAKE_CUDA_COMPILER={shutil.which("clang++")}',
             f'-DCUDAToolkit_ROOT={Path(shutil.which("nvcc")).resolve().parents[1]}', '-DCMAKE_CUDA_ARCHITECTURES=70',
             f'-DPython_EXECUTABLE={sys.executable}', '-DBUILD_TESTING=ON'], 600))
-        require(stage('build', ['cmake', '--build', str(build), '--parallel', str(len(os.sched_getaffinity(0)))], 7200))
+        require(stage('build', ['cmake', '--build', str(build), '--parallel', '1'], 7200))
         require(stage('ctest', ['ctest', '--test-dir', str(build), '--output-on-failure', '--no-tests=error', '-j1'],
                       3600))
         deadline = time.monotonic() + BUDGET_SECONDS

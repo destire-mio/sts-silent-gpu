@@ -60,10 +60,12 @@ add_library(spire_core INTERFACE)
 add_dependencies(spire_core check_game_layout)
 target_include_directories(spire_core INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 target_compile_features(spire_core INTERFACE cxx_std_17)
+set(SPIRE_CUDA_INLINE_THRESHOLD 5 CACHE STRING "LLVM device inlining threshold")
 target_compile_options(spire_core INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>
     $<$<COMPILE_LANGUAGE:CUDA>:-ffp-contract=off>
-    $<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xcuda-ptxas --split-compile=0>)
+    "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xcuda-ptxas --split-compile=1>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xarch_device -mllvm=-inline-threshold=${SPIRE_CUDA_INLINE_THRESHOLD}>")
 
 pybind11_add_module(spire host/bindings.cpp)
 target_link_libraries(spire PRIVATE spire_core)

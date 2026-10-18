@@ -19,7 +19,7 @@ nvidia-smi
 cmake -S . -B "$build" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER="$clang" \
     -DCMAKE_CUDA_COMPILER="$clang" -DCUDAToolkit_ROOT="$cuda" \
     -DCMAKE_CUDA_ARCHITECTURES=70 -DPython_EXECUTABLE="$python" -DBUILD_TESTING=ON
-cmake --build "$build" --parallel "$(nproc)"
+cmake --build "$build" --parallel 1
 export PYTHONPATH="$build:$repo"
 ctest --test-dir "$build" --output-on-failure --no-tests=error -j1
 "$python" tests/check_cuda_roots.py "$roots"
