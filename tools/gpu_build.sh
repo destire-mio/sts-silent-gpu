@@ -15,7 +15,7 @@ cuda=$(dirname "$(dirname "$(realpath "$nvcc")")")
 cmake -S . -B "$build" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER="$clang" \
     -DCMAKE_CUDA_COMPILER="$clang" -DCUDAToolkit_ROOT="$cuda" \
     -DCMAKE_CUDA_COMPILER_LAUNCHER="$python;$repo/tools/cuda_compile.py;compile" \
-    -DCMAKE_CUDA_ARCHITECTURES=70 -DSPIRE_CUDA_INLINE_THRESHOLD=5 \
+    -DCMAKE_CUDA_ARCHITECTURES=70 \
     -DPython_EXECUTABLE="$python" -DBUILD_TESTING=OFF
 cmake --build "$build" --target spire_gpu --parallel 2
 "$python" tools/cuda_compile.py report "$build"

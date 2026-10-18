@@ -1,4 +1,4 @@
-"""Compile the production device units and check their PTX link interface without a toolkit."""
+"""Check the production sm_70 PTX link interface at the fixed inline threshold of 5."""
 import argparse
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
@@ -60,6 +60,7 @@ def main():
     parser.add_argument('--generated', type=Path, required=True)
     parser.add_argument('--compiler', required=True)
     args = parser.parse_args()
+    assert '-mllvm=-inline-threshold=5' in (args.root / 'CMakeLists.txt').read_text()
     sources = [args.generated / p for p in json.loads((args.generated / 'sources.json').read_text())]
     sources += sorted((args.root / 'cuda').glob('*.cu'))
     sources += sorted((args.root / 'tests').glob('test_cuda_*.cu'))

@@ -131,10 +131,8 @@ compiler/assembler processes; it does not establish a peak-memory bound on the s
 `CMAKE_CUDA_COMPILER_LAUNCHER` runs every CUDA compile through `/usr/bin/time -v` and keeps its
 raw output in `OBJECT.o.time`. `tools/cuda_compile.py report BUILD_DIR` prints the latest wall
 seconds, peak RSS in KiB and exit status for each object. Unchanged objects retain their prior
-compile measurements. Release remains `-O3`; `SPIRE_CUDA_INLINE_THRESHOLD` remains 5.
-`tools/inline_check.sh WORK_DIR` retains its sequential threshold-5/250 comparison, parity and
-throughput workload; each build uses two jobs and records per-unit timing. The ineffective
-`--split-compile=1` flag has been removed.
+compile measurements. Release remains `-O3`; CUDA uses the fixed LLVM inline threshold 5.
+The PTX link check uses the same threshold. No threshold-250 comparison build is needed.
 
 To build only the GPU extension inside an existing Slurm allocation, put clang++ and the CUDA
 12.8 toolkit's nvcc on PATH and set `SPIRE_PYTHON` to the installed server venv:

@@ -63,13 +63,12 @@ set_target_properties(spire_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 add_dependencies(spire_core check_game_layout)
 target_include_directories(spire_options INTERFACE "${SPIRE_GENERATED_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 target_compile_features(spire_options INTERFACE cxx_std_17)
-set(SPIRE_CUDA_INLINE_THRESHOLD 5 CACHE STRING "LLVM device inlining threshold")
 target_compile_options(spire_options INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>
     $<$<COMPILE_LANGUAGE:CUDA>:-ffp-contract=off>
     $<$<COMPILE_LANGUAGE:CUDA>:--no-offload-new-driver>
     "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xarch_device -fno-slp-vectorize>"
-    "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xarch_device -mllvm=-inline-threshold=${SPIRE_CUDA_INLINE_THRESHOLD}>")
+    "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xarch_device -mllvm=-inline-threshold=5>")
 
 target_compile_options(spire_core PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-flto=thin>)
 target_link_options(spire_core PUBLIC -flto=thin)
