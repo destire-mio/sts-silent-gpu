@@ -215,6 +215,8 @@ def main():
     sets = evaluation_sets(train, dev, e2)
     bands = [band for band in BANDS if len({r["seed"] for r in train if r["band"] == band}) >= 20
              and f"dev/{band}" in sets]
+    bands.sort(key=lambda band: (float(np.median([r["distance_to_win"] for r in train if r["band"] == band])),
+                                 BANDS.index(band)))
     checkpoint = torch.load(args.resume, map_location="cpu", weights_only=True) if args.resume else None
     curriculum = Curriculum(train, far, bands, args.init_seed, checkpoint["curriculum"] if checkpoint else None)
     model, ppo = ModelConfig(), PPOConfig(epochs=1, minibatch_size=8192)
@@ -226,6 +228,7 @@ def main():
                     group=args.group, init_seed=args.init_seed, source_hashes=source_hashes, bands=bands,
                     sampling=SCHEME, repeats=REPEATS, evaluation_interval=EVALUATION_INTERVAL,
                     decision_target=args.decisions, interval="Two-sided Hoeffding over seed families; paired range [-1,1]",
+                    band_order="Increasing median winning-path decisions remaining, fixed before training",
                     natural_train_seeds="fresh sequential train seeds; one per attempt", root_family_cap=.05)
     if checkpoint:
         assert checkpoint["config"] == manifest, "Resume requires identical source, environment, roots and experiment"
@@ -298,6 +301,9 @@ def main():
                           frontier=curriculum.frontier,
                           source_episodes=dict(Counter(sources[e["attempt"] - first] for e in rollout.episodes)),
                           source_decisions=decisions_by_source)
+            result["source_episode_shares"] = {name: count / len(rollout.episodes)
+                for name, count in result["source_episodes"].items()}
+            result["source_decision_shares"] = {name: count / rollout.count for name, count in decisions_by_source.items()}
             result["timing"] = dict(**rollout.timing, total_seconds=time.perf_counter() - begin)
             result["timing"]["decisions_per_second"] = rollout.count / result["timing"]["total_seconds"]
             with (args.output / "updates.jsonl").open("a") as stream:
