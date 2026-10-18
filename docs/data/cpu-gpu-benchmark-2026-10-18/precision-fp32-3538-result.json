@@ -1,0 +1,3371 @@
+{
+  "phase": "precision",
+  "source": "23dcf237f5b73b1c4dc3e95a75de05c3c2d5d575",
+  "started": 1792336335.839603,
+  "deadline": 1792339800.0,
+  "roots_sha256": "9eb42bf82c2b9ec3a66818de7fd0fe53117d2be67361e0a8057446448dd4189d",
+  "stages": [
+    {
+      "stage": "five-updates",
+      "status": "ok",
+      "seconds": 158.59560905303806,
+      "log": "/home/zhuyouwei/spire-downloads/precision-fp32-3538/five-updates.log",
+      "training": {
+        "updates": [
+          {
+            "episodes": 65536,
+            "completed": 65536,
+            "wins": 0,
+            "deaths": 65536,
+            "episode_decisions": {
+              "min": 1,
+              "p50": 16.0,
+              "p95": 47.0,
+              "p99": 68.0,
+              "max": 221,
+              "mean": 19.177383422851562
+            },
+            "lane_utilization": {
+              "waves": 1230,
+              "active_lane_steps": 1256809,
+              "available_lane_steps": 10076160,
+              "active_lane_seconds": 210284.24875039625,
+              "available_lane_seconds": 452542.75183984375,
+              "step_fraction": 0.12473094909171747,
+              "time_fraction": 0.46467266992007084
+            },
+            "workers": [
+              {
+                "rank": 0,
+                "decisions": 155627,
+                "compact_bytes": 289002224,
+                "timing": {
+                  "root_prepare_seconds": 19.0879375,
+                  "reset_seconds": 0.03219046401977539,
+                  "step_encode_seconds": 1.0114816011339427,
+                  "inference_seconds": 6.345956345558166,
+                  "storage_seconds": 0.1083166723549366,
+                  "collection_seconds": 27.84394272195641
+                },
+                "utilization": {
+                  "waves": 221,
+                  "active_lane_steps": 155627,
+                  "available_lane_steps": 1810432,
+                  "active_lane_seconds": 25762.346915955542,
+                  "available_lane_seconds": 63796.2947734375
+                },
+                "memory": {
+                  "allocated_bytes": 1696120832,
+                  "reserved_bytes": 8216641536,
+                  "peak_allocated_bytes": 5164780032,
+                  "peak_reserved_bytes": 8216641536,
+                  "free_bytes": 6129451008,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 1,
+                "decisions": 155652,
+                "compact_bytes": 289429146,
+                "timing": {
+                  "root_prepare_seconds": 20.151919921875,
+                  "reset_seconds": 0.032323585510253904,
+                  "step_encode_seconds": 0.8964710385203362,
+                  "inference_seconds": 5.3784627161026,
+                  "storage_seconds": 0.07018243205547332,
+                  "collection_seconds": 27.538368412991986
+                },
+                "utilization": {
+                  "waves": 125,
+                  "active_lane_steps": 155652,
+                  "available_lane_steps": 1024000,
+                  "active_lane_seconds": 25922.10959084797,
+                  "available_lane_seconds": 53545.482796875
+                },
+                "memory": {
+                  "allocated_bytes": 1696143360,
+                  "reserved_bytes": 8214544384,
+                  "peak_allocated_bytes": 5164780032,
+                  "peak_reserved_bytes": 8214544384,
+                  "free_bytes": 6131548160,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 2,
+                "decisions": 156257,
+                "compact_bytes": 289742459,
+                "timing": {
+                  "root_prepare_seconds": 20.731896484375,
+                  "reset_seconds": 0.0396759033203125,
+                  "step_encode_seconds": 0.9216839688867331,
+                  "inference_seconds": 5.575094266414642,
+                  "storage_seconds": 0.07822617587447167,
+                  "collection_seconds": 28.995428731897846
+                },
+                "utilization": {
+                  "waves": 150,
+                  "active_lane_steps": 156257,
+                  "available_lane_steps": 1228800,
+                  "active_lane_seconds": 26026.262311009883,
+                  "available_lane_seconds": 55625.84941796875
+                },
+                "memory": {
+                  "allocated_bytes": 1696456704,
+                  "reserved_bytes": 8214544384,
+                  "peak_allocated_bytes": 5164796416,
+                  "peak_reserved_bytes": 8214544384,
+                  "free_bytes": 6152519680,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 3,
+                "decisions": 157397,
+                "compact_bytes": 291568017,
+                "timing": {
+                  "root_prepare_seconds": 20.3495234375,
+                  "reset_seconds": 0.033783809661865234,
+                  "step_encode_seconds": 0.9164902393221855,
+                  "inference_seconds": 5.555983361721039,
+                  "storage_seconds": 0.07641503968834877,
+                  "collection_seconds": 28.47477027506102
+                },
+                "utilization": {
+                  "waves": 141,
+                  "active_lane_steps": 157397,
+                  "available_lane_steps": 1155072,
+                  "active_lane_seconds": 26288.592904262543,
+                  "available_lane_seconds": 55372.68140625
+                },
+                "memory": {
+                  "allocated_bytes": 1698281984,
+                  "reserved_bytes": 8216641536,
+                  "peak_allocated_bytes": 5164796416,
+                  "peak_reserved_bytes": 8216641536,
+                  "free_bytes": 6133645312,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 4,
+                "decisions": 158223,
+                "compact_bytes": 292229029,
+                "timing": {
+                  "root_prepare_seconds": 19.613275390625,
+                  "reset_seconds": 0.032519168853759765,
+                  "step_encode_seconds": 0.9444126721024513,
+                  "inference_seconds": 5.738092550754547,
+                  "storage_seconds": 0.08114694413542747,
+                  "collection_seconds": 28.073469090042636
+                },
+                "utilization": {
+                  "waves": 148,
+                  "active_lane_steps": 158223,
+                  "available_lane_steps": 1212416,
+                  "active_lane_seconds": 26500.057023199082,
+                  "available_lane_seconds": 57285.7202265625
+                },
+                "memory": {
+                  "allocated_bytes": 1698942976,
+                  "reserved_bytes": 8745123840,
+                  "peak_allocated_bytes": 5205286912,
+                  "peak_reserved_bytes": 8745123840,
+                  "free_bytes": 5621940224,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 5,
+                "decisions": 157284,
+                "compact_bytes": 291311369,
+                "timing": {
+                  "root_prepare_seconds": 19.350791015625,
+                  "reset_seconds": 0.03221811294555664,
+                  "step_encode_seconds": 0.9307965445518493,
+                  "inference_seconds": 5.51082803273201,
+                  "storage_seconds": 0.07229990392923355,
+                  "collection_seconds": 27.508721171994694
+                },
+                "utilization": {
+                  "waves": 129,
+                  "active_lane_steps": 157284,
+                  "available_lane_steps": 1056768,
+                  "active_lane_seconds": 26461.236266484262,
+                  "available_lane_seconds": 55006.7786328125
+                },
+                "memory": {
+                  "allocated_bytes": 1698217984,
+                  "reserved_bytes": 8197767168,
+                  "peak_allocated_bytes": 5164796416,
+                  "peak_reserved_bytes": 8197767168,
+                  "free_bytes": 6152519680,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 6,
+                "decisions": 157929,
+                "compact_bytes": 292956262,
+                "timing": {
+                  "root_prepare_seconds": 19.913974609375,
+                  "reset_seconds": 0.03386675262451172,
+                  "step_encode_seconds": 0.9027543078660965,
+                  "inference_seconds": 5.191362560749054,
+                  "storage_seconds": 0.063006207883358,
+                  "collection_seconds": 27.625230096047744
+                },
+                "utilization": {
+                  "waves": 111,
+                  "active_lane_steps": 157929,
+                  "available_lane_steps": 909312,
+                  "active_lane_seconds": 26788.591310141564,
+                  "available_lane_seconds": 51777.69309375
+                },
+                "memory": {
+                  "allocated_bytes": 1700315136,
+                  "reserved_bytes": 8208252928,
+                  "peak_allocated_bytes": 5164796416,
+                  "peak_reserved_bytes": 8208252928,
+                  "free_bytes": 6158811136,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 7,
+                "decisions": 158440,
+                "compact_bytes": 293091636,
+                "timing": {
+                  "root_prepare_seconds": 19.859908203125,
+                  "reset_seconds": 0.03213312149047851,
+                  "step_encode_seconds": 0.974952443704009,
+                  "inference_seconds": 5.995978767871857,
+                  "storage_seconds": 0.0938631680905819,
+                  "collection_seconds": 28.715683665010147
+                },
+                "utilization": {
+                  "waves": 205,
+                  "active_lane_steps": 158440,
+                  "available_lane_steps": 1679360,
+                  "active_lane_seconds": 26535.052428495404,
+                  "available_lane_seconds": 60132.2514921875
+                },
+                "memory": {
+                  "allocated_bytes": 1700315136,
+                  "reserved_bytes": 8225030144,
+                  "peak_allocated_bytes": 5164796416,
+                  "peak_reserved_bytes": 8225030144,
+                  "free_bytes": 6125256704,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              }
+            ],
+            "root_families": 1455,
+            "root_families_won": 0,
+            "natural_starts": 0,
+            "completed_natural_starts": 0,
+            "truncated": 0,
+            "budget_cutoffs": 0,
+            "faults": 0,
+            "decisions": 1256809,
+            "training_decisions": 1256809,
+            "replay_decisions": 51762634,
+            "compact_bytes": 2339384678,
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 945642,
+                "normalized": 0.9084454774856567
+              },
+              "hand_select": {
+                "decisions": 141183,
+                "normalized": 0.5788794755935669
+              },
+              "grid": {
+                "decisions": 9617,
+                "normalized": 0.9969173073768616
+              },
+              "card_reward": {
+                "decisions": 9063,
+                "normalized": 0.9983819723129272
+              },
+              "combat_reward": {
+                "decisions": 22435,
+                "normalized": 0.7339324951171875
+              },
+              "event": {
+                "decisions": 9020,
+                "normalized": 0.3744693696498871
+              },
+              "map": {
+                "decisions": 69137,
+                "normalized": 0.9368604421615601
+              },
+              "room": {
+                "decisions": 34809,
+                "normalized": 0.7114790081977844
+              },
+              "shop": {
+                "decisions": 15889,
+                "normalized": 0.454704612493515
+              },
+              "boss_reward": {
+                "decisions": 14,
+                "normalized": 0.997201144695282
+              }
+            },
+            "value_calibration": {
+              "episode_start": {
+                "count": 65536,
+                "brier": 0.24561545252799988,
+                "predicted": 0.49531543254852295,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 4,
+                    "count": 28272,
+                    "predicted": 0.47734037041664124,
+                    "observed": 0.0
+                  },
+                  {
+                    "bin": 5,
+                    "count": 37264,
+                    "predicted": 0.5089530348777771,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "decision_weighted": {
+                "count": 1256809,
+                "brier": 0.2517945468425751,
+                "predicted": 0.5017269253730774,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 4,
+                    "count": 462425,
+                    "predicted": 0.49394360184669495,
+                    "observed": 0.0
+                  },
+                  {
+                    "bin": 5,
+                    "count": 794384,
+                    "predicted": 0.5062577128410339,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "by_screen": {
+                "combat": {
+                  "count": 945642,
+                  "brier": 0.252631276845932,
+                  "predicted": 0.502583920955658,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 342530,
+                      "predicted": 0.4959656894207001,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 603112,
+                      "predicted": 0.5063425898551941,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "hand_select": {
+                  "count": 141183,
+                  "brier": 0.2527671456336975,
+                  "predicted": 0.5027168989181519,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 50083,
+                      "predicted": 0.49592992663383484,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 91100,
+                      "predicted": 0.5064480304718018,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "grid": {
+                  "count": 9617,
+                  "brier": 0.2561819553375244,
+                  "predicted": 0.5061281323432922,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 660,
+                      "predicted": 0.4977467954158783,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 8957,
+                      "predicted": 0.5067456364631653,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "card_reward": {
+                  "count": 9063,
+                  "brier": 0.2524280548095703,
+                  "predicted": 0.5023913383483887,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 3245,
+                      "predicted": 0.49680352210998535,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 5818,
+                      "predicted": 0.5055080652236938,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "combat_reward": {
+                  "count": 22435,
+                  "brier": 0.25106939673423767,
+                  "predicted": 0.501052975654602,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 8928,
+                      "predicted": 0.49723535776138306,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 13507,
+                      "predicted": 0.5035763382911682,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "event": {
+                  "count": 9020,
+                  "brier": 0.2508056163787842,
+                  "predicted": 0.5007813572883606,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 3468,
+                      "predicted": 0.49590563774108887,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 5552,
+                      "predicted": 0.5038268566131592,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "map": {
+                  "count": 69137,
+                  "brier": 0.23499296605587006,
+                  "predicted": 0.48457297682762146,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 49663,
+                      "predicted": 0.47675010561943054,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 19474,
+                      "predicted": 0.5045232176780701,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "room": {
+                  "count": 34809,
+                  "brier": 0.2549113929271698,
+                  "predicted": 0.5048714280128479,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 3749,
+                      "predicted": 0.4975065588951111,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 31060,
+                      "predicted": 0.5057604312896729,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "shop": {
+                  "count": 15889,
+                  "brier": 0.25820308923721313,
+                  "predicted": 0.5081276297569275,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 94,
+                      "predicted": 0.49832940101623535,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 15795,
+                      "predicted": 0.5081859230995178,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "boss_reward": {
+                  "count": 14,
+                  "brier": 0.25064006447792053,
+                  "predicted": 0.5006334185600281,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 5,
+                      "predicted": 0.4977347254753113,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 9,
+                      "predicted": 0.5022437572479248,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              },
+              "by_act": {
+                "1": {
+                  "count": 259750,
+                  "brier": 0.2514299750328064,
+                  "predicted": 0.5013971924781799,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 110367,
+                      "predicted": 0.4962598383426666,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 149383,
+                      "predicted": 0.5051928162574768,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "2": {
+                  "count": 484461,
+                  "brier": 0.24858498573303223,
+                  "predicted": 0.4985091984272003,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 258751,
+                      "predicted": 0.4929613769054413,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 225710,
+                      "predicted": 0.5048691630363464,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "3": {
+                  "count": 337824,
+                  "brier": 0.2540901005268097,
+                  "predicted": 0.5040085315704346,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 79985,
+                      "predicted": 0.4932481348514557,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 257839,
+                      "predicted": 0.5073465704917908,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "4": {
+                  "count": 174774,
+                  "brier": 0.2567959427833557,
+                  "predicted": 0.5067259669303894,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 4,
+                      "count": 13322,
+                      "predicted": 0.498007595539093,
+                      "observed": 0.0
+                    },
+                    {
+                      "bin": 5,
+                      "count": 161452,
+                      "predicted": 0.5074453353881836,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              }
+            },
+            "ppo": {
+              "samples": 1256809,
+              "minibatches": 154,
+              "update_seconds": 14.253900808980688,
+              "policy_loss": 6.776792651184586e-05,
+              "value_loss": 0.0059352136558618734,
+              "entropy": 0.8550849397043775,
+              "kl": 0.0025062156975482618,
+              "clip_fraction": 0.00996173649041558,
+              "loss": -0.00551547421954019,
+              "grad_norm": 0.048396231738348894,
+              "memory": [
+                {
+                  "rank": 0,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 8835301376,
+                  "peak_allocated_bytes": 6754516992,
+                  "peak_reserved_bytes": 8835301376,
+                  "free_bytes": 5508694016,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 1,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10328473600,
+                  "peak_allocated_bytes": 7345925120,
+                  "peak_reserved_bytes": 10328473600,
+                  "free_bytes": 4015521792,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 2,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 8606711808,
+                  "peak_allocated_bytes": 6636931072,
+                  "peak_reserved_bytes": 8606711808,
+                  "free_bytes": 5758255104,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 3,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 8237613056,
+                  "peak_allocated_bytes": 6492192256,
+                  "peak_reserved_bytes": 8237613056,
+                  "free_bytes": 6110576640,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 4,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 8766095360,
+                  "peak_allocated_bytes": 6475845632,
+                  "peak_reserved_bytes": 8766095360,
+                  "free_bytes": 5598871552,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 5,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 8443133952,
+                  "peak_allocated_bytes": 6560598016,
+                  "peak_reserved_bytes": 8443133952,
+                  "free_bytes": 5905055744,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 6,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 9221177344,
+                  "peak_allocated_bytes": 6874363392,
+                  "peak_reserved_bytes": 9221177344,
+                  "free_bytes": 5143789568,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 7,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 9225371648,
+                  "peak_allocated_bytes": 6768620032,
+                  "peak_reserved_bytes": 9225371648,
+                  "free_bytes": 5122818048,
+                  "total_bytes": 16928342016
+                }
+              ],
+              "policy_version": 0,
+              "published_version": 1,
+              "learner_seconds": 14.458371074986644
+            },
+            "update": 1,
+            "engine_commit": "23dcf237f5b73b1c4dc3e95a75de05c3c2d5d575",
+            "timing": {
+              "root_prepare_seconds": 159.0592265625,
+              "reset_seconds": 0.2687109184265137,
+              "step_encode_seconds": 7.499042816087604,
+              "inference_seconds": 45.291758601903915,
+              "storage_seconds": 0.6434565440118313,
+              "collection_seconds": 30.37815036100801,
+              "update_seconds": 14.253900808980688,
+              "learner_seconds": 14.458371074986644,
+              "total_seconds": 46.02910410996992,
+              "decisions_per_second": 27304.65917818667,
+              "other_seconds": 1.1925826739752665
+            },
+            "coordinator_peak_rss_mib": 849.66796875
+          },
+          {
+            "episodes": 65536,
+            "completed": 65536,
+            "wins": 0,
+            "deaths": 65536,
+            "episode_decisions": {
+              "min": 1,
+              "p50": 16.0,
+              "p95": 44.0,
+              "p99": 64.0,
+              "max": 161,
+              "mean": 18.275482177734375
+            },
+            "lane_utilization": {
+              "waves": 961,
+              "active_lane_steps": 1197702,
+              "available_lane_steps": 7872512,
+              "active_lane_seconds": 194280.24174959946,
+              "available_lane_seconds": 407563.120359375,
+              "step_fraction": 0.1521372085555411,
+              "time_fraction": 0.4766874921810636
+            },
+            "workers": [
+              {
+                "rank": 0,
+                "decisions": 149485,
+                "compact_bytes": 277999126,
+                "timing": {
+                  "root_prepare_seconds": 0.00217907190322876,
+                  "reset_seconds": 0.03038310432434082,
+                  "step_encode_seconds": 0.9156689915806056,
+                  "inference_seconds": 5.51552613401413,
+                  "storage_seconds": 0.08263155201077461,
+                  "collection_seconds": 7.825703721027821
+                },
+                "utilization": {
+                  "waves": 161,
+                  "active_lane_steps": 149485,
+                  "available_lane_steps": 1318912,
+                  "active_lane_seconds": 24105.135105155947,
+                  "available_lane_seconds": 55391.790578125
+                },
+                "memory": {
+                  "allocated_bytes": 1695867904,
+                  "reserved_bytes": 8835301376,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 8835301376,
+                  "free_bytes": 5508694016,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 1,
+                "decisions": 150373,
+                "compact_bytes": 279026911,
+                "timing": {
+                  "root_prepare_seconds": 0.0022312960624694825,
+                  "reset_seconds": 0.030119935989379884,
+                  "step_encode_seconds": 0.8885995486378669,
+                  "inference_seconds": 5.086220290184021,
+                  "storage_seconds": 0.06629817590117455,
+                  "collection_seconds": 7.494066034909338
+                },
+                "utilization": {
+                  "waves": 115,
+                  "active_lane_steps": 150373,
+                  "available_lane_steps": 942080,
+                  "active_lane_seconds": 24367.815730789185,
+                  "available_lane_seconds": 51031.0564296875
+                },
+                "memory": {
+                  "allocated_bytes": 1696895488,
+                  "reserved_bytes": 10328473600,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 10328473600,
+                  "free_bytes": 4015521792,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 2,
+                "decisions": 150744,
+                "compact_bytes": 279714568,
+                "timing": {
+                  "root_prepare_seconds": 0.0022261760234832764,
+                  "reset_seconds": 0.030117887496948242,
+                  "step_encode_seconds": 0.8546283496916294,
+                  "inference_seconds": 4.95045426940918,
+                  "storage_seconds": 0.06148339203000069,
+                  "collection_seconds": 7.057154092006385
+                },
+                "utilization": {
+                  "waves": 106,
+                  "active_lane_steps": 150744,
+                  "available_lane_steps": 868352,
+                  "active_lane_seconds": 24425.41606671524,
+                  "available_lane_seconds": 49487.0910625
+                },
+                "memory": {
+                  "allocated_bytes": 1697583104,
+                  "reserved_bytes": 8860467200,
+                  "peak_allocated_bytes": 5182679040,
+                  "peak_reserved_bytes": 8860467200,
+                  "free_bytes": 5504499712,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 3,
+                "decisions": 150148,
+                "compact_bytes": 278855722,
+                "timing": {
+                  "root_prepare_seconds": 0.002550784111022949,
+                  "reset_seconds": 0.029634559631347656,
+                  "step_encode_seconds": 0.8379863040745258,
+                  "inference_seconds": 4.984617993354798,
+                  "storage_seconds": 0.061290335953235624,
+                  "collection_seconds": 7.345896807964891
+                },
+                "utilization": {
+                  "waves": 104,
+                  "active_lane_steps": 150148,
+                  "available_lane_steps": 851968,
+                  "active_lane_seconds": 24290.47219287014,
+                  "available_lane_seconds": 49650.1745703125
+                },
+                "memory": {
+                  "allocated_bytes": 1696724480,
+                  "reserved_bytes": 8489271296,
+                  "peak_allocated_bytes": 5182482432,
+                  "peak_reserved_bytes": 8489271296,
+                  "free_bytes": 5858918400,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 4,
+                "decisions": 150025,
+                "compact_bytes": 279753804,
+                "timing": {
+                  "root_prepare_seconds": 0.002672640085220337,
+                  "reset_seconds": 0.03246694564819336,
+                  "step_encode_seconds": 0.900252672046423,
+                  "inference_seconds": 5.120652286529541,
+                  "storage_seconds": 0.06689353609085083,
+                  "collection_seconds": 7.547428357996978
+                },
+                "utilization": {
+                  "waves": 118,
+                  "active_lane_steps": 150025,
+                  "available_lane_steps": 966656,
+                  "active_lane_seconds": 24395.22292638302,
+                  "available_lane_seconds": 51451.0739765625
+                },
+                "memory": {
+                  "allocated_bytes": 1697622528,
+                  "reserved_bytes": 8766095360,
+                  "peak_allocated_bytes": 5175934464,
+                  "peak_reserved_bytes": 8766095360,
+                  "free_bytes": 5598871552,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 5,
+                "decisions": 148192,
+                "compact_bytes": 275959005,
+                "timing": {
+                  "root_prepare_seconds": 0.0022118399143218996,
+                  "reset_seconds": 0.0326297607421875,
+                  "step_encode_seconds": 0.905600007802248,
+                  "inference_seconds": 5.163633661746979,
+                  "storage_seconds": 0.07102326408028603,
+                  "collection_seconds": 7.736404962022789
+                },
+                "utilization": {
+                  "waves": 135,
+                  "active_lane_steps": 148192,
+                  "available_lane_steps": 1105920,
+                  "active_lane_seconds": 24207.03485261154,
+                  "available_lane_seconds": 51977.1574765625
+                },
+                "memory": {
+                  "allocated_bytes": 1693827584,
+                  "reserved_bytes": 8443133952,
+                  "peak_allocated_bytes": 5175934464,
+                  "peak_reserved_bytes": 8443133952,
+                  "free_bytes": 5905055744,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 6,
+                "decisions": 148183,
+                "compact_bytes": 274456986,
+                "timing": {
+                  "root_prepare_seconds": 0.002125823974609375,
+                  "reset_seconds": 0.029889535903930665,
+                  "step_encode_seconds": 0.8522874893248081,
+                  "inference_seconds": 4.754001924753189,
+                  "storage_seconds": 0.056078208088874815,
+                  "collection_seconds": 7.099984380998649
+                },
+                "utilization": {
+                  "waves": 100,
+                  "active_lane_steps": 148183,
+                  "available_lane_steps": 819200,
+                  "active_lane_seconds": 23856.71258793068,
+                  "available_lane_seconds": 47690.3185703125
+                },
+                "memory": {
+                  "allocated_bytes": 1692325376,
+                  "reserved_bytes": 9221177344,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 9221177344,
+                  "free_bytes": 5143789568,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 7,
+                "decisions": 150552,
+                "compact_bytes": 280353135,
+                "timing": {
+                  "root_prepare_seconds": 0.0021288959980010984,
+                  "reset_seconds": 0.03248025512695313,
+                  "step_encode_seconds": 0.8908994573354722,
+                  "inference_seconds": 5.068347396373749,
+                  "storage_seconds": 0.06705606362223625,
+                  "collection_seconds": 7.514142144937068
+                },
+                "utilization": {
+                  "waves": 122,
+                  "active_lane_steps": 150552,
+                  "available_lane_steps": 999424,
+                  "active_lane_seconds": 24632.432287143707,
+                  "available_lane_seconds": 50884.4576953125
+                },
+                "memory": {
+                  "allocated_bytes": 1698221568,
+                  "reserved_bytes": 9225371648,
+                  "peak_allocated_bytes": 5176374784,
+                  "peak_reserved_bytes": 9225371648,
+                  "free_bytes": 5122818048,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              }
+            ],
+            "root_families": 1455,
+            "root_families_won": 0,
+            "natural_starts": 0,
+            "completed_natural_starts": 0,
+            "truncated": 0,
+            "budget_cutoffs": 0,
+            "faults": 0,
+            "decisions": 1197702,
+            "training_decisions": 1197702,
+            "replay_decisions": 51870724,
+            "compact_bytes": 2235700937,
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 902238,
+                "normalized": 0.9130510687828064
+              },
+              "hand_select": {
+                "decisions": 135155,
+                "normalized": 0.5812549591064453
+              },
+              "grid": {
+                "decisions": 8978,
+                "normalized": 0.9989759922027588
+              },
+              "card_reward": {
+                "decisions": 8517,
+                "normalized": 0.9992451667785645
+              },
+              "combat_reward": {
+                "decisions": 19108,
+                "normalized": 0.7277005910873413
+              },
+              "event": {
+                "decisions": 7772,
+                "normalized": 0.4022098779678345
+              },
+              "map": {
+                "decisions": 64519,
+                "normalized": 0.9280304908752441
+              },
+              "room": {
+                "decisions": 34568,
+                "normalized": 0.7189103364944458
+              },
+              "shop": {
+                "decisions": 16818,
+                "normalized": 0.4347458481788635
+              },
+              "boss_reward": {
+                "decisions": 29,
+                "normalized": 0.9993064999580383
+              }
+            },
+            "value_calibration": {
+              "episode_start": {
+                "count": 65536,
+                "brier": 9.879207937046885e-05,
+                "predicted": 0.009924083948135376,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 65536,
+                    "predicted": 0.009924083948135376,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "decision_weighted": {
+                "count": 1197702,
+                "brier": 9.057895658770576e-05,
+                "predicted": 0.009514866396784782,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 1197702,
+                    "predicted": 0.009514866396784782,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "by_screen": {
+                "combat": {
+                  "count": 902238,
+                  "brier": 8.966099267126992e-05,
+                  "predicted": 0.00946884136646986,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 902238,
+                      "predicted": 0.00946884136646986,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "hand_select": {
+                  "count": 135155,
+                  "brier": 8.984342275653034e-05,
+                  "predicted": 0.009478465653955936,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 135155,
+                      "predicted": 0.009478465653955936,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "grid": {
+                  "count": 8978,
+                  "brier": 9.09203226910904e-05,
+                  "predicted": 0.009535078890621662,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8978,
+                      "predicted": 0.009535078890621662,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "card_reward": {
+                  "count": 8517,
+                  "brier": 8.969508780864999e-05,
+                  "predicted": 0.00947063509374857,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8517,
+                      "predicted": 0.00947063509374857,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "combat_reward": {
+                  "count": 19108,
+                  "brier": 8.980190614238381e-05,
+                  "predicted": 0.009476186707615852,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 19108,
+                      "predicted": 0.009476186707615852,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "event": {
+                  "count": 7772,
+                  "brier": 9.025395411299542e-05,
+                  "predicted": 0.009499896317720413,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 7772,
+                      "predicted": 0.009499896317720413,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "map": {
+                  "count": 64519,
+                  "brier": 0.00010509605635888875,
+                  "predicted": 0.010238762944936752,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 64519,
+                      "predicted": 0.010238762944936752,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "room": {
+                  "count": 34568,
+                  "brier": 9.047690400620922e-05,
+                  "predicted": 0.009511781856417656,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 34568,
+                      "predicted": 0.009511781856417656,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "shop": {
+                  "count": 16818,
+                  "brier": 9.155133011518046e-05,
+                  "predicted": 0.009568124078214169,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 16818,
+                      "predicted": 0.009568124078214169,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "boss_reward": {
+                  "count": 29,
+                  "brier": 9.120491449721158e-05,
+                  "predicted": 0.0095499437302351,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 29,
+                      "predicted": 0.0095499437302351,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              },
+              "by_act": {
+                "1": {
+                  "count": 246666,
+                  "brier": 8.906831499189138e-05,
+                  "predicted": 0.009437551721930504,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 246666,
+                      "predicted": 0.009437551721930504,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "2": {
+                  "count": 457067,
+                  "brier": 9.103200864046812e-05,
+                  "predicted": 0.00953634362667799,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 457067,
+                      "predicted": 0.00953634362667799,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "3": {
+                  "count": 321299,
+                  "brier": 9.105281060328707e-05,
+                  "predicted": 0.009540248662233353,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 321299,
+                      "predicted": 0.009540248662233353,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "4": {
+                  "count": 172670,
+                  "brier": 9.065595077117905e-05,
+                  "predicted": 0.00952123012393713,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 172670,
+                      "predicted": 0.00952123012393713,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              }
+            },
+            "ppo": {
+              "samples": 1197702,
+              "minibatches": 147,
+              "update_seconds": 13.301898433011957,
+              "policy_loss": 2.420012941595484e-06,
+              "value_loss": 5.631697874584634e-05,
+              "entropy": 0.860694972780297,
+              "kl": 0.002297422552159317,
+              "clip_fraction": 0.008563064983514125,
+              "loss": -0.008576370376876086,
+              "grad_norm": 0.010961011560967139,
+              "memory": [
+                {
+                  "rank": 0,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 8973713408,
+                  "peak_allocated_bytes": 6775677440,
+                  "peak_reserved_bytes": 8973713408,
+                  "free_bytes": 5370281984,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 1,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10330570752,
+                  "peak_allocated_bytes": 7274848256,
+                  "peak_reserved_bytes": 10330570752,
+                  "free_bytes": 4013424640,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 2,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 9611247616,
+                  "peak_allocated_bytes": 7142691840,
+                  "peak_reserved_bytes": 9611247616,
+                  "free_bytes": 4753719296,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 3,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 8489271296,
+                  "peak_allocated_bytes": 6540943360,
+                  "peak_reserved_bytes": 8489271296,
+                  "free_bytes": 5858918400,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 4,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 11066671104,
+                  "peak_allocated_bytes": 7675219968,
+                  "peak_reserved_bytes": 11066671104,
+                  "free_bytes": 3298295808,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 5,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10072621056,
+                  "peak_allocated_bytes": 7338007040,
+                  "peak_reserved_bytes": 10072621056,
+                  "free_bytes": 4275568640,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 6,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10487857152,
+                  "peak_allocated_bytes": 7322185728,
+                  "peak_reserved_bytes": 10487857152,
+                  "free_bytes": 3877109760,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 7,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 9965666304,
+                  "peak_allocated_bytes": 7056560128,
+                  "peak_reserved_bytes": 9965666304,
+                  "free_bytes": 4382523392,
+                  "total_bytes": 16928342016
+                }
+              ],
+              "policy_version": 1,
+              "published_version": 2,
+              "learner_seconds": 13.480347361997701
+            },
+            "update": 2,
+            "engine_commit": "23dcf237f5b73b1c4dc3e95a75de05c3c2d5d575",
+            "timing": {
+              "root_prepare_seconds": 0.018326528072357177,
+              "reset_seconds": 0.24772198486328126,
+              "step_encode_seconds": 7.045922820493579,
+              "inference_seconds": 40.64345395636559,
+              "storage_seconds": 0.5327545277774334,
+              "collection_seconds": 9.180813745013438,
+              "update_seconds": 13.301898433011957,
+              "learner_seconds": 13.480347361997701,
+              "total_seconds": 23.83757555601187,
+              "decisions_per_second": 50244.28751932945,
+              "other_seconds": 1.176414449000731
+            },
+            "coordinator_peak_rss_mib": 999.3515625
+          },
+          {
+            "episodes": 65536,
+            "completed": 65536,
+            "wins": 0,
+            "deaths": 65536,
+            "episode_decisions": {
+              "min": 1,
+              "p50": 17.0,
+              "p95": 48.0,
+              "p99": 69.0,
+              "max": 143,
+              "mean": 19.69293212890625
+            },
+            "lane_utilization": {
+              "waves": 1084,
+              "active_lane_steps": 1290596,
+              "available_lane_steps": 8880128,
+              "active_lane_seconds": 207388.84644778632,
+              "available_lane_seconds": 444329.785953125,
+              "step_fraction": 0.14533529246425278,
+              "time_fraction": 0.46674531621354104
+            },
+            "workers": [
+              {
+                "rank": 0,
+                "decisions": 161534,
+                "compact_bytes": 299556976,
+                "timing": {
+                  "root_prepare_seconds": 0.0025589759349822997,
+                  "reset_seconds": 0.030096384048461915,
+                  "step_encode_seconds": 0.9251522587537765,
+                  "inference_seconds": 5.46959769153595,
+                  "storage_seconds": 0.07222291216254234,
+                  "collection_seconds": 7.817193532944657
+                },
+                "utilization": {
+                  "waves": 131,
+                  "active_lane_steps": 161534,
+                  "available_lane_steps": 1073152,
+                  "active_lane_seconds": 26063.694993920326,
+                  "available_lane_seconds": 54651.6469453125
+                },
+                "memory": {
+                  "allocated_bytes": 1717761024,
+                  "reserved_bytes": 9273606144,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 9273606144,
+                  "free_bytes": 5070389248,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 1,
+                "decisions": 160783,
+                "compact_bytes": 298491026,
+                "timing": {
+                  "root_prepare_seconds": 0.0022364161014556887,
+                  "reset_seconds": 0.029838336944580077,
+                  "step_encode_seconds": 0.9319669761508703,
+                  "inference_seconds": 5.626176506042481,
+                  "storage_seconds": 0.07747116792201995,
+                  "collection_seconds": 8.34932351403404
+                },
+                "utilization": {
+                  "waves": 138,
+                  "active_lane_steps": 160783,
+                  "available_lane_steps": 1130496,
+                  "active_lane_seconds": 25866.97112647724,
+                  "available_lane_seconds": 56210.3763046875
+                },
+                "memory": {
+                  "allocated_bytes": 1716359680,
+                  "reserved_bytes": 10630463488,
+                  "peak_allocated_bytes": 5175934464,
+                  "peak_reserved_bytes": 10630463488,
+                  "free_bytes": 3713531904,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 2,
+                "decisions": 161613,
+                "compact_bytes": 298853147,
+                "timing": {
+                  "root_prepare_seconds": 0.002298880100250244,
+                  "reset_seconds": 0.030220287322998047,
+                  "step_encode_seconds": 0.960214011490345,
+                  "inference_seconds": 5.616833536624909,
+                  "storage_seconds": 0.07945648023486138,
+                  "collection_seconds": 8.05829278100282
+                },
+                "utilization": {
+                  "waves": 143,
+                  "active_lane_steps": 161613,
+                  "available_lane_steps": 1171456,
+                  "active_lane_seconds": 25758.501060142517,
+                  "available_lane_seconds": 56369.4914453125
+                },
+                "memory": {
+                  "allocated_bytes": 1717761024,
+                  "reserved_bytes": 9911140352,
+                  "peak_allocated_bytes": 5175934464,
+                  "peak_reserved_bytes": 9911140352,
+                  "free_bytes": 4453826560,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 3,
+                "decisions": 159886,
+                "compact_bytes": 295967343,
+                "timing": {
+                  "root_prepare_seconds": 0.0026173439025878906,
+                  "reset_seconds": 0.029396991729736328,
+                  "step_encode_seconds": 0.9350594550967216,
+                  "inference_seconds": 5.600639997959137,
+                  "storage_seconds": 0.0784533120393753,
+                  "collection_seconds": 8.332209525979124
+                },
+                "utilization": {
+                  "waves": 139,
+                  "active_lane_steps": 159886,
+                  "available_lane_steps": 1138688,
+                  "active_lane_seconds": 25652.628165416718,
+                  "available_lane_seconds": 56042.8387890625
+                },
+                "memory": {
+                  "allocated_bytes": 1713836032,
+                  "reserved_bytes": 8787066880,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 8787066880,
+                  "free_bytes": 5561122816,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 4,
+                "decisions": 161352,
+                "compact_bytes": 298720614,
+                "timing": {
+                  "root_prepare_seconds": 0.002220031976699829,
+                  "reset_seconds": 0.03015065574645996,
+                  "step_encode_seconds": 0.9027717093080282,
+                  "inference_seconds": 5.430078476905822,
+                  "storage_seconds": 0.07083513614535332,
+                  "collection_seconds": 8.21127711806912
+                },
+                "utilization": {
+                  "waves": 125,
+                  "active_lane_steps": 161352,
+                  "available_lane_steps": 1024000,
+                  "active_lane_seconds": 25802.621822637557,
+                  "available_lane_seconds": 54128.642546875
+                },
+                "memory": {
+                  "allocated_bytes": 1716589056,
+                  "reserved_bytes": 11366563840,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 11366563840,
+                  "free_bytes": 2998403072,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 5,
+                "decisions": 161584,
+                "compact_bytes": 299406117,
+                "timing": {
+                  "root_prepare_seconds": 0.0030115840435028076,
+                  "reset_seconds": 0.029543424606323244,
+                  "step_encode_seconds": 0.9318912018537522,
+                  "inference_seconds": 5.390652420997619,
+                  "storage_seconds": 0.0697934398651123,
+                  "collection_seconds": 8.017827220028266
+                },
+                "utilization": {
+                  "waves": 128,
+                  "active_lane_steps": 161584,
+                  "available_lane_steps": 1048576,
+                  "active_lane_seconds": 25983.300190766335,
+                  "available_lane_seconds": 53978.15090625
+                },
+                "memory": {
+                  "allocated_bytes": 1717761024,
+                  "reserved_bytes": 10372513792,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 10372513792,
+                  "free_bytes": 3975675904,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 6,
+                "decisions": 162230,
+                "compact_bytes": 299972664,
+                "timing": {
+                  "root_prepare_seconds": 0.002748415946960449,
+                  "reset_seconds": 0.02960383987426758,
+                  "step_encode_seconds": 0.9442365448474884,
+                  "inference_seconds": 5.5714467875957485,
+                  "storage_seconds": 0.08276400023698807,
+                  "collection_seconds": 8.24713943595998
+                },
+                "utilization": {
+                  "waves": 143,
+                  "active_lane_steps": 162230,
+                  "available_lane_steps": 1171456,
+                  "active_lane_seconds": 26027.992572532654,
+                  "available_lane_seconds": 55788.210796875
+                },
+                "memory": {
+                  "allocated_bytes": 1717841408,
+                  "reserved_bytes": 10789847040,
+                  "peak_allocated_bytes": 5178429440,
+                  "peak_reserved_bytes": 10789847040,
+                  "free_bytes": 3575119872,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 7,
+                "decisions": 161614,
+                "compact_bytes": 299029470,
+                "timing": {
+                  "root_prepare_seconds": 0.00225382399559021,
+                  "reset_seconds": 0.029560831069946288,
+                  "step_encode_seconds": 0.9546076189875603,
+                  "inference_seconds": 5.742033937215805,
+                  "storage_seconds": 0.07411344027519226,
+                  "collection_seconds": 8.217512008035555
+                },
+                "utilization": {
+                  "waves": 137,
+                  "active_lane_steps": 161614,
+                  "available_lane_steps": 1122304,
+                  "active_lane_seconds": 26233.136515892984,
+                  "available_lane_seconds": 57160.42821875
+                },
+                "memory": {
+                  "allocated_bytes": 1717761024,
+                  "reserved_bytes": 10265559040,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 10265559040,
+                  "free_bytes": 4082630656,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              }
+            ],
+            "root_families": 1455,
+            "root_families_won": 0,
+            "natural_starts": 0,
+            "completed_natural_starts": 0,
+            "truncated": 0,
+            "budget_cutoffs": 0,
+            "faults": 0,
+            "decisions": 1290596,
+            "training_decisions": 1290596,
+            "replay_decisions": 51859400,
+            "compact_bytes": 2400322189,
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 976982,
+                "normalized": 0.9037472605705261
+              },
+              "hand_select": {
+                "decisions": 142702,
+                "normalized": 0.5780582427978516
+              },
+              "grid": {
+                "decisions": 8404,
+                "normalized": 0.9996756911277771
+              },
+              "card_reward": {
+                "decisions": 8850,
+                "normalized": 0.9998221397399902
+              },
+              "combat_reward": {
+                "decisions": 23732,
+                "normalized": 0.7419746518135071
+              },
+              "event": {
+                "decisions": 9097,
+                "normalized": 0.37346911430358887
+              },
+              "map": {
+                "decisions": 71112,
+                "normalized": 0.9389787316322327
+              },
+              "room": {
+                "decisions": 34310,
+                "normalized": 0.710297167301178
+              },
+              "shop": {
+                "decisions": 15376,
+                "normalized": 0.4650228023529053
+              },
+              "boss_reward": {
+                "decisions": 31,
+                "normalized": 0.9996819496154785
+              }
+            },
+            "value_calibration": {
+              "episode_start": {
+                "count": 65536,
+                "brier": 3.508009831421077e-05,
+                "predicted": 0.005921968258917332,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 65536,
+                    "predicted": 0.005921968258917332,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "decision_weighted": {
+                "count": 1290596,
+                "brier": 3.409828059375286e-05,
+                "predicted": 0.005839174147695303,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 1290596,
+                    "predicted": 0.005839174147695303,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "by_screen": {
+                "combat": {
+                  "count": 976982,
+                  "brier": 3.3978201827267185e-05,
+                  "predicted": 0.005829026456922293,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 976982,
+                      "predicted": 0.005829026456922293,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "hand_select": {
+                  "count": 142702,
+                  "brier": 3.40353581123054e-05,
+                  "predicted": 0.00583392521366477,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 142702,
+                      "predicted": 0.00583392521366477,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "grid": {
+                  "count": 8404,
+                  "brier": 3.420518623897806e-05,
+                  "predicted": 0.0058484687469899654,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8404,
+                      "predicted": 0.0058484687469899654,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "card_reward": {
+                  "count": 8850,
+                  "brier": 3.402398942853324e-05,
+                  "predicted": 0.005832950584590435,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8850,
+                      "predicted": 0.005832950584590435,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "combat_reward": {
+                  "count": 23732,
+                  "brier": 3.3999865991063416e-05,
+                  "predicted": 0.00583085510879755,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 23732,
+                      "predicted": 0.00583085510879755,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "event": {
+                  "count": 9097,
+                  "brier": 3.4148775739595294e-05,
+                  "predicted": 0.005843555089086294,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 9097,
+                      "predicted": 0.005843555089086294,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "map": {
+                  "count": 71112,
+                  "brier": 3.57952194462996e-05,
+                  "predicted": 0.005982197355479002,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 71112,
+                      "predicted": 0.005982197355479002,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "room": {
+                  "count": 34310,
+                  "brier": 3.4192256862297654e-05,
+                  "predicted": 0.005847345106303692,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 34310,
+                      "predicted": 0.005847345106303692,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "shop": {
+                  "count": 15376,
+                  "brier": 3.4359640267211944e-05,
+                  "predicted": 0.005861656274646521,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 15376,
+                      "predicted": 0.005861656274646521,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "boss_reward": {
+                  "count": 31,
+                  "brier": 3.443217428866774e-05,
+                  "predicted": 0.005867823958396912,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 31,
+                      "predicted": 0.005867823958396912,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              },
+              "by_act": {
+                "1": {
+                  "count": 268959,
+                  "brier": 3.3780659578042105e-05,
+                  "predicted": 0.005812087096273899,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 268959,
+                      "predicted": 0.005812087096273899,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "2": {
+                  "count": 499727,
+                  "brier": 3.40744991262909e-05,
+                  "predicted": 0.005837020464241505,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 499727,
+                      "predicted": 0.005837020464241505,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "3": {
+                  "count": 346756,
+                  "brier": 3.4288386814296246e-05,
+                  "predicted": 0.005855471361428499,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 346756,
+                      "predicted": 0.005855471361428499,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "4": {
+                  "count": 175154,
+                  "brier": 3.427747651585378e-05,
+                  "predicted": 0.0058546485379338264,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 175154,
+                      "predicted": 0.0058546485379338264,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              }
+            },
+            "ppo": {
+              "samples": 1290596,
+              "minibatches": 158,
+              "update_seconds": 14.226656266022474,
+              "policy_loss": 6.076171607260194e-05,
+              "value_loss": 2.665245983391742e-05,
+              "entropy": 0.8533767250294066,
+              "kl": 0.0006967297757343986,
+              "clip_fraction": 0.00038044438201508934,
+              "loss": -0.008459678915253418,
+              "grad_norm": 0.010696682673366082,
+              "memory": [
+                {
+                  "rank": 0,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10097786880,
+                  "peak_allocated_bytes": 7320637952,
+                  "peak_reserved_bytes": 10097786880,
+                  "free_bytes": 4246208512,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 1,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10630463488,
+                  "peak_allocated_bytes": 6935380992,
+                  "peak_reserved_bytes": 10630463488,
+                  "free_bytes": 3713531904,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 2,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 9911140352,
+                  "peak_allocated_bytes": 6692254208,
+                  "peak_reserved_bytes": 9911140352,
+                  "free_bytes": 4453826560,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 3,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 9326034944,
+                  "peak_allocated_bytes": 6972661248,
+                  "peak_reserved_bytes": 9326034944,
+                  "free_bytes": 5022154752,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 4,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 11366563840,
+                  "peak_allocated_bytes": 6744488960,
+                  "peak_reserved_bytes": 11366563840,
+                  "free_bytes": 2998403072,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 5,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10372513792,
+                  "peak_allocated_bytes": 6575618560,
+                  "peak_reserved_bytes": 10372513792,
+                  "free_bytes": 3975675904,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 6,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10789847040,
+                  "peak_allocated_bytes": 6497401856,
+                  "peak_reserved_bytes": 10789847040,
+                  "free_bytes": 3575119872,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 7,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10265559040,
+                  "peak_allocated_bytes": 6308013568,
+                  "peak_reserved_bytes": 10265559040,
+                  "free_bytes": 4082630656,
+                  "total_bytes": 16928342016
+                }
+              ],
+              "policy_version": 2,
+              "published_version": 3,
+              "learner_seconds": 14.420963633921929
+            },
+            "update": 3,
+            "engine_commit": "23dcf237f5b73b1c4dc3e95a75de05c3c2d5d575",
+            "timing": {
+              "root_prepare_seconds": 0.019945472002029417,
+              "reset_seconds": 0.23841075134277345,
+              "step_encode_seconds": 7.485899776488543,
+              "inference_seconds": 44.44745935487747,
+              "storage_seconds": 0.6051098888814449,
+              "collection_seconds": 9.839961525052786,
+              "update_seconds": 14.226656266022474,
+              "learner_seconds": 14.420963633921929,
+              "total_seconds": 25.51929152198136,
+              "decisions_per_second": 50573.347574650696,
+              "other_seconds": 1.258366363006644
+            },
+            "coordinator_peak_rss_mib": 1013.62109375
+          },
+          {
+            "episodes": 65536,
+            "completed": 65536,
+            "wins": 0,
+            "deaths": 65536,
+            "episode_decisions": {
+              "min": 1,
+              "p50": 16.0,
+              "p95": 47.0,
+              "p99": 68.0,
+              "max": 170,
+              "mean": 19.131515502929688
+            },
+            "lane_utilization": {
+              "waves": 1027,
+              "active_lane_steps": 1253803,
+              "available_lane_steps": 8413184,
+              "active_lane_seconds": 201966.36326627206,
+              "available_lane_seconds": 432725.42874609376,
+              "step_fraction": 0.1490283583480404,
+              "time_fraction": 0.4667309796225957
+            },
+            "workers": [
+              {
+                "rank": 0,
+                "decisions": 157016,
+                "compact_bytes": 290385020,
+                "timing": {
+                  "root_prepare_seconds": 0.0021923840045928954,
+                  "reset_seconds": 0.03023155212402344,
+                  "step_encode_seconds": 0.9352345563173294,
+                  "inference_seconds": 5.498011646270752,
+                  "storage_seconds": 0.07384521570801734,
+                  "collection_seconds": 8.069848289014772
+                },
+                "utilization": {
+                  "waves": 130,
+                  "active_lane_steps": 157016,
+                  "available_lane_steps": 1064960,
+                  "active_lane_seconds": 25176.66957067013,
+                  "available_lane_seconds": 55045.508625
+                },
+                "memory": {
+                  "allocated_bytes": 1708253696,
+                  "reserved_bytes": 10097786880,
+                  "peak_allocated_bytes": 5203041792,
+                  "peak_reserved_bytes": 10097786880,
+                  "free_bytes": 4246208512,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 1,
+                "decisions": 155397,
+                "compact_bytes": 287546908,
+                "timing": {
+                  "root_prepare_seconds": 0.0027299840450286865,
+                  "reset_seconds": 0.029820928573608397,
+                  "step_encode_seconds": 0.919603201687336,
+                  "inference_seconds": 5.41967974281311,
+                  "storage_seconds": 0.07409836786985398,
+                  "collection_seconds": 7.978924231021665
+                },
+                "utilization": {
+                  "waves": 132,
+                  "active_lane_steps": 155397,
+                  "available_lane_steps": 1081344,
+                  "active_lane_seconds": 24931.678406524657,
+                  "available_lane_seconds": 54288.470140625
+                },
+                "memory": {
+                  "allocated_bytes": 1705415680,
+                  "reserved_bytes": 10630463488,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 10630463488,
+                  "free_bytes": 3713531904,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 2,
+                "decisions": 157908,
+                "compact_bytes": 292540382,
+                "timing": {
+                  "root_prepare_seconds": 0.002136064052581787,
+                  "reset_seconds": 0.030041088104248048,
+                  "step_encode_seconds": 0.922720257639885,
+                  "inference_seconds": 5.454370817184448,
+                  "storage_seconds": 0.07301155215501785,
+                  "collection_seconds": 7.804630586062558
+                },
+                "utilization": {
+                  "waves": 131,
+                  "active_lane_steps": 157908,
+                  "available_lane_steps": 1073152,
+                  "active_lane_seconds": 25485.71200164032,
+                  "available_lane_seconds": 54600.6441796875
+                },
+                "memory": {
+                  "allocated_bytes": 1710408704,
+                  "reserved_bytes": 9911140352,
+                  "peak_allocated_bytes": 5250071552,
+                  "peak_reserved_bytes": 9911140352,
+                  "free_bytes": 4453826560,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 3,
+                "decisions": 157730,
+                "compact_bytes": 291417136,
+                "timing": {
+                  "root_prepare_seconds": 0.0021237759590148927,
+                  "reset_seconds": 0.029854719161987304,
+                  "step_encode_seconds": 0.9199534067511559,
+                  "inference_seconds": 5.345545210838318,
+                  "storage_seconds": 0.06919023996591568,
+                  "collection_seconds": 7.880020766984671
+                },
+                "utilization": {
+                  "waves": 121,
+                  "active_lane_steps": 157730,
+                  "available_lane_steps": 991232,
+                  "active_lane_seconds": 25253.95719762802,
+                  "available_lane_seconds": 53574.3313515625
+                },
+                "memory": {
+                  "allocated_bytes": 1709285888,
+                  "reserved_bytes": 9326034944,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 9326034944,
+                  "free_bytes": 5022154752,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 4,
+                "decisions": 156972,
+                "compact_bytes": 289914645,
+                "timing": {
+                  "root_prepare_seconds": 0.00207257604598999,
+                  "reset_seconds": 0.029731840133666993,
+                  "step_encode_seconds": 0.8784803842306137,
+                  "inference_seconds": 5.189819390296936,
+                  "storage_seconds": 0.06243510395288467,
+                  "collection_seconds": 7.6491217139409855
+                },
+                "utilization": {
+                  "waves": 107,
+                  "active_lane_steps": 156972,
+                  "available_lane_steps": 876544,
+                  "active_lane_seconds": 25297.661883220673,
+                  "available_lane_seconds": 51727.789296875
+                },
+                "memory": {
+                  "allocated_bytes": 1707783168,
+                  "reserved_bytes": 11366563840,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 11366563840,
+                  "free_bytes": 2998403072,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 5,
+                "decisions": 158028,
+                "compact_bytes": 292183599,
+                "timing": {
+                  "root_prepare_seconds": 0.002807807922363281,
+                  "reset_seconds": 0.03240038299560547,
+                  "step_encode_seconds": 0.9277972476482391,
+                  "inference_seconds": 5.407767541885376,
+                  "storage_seconds": 0.07189078390598297,
+                  "collection_seconds": 7.910765636013821
+                },
+                "utilization": {
+                  "waves": 128,
+                  "active_lane_steps": 158028,
+                  "available_lane_steps": 1048576,
+                  "active_lane_seconds": 25414.140822753907,
+                  "available_lane_seconds": 54189.845578125
+                },
+                "memory": {
+                  "allocated_bytes": 1710052352,
+                  "reserved_bytes": 10372513792,
+                  "peak_allocated_bytes": 5178452480,
+                  "peak_reserved_bytes": 10372513792,
+                  "free_bytes": 3975675904,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 6,
+                "decisions": 154745,
+                "compact_bytes": 288032787,
+                "timing": {
+                  "root_prepare_seconds": 0.0022190079689025878,
+                  "reset_seconds": 0.032756736755371094,
+                  "step_encode_seconds": 0.9291028442382813,
+                  "inference_seconds": 5.689724929094314,
+                  "storage_seconds": 0.08225891184806823,
+                  "collection_seconds": 8.30805391294416
+                },
+                "utilization": {
+                  "waves": 170,
+                  "active_lane_steps": 154745,
+                  "available_lane_steps": 1392640,
+                  "active_lane_seconds": 25273.891978547574,
+                  "available_lane_seconds": 56892.53770703125
+                },
+                "memory": {
+                  "allocated_bytes": 1705901568,
+                  "reserved_bytes": 10789847040,
+                  "peak_allocated_bytes": 5257404928,
+                  "peak_reserved_bytes": 10789847040,
+                  "free_bytes": 3575119872,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 7,
+                "decisions": 156007,
+                "compact_bytes": 288603511,
+                "timing": {
+                  "root_prepare_seconds": 0.0026705920696258544,
+                  "reset_seconds": 0.03274342346191406,
+                  "step_encode_seconds": 0.8813312014937401,
+                  "inference_seconds": 5.268590589046478,
+                  "storage_seconds": 0.06488147175312042,
+                  "collection_seconds": 7.704811242991127
+                },
+                "utilization": {
+                  "waves": 108,
+                  "active_lane_steps": 156007,
+                  "available_lane_steps": 884736,
+                  "active_lane_seconds": 25132.65140528679,
+                  "available_lane_seconds": 52406.301867187496
+                },
+                "memory": {
+                  "allocated_bytes": 1706471936,
+                  "reserved_bytes": 10265559040,
+                  "peak_allocated_bytes": 5180813824,
+                  "peak_reserved_bytes": 10265559040,
+                  "free_bytes": 4082630656,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              }
+            ],
+            "root_families": 1455,
+            "root_families_won": 0,
+            "natural_starts": 0,
+            "completed_natural_starts": 0,
+            "truncated": 0,
+            "budget_cutoffs": 0,
+            "faults": 0,
+            "decisions": 1253803,
+            "training_decisions": 1253803,
+            "replay_decisions": 51841940,
+            "compact_bytes": 2330654476,
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 945288,
+                "normalized": 0.9067469239234924
+              },
+              "hand_select": {
+                "decisions": 137688,
+                "normalized": 0.5818788409233093
+              },
+              "grid": {
+                "decisions": 8717,
+                "normalized": 0.999589204788208
+              },
+              "card_reward": {
+                "decisions": 8584,
+                "normalized": 0.9995218515396118
+              },
+              "combat_reward": {
+                "decisions": 22701,
+                "normalized": 0.731724739074707
+              },
+              "event": {
+                "decisions": 8847,
+                "normalized": 0.3706219792366028
+              },
+              "map": {
+                "decisions": 70892,
+                "normalized": 0.9386109709739685
+              },
+              "room": {
+                "decisions": 35293,
+                "normalized": 0.7058587074279785
+              },
+              "shop": {
+                "decisions": 15770,
+                "normalized": 0.4629819095134735
+              },
+              "boss_reward": {
+                "decisions": 23,
+                "normalized": 0.9995154738426208
+              }
+            },
+            "value_calibration": {
+              "episode_start": {
+                "count": 65536,
+                "brier": 1.966839590750169e-05,
+                "predicted": 0.0044328561052680016,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 65536,
+                    "predicted": 0.0044328561052680016,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "decision_weighted": {
+                "count": 1253803,
+                "brier": 1.8717182683758438e-05,
+                "predicted": 0.0043259370140731335,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 1253803,
+                    "predicted": 0.0043259370140731335,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "by_screen": {
+                "combat": {
+                  "count": 945288,
+                  "brier": 1.859725125541445e-05,
+                  "predicted": 0.004312396515160799,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 945288,
+                      "predicted": 0.004312396515160799,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "hand_select": {
+                  "count": 137688,
+                  "brier": 1.8635537344380282e-05,
+                  "predicted": 0.004316830541938543,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 137688,
+                      "predicted": 0.004316830541938543,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "grid": {
+                  "count": 8717,
+                  "brier": 1.8804470528266393e-05,
+                  "predicted": 0.004336364101618528,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8717,
+                      "predicted": 0.004336364101618528,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "card_reward": {
+                  "count": 8584,
+                  "brier": 1.867687751655467e-05,
+                  "predicted": 0.004321628250181675,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8584,
+                      "predicted": 0.004321628250181675,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "combat_reward": {
+                  "count": 22701,
+                  "brier": 1.8668972188606858e-05,
+                  "predicted": 0.004320692270994186,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 22701,
+                      "predicted": 0.004320692270994186,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "event": {
+                  "count": 8847,
+                  "brier": 1.879384581116028e-05,
+                  "predicted": 0.004335049074143171,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8847,
+                      "predicted": 0.004335049074143171,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "map": {
+                  "count": 70892,
+                  "brier": 2.0389268684084527e-05,
+                  "predicted": 0.004513831343501806,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 70892,
+                      "predicted": 0.004513831343501806,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "room": {
+                  "count": 35293,
+                  "brier": 1.879294723039493e-05,
+                  "predicted": 0.0043350206688046455,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 35293,
+                      "predicted": 0.0043350206688046455,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "shop": {
+                  "count": 15770,
+                  "brier": 1.8932518287329003e-05,
+                  "predicted": 0.004351099953055382,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 15770,
+                      "predicted": 0.004351099953055382,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "boss_reward": {
+                  "count": 23,
+                  "brier": 1.8966233255923726e-05,
+                  "predicted": 0.004354998003691435,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 23,
+                      "predicted": 0.004354998003691435,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              },
+              "by_act": {
+                "1": {
+                  "count": 258659,
+                  "brier": 1.847143539634999e-05,
+                  "predicted": 0.00429781386628747,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 258659,
+                      "predicted": 0.00429781386628747,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "2": {
+                  "count": 485224,
+                  "brier": 1.873002838692628e-05,
+                  "predicted": 0.004327121656388044,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 485224,
+                      "predicted": 0.004327121656388044,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "3": {
+                  "count": 333824,
+                  "brier": 1.8836108210962266e-05,
+                  "predicted": 0.00433972617611289,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 333824,
+                      "predicted": 0.00433972617611289,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "4": {
+                  "count": 176096,
+                  "brier": 1.8817301679519005e-05,
+                  "predicted": 0.004337843507528305,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 176096,
+                      "predicted": 0.004337843507528305,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              }
+            },
+            "ppo": {
+              "samples": 1253803,
+              "minibatches": 154,
+              "update_seconds": 13.910800228011794,
+              "policy_loss": 3.396955271031411e-05,
+              "value_loss": 1.4013722436181032e-05,
+              "entropy": 0.8555239959824686,
+              "kl": 0.0006774522958208258,
+              "clip_fraction": 7.337675924653282e-05,
+              "loss": -0.008514264555580468,
+              "grad_norm": 0.006095965023778554,
+              "memory": [
+                {
+                  "rank": 0,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10097786880,
+                  "peak_allocated_bytes": 6736280064,
+                  "peak_reserved_bytes": 10097786880,
+                  "free_bytes": 4246208512,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 1,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10630463488,
+                  "peak_allocated_bytes": 6638023680,
+                  "peak_reserved_bytes": 10630463488,
+                  "free_bytes": 3713531904,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 2,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10057940992,
+                  "peak_allocated_bytes": 7289218048,
+                  "peak_reserved_bytes": 10057940992,
+                  "free_bytes": 4307025920,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 3,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 9326034944,
+                  "peak_allocated_bytes": 6769973760,
+                  "peak_reserved_bytes": 9326034944,
+                  "free_bytes": 5022154752,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 4,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 11366563840,
+                  "peak_allocated_bytes": 6847220224,
+                  "peak_reserved_bytes": 11366563840,
+                  "free_bytes": 2998403072,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 5,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10781458432,
+                  "peak_allocated_bytes": 7559029760,
+                  "peak_reserved_bytes": 10781458432,
+                  "free_bytes": 3566731264,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 6,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 12643729408,
+                  "peak_allocated_bytes": 8038580736,
+                  "peak_reserved_bytes": 12643729408,
+                  "free_bytes": 1721237504,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 7,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 11014242304,
+                  "peak_allocated_bytes": 7523607552,
+                  "peak_reserved_bytes": 11014242304,
+                  "free_bytes": 3333947392,
+                  "total_bytes": 16928342016
+                }
+              ],
+              "policy_version": 3,
+              "published_version": 4,
+              "learner_seconds": 14.111273679998703
+            },
+            "update": 4,
+            "engine_commit": "23dcf237f5b73b1c4dc3e95a75de05c3c2d5d575",
+            "timing": {
+              "root_prepare_seconds": 0.018952192068099977,
+              "reset_seconds": 0.2475806713104248,
+              "step_encode_seconds": 7.314223100006581,
+              "inference_seconds": 43.27350986742973,
+              "storage_seconds": 0.5716116471588611,
+              "collection_seconds": 9.685709660989232,
+              "update_seconds": 13.910800228011794,
+              "learner_seconds": 14.111273679998703,
+              "total_seconds": 25.070111260050908,
+              "decisions_per_second": 50011.8642073172,
+              "other_seconds": 1.273127919062972
+            },
+            "coordinator_peak_rss_mib": 1015.19921875
+          },
+          {
+            "episodes": 65536,
+            "completed": 65536,
+            "wins": 0,
+            "deaths": 65536,
+            "episode_decisions": {
+              "min": 1,
+              "p50": 16.0,
+              "p95": 47.0,
+              "p99": 66.0,
+              "max": 177,
+              "mean": 19.01934814453125
+            },
+            "lane_utilization": {
+              "waves": 1096,
+              "active_lane_steps": 1246452,
+              "available_lane_steps": 8978432,
+              "active_lane_seconds": 200627.67534592914,
+              "available_lane_seconds": 430235.2798125,
+              "step_fraction": 0.1388273587192062,
+              "time_fraction": 0.46632083596994717
+            },
+            "workers": [
+              {
+                "rank": 0,
+                "decisions": 156294,
+                "compact_bytes": 289535672,
+                "timing": {
+                  "root_prepare_seconds": 0.0025958399772644043,
+                  "reset_seconds": 0.03039129638671875,
+                  "step_encode_seconds": 0.8728627206981182,
+                  "inference_seconds": 5.200641034603119,
+                  "storage_seconds": 0.06320793622732163,
+                  "collection_seconds": 7.324347143992782
+                },
+                "utilization": {
+                  "waves": 112,
+                  "active_lane_steps": 156294,
+                  "available_lane_steps": 917504,
+                  "active_lane_seconds": 25345.70013319683,
+                  "available_lane_seconds": 51738.7278671875
+                },
+                "memory": {
+                  "allocated_bytes": 1707404288,
+                  "reserved_bytes": 10097786880,
+                  "peak_allocated_bytes": 5205198336,
+                  "peak_reserved_bytes": 10097786880,
+                  "free_bytes": 4246208512,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 1,
+                "decisions": 156370,
+                "compact_bytes": 289499501,
+                "timing": {
+                  "root_prepare_seconds": 0.002510848045349121,
+                  "reset_seconds": 0.030323711395263672,
+                  "step_encode_seconds": 0.9052159983217716,
+                  "inference_seconds": 5.2942315573692325,
+                  "storage_seconds": 0.06899318400025367,
+                  "collection_seconds": 7.341003443929367
+                },
+                "utilization": {
+                  "waves": 128,
+                  "active_lane_steps": 156370,
+                  "available_lane_steps": 1048576,
+                  "active_lane_seconds": 25187.723246598245,
+                  "available_lane_seconds": 52992.3470859375
+                },
+                "memory": {
+                  "allocated_bytes": 1707367936,
+                  "reserved_bytes": 10630463488,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 10630463488,
+                  "free_bytes": 3713531904,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 2,
+                "decisions": 155512,
+                "compact_bytes": 288782234,
+                "timing": {
+                  "root_prepare_seconds": 0.0024391679763793943,
+                  "reset_seconds": 0.030005247116088866,
+                  "step_encode_seconds": 0.9290352672636509,
+                  "inference_seconds": 5.5353753590583805,
+                  "storage_seconds": 0.07789564770460129,
+                  "collection_seconds": 8.018944971030578
+                },
+                "utilization": {
+                  "waves": 141,
+                  "active_lane_steps": 155512,
+                  "available_lane_steps": 1155072,
+                  "active_lane_seconds": 25084.721248435973,
+                  "available_lane_seconds": 55452.07934375
+                },
+                "memory": {
+                  "allocated_bytes": 1706650624,
+                  "reserved_bytes": 10057940992,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 10057940992,
+                  "free_bytes": 4307025920,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 3,
+                "decisions": 154262,
+                "compact_bytes": 285998636,
+                "timing": {
+                  "root_prepare_seconds": 0.002405375957489014,
+                  "reset_seconds": 0.030044160842895507,
+                  "step_encode_seconds": 0.906514434620738,
+                  "inference_seconds": 5.491798017024994,
+                  "storage_seconds": 0.07734768027067185,
+                  "collection_seconds": 8.235839892993681
+                },
+                "utilization": {
+                  "waves": 147,
+                  "active_lane_steps": 154262,
+                  "available_lane_steps": 1204224,
+                  "active_lane_seconds": 24619.896014702797,
+                  "available_lane_seconds": 55004.782109375
+                },
+                "memory": {
+                  "allocated_bytes": 1703867392,
+                  "reserved_bytes": 9326034944,
+                  "peak_allocated_bytes": 5175934464,
+                  "peak_reserved_bytes": 9326034944,
+                  "free_bytes": 5022154752,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 4,
+                "decisions": 156345,
+                "compact_bytes": 289911026,
+                "timing": {
+                  "root_prepare_seconds": 0.002539520025253296,
+                  "reset_seconds": 0.030353408813476562,
+                  "step_encode_seconds": 0.9260554277300834,
+                  "inference_seconds": 5.469005822420121,
+                  "storage_seconds": 0.07384972786903381,
+                  "collection_seconds": 8.00091581500601
+                },
+                "utilization": {
+                  "waves": 133,
+                  "active_lane_steps": 156345,
+                  "available_lane_steps": 1089536,
+                  "active_lane_seconds": 25160.95790256405,
+                  "available_lane_seconds": 54724.0993359375
+                },
+                "memory": {
+                  "allocated_bytes": 1707779584,
+                  "reserved_bytes": 11366563840,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 11366563840,
+                  "free_bytes": 2998403072,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 5,
+                "decisions": 157084,
+                "compact_bytes": 291003415,
+                "timing": {
+                  "root_prepare_seconds": 0.0026163198947906493,
+                  "reset_seconds": 0.03075071907043457,
+                  "step_encode_seconds": 0.9895444482713938,
+                  "inference_seconds": 5.509436423063279,
+                  "storage_seconds": 0.08435868763923646,
+                  "collection_seconds": 8.070017974008806
+                },
+                "utilization": {
+                  "waves": 177,
+                  "active_lane_steps": 157084,
+                  "available_lane_steps": 1449984,
+                  "active_lane_seconds": 25163.895027799605,
+                  "available_lane_seconds": 55897.8499921875
+                },
+                "memory": {
+                  "allocated_bytes": 1709372416,
+                  "reserved_bytes": 10781458432,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 10781458432,
+                  "free_bytes": 3566731264,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 6,
+                "decisions": 154558,
+                "compact_bytes": 286358148,
+                "timing": {
+                  "root_prepare_seconds": 0.003579904079437256,
+                  "reset_seconds": 0.02994790458679199,
+                  "step_encode_seconds": 0.8703907775878906,
+                  "inference_seconds": 5.219963905811309,
+                  "storage_seconds": 0.06719260802865028,
+                  "collection_seconds": 7.630912184016779
+                },
+                "utilization": {
+                  "waves": 117,
+                  "active_lane_steps": 154558,
+                  "available_lane_steps": 958464,
+                  "active_lane_seconds": 24757.243621795653,
+                  "available_lane_seconds": 52031.6834765625
+                },
+                "memory": {
+                  "allocated_bytes": 1704226816,
+                  "reserved_bytes": 12643729408,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 12643729408,
+                  "free_bytes": 1721237504,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              },
+              {
+                "rank": 7,
+                "decisions": 156027,
+                "compact_bytes": 288237320,
+                "timing": {
+                  "root_prepare_seconds": 0.0029736959934234617,
+                  "reset_seconds": 0.030092287063598632,
+                  "step_encode_seconds": 0.915088385105133,
+                  "inference_seconds": 5.217051647901535,
+                  "storage_seconds": 0.07102905610203743,
+                  "collection_seconds": 7.76407868496608
+                },
+                "utilization": {
+                  "waves": 141,
+                  "active_lane_steps": 156027,
+                  "available_lane_steps": 1155072,
+                  "active_lane_seconds": 25307.53815083599,
+                  "available_lane_seconds": 52393.7106015625
+                },
+                "memory": {
+                  "allocated_bytes": 1706105856,
+                  "reserved_bytes": 11014242304,
+                  "peak_allocated_bytes": 5175950848,
+                  "peak_reserved_bytes": 11014242304,
+                  "free_bytes": 3333947392,
+                  "total_bytes": 16928342016
+                },
+                "root_cache_bytes": 220807180
+              }
+            ],
+            "root_families": 1455,
+            "root_families_won": 0,
+            "natural_starts": 0,
+            "completed_natural_starts": 0,
+            "truncated": 0,
+            "budget_cutoffs": 0,
+            "faults": 0,
+            "decisions": 1246452,
+            "training_decisions": 1246452,
+            "replay_decisions": 51847833,
+            "compact_bytes": 2319297632,
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 940879,
+                "normalized": 0.9078848361968994
+              },
+              "hand_select": {
+                "decisions": 135025,
+                "normalized": 0.5805647373199463
+              },
+              "grid": {
+                "decisions": 8634,
+                "normalized": 0.9995646476745605
+              },
+              "card_reward": {
+                "decisions": 8592,
+                "normalized": 0.9990586638450623
+              },
+              "combat_reward": {
+                "decisions": 22000,
+                "normalized": 0.7351751327514648
+              },
+              "event": {
+                "decisions": 9061,
+                "normalized": 0.35967299342155457
+              },
+              "map": {
+                "decisions": 70945,
+                "normalized": 0.9379139542579651
+              },
+              "room": {
+                "decisions": 35552,
+                "normalized": 0.7045039534568787
+              },
+              "shop": {
+                "decisions": 15747,
+                "normalized": 0.465389609336853
+              },
+              "boss_reward": {
+                "decisions": 17,
+                "normalized": 0.998989999294281
+              }
+            },
+            "value_calibration": {
+              "episode_start": {
+                "count": 65536,
+                "brier": 1.0352890967624262e-05,
+                "predicted": 0.003216307610273361,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 65536,
+                    "predicted": 0.003216307610273361,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "decision_weighted": {
+                "count": 1246452,
+                "brier": 9.891493391478434e-06,
+                "predicted": 0.003144830232486129,
+                "observed": 0.0,
+                "bins": [
+                  {
+                    "bin": 0,
+                    "count": 1246452,
+                    "predicted": 0.003144830232486129,
+                    "observed": 0.0
+                  }
+                ]
+              },
+              "by_screen": {
+                "combat": {
+                  "count": 940879,
+                  "brier": 9.834134289121721e-06,
+                  "predicted": 0.0031359123531728983,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 940879,
+                      "predicted": 0.0031359123531728983,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "hand_select": {
+                  "count": 135025,
+                  "brier": 9.851689355855342e-06,
+                  "predicted": 0.0031387091148644686,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 135025,
+                      "predicted": 0.0031387091148644686,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "grid": {
+                  "count": 8634,
+                  "brier": 9.938485163729638e-06,
+                  "predicted": 0.0031525047961622477,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8634,
+                      "predicted": 0.0031525047961622477,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "card_reward": {
+                  "count": 8592,
+                  "brier": 9.854761628957931e-06,
+                  "predicted": 0.0031392008531838655,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 8592,
+                      "predicted": 0.0031392008531838655,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "combat_reward": {
+                  "count": 22000,
+                  "brier": 9.871604561340064e-06,
+                  "predicted": 0.0031418651342391968,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 22000,
+                      "predicted": 0.0031418651342391968,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "event": {
+                  "count": 9061,
+                  "brier": 9.920308002620004e-06,
+                  "predicted": 0.0031495634466409683,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 9061,
+                      "predicted": 0.0031495634466409683,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "map": {
+                  "count": 70945,
+                  "brier": 1.069980953616323e-05,
+                  "predicted": 0.003270006738603115,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 70945,
+                      "predicted": 0.003270006738603115,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "room": {
+                  "count": 35552,
+                  "brier": 9.911348570312839e-06,
+                  "predicted": 0.0031481885816901922,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 35552,
+                      "predicted": 0.0031481885816901922,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "shop": {
+                  "count": 15747,
+                  "brier": 9.978798516385723e-06,
+                  "predicted": 0.0031588906422257423,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 15747,
+                      "predicted": 0.0031588906422257423,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "boss_reward": {
+                  "count": 17,
+                  "brier": 9.986720215238165e-06,
+                  "predicted": 0.003160149557515979,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 17,
+                      "predicted": 0.003160149557515979,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              },
+              "by_act": {
+                "1": {
+                  "count": 257739,
+                  "brier": 9.783320820133667e-06,
+                  "predicted": 0.0031278140377253294,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 257739,
+                      "predicted": 0.0031278140377253294,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "2": {
+                  "count": 479205,
+                  "brier": 9.90522948995931e-06,
+                  "predicted": 0.003146821167320013,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 479205,
+                      "predicted": 0.003146821167320013,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "3": {
+                  "count": 334794,
+                  "brier": 9.938426956068724e-06,
+                  "predicted": 0.0031523192301392555,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 334794,
+                      "predicted": 0.0031523192301392555,
+                      "observed": 0.0
+                    }
+                  ]
+                },
+                "4": {
+                  "count": 174714,
+                  "brier": 9.923456673277542e-06,
+                  "predicted": 0.003150121308863163,
+                  "observed": 0.0,
+                  "bins": [
+                    {
+                      "bin": 0,
+                      "count": 174714,
+                      "predicted": 0.003150121308863163,
+                      "observed": 0.0
+                    }
+                  ]
+                }
+              }
+            },
+            "ppo": {
+              "samples": 1246452,
+              "minibatches": 153,
+              "update_seconds": 13.77062656194903,
+              "policy_loss": 0.00039182532873054674,
+              "value_loss": 9.025838555937032e-06,
+              "entropy": 0.8561529220312795,
+              "kl": 0.0007602742074326201,
+              "clip_fraction": 0.002477431898314366,
+              "loss": -0.008165189763282277,
+              "grad_norm": 0.01675573128599816,
+              "memory": [
+                {
+                  "rank": 0,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10097786880,
+                  "peak_allocated_bytes": 7066160640,
+                  "peak_reserved_bytes": 10097786880,
+                  "free_bytes": 4246208512,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 1,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10630463488,
+                  "peak_allocated_bytes": 7056720896,
+                  "peak_reserved_bytes": 10630463488,
+                  "free_bytes": 3713531904,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 2,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10057940992,
+                  "peak_allocated_bytes": 7132913152,
+                  "peak_reserved_bytes": 10057940992,
+                  "free_bytes": 4307025920,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 3,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 10003415040,
+                  "peak_allocated_bytes": 7309044224,
+                  "peak_reserved_bytes": 10003415040,
+                  "free_bytes": 4344774656,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 4,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 11368660992,
+                  "peak_allocated_bytes": 7383842304,
+                  "peak_reserved_bytes": 11368660992,
+                  "free_bytes": 2996305920,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 5,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 11513364480,
+                  "peak_allocated_bytes": 7776175104,
+                  "peak_reserved_bytes": 11513364480,
+                  "free_bytes": 2834825216,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 6,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 12643729408,
+                  "peak_allocated_bytes": 6931384320,
+                  "peak_reserved_bytes": 12643729408,
+                  "free_bytes": 1721237504,
+                  "total_bytes": 16928342016
+                },
+                {
+                  "rank": 7,
+                  "allocated_bytes": 35845120,
+                  "reserved_bytes": 11014242304,
+                  "peak_allocated_bytes": 6640835584,
+                  "peak_reserved_bytes": 11014242304,
+                  "free_bytes": 3333947392,
+                  "total_bytes": 16928342016
+                }
+              ],
+              "policy_version": 4,
+              "published_version": 5,
+              "learner_seconds": 13.949074740055948
+            },
+            "update": 5,
+            "engine_commit": "23dcf237f5b73b1c4dc3e95a75de05c3c2d5d575",
+            "timing": {
+              "root_prepare_seconds": 0.021660671949386597,
+              "reset_seconds": 0.24190873527526854,
+              "step_encode_seconds": 7.31470745959878,
+              "inference_seconds": 42.93750376725197,
+              "storage_seconds": 0.5838745278418064,
+              "collection_seconds": 9.520477663027123,
+              "update_seconds": 13.77062656194903,
+              "learner_seconds": 13.949074740055948,
+              "total_seconds": 24.751603885903023,
+              "decisions_per_second": 50358.433568416214,
+              "other_seconds": 1.282051482819952
+            },
+            "coordinator_peak_rss_mib": 1015.19921875
+          }
+        ],
+        "measured_updates": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "decisions_per_second": 50298.692400499844,
+        "collection_decisions_per_second": 130498.28344908086,
+        "min_time_lane_utilization": 0.46467266992007084,
+        "outcomes": {
+          "episodes": 327680,
+          "wins": 0,
+          "deaths": 327680,
+          "truncated": 0,
+          "faults": 0,
+          "budget_cutoffs": 0
+        },
+        "checkpoint_sha256": "79a9766daf4a2a0a7a7cb7237991da052c138872126a878690604088038ff57b"
+      }
+    }
+  ],
+  "status": "passed",
+  "config": {
+    "lanes_per_gpu": 8192,
+    "episodes": 65536,
+    "decision_cap": 3000,
+    "inference_chunk": 512,
+    "gamma": 1,
+    "gae_lambda": 1,
+    "workers": 8,
+    "global_minibatch": 8192,
+    "storage_mib": 2549
+  },
+  "ended": 1792336494.7610857
+}

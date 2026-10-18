@@ -1,0 +1,29 @@
+{
+  "phase": "precision",
+  "source": "e122e83560503db76dff7e4dcf15da3a788fbac8",
+  "started": 1792336545.242361,
+  "deadline": 1792339800.0,
+  "roots_sha256": "9eb42bf82c2b9ec3a66818de7fd0fe53117d2be67361e0a8057446448dd4189d",
+  "stages": [
+    {
+      "stage": "five-updates",
+      "status": "failed",
+      "seconds": 45.568661764031276,
+      "log": "/home/zhuyouwei/spire-downloads/precision-fp16-3539/five-updates.log"
+    }
+  ],
+  "status": "failed",
+  "config": {
+    "lanes_per_gpu": 8192,
+    "episodes": 65536,
+    "decision_cap": 3000,
+    "inference_chunk": 512,
+    "gamma": 1,
+    "gae_lambda": 1,
+    "workers": 8,
+    "global_minibatch": 8192,
+    "storage_mib": 2549
+  },
+  "error": "AssertionError({'stage': 'five-updates', 'status': 'failed', 'seconds': 45.568661764031276, 'log': '/home/zhuyouwei/spire-downloads/precision-fp16-3539/five-updates.log'})",
+  "ended": 1792336590.9019945
+}
