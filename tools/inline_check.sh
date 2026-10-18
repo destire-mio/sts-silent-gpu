@@ -12,6 +12,7 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 python=${SPIRE_PYTHON:?set SPIRE_PYTHON to the server venv Python}
 clang=$(command -v clang++)
 cuda=$(dirname "$(dirname "$(realpath "$(command -v nvcc)")")")
+ld.lld --version
 declare -A thresholds=([inline5]=5 [inline250]=250)
 
 build() {

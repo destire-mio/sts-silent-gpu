@@ -63,7 +63,9 @@ CUDA Toolkit **12.8.x or 12.9.x** with development headers (CUDA 13 no longer
 compiles for `sm_70`; `nvcc` on `PATH` only locates the toolkit), NVIDIA driver **570.124.06 or
 newer** (the cluster has 580.105.08), Clang with the NVPTX backend and libstdc++ development headers
 as both C++ and CUDA compiler (the cluster has Clang 21.1.7), CMake **3.31 or newer** (the cluster has 3.31.8),
-Make, LLVM lld, rsync, and Python **3.12** with development headers. These are the intended toolchain
+Make, rsync, and Python **3.12** with development headers. Linux CPU targets additionally require
+LLVM lld (`ld.lld` on `PATH`) for ThinLTO; the GPU-only target does not use it. The full check scripts
+check the linker before configuring or compiling. These are the intended toolchain
 bounds, not a GPU validation claim. NVIDIA documents the
 [CUDA 12.8 compiler/OS requirements](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-installation-guide-linux/index.html)
 and [driver versions](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-toolkit-release-notes/index.html).
@@ -118,6 +120,24 @@ compile measurements. Release remains `-O3`; `SPIRE_CUDA_INLINE_THRESHOLD` remai
 `tools/inline_check.sh WORK_DIR` retains its sequential threshold-5/250 comparison, parity and
 throughput workload; each build uses two jobs and records per-unit timing. The ineffective
 `--split-compile=1` flag has been removed.
+
+To build only the GPU extension inside an existing Slurm allocation, put clang++ and the CUDA
+12.8 toolkit's nvcc on PATH and set `SPIRE_PYTHON` to the installed server venv:
+
+```sh
+export SPIRE_PYTHON="$HOME/spire-env/bin/python"
+export PATH="/usr/local/cuda-12.8/bin:$PATH"
+tools/gpu_build.sh "$HOME/spire-v100-build"
+export PYTHONPATH="$HOME/spire-v100-build:$PWD"
+```
+
+This builds only `spire_gpu` at `-O3`, inline threshold 5 and two parallel jobs, and records
+per-unit wall time and peak RSS. It preserves an existing `TMPDIR` such as a Slurm job's node-local
+scratch directory. It does not run tests, benchmarks or training, and does not
+require the CPU `spire` module or `ld.lld`. Constant tables are defined once in device global
+memory (`SPIRE_CONSTANT` expands to `__device__`), rather than duplicated constexpr tables in
+the former monolithic unit. A successful V100 assembly and device link are still required to
+confirm that the former 64 KiB constant-data overflow is resolved.
 
 Inside an existing Slurm allocation, with clang++ and the toolkit's nvcc on PATH, this command
 builds only `spire_gpu` and `test_cuda_parity`, then prints the per-unit resource table and runs

@@ -301,6 +301,9 @@ def suite(roots, build, output):
     def command(check, *options):
         return [sys.executable, '-m', 'tools.gpu_train_check', check, '--roots', str(roots), *map(str, options)]
     try:
+        linker = shutil.which('ld.lld')
+        assert linker, 'Linux CPU targets require LLVM lld; put ld.lld on PATH before running the full suite'
+        require(stage('linker', [linker, '--version'], 30))
         preflight = 'import torch; assert torch.cuda.device_count() == 8; assert "sm_70" in torch.cuda.get_arch_list(); assert all(torch.cuda.get_device_capability(i) == (7,0) for i in range(8)); print(torch.__version__, torch.version.cuda, [torch.cuda.get_device_properties(i) for i in range(8)])'
         require(stage('preflight', [sys.executable, '-c', preflight], 30))
         require(stage('hardware', ['nvidia-smi'], 30))

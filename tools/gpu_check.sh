@@ -12,6 +12,7 @@ python=${SPIRE_PYTHON:?set SPIRE_PYTHON to the server venv Python}
 nvcc=$(command -v nvcc)
 clang=$(command -v clang++)
 cuda=$(dirname "$(dirname "$(realpath "$nvcc")")")
+ld.lld --version
 "$nvcc" --version
 "$clang" --version
 nvidia-smi
