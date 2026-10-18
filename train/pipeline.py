@@ -65,14 +65,15 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
         rng.set_state(state["ppo"])
         if device.type == "cuda":
             torch.cuda.set_rng_state(state["cuda"], device)
-    save_checkpoint(output / "initial.pt", model, optimizer, manifest, version, rng, next_attempt)
-    save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt)
+    curriculum = checkpoint.get("curriculum") if checkpoint is not None else None
+    save_checkpoint(output / "initial.pt", model, optimizer, manifest, version, rng, next_attempt, curriculum)
+    save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt, curriculum)
     connection.send(version)
     rollout = None
     while (job := connection.recv()) is not None:
         kind, expected, *payload = job
         assert expected == version
-        if kind == "collect":
+        if kind in ("collect", "evaluate"):
             assert rollout is None
             if device.type == "cuda":
                 torch.cuda.reset_peak_memory_stats(device)
@@ -82,14 +83,21 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
                                  count=rollout.count, compact_bytes=int(rollout.offsets[rollout.count]), timing=rollout.timing,
                                  utilization=rollout.utilization, memory=device_memory(device),
                                  root_cache_bytes=sum(cache.bytes for cache in collector.root_caches)))
+            if kind == "evaluate":
+                rollout = None
+        elif kind == "checkpoint":
+            assert rollout is None
+            curriculum, = payload
+            save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt, curriculum)
+            connection.send(version)
         else:
             assert kind == "update" and rollout is not None
-            next_attempt, = payload
+            next_attempt, curriculum = payload
             metrics = update(wrapped, optimizer, rollout, ppo_config, device, rng, policy_version=version)
             rollout = None
             version += 1
             dist.barrier()
-            save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt)
+            save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt, curriculum)
             metrics["memory"] = device_memory(device)
             connection.send((version, metrics))
     assert rollout is None
@@ -180,12 +188,36 @@ class Pipeline:
         self.pending = result
         return result
 
-    def update(self, rollout):
+    def evaluate(self, roots, sampling_seed, attempts):
+        assert self.pending is None and len(roots) == len(attempts) and roots
+        start = time.perf_counter()
+        for rank, connection in enumerate(self.connections):
+            connection.send(("evaluate", self.version, roots[rank::self.config.workers], sampling_seed,
+                             list(attempts)[rank::self.config.workers], None))
+        parts = self.receive()
+        assert all(p["version"] == self.version for p in parts)
+        episodes = []
+        for part in parts:
+            for episode in part["episodes"]:
+                records = episode["records"]
+                episodes.append(dict(episode, initial_value=float(part["metrics"]["values"][records[0]])
+                                     if records else None))
+        return dict(episodes=sorted(episodes, key=lambda e: e["attempt"]),
+                    decisions=sum(p["count"] for p in parts), seconds=time.perf_counter() - start,
+                    memory=[dict(rank=rank, **p["memory"]) for rank, p in enumerate(parts)])
+
+    def save_curriculum(self, curriculum):
+        assert self.pending is None
+        for connection in self.connections:
+            connection.send(("checkpoint", self.version, curriculum))
+        assert self.receive() == [self.version] * self.config.workers
+
+    def update(self, rollout, *, curriculum=None):
         assert self.pending is rollout
         assert np.all(rollout.policy_versions == self.version), "Stale policy samples"
         start = time.perf_counter()
         for connection in self.connections:
-            connection.send(("update", self.version, rollout.next_attempt))
+            connection.send(("update", self.version, rollout.next_attempt, curriculum))
         results = self.receive()
         assert all(version == self.version + 1 for version, _ in results)
         self.version, metrics = results[0]
