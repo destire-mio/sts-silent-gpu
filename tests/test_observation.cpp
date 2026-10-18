@@ -1,8 +1,10 @@
 #include "obs/encode.hpp"
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <vector>
 
 using namespace spire;
 static int pairs[13]{};
@@ -67,6 +69,45 @@ static void draw_and_identity() {
     equal(a, b);
     b = a; b.cards[b.hand[0]] = make_card(CardId::BladeDance);
     different(a, b);
+}
+static void pile_sorting_matches_tokens() {
+    Game g; reset(g, 123);
+    g.cards.clear(); g.grid_source = PileId::Discard;
+    const CardId kinds[]{CardId::GlassKnife, CardId::BladeDance, CardId::Survivor, CardId::Slimed, CardId::Regret};
+    for (int i = 0; i < card_capacity; ++i) {
+        auto c = make_card(kinds[(i / 2) % 5]);
+        c.upgrades = (i / 13) % 2; c.cost_for_turn = (i / 3) % 4 - 1;
+        c.damage += i % 7; c.base_damage += i % 3; c.block += i % 5;
+        c.magic += i % 2; c.base_magic += i % 3;
+        c.free_to_play_once = i % 17 == 0;
+        c.bottle_flame = i % 19 == 0; c.bottle_lightning = i % 23 == 0; c.bottle_tornado = i % 29 == 0;
+        g.cards.add(c);
+    }
+    for (auto phase : {RoomPhase::Combat, RoomPhase::Event}) {
+        g.room_phase = phase;
+        for (int count : {0, 1, 64, card_capacity}) for (int rotation : {0, 1, 73}) {
+            Pile cards;
+            for (int i = 0; i < count; ++i) cards.push_back((i * 101 + rotation) % card_capacity);
+            for (auto zone : {obs::Zone::Master, obs::Zone::Hand, obs::Zone::Draw, obs::Zone::Discard,
+                              obs::Zone::Exhaust, obs::Zone::Grid}) for (bool unordered : {false, true}) for (bool copy : {false, true}) {
+                const Game before = g;
+                std::vector<obs::Token> tokens;
+                for (int i = 0; i < count; ++i) {
+                    const int index = !unordered && (zone == obs::Zone::Draw || zone == obs::Zone::Exhaust) ? count - i - 1 : i;
+                    tokens.push_back(obs::card_token(g, g.cards[cards[index]], zone, unordered ? 0 : i + 1, !copy));
+                }
+                if (unordered) std::stable_sort(tokens.begin(), tokens.end(), obs::less);
+                obs::Observation actual, expected;
+                obs::Writer left{actual.view()}, right{expected.view()};
+                obs::pile(left, g, cards, zone, unordered, copy);
+                for (const auto& token : tokens) right.add(token);
+                left.view.finish(left.result.entities, 0); right.view.finish(right.result.entities, 0);
+                require(!left.result.fault && !right.result.fault, "pile sorting fixture overflow");
+                require(std::memcmp(&actual, &expected, sizeof(actual)) == 0, "pile indices changed token order or bytes");
+                require(std::memcmp(&g, &before, sizeof(g)) == 0, "pile sorting changed Game");
+            }
+        }
+    }
 }
 static void dome() {
     const Game before = combat(true);
@@ -253,7 +294,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    draw_and_identity(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

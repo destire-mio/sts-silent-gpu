@@ -28,18 +28,24 @@ SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int po
     return t;
 }
 SPIRE_FN inline void pile(Writer& w, const Game& g, const Pile& cards, Zone zone, bool unordered, bool copy) {
-    Token sorted[card_capacity];
+    uint8_t sorted[card_capacity];
     for (int i = 0; i < cards.size; ++i) {
         const int index = !unordered && (zone == Zone::Draw || zone == Zone::Exhaust) ? cards.size - i - 1 : i;
         const Card& c = g.cards[cards[index]];
         Token t = card_token(g, c, zone, unordered ? 0 : i + 1, !copy);
         if (unordered) {
             int at = i;
-            while (at > 0 && less(t, sorted[at - 1])) { sorted[at] = sorted[at - 1]; --at; }
-            sorted[at] = t;
+            while (at > 0) {
+                const auto& previous = g.cards[sorted[at - 1]];
+                if (c.id > previous.id || (c.id == previous.id &&
+                    !less(t, card_token(g, previous, zone, 0, !copy)))) break;
+                sorted[at] = sorted[at - 1]; --at;
+            }
+            sorted[at] = cards[index];
         } else w.add(t);
     }
-    if (unordered) for (int i = 0; i < cards.size; ++i) w.add(sorted[i]);
+    if (unordered) for (int i = 0; i < cards.size; ++i)
+        w.add(card_token(g, g.cards[sorted[i]], zone, 0, !copy));
 }
 SPIRE_FN inline void powers(Writer& w, const Game& g, const Creature& c, int owner) {
     int position = 0;
