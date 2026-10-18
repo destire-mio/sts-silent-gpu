@@ -34,8 +34,10 @@ def extract(lines):
             position = len(path) - int(band[1:]) if band.startswith("k") else line["stage_positions"][band]
             if not 0 < position < len(path):
                 continue
+            reached = [(value, stage) for stage, value in line["stage_positions"].items() if 0 <= value <= position]
+            stage = max(reached)[1] if reached else "act1"
             result.append(dict(seed=line["seed"], candidates=path[:position], partition=line["partition"],
-                band=band, distance_to_win=len(path) - position, stage=band if not band.startswith("k") else line["stage"],
+                band=band, distance_to_win=len(path) - position, stage=stage,
                 source=dict(stage=line["stage"], attempt=line["attempt"], decisions=line["decisions"],
                             verification_decisions=line["verification_decisions"])))
     return result
