@@ -102,7 +102,7 @@ class Collector:
         record_episode = torch.empty(len(rollout.actions), device=device, dtype=torch.int64)
         record_decision = torch.empty_like(record_episode)
         next_episode = 0
-        timers = {k: [] for k in ("engine_encode_seconds", "inference_seconds", "storage_seconds")}
+        timers = {k: [] for k in ("reset_seconds", "step_encode_seconds", "inference_seconds", "storage_seconds")}
 
         def timed(name, operation):
             if device.type == "cuda":
@@ -124,7 +124,7 @@ class Collector:
                 slots = free[:count]
                 assigned = torch.arange(next_episode, next_episode + count, device=device)
                 current[slots], admission[slots] = assigned, assigned
-                timed("engine_encode_seconds", lambda: self.batch.reset_tensors(slots, assigned, seeds, offsets, prefixes))
+                timed("reset_seconds", lambda: self.batch.reset_tensors(slots, assigned, seeds, offsets, prefixes))
                 next_episode += count
             failed = torch.nonzero((current >= 0) & (self.arrays["faults"].long() != 0)).flatten()
             outcomes[current[failed]] = 4
@@ -169,7 +169,7 @@ class Collector:
             rollout.acts[records] = self.arrays["values"][slots, 0, 0]
             record_episode[records], record_decision[records] = ids, decisions[ids]
             decisions[ids] += 1
-            timed("engine_encode_seconds", lambda: self.batch.step_tensors(choices, mask))
+            timed("step_encode_seconds", lambda: self.batch.step_tensors(choices, mask))
             rollout.rewards[wave_begin:rollout.count] = self.arrays["rewards"][slots]
             ids = current[slots]
             failed = self.arrays["faults"].long()[slots] != 0

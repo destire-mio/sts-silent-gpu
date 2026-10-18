@@ -29,6 +29,9 @@ class PipelineTests(unittest.TestCase):
             with Pipeline(model_config, ppo_config, config, 1729, output, manifest) as pipeline:
                 pipeline.initialize()
                 first = pipeline.collect(roots, 1729, range(5))
+                self.assertEqual(set(first.timing), {"reset_seconds", "step_encode_seconds", "inference_seconds",
+                                                     "storage_seconds", "collection_seconds"})
+                self.assertTrue(all(value > 0 for value in first.timing.values()))
                 self.assertEqual(first.count, 20)
                 self.assertFalse(hasattr(first, "data"))
                 self.assertTrue(first.valid.all())

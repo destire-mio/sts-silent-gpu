@@ -90,6 +90,9 @@ class TrainerTests(unittest.TestCase):
         collector = Collector(2, 3, 2, self.device, 1)
         before = {key: tensor.clone() for key, tensor in self.model.state_dict().items()}
         rollout = collector.collect(self.model, roots, 1729, range(5), policy_version=7)
+        self.assertEqual(set(rollout.timing), {"reset_seconds", "step_encode_seconds", "inference_seconds",
+                                             "storage_seconds", "collection_seconds"})
+        self.assertTrue(all(value > 0 for value in rollout.timing.values()))
         self.assertEqual(rollout.count, 15)
         self.assertEqual(len(rollout.episodes), 5)
         self.assertTrue(all(e["outcome"] == "truncated" for e in rollout.episodes))
