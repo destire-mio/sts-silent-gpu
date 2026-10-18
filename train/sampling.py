@@ -13,8 +13,8 @@ def root_key(root):
     return hashlib.sha256(payload).hexdigest()
 
 
-def root_words(roots, device):
-    return torch.tensor([[int(root_key(r)[i:i + 8], 16) for i in (0, 8)] for r in roots],
+def root_words(keys, device):
+    return torch.tensor([[int(key[i:i + 8], 16) for i in (0, 8)] for key in keys],
                         dtype=torch.int64, device=device).reshape(-1, 2)
 
 

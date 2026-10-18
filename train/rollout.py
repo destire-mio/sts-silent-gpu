@@ -148,7 +148,7 @@ class Collector:
         def tensor(x, dtype=torch.int64):
             return torch.tensor(x, device=device, dtype=dtype)
         root_keys = [root_key(root) for root in roots]
-        keys, attempts_tensor = root_words(roots, device), tensor(attempts)
+        keys, attempts_tensor = root_words(root_keys, device), tensor(attempts)
         current = torch.full((self.size,), -1, device=device, dtype=torch.int64)
         admission = torch.zeros_like(current)
         outcomes = torch.zeros(n, device=device, dtype=torch.int64)
@@ -255,10 +255,10 @@ class Collector:
         synchronize(device)
         outcome_names = (None, "victory", "death", "truncated", "fault", "budget_cutoff")
         host_outcomes, host_faults, host_bootstrap = outcomes.cpu().tolist(), faults.cpu().tolist(), bootstrap.cpu().tolist()
-        episodes = [dict(seed=r["seed"], root_key=root_key(r), prefix_decisions=len(r["candidates"]),
+        episodes = [dict(seed=r["seed"], root_key=key, prefix_decisions=len(r["candidates"]),
                          attempt=a, policy_version=policy_version, candidates=[], records=[],
                          outcome=outcome_names[o], fault=f)
-                    for r, a, o, f in zip(roots, attempts, host_outcomes, host_faults)]
+                    for r, key, a, o, f in zip(roots, root_keys, attempts, host_outcomes, host_faults)]
         for i, (ep, choice) in enumerate(zip(record_episode[:rollout.count].cpu().tolist(),
                                             rollout.actions[:rollout.count].cpu().tolist())):
             episodes[ep]["records"].append(i)

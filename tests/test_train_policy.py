@@ -125,10 +125,14 @@ class TrainerTests(unittest.TestCase):
             self.assertEqual(rollout.data.untyped_storage().nbytes(), used)
 
     def test_root_cache_reuses_prefixes_and_keeps_rollout_bytes(self):
+        from unittest.mock import patch
         from reference_collect import winning_root
+        from train.sampling import root_key
         roots = [dict(seed=1000000000, candidates=[]), winning_root(8)]
         collector = Collector(2, 4, 2, self.device, .95)
-        first = collector.collect(self.model, roots * 2, 1729, range(4), policy_version=0)
+        with patch("train.rollout.root_key", wraps=root_key) as hashed:
+            first = collector.collect(self.model, roots * 2, 1729, range(4), policy_version=0)
+        self.assertEqual(hashed.call_count, 4)
         second = collector.collect(self.model, roots * 2, 1729, range(4), policy_version=0)
         self.assertEqual([cache.size for cache in collector.root_caches], [1])
         self.assertEqual(first.episodes, second.episodes)
@@ -309,7 +313,7 @@ class TrainerTests(unittest.TestCase):
         from reference_collect import word
         from train.sampling import random_words, root_key, root_words
         roots = [dict(seed=-17, candidates=[1]), dict(seed=-17, candidates=[0]), dict(seed=2**62, candidates=[])]
-        keys = root_words(roots, self.device)
+        keys = root_words([root_key(root) for root in roots], self.device)
         attempts = torch.tensor([2**33, 7, 14])
         decisions = torch.tensor([2**34, 9, 33])
         actual = random_words(2**45+1729, keys, attempts, decisions)

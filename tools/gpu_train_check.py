@@ -66,7 +66,7 @@ def parity(roots):
     state = model.state_dict()
     roots = roots[:16] + [dict(seed=1000000000 + i, candidates=[]) for i in range(4)]
     roots += [dict(seed=1000000020, candidates=[999])]
-    keys = root_words(roots, cpu)
+    keys = root_words([root_key(root) for root in roots], cpu)
     attempts = torch.arange(len(roots)) + 2**33
     decisions = torch.arange(len(roots)) + 2**34
     torch.testing.assert_close(random_words(1729, keys, attempts, decisions),
