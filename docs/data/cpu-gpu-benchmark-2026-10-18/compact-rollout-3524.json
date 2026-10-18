@@ -1,0 +1,263 @@
+{
+  "source_commit": "0f2aaae1df8c1f2f09ea463194dc0cc170c875a5",
+  "job": 3524,
+  "validation": {
+    "ctest_passed": 3,
+    "ctest_names": [
+      "host_tests",
+      "cuda_python",
+      "test_cuda_parity"
+    ],
+    "paired_updates_identical": 2,
+    "collector_parity_log": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py:22: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)\n  return {name: torch.as_tensor(getattr(batch, name), device=device) for name in FIELDS}\n{\"check\": \"CPU/GPU collector parity\", \"decisions\": 409, \"compact_bytes\": 627415, \"exact_actions_outcomes_observations\": true, \"max_absolute_error\": {\"log_probs\": 1.8477439880371094e-05, \"values\": 3.1888484954833984e-06, \"returns\": 1.6689300537109375e-06, \"advantages\": 2.3245811462402344e-06}}\n"
+  },
+  "memory": {
+    "stack_limit_bytes": 9584,
+    "free_before": [
+      16602628096,
+      16928342016
+    ],
+    "free_after_batch": [
+      15077998592,
+      16928342016
+    ],
+    "native_batch_bytes": 1524629504
+  },
+  "pipeline": {
+    "check": "weak_scaling",
+    "workers": 1,
+    "lanes_per_gpu": 2048,
+    "inference_chunk": 512,
+    "decision_cap": 64,
+    "global_minibatch_size": 2048,
+    "measured_versions": 3,
+    "collect_decisions_per_second": 15208.603466322802,
+    "per_gpu_collect_decisions_per_second": 15208.603466322802,
+    "total_decisions_per_second": 6783.043359006587,
+    "per_gpu_decisions_per_second": 6783.043359006587,
+    "updates": [
+      {
+        "version": 0,
+        "warmup": true,
+        "decisions": 38642,
+        "collect_decisions_per_second": 2548.1238925791454,
+        "per_gpu_collect_decisions_per_second": 2548.1238925791454,
+        "total_decisions_per_second": 2048.7207433623507,
+        "per_gpu_decisions_per_second": 2048.7207433623507,
+        "collection_seconds": 15.16488272510469,
+        "update_seconds": 3.6966434859205037,
+        "total_seconds": 18.861526211025193,
+        "cuda_collect_event_seconds_sum": {
+          "root_prepare_seconds": 11.949609375,
+          "reset_seconds": 0.010471424102783204,
+          "step_encode_seconds": 0.5100431374311447,
+          "inference_seconds": 1.8459924535751342,
+          "storage_seconds": 0.028901952058076857
+        },
+        "ppo": {
+          "samples": 38642,
+          "minibatches": 19,
+          "update_seconds": 3.406171394046396,
+          "policy_loss": -0.009492950820816729,
+          "value_loss": 0.05019328785300252,
+          "entropy": 0.850782978387237,
+          "kl": 0.0069051431853731585,
+          "clip_fraction": 0.10475648267298843,
+          "loss": 0.00709586382794532,
+          "grad_norm": 0.26330447331137224,
+          "policy_version": 0,
+          "published_version": 1,
+          "learner_seconds": 3.6963142439490184
+        }
+      },
+      {
+        "version": 1,
+        "warmup": false,
+        "decisions": 42298,
+        "collect_decisions_per_second": 14287.05801811183,
+        "per_gpu_collect_decisions_per_second": 14287.05801811183,
+        "total_decisions_per_second": 6549.827859696527,
+        "per_gpu_decisions_per_second": 6549.827859696527,
+        "collection_seconds": 2.960581523948349,
+        "update_seconds": 3.49729811900761,
+        "total_seconds": 6.457879642955959,
+        "cuda_collect_event_seconds_sum": {
+          "root_prepare_seconds": 0.0002938880026340485,
+          "reset_seconds": 0.008126463890075684,
+          "step_encode_seconds": 0.5461329884529114,
+          "inference_seconds": 1.6249548833370209,
+          "storage_seconds": 0.02782953608036041
+        },
+        "ppo": {
+          "samples": 42298,
+          "minibatches": 21,
+          "update_seconds": 3.349016015068628,
+          "policy_loss": -0.005924284356700889,
+          "value_loss": 0.0009822136074302554,
+          "entropy": 0.8395781594222587,
+          "kl": 0.004576540787238737,
+          "clip_fraction": 0.06435292448815547,
+          "loss": -0.013828958355848927,
+          "grad_norm": 0.2147916440367896,
+          "policy_version": 1,
+          "published_version": 2,
+          "learner_seconds": 3.4969948900397867
+        }
+      },
+      {
+        "version": 2,
+        "warmup": false,
+        "decisions": 50984,
+        "collect_decisions_per_second": 15262.18861098946,
+        "per_gpu_collect_decisions_per_second": 15262.18861098946,
+        "total_decisions_per_second": 6815.940621817005,
+        "per_gpu_decisions_per_second": 6815.940621817005,
+        "collection_seconds": 3.340543174999766,
+        "update_seconds": 4.139568937011063,
+        "total_seconds": 7.480112112010829,
+        "cuda_collect_event_seconds_sum": {
+          "root_prepare_seconds": 0.00034508800506591797,
+          "reset_seconds": 0.00811520004272461,
+          "step_encode_seconds": 0.601373697757721,
+          "inference_seconds": 1.9675453383922576,
+          "storage_seconds": 0.028522431939840318
+        },
+        "ppo": {
+          "samples": 50984,
+          "minibatches": 25,
+          "update_seconds": 3.9909479760099202,
+          "policy_loss": -0.0061895988031662975,
+          "value_loss": 0.0003867620837912121,
+          "entropy": 0.7913182778484159,
+          "kl": 0.005837513116931739,
+          "clip_fraction": 0.08029970196545563,
+          "loss": -0.013909404756284743,
+          "grad_norm": 0.15393306725060343,
+          "policy_version": 2,
+          "published_version": 3,
+          "learner_seconds": 4.139233511989005
+        }
+      },
+      {
+        "version": 3,
+        "warmup": false,
+        "decisions": 57932,
+        "collect_decisions_per_second": 15908.666901176752,
+        "per_gpu_collect_decisions_per_second": 15908.666901176752,
+        "total_decisions_per_second": 6933.852424378396,
+        "per_gpu_decisions_per_second": 6933.852424378396,
+        "collection_seconds": 3.641537053976208,
+        "update_seconds": 4.713414343073964,
+        "total_seconds": 8.354951397050172,
+        "cuda_collect_event_seconds_sum": {
+          "root_prepare_seconds": 0.0002314240038394928,
+          "reset_seconds": 0.008154111862182617,
+          "step_encode_seconds": 0.6244556789398193,
+          "inference_seconds": 2.1495224316120147,
+          "storage_seconds": 0.027652543991804123
+        },
+        "ppo": {
+          "samples": 57932,
+          "minibatches": 29,
+          "update_seconds": 4.467201901017688,
+          "policy_loss": -0.0030294645394787047,
+          "value_loss": 0.00025237283585390226,
+          "entropy": 0.7445681992588242,
+          "kl": 0.0048790545506240774,
+          "clip_fraction": 0.04881585306911552,
+          "loss": -0.010348956364998623,
+          "grad_norm": 0.1567088676716736,
+          "policy_version": 3,
+          "published_version": 4,
+          "learner_seconds": 4.713123901979998
+        }
+      }
+    ]
+  },
+  "capacity_probe": {
+    "check": "single_gpu",
+    "status": "fit",
+    "lanes_per_gpu": 8192,
+    "inference_chunk": 512,
+    "decisions": 184298,
+    "decision_cap": 64,
+    "policy_version": 1,
+    "root_preparation_seconds": 18.270848096930422,
+    "collect_decisions_per_second": 22314.736612731427,
+    "per_gpu_collect_decisions_per_second": 22314.736612731427,
+    "total_decisions_per_second": 8307.611745773664,
+    "per_gpu_decisions_per_second": 8307.611745773664,
+    "collection_seconds": 8.259026454063132,
+    "update_seconds": 13.92520719091408,
+    "total_seconds": 22.184233644977212,
+    "cuda_event_seconds": {
+      "root_prepare_seconds": 0.0013834240436553956,
+      "reset_seconds": 0.02406707191467285,
+      "step_encode_seconds": 0.9002833895683289,
+      "inference_seconds": 5.135225854873657,
+      "storage_seconds": 0.03638886407017708,
+      "update_seconds": 13.92501171875
+    },
+    "memory": {
+      "native_batch_bytes": 1828716544,
+      "root_cache_bytes": 311066624,
+      "free_before_batch_bytes": 16598433792,
+      "free_after_batch_bytes": 14769717248,
+      "free_after_collect_bytes": 7840727040,
+      "free_after_update_bytes": 152567808,
+      "device_total_bytes": 16928342016,
+      "torch_peak_allocated_bytes": 11443324416,
+      "torch_peak_reserved_bytes": 14218690560,
+      "native_plus_torch_peak_allocated_bytes": 13583107584,
+      "device_peak_used_estimate_bytes": 16684187648
+    },
+    "storage_mib": 2549,
+    "compact_bytes": 340586487,
+    "observations": {
+      "decisions": 184298,
+      "entities": {
+        "mean": 75.27039360166687,
+        "p95": 119.0,
+        "max": 178
+      },
+      "candidates": {
+        "mean": 5.361582871219438,
+        "p95": 13.0,
+        "max": 65
+      },
+      "record_bytes": {
+        "mean": 1848.020526538541,
+        "p95": 2915.0,
+        "max": 4332
+      },
+      "storage_bytes_per_decision": 5415
+    },
+    "ppo": {
+      "samples": 184298,
+      "minibatches": 90,
+      "update_seconds": 13.923785727005452,
+      "policy_loss": -0.006644456741338928,
+      "value_loss": 0.014221467089612515,
+      "entropy": 0.8249185210969036,
+      "kl": 0.006444975889084411,
+      "clip_fraction": 0.09101563772158197,
+      "loss": -0.007782907582675785,
+      "grad_norm": 0.1658134603579538
+    },
+    "model": {
+      "width": 128,
+      "layers": 4,
+      "heads": 4,
+      "feedforward": 256
+    },
+    "fp32": true
+  },
+  "artifacts_sha256": "77c8466385b346ffb73ef7884e92ec6239d29e42b7a83ef0dea4f8dad1f9c1bb  /home/zhuyouwei/spire-build-split-bc5b225/spire.cpython-312-x86_64-linux-gnu.so\nedd61d97870cb38ff3e45dc1be09a7363eaf28506faed55ae90669ab1ce51fd8  /home/zhuyouwei/spire-build-split-bc5b225/spire_gpu.cpython-312-x86_64-linux-gnu.so\n",
+  "log_sha256": {
+    "compact-rollout-3524/collector-parity.log": "b4855d0f2ab59af82218c5b46bad9c67135233fe5b954d8e84ed51e3b783c82b",
+    "compact-rollout-3524/ctest.log": "3749fdf891078ed2ddaa13812ec711d952bb0e153c41ec6af060684160782e2e",
+    "compact-rollout-3524/paired-training.log": "f6b95e31cf57061cac92e9dd961ee4986b1f2bf0aeabd186c8bada89d043a6b0",
+    "compact-rollout-3524/pipeline.log": "55502cef99d011a7c983456eb0ff18350558ade1082815f47099a514c0c8518f",
+    "compact-rollout-3524/probe-8192-512.log": "c7b552618c4e94a0f5e6df1188a0324a2b903ad0491e92898baaba6ac32d482e"
+  }
+}
