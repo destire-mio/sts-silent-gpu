@@ -9,13 +9,19 @@ and [content porting guide](docs/porting.md).
 
 ## Build and checks
 
-On this macOS arm64 machine, use the existing Python environment:
+On the Linux V100 server, inside a Slurm GPU allocation:
 
 ```sh
-SPIRE_PYTHON=/Users/destire/Documents/Codex/2026-09-10/new-chat-2/outputs/spire-lab/.venv/bin/python
-cmake -S . -B /private/tmp/spire-build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DPython_EXECUTABLE="$SPIRE_PYTHON"
-cmake --build /private/tmp/spire-build --parallel 1
-ctest --test-dir /private/tmp/spire-build --output-on-failure
+export SPIRE_PYTHON="$HOME/spire-env/bin/python"
+export SPIRE_BUILD="$HOME/spire-build-split-bc5b225"
+export PATH="$HOME/.local/bin:/usr/local/cuda-12.8/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-12.8/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+cmake -S . -B "$SPIRE_BUILD" -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DCMAKE_CUDA_COMPILER=/usr/bin/clang++ \
+  -DCUDAToolkit_ROOT=/usr/local/cuda-12.8 -DCMAKE_CUDA_ARCHITECTURES=70 \
+  -DPython_EXECUTABLE="$SPIRE_PYTHON" -DBUILD_TESTING=ON
+cmake --build "$SPIRE_BUILD" --parallel 2
+ctest --test-dir "$SPIRE_BUILD" --output-on-failure --no-tests=error -j1
 ```
 
 Rule bodies live in `core/**/*.inc` and `obs/*.inc`. `host/generate_content.py` emits
@@ -38,7 +44,7 @@ The CPU reference/test library uses ThinLTO (`-flto=thin`), with the Apple linke
 `ld.lld` on Linux (two ThinLTO workers). CUDA uses relocatable device code without device LTO.
 Both retain `-ffp-contract=off`. Every build checks restricted C++ and its clang AST for heap
 allocation, exceptions, mutable globals, function pointers and recursion. CTest's `device_link`
-uses an NVPTX-enabled clang (Homebrew LLVM on this Mac) to emit sm_70 PTX at threshold 5 for every
+uses an NVPTX-enabled clang to emit sm_70 PTX at threshold 5 for every
 CUDA unit, including host launch files and both CUDA test files. It checks external functions,
 globals, direct calls and symbol references for closure and unique definitions, rejects any unit
 above 60,000 lines, and prints each unit's lines, function count and largest function.
@@ -47,7 +53,7 @@ a toolkit; clang's own CUDA builtin-variable header supplies the real PTX specia
 This is a PTX interface check, not an nvlink or GPU execution test.
 
 ```sh
-ctest --test-dir /private/tmp/spire-build -R '^device_link$' -V
+ctest --test-dir "$SPIRE_BUILD" -R '^device_link$' -V
 ```
 
 The build uses the documented Clang 21
@@ -71,7 +77,7 @@ the same device link as the engine. See also Clang's
 [CUDA compilation model](https://releases.llvm.org/21.1.0/docs/CompileCudaWithLLVM.html)
 and [ThinLTO linker support](https://clang.llvm.org/docs/ThinLTO.html).
 
-## V100 day-one check
+## V100 toolchain and checks
 
 Server target: Linux x86_64 (the cluster runs CentOS Stream 9), eight V100 GPUs (`sm_70`, 16 GB each),
 CUDA Toolkit **12.8.x or 12.9.x** with development headers (CUDA 13 no longer
@@ -80,19 +86,19 @@ newer** (the cluster has 580.105.08), Clang with the NVPTX backend and libstdc++
 as both C++ and CUDA compiler (the cluster has Clang 21.1.7), CMake **3.31 or newer** (the cluster has 3.31.8),
 Make, rsync, and Python **3.12** with development headers. Linux CPU targets additionally require
 LLVM lld (`ld.lld` on `PATH`) for ThinLTO; the GPU-only target does not use it. The full check scripts
-check the linker before configuring or compiling. These are the intended toolchain
-bounds, not a GPU validation claim. NVIDIA documents the
+check the linker before configuring or compiling. The measured server build uses CUDA 12.8.61,
+Clang 21.1.7, CMake 3.31.8 and driver 580.105.08. NVIDIA documents the
 [CUDA 12.8 compiler/OS requirements](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-installation-guide-linux/index.html)
 and [driver versions](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-toolkit-release-notes/index.html).
 
-The local venv has Python **3.12.13**, `numpy==2.5.3`, `pybind11==3.1.0`, and
-`torch==2.14.0`. Recreate these package versions in a Linux venv; PyTorch must be a CUDA-enabled
+The server venv has Python **3.12.12**, `numpy==2.5.3`, `pybind11==3.1.0`, and
+`torch==2.14.0+cu126`. PyTorch must be a CUDA-enabled
 build compatible with the installed driver whose kernels include V100 (check `torch.version.cuda`,
 `torch.cuda.is_available()` and that `torch.cuda.get_arch_list()` contains `sm_70`). Do not copy the macOS venv. Game JARs, Java, Steam and oracle
 runtime assets are not needed to build, replay the committed recordings or run GPU checks.
 No dependencies are downloaded by the check script.
 
-From the Mac, after choosing the SSH alias and the accepted E2 root file:
+To transfer a checkout and accepted E2 roots from a machine with rsync:
 
 ```sh
 GPU_HOST=your-gpu-alias
@@ -108,7 +114,7 @@ Keep `tests/traces/` in the transfer (do not exclude it); the root-level ignored
 contains generated recordings. On the server, in the synced checkout:
 
 ```sh
-export SPIRE_PYTHON="$HOME/spire-venv/bin/python"
+export SPIRE_PYTHON="$HOME/spire-env/bin/python"
 tools/gpu_check.sh "$HOME/spire-gpu-build" "$HOME/spire-e2.roots.jsonl.gz"
 
 # Complete training path: all eight devices; reuses the same build, results go to a fresh directory.
@@ -124,8 +130,7 @@ It also tests a non-default CUDA stream, invalid-prefix isolation, refill and pe
 The supplied prefixes and 32 continuation decisions per root exercise the rooted workload;
 this is separate from original-game trace acceptance.
 
-The previous monolithic build was reported to drive `ptxas` above 98 GiB and to be OOM-killed;
-that is a server log report, not a Mac measurement. All three check scripts now use **two parallel
+The server logs record the previous monolithic build driving `ptxas` above 98 GiB and being OOM-killed. The check scripts use **two parallel
 build jobs**. This permits parallel per-unit assembly while limiting the number of simultaneous
 compiler/assembler processes; it does not establish a peak-memory bound on the server.
 `CMAKE_CUDA_COMPILER_LAUNCHER` runs every CUDA compile through `/usr/bin/time -v` and keeps its
@@ -159,7 +164,7 @@ builds only `spire_gpu` and `test_cuda_parity`, then prints the per-unit resourc
 byte parity. `SPIRE_PYTHON` names the installed server venv; no dependency download occurs:
 
 ```sh
-BUILD="$HOME/spire-v100-day-one"
+BUILD="$HOME/spire-v100-build"
 mkdir -p "$BUILD/tmp"
 export TMPDIR="$BUILD/tmp"
 cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Release \
@@ -174,7 +179,7 @@ export PYTHONPATH="$BUILD:$PWD"
 ```
 
 Only the server can verify assembly time/RSS, nvlink success, device resources, GPU byte parity
-and throughput. The Mac PTX check cannot establish those results.
+and throughput. PTX inspection alone cannot establish those results.
 
 `train.run --device cuda` can read existing roots or create natural starts with only
 `spire_gpu` installed. Generating route prefixes with `train.roots` and running the full
@@ -250,11 +255,12 @@ JSON is the final table, also saved as `training-throughput.json`, with grid sta
 largest fitting size, 1/2/8-GPU rates and efficiencies. The fresh output directory retains
 `profile.json`, `probe-*.json`, stage `*.log`, `exact-*/result.json` and `ddp-*/result.json` (including
 each warmup/measured version). The supplied roots' SHA256 identifies the workload. No GPU result is asserted by the
-Mac's CPU and device-LLVM tests; the server CUDA build, CUDA execution, memory bounds and NCCL scaling require
+CPU and device-LLVM tests; the server CUDA build, CUDA execution, memory bounds and NCCL scaling require
 this command on the target server.
 
 Both scripts reuse an existing build directory, so only changed sources are recompiled.
-`gpu_check.sh` selects GPU 0, requires CUDA, builds with two jobs, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
+The check scripts preserve Slurm's `CUDA_VISIBLE_DEVICES`. `gpu_check.sh` uses the first visible
+GPU, requires CUDA, builds with two jobs, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
 and the Python CUDA test, replays the supplied E2 prefixes on both batch implementations,
 then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048/8192/32768.
 `test_cuda_parity` compares every `Game` byte and every observation/status byte after each
@@ -282,17 +288,27 @@ The trainer uses `step_tensors(int32 choices[size], uint8 active[size])` and
 with one device thread per record. All inputs reside on the batch device. These calls enqueue
 work on PyTorch's current stream without a device synchronization; consume observations and
 retain input tensors on that stream.
-Roots are uploaded once per collection and replayed on the device during refill. The CPU batch
+Nonempty roots are replayed once per collector and cached as complete game/history state;
+subsequent admissions restore cached slots in batches. Natural starts reset directly and do
+not retain a cache entry. The CPU batch
 exposes these same methods for reference tests, with NumPy observation buffers viewed as tensors.
 Only read from these views; the native batch owns and mutates them.
 
-The Mac checks restricted C++, CUDA device LLVM and PTX link closure, plus CPU execution of the
-same kernel bodies. The server CUDA build, GPU byte parity, device stack/resource use and V100
-throughput remain day-one checks.
+The [CPU/GPU report](docs/cpu-gpu-parity-2026-10-18.md) records the V100 build, original trace
+replays, complete-state byte comparisons, memory measurements and training throughput.
+The cap-64 benchmark and complete-episode measurements have different workloads; compare
+only matching configurations.
 
 ## Eight-V100 complete-episode training
 
 Use a Slurm allocation with eight V100s and preserve its `CUDA_VISIBLE_DEVICES`.
+On this cluster, open the allocation with:
+
+```sh
+srun --partition=N56_128G_V100 --ntasks=1 --gres=gpu:V100:8 \
+  --cpus-per-task=8 --mem=64G --time=00:30:00 --pty bash
+```
+
 The audited E2 archive contains both train and dev families. Prepare the training partition
 once; `train.run` rejects dev and locked-test roots:
 
@@ -316,7 +332,7 @@ PY
   --roots "$HOME/spire-downloads/e2-train.roots.json" \
   --batch-size 8192 --episodes 65536 --inference-chunk 512 \
   --decision-cap 3000 --gae-lambda 1 --storage-mib 2549 \
-  --epochs 1 --minibatch-size 16384 --updates 10 \
+  --epochs 1 --minibatch-size 8192 --updates 8 \
   --output "$HOME/spire-downloads/e2-full-episodes"
 ```
 
@@ -324,8 +340,15 @@ This is a bounded engineering run, not a learning experiment. Gamma is fixed at 
 `--episodes` counts global starts per update; `--batch-size` is lanes per GPU and
 `--minibatch-size` is global PPO decisions. The 3,000-decision safety cap retains the existing
 bootstrap rule and reports truncations separately. A truncated run does not establish
-complete-episode throughput. The final lane, storage and minibatch recommendation requires
-the complete-episode measurements recorded in the report.
+complete-episode throughput. This configuration completed eight updates at each of epochs 1 and 3:
+FP32 end-to-end rates were 48,972 and 23,387 new decisions/second after the first update.
+The 8,192 global minibatch completed both runs; 16,384 failed with an OOM on update 4.
+Time-weighted lane occupancy was 44.8–49.5%, with short completed games waiting for longer
+games in the same wave. Each update had 65,536 deaths and zero wins; these measurements
+establish engineering throughput, not learning quality or memory capacity for stronger policies.
+The production path remains FP32: the five-update FP16 trial reached 65,047 versus 50,299
+new decisions/second (+29.32%), below the agreed 30% adoption threshold. The FP16 trial is
+kept only in external evidence; there is no precision switch in the trainer.
 
 `updates.jsonl` records episode length quantiles, wins/deaths, compact trajectory bytes, per-rank
 timing and CUDA allocated/reserved peaks reset at each collection. Post-update memory is
@@ -341,7 +364,7 @@ GPU utilization. Per-rank collection times expose additional waiting at the rank
 Add the build directory to `PYTHONPATH` and import `spire`:
 
 ```sh
-PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" -c 'import spire; print(spire.encounters)'
+PYTHONPATH=/tmp/spire-build "$SPIRE_PYTHON" -c 'import spire; print(spire.encounters)'
 ```
 
 ```python
@@ -414,7 +437,7 @@ batch.step(actions)
 
 After a terminal/cap/fault output, the next call resets that slot and ignores its action index.
 Read final observations before that call; clear recurrent memory where `reset_mask` is set.
-Run `tools/check_observation.py tests/traces --deep inventory/deep-neow.json --output /private/tmp/observations.json`
+Run `tools/check_observation.py tests/traces --deep inventory/deep-neow.json --output /tmp/observations.json`
 with the same `PYTHONPATH` to encode oracle decisions while replaying both comparison scopes.
 For the complete 974-trace corpus, append the 12 `extra_deep_traces.path` entries from
 `inventory/observation.json` to the positional paths. The audit reports decision-weighted
@@ -442,22 +465,22 @@ rebuilds the game and visible history. `batch-check` compares supplied prefixes 
 batch stepping, including all observation/candidate buffers.
 
 ```sh
-cmake --build /private/tmp/e2-build --target spire spire_collect_roots --parallel 1
-python3 tools/e2_roots.py collect --output /private/tmp/e2-roots/round2 --name breadth \
+cmake --build /tmp/e2-build --target spire spire_collect_roots --parallel 1
+python3 tools/e2_roots.py collect --output /tmp/e2-roots/round2 --name breadth \
   --offset 2300 --train 1024 --dev 512 --family-decisions 2000000 --trials 12
-python3 tools/e2_roots.py audit --output /private/tmp/e2-roots/round2 --name audited \
-  --inputs /private/tmp/e2-roots/round2/breadth.roots.jsonl.gz
-python3 tools/e2_roots.py evaluate --output /private/tmp/e2-roots/round2 --name measured \
-  --inputs /private/tmp/e2-roots/round2/audited.roots.jsonl.gz
-PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py batch-check \
-  --output /private/tmp/e2-roots/round2 --name batch-check \
-  --inputs /private/tmp/e2-roots/round2/measured.roots.jsonl.gz
-PYTHONPATH=/private/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py validate \
-  --output /private/tmp/e2-roots/round2 --name oracle --minimum-roots 30 \
-  --inputs /private/tmp/e2-roots/round2/measured.roots.jsonl.gz
-python3 tools/e2_roots.py summarize --output /private/tmp/e2-roots/round2 --name candidates \
-  --inputs /private/tmp/e2-roots/round2/measured.roots.jsonl.gz \
-  --audits /private/tmp/e2-roots/round2/oracle/results.json
+python3 tools/e2_roots.py audit --output /tmp/e2-roots/round2 --name audited \
+  --inputs /tmp/e2-roots/round2/breadth.roots.jsonl.gz
+python3 tools/e2_roots.py evaluate --output /tmp/e2-roots/round2 --name measured \
+  --inputs /tmp/e2-roots/round2/audited.roots.jsonl.gz
+PYTHONPATH=/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py batch-check \
+  --output /tmp/e2-roots/round2 --name batch-check \
+  --inputs /tmp/e2-roots/round2/measured.roots.jsonl.gz
+PYTHONPATH=/tmp/e2-build "$SPIRE_PYTHON" tools/e2_roots.py validate \
+  --output /tmp/e2-roots/round2 --name oracle --minimum-roots 30 \
+  --inputs /tmp/e2-roots/round2/measured.roots.jsonl.gz
+python3 tools/e2_roots.py summarize --output /tmp/e2-roots/round2 --name candidates \
+  --inputs /tmp/e2-roots/round2/measured.roots.jsonl.gz \
+  --audits /tmp/e2-roots/round2/oracle/results.json
 ```
 
 Use a fresh output directory. `budget.json` starts a shared three-hour wall-clock budget;
@@ -490,7 +513,7 @@ validation, both replay scopes and the 13-idle-frame check gate release. The
 [collection manifest](inventory/e2-roots.json) records coverage, distributions, checksums,
 validation and remaining gaps.
 
-`PYTHONPATH=/private/tmp/e2-r3-build "$SPIRE_PYTHON" tests/check_retained_death.py --output /private/tmp/retained-death-check`
+`PYTHONPATH=/tmp/e2-r3-build "$SPIRE_PYTHON" tests/check_retained_death.py --output /tmp/retained-death-check`
 records the focused seed-1000042012 input in `tests/retained_death_cache.json`, replays both
 scopes, and compares another original recording with 13 extra idle frames. It serializes JVMs
 with the oracle lock and requires a fresh output directory. The original's death-terminal
@@ -582,29 +605,20 @@ adding a training sample. This preserves unequal tails and batches smaller than 
 Use `--torch-threads` to set PyTorch's thread count per process (default one). Keep generated artifacts outside the checkout:
 
 ```sh
-export SPIRE_PYTHON=/Users/destire/Documents/Codex/2026-09-10/new-chat-2/outputs/spire-lab/.venv/bin/python
-export PYTHONPATH=/private/tmp/trainer-runs/build:.
-export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
-"$SPIRE_PYTHON" -m train.run --output /private/tmp/trainer-runs/natural \
+export SPIRE_PYTHON="$HOME/spire-env/bin/python"
+export PYTHONPATH="$SPIRE_BUILD:$PWD"
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+"$SPIRE_PYTHON" -m train.run --output "$HOME/spire-downloads/cpu-reference" \
   --updates 2 --episodes 12 --batch-size 4 --device cpu
 
-"$SPIRE_PYTHON" -m train.roots --output /private/tmp/trainer-runs/roots.json
-"$SPIRE_PYTHON" -m train.run --roots /private/tmp/trainer-runs/roots.json \
-  --output /private/tmp/trainer-runs/deep --updates 2 --episodes 6 --batch-size 3 --device cpu
-
-# Local reference smoke (two collecting/DDP test processes).
-"$SPIRE_PYTHON" -m train.run --roots /private/tmp/e1-runs/roots/train.json \
-  --output /private/tmp/trainer-runs/ddp --updates 1 --episodes 48 \
+# CPU reference smoke (two collecting/DDP test processes).
+"$SPIRE_PYTHON" -m train.run --roots "$HOME/spire-downloads/e2-train.roots.json" \
+  --output "$HOME/spire-downloads/cpu-ddp-reference" --updates 1 --episodes 48 \
   --workers 2 --batch-size 32 --device cpu
-
-# Same launcher on one machine with eight CUDA devices.
-"$SPIRE_PYTHON" -m train.run --roots /private/tmp/e1-runs/roots/train.json \
-  --output /private/tmp/trainer-runs/cuda --updates 1 --episodes 48 \
-  --workers 8 --batch-size 32 --device cuda
 ```
 
-The build commands above can use `/private/tmp/trainer-runs/build` in place of
-`/private/tmp/spire-build`. PyTorch is required in the selected Python environment.
+Use the eight-V100 complete-episode command above for GPU measurements. These small CPU
+commands check the reference path. PyTorch is required in the selected Python environment.
 `train.roots` checks the inventory's source-action hash, replays legal actions to candidate
 indices and verifies the victory observation. Its default roots are 8, 32 and 128 decisions
 before the known seed 202610180018 victory. It generates root inputs, not demonstrations for
@@ -647,11 +661,11 @@ Resume `train.run` from a completed update into a fresh output directory:
 
 ```sh
 "$SPIRE_PYTHON" -m train.run \
-  --resume /private/tmp/trainer-runs/cuda/checkpoint.pt \
-  --output /private/tmp/trainer-runs/cuda-resumed --updates 10
+  --resume "$HOME/spire-downloads/e2-full-episodes/checkpoint.pt" \
+  --output "$HOME/spire-downloads/e2-resumed" --updates 10
 ```
 
-`--updates` is the total target, so a checkpoint at update 4 continues with updates 5 through
+`--updates` is the total target, so a checkpoint at update 8 continues with updates 9 and
 10. Omitting it retains the original target. Training arguments, worker count, roots and
 sampling progress come from the saved run; only the output directory and update target may
 change. Keep `roots.json` beside the checkpoint, use the same engine commit and PyTorch
@@ -659,8 +673,13 @@ version, and keep the same device ordering. `initial.pt` in the new directory co
 restored policy version. An interrupted, unpublished update is repeated from the last atomic
 checkpoint; JSONL files in the new directory describe only the resumed segment. This entry
 point accepts format-1 checkpoints produced by `train.run`; older checkpoints lack the RNG
-and progress fields needed for continuation. GPU continuation equivalence still requires
-runtime validation.
+and progress fields needed for continuation. On eight V100s, direct four updates and two plus
+two resumed updates matched model/optimizer/RNG tensors and action logs exactly with
+`torch.use_deterministic_algorithms(True)` enabled in every process,
+`CUBLAS_WORKSPACE_CONFIG=:4096:8`, `NCCL_ALGO=Ring`, and `NCCL_PROTO=Simple`.
+DDP reduction buckets are initialized before real gradients on both paths. The first resumed
+collection rebuilds root caches; later updates return to the ordinary steady-state cost.
+See the report for the fixed workload and runtime version of this check.
 
 `tests/test_train_policy.py` compares the tensor collector against a scalar reference, including
 exact packed bytes, actions, outcomes, faults, budget cuts, refill, truncation and GAE.
@@ -678,14 +697,14 @@ reported only if every attempt terminates, otherwise it reports bounds with unre
 outcomes. Paired reports require identical roots, sampling stream, cap and evaluation engine.
 
 ```sh
-"$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/natural/initial.pt \
-  --episodes 8 --output /private/tmp/trainer-runs/before.json --device cpu
-"$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/natural/checkpoint.pt \
-  --episodes 8 --reference /private/tmp/trainer-runs/before.json \
-  --output /private/tmp/trainer-runs/after.json --device cpu
-"$SPIRE_PYTHON" -m train.evaluate --checkpoint /private/tmp/trainer-runs/deep/checkpoint.pt \
-  --roots /private/tmp/trainer-runs/roots.json --root-index 1 \
-  --output /private/tmp/trainer-runs/deep-32-eval.json --device cpu
+"$SPIRE_PYTHON" -m train.evaluate --checkpoint /tmp/trainer-runs/natural/initial.pt \
+  --episodes 8 --output /tmp/trainer-runs/before.json --device cpu
+"$SPIRE_PYTHON" -m train.evaluate --checkpoint /tmp/trainer-runs/natural/checkpoint.pt \
+  --episodes 8 --reference /tmp/trainer-runs/before.json \
+  --output /tmp/trainer-runs/after.json --device cpu
+"$SPIRE_PYTHON" -m train.evaluate --checkpoint /tmp/trainer-runs/deep/checkpoint.pt \
+  --roots /tmp/trainer-runs/roots.json --root-index 1 \
+  --output /tmp/trainer-runs/deep-32-eval.json --device cpu
 ```
 
 Duplicate seed families require explicit independent attempt IDs in the Python evaluator.
@@ -703,8 +722,8 @@ samples per beam member. These prefixes discover curriculum roots, never PPO act
 untrained and uniform policies. Its selected train/dev JSON files feed `python -m train.e1`:
 
 ```sh
-"$SPIRE_PYTHON" -m train.e1 --roots /private/tmp/e1-runs/roots/train.json \
-  --dev-roots /private/tmp/e1-runs/roots/dev.json --output /private/tmp/e1-runs/init-1729 \
+"$SPIRE_PYTHON" -m train.e1 --roots /tmp/e1-runs/roots/train.json \
+  --dev-roots /tmp/e1-runs/roots/dev.json --output /tmp/e1-runs/init-1729 \
   --init-seed 1729 --decisions 200000 --deadline-epoch "$E1_DEADLINE_EPOCH"
 ```
 
@@ -726,17 +745,17 @@ terminal compares both full oracle snapshot scopes and canonical legal actions b
 action is sent. Only the existing seven visible-observation arrays reach `train.model.Policy`;
 the game seed and RNG remain in the synchronizer. Sampling uses an independent PCG64 stream.
 
-Use the build commands above with `/private/tmp/mod-work/build` as the build directory, then
+Use the build commands above with `/tmp/mod-work/build` as the build directory, then
 run from this checkout:
 
 ```sh
-export PYTHONPATH=/private/tmp/mod-work/build:.
-python3 -m watch.build --output /private/tmp/mod-work/mod
-"$SPIRE_PYTHON" -m watch.check --mod /private/tmp/mod-work/mod/Watch.jar --output /private/tmp/mod-work/check
-"$SPIRE_PYTHON" -m watch.run --mod /private/tmp/mod-work/mod/Watch.jar \
-  --checkpoint /private/tmp/e1-runs/init-2718/checkpoint.pt \
-  --roots /private/tmp/e1-runs/roots/train.json --root-index 7 \
-  --delay 0.5 --output /private/tmp/mod-work/watch
+export PYTHONPATH=/tmp/mod-work/build:.
+python3 -m watch.build --output /tmp/mod-work/mod
+"$SPIRE_PYTHON" -m watch.check --mod /tmp/mod-work/mod/Watch.jar --output /tmp/mod-work/check
+"$SPIRE_PYTHON" -m watch.run --mod /tmp/mod-work/mod/Watch.jar \
+  --checkpoint /tmp/e1-runs/init-2718/checkpoint.pt \
+  --roots /tmp/e1-runs/roots/train.json --root-index 7 \
+  --delay 0.5 --output /tmp/mod-work/watch
 ```
 
 Use `--seed 1` in place of `--roots ... --root-index ...` to begin at Neow. E1 JSON root lists
@@ -762,7 +781,7 @@ root-7 Heart victory, including checkpoint/trace hashes and fresh-build replay r
 ## Trace replay
 
 ```sh
-PYTHONPATH=/private/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py /path/to/traces
+PYTHONPATH=/tmp/spire-build "$SPIRE_PYTHON" tests/replay.py /path/to/traces
 ```
 
 The replayer accepts JSONL, gzip-compressed JSONL and directories. A header supplies `schema`,
@@ -786,17 +805,17 @@ agreement with the game.
 After configuring the build, run:
 
 ```sh
-cmake --build /private/tmp/spire-build --target benchmark --parallel 1
+cmake --build /tmp/spire-build --target benchmark --parallel 1
 ```
 
 This prints `sizeof(Game)` in bytes, elapsed time and decisions per second for 100,000 steps,
 one CPU thread, a seeded random legal policy and a cycle through the encounter catalog.
 The combat deck and starting HP are fixed so adding run initialization does not change the
-benchmark load. Timing includes complete run resets and dungeon generation. To choose the decision count, run `/private/tmp/spire-build/spire_benchmark 1000000`.
+benchmark load. Timing includes complete run resets and dungeon generation. To choose the decision count, run `/tmp/spire-build/spire_benchmark 1000000`.
 Results are written to stdout.
 
 `spire_benchmark` measures starter combats with a complete dungeon reset per combat.
-For whole-game throughput, run `/private/tmp/spire-build/spire_deep_benchmark 1000`.
+For whole-game throughput, run `/tmp/spire-build/spire_deep_benchmark 1000`.
 This replays 12 fixed Neow-to-terminal games (15,038 decisions per round) on one thread.
 Timing includes resets and native `step`, excluding file loading and the initial legal-action
 and terminal check. The optional second argument selects an action file. The output checksum

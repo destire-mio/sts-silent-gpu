@@ -52,8 +52,6 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
     dist.init_process_group("nccl" if device.type == "cuda" else "gloo", init_method=rendezvous,
                             rank=rank, world_size=config.workers, timeout=timedelta(seconds=300))
     wrapped = distributed_policy(model, device)
-    # DDP rebuilds its reduction buckets after the first backward. Stabilize
-    # their order before real gradients so fresh and resumed workers agree.
     for _ in range(2):
         logits, value = wrapped(empty_inputs(device))
         ((logits.sum() + value.sum()) * 0).backward()
