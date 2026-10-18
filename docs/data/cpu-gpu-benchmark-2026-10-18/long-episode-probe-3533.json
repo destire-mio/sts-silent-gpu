@@ -1,0 +1,56 @@
+{
+  "source": "9701bd2",
+  "decision_cap": 3000,
+  "lanes": 8192,
+  "episodes": 512,
+  "decisions": 9934,
+  "seconds": 13.766448166919872,
+  "compact_bytes": 18449469,
+  "lengths": {
+    "mean": 19.40234375,
+    "p50": 17.0,
+    "p95": 47.89999999999998,
+    "p99": 66.66999999999996,
+    "max": 86
+  },
+  "outcomes": {
+    "victory": 0,
+    "death": 512,
+    "truncated": 0,
+    "fault": 0,
+    "budget_cutoff": 0
+  },
+  "profile": {
+    "decisions": 9934,
+    "entities": {
+      "mean": 75.58033017918261,
+      "p95": 119.0,
+      "max": 167
+    },
+    "candidates": {
+      "mean": 5.61093215220455,
+      "p95": 13.0,
+      "max": 55
+    },
+    "record_bytes": {
+      "mean": 1857.2044493658145,
+      "p95": 2916.0,
+      "max": 4054
+    },
+    "storage_bytes_per_decision": 5068
+  },
+  "torch_peak_allocated": 2910665728,
+  "torch_peak_reserved": 3382706176,
+  "free": [
+    11288444928,
+    16928342016
+  ],
+  "timing": {
+    "root_prepare_seconds": 11.7328291015625,
+    "reset_seconds": 0.009947135925292968,
+    "step_encode_seconds": 0.4422420479059219,
+    "inference_seconds": 1.2626063458919525,
+    "storage_seconds": 0.034219392143189906,
+    "collection_seconds": 13.765256960992701
+  }
+}
