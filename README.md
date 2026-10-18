@@ -50,7 +50,11 @@ options, and CMake 3.31's
 [`CUDA_SEPARABLE_COMPILATION`](https://cmake.org/cmake/help/v3.31/prop_tgt/CUDA_SEPARABLE_COMPILATION.html),
 [`CUDA_RESOLVE_DEVICE_SYMBOLS`](https://cmake.org/cmake/help/v3.31/prop_tgt/CUDA_RESOLVE_DEVICE_SYMBOLS.html)
 and [`CUDA_COMPILER_LAUNCHER`](https://cmake.org/cmake/help/v3.31/prop_tgt/LANG_COMPILER_LAUNCHER.html)
-properties. `spire_cuda` remains an unresolved RDC static archive; CMake performs the nvlink step
+properties. CUDA compilation selects `--no-offload-new-driver` so Clang emits the NVIDIA
+relocatable fatbins consumed by CMake 3.31's nvlink step. Clang 21's default RDC driver instead
+stores device objects in `.llvm.offloading`, which this CMake device-link rule does not unpack;
+mixing those formats can produce a successful link with an empty GPU image.
+`spire_cuda` remains an unresolved RDC static archive; CMake performs the nvlink step
 at each final consumer (`spire_gpu`, `test_cuda_faults`, `test_cuda_parity`), so test kernels join
 the same device link as the engine. See also Clang's
 [CUDA compilation model](https://releases.llvm.org/21.1.0/docs/CompileCudaWithLLVM.html)
