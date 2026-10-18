@@ -656,3 +656,42 @@ README 增加显式筛选/转换命令；后面的工程训练只用 5,815 个 t
 轨迹 tensor/模型哈希比较保持不变。3535 使用修正脚本通过两轮确定性旧基线比较、采样器对照，
 以及分成三个互斥分片的全部 8,721 个 E2 Game/History/观测/状态字节对照和重复恢复检查。
 这些失败原始日志与成功证据一起保留，不将失败作业记为整项通过。
+
+### 4. 八卡确定性续训（先发现差异，再修复并实测通过）
+
+3537 在原先 `4ff1b1b` 上完成 direct-4 与 2+2 的训练，但严格比较失败：69 个模型 tensor 不同，
+最大绝对差 0.00010437145829200745；优化器 135 个 tensor 不同，最大绝对差约 2.73e-7。
+其中首个模型差为 7.15e-7。各 rank RNG、策略版本、next-attempt 及后两轮完整动作/结局日志相同。
+没有把放宽容差当作通过。原始[失败结果](data/cpu-gpu-benchmark-2026-10-18/resume-3537-failure.json)
+与[逐 tensor 差异](data/cpu-gpu-benchmark-2026-10-18/resume-3537-differences.json)均保留。
+
+检查已安装 PyTorch 2.14 的 `DistributedDataParallel` 实现发现：初始通信 bucket 会在第一次
+backward 后重建，重启过程会重新经历这个阶段。修复 `23dcf23` 在正式采样前执行两次零损失
+forward/backward，让 fresh/resumed worker 都先稳定 bucket，再清空梯度；不执行 optimizer.step。
+恢复 checkpoint RNG 在此之后完成。新增断言检查初始模型参数与空优化器状态没有被改变。
+这是对浮点归约顺序的修正；没有改游戏、观测、采样 counter 或 PPO 公式。
+
+3537 的现象与 bucket 顺序相关这一解释受到后续对照支持，但没有对 NCCL 的每次归约做内核级追踪。
+同配置作业 **3540**（源码 `23dcf237f5b73b1c4dc3e95a75de05c3c2d5d575`）实测通过：
+
+- 每个进程经 `sitecustomize.py` 启用 `torch.use_deterministic_algorithms(True)`。
+- `CUBLAS_WORKSPACE_CONFIG=:4096:8`、`NCCL_ALGO=Ring`、`NCCL_PROTO=Simple`；设备顺序一致。
+- continuous-4 与 split-2 + resumed-2 的全部模型参数、Adam 状态、所有 rank RNG 逐 tensor 完全相等。
+- 后两轮完整动作/结局 JSON 相等，最终 policy_version=4，next_attempt=262,144。
+- 比较的是训练状态内容；因输出路径和配置记录不同，不要求整个 `.pt` 文件哈希相同。
+- 2026-10-18 23:12:02 +08:00 结束，退出码 0。
+
+| 路径 | 轮次 | 新决策 | 总墙钟秒 | 单卡最大 Torch 峰值 GiB | 更新后最大存活 MiB |
+|---|---:|---:|---:|---:|---:|
+| direct-four | 1 | 1,256,809 | 49.580 | 6.8867 | 81.730 |
+| direct-four | 2 | 1,197,702 | 27.036 | 7.1954 | 81.730 |
+| direct-four | 3 | 1,290,604 | 28.810 | 6.8706 | 81.730 |
+| direct-four | 4 | 1,342,905 | 30.117 | 7.2590 | 81.730 |
+| split-two | 1 | 1,256,809 | 49.652 | 6.8867 | 81.730 |
+| split-two | 2 | 1,197,702 | 27.466 | 7.1954 | 81.730 |
+| resumed-four | 3 | 1,290,604 | 49.148 | 6.8709 | 81.730 |
+| resumed-four | 4 | 1,342,905 | 29.911 | 7.2578 | 81.730 |
+
+续训首轮重新构造原生 E2 cache，所以第 3 轮包含冷启动开销；其后一轮与 continuous 的速度和
+显存相近，没有逐轮存活内存增长。此处的确定性设置会占用额外工作区，不能直接与普通测速的
+34–35 MiB 存活内存混为一谈。[3540 原始数据](data/cpu-gpu-benchmark-2026-10-18/resume-3540.json)。
