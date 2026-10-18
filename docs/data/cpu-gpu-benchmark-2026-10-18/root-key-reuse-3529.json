@@ -1,0 +1,751 @@
+{
+  "source_commit": "43a0bed7a9f9cdfbcb95760bae1ae35fa4fd9f9a",
+  "job": 3529,
+  "status": "passed",
+  "ctest_passed": 3,
+  "paired_updates_identical": 2,
+  "natural_gpu": {
+    "status": "passed",
+    "device": "cuda:0",
+    "updates": [
+      {
+        "version": 0,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 1,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 2,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 3,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 4,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 5,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 6,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 7,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 8,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 9,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 10,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 11,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 12,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 13,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 14,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 15,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 16,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 17,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 18,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 19,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 20,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 21,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 22,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 23,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 24,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 25,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 26,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 27,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 28,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 29,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 30,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      },
+      {
+        "version": 31,
+        "decisions": 32,
+        "caches": 0,
+        "cached_roots": 0
+      }
+    ]
+  },
+  "collector_parity_log": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py:22: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)\n  return {name: torch.as_tensor(getattr(batch, name), device=device) for name in FIELDS}\n{\"check\": \"CPU/GPU collector parity\", \"decisions\": 409, \"compact_bytes\": 627415, \"exact_actions_outcomes_observations\": true, \"max_absolute_error\": {\"log_probs\": 1.8477439880371094e-05, \"values\": 3.1888484954833984e-06, \"returns\": 1.6689300537109375e-06, \"advantages\": 2.3245811462402344e-06}}\n",
+  "python_profile": {
+    "source_commit": "43a0bed7a9f9cdfbcb95760bae1ae35fa4fd9f9a",
+    "unprofiled": [
+      {
+        "decisions": 38642,
+        "timing": {
+          "root_prepare_seconds": 0.0002887679934501648,
+          "reset_seconds": 0.008079360008239746,
+          "step_encode_seconds": 0.5086771150827408,
+          "inference_seconds": 1.536293883562088,
+          "storage_seconds": 0.027278048053383828,
+          "collection_seconds": 2.36856768198777
+        }
+      },
+      {
+        "decisions": 38642,
+        "timing": {
+          "root_prepare_seconds": 0.0002836480140686035,
+          "reset_seconds": 0.008059904098510743,
+          "step_encode_seconds": 0.5086699528694153,
+          "inference_seconds": 1.5342264354228974,
+          "storage_seconds": 0.027087392121553422,
+          "collection_seconds": 2.2880611970322207
+        }
+      },
+      {
+        "decisions": 38642,
+        "timing": {
+          "root_prepare_seconds": 0.0002682879865169525,
+          "reset_seconds": 0.008049663543701171,
+          "step_encode_seconds": 0.5088143353462219,
+          "inference_seconds": 1.5345817601680756,
+          "storage_seconds": 0.027026015996932985,
+          "collection_seconds": 2.290648737922311
+        }
+      }
+    ],
+    "profiled": {
+      "decisions": 38642,
+      "timing": {
+        "root_prepare_seconds": 0.0003717119991779327,
+        "reset_seconds": 0.009773056030273437,
+        "step_encode_seconds": 0.5089279967546463,
+        "inference_seconds": 1.5538903057575226,
+        "storage_seconds": 0.02828608000278473,
+        "collection_seconds": 2.3487551379948854
+      }
+    },
+    "top_self": [
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/sampling.py",
+        "line": 21,
+        "function": "multiply",
+        "calls": 1280,
+        "self_seconds": 0.12880623300000002,
+        "cumulative_seconds": 0.12880623300000002
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/json/encoder.py",
+        "line": 205,
+        "function": "iterencode",
+        "calls": 2048,
+        "self_seconds": 0.109559559,
+        "cumulative_seconds": 0.109559559
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch._transformer_encoder_layer_fwd>",
+        "calls": 464,
+        "self_seconds": 0.10114347400000001,
+        "cumulative_seconds": 0.117135784
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/sampling.py",
+        "line": 27,
+        "function": "random_words",
+        "calls": 64,
+        "self_seconds": 0.053726192000000006,
+        "cumulative_seconds": 0.182532425
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py",
+        "line": 107,
+        "function": "forward",
+        "calls": 116,
+        "self_seconds": 0.043364372000000005,
+        "cumulative_seconds": 0.33243541400000004
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py",
+        "line": 25,
+        "function": "network_inputs",
+        "calls": 116,
+        "self_seconds": 0.032526646,
+        "cumulative_seconds": 0.058656024
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch.embedding>",
+        "calls": 1044,
+        "self_seconds": 0.029997018,
+        "cumulative_seconds": 0.029997018
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch._C._nn.linear>",
+        "calls": 580,
+        "self_seconds": 0.02057553,
+        "cumulative_seconds": 0.02057553
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<method 'sum' of 'torch._C.TensorBase' objects>",
+        "calls": 809,
+        "self_seconds": 0.016147091000000002,
+        "cumulative_seconds": 0.016147091000000002
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py",
+        "line": 75,
+        "function": "store_inputs",
+        "calls": 64,
+        "self_seconds": 0.015511849000000001,
+        "cumulative_seconds": 0.015856893
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/module.py",
+        "line": 1959,
+        "function": "__getattr__",
+        "calls": 32596,
+        "self_seconds": 0.014400897000000001,
+        "cumulative_seconds": 0.014400897000000001
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch.nonzero>",
+        "calls": 195,
+        "self_seconds": 0.013497096,
+        "cumulative_seconds": 0.013497096
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/transformer.py",
+        "line": 799,
+        "function": "forward",
+        "calls": 464,
+        "self_seconds": 0.013021558,
+        "cumulative_seconds": 0.18730516900000002
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<method 'append' of 'list' objects>",
+        "calls": 81691,
+        "self_seconds": 0.011108516,
+        "cumulative_seconds": 0.011108516
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/_native/registry.py",
+        "line": 938,
+        "function": "eager_router",
+        "calls": 464,
+        "self_seconds": 0.010627172,
+        "cumulative_seconds": 0.015992310000000003
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<method 'logsumexp' of 'torch._C.TensorBase' objects>",
+        "calls": 115,
+        "self_seconds": 0.009815474000000001,
+        "cumulative_seconds": 0.009815474000000001
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<method 'to' of 'torch._C.TensorBase' objects>",
+        "calls": 695,
+        "self_seconds": 0.009576246,
+        "cumulative_seconds": 0.009576246
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<method 'long' of 'torch._C.TensorBase' objects>",
+        "calls": 861,
+        "self_seconds": 0.009426702,
+        "cumulative_seconds": 0.009426702
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/module.py",
+        "line": 2845,
+        "function": "named_modules",
+        "calls": 13920,
+        "self_seconds": 0.008616895000000001,
+        "cumulative_seconds": 0.010589799
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method _hashlib.openssl_sha256>",
+        "calls": 2048,
+        "self_seconds": 0.008036386000000001,
+        "cumulative_seconds": 0.008036386000000001
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch.zeros_like>",
+        "calls": 595,
+        "self_seconds": 0.007926669,
+        "cumulative_seconds": 0.007926669
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/module.py",
+        "line": 1787,
+        "function": "_call_impl",
+        "calls": 2900,
+        "self_seconds": 0.007886234,
+        "cumulative_seconds": 0.334190466
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/rollout.py",
+        "line": 210,
+        "function": "infer",
+        "calls": 115,
+        "self_seconds": 0.007845221000000001,
+        "cumulative_seconds": 0.44571325500000003
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch.argsort>",
+        "calls": 194,
+        "self_seconds": 0.006717321,
+        "cumulative_seconds": 0.006717321
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch.where>",
+        "calls": 270,
+        "self_seconds": 0.006020846000000001,
+        "cumulative_seconds": 0.006020846000000001
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/transformer.py",
+        "line": 904,
+        "function": "<genexpr>",
+        "calls": 6496,
+        "self_seconds": 0.005889203,
+        "cumulative_seconds": 0.005889203
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<method 'masked_fill_' of 'torch._C.TensorBase' objects>",
+        "calls": 464,
+        "self_seconds": 0.00556226,
+        "cumulative_seconds": 0.00556226
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/sampling.py",
+        "line": 43,
+        "function": "sample",
+        "calls": 115,
+        "self_seconds": 0.004876461,
+        "cumulative_seconds": 0.011277561
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/rollout.py",
+        "line": 164,
+        "function": "timed",
+        "calls": 184,
+        "self_seconds": 0.004681792000000001,
+        "cumulative_seconds": 0.301685543
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/module.py",
+        "line": 1779,
+        "function": "_wrapped_call_impl",
+        "calls": 2900,
+        "self_seconds": 0.0046553540000000004,
+        "cumulative_seconds": 0.33447085600000004
+      }
+    ],
+    "top_cumulative": [
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/rollout.py",
+        "line": 210,
+        "function": "infer",
+        "calls": 115,
+        "self_seconds": 0.007845221000000001,
+        "cumulative_seconds": 0.44571325500000003
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/module.py",
+        "line": 1779,
+        "function": "_wrapped_call_impl",
+        "calls": 2900,
+        "self_seconds": 0.0046553540000000004,
+        "cumulative_seconds": 0.33447085600000004
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/module.py",
+        "line": 1787,
+        "function": "_call_impl",
+        "calls": 2900,
+        "self_seconds": 0.007886234,
+        "cumulative_seconds": 0.334190466
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py",
+        "line": 107,
+        "function": "forward",
+        "calls": 116,
+        "self_seconds": 0.043364372000000005,
+        "cumulative_seconds": 0.33243541400000004
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/rollout.py",
+        "line": 164,
+        "function": "timed",
+        "calls": 184,
+        "self_seconds": 0.004681792000000001,
+        "cumulative_seconds": 0.301685543
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/rollout.py",
+        "line": 201,
+        "function": "<lambda>",
+        "calls": 64,
+        "self_seconds": 0.0027246180000000003,
+        "cumulative_seconds": 0.188274444
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/transformer.py",
+        "line": 799,
+        "function": "forward",
+        "calls": 464,
+        "self_seconds": 0.013021558,
+        "cumulative_seconds": 0.18730516900000002
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/sampling.py",
+        "line": 39,
+        "function": "uniforms",
+        "calls": 64,
+        "self_seconds": 0.00204637,
+        "cumulative_seconds": 0.185549826
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/sampling.py",
+        "line": 27,
+        "function": "random_words",
+        "calls": 64,
+        "self_seconds": 0.053726192000000006,
+        "cumulative_seconds": 0.182532425
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/sampling.py",
+        "line": 21,
+        "function": "multiply",
+        "calls": 1280,
+        "self_seconds": 0.12880623300000002,
+        "cumulative_seconds": 0.12880623300000002
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/sampling.py",
+        "line": 11,
+        "function": "root_key",
+        "calls": 2048,
+        "self_seconds": 0.002784505,
+        "cumulative_seconds": 0.128368029
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch._transformer_encoder_layer_fwd>",
+        "calls": 464,
+        "self_seconds": 0.10114347400000001,
+        "cumulative_seconds": 0.117135784
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/json/__init__.py",
+        "line": 183,
+        "function": "dumps",
+        "calls": 2048,
+        "self_seconds": 0.0025447200000000003,
+        "cumulative_seconds": 0.115620598
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/json/encoder.py",
+        "line": 183,
+        "function": "encode",
+        "calls": 2048,
+        "self_seconds": 0.002103338,
+        "cumulative_seconds": 0.11258506200000001
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/json/encoder.py",
+        "line": 205,
+        "function": "iterencode",
+        "calls": 2048,
+        "self_seconds": 0.109559559,
+        "cumulative_seconds": 0.109559559
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py",
+        "line": 25,
+        "function": "network_inputs",
+        "calls": 116,
+        "self_seconds": 0.032526646,
+        "cumulative_seconds": 0.058656024
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/sparse.py",
+        "line": 188,
+        "function": "forward",
+        "calls": 1044,
+        "self_seconds": 0.0015124040000000002,
+        "cumulative_seconds": 0.033408817
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/functional.py",
+        "line": 2509,
+        "function": "embedding",
+        "calls": 1044,
+        "self_seconds": 0.0011320170000000001,
+        "cumulative_seconds": 0.03140566
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/model.py",
+        "line": 130,
+        "function": "distribution",
+        "calls": 115,
+        "self_seconds": 0.002380577,
+        "cumulative_seconds": 0.030441254
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch.embedding>",
+        "calls": 1044,
+        "self_seconds": 0.029997018,
+        "cumulative_seconds": 0.029997018
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/cuda/streams.py",
+        "line": 199,
+        "function": "record",
+        "calls": 622,
+        "self_seconds": 0.001106427,
+        "cumulative_seconds": 0.025112517
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/container.py",
+        "line": 254,
+        "function": "forward",
+        "calls": 232,
+        "self_seconds": 0.001564246,
+        "cumulative_seconds": 0.023342712
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/linear.py",
+        "line": 130,
+        "function": "forward",
+        "calls": 580,
+        "self_seconds": 0.0007824290000000001,
+        "cumulative_seconds": 0.02180818
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method builtins.any>",
+        "calls": 464,
+        "self_seconds": 0.0011561310000000001,
+        "cumulative_seconds": 0.021030388
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/cuda/__init__.py",
+        "line": 1297,
+        "function": "current_stream",
+        "calls": 751,
+        "self_seconds": 0.002497972,
+        "cumulative_seconds": 0.020762129
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<built-in method torch._C._nn.linear>",
+        "calls": 580,
+        "self_seconds": 0.02057553,
+        "cumulative_seconds": 0.02057553
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/nn/modules/transformer.py",
+        "line": 871,
+        "function": "<genexpr>",
+        "calls": 5104,
+        "self_seconds": 0.004469351,
+        "cumulative_seconds": 0.019874257000000003
+      },
+      {
+        "file": "/home/zhuyouwei/sts-silent-gpu-split/train/rollout.py",
+        "line": 202,
+        "function": "<lambda>",
+        "calls": 64,
+        "self_seconds": 0.000688828,
+        "cumulative_seconds": 0.018620476
+      },
+      {
+        "file": "~",
+        "line": 0,
+        "function": "<method 'sum' of 'torch._C.TensorBase' objects>",
+        "calls": 809,
+        "self_seconds": 0.016147091000000002,
+        "cumulative_seconds": 0.016147091000000002
+      },
+      {
+        "file": "/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/_native/registry.py",
+        "line": 938,
+        "function": "eager_router",
+        "calls": 464,
+        "self_seconds": 0.010627172,
+        "cumulative_seconds": 0.015992310000000003
+      }
+    ]
+  },
+  "artifacts_sha256": "77c8466385b346ffb73ef7884e92ec6239d29e42b7a83ef0dea4f8dad1f9c1bb  /home/zhuyouwei/spire-build-split-bc5b225/spire.cpython-312-x86_64-linux-gnu.so\nedd61d97870cb38ff3e45dc1be09a7363eaf28506faed55ae90669ab1ce51fd8  /home/zhuyouwei/spire-build-split-bc5b225/spire_gpu.cpython-312-x86_64-linux-gnu.so\n",
+  "files_sha256": {
+    "root-key-reuse-3529/artifacts.sha256": "a4e0f5a7eabc17701e0888a0b7c014d058e97d2a881be6828578f8ddbad30d69",
+    "root-key-reuse-3529/collector-parity.log": "b4855d0f2ab59af82218c5b46bad9c67135233fe5b954d8e84ed51e3b783c82b",
+    "root-key-reuse-3529/ctest-detail.log": "4e62912235a7e2a4d9840c2c83fcfb45ffc44a7370cab2374c9be75e0cee72d7",
+    "root-key-reuse-3529/ctest.log": "96ad9bb1ca9d1e5ca997928ee427f500f8272260140e376a66adbf1d5baba153",
+    "root-key-reuse-3529/natural-roots-gpu.json": "5777b0324ffdd79fec79b25d76c51df7ff540a840f2dfddd476632c88d3e3ea2",
+    "root-key-reuse-3529/paired-training.json": "0022fb6ae3a61c8066526b7b98ed7668d5630ac257b974a11760629637076b5a",
+    "root-key-reuse-3529/paired-training.log": "5aefff64a9f90d3dd799319c38f64ff101a2283666cae64441290d20ac1baef3",
+    "root-key-reuse-3529/python-profile.json": "431f1acc8234e8256aea3d7e76eb2695bac0ebfee313e2ea4e4c5771c3cfe2b0",
+    "root-key-reuse-3529/python-profile.log": "c0ec58f15e01f93a93796a5c1bfac85e8c65b7149c59c8060c3e907a684baaf2"
+  }
+}
