@@ -143,7 +143,7 @@ class Curriculum:
         self.state["next_evaluation"] = (self.state["total_decisions"] // EVALUATION_INTERVAL + 1) * EVALUATION_INTERVAL
         return dict(before=before, after=self.frontier, lower95=lower, stagnant=self.state["stagnant"])
 
-    def snapshot(self):
+    def state_dict(self):
         return deepcopy(dict(self.state, rng_state=self.rng.getstate()))
 
 
@@ -246,7 +246,7 @@ def main():
     started = time.time()
     with Pipeline(model, ppo, config, args.init_seed, args.output, manifest, checkpoint) as pipeline:
         pipeline.initialize()
-        pipeline.save_curriculum(curriculum.snapshot())
+        pipeline.save_curriculum(curriculum.state_dict())
         if not initial:
             initial, count, seconds, completed = assess(pipeline, sets, args.output, "initial", 0, {}, args.deadline_epoch)
             curriculum.state["evaluation_decisions"] += count
@@ -256,7 +256,7 @@ def main():
         (args.output / "initial-evaluation.json").write_text(json.dumps(initial) + "\n")
         if not checkpoint and not curriculum.state["stopped"]:
             curriculum.state["best_lower"] = initial[f"dev/{curriculum.frontier}"]["interval95"][0]
-        pipeline.save_curriculum(curriculum.snapshot())
+        pipeline.save_curriculum(curriculum.state_dict())
         last_evaluated = curriculum.state.get("last_evaluated_decisions", 0)
 
         def evaluate_current():
@@ -277,7 +277,7 @@ def main():
                 curriculum.state["last_evaluated_decisions"] = total
             else:
                 curriculum.state["stopped"] = "wall_budget_during_evaluation"
-            pipeline.save_curriculum(curriculum.snapshot())
+            pipeline.save_curriculum(curriculum.state_dict())
 
         while curriculum.state["total_decisions"] < args.decisions and curriculum.state["stopped"] is None:
             if curriculum.state["total_decisions"] >= curriculum.state["next_evaluation"]:
@@ -303,7 +303,7 @@ def main():
             result["selected_action_probability"] = dict(mean=float(probabilities.mean()),
                 min=float(probabilities.min()), max=float(probabilities.max()))
             decisions_by_source = curriculum.record(rollout.episodes, sources, first)
-            result["ppo"] = pipeline.update(rollout, curriculum=curriculum.snapshot())
+            result["ppo"] = pipeline.update(rollout, curriculum=curriculum.state_dict())
             result.update(update=pipeline.version, cumulative_decisions=curriculum.state["total_decisions"],
                           frontier=curriculum.frontier,
                           source_episodes=dict(Counter(sources[e["attempt"] - first] for e in rollout.episodes)),
@@ -324,7 +324,7 @@ def main():
         if curriculum.state["stopped"] == "wall_budget" and last_evaluated != curriculum.state["total_decisions"]:
             evaluate_current()
         curriculum.state["stopped"] = curriculum.state["stopped"] or "decision_budget"
-        pipeline.save_curriculum(curriculum.snapshot())
+        pipeline.save_curriculum(curriculum.state_dict())
         report = dict(group=args.group, init_seed=args.init_seed, decisions=curriculum.state["total_decisions"],
             frontier=curriculum.frontier, learned=curriculum.state["learned"], stop_reason=curriculum.state["stopped"],
             evaluation_decisions=curriculum.state["evaluation_decisions"], evaluation_seconds=curriculum.state["evaluation_seconds"],

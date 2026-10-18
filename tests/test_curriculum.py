@@ -55,7 +55,7 @@ class CurriculumTests(unittest.TestCase):
         episodes = [dict(attempt=i, records=list(range(i % 5 + 1))) for i in range(137)]
         curriculum.record(episodes, sources, 0)
         curriculum.assess(dict(interval95=[.8, 1.], mean=.9))
-        snapshot = curriculum.snapshot()
+        snapshot = curriculum.state_dict()
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "state.pt"
             torch.save(snapshot, path)
@@ -63,7 +63,7 @@ class CurriculumTests(unittest.TestCase):
         self.assertEqual(snapshot, loaded)
         restored = self.make(loaded)
         self.assertEqual(curriculum.draw(1000), restored.draw(1000))
-        self.assertEqual(curriculum.snapshot(), restored.snapshot())
+        self.assertEqual(curriculum.state_dict(), restored.state_dict())
 
     def test_statistics_weight_families_and_pair_by_seed(self):
         episodes = [dict(seed=2000000000, outcome="victory")] * 100
@@ -90,8 +90,8 @@ class CurriculumTests(unittest.TestCase):
             second.mkdir()
             with Pipeline(model, ppo, config, 1729, first, manifest) as pipeline:
                 pipeline.initialize()
-                pipeline.save_curriculum(curriculum.snapshot())
-                self.assertEqual(torch.load(first / "checkpoint.pt", weights_only=True)["curriculum"], curriculum.snapshot())
+                pipeline.save_curriculum(curriculum.state_dict())
+                self.assertEqual(torch.load(first / "checkpoint.pt", weights_only=True)["curriculum"], curriculum.state_dict())
                 before = pipeline.state
                 evaluated = pipeline.evaluate(group, 63100, range(4))
                 self.assertEqual(evaluated["decisions"], 12)
@@ -100,7 +100,7 @@ class CurriculumTests(unittest.TestCase):
                 for name, value in pipeline.state.items():
                     torch.testing.assert_close(value, before[name], atol=0, rtol=0)
                 rollout = pipeline.collect(group, 1729, range(4))
-                state = curriculum.snapshot()
+                state = curriculum.state_dict()
                 pipeline.update(rollout, curriculum=state)
                 saved = torch.load(first / "checkpoint.pt", weights_only=True)
                 self.assertEqual(saved["curriculum"], state)
