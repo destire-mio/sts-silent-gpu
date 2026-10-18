@@ -33,6 +33,12 @@ class PipelineTests(unittest.TestCase):
                                                      "storage_seconds", "collection_seconds"})
                 self.assertTrue(all(value > 0 for value in first.timing.values()))
                 self.assertEqual(first.count, 20)
+                self.assertEqual(first.utilization["active_lane_steps"], first.count)
+                self.assertGreater(first.utilization["time_fraction"], 0)
+                self.assertLessEqual(first.utilization["time_fraction"], 1)
+                self.assertEqual(sum(w["compact_bytes"] for w in first.workers) + (first.count + 2) * 8,
+                                 first.compact_bytes)
+                self.assertTrue(all(w["memory"] == {} for w in first.workers))
                 self.assertFalse(hasattr(first, "data"))
                 self.assertTrue(first.valid.all())
                 self.assertEqual([e["candidates"] for e in first.episodes], [e["candidates"] for e in expected.episodes])
@@ -45,6 +51,7 @@ class PipelineTests(unittest.TestCase):
                     pipeline.update(first)
                 first.policy_versions[0] = 0
                 metrics = pipeline.update(first)
+                self.assertEqual(metrics["memory"], [dict(rank=0), dict(rank=1)])
                 self.assertEqual((metrics["policy_version"], metrics["published_version"]), (0, 1))
                 checkpoint = torch.load(output / "checkpoint.pt", weights_only=False)
                 self.assertEqual(checkpoint["policy_version"], 1)

@@ -290,6 +290,52 @@ The Mac checks restricted C++, CUDA device LLVM and PTX link closure, plus CPU e
 same kernel bodies. The server CUDA build, GPU byte parity, device stack/resource use and V100
 throughput remain day-one checks.
 
+## Eight-V100 complete-episode training
+
+Use a Slurm allocation with eight V100s and preserve its `CUDA_VISIBLE_DEVICES`.
+The audited E2 archive contains both train and dev families. Prepare the training partition
+once; `train.run` rejects dev and locked-test roots:
+
+```sh
+export SPIRE_PYTHON="$HOME/spire-env/bin/python"
+export PYTHONPATH="$HOME/spire-build-split-bc5b225:$PWD"
+export LD_LIBRARY_PATH="/usr/local/cuda-12.8/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+"$SPIRE_PYTHON" - <<'PY'
+import gzip, json
+from pathlib import Path
+from tools.evaluation import partition
+source = Path.home() / "spire-downloads/native-audit.roots.jsonl.gz"
+roots = [json.loads(line)["root"] for line in gzip.open(source, "rt")]
+roots = [root for root in roots if partition(root["seed"]) == "train"]
+target = source.with_name("e2-train.roots.json")
+target.write_text(json.dumps(dict(observation_version=2, roots=roots)) + "\n")
+print(len(roots), target)
+PY
+"$SPIRE_PYTHON" -m train.run --device cuda --workers 8 \
+  --roots "$HOME/spire-downloads/e2-train.roots.json" \
+  --batch-size 8192 --episodes 65536 --inference-chunk 512 \
+  --decision-cap 3000 --gae-lambda 1 --storage-mib 2549 \
+  --epochs 1 --minibatch-size 16384 --updates 10 \
+  --output "$HOME/spire-downloads/e2-full-episodes"
+```
+
+This is a bounded engineering run, not a learning experiment. Gamma is fixed at 1 in PPO.
+`--episodes` counts global starts per update; `--batch-size` is lanes per GPU and
+`--minibatch-size` is global PPO decisions. The 3,000-decision safety cap retains the existing
+bootstrap rule and reports truncations separately. A truncated run does not establish
+complete-episode throughput. The final lane, storage and minibatch recommendation requires
+the complete-episode measurements recorded in the report.
+
+`updates.jsonl` records episode length quantiles, wins/deaths, compact trajectory bytes, per-rank
+timing and CUDA allocated/reserved peaks reset at each collection. Post-update memory is
+sampled after releasing the rollout and publishing the checkpoint. These allocator peaks do
+not include the simulator's native allocations; free/total device memory and root-cache bytes
+are also recorded. Lane utilization is both decisions divided by available lane steps and a
+time-weighted active-lane fraction over collection waves. Wave timing spans sampling through
+environment advancement, excluding root preparation and PPO; it is distinct from hardware
+GPU utilization. Per-rank collection times expose additional waiting at the rank barrier.
+
 ## Python API
 
 Add the build directory to `PYTHONPATH` and import `spire`:

@@ -28,6 +28,15 @@ class PipelineConfig:
     inference_chunk: int = DEFAULT_INFERENCE_CHUNK
 
 
+def device_memory(device):
+    if device.type == "cpu":
+        return {}
+    free, total = torch.cuda.mem_get_info(device)
+    return dict(allocated_bytes=torch.cuda.memory_allocated(device), reserved_bytes=torch.cuda.memory_reserved(device),
+                peak_allocated_bytes=torch.cuda.max_memory_allocated(device),
+                peak_reserved_bytes=torch.cuda.max_memory_reserved(device), free_bytes=free, total_bytes=total)
+
+
 def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous, output, manifest, checkpoint):
     torch.set_num_threads(config.torch_threads)
     torch.set_num_interop_threads(1)
@@ -61,10 +70,14 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
         assert expected == version
         if kind == "collect":
             assert rollout is None
+            if device.type == "cuda":
+                torch.cuda.reset_peak_memory_stats(device)
             roots, sampling_seed, attempts, budget = payload
             rollout = collector.collect(model, roots, sampling_seed, attempts, budget, policy_version=version)
             connection.send(dict(version=version, metrics=rollout.metrics_host(), episodes=rollout.episodes,
-                                 count=rollout.count, compact_bytes=int(rollout.offsets[rollout.count]), timing=rollout.timing))
+                                 count=rollout.count, compact_bytes=int(rollout.offsets[rollout.count]), timing=rollout.timing,
+                                 utilization=rollout.utilization, memory=device_memory(device),
+                                 root_cache_bytes=sum(cache.bytes for cache in collector.root_caches)))
         else:
             assert kind == "update" and rollout is not None
             next_attempt, = payload
@@ -73,6 +86,7 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
             version += 1
             dist.barrier()
             save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt)
+            metrics["memory"] = device_memory(device)
             connection.send((version, metrics))
     assert rollout is None
     dist.destroy_process_group()
@@ -147,8 +161,17 @@ class Pipeline:
         timing = {name: sum(p["timing"][name] for p in parts) for name in
                   ("root_prepare_seconds", "reset_seconds", "step_encode_seconds", "inference_seconds", "storage_seconds")}
         timing["collection_seconds"] = time.perf_counter() - start
+        utilization = {name: sum(p["utilization"][name] for p in parts) for name in parts[0]["utilization"]}
+        utilization["step_fraction"] = (utilization["active_lane_steps"] / utilization["available_lane_steps"]
+                                        if utilization["available_lane_steps"] else 0.)
+        utilization["time_fraction"] = (utilization["active_lane_seconds"] / utilization["available_lane_seconds"]
+                                        if utilization["available_lane_seconds"] else 0.)
         result = SimpleNamespace(**metrics, count=records, next_attempt=max(attempts) + 1,
                                  episodes=sorted(episodes, key=lambda e: e["attempt"]),
+                                 utilization=utilization, workers=[dict(rank=rank, decisions=p["count"],
+                                     compact_bytes=p["compact_bytes"], timing=p["timing"], utilization=p["utilization"],
+                                     memory=p["memory"], root_cache_bytes=p["root_cache_bytes"])
+                                     for rank, p in enumerate(parts)],
                                  timing=timing, compact_bytes=sum(p["compact_bytes"] for p in parts) + (records + len(parts)) * 8)
         self.pending = result
         return result
@@ -164,7 +187,8 @@ class Pipeline:
         self.version, metrics = results[0]
         self.next_attempt = rollout.next_attempt
         self.pending = None
-        return dict(metrics, policy_version=self.version - 1, published_version=self.version,
+        memory = [dict(rank=rank, **m.pop("memory")) for rank, (_, m) in enumerate(results)]
+        return dict(metrics, memory=memory, policy_version=self.version - 1, published_version=self.version,
                     learner_seconds=time.perf_counter() - start)
 
     def __exit__(self, kind, value, traceback):

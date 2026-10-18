@@ -52,6 +52,7 @@ class Rollout:
     global_ids: torch.Tensor
     episodes: list
     timing: dict
+    utilization: dict
     count: int = 0
 
     @classmethod
@@ -63,11 +64,11 @@ class Rollout:
                    torch.zeros(decisions + 1, dtype=torch.int64, device=device), zeros(torch.int32),
                    *[zeros(torch.float32) for _ in range(5)], zeros(torch.uint8), zeros(torch.uint8),
                    zeros(torch.float32), zeros(torch.bool), zeros(torch.bool), zeros(torch.int64),
-                   zeros(torch.int64), [], {})
+                   zeros(torch.int64), [], {}, {})
 
     def metrics_host(self):
         return {f.name: getattr(self, f.name)[:self.count].cpu().numpy() for f in fields(self)
-                if f.name not in ("data", "offsets", "episodes", "timing", "count")}
+                if f.name not in ("data", "offsets", "episodes", "timing", "utilization", "count")}
 
 
 class Collector:
@@ -160,6 +161,7 @@ class Collector:
         next_episode = 0
         timers = {k: [] for k in ("root_prepare_seconds", "reset_seconds", "step_encode_seconds",
                                 "inference_seconds", "storage_seconds")}
+        waves = []
 
         def timed(name, operation):
             if device.type == "cuda":
@@ -196,6 +198,9 @@ class Collector:
                     break
                 continue
             wave_begin = rollout.count
+            wave_start = torch.cuda.Event(enable_timing=True) if device.type == "cuda" else time.perf_counter()
+            if device.type == "cuda":
+                wave_start.record()
             assert wave_begin + len(slots) <= len(rollout.actions), "Compact rollout storage exhausted; increase storage_mib"
             ids = current[slots]
             draws = timed("inference_seconds", lambda: uniforms(sampling_seed, keys[ids], attempts_tensor[ids], decisions[ids]))
@@ -247,6 +252,10 @@ class Collector:
                         bootstrap[current[tail]] = value
                     timed("inference_seconds", infer_tail)
             current[slots[finished]] = -1
+            wave_end = torch.cuda.Event(enable_timing=True) if device.type == "cuda" else time.perf_counter()
+            if device.type == "cuda":
+                wave_end.record()
+            waves.append((len(slots), wave_start, wave_end))
         live = current[current >= 0]
         outcomes[live] = 5
         used_bytes = int(rollout.offsets[rollout.count])
@@ -270,6 +279,12 @@ class Collector:
         rollout.timing = {name: sum(a.elapsed_time(b) / 1000 for a, b in times) if device.type == "cuda"
                           else sum(times) for name, times in timers.items()}
         rollout.timing["collection_seconds"] = time.perf_counter() - start
+        elapsed = [(count, a.elapsed_time(b) / 1000 if device.type == "cuda" else b - a)
+                   for count, a, b in waves]
+        rollout.utilization = dict(waves=len(waves), active_lane_steps=rollout.count,
+            available_lane_steps=len(waves) * self.size,
+            active_lane_seconds=sum(count * seconds for count, seconds in elapsed),
+            available_lane_seconds=self.size * sum(seconds for _, seconds in elapsed))
         return rollout
 
     def finish_targets(self, rollout, episode, decision, outcomes, bootstrap):

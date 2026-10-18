@@ -21,6 +21,7 @@ def summarize(rollout):
     episodes = rollout.episodes
     completed = [e for e in episodes if e["outcome"] in ("victory", "death")]
     wins = [e for e in episodes if e["outcome"] == "victory"]
+    lengths = np.array([len(e["records"]) for e in episodes], dtype=np.int64)
     valid = rollout.valid[:n]
     complete = rollout.complete[:n]
     starts = np.array([e["records"][0] for e in completed], dtype=np.int32)
@@ -36,6 +37,11 @@ def summarize(rollout):
         selected = (rollout.acts[:n] == act) & complete
         by_act[str(act)] = calibration(rollout.values[:n][selected], rollout.returns[:n][selected])
     return dict(episodes=len(episodes), completed=len(completed), wins=len(wins),
+                deaths=sum(e["outcome"] == "death" for e in episodes),
+                episode_decisions=(dict(min=int(lengths.min()), p50=float(np.quantile(lengths, .5)),
+                    p95=float(np.quantile(lengths, .95)), p99=float(np.quantile(lengths, .99)),
+                    max=int(lengths.max()), mean=float(lengths.mean())) if len(lengths) else None),
+                lane_utilization=rollout.utilization, workers=rollout.workers,
                 root_families=len({e["seed"] for e in episodes}),
                 root_families_won=len({e["seed"] for e in wins}),
                 natural_starts=sum(e["prefix_decisions"] == 0 for e in episodes),
