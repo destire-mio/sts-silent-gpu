@@ -226,6 +226,51 @@ GPU 的 12 组测量累计 **100,372,982 次决策**，CPU 的 8 组累计 **18,
 
 结构化结果：[`root-cache-3520.json`](data/cpu-gpu-benchmark-2026-10-18/root-cache-3520.json)。执行脚本、失败和成功测试日志、确定性训练基线、逐内核资源及原始测速输出已归档为 `root-cache-759d874-evidence.tar.gz`，服务器和本地副本 SHA256 均为 `2b7d262d65041fa99dbc97dcf33b157996e1437b515d3966426a60a1fd2a26fa`。
 
+## 复核步骤 2 与下一步任务
+
+### Mac 复核（3c1bc8d）
+
+我在 Mac 上从头构建了 3c1bc8d，以下检查全部通过：
+
+- CTest 50/50。这里没有 CUDA，所以少了服务器上的 5 项。
+- `tests/replay.py tests/traces`：853/853 条轨迹，19,401 次决策。
+- 深局 12/12，15,520 次决策。
+- 训练相关测试：packing 2、distributed 2、pipeline 1、policy 16、gpu_train_check 5。
+
+### 发现的问题：自然开局时根缓存无限增长
+
+`Collector.prepare_roots` 把每个没见过的 root 都写进一个新的 `RootCache`，而且从不释放。
+
+- 不传 `--roots` 时，`train/run.py` 用 `natural_roots(first_seed, updates * episodes)`，每轮都是新种子，所以每轮都会新建一份缓存。
+- 按 2,048 lane 算，每轮约多占 2,048 × 37,872 B ≈ 78 MB 显存，一百多轮后就会显存不足。
+- 这类 root 前缀为空，缓存本来就没有收益。
+
+实测（Mac CPU 后端，3c1bc8d，同一个 `Collector` 每轮 8 个自然 root）：
+
+```text
+update 0 caches 1 cached roots 8
+update 1 caches 2 cached roots 16
+update 2 caches 3 cached roots 24
+update 3 caches 4 cached roots 32
+```
+
+### 下一步任务（按顺序，每步测完再做下一步）
+
+1. **修缓存增长**：前缀为空的 root 不进缓存，直接走原来的 `reset_tensors`。
+   - 加测试：同一个 `Collector` 用自然 root 连续采集多轮，缓存数量保持为 0；E2 root 的行为和步骤 2 的验收结果不变。
+2. **压设备栈**：现在每线程栈 19,920 B，2,048 lane 的原生批次占 3.22 GB，大头是栈预留。
+   - 用 `ptxas -v` 或逐函数资源报告，找出栈帧最大的函数。重放、编码、恢复这三个内核的栈都在 19.6–20 KB，说明它们共用的编码路径是主因，先查 `obs/entities.inc` 里的 `pile()`：`Token sorted[card_capacity]`，约 17.7 KB。
+   - 改法例如只排序 `uint8_t` 索引，或者原地排序。观测必须逐字节不变，全部一致性检查照常通过。
+   - 目标：每线程栈不超过 4 KB。报告改前和改后的栈大小、`native_batch_bytes`。
+3. **加大 lane 数**：在 4,096 和 8,192 lane 下测完整的采样加更新吞吐和显存峰值。如果 PPO 更新显存不够，只能用不改变数学的办法，例如梯度累积，保持 2,048 的小批量。
+4. **试 FP16**：推理和更新现在是主要耗时（每轮约 2 秒加 4 秒）。
+   - 决策规则：端到端提速不到 30% 就不用；用的话只保留一种精度，不留开关。
+   - 采样器对照的容差按实际误差重定，写明理由。
+5. **查 Python 开销**：采样墙钟比 CUDA event 分项之和每轮多约 1 秒。先确认这一秒花在哪，再决定要不要改。
+6. **8 卡**：用 `workers=8` 测每卡吞吐和总吞吐。
+
+规则和前面相同：游戏逻辑、观测、RNG 不变；不加可选模式；每步提交，报告追加到本文件末尾，写明哪些是实测、哪些是推断。
+
 ## 优化步骤 3：设备栈与轨迹显存
 
 ### 卡牌索引排序
