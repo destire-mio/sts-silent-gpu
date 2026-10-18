@@ -138,10 +138,12 @@ export PYTHONPATH="$HOME/spire-v100-build:$PWD"
 This builds only `spire_gpu` at `-O3`, inline threshold 5 and two parallel jobs, and records
 per-unit wall time and peak RSS. It preserves an existing `TMPDIR` such as a Slurm job's node-local
 scratch directory. It does not run tests, benchmarks or training, and does not
-require the CPU `spire` module or `ld.lld`. Constant tables are defined once in device global
-memory (`SPIRE_CONSTANT` expands to `__device__`), rather than duplicated constexpr tables in
-the former monolithic unit. A successful V100 assembly and device link are still required to
-confirm that the former 64 KiB constant-data overflow is resolved.
+require the CPU `spire` module or `ld.lld`. Small tables have matching `__constant__`
+declarations and definitions. Initial game and monster states use `ReadOnly<T>` with a `const`
+payload in device global memory, keeping the 37 KiB initial game outside the 64 KiB constant
+bank. The outer storage is `const` on the host and `__device__` on the GPU: Clang 21 promotes
+top-level device `const` definitions to constant memory even when marked `__device__`, but
+leaves a non-const record with a `const` payload in global memory.
 
 Inside an existing Slurm allocation, with clang++ and the toolkit's nvcc on PATH, this command
 builds only `spire_gpu` and `test_cuda_parity`, then prints the per-unit resource table and runs

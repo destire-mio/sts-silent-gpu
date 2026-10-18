@@ -80,7 +80,7 @@ def split(text, origin):
         line = text.count('\n', 0, start) + 1
         definition = f'namespace {namespace} {{\n#line {line} "{origin}"\n' + signature + text[body:end] + '\n}\n'
         definitions.append((name, definition))
-    for m in re.finditer(r'(?m)^constexpr\s+([\w:]+)\s+(\w+)((?:\[[^\]]*\])*)\s*(?:=\s*)?\{', clean):
+    for m in re.finditer(r'(?m)^constexpr\s+([\w:]+(?:<[\w:]+>)?)\s+(\w+)((?:\[[^\]]*\])*)\s*(?:=\s*)?\{', clean):
         start, body = m.start(), m.end()-1
         if any(a <= start < b for a, b in functions): continue
         end = close(clean, body)+1
@@ -96,9 +96,10 @@ def split(text, origin):
                 if c == ',' and depth == 0: count += 1; has_item = False
                 elif not c.isspace(): has_item = True
             dims = f'[{count + int(has_item)}]' + dims[2:]
-        edits.append((start, end, f'extern SPIRE_CONSTANT const {m[1]} {m[2]}{dims};'))
+        storage = 'SPIRE_STORAGE' if m[1].startswith('ReadOnly<') else 'SPIRE_CONSTANT const'
+        edits.append((start, end, f'extern {storage} {m[1]} {m[2]}{dims};'))
         namespace = '::'.join(n for k,n in enclosing(start) if k == 'namespace')
-        definition = re.sub(r'^constexpr', 'SPIRE_CONSTANT const', text[start:end])
+        definition = re.sub(r'^constexpr', storage, text[start:end])
         definitions.append((m[2], f'namespace {namespace} {{\n{definition}\n}}\n'))
     for start, end, replacement in sorted(edits, reverse=True):
         text = text[:start] + replacement + text[end:]

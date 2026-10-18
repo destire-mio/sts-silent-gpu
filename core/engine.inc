@@ -12,7 +12,7 @@
 #include "core/card_lifetime.hpp"
 
 namespace spire {
-constexpr Game initial_game{};
+constexpr ReadOnly<Game> initial_game{};
 SPIRE_FN inline bool potion_can_discard_base(const Game& g, int) {
     return g.event.id == EventId::Count || !event_data(g.event.id).blocks_potions;
 }
@@ -943,7 +943,7 @@ SPIRE_FN inline void prepare_player_battle(Game& g) {
     g.player.end_turn_queued = false;
     g.player.card_in_use = -1;
     g.player.max_orbs = g.player.master_max_orbs;
-    g.orbs = initial_game.orbs;
+    g.orbs = initial_game.value.orbs;
     for (int i = 0; i < g.player.max_orbs; ++i) g.orbs.slots.push_back(-1);
     g.player.stance = Stance::Neutral;
     for (auto& count : g.stance_changes) count = 0;
@@ -1082,7 +1082,7 @@ SPIRE_FN inline void initialize_source_card_pools(Game& g) {
 
 SPIRE_FN inline void reset(Game& g, uint64_t seed, RunProfile profile = {}) {
     bind_fault(g);
-    g = initial_game;
+    g = initial_game.value;
     g.run.seed = seed;
     g.run.profile = profile;
     g.unseeded.reset(seed);

@@ -12,9 +12,11 @@
 
 #define SPIRE_INLINE __attribute__((always_inline))
 #if defined(__CUDA_ARCH__)
-#define SPIRE_CONSTANT __device__
+#define SPIRE_CONSTANT __constant__
+#define SPIRE_STORAGE __device__
 #else
 #define SPIRE_CONSTANT
+#define SPIRE_STORAGE const
 #endif
 
 #if defined(__CUDACC__)
@@ -30,6 +32,7 @@
 #endif
 
 namespace spire {
+template<class T> struct ReadOnly { const T value; };
 SPIRE_FN SPIRE_INLINE constexpr uint32_t assertion_id(const char* file, uint32_t line) {
     uint32_t hash = 2166136261u;
     while (*file) hash = (hash ^ static_cast<uint8_t>(*file++)) * 16777619u;

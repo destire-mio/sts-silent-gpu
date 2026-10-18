@@ -39,7 +39,7 @@ extern "C" __global__ void spire_encode_batch(spire::Game* games, spire::obs::Hi
 extern "C" __global__ void spire_training_initialize(spire::cuda::TrainingState b) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= b.size) return;
-    b.games[i] = spire::initial_game;
+    b.games[i] = spire::initial_game.value;
     b.histories[i] = {};
     b.finished[i] = 1;
 }

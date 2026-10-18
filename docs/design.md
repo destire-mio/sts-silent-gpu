@@ -28,7 +28,10 @@ Device C++: the code under `core/` must compile both as host C++17 and inside CU
 - no heap, no exceptions, no RTTI, no virtual functions, no recursion, no function pointers
 - no standard library beyond `<cstdint>`, `<cstddef>` and fixed-size helpers defined in `core/`
 - no mutable globals or statics; constant tables have one `const` definition per backend and
-  extern declarations. The sole exception is the per-thread fault-pointer array in CUDA block
+  extern declarations, both with `__constant__` on the device. Initial game and monster states
+  use `ReadOnly<T>` storage with a `const` payload in device global memory; their outer storage
+  is also `const` on the host. This keeps large initial states outside CUDA's 64 KiB constant
+  bank without allowing writes. The sole exception is the per-thread fault-pointer array in CUDA block
   shared memory owned by `cuda/platform.cu`; its accessor routes
   assertions to the owning `Game` and stores no rule state
 - capacities and their Java basis are documented in `porting.md`. Java growing lists have
