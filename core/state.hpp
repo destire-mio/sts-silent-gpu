@@ -332,6 +332,7 @@ struct ActionManager {
     Phase phase = Phase::WaitingOnUser;
     bool turn_has_ended = false;
     bool monster_attacks_queued = true;
+    uint8_t padding = 0;
     int total_discarded_this_turn = 0;
     int damage_received_this_turn = 0;
     int damage_received_this_combat = 0;
@@ -343,10 +344,12 @@ struct ActionManager {
 struct DialogOption { uint8_t slot; bool disabled; };
 struct Event {
     EventId id = EventId::Count;
+    uint8_t padding[3]{};
     EventState state{};
     int screen = 0;
     bool has_focus = true;
     bool no_cards = false;
+    uint8_t tail_padding[2]{};
 };
 struct MapNode {
     uint8_t edges = 0;
