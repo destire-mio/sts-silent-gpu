@@ -6,7 +6,6 @@ from pathlib import Path
 
 import torch
 import spire_gpu
-from benchmark_training import deep_routes
 
 
 def measure(size, seconds, deep):
@@ -59,6 +58,8 @@ def measure(size, seconds, deep):
 
 
 if __name__ == '__main__':
+    from benchmark_training import deep_routes
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sizes', nargs='+', type=int, default=[32, 128, 512, 2048])
     parser.add_argument('--seconds', type=float, default=5)
