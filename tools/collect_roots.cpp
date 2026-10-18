@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
+#include <set>
 #include <string>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -490,11 +491,12 @@ void collect(int64_t seed, const std::string& partition, Budget& budget, uint64_
               << ",\"max_floor\":" << max_floor << ",\"deaths\":" << deaths << ",\"wins\":" << wins
               << ",\"rollbacks\":" << rollbacks << ",\"budget_cutoff\":" << (!budget.available(end) ? "true" : "false") << "}\n" << std::flush;
 }
-void winning(int64_t seed, const std::string& partition, int stage,
+bool winning(int64_t seed, const std::string& partition, int stage,
              const std::vector<uint16_t>& prefix, Budget& budget, uint64_t run_limit, int runs) {
-    SPIRE_ASSERT(stage >= 4 && stage <= 7);
+    SPIRE_ASSERT(stage == 1 || (stage >= 4 && stage <= 7));
     Node root{}; reset(root.game, seed);
     for (auto candidate : prefix) {
+        if (!budget.available(budget.limit)) return false;
         ActionSet actions; legal_actions(root.game, actions);
         SPIRE_ASSERT(candidate < actions.size);
         budget.step(root, candidate, actions);
@@ -507,17 +509,41 @@ void winning(int64_t seed, const std::string& partition, int stage,
         while (!terminal(node.game) && node.path.size() < path_cap && budget.available(end)) {
             if (!advance(node, rng, budget, end, run < 4 ? 4 : 16, nullptr)) break;
         }
+        std::array<int, stage_count> positions;
+        positions.fill(-1);
+        const uint64_t search_decisions = budget.used - begin;
+        if (node.game.screen == Screen::Victory) {
+            Node replay{}; reset(replay.game, seed);
+            for (auto candidate : node.path) {
+                if (!budget.available(budget.limit)) return false;
+                for (int boundary = 0; boundary < stage_count; ++boundary)
+                    if (positions[boundary] < 0 && at_stage(replay.game, boundary))
+                        positions[boundary] = int(replay.path.size());
+                ActionSet actions; legal_actions(replay.game, actions);
+                SPIRE_ASSERT(candidate < actions.size);
+                budget.step(replay, candidate, actions);
+            }
+            SPIRE_ASSERT(replay.game.screen == Screen::Victory);
+        }
         std::cout << "{\"kind\":\"winning_search\",\"partition\":\"" << partition
                   << "\",\"seed\":" << seed << ",\"stage\":\"" << stages[stage]
-                  << "\",\"attempt\":" << run << ",\"decisions\":" << budget.used - begin
+                  << "\",\"attempt\":" << run << ",\"decisions\":" << search_decisions
+                  << ",\"verification_decisions\":" << budget.used - begin - search_decisions
                   << ",\"prefix_decisions\":" << prefix.size() << ",\"continuation_decisions\":" << node.path.size() - prefix.size()
                   << ",\"outcome\":\"" << (node.game.screen == Screen::Victory ? "victory" :
                       node.game.screen == Screen::Death ? "death" : "cutoff") << '"';
         if (node.game.screen == Screen::Victory) {
             std::cout << ",\"candidates\":"; path_json(node.path);
+            std::cout << ",\"stage_positions\":{";
+            for (int boundary = 0; boundary < stage_count; ++boundary)
+                std::cout << (boundary ? ",\"" : "\"") << stages[boundary] << "\":" << positions[boundary];
+            std::cout << '}';
+            signature(node.game);
         }
         std::cout << "}\n" << std::flush;
+        if (node.game.screen == Screen::Victory) return true;
     }
+    return false;
 }
 void evaluate(int64_t seed, int stage, const std::vector<uint16_t>& prefix, Budget& budget) {
     Node root{}; reset(root.game, seed);
@@ -580,6 +606,7 @@ int main(int argc, char** argv) {
     const auto wall_start = std::chrono::steady_clock::now();
     int64_t seed;
     std::string partition;
+    std::set<int64_t> winning_families;
     while (input >> partition >> seed && budget.available(limit)) {
         SPIRE_ASSERT((partition == "train" && seed >= 1000000000 && seed <= 1999999999) ||
                      (partition == "dev" && seed >= 2000000000 && seed <= 2000004095));
@@ -591,7 +618,10 @@ int main(int argc, char** argv) {
             for (auto& c : prefix) input >> c;
             SPIRE_ASSERT(input.good());
             if (mode == "evaluate") evaluate(seed, stage, prefix, budget);
-            else if (mode == "winning") winning(seed, partition, stage, prefix, budget, family_limit, trials);
+            else if (mode == "winning") {
+                if (!winning_families.count(seed) && winning(seed, partition, stage, prefix, budget, family_limit, trials))
+                    winning_families.insert(seed);
+            }
             else if (mode == "replay") replay_root(seed, partition, stage, prefix, budget);
             else collect(seed, partition, budget, family_limit, trials, prefix, stage);
         }
