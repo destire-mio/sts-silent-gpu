@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import timedelta
 from multiprocessing.connection import wait
@@ -27,23 +28,32 @@ class PipelineConfig:
     inference_chunk: int = DEFAULT_INFERENCE_CHUNK
 
 
-def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous, output, manifest):
+def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous, output, manifest, checkpoint):
     torch.set_num_threads(config.torch_threads)
     torch.set_num_interop_threads(1)
     torch.manual_seed(seed)
     device = worker_device(config.device, rank)
     model = Policy(model_config).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=ppo_config.learning_rate)
+    if checkpoint is not None:
+        model.load_state_dict(checkpoint["model"])
+        optimizer.load_state_dict(deepcopy(checkpoint["optimizer"]))
     collector = Collector(config.batch_size, config.decision_cap, config.storage_mib, device, ppo_config.gae_lambda,
                           inference_chunk=config.inference_chunk)
     dist.init_process_group("nccl" if device.type == "cuda" else "gloo", init_method=rendezvous,
                             rank=rank, world_size=config.workers, timeout=timedelta(seconds=300))
     wrapped = distributed_policy(model, device)
     rng = torch.Generator(device=device).manual_seed(seed)
-    version = 0
-    if rank == 0:
-        save_checkpoint(output / "initial.pt", model, optimizer, manifest, version)
-        save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version)
+    version, next_attempt = 0, 0
+    if checkpoint is not None:
+        version, next_attempt = checkpoint["policy_version"], checkpoint["next_attempt"]
+        state = checkpoint["rng_states"][rank]
+        torch.set_rng_state(state["torch"])
+        rng.set_state(state["ppo"])
+        if device.type == "cuda":
+            torch.cuda.set_rng_state(state["cuda"], device)
+    save_checkpoint(output / "initial.pt", model, optimizer, manifest, version, rng, next_attempt)
+    save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt)
     connection.send(version)
     rollout = None
     while (job := connection.recv()) is not None:
@@ -57,12 +67,12 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
                                  count=rollout.count, compact_bytes=int(rollout.offsets[rollout.count]), timing=rollout.timing))
         else:
             assert kind == "update" and rollout is not None
+            next_attempt, = payload
             metrics = update(wrapped, optimizer, rollout, ppo_config, device, rng, policy_version=version)
             rollout = None
             version += 1
             dist.barrier()
-            if rank == 0:
-                save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version)
+            save_checkpoint(output / "checkpoint.pt", model, optimizer, manifest, version, rng, next_attempt)
             connection.send((version, metrics))
     assert rollout is None
     dist.destroy_process_group()
@@ -70,7 +80,7 @@ def worker(connection, rank, model_config, ppo_config, config, seed, rendezvous,
 
 
 class Pipeline:
-    def __init__(self, model_config, ppo_config, config, seed, output, manifest):
+    def __init__(self, model_config, ppo_config, config, seed, output, manifest, checkpoint=None):
         assert config.workers > 0 and config.storage_mib > 0
         assert config.device in ("cpu", "cuda")
         assert config.device != "cpu" or config.workers <= 3
@@ -79,6 +89,10 @@ class Pipeline:
         self.context = mp.get_context("spawn")
         self.processes, self.connections = [], []
         self.version, self.pending = 0, None
+        self.next_attempt, self.checkpoint = 0, checkpoint
+        if checkpoint is not None:
+            assert checkpoint["format_version"] == 1 and len(checkpoint["rng_states"]) == config.workers
+            self.version, self.next_attempt = checkpoint["policy_version"], checkpoint["next_attempt"]
 
     @property
     def state(self):
@@ -104,12 +118,13 @@ class Pipeline:
         for rank in range(self.config.workers):
             parent, child = self.context.Pipe()
             process = self.context.Process(target=worker, args=(child, rank, self.model_config, self.ppo_config,
-                self.config, self.seed, (self.output / "rendezvous").resolve().as_uri(), self.output, self.manifest))
+                self.config, self.seed, (self.output / "rendezvous").resolve().as_uri(), self.output, self.manifest,
+                self.checkpoint))
             process.start()
             child.close()
             self.processes.append(process)
             self.connections.append(parent)
-        assert self.receive() == [0] * self.config.workers
+        assert self.receive() == [self.version] * self.config.workers
 
     def collect(self, roots, sampling_seed, attempts, decision_budget=None):
         assert self.pending is None and len(roots) == len(attempts) and roots
@@ -132,7 +147,8 @@ class Pipeline:
         timing = {name: sum(p["timing"][name] for p in parts) for name in
                   ("engine_encode_seconds", "inference_seconds", "storage_seconds")}
         timing["collection_seconds"] = time.perf_counter() - start
-        result = SimpleNamespace(**metrics, count=records, episodes=sorted(episodes, key=lambda e: e["attempt"]),
+        result = SimpleNamespace(**metrics, count=records, next_attempt=max(attempts) + 1,
+                                 episodes=sorted(episodes, key=lambda e: e["attempt"]),
                                  timing=timing, compact_bytes=sum(p["compact_bytes"] for p in parts) + (records + len(parts)) * 8)
         self.pending = result
         return result
@@ -142,10 +158,11 @@ class Pipeline:
         assert np.all(rollout.policy_versions == self.version), "Stale policy samples"
         start = time.perf_counter()
         for connection in self.connections:
-            connection.send(("update", self.version))
+            connection.send(("update", self.version, rollout.next_attempt))
         results = self.receive()
         assert all(version == self.version + 1 for version, _ in results)
         self.version, metrics = results[0]
+        self.next_attempt = rollout.next_attempt
         self.pending = None
         return dict(metrics, policy_version=self.version - 1, published_version=self.version,
                     learner_seconds=time.perf_counter() - start)
