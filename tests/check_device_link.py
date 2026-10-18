@@ -68,7 +68,7 @@ def main():
             output = Path(temp) / (source.stem + '.ptx')
             command = [args.compiler, '-std=c++17', '-x', 'cuda', '--cuda-device-only', '--cuda-gpu-arch=sm_70',
                        '-nocudainc', '-nocudalib', '-Xclang', '-target-feature', '-Xclang', '+ptx70',
-                       '-fgpu-rdc', '-O3', '-ffp-contract=off', '-mllvm', '-inline-threshold=5', '-S',
+                       '-fgpu-rdc', '-O3', '-ffp-contract=off', '-fno-slp-vectorize', '-mllvm', '-inline-threshold=5', '-S',
                        '-include', str(args.root / 'tests/cuda_stub/cuda_runtime.h'),
                        '-I', str(args.root / 'tests/cuda_stub'), '-I', str(args.generated),
                        '-DSPIRE_DEEP_ACTIONS="' + str(args.root / 'tests/deep_benchmark.actions') + '"',
