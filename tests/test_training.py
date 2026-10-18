@@ -66,7 +66,8 @@ class TrainingTests(unittest.TestCase):
         self.assertEqual(ids[0, 0, 0], 1)
 
     def test_step_releases_gil(self):
-        batch = spire.TrainingBatch(128, 4, 100, list(range(1000000000, 1000000256)))
+        batch = spire.TrainingBatch(2048, 1, 100, list(range(1000000000, 1000004096)))
+        selected = np.zeros(2048, dtype=np.int32)
         ready, start, ran = threading.Event(), threading.Event(), threading.Event()
 
         def python_thread():
@@ -81,7 +82,7 @@ class TrainingTests(unittest.TestCase):
         try:
             sys.setswitchinterval(1)
             start.set()
-            batch.step(np.zeros(128, dtype=np.int32))
+            batch.step(selected)
             self.assertTrue(ran.is_set(), "Python thread could not run while C++ stepped")
         finally:
             sys.setswitchinterval(interval)
