@@ -306,9 +306,11 @@ def suite(roots, build, output):
         require(stage('hardware', ['nvidia-smi'], 30))
         require(stage('configure', ['cmake', '-S', str(repo), '-B', str(build), '-DCMAKE_BUILD_TYPE=Release',
             f'-DCMAKE_CXX_COMPILER={shutil.which("clang++")}', f'-DCMAKE_CUDA_COMPILER={shutil.which("clang++")}',
+            f'-DCMAKE_CUDA_COMPILER_LAUNCHER={sys.executable};{repo / "tools/cuda_compile.py"};compile',
             f'-DCUDAToolkit_ROOT={Path(shutil.which("nvcc")).resolve().parents[1]}', '-DCMAKE_CUDA_ARCHITECTURES=70',
             f'-DPython_EXECUTABLE={sys.executable}', '-DBUILD_TESTING=ON'], 600))
-        require(stage('build', ['cmake', '--build', str(build), '--parallel', '1'], 7200))
+        require(stage('build', ['cmake', '--build', str(build), '--parallel', '2'], 7200))
+        require(stage('compile_times', [sys.executable, str(repo / 'tools/cuda_compile.py'), 'report', str(build)], 30))
         require(stage('ctest', ['ctest', '--test-dir', str(build), '--output-on-failure', '--no-tests=error', '-j1'],
                       3600))
         deadline = time.monotonic() + BUDGET_SECONDS

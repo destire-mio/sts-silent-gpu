@@ -18,24 +18,52 @@ cmake --build /private/tmp/spire-build --parallel 1
 ctest --test-dir /private/tmp/spire-build --output-on-failure
 ```
 
-Every build checks `core/` and `obs/` headers and the clang AST for device restrictions, including mutable
-globals, missing `SPIRE_FN`, heap allocation, exceptions, function pointers and recursion. Native
-checks cover RNG vectors, monster behavior and combat; Python checks cover the host API and trace
-comparison. Host floating point contraction is disabled. `cuda/batch.cu` provides one thread per
-`Game`, stepping a batch of actions, and is built only when CMake finds a CUDA compiler.
-Clang's device-LLVM smoke check covers the engine and observation encoder. CUDA sources are
-compiled by clang++ (CMake `CMAKE_CUDA_COMPILER=clang++`), the same front end as that check; NVCC
-rejects the engine's namespace-scope constexpr tables in device code. Execution on GPU hardware
-has not been tested on this machine.
+Rule bodies live in `core/**/*.inc` and `obs/*.inc`. `host/generate_content.py` emits
+public declaration headers, split `.cpp` definitions and one-line CUDA wrappers in the build
+directory. Both backends compile those same definitions. Content groups use stable four-letter
+filename ranges; core and observation routines use groups of twelve functions; dispatchers have
+separate groups. A card body or data edit changes one group's `.cpp`, leaving declaration headers
+and other groups untouched. Small fixed-container, RNG and constexpr helpers stay inline.
+Constant tables have one definition per backend. The CUDA fault-pointer array belongs to the
+single `device_fault_target` definition in `cuda/platform.cu`.
+
+The CPU reference/test library uses ThinLTO (`-flto=thin`), with the Apple linker on macOS and
+`ld.lld` on Linux (two ThinLTO workers). CUDA uses relocatable device code without device LTO.
+Both retain `-ffp-contract=off`. Every build checks restricted C++ and its clang AST for heap
+allocation, exceptions, mutable globals, function pointers and recursion. CTest's `device_link`
+uses an NVPTX-enabled clang (Homebrew LLVM on this Mac) to emit sm_70 PTX at threshold 5 for every
+CUDA unit, including host launch files and both CUDA test files. It checks external functions,
+globals, direct calls and symbol references for closure and unique definitions, rejects any unit
+above 60,000 lines, and prints each unit's lines, function count and largest function.
+The test-only runtime declarations in `tests/cuda_stub/` allow parsing host launch code without
+a toolkit; clang's own CUDA builtin-variable header supplies the real PTX special registers.
+This is a PTX interface check, not an nvlink or GPU execution test.
+
+```sh
+ctest --test-dir /private/tmp/spire-build -R '^device_link$' -V
+```
+
+The build uses the documented Clang 21
+[`-fgpu-rdc`](https://releases.llvm.org/21.1.0/tools/clang/docs/ClangCommandLineReference.html#cmdoption-clang-fgpu-rdc)
+and [`-ffp-contract`](https://releases.llvm.org/21.1.0/tools/clang/docs/ClangCommandLineReference.html#cmdoption-clang-ffp-contract)
+options, and CMake 3.31's
+[`CUDA_SEPARABLE_COMPILATION`](https://cmake.org/cmake/help/v3.31/prop_tgt/CUDA_SEPARABLE_COMPILATION.html),
+[`CUDA_RESOLVE_DEVICE_SYMBOLS`](https://cmake.org/cmake/help/v3.31/prop_tgt/CUDA_RESOLVE_DEVICE_SYMBOLS.html)
+and [`CUDA_COMPILER_LAUNCHER`](https://cmake.org/cmake/help/v3.31/prop_tgt/LANG_COMPILER_LAUNCHER.html)
+properties. `spire_cuda` remains an unresolved RDC static archive; CMake performs the nvlink step
+at each final consumer (`spire_gpu`, `test_cuda_faults`, `test_cuda_parity`), so test kernels join
+the same device link as the engine. See also Clang's
+[CUDA compilation model](https://releases.llvm.org/21.1.0/docs/CompileCudaWithLLVM.html)
+and [ThinLTO linker support](https://clang.llvm.org/docs/ThinLTO.html).
 
 ## V100 day-one check
 
-Server target: Linux x86_64 (Ubuntu 22.04 or 24.04), eight V100 GPUs (`sm_70`, 16 GB each),
+Server target: Linux x86_64 (the cluster runs CentOS Stream 9), eight V100 GPUs (`sm_70`, 16 GB each),
 CUDA Toolkit **12.8.x or 12.9.x** with development headers (CUDA 13 no longer
 compiles for `sm_70`; `nvcc` on `PATH` only locates the toolkit), NVIDIA driver **570.124.06 or
 newer** (the cluster has 580.105.08), Clang with the NVPTX backend and libstdc++ development headers
-as both C++ and CUDA compiler (the cluster has Clang 21.1.7), CMake **3.24 or newer**,
-Make, rsync, and Python **3.12** with development headers. These are the intended toolchain
+as both C++ and CUDA compiler (the cluster has Clang 21.1.7), CMake **3.31 or newer** (the cluster has 3.31.8),
+Make, LLVM lld, rsync, and Python **3.12** with development headers. These are the intended toolchain
 bounds, not a GPU validation claim. NVIDIA documents the
 [CUDA 12.8 compiler/OS requirements](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-installation-guide-linux/index.html)
 and [driver versions](https://docs.nvidia.com/cuda/archive/12.8.1/cuda-toolkit-release-notes/index.html).
@@ -79,30 +107,39 @@ It also tests a non-default CUDA stream, invalid-prefix isolation, refill and pe
 The supplied prefixes and 32 continuation decisions per root exercise the rooted workload;
 this is separate from original-game trace acceptance.
 
-CUDA compilation is memory bound: the whole-game translation unit has driven `ptxas`
-above 98 GiB on the V100 server. The check scripts build one file at a time, and CMake
-limits `ptxas` to one compilation thread. Release retains `-O3` and sets the LLVM device
-inlining threshold to 5 to reduce expanded device code. These settings reduce parallel
-memory pressure; a successful build and its peak memory still need server verification.
-Lower inlining can change GPU throughput. `tools/inline_check.sh WORK_DIR` compares explicit
-thresholds 5 and 250 sequentially, including parity and throughput checks; each uses one
-compiler and one `ptxas` thread. `SPIRE_CUDA_INLINE_THRESHOLD` is the CMake cache parameter
-for that comparison. Use a fresh build directory for each threshold.
+The previous monolithic build was reported to drive `ptxas` above 98 GiB and to be OOM-killed;
+that is a server log report, not a Mac measurement. All three check scripts now use **two parallel
+build jobs**. This permits parallel per-unit assembly while limiting the number of simultaneous
+compiler/assembler processes; it does not establish a peak-memory bound on the server.
+`CMAKE_CUDA_COMPILER_LAUNCHER` runs every CUDA compile through `/usr/bin/time -v` and keeps its
+raw output in `OBJECT.o.time`. `tools/cuda_compile.py report BUILD_DIR` prints the latest wall
+seconds, peak RSS in KiB and exit status for each object. Unchanged objects retain their prior
+compile measurements. Release remains `-O3`; `SPIRE_CUDA_INLINE_THRESHOLD` remains 5.
+`tools/inline_check.sh WORK_DIR` retains its sequential threshold-5/250 comparison, parity and
+throughput workload; each build uses two jobs and records per-unit timing. The ineffective
+`--split-compile=1` flag has been removed.
 
-To build only the GPU extension inside an existing Slurm allocation, with `clang++` and
-the CUDA toolkit's `nvcc` on `PATH`:
+Inside an existing Slurm allocation, with clang++ and the toolkit's nvcc on PATH, this command
+builds only `spire_gpu` and `test_cuda_parity`, then prints the per-unit resource table and runs
+byte parity. `SPIRE_PYTHON` names the installed server venv; no dependency download occurs:
 
 ```sh
-BUILD="$HOME/spire-gpu-build-only"
+BUILD="$HOME/spire-v100-day-one"
 mkdir -p "$BUILD/tmp"
 export TMPDIR="$BUILD/tmp"
 cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_CXX_COMPILER="$(command -v clang++)" -DCMAKE_CUDA_COMPILER="$(command -v clang++)" \
   -DCUDAToolkit_ROOT="$(dirname "$(dirname "$(realpath "$(command -v nvcc)")")")" \
-  -DCMAKE_CUDA_ARCHITECTURES=70 -DPython_EXECUTABLE="$SPIRE_PYTHON" -DBUILD_TESTING=OFF
-cmake --build "$BUILD" --target spire_gpu --parallel 1
+  -DCMAKE_CUDA_ARCHITECTURES=70 -DPython_EXECUTABLE="$SPIRE_PYTHON" -DBUILD_TESTING=ON \
+  -DCMAKE_CUDA_COMPILER_LAUNCHER="$SPIRE_PYTHON;$PWD/tools/cuda_compile.py;compile"
+cmake --build "$BUILD" --target spire_gpu test_cuda_parity --parallel 2 && \
+  "$SPIRE_PYTHON" tools/cuda_compile.py report "$BUILD" && \
+  "$BUILD/test_cuda_parity"
 export PYTHONPATH="$BUILD:$PWD"
 ```
+
+Only the server can verify assembly time/RSS, nvlink success, device resources, GPU byte parity
+and throughput. The Mac PTX check cannot establish those results.
 
 `train.run --device cuda` can read existing roots or create natural starts with only
 `spire_gpu` installed. Generating route prefixes with `train.roots` and running the full
@@ -181,8 +218,8 @@ each warmup/measured version). The supplied roots' SHA256 identifies the workloa
 Mac's CPU and device-LLVM tests; the server CUDA build, CUDA execution, memory bounds and NCCL scaling require
 this command on the target server.
 
-Both scripts reuse an existing build directory, so only changed sources are recompiled; `cuda/batch.cu` holds the whole device engine and is the slow file. `gpu_check.sh` selects GPU 0, requires CUDA, builds with one
-compiler process per allocated CPU, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
+Both scripts reuse an existing build directory, so only changed sources are recompiled.
+`gpu_check.sh` selects GPU 0, requires CUDA, builds with two jobs, runs the full CTest suite including `test_cuda_faults`, `test_cuda_parity`
 and the Python CUDA test, replays the supplied E2 prefixes on both batch implementations,
 then measures random and deep stepping plus encoding at batch sizes 32/128/512/2048/8192/32768.
 `test_cuda_parity` compares every `Game` byte and every observation/status byte after each
@@ -214,7 +251,7 @@ Roots are uploaded once per collection and replayed on the device during refill.
 exposes these same methods for reference tests, with NumPy observation buffers viewed as tensors.
 Only read from these views; the native batch owns and mutates them.
 
-The Mac checks restricted C++ and CUDA device LLVM generation, plus CPU execution of the
+The Mac checks restricted C++, CUDA device LLVM and PTX link closure, plus CPU execution of the
 same kernel bodies. The server CUDA build, GPU byte parity, device stack/resource use and V100
 throughput remain day-one checks.
 

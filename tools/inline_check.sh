@@ -17,15 +17,17 @@ declare -A thresholds=([inline5]=5 [inline250]=250)
 build() {
     local name=$1 start=$SECONDS
     cmake -S . -B "$work/$name" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER="$clang" \
-        -DCMAKE_CUDA_COMPILER="$clang" -DCUDAToolkit_ROOT="$cuda" -DCMAKE_CUDA_ARCHITECTURES=70 \
+        -DCMAKE_CUDA_COMPILER="$clang" \
+        -DCMAKE_CUDA_COMPILER_LAUNCHER="$python;$repo/tools/cuda_compile.py;compile" -DCUDAToolkit_ROOT="$cuda" -DCMAKE_CUDA_ARCHITECTURES=70 \
         -DSPIRE_CUDA_INLINE_THRESHOLD="${thresholds[$name]}" -DPython_EXECUTABLE="$python" -DBUILD_TESTING=ON \
         > "$work/$name.configure.log" 2>&1
-    cmake --build "$work/$name" --parallel 1 --target spire spire_gpu test_cuda_parity \
+    cmake --build "$work/$name" --parallel 2 --target spire spire_gpu test_cuda_parity \
         > "$work/$name.build.log" 2>&1
+    "$python" tools/cuda_compile.py report "$work/$name"
     echo "$((SECONDS - start))" > "$work/$name.seconds"
 }
 
-echo "building variants sequentially, one compiler and one ptxas thread; logs in $work"
+echo "building variants sequentially, two compiler processes per build; logs in $work"
 for name in inline5 inline250; do
     build "$name"
     echo "== $name: build $(cat "$work/$name.seconds") s"
