@@ -68,6 +68,7 @@ target_compile_options(spire_options INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:-ffp-contract=off>
     $<$<COMPILE_LANGUAGE:CUDA>:-ffp-contract=off>
     $<$<COMPILE_LANGUAGE:CUDA>:--no-offload-new-driver>
+    "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xarch_device -fno-slp-vectorize>"
     "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:-Xarch_device -mllvm=-inline-threshold=${SPIRE_CUDA_INLINE_THRESHOLD}>")
 
 target_compile_options(spire_core PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-flto=thin>)
