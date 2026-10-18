@@ -70,14 +70,43 @@ tools/gpu_check.sh "$HOME/spire-gpu-build" "$HOME/spire-e2.roots.jsonl.gz"
 tools/gpu_train_check.sh "$HOME/spire-gpu-build" "$HOME/spire-train-check" "$HOME/spire-e2.roots.jsonl.gz"
 ```
 
-`gpu_train_check.sh` requires eight V100s and builds for `sm_70` with one compiler
-process per allocated CPU (each needs about 0.4 GB); it downloads nothing. Supply the audited E2 roots (Act 3, Act 4 and Heart starts).
+`gpu_train_check.sh` requires eight V100s and builds for `sm_70`; it downloads nothing.
+Supply the audited E2 roots (Act 3, Act 4 and Heart starts).
 It runs full CTest, then compares the same fp32 policy on CPU and GPU batches: counter words,
 actions, episode outcomes, compact observation bytes, masks and policy versions must agree
 exactly; log probabilities, values, returns and advantages use `atol=rtol=3e-5`.
 It also tests a non-default CUDA stream, invalid-prefix isolation, refill and permuted lanes.
 The supplied prefixes and 32 continuation decisions per root exercise the rooted workload;
 this is separate from original-game trace acceptance.
+
+CUDA compilation is memory bound: the whole-game translation unit has driven `ptxas`
+above 98 GiB on the V100 server. The check scripts build one file at a time, and CMake
+limits `ptxas` to one compilation thread. Release retains `-O3` and sets the LLVM device
+inlining threshold to 5 to reduce expanded device code. These settings reduce parallel
+memory pressure; a successful build and its peak memory still need server verification.
+Lower inlining can change GPU throughput. `tools/inline_check.sh WORK_DIR` compares explicit
+thresholds 5 and 250 sequentially, including parity and throughput checks; each uses one
+compiler and one `ptxas` thread. `SPIRE_CUDA_INLINE_THRESHOLD` is the CMake cache parameter
+for that comparison. Use a fresh build directory for each threshold.
+
+To build only the GPU extension inside an existing Slurm allocation, with `clang++` and
+the CUDA toolkit's `nvcc` on `PATH`:
+
+```sh
+BUILD="$HOME/spire-gpu-build-only"
+mkdir -p "$BUILD/tmp"
+export TMPDIR="$BUILD/tmp"
+cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_COMPILER="$(command -v clang++)" -DCMAKE_CUDA_COMPILER="$(command -v clang++)" \
+  -DCUDAToolkit_ROOT="$(dirname "$(dirname "$(realpath "$(command -v nvcc)")")")" \
+  -DCMAKE_CUDA_ARCHITECTURES=70 -DPython_EXECUTABLE="$SPIRE_PYTHON" -DBUILD_TESTING=OFF
+cmake --build "$BUILD" --target spire_gpu --parallel 1
+export PYTHONPATH="$BUILD:$PWD"
+```
+
+`train.run --device cuda` can read existing roots or create natural starts with only
+`spire_gpu` installed. Generating route prefixes with `train.roots` and running the full
+CPU/GPU parity suite require the CPU `spire` module as well.
 
 The measurement workload uses the default 128-wide, four-layer policy and **64 continuation
 decisions per attempt**, stopping earlier on terminal outcomes. Supplied roots cycle to the lane
@@ -470,8 +499,9 @@ Root files have this format (every prefix starts at fresh Neow):
 {"observation_version": 2, "roots": [{"seed": 1000000000, "candidates": [0, 1]}]}
 ```
 
-Training cycles supplied roots in order. Natural starts use consecutive train seeds; new
-updates use new seeds. Except for the historical E1 winning route, training rejects roots
+Training cycles supplied roots in order. Natural starts use consecutive train seeds for the
+initial update target. Resuming with a larger target cycles the saved root list. Except for
+the historical E1 winning route, training rejects roots
 outside the train partition. `--init-seed` controls initialization, policy sampling and
 minibatch shuffling; planned independent initializations are 1729, 2718 and 31415.
 `--episodes` is total starts per update, `--batch-size` is lanes per GPU,
@@ -484,7 +514,9 @@ for small runs, not a pre-approved large experiment.
 
 Each fresh output directory contains config/root inputs, initial and latest checkpoints,
 update JSONL metrics and episode candidate-index logs for replay/audit. Checkpoints include
-model, optimizer, configuration, observation version and engine Git commit. Logs report
+model, optimizer, configuration, observation version and engine Git commit, along with each
+rank's CPU/CUDA RNG state, PPO shuffle-generator state, policy version and next attempt ID.
+Checkpoint files are flushed and atomically replaced after a complete update. Logs report
 starts/completions/wins, independent families won, natural starts, faults/truncations, new and
 replay decisions, per-screen normalized entropy, sampled KL, start/decision value calibration
 with screen/act breakdowns, compact bytes and coordinator peak RSS. Wall-time buckets are
@@ -492,6 +524,25 @@ collection (including transport), learner (including transport, update and check
 coordinator work. Process startup is reported separately. Engine+encode, inference and
 storage are sums of per-device work measured with CUDA events; they are not additional wall-time
 buckets. PPO time is part of learner time. The reported coordinator RSS excludes workers.
+
+Resume `train.run` from a completed update into a fresh output directory:
+
+```sh
+"$SPIRE_PYTHON" -m train.run \
+  --resume /private/tmp/trainer-runs/cuda/checkpoint.pt \
+  --output /private/tmp/trainer-runs/cuda-resumed --updates 10
+```
+
+`--updates` is the total target, so a checkpoint at update 4 continues with updates 5 through
+10. Omitting it retains the original target. Training arguments, worker count, roots and
+sampling progress come from the saved run; only the output directory and update target may
+change. Keep `roots.json` beside the checkpoint, use the same engine commit and PyTorch
+version, and keep the same device ordering. `initial.pt` in the new directory contains the
+restored policy version. An interrupted, unpublished update is repeated from the last atomic
+checkpoint; JSONL files in the new directory describe only the resumed segment. This entry
+point accepts format-1 checkpoints produced by `train.run`; older checkpoints lack the RNG
+and progress fields needed for continuation. GPU continuation equivalence still requires
+runtime validation.
 
 `tests/test_train_policy.py` compares the tensor collector against a scalar reference, including
 exact packed bytes, actions, outcomes, faults, budget cuts, refill, truncation and GAE.
