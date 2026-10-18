@@ -1,0 +1,9 @@
+{
+  "archive": "complete-training-evidence-3543.tar.gz",
+  "bytes": 415662519,
+  "sha256": "33234f75c6909e5b440166f4961b69041bb247aa1c6d4b17a4565fbb8e4f0bc4",
+  "files": 158,
+  "local_archive_sha256_matches": true,
+  "verified_files": 158,
+  "repository_json_matches": 13
+}

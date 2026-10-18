@@ -767,3 +767,49 @@ log_probs / values / returns / advantages 最大绝对误差分别为
 [FP16 scale=128 五轮](data/cpu-gpu-benchmark-2026-10-18/precision-fp16-3541-result.json)。
 同目录的 `*-initial-audit.json`、`*-final-audit.json` 保存全部 128 个价值预测和合法动作概率。
 FP16 副本、标定脚本、失败日志和 checkpoint 放在外部证据归档中，未合入最终训练代码。
+
+### 6. 最终回归、文档和证据（全部完成）
+
+最终生产源码为 `927fa6ad62d2a1a4d7efeeea07c085ead45b2b44`；其后的提交只补充文档和原始数据。
+作业 **3543** 于 **2026-10-18 23:32:15 +08:00** 结束，退出码 0：
+
+| 检查 | 结果 |
+|---|---|
+| 全部 CTest | **55/55 通过，393.50 秒** |
+| Python 回归（包含初始权重与 Slurm 设备映射检查） | **108 项通过** |
+| 原始轨迹回放 | combat/run 两个 scope 各 **853/853 条、19,401/19,401 决策完全匹配** |
+| E2 完整状态 | **8,721/8,721**；三个互斥分片各 2,907 个；Game、History、观测、状态字节及重复恢复通过 |
+| FP32 CPU/GPU 采样器 | **409 次决策、627,415 字节**；动作、结局、观测、counter 与 lane 置换检查通过 |
+| 两轮确定性更新基线 | 全部原有 rollout tensor 和更新后模型参数逐字节匹配 3516 基线 |
+| 原生模块 | CPU/GPU SHA256 与此前完全相同 |
+
+采样器 log_probs / values / returns / advantages 的最大绝对误差分别为
+1.84774e-5 / 3.18885e-6 / 1.66893e-6 / 2.32458e-6，原有 `atol=rtol=3e-5` 未放宽。
+[最终回归摘要](data/cpu-gpu-benchmark-2026-10-18/final-training-gates-3543.json)保留源码、模块哈希及精确数值。
+游戏实现、观测、原生 CUDA、原始 `tests/test_cuda_parity.cu` 和 oracle trace fixtures 相对 6b5ed71 均未改动。
+
+README 已统一 Linux/V100 toolchain、构建和检查入口，提供 train-only E2 转换、八卡命令、
+检查点续训与测量口径。检查脚本保留 Slurm 分配的 `CUDA_VISIBLE_DEVICES`，使用可见设备的相对编号，
+不再硬编码物理卡 0–7。选定工程配置为每卡 8,192 lane、chunk 512、2,549 MiB 轨迹预算、
+全局 65,536 局/轮、minibatch 8,192、epochs=1、gamma/lambda=1、cap=3,000、FP32。
+
+lane 时间利用率约 45%–49%、短程全部死亡以及更强策略的长局显存容量仍是本次结果的边界。
+本轮未改变完整局语义，没有开始正式训练；所有 Slurm 作业及训练 worker 已结束。
+第 3–5 步和最终回归都在预定 2026-10-19 00:10:00 +08:00 截止时间之前完成。
+变更留在 `codex/fix-split-build-entry`，不合并 main。
+
+#### 证据归档及核验
+
+服务器 `~/spire-downloads/` 与本地 `D:\google download\sts-silent-gpu-results\2026-10-18-ce11724\`
+均保留以下归档：
+
+| 文件 | 大小 | SHA256 |
+|---|---:|---|
+| `long-step1-evidence.tar.gz` | 见归档 | `ae0195065c4d0b3d267985bd72b7794d86a330d17c8e73410ee6c4eb3dede03f` |
+| `complete-training-evidence-3543.tar.gz` | 415,662,519 B | `33234f75c6909e5b440166f4961b69041bb247aa1c6d4b17a4565fbb8e4f0bc4` |
+
+新归档包含 158 个文件：全部成功/失败试跑日志与 JSON、完整动作记录、初始及最终 checkpoint、
+E2 输入、检查脚本、最终 LastTest.log、逐文件 SHA256 清单，以及生产和未采用 FP16 副本的 Git bundle。
+本地下载后核对了归档 SHA256、全部 **158 个文件**的大小与哈希，并验证仓库中 **13 个 JSON**
+与对应归档原件逐字节一致。[本地核验摘要](data/cpu-gpu-benchmark-2026-10-18/complete-training-verification.json)。
+大体积 checkpoint 和日志保留在上述证据目录，Git 仓库提交可审阅的代码、README、报告和结构化结果。

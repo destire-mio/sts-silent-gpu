@@ -1,0 +1,59 @@
+{
+  "job": 3543,
+  "source": "927fa6ad62d2a1a4d7efeeea07c085ead45b2b44",
+  "status": "passed",
+  "ended": "2026-10-18T23:32:15+08:00",
+  "ctest": {
+    "passed": 55,
+    "failed": 0,
+    "seconds": 393.5,
+    "python_tests": 108,
+    "trace_replay": {
+      "traces_per_scope": 853,
+      "decisions_per_scope": 19401,
+      "scopes": [
+        "combat",
+        "run"
+      ]
+    }
+  },
+  "collector": {
+    "check": "CPU/GPU collector parity",
+    "decisions": 409,
+    "compact_bytes": 627415,
+    "exact_actions_outcomes_observations": true,
+    "max_absolute_error": {
+      "log_probs": 1.8477439880371094e-05,
+      "values": 3.1888484954833984e-06,
+      "returns": 1.6689300537109375e-06,
+      "advantages": 2.3245811462402344e-06
+    }
+  },
+  "paired_updates": {
+    "updates": 2,
+    "all_rollout_and_model_bytes_match": true
+  },
+  "complete_e2_roots": {
+    "count": 8721,
+    "shards": [
+      {
+        "prefixes": 2907,
+        "exit_code": 0
+      },
+      {
+        "prefixes": 2907,
+        "exit_code": 0
+      },
+      {
+        "prefixes": 2907,
+        "exit_code": 0
+      }
+    ],
+    "repeated_restore": true
+  },
+  "native_modules_sha256": {
+    "spire.cpython-312-x86_64-linux-gnu.so": "77c8466385b346ffb73ef7884e92ec6239d29e42b7a83ef0dea4f8dad1f9c1bb",
+    "spire_gpu.cpython-312-x86_64-linux-gnu.so": "edd61d97870cb38ff3e45dc1be09a7363eaf28506faed55ae90669ab1ce51fd8"
+  },
+  "original_game_observation_native_and_oracle_sources_unchanged": true
+}
