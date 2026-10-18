@@ -282,6 +282,9 @@ def main():
                 print(json.dumps(dict(event="frontier", **event)), flush=True)
                 last_evaluated = total
                 curriculum.state["last_evaluated_decisions"] = total
+                with (args.output / "stages.jsonl").open("a") as stream:
+                    stream.write(json.dumps(dict(decisions=total, policy_version=pipeline.version,
+                        frontier=curriculum.frontier, learned=curriculum.state["learned"], event=event)) + "\n")
             else:
                 curriculum.state["stopped"] = "wall_budget_during_evaluation"
             pipeline.save_curriculum(curriculum.state_dict())
