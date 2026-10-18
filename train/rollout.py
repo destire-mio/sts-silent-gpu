@@ -236,6 +236,8 @@ class Collector:
             current[slots[finished]] = -1
         live = current[current >= 0]
         outcomes[live] = 5
+        used_bytes = int(rollout.offsets[rollout.count])
+        rollout.data = timed("storage_seconds", lambda: rollout.data[:used_bytes].clone())
         self.finish_targets(rollout, record_episode, record_decision, outcomes, bootstrap)
         synchronize(device)
         outcome_names = (None, "victory", "death", "truncated", "fault", "budget_cutoff")

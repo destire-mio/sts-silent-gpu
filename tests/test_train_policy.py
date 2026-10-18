@@ -115,6 +115,15 @@ class TrainerTests(unittest.TestCase):
         self.assertEqual(result["minibatches"], 8)
         self.assertTrue(np.isfinite(result["loss"]))
 
+    def test_collection_releases_unused_storage(self):
+        collector = Collector(2, 4, 8, self.device, .95)
+        for roots in ([dict(seed=1000000000, candidates=[])],
+                      [dict(seed=1000000000, candidates=[999])], []):
+            rollout = collector.collect(self.model, roots, 1729, range(len(roots)), policy_version=0)
+            used = int(rollout.offsets[rollout.count])
+            self.assertEqual(rollout.data.numel(), used)
+            self.assertEqual(rollout.data.untyped_storage().nbytes(), used)
+
     def test_root_cache_reuses_prefixes_and_keeps_rollout_bytes(self):
         from reference_collect import winning_root
         roots = [dict(seed=1000000000, candidates=[]), winning_root(8)]
