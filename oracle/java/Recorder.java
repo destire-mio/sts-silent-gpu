@@ -188,6 +188,8 @@ public final class Recorder {
         else if (node.room instanceof MonsterRoomBoss) AbstractDungeon.bossKey = setup.get("encounter").getAsString();
         else if (node.room instanceof MonsterRoom) AbstractDungeon.monsterList.set(0, setup.get("encounter").getAsString());
         AbstractDungeon.nextRoom = node;
+        // AbstractDungeon.nextRoomTransitionStart hides the departing room's Proceed button.
+        AbstractDungeon.overlayMenu.proceedButton.hide();
         CardCrawlGame.dungeon.nextRoomTransition();
     }
 
