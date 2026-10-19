@@ -32,7 +32,7 @@ JAVA_METHODS = {
     'reduce_power': ('actions.common.ReducePowerAction', 'update'),
     'first_strong_excluded': ('dungeons.AbstractDungeon', 'populateFirstStrongEnemy'),
     'roll_encounter': ('dungeons.AbstractDungeon', 'populateMonsterList'),
-    'advance_escape': ('monsters.AbstractMonster', 'updateEscapeAnimation'),
+    'advance_escape': ('characters.AbstractPlayer', 'updateEscapeAnimation'),
     'begin_player_turn': ('actions.GameActionManager', 'getNextAction'),
     'close_grid_screen': ('dungeons.AbstractDungeon', 'closeCurrentScreen'),
     'complete_master_selection': ('screens.select.GridCardSelectScreen', 'update'),
