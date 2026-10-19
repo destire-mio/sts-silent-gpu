@@ -253,7 +253,7 @@ def source_location(filename, line, build, function, owners):
     if path.is_relative_to(build / 'spire_generated/sources'):
         for physical, text in enumerate(path.read_text().splitlines()[:line], 1):
             directive = re.fullmatch(r'#line (\d+) "([^"]+)"', text)
-            if directive:
+            if directive and not Path(directive[2]).is_relative_to(build / 'spire_generated'):
                 source = rule_file(directive[2], build) or Path(directive[2])
                 logical = int(directive[1]) + line - physical - 1
     symbol = re.search(r'::units::(\w+)::(\w+)::(\w+)\(', function)
