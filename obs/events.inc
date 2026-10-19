@@ -108,7 +108,8 @@ SPIRE_FN inline void event_values(const Game& g, int slot, bool disabled, Token&
         break;
     case EventId::DeadAdventurer:
         if (page == 0) {
-            t.values[1] = s.DeadAdventurer.enemy + 1;
+            // DeadAdventurer.randomReward replaces the constructor's enemy clue body.
+            if (s.DeadAdventurer.numRewards == 0) t.values[1] = s.DeadAdventurer.enemy + 1;
             if (slot == 0) t.values[2] = s.DeadAdventurer.encounterChance;
         }
         break;

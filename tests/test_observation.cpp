@@ -225,6 +225,22 @@ static void event_secrets() {
     const auto with = observe(a, reveal), without = observe(a);
     require(std::memcmp(&with, &without, sizeof(with)) != 0, "transient card reveal missing");
 }
+static void adventurer_previous_clue() {
+    Game a = event(EventId::DeadAdventurer), b = a;
+    b.event.state.DeadAdventurer.enemy = (a.event.state.DeadAdventurer.enemy + 1) % 3;
+    different(a, b);
+    for (int seed = 1; ; ++seed) {
+        b = a; b.rng.misc.reset(seed);
+        step(b, {ActionKind::Choose, 0});
+        if (b.event.state.DeadAdventurer.screen == 0) break;
+    }
+    require(b.event.state.DeadAdventurer.numRewards == 1, "adventurer search fixture");
+    a = b;
+    b.event.state.DeadAdventurer.enemy = (a.event.state.DeadAdventurer.enemy + 1) % 3;
+    equal(a, b);
+    b.event.state.DeadAdventurer.encounterChance += 25;
+    different(a, b);
+}
 static void private_counters() {
     Game a = combat(), b;
     apply_power(a, player_target, player_target, PowerId::Ritual, 2);
@@ -340,7 +356,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

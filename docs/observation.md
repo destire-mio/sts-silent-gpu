@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 4 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 5 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -147,6 +147,10 @@ information omission, not permission to expose pending moves.
 | Match and Keep | face-down card backs have no card ID/stat; shown card faces and attempt count; public spatial positions | `events/shrines/GremlinMatchGame.update/render`, `AbstractCard.render` |
 | Wheel | spin control; result only after spin completes and the dialog reveals it | `events/shrines/GremlinWheelGame.preApplyResult`; preselected result denied |
 
+`DeadAdventurer.randomReward` replaces the introduction body after each successful search.
+The enemy clue is therefore denied after that first search even though the internal page
+returns to INTRO. Remembering that clue belongs to the caller.
+
 Event dynamic whitelist (unlisted event state denied):
 
 | Event and displayed page | Values | Java basis |
@@ -156,7 +160,7 @@ Event dynamic whitelist (unlisted event state denied):
 | Designer main (1) | one upgrade vs two random, remove vs transform; costs 50/75/110, damage 5 | `Designer.buttonEffect`, OPTIONS 1-13 |
 | WeMeetAgain intro (0) | offered potion/card, goldAmount | constructor OPTIONS 0/2/4 |
 | Nloth intro (0) | offered relics | constructor OPTIONS 0 |
-| DeadAdventurer intro (0) | encounterChance and enemy clue; no shuffled rewards | constructor body DESCRIPTIONS 3/4/5; `randomReward` |
+| DeadAdventurer intro (0) | encounterChance; enemy clue only before the first successful search; no shuffled rewards | constructor body DESCRIPTIONS 3/4/5; `randomReward` |
 | KnowingSkull ask (1) | potion/gold/card/leave HP costs, 90 gold | `obtainReward` dialog updates |
 | ScrapOoze intro (0) | dmg, relicObtainChance | constructor and `buttonEffect` |
 | GoopPuddle intro (0) | goldLoss, 75 gold, 11 damage | constructor |
@@ -360,7 +364,7 @@ All words are little endian; records need no alignment or end padding. There are
 in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
 8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
 return/recurrent-state storage belongs to the trainer and is not included in these sizes.
-The format is tied to protocol version 4; it is not a save/load format for games.
+The format is tied to protocol version 5; it is not a save/load format for games.
 
 Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
 gathers records by int32 indices into its preallocated dense arrays with the same shapes,
