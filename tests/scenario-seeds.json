@@ -119,6 +119,11 @@
     102,
     104
   ],
+  "Codex-MasterReality-upgrade": [
+    101,
+    102,
+    103
+  ],
   "CompileDriver-same-orbs": [
     101,
     200,
@@ -170,6 +175,11 @@
     103
   ],
   "Discovery-full-hand-two": [
+    101,
+    102,
+    103
+  ],
+  "Doppelganger-duplicated-energy-control": [
     101,
     102,
     103
@@ -354,6 +364,11 @@
     114,
     128
   ],
+  "Madness-zero-turn-cost": [
+    113,
+    125,
+    132
+  ],
   "MawBank-shop-spend": [
     101,
     102,
@@ -483,6 +498,11 @@
     101,
     102,
     103
+  ],
+  "Poison-corpse-explosion-post-combat": [
+    103,
+    104,
+    105
   ],
   "PrismaticShard-upgraded-reward": [
     101,
