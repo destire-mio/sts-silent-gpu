@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Anger",
+      "upgrades": 0
+    },
+    {
+      "id": "Anger",
+      "upgrades": 1
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 0
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    },
+    {
+      "id": "Barricade",
+      "upgrades": 0
+    },
+    {
+      "id": "Barricade",
+      "upgrades": 1
+    },
+    {
+      "id": "Battle Trance",
+      "upgrades": 0
+    },
+    {
+      "id": "Battle Trance",
+      "upgrades": 1
+    },
+    {
+      "id": "Berserk",
+      "upgrades": 0
+    },
+    {
+      "id": "Berserk",
+      "upgrades": 1
+    },
+    {
+      "id": "Blood for Blood",
+      "upgrades": 0
+    },
+    {
+      "id": "Blood for Blood",
+      "upgrades": 1
+    },
+    {
+      "id": "Bloodletting",
+      "upgrades": 0
+    },
+    {
+      "id": "Bloodletting",
+      "upgrades": 1
+    },
+    {
+      "id": "Bludgeon",
+      "upgrades": 0
+    },
+    {
+      "id": "Bludgeon",
+      "upgrades": 1
+    },
+    {
+      "id": "Body Slam",
+      "upgrades": 0
+    },
+    {
+      "id": "Body Slam",
+      "upgrades": 1
+    },
+    {
+      "id": "Brutality",
+      "upgrades": 0
+    },
+    {
+      "id": "Brutality",
+      "upgrades": 1
+    },
+    {
+      "id": "Burning Pact",
+      "upgrades": 0
+    },
+    {
+      "id": "Burning Pact",
+      "upgrades": 1
+    },
+    {
+      "id": "Carnage",
+      "upgrades": 0
+    },
+    {
+      "id": "Carnage",
+      "upgrades": 1
+    },
+    {
+      "id": "Clash",
+      "upgrades": 0
+    },
+    {
+      "id": "Clash",
+      "upgrades": 1
+    },
+    {
+      "id": "Cleave",
+      "upgrades": 0
+    },
+    {
+      "id": "Cleave",
+      "upgrades": 1
+    },
+    {
+      "id": "Clothesline",
+      "upgrades": 0
+    },
+    {
+      "id": "Clothesline",
+      "upgrades": 1
+    },
+    {
+      "id": "Combust",
+      "upgrades": 0
+    },
+    {
+      "id": "Combust",
+      "upgrades": 1
+    },
+    {
+      "id": "Corruption",
+      "upgrades": 0
+    },
+    {
+      "id": "Corruption",
+      "upgrades": 1
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 0
+    },
+    {
+      "id": "Dark Embrace",
+      "upgrades": 1
+    },
+    {
+      "id": "Demon Form",
+      "upgrades": 0
+    },
+    {
+      "id": "Demon Form",
+      "upgrades": 1
+    },
+    {
+      "id": "Disarm",
+      "upgrades": 0
+    },
+    {
+      "id": "Disarm",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

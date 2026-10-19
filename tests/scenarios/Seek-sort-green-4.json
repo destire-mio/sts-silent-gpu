@@ -1,0 +1,187 @@
+{
+  "deck": [
+    {
+      "id": "Setup",
+      "upgrades": 0
+    },
+    {
+      "id": "Setup",
+      "upgrades": 1
+    },
+    {
+      "id": "Skewer",
+      "upgrades": 0
+    },
+    {
+      "id": "Skewer",
+      "upgrades": 1
+    },
+    {
+      "id": "Slice",
+      "upgrades": 0
+    },
+    {
+      "id": "Slice",
+      "upgrades": 1
+    },
+    {
+      "id": "Storm of Steel",
+      "upgrades": 0
+    },
+    {
+      "id": "Storm of Steel",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Sucker Punch",
+      "upgrades": 0
+    },
+    {
+      "id": "Sucker Punch",
+      "upgrades": 1
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 1
+    },
+    {
+      "id": "Tactician",
+      "upgrades": 0
+    },
+    {
+      "id": "Tactician",
+      "upgrades": 1
+    },
+    {
+      "id": "Terror",
+      "upgrades": 0
+    },
+    {
+      "id": "Terror",
+      "upgrades": 1
+    },
+    {
+      "id": "Tools of the Trade",
+      "upgrades": 0
+    },
+    {
+      "id": "Tools of the Trade",
+      "upgrades": 1
+    },
+    {
+      "id": "Underhanded Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Underhanded Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Unload",
+      "upgrades": 0
+    },
+    {
+      "id": "Unload",
+      "upgrades": 1
+    },
+    {
+      "id": "Venomology",
+      "upgrades": 0
+    },
+    {
+      "id": "Venomology",
+      "upgrades": 1
+    },
+    {
+      "id": "Well Laid Plans",
+      "upgrades": 0
+    },
+    {
+      "id": "Well Laid Plans",
+      "upgrades": 1
+    },
+    {
+      "id": "Wraith Form v2",
+      "upgrades": 0
+    },
+    {
+      "id": "Wraith Form v2",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

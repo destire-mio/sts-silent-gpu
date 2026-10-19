@@ -1,0 +1,147 @@
+{
+  "deck": [
+    {
+      "id": "Bite",
+      "upgrades": 0
+    },
+    {
+      "id": "Bite",
+      "upgrades": 1
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 1
+    },
+    {
+      "id": "J.A.X.",
+      "upgrades": 0
+    },
+    {
+      "id": "J.A.X.",
+      "upgrades": 1
+    },
+    {
+      "id": "RitualDagger",
+      "upgrades": 0
+    },
+    {
+      "id": "RitualDagger",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

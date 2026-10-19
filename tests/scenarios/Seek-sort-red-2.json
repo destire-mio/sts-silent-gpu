@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Double Tap",
+      "upgrades": 0
+    },
+    {
+      "id": "Double Tap",
+      "upgrades": 1
+    },
+    {
+      "id": "Dropkick",
+      "upgrades": 0
+    },
+    {
+      "id": "Dropkick",
+      "upgrades": 1
+    },
+    {
+      "id": "Dual Wield",
+      "upgrades": 0
+    },
+    {
+      "id": "Dual Wield",
+      "upgrades": 1
+    },
+    {
+      "id": "Entrench",
+      "upgrades": 0
+    },
+    {
+      "id": "Entrench",
+      "upgrades": 1
+    },
+    {
+      "id": "Evolve",
+      "upgrades": 0
+    },
+    {
+      "id": "Evolve",
+      "upgrades": 1
+    },
+    {
+      "id": "Exhume",
+      "upgrades": 0
+    },
+    {
+      "id": "Exhume",
+      "upgrades": 1
+    },
+    {
+      "id": "Feed",
+      "upgrades": 0
+    },
+    {
+      "id": "Feed",
+      "upgrades": 1
+    },
+    {
+      "id": "Feel No Pain",
+      "upgrades": 0
+    },
+    {
+      "id": "Feel No Pain",
+      "upgrades": 1
+    },
+    {
+      "id": "Fiend Fire",
+      "upgrades": 0
+    },
+    {
+      "id": "Fiend Fire",
+      "upgrades": 1
+    },
+    {
+      "id": "Fire Breathing",
+      "upgrades": 0
+    },
+    {
+      "id": "Fire Breathing",
+      "upgrades": 1
+    },
+    {
+      "id": "Flame Barrier",
+      "upgrades": 0
+    },
+    {
+      "id": "Flame Barrier",
+      "upgrades": 1
+    },
+    {
+      "id": "Flex",
+      "upgrades": 0
+    },
+    {
+      "id": "Flex",
+      "upgrades": 1
+    },
+    {
+      "id": "Ghostly Armor",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly Armor",
+      "upgrades": 1
+    },
+    {
+      "id": "Havoc",
+      "upgrades": 0
+    },
+    {
+      "id": "Havoc",
+      "upgrades": 1
+    },
+    {
+      "id": "Headbutt",
+      "upgrades": 0
+    },
+    {
+      "id": "Headbutt",
+      "upgrades": 1
+    },
+    {
+      "id": "Heavy Blade",
+      "upgrades": 0
+    },
+    {
+      "id": "Heavy Blade",
+      "upgrades": 1
+    },
+    {
+      "id": "Hemokinesis",
+      "upgrades": 0
+    },
+    {
+      "id": "Hemokinesis",
+      "upgrades": 1
+    },
+    {
+      "id": "Immolate",
+      "upgrades": 0
+    },
+    {
+      "id": "Immolate",
+      "upgrades": 1
+    },
+    {
+      "id": "Impervious",
+      "upgrades": 0
+    },
+    {
+      "id": "Impervious",
+      "upgrades": 1
+    },
+    {
+      "id": "Infernal Blade",
+      "upgrades": 0
+    },
+    {
+      "id": "Infernal Blade",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 8,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

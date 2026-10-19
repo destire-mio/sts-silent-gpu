@@ -1184,6 +1184,111 @@
     125,
     283
   ],
+  "Seek-DeusExMachina-not-drawn": [
+    127,
+    134,
+    138
+  ],
+  "Seek-duplicated-full-hand": [
+    117,
+    129,
+    156
+  ],
+  "Seek-sort-blue-1": [
+    275,
+    624,
+    831
+  ],
+  "Seek-sort-blue-2": [
+    122,
+    275,
+    948
+  ],
+  "Seek-sort-blue-3": [
+    122,
+    275,
+    831
+  ],
+  "Seek-sort-blue-4": [
+    117,
+    192,
+    234
+  ],
+  "Seek-sort-colorless-1": [
+    443,
+    524,
+    624
+  ],
+  "Seek-sort-colorless-2": [
+    689,
+    749,
+    767
+  ],
+  "Seek-sort-curses": [
+    226,
+    302,
+    367
+  ],
+  "Seek-sort-green-1": [
+    122,
+    275,
+    831
+  ],
+  "Seek-sort-green-2": [
+    122,
+    831,
+    948
+  ],
+  "Seek-sort-green-3": [
+    476,
+    558,
+    821
+  ],
+  "Seek-sort-green-4": [
+    107,
+    164,
+    529
+  ],
+  "Seek-sort-permanent-special": [
+    226,
+    302,
+    367
+  ],
+  "Seek-sort-purple-1": [
+    929,
+    1047,
+    1580
+  ],
+  "Seek-sort-purple-3": [
+    278,
+    385,
+    591
+  ],
+  "Seek-sort-purple-4": [
+    112,
+    346,
+    381
+  ],
+  "Seek-sort-red-1": [
+    122,
+    275,
+    624
+  ],
+  "Seek-sort-red-2": [
+    278,
+    385,
+    591
+  ],
+  "Seek-sort-red-3": [
+    278,
+    385,
+    591
+  ],
+  "Seek-sort-red-4": [
+    222,
+    311,
+    363
+  ],
   "Setup-empty-hand": [
     101,
     102,

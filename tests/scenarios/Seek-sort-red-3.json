@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Inflame",
+      "upgrades": 0
+    },
+    {
+      "id": "Inflame",
+      "upgrades": 1
+    },
+    {
+      "id": "Intimidate",
+      "upgrades": 0
+    },
+    {
+      "id": "Intimidate",
+      "upgrades": 1
+    },
+    {
+      "id": "Iron Wave",
+      "upgrades": 0
+    },
+    {
+      "id": "Iron Wave",
+      "upgrades": 1
+    },
+    {
+      "id": "Juggernaut",
+      "upgrades": 0
+    },
+    {
+      "id": "Juggernaut",
+      "upgrades": 1
+    },
+    {
+      "id": "Limit Break",
+      "upgrades": 0
+    },
+    {
+      "id": "Limit Break",
+      "upgrades": 1
+    },
+    {
+      "id": "Metallicize",
+      "upgrades": 0
+    },
+    {
+      "id": "Metallicize",
+      "upgrades": 1
+    },
+    {
+      "id": "Offering",
+      "upgrades": 0
+    },
+    {
+      "id": "Offering",
+      "upgrades": 1
+    },
+    {
+      "id": "Perfected Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Perfected Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Pommel Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Pommel Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Power Through",
+      "upgrades": 0
+    },
+    {
+      "id": "Power Through",
+      "upgrades": 1
+    },
+    {
+      "id": "Pummel",
+      "upgrades": 0
+    },
+    {
+      "id": "Pummel",
+      "upgrades": 1
+    },
+    {
+      "id": "Rage",
+      "upgrades": 0
+    },
+    {
+      "id": "Rage",
+      "upgrades": 1
+    },
+    {
+      "id": "Rampage",
+      "upgrades": 0
+    },
+    {
+      "id": "Rampage",
+      "upgrades": 1
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 0
+    },
+    {
+      "id": "Reaper",
+      "upgrades": 1
+    },
+    {
+      "id": "Reckless Charge",
+      "upgrades": 0
+    },
+    {
+      "id": "Reckless Charge",
+      "upgrades": 1
+    },
+    {
+      "id": "Rupture",
+      "upgrades": 0
+    },
+    {
+      "id": "Rupture",
+      "upgrades": 1
+    },
+    {
+      "id": "Searing Blow",
+      "upgrades": 0
+    },
+    {
+      "id": "Searing Blow",
+      "upgrades": 1
+    },
+    {
+      "id": "Second Wind",
+      "upgrades": 0
+    },
+    {
+      "id": "Second Wind",
+      "upgrades": 1
+    },
+    {
+      "id": "Seeing Red",
+      "upgrades": 0
+    },
+    {
+      "id": "Seeing Red",
+      "upgrades": 1
+    },
+    {
+      "id": "Sentinel",
+      "upgrades": 0
+    },
+    {
+      "id": "Sentinel",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 8,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}
