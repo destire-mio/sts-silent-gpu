@@ -1,5 +1,5 @@
 {
-  "protocol_version": 5,
+  "protocol_version": 6,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -123,6 +123,10 @@
     {
       "field": "Live card damage/block/magic previews",
       "reason": "Java modification flags are absent from Game.Card. Protocol 3 uses the freely inspectable popup base values."
+    },
+    {
+      "field": "Second transient Match face",
+      "reason": "Settled decisions occur after the mismatched pair is covered. A transient observation boundary requires engine/caller work; remembered faces are denied as current fields."
     }
   ],
   "representation": {
@@ -190,6 +194,14 @@
       ],
       "rule": "Enemy clue only while the constructor introduction body remains, before numRewards changes.",
       "test": "tests/test_observation.cpp:adventurer_previous_clue"
+    },
+    {
+      "version": 6,
+      "fields": [
+        "History card entity"
+      ],
+      "rule": "Emit only current Match faces; caller recurrent memory owns previous reveals. History retains current RestOption labels only.",
+      "test": "tests/test_observation.cpp:match_current_screen"
     }
   ],
   "measurements_protocol_version": 2

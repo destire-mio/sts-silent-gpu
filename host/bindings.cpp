@@ -202,7 +202,6 @@ struct Environment {
     void step(const py::dict& action) {
         if (game.fault != 0) return;
         const auto selected = parse_action(action);
-        obs::record_action(reveal, game, selected);
         spire::step(game, selected);
     }
 };

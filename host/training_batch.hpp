@@ -232,7 +232,6 @@ private:
                 fail(i, static_cast<uint32_t>(obs::Fault::InvalidCandidate)); return;
             }
             const auto step_start = Clock::now();
-            obs::record_action(reveals[i], games[i], actions[i][candidate]);
             spire::step(games[i], actions[i][candidate]);
             timing_ns[i * 3 + 1] += elapsed(step_start);
             publish(i);
@@ -261,7 +260,6 @@ private:
             const int candidate = selected_[i];
             if (candidate < 0 || candidate >= actions[i].size) { fail(i, static_cast<uint32_t>(obs::Fault::InvalidCandidate)); continue; }
             const auto start = Clock::now();
-            obs::record_action(reveals[i], g, actions[i][candidate]);
             spire::step(g, actions[i][candidate]);
             timing_ns[i * 3 + 1] += elapsed(start);
             ++episode.decisions; decision_counts[i] = episode.decisions; advanced[i] = 1;

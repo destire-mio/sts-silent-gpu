@@ -205,7 +205,6 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
         break;
     default: break;
     }
-    if (history.shown) w.add(history.card);
     legal_actions(g, actions);
     if (actions.size > candidate_capacity) w.result.fault = static_cast<uint32_t>(Fault::Candidates);
     if (w.result.fault) { view.finish(0, 0, w.result.entities); actions.clear(); return {w.result.fault, 0, 0}; }

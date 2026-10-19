@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 5 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 6 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -44,12 +44,11 @@ and 133 local deep traces are 285 and 51; `inventory/observation.json` identifie
 and per-kind peaks. These are execution budgets with headroom, not Java game limits.
 Seven network arrays occupy 10,176 bytes per decision (24 bytes/entity, 7 bytes/candidate,
 64 mask bytes). Two int32 counts bring the padded observation to 10,184 bytes, versus
-36,352 array bytes in version 1. The visible-history sidecar and episode bookkeeping are
+36,352 array bytes in version 1. The displayed-label sidecar and episode bookkeeping are
 outside these arrays and outside the unchanged 37,872-byte `Game`.
 
 Device callers own one `obs::History` and a zero-initialized `obs::Observation` beside each
-game. Clear history on reset, call `obs::record_action(history, game, action)` before stepping,
-then call `obs::encode(game, history, view, private_actions)` at each settled boundary.
+game. Clear the displayed-label cache on reset, then call `obs::encode(game, history, view, private_actions)` at each settled boundary.
 A borrowed `View` requires zero-initialized backing arrays/counts on first use; preserve its
 counts across subsequent calls, including game resets and forks. The encoder overwrites
 valid rows, clears only the previously used tail, and regenerates the used mask bytes.
@@ -178,15 +177,16 @@ Event dynamic whitelist (unlisted event state denied):
 | GremlinMatchGame play (2) | attemptCount, visible faces | `render/update` |
 | GremlinWheelGame complete (1) | revealed result, displayed gold/damage | `preApplyResult` |
 
-Match positions are compact left-to-right order of remaining cards. A `History` card token
-after a click records the face the player just revealed, with its position in the preceding
-observation. This preserves the second face of a mismatched pair that Java shows for 1.25
-seconds before turning both cards down (`GremlinMatchGame.update`). The sidecar is written
-only for the clicked card, cleared on the next action/reset, and copied on a training fork.
-It is outside `Game`. No face-down unclicked card enters history.
-The same sidecar caches RestOption's displayed healing numbers on entry to each rest-room
-floor. Java constructs that description once, so later Fruit Juice use changes the top-panel
-max HP but not the button's text. Reset clears this cache and clone copies it.
+Match positions are compact left-to-right order of remaining cards. Only the currently
+face-up cards are emitted. A mismatched pair is covered before the next settled boundary
+(`GremlinMatchGame.updateMatchGameLogic`); its previous faces are not observation fields.
+The caller owns recurrent memory. The second transient reveal is currently omitted because
+there is no observation boundary during its 1.25-second display. Exposing that transition
+requires an engine/caller interface change, not an encoded history token.
+
+The `History` sidecar caches only RestOption's displayed healing numbers on entry to each
+rest-room floor. Java constructs that description once, so later Fruit Juice use changes
+the top-panel max HP but not the button's text. Reset clears this cache and clone copies it.
 
 ## MAP
 
@@ -315,7 +315,7 @@ Storage exhaustion is returned by `store` and does not end or modify a game. Oth
 codes are the unchanged core's latched assertion IDs.
 Host core invariant violations still abort the process, including in release builds.
 
-`clone(i, j)` copies the game, visible-history sidecar, root-family identity and episode decision count;
+`clone(i, j)` copies the game, displayed-label sidecar, root-family identity and episode decision count;
 it refreshes j's observation, emits no reward and consumes no seed. The caller copies its
 network memory and policy RNG separately. Mutating calls on a batch serialize; caller-owned
 input arrays and borrowed output views must not be read/written concurrently with a call.
@@ -323,7 +323,7 @@ An inference worker should receive only the seven network arrays, never the batc
 snapshot/search APIs, seed bookkeeping or the training-only clone method.
 
 `reset_to(slot, seed, candidates)` starts a fresh Neow game and replays the candidate-index
-prefix, recording visible actions and encoding every boundary to rebuild `History`.
+prefix, recording encoding every boundary to rebuild `History`.
 `reset_to_many(slots, seeds, candidates)` takes equally sized lists; each element of
 `candidates` is one prefix, and slots are distinct. Both release the GIL and serialize with
 other batch mutations. The root must be a live decision. An invalid candidate or terminal
@@ -364,7 +364,7 @@ All words are little endian; records need no alignment or end padding. There are
 in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
 8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
 return/recurrent-state storage belongs to the trainer and is not included in these sizes.
-The format is tied to protocol version 5; it is not a save/load format for games.
+The format is tied to protocol version 6; it is not a save/load format for games.
 
 Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
 gathers records by int32 indices into its preallocated dense arrays with the same shapes,

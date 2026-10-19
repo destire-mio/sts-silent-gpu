@@ -219,11 +219,8 @@ static void event_secrets() {
     const auto& s = b.event.state.GremlinMatchGame;
     Card temp = b.cards[s.cards[0]]; b.cards[s.cards[0]] = b.cards[s.cards[1]]; b.cards[s.cards[1]] = temp;
     equal(a, b);
-    obs::History reveal; obs::record_action(reveal, a, {ActionKind::Choose, 0});
-    require(reveal.shown, "clicked Match face must be recorded as visible history");
-    step(a, {ActionKind::Choose, 0});
-    const auto with = observe(a, reveal), without = observe(a);
-    require(std::memcmp(&with, &without, sizeof(with)) != 0, "transient card reveal missing");
+    b = a; step(b, {ActionKind::Choose, 0});
+    different(a, b);
 }
 static void adventurer_previous_clue() {
     Game a = event(EventId::DeadAdventurer), b = a;
@@ -240,6 +237,25 @@ static void adventurer_previous_clue() {
     equal(a, b);
     b.event.state.DeadAdventurer.encounterChance += 25;
     different(a, b);
+}
+static void match_current_screen() {
+    Game a = event(EventId::GremlinMatchGame);
+    step(a, {ActionKind::Choose, 0}); step(a, {ActionKind::Choose, 0});
+    step(a, {ActionKind::Choose, 0});
+    const auto& s = a.event.state.GremlinMatchGame;
+    int first = -1, second = -1;
+    for (int i = 1; i < s.count; ++i) {
+        const auto id = a.cards[s.cards[i]].id;
+        if (id == a.cards[s.cards[0]].id) continue;
+        if (first < 0) first = i;
+        else if (id != a.cards[s.cards[first]].id) { second = i; break; }
+    }
+    require(second >= 0, "Match fixture needs two distinct mismatches");
+    Game b = a;
+    const Action x{ActionKind::Choose, first - 1}, y{ActionKind::Choose, second - 1};
+    step(a, x); step(b, y);
+    const auto one = observe(a), two = observe(b);
+    require(std::memcmp(&one, &two, sizeof(one)) == 0, "covered Match faces remain in policy input as history");
 }
 static void private_counters() {
     Game a = combat(), b;
@@ -284,7 +300,7 @@ static void screen_local_state() {
     require(!obs::encode(a, history, before.view(), actions).fault, "rest observation failed");
     const int max_hp = a.player.creature.max_hp;
     const Action drink{ActionKind::PotionUse, 0};
-    obs::record_action(history, a, drink); step(a, drink);
+    step(a, drink);
     require(a.player.creature.max_hp > max_hp, "fruit juice positive control failed");
     require(!obs::encode(a, history, after.view(), actions).fault, "rest after potion failed");
     int rest_options = 0;
@@ -356,7 +372,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

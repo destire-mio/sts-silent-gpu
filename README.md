@@ -325,7 +325,7 @@ source = Path.home() / "spire-downloads/native-audit.roots.jsonl.gz"
 roots = [json.loads(line)["root"] for line in gzip.open(source, "rt")]
 roots = [root for root in roots if partition(root["seed"]) == "train"]
 target = source.with_name("e2-train.roots.json")
-target.write_text(json.dumps(dict(observation_version=5, roots=roots)) + "\n")
+target.write_text(json.dumps(dict(observation_version=6, roots=roots)) + "\n")
 print(len(roots), target)
 PY
 "$SPIRE_PYTHON" -m train.run --device cuda --workers 8 \
@@ -530,7 +530,7 @@ heads and feedforward width 256, about one million parameters. `--width`, `--lay
 `--heads` and `--feedforward` configure the size.
 
 This is the E1 **no memory** setting: no recurrent state or learned prefix memory. Root replay
-rebuilds the encoder's visible-history sidecar, then the network first observes the root.
+rebuilds the encoder's displayed-rest-label cache, then the network first observes the root.
 Both heads receive only the seven observation arrays. `train/` has no search, game save/load,
 reward shaping or hidden-state input.
 
@@ -628,7 +628,7 @@ They can establish continuation wiring, not unseen-seed performance.
 Root files have this format (every prefix starts at fresh Neow):
 
 ```json
-{"observation_version": 5, "roots": [{"seed": 1000000000, "candidates": [0, 1]}]}
+{"observation_version": 6, "roots": [{"seed": 1000000000, "candidates": [0, 1]}]}
 ```
 
 Training cycles supplied roots in order. Natural starts use consecutive train seeds for the
