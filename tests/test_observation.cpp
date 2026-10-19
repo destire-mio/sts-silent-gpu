@@ -293,7 +293,7 @@ static void overflow() {
     require(w.result.fault == static_cast<uint32_t>(obs::Fault::Entities), "overflow fault missing");
 }
 int main() {
-    static_assert(sizeof(Game) == 37872);
+    static_assert(sizeof(Game) == 37888);
     draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);

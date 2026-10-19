@@ -449,10 +449,12 @@ caller in the Java tree. Neither counts as matched through a different orb metho
 
 ### Orbs and stances
 
-- `Game::orbs` owns 128 eight-byte orb objects, a 32-byte two-bit type table, ten byte active slot references and a
+- `Game::orbs` owns 128 eight-byte orb objects with a 16-byte allocation bitmap, a 32-byte two-bit type table, ten byte active slot references and a
   256-entry channel history. Slots and histories refer to the same orb objects. Evoking removes
   a slot reference, not the historical object; later Focus changes affect active orbs only.
-  The object and history capacities are execution budgets and assert on exhaustion.
+  Decision-boundary collection traces slots, histories and Channel actions. Unchanneled objects
+  rejected by AbstractPlayer.channelOrb with zero slots are reclaimed. Evoked historical objects
+  remain live. The object and history capacities are execution budgets and assert on exhaustion.
 - Ten slots cover the Silent's original callers: `IncreaseMaxOrbAction.update` calls
   `increaseMaxOrbSlots(1)` repeatedly and stops at ten. The lower-level Java method checks
   equality with ten, not `>= 10`; do not replace the action's loop with one multi-slot call.
@@ -686,7 +688,7 @@ problem in those contracts with the JSON path and Java evidence while continuing
 If engine state is missing, implement its source behavior; do not substitute a trace value or
 invent a default.
 
-The CUDA parity gate compares all 37,872 Game bytes, including unused storage. Independent
+The CUDA parity gate compares all Game bytes, including unused storage. Independent
 host dispatch paths exposed uninitialized padding at orb reset, monster construction,
 card/effect bitfields, relic alignment and the Game tail. Orb reset and monster construction
 copy constant initial objects; Card, Effect, Relic and Game name and initialize the affected
