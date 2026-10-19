@@ -1,0 +1,93 @@
+{
+  "deck": [
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Cursed Key"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1000,
+  "max_hp": 1000,
+  "encounter": "Time Eater",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

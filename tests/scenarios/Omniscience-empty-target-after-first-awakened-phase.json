@@ -1,0 +1,81 @@
+{
+  "deck": [
+    {
+      "id": "Blasphemy",
+      "upgrades": 1
+    },
+    {
+      "id": "Searing Blow",
+      "upgrades": 11
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Omniscience",
+      "upgrades": 1
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Cursed Key",
+    "Lantern",
+    "SacredBark"
+  ],
+  "potions": [
+    "Energy Potion",
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Awakened One",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 2
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}

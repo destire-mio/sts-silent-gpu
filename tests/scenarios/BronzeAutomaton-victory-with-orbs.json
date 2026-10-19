@@ -1,0 +1,93 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "Snake Skull",
+    "Cursed Key",
+    "Lantern",
+    "Art of War",
+    "Runic Pyramid"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1000,
+  "max_hp": 1000,
+  "deck": [
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Deadly Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    }
+  ],
+  "encounter": "Automaton",
+  "actions": [
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 1
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

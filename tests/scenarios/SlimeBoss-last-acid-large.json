@@ -1,0 +1,95 @@
+{
+  "deck": [
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Ginger",
+    "Lantern",
+    "Vajra",
+    "Akabeko",
+    "Bag of Marbles"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Slime Boss",
+  "start": {
+    "act": 1,
+    "floor": 17,
+    "node": [
+      3,
+      14
+    ],
+    "room": "MonsterRoomBoss",
+    "gold": 0,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 2
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 2
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 2
+    }
+  ]
+}

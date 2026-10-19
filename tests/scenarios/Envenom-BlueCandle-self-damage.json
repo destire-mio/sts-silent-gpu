@@ -1,0 +1,34 @@
+{
+  "deck": [
+    {
+      "id": "Envenom",
+      "upgrades": 1
+    },
+    {
+      "id": "Regret",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Blue Candle"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

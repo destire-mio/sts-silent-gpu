@@ -1,0 +1,110 @@
+{
+  "deck": [
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    },
+    {
+      "id": "Burst",
+      "upgrades": 1
+    },
+    {
+      "id": "Blade Dance",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "Cursed Key"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1000,
+  "max_hp": 1000,
+  "encounter": "Time Eater",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 2,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 2,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 2,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 2,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Adaptation",
+      "upgrades": 0
+    },
+    {
+      "id": "Adaptation",
+      "upgrades": 1
+    },
+    {
+      "id": "Alpha",
+      "upgrades": 0
+    },
+    {
+      "id": "Alpha",
+      "upgrades": 1
+    },
+    {
+      "id": "BattleHymn",
+      "upgrades": 0
+    },
+    {
+      "id": "BattleHymn",
+      "upgrades": 1
+    },
+    {
+      "id": "Blasphemy",
+      "upgrades": 0
+    },
+    {
+      "id": "Blasphemy",
+      "upgrades": 1
+    },
+    {
+      "id": "BowlingBash",
+      "upgrades": 0
+    },
+    {
+      "id": "BowlingBash",
+      "upgrades": 1
+    },
+    {
+      "id": "Brilliance",
+      "upgrades": 0
+    },
+    {
+      "id": "Brilliance",
+      "upgrades": 1
+    },
+    {
+      "id": "CarveReality",
+      "upgrades": 0
+    },
+    {
+      "id": "CarveReality",
+      "upgrades": 1
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 0
+    },
+    {
+      "id": "ClearTheMind",
+      "upgrades": 1
+    },
+    {
+      "id": "Collect",
+      "upgrades": 0
+    },
+    {
+      "id": "Collect",
+      "upgrades": 1
+    },
+    {
+      "id": "Conclude",
+      "upgrades": 0
+    },
+    {
+      "id": "Conclude",
+      "upgrades": 1
+    },
+    {
+      "id": "ConjureBlade",
+      "upgrades": 0
+    },
+    {
+      "id": "ConjureBlade",
+      "upgrades": 1
+    },
+    {
+      "id": "Consecrate",
+      "upgrades": 0
+    },
+    {
+      "id": "Consecrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 0
+    },
+    {
+      "id": "Crescendo",
+      "upgrades": 1
+    },
+    {
+      "id": "CrushJoints",
+      "upgrades": 0
+    },
+    {
+      "id": "CrushJoints",
+      "upgrades": 1
+    },
+    {
+      "id": "CutThroughFate",
+      "upgrades": 0
+    },
+    {
+      "id": "CutThroughFate",
+      "upgrades": 1
+    },
+    {
+      "id": "DeceiveReality",
+      "upgrades": 0
+    },
+    {
+      "id": "DeceiveReality",
+      "upgrades": 1
+    },
+    {
+      "id": "DeusExMachina",
+      "upgrades": 0
+    },
+    {
+      "id": "DeusExMachina",
+      "upgrades": 1
+    },
+    {
+      "id": "DevaForm",
+      "upgrades": 0
+    },
+    {
+      "id": "DevaForm",
+      "upgrades": 1
+    },
+    {
+      "id": "Devotion",
+      "upgrades": 0
+    },
+    {
+      "id": "Devotion",
+      "upgrades": 1
+    },
+    {
+      "id": "EmptyBody",
+      "upgrades": 0
+    },
+    {
+      "id": "EmptyBody",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 5,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

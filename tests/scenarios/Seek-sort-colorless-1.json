@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Apotheosis",
+      "upgrades": 0
+    },
+    {
+      "id": "Apotheosis",
+      "upgrades": 1
+    },
+    {
+      "id": "Bandage Up",
+      "upgrades": 0
+    },
+    {
+      "id": "Bandage Up",
+      "upgrades": 1
+    },
+    {
+      "id": "Blind",
+      "upgrades": 0
+    },
+    {
+      "id": "Blind",
+      "upgrades": 1
+    },
+    {
+      "id": "Chrysalis",
+      "upgrades": 0
+    },
+    {
+      "id": "Chrysalis",
+      "upgrades": 1
+    },
+    {
+      "id": "Dark Shackles",
+      "upgrades": 0
+    },
+    {
+      "id": "Dark Shackles",
+      "upgrades": 1
+    },
+    {
+      "id": "Deep Breath",
+      "upgrades": 0
+    },
+    {
+      "id": "Deep Breath",
+      "upgrades": 1
+    },
+    {
+      "id": "Discovery",
+      "upgrades": 0
+    },
+    {
+      "id": "Discovery",
+      "upgrades": 1
+    },
+    {
+      "id": "Dramatic Entrance",
+      "upgrades": 0
+    },
+    {
+      "id": "Dramatic Entrance",
+      "upgrades": 1
+    },
+    {
+      "id": "Enlightenment",
+      "upgrades": 0
+    },
+    {
+      "id": "Enlightenment",
+      "upgrades": 1
+    },
+    {
+      "id": "Finesse",
+      "upgrades": 0
+    },
+    {
+      "id": "Finesse",
+      "upgrades": 1
+    },
+    {
+      "id": "Flash of Steel",
+      "upgrades": 0
+    },
+    {
+      "id": "Flash of Steel",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 0
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Good Instincts",
+      "upgrades": 0
+    },
+    {
+      "id": "Good Instincts",
+      "upgrades": 1
+    },
+    {
+      "id": "HandOfGreed",
+      "upgrades": 0
+    },
+    {
+      "id": "HandOfGreed",
+      "upgrades": 1
+    },
+    {
+      "id": "Impatience",
+      "upgrades": 0
+    },
+    {
+      "id": "Impatience",
+      "upgrades": 1
+    },
+    {
+      "id": "Jack Of All Trades",
+      "upgrades": 0
+    },
+    {
+      "id": "Jack Of All Trades",
+      "upgrades": 1
+    },
+    {
+      "id": "Madness",
+      "upgrades": 0
+    },
+    {
+      "id": "Madness",
+      "upgrades": 1
+    },
+    {
+      "id": "Magnetism",
+      "upgrades": 0
+    },
+    {
+      "id": "Magnetism",
+      "upgrades": 1
+    },
+    {
+      "id": "Master of Strategy",
+      "upgrades": 0
+    },
+    {
+      "id": "Master of Strategy",
+      "upgrades": 1
+    },
+    {
+      "id": "Mayhem",
+      "upgrades": 0
+    },
+    {
+      "id": "Mayhem",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 3,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

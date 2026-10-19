@@ -52,5 +52,11 @@ struct SpikeSlime_L : MonsterHooks {
             m.state.SpikeSlime_L.splitTriggered = true;
         }
     }
+    SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
+        monster_die_base(g, owner, trigger_relics);
+        for (int i = 0; i < g.manager.actions.size; ++i)
+            if (g.action_objects[g.manager.actions[i]].kind == EffectKind::SpawnMonster) return;
+        if (monsters_basically_dead(g) && g.room_kind == RoomKind::Boss) monster_onBossVictoryLogic(g, owner);
+    }
 };
 }

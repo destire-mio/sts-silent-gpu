@@ -25,5 +25,9 @@ struct SpikeSlime_M : MonsterHooks {
         }
         queue_monster_roll(g, index);
     }
+    SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
+        monster_die_base(g, owner, trigger_relics);
+        if (monsters_basically_dead(g) && g.room_kind == RoomKind::Boss) monster_onBossVictoryLogic(g, owner);
+    }
 };
 }

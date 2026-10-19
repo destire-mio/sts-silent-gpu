@@ -1,0 +1,155 @@
+{
+  "deck": [
+    {
+      "id": "Vault",
+      "upgrades": 0
+    },
+    {
+      "id": "Vault",
+      "upgrades": 1
+    },
+    {
+      "id": "Vengeance",
+      "upgrades": 0
+    },
+    {
+      "id": "Vengeance",
+      "upgrades": 1
+    },
+    {
+      "id": "Wallop",
+      "upgrades": 0
+    },
+    {
+      "id": "Wallop",
+      "upgrades": 1
+    },
+    {
+      "id": "WaveOfTheHand",
+      "upgrades": 0
+    },
+    {
+      "id": "WaveOfTheHand",
+      "upgrades": 1
+    },
+    {
+      "id": "Weave",
+      "upgrades": 0
+    },
+    {
+      "id": "Weave",
+      "upgrades": 1
+    },
+    {
+      "id": "WheelKick",
+      "upgrades": 0
+    },
+    {
+      "id": "WheelKick",
+      "upgrades": 1
+    },
+    {
+      "id": "WindmillStrike",
+      "upgrades": 0
+    },
+    {
+      "id": "WindmillStrike",
+      "upgrades": 1
+    },
+    {
+      "id": "Wireheading",
+      "upgrades": 0
+    },
+    {
+      "id": "Wireheading",
+      "upgrades": 1
+    },
+    {
+      "id": "Wish",
+      "upgrades": 0
+    },
+    {
+      "id": "Wish",
+      "upgrades": 1
+    },
+    {
+      "id": "Worship",
+      "upgrades": 0
+    },
+    {
+      "id": "Worship",
+      "upgrades": 1
+    },
+    {
+      "id": "WreathOfFlame",
+      "upgrades": 0
+    },
+    {
+      "id": "WreathOfFlame",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 6,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

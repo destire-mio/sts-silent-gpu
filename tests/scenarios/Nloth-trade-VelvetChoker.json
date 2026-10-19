@@ -1,0 +1,53 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Vajra",
+    "Velvet Choker"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 6,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 2,
+    "floor": 33,
+    "node": [
+      3,
+      14
+    ],
+    "room": "EventRoom",
+    "gold": 200,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}

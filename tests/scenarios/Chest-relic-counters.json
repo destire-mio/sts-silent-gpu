@@ -1,0 +1,63 @@
+{
+  "deck": [
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Matryoshka",
+    "NlothsMask",
+    "Cursed Key",
+    "Omamori",
+    "MealTicket",
+    "SsserpentHead",
+    "Sling"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1500,
+  "max_hp": 1500,
+  "encounter": "Cultist",
+  "start": {
+    "act": 1,
+    "floor": 9,
+    "node": [
+      3,
+      8
+    ],
+    "room": "TreasureRoom",
+    "gold": 600,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}

@@ -133,5 +133,1535 @@
     101,
     103,
     113
+  ],
+  "AcidSlime-long-move-history": [
+    103,
+    104,
+    106
+  ],
+  "ApplyStasis-basic-card-order": [
+    104,
+    106,
+    108
+  ],
+  "ApplyStasis-curse-card-order": [
+    101,
+    102,
+    103
+  ],
+  "ApplyStasis-last-draw-card": [
+    101,
+    102,
+    103
+  ],
+  "ApplyStasis-no-piles": [
+    101,
+    102,
+    103
+  ],
+  "ApplyStasis-special-card-order": [
+    104,
+    106,
+    108
+  ],
+  "Astrolabe-no-purge": [
+    101,
+    102,
+    103
+  ],
+  "Astrolabe-one-purge": [
+    101,
+    102,
+    103
+  ],
+  "Astrolabe-transform-AThousandCuts": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Accuracy": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Acrobatics": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Adrenaline": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-AfterImage": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Alchemize": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-AllOutAttack": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Apotheosis": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Apparition": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Backflip": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Backstab": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BandageUp": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Bane": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Bite": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BladeDance": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Blind": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Blur": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BouncingFlask": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BulletTime": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Burst": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CalculatedGamble": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Caltrops": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Catalyst": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Choke": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Chrysalis": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CloakAndDagger": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Clumsy": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Concentrate": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CorpseExplosion": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CripplingPoison": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DaggerSpray": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DaggerThrow": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DarkShackles": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Dash": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DeadlyPoison": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Decay": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DeepBreath": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Defend_Green": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Deflect": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DieDieDie": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Discovery": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Distraction": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DodgeAndRoll": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Doppelganger": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Doubt": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DramaticEntrance": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-EndlessAgony": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Enlightenment": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Envenom": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-EscapePlan": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Eviscerate": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Expertise": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Finesse": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Finisher": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-FlashOfSteel": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Flechettes": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-FlyingKnee": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Footwork": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Forethought": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-GlassKnife": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-GoodInstincts": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-GrandFinale": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-HandOfGreed": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-HeelHook": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Impatience": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-InfiniteBlades": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Injury": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-JAX": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-JackOfAllTrades": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-LegSweep": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Madness": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Magnetism": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Malaise": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-MasterOfStrategy": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-MasterfulStab": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Mayhem": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Metamorphosis": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-MindBlast": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Neutralize": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Nightmare": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Normality": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-NoxiousFumes": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Outmaneuver": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Pain": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Panacea": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Panache": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PanicButton": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Parasite": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PhantasmalKiller": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PiercingWail": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PoisonedStab": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Predator": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Prepared": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Purity": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-QuickSlash": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Reflex": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Regret": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-RiddleWithHoles": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-RitualDagger": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SadisticNature": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SecretTechnique": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SecretWeapon": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Setup": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Shame": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Skewer": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Slice": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SneakyStrike": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-StormOfSteel": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Strike_Green": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SuckerPunch": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Survivor": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SwiftStrike": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Tactician": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Terror": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-TheBomb": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-ThinkingAhead": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-ToolsOfTheTrade": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Transmutation": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Trip": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Unload": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Violence": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-WellLaidPlans": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-WraithForm": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Writhe": [
+    101,
+    102,
+    104
+  ],
+  "AwakenedOne-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "AwakenedOne-victory-with-cultists": [
+    136,
+    138,
+    169
+  ],
+  "Beta-snecko-discounted-upgrade": [
+    113,
+    140,
+    145
+  ],
+  "BlackStar-campfire-reroll": [
+    951,
+    1001,
+    1044
+  ],
+  "BlackStar-emerald-victory": [
+    102,
+    108,
+    111
+  ],
+  "Bonfire-no-purge": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-common": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-curse": [
+    102,
+    319,
+    336
+  ],
+  "Bonfire-offer-rare": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-special": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-uncommon": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-repeat-curse": [
+    141,
+    194,
+    440
+  ],
+  "BossReward-starter-replacement": [
+    139,
+    142,
+    191
+  ],
+  "BottledFlame-combat-reward": [
+    6442,
+    34478,
+    38999
+  ],
+  "BottledLightning-combat-reward": [
+    7516,
+    8714,
+    9009
+  ],
+  "BottledTornado-combat-reward": [
+    5495,
+    8688,
+    9816
+  ],
+  "BouncingFlask-half-dead-target": [
+    102,
+    120,
+    146
+  ],
+  "BronzeAutomaton-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "BronzeAutomaton-victory-with-orbs": [
+    187,
+    229,
+    301
+  ],
+  "CalculatedGamble-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "Chest-relic-counters": [
+    101,
+    102,
+    104
+  ],
+  "Clash-choker-base-rejection": [
+    112,
+    115,
+    121
+  ],
+  "ClearCardQueue-awakened-copied-finale": [
+    101,
+    102,
+    103
+  ],
+  "Codex-MasterReality-upgrade": [
+    101,
+    102,
+    103
+  ],
+  "ConjureBlade-ChemicalX": [
+    101,
+    102,
+    103
+  ],
+  "Darkness-LockOn-evoke": [
+    113,
+    125,
+    132
+  ],
+  "DeadAdventurer-lagavulin-ambush": [
+    145,
+    260,
+    383
+  ],
+  "DeadAdventurer-three-rewards": [
+    1568,
+    1625,
+    2125
+  ],
+  "Deca-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "Designer-random-adjustment": [
+    164,
+    448,
+    477
+  ],
+  "Designer-transform-two-cards": [
+    657,
+    685,
+    757
+  ],
+  "Discovery-MasterReality-nine": [
+    107,
+    125,
+    129
+  ],
+  "Discovery-full-hand-one": [
+    101,
+    102,
+    103
+  ],
+  "Discovery-full-hand-two": [
+    101,
+    102,
+    103
+  ],
+  "Doppelganger-duplicated-energy-control": [
+    101,
+    102,
+    103
+  ],
+  "Entrench-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
+  "EntropicBrew-SacredBark": [
+    101,
+    102,
+    103
+  ],
+  "Envenom-BlueCandle-self-damage": [
+    101,
+    103,
+    104
+  ],
+  "Exhume-discounted-upgrade": [
+    113,
+    125,
+    132
+  ],
+  "Expunger-armaments-upgrade": [
+    101,
+    103,
+    104
+  ],
+  "FirePotion-flying-vulnerable": [
+    101,
+    102,
+    103
+  ],
+  "FirePotion-slow-vulnerable": [
+    101,
+    102,
+    103
+  ],
+  "FlyingSleeves-retain-0-discards-before-death": [
+    101,
+    103,
+    104
+  ],
+  "FlyingSleeves-retain-1-discards-before-death": [
+    107,
+    113,
+    116
+  ],
+  "ForceField-created-after-power": [
+    113,
+    125,
+    132
+  ],
+  "Forethought-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "Forethought-one-card": [
+    101,
+    103,
+    104
+  ],
+  "FrozenEgg-reward-preview": [
+    1354,
+    1670,
+    1711
+  ],
+  "Girya-third-campfire-rejected": [
+    172,
+    263,
+    343
+  ],
+  "GlassKnife-duplicate": [
+    2000003426,
+    2000003428,
+    2000003429
+  ],
+  "GlassKnife-rejected-copy-no-exhaust-hooks": [
+    107,
+    109,
+    127
+  ],
+  "GlassKnife-rejected-copy-resets-cost": [
+    111,
+    178,
+    179
+  ],
+  "GlassKnife-single": [
+    2000003426,
+    2000003428,
+    2000003429
+  ],
+  "GlassKnife-triple": [
+    2000003426,
+    2000003428,
+    2000003429
+  ],
+  "GoldenIdolEvent-injury": [
+    151,
+    182,
+    185
+  ],
+  "GoldenIdolEvent-max-hp": [
+    151,
+    182,
+    185
+  ],
+  "GremlinWheelGame-outcomes": [
+    893,
+    1447,
+    2071,
+    258,
+    269,
+    754,
+    1408,
+    1521,
+    2710,
+    137,
+    599,
+    793,
+    1255,
+    1676,
+    2368,
+    436,
+    901,
+    1063
+  ],
+  "Havoc-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
+  "Hexaghost-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "Impatience-no-attacks": [
+    102,
+    103,
+    106
+  ],
+  "InfernalBlade-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
+  "Innate-overflow-after-monster-prebattle": [
+    101,
+    102,
+    103
+  ],
+  "LessonLearned-lethal-solo": [
+    113,
+    125,
+    132
+  ],
+  "Lightning-LockOn-all-enemies": [
+    101,
+    103,
+    104
+  ],
+  "LivingWall-bottled-only": [
+    108,
+    114,
+    128
+  ],
+  "LivingWall-grow": [
+    108,
+    114,
+    128
+  ],
+  "Madness-zero-turn-cost": [
+    113,
+    125,
+    132
+  ],
+  "MawBank-shop-spend": [
+    101,
+    102,
+    105
+  ],
+  "MoltenEgg-reward-preview": [
+    594,
+    887,
+    2017
+  ],
+  "Nightmare-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "Nloth-trade-BottledFlame": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-BottledLightning": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-BottledTornado": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-BustedCrown": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-CoffeeDripper": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-CursedKey": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-Ectoplasm": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-FusionHammer": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-Necronomicon": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-PhilosopherStone": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-RingOfTheSerpent": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-RunicDome": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-SneckoEye": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-Sozu": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-VelvetChoker": [
+    206,
+    579,
+    696
+  ],
+  "NlothsMask-gold-before-relic": [
+    102,
+    104,
+    110
+  ],
+  "Omniscience-empty-target-after-first-awakened-phase": [
+    2210,
+    2713,
+    4236
+  ],
+  "PandorasBox-no-basics": [
+    101,
+    102,
+    103
+  ],
+  "PeacePipe-all-protected": [
+    101,
+    102,
+    103
+  ],
+  "PeacePipe-bottled-card-filter": [
+    101,
+    102,
+    103
+  ],
+  "PeacePipe-third-campfire-rejected": [
+    172,
+    229,
+    545
+  ],
+  "PenNib-nine-attacks": [
+    127,
+    175,
+    206
+  ],
+  "PhilosopherStone-darkling-revive": [
+    101,
+    102,
+    103
+  ],
+  "PhilosopherStone-gremlin-summons": [
+    101,
+    102,
+    103
+  ],
+  "PhilosopherStone-prebattle-strength": [
+    101,
+    102,
+    103
+  ],
+  "Poison-corpse-explosion-post-combat": [
+    103,
+    104,
+    105
+  ],
+  "Pummel-half-dead-before-last-hit": [
+    101,
+    103,
+    104
+  ],
+  "Pummel-lethal-before-last-hit": [
+    101,
+    103,
+    104
+  ],
+  "Rampage-duplicate": [
+    2000003426,
+    2000003428,
+    2000003429
+  ],
+  "Reboot-shuffle-relics": [
+    129,
+    132,
+    137
+  ],
+  "ScrapOoze-lethal-failure": [
+    108,
+    172,
+    204
+  ],
+  "ScrapOoze-lethal-success": [
+    126,
+    147,
+    240
+  ],
+  "SecretTechnique-duplicated-full-hand": [
+    107,
+    125,
+    283
+  ],
+  "SecretTechnique-single-remaining-full-hand": [
+    406,
+    556,
+    1408
+  ],
+  "SecretWeapon-duplicated-full-hand": [
+    107,
+    125,
+    283
+  ],
+  "Seek-DeusExMachina-not-drawn": [
+    127,
+    134,
+    138
+  ],
+  "Seek-duplicated-full-hand": [
+    117,
+    129,
+    156
+  ],
+  "Seek-purple-pile-before-escape": [
+    122,
+    275,
+    831
+  ],
+  "Seek-sort-blue-1": [
+    275,
+    624,
+    831
+  ],
+  "Seek-sort-blue-2": [
+    122,
+    275,
+    948
+  ],
+  "Seek-sort-blue-3": [
+    122,
+    275,
+    831
+  ],
+  "Seek-sort-blue-4": [
+    117,
+    192,
+    234
+  ],
+  "Seek-sort-colorless-1": [
+    443,
+    524,
+    624
+  ],
+  "Seek-sort-colorless-2": [
+    689,
+    749,
+    767
+  ],
+  "Seek-sort-curses": [
+    226,
+    302,
+    367
+  ],
+  "Seek-sort-green-1": [
+    122,
+    275,
+    831
+  ],
+  "Seek-sort-green-2": [
+    122,
+    831,
+    948
+  ],
+  "Seek-sort-green-3": [
+    476,
+    558,
+    821
+  ],
+  "Seek-sort-green-4": [
+    107,
+    164,
+    529
+  ],
+  "Seek-sort-permanent-special": [
+    226,
+    302,
+    367
+  ],
+  "Seek-sort-purple-1": [
+    929,
+    1047,
+    1580
+  ],
+  "Seek-sort-purple-3": [
+    278,
+    385,
+    591
+  ],
+  "Seek-sort-purple-4": [
+    112,
+    346,
+    381
+  ],
+  "Seek-sort-red-1": [
+    122,
+    275,
+    624
+  ],
+  "Seek-sort-red-2": [
+    278,
+    385,
+    591
+  ],
+  "Seek-sort-red-3": [
+    278,
+    385,
+    591
+  ],
+  "Seek-sort-red-4": [
+    222,
+    311,
+    363
+  ],
+  "Setup-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "Shop-buy-Orrery": [
+    216,
+    258,
+    315
+  ],
+  "Shop-buy-membership": [
+    118,
+    127,
+    129
+  ],
+  "Shop-discounted-restocks": [
+    101,
+    102,
+    105
+  ],
+  "Shop-potions-Sozu": [
+    101,
+    102,
+    105
+  ],
+  "Shop-potions-full": [
+    101,
+    102,
+    105
+  ],
+  "Shovel-third-campfire-rejected": [
+    138,
+    221,
+    307
+  ],
+  "Skewer-flight-overflow": [
+    101,
+    102,
+    103
+  ],
+  "SlimeBoss-last-acid-large": [
+    101,
+    102,
+    103
+  ],
+  "SlimeBoss-last-spike-large": [
+    101,
+    102,
+    103
+  ],
+  "SlimeBoss-last-spike-medium": [
+    101,
+    102,
+    103
+  ],
+  "SlimeBoss-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "SlimeBoss-split-boss-victory": [
+    101,
+    102,
+    103
+  ],
+  "Sling-elite-victory": [
+    102,
+    103,
+    107
+  ],
+  "SmokeBomb-during-gambling-selection": [
+    101,
+    102,
+    103
+  ],
+  "SpireShield-first-smoke-left": [
+    111,
+    122,
+    149
+  ],
+  "SpireSpear-blocked-poison-control": [
+    109,
+    126,
+    131
+  ],
+  "SpireSpear-first-poison": [
+    111,
+    122,
+    149
+  ],
+  "SpireSpear-first-smoke-right": [
+    111,
+    122,
+    149
+  ],
+  "Stasis-full-hand-release": [
+    101,
+    104,
+    107
+  ],
+  "Stasis-seven-card-control": [
+    102,
+    111,
+    117
+  ],
+  "StoneCalendar-clears-queued-burn": [
+    101,
+    102,
+    103
+  ],
+  "StormOfSteel-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "Study-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
+  "Sunder-half-dead-energy": [
+    101,
+    103,
+    104
+  ],
+  "TheCollector-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "TheGuardian-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "TheLibrary-rare-card": [
+    121,
+    233,
+    355
+  ],
+  "TimeWarp-burst-pending": [
+    221,
+    240,
+    299
+  ],
+  "TimeWarp-conclude-on-twelfth-card": [
+    141,
+    207,
+    375
+  ],
+  "TimeWarp-twelve-cards": [
+    101,
+    102,
+    103
+  ],
+  "Tingsha-half-dead-target": [
+    171,
+    281,
+    310
+  ],
+  "TombRedMask-owned-gold": [
+    126,
+    129,
+    142
+  ],
+  "Toolbox-duplicate-choices": [
+    105,
+    135,
+    142
+  ],
+  "ToxicEgg-reward-preview": [
+    391,
+    788,
+    988
+  ],
+  "Transient-reflected-death-before-fading": [
+    774,
+    1312,
+    1490
+  ],
+  "UnceasingTop-draw-without-discard": [
+    101,
+    117,
+    119
+  ],
+  "UnceasingTop-no-draw-empty-discard": [
+    165,
+    201,
+    423
+  ],
+  "VelvetChoker-secret-card-gates": [
+    1632,
+    3300,
+    3494
+  ],
+  "VelvetChoker-six-cards": [
+    101,
+    102,
+    103
+  ],
+  "Violence-full-hand": [
+    107,
+    125,
+    129
+  ],
+  "WarpedTongs-exhausted-piles": [
+    101,
+    103,
+    104
+  ],
+  "WellLaidPlans-burn-before-retain": [
+    101,
+    103,
+    104
+  ],
+  "WingBoots-third-flight": [
+    108,
+    118,
+    121
   ]
 }

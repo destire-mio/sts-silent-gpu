@@ -1,0 +1,70 @@
+{
+  "deck": [
+    {
+      "id": "Bite",
+      "upgrades": 0
+    },
+    {
+      "id": "Bite",
+      "upgrades": 0
+    },
+    {
+      "id": "Bite",
+      "upgrades": 0
+    },
+    {
+      "id": "Bite",
+      "upgrades": 0
+    },
+    {
+      "id": "Bite",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 0
+    },
+    {
+      "id": "Ghostly",
+      "upgrades": 0
+    },
+    {
+      "id": "J.A.X.",
+      "upgrades": 0
+    },
+    {
+      "id": "RitualDagger",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Cursed Key"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Automaton",
+  "actions": [
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

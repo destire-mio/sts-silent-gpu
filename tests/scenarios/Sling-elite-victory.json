@@ -1,0 +1,53 @@
+{
+  "deck": [
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Sling",
+    "CaptainsWheel",
+    "Letter Opener"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1500,
+  "max_hp": 1500,
+  "encounter": "Gremlin Nob",
+  "start": {
+    "act": 1,
+    "floor": 6,
+    "node": [
+      3,
+      5
+    ],
+    "room": "MonsterRoomElite",
+    "gold": 200,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}

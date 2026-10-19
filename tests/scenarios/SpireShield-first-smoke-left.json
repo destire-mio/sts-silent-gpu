@@ -1,0 +1,94 @@
+{
+  "deck": [
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Deadly Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Snake Skull",
+    "Cursed Key",
+    "Lantern"
+  ],
+  "potions": [
+    "SmokeBomb",
+    null
+  ],
+  "hp": 1000,
+  "max_hp": 1000,
+  "encounter": "Shield and Spear",
+  "start": {
+    "act": 4,
+    "floor": 54,
+    "node": [
+      3,
+      2
+    ],
+    "room": "MonsterRoomElite",
+    "gold": 0,
+    "keys": [
+      true,
+      true,
+      true
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    }
+  ]
+}

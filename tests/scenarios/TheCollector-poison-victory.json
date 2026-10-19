@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Bouncing Flask",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    },
+    {
+      "id": "Catalyst",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Snake Skull",
+    "Ice Cream",
+    "Gremlin Horn",
+    "Letter Opener",
+    "CaptainsWheel"
+  ],
+  "potions": [
+    "GhostInAJar",
+    "GhostInAJar"
+  ],
+  "hp": 400,
+  "max_hp": 400,
+  "encounter": "Collector"
+}

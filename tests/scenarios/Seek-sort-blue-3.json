@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Lockon",
+      "upgrades": 0
+    },
+    {
+      "id": "Lockon",
+      "upgrades": 1
+    },
+    {
+      "id": "Loop",
+      "upgrades": 0
+    },
+    {
+      "id": "Loop",
+      "upgrades": 1
+    },
+    {
+      "id": "Machine Learning",
+      "upgrades": 0
+    },
+    {
+      "id": "Machine Learning",
+      "upgrades": 1
+    },
+    {
+      "id": "Melter",
+      "upgrades": 0
+    },
+    {
+      "id": "Melter",
+      "upgrades": 1
+    },
+    {
+      "id": "Meteor Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Meteor Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Multi-Cast",
+      "upgrades": 0
+    },
+    {
+      "id": "Multi-Cast",
+      "upgrades": 1
+    },
+    {
+      "id": "Rainbow",
+      "upgrades": 0
+    },
+    {
+      "id": "Rainbow",
+      "upgrades": 1
+    },
+    {
+      "id": "Reboot",
+      "upgrades": 0
+    },
+    {
+      "id": "Reboot",
+      "upgrades": 1
+    },
+    {
+      "id": "Rebound",
+      "upgrades": 0
+    },
+    {
+      "id": "Rebound",
+      "upgrades": 1
+    },
+    {
+      "id": "Recycle",
+      "upgrades": 0
+    },
+    {
+      "id": "Recycle",
+      "upgrades": 1
+    },
+    {
+      "id": "Redo",
+      "upgrades": 0
+    },
+    {
+      "id": "Redo",
+      "upgrades": 1
+    },
+    {
+      "id": "Reinforced Body",
+      "upgrades": 0
+    },
+    {
+      "id": "Reinforced Body",
+      "upgrades": 1
+    },
+    {
+      "id": "Reprogram",
+      "upgrades": 0
+    },
+    {
+      "id": "Reprogram",
+      "upgrades": 1
+    },
+    {
+      "id": "Rip and Tear",
+      "upgrades": 0
+    },
+    {
+      "id": "Rip and Tear",
+      "upgrades": 1
+    },
+    {
+      "id": "Scrape",
+      "upgrades": 0
+    },
+    {
+      "id": "Scrape",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    },
+    {
+      "id": "Seek",
+      "upgrades": 1
+    },
+    {
+      "id": "Self Repair",
+      "upgrades": 0
+    },
+    {
+      "id": "Self Repair",
+      "upgrades": 1
+    },
+    {
+      "id": "Skim",
+      "upgrades": 0
+    },
+    {
+      "id": "Skim",
+      "upgrades": 1
+    },
+    {
+      "id": "Stack",
+      "upgrades": 0
+    },
+    {
+      "id": "Stack",
+      "upgrades": 1
+    },
+    {
+      "id": "Static Discharge",
+      "upgrades": 0
+    },
+    {
+      "id": "Static Discharge",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

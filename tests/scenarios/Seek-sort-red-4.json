@@ -1,0 +1,163 @@
+{
+  "deck": [
+    {
+      "id": "Sever Soul",
+      "upgrades": 0
+    },
+    {
+      "id": "Sever Soul",
+      "upgrades": 1
+    },
+    {
+      "id": "Shockwave",
+      "upgrades": 0
+    },
+    {
+      "id": "Shockwave",
+      "upgrades": 1
+    },
+    {
+      "id": "Shrug It Off",
+      "upgrades": 0
+    },
+    {
+      "id": "Shrug It Off",
+      "upgrades": 1
+    },
+    {
+      "id": "Spot Weakness",
+      "upgrades": 0
+    },
+    {
+      "id": "Spot Weakness",
+      "upgrades": 1
+    },
+    {
+      "id": "Sword Boomerang",
+      "upgrades": 0
+    },
+    {
+      "id": "Sword Boomerang",
+      "upgrades": 1
+    },
+    {
+      "id": "Thunderclap",
+      "upgrades": 0
+    },
+    {
+      "id": "Thunderclap",
+      "upgrades": 1
+    },
+    {
+      "id": "True Grit",
+      "upgrades": 0
+    },
+    {
+      "id": "True Grit",
+      "upgrades": 1
+    },
+    {
+      "id": "Twin Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Twin Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Uppercut",
+      "upgrades": 0
+    },
+    {
+      "id": "Uppercut",
+      "upgrades": 1
+    },
+    {
+      "id": "Warcry",
+      "upgrades": 0
+    },
+    {
+      "id": "Warcry",
+      "upgrades": 1
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 0
+    },
+    {
+      "id": "Whirlwind",
+      "upgrades": 1
+    },
+    {
+      "id": "Wild Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Wild Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 4,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

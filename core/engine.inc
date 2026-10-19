@@ -309,6 +309,11 @@ SPIRE_FN inline void monster_die_base(Game& g, int owner, bool trigger_relics) {
             for (int p = next_power_onDeath(g, c.powers.head); p != 255; p = next_power_onDeath(g, g.power_objects[p].next)) power_onDeath(g, g.power_objects[p], owner);
         for (int i = next_relic_onMonsterDeath(g, 0); i < g.run.relics.size; i = next_relic_onMonsterDeath(g, i + 1)) relic_onMonsterDeath(g, i, owner);
     }
+    if (monsters_basically_dead(g)) {
+        g.end_turn_enabled = false;
+        for (int i = 0; i < g.limbo.size; ++i) card_resetAttributes(g, g.limbo[i]);
+        g.limbo.clear();
+    }
     c.hp = max(0, c.hp);
 }
 SPIRE_FN inline void settle_deaths_after_wait(Game& g, int frames) {
@@ -608,6 +613,7 @@ SPIRE_FN inline void end_turn_early(Game& g) {
         add_bottom(g, units::actions::UseCard::construct(g, item.card, no_target));
     }
     g.manager.card_queue.clear();
+    for (int i = 0; i < g.limbo.size; ++i) card_resetAttributes(g, g.limbo[i]);
     g.limbo.clear();
     add_bottom(g, units::actions::NewQueueCard::construct());
 }
@@ -661,11 +667,15 @@ SPIRE_FN inline void after_draw_turn_hooks(Game& g) {
 }
 SPIRE_FN inline void begin_player_turn(Game& g) {
     settle_card_moves(g);
-    // GameActionManager.getNextAction waits after the final monster; death animation cleanup
-    // precedes the next turn's power refreshes, including monsters killed by reflected damage.
+    // GameActionManager.getNextAction's final wait settles deaths that also crossed
+    // SpawnMonsterAction or ChannelAction; a death from the final attack can retain powers.
     for (int i = 0; i < g.monster_order.size; ++i) {
-        Creature& creature = g.monsters[g.monster_order[i]].creature;
-        if (creature.dying) { creature.dead = true; creature.powers.clear(); }
+        const int owner = g.monster_order[i];
+        Creature& creature = g.monsters[owner].creature;
+        if (creature.dying && ((g.deaths_before_monster_turn >> owner) & 1)) {
+            creature.dead = true;
+            creature.powers.clear();
+        }
     }
     g.deaths_before_monster_turn = 0;
     if (!g.skip_monster_turn) {
@@ -793,7 +803,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                     g.manager.card_queue[0].target = queued.target;
                 }
                 if (!card_canUse(g, queued.card, queued.target) && !card.dont_trigger_on_use_card) {
-                    remove_from_pile(g.limbo, queued.card);
+                    if (remove_from_pile(g.limbo, queued.card)) card_resetAttributes(g, queued.card);
                     g.manager.card_queue.pop_front();
                     if (card.in_autoplay) {
                         card.dont_trigger_on_use_card = true;
@@ -813,7 +823,11 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 if (card.target != CardTarget::Enemy ||
                     (queued.target != no_target && alive(get_creature(g, queued.target))))
                     use_card(g, queued.card, queued.target);
-                else remove_from_pile(g.limbo, queued.card);
+                else {
+                    const bool removed = remove_from_pile(g.limbo, queued.card);
+                    // ExhaustCardEffect.update resets rejected cards before the next settled observation.
+                    if (removed || queued.target == no_target) card_resetAttributes(g, queued.card);
+                }
             }
             remove_queued_card(g, queued.card);
         } else if (g.player.end_turn_queued && !monsters_basically_dead(g)) {
@@ -853,6 +867,9 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 Powers& powers = g.monsters[id].creature.powers;
                 for (int p = next_power_duringTurn(g, powers.head); p != 255; p = next_power_duringTurn(g, g.power_objects[p].next)) power_duringTurn(g, g.power_objects[p], id);
             }
+            // GameActionManager.getNextAction queues 1.5s after the final monster;
+            // AbstractMonster.updateDeathAnimation needs 1.8s, so reflected deaths may retain powers.
+            if (g.manager.monster_queue.empty()) add_bottom(g, units::actions::Wait::make(91));
             // GameActionManager.update refreshes the hand when getNextAction queued a monster turn but selected no action.
             if (g.manager.phase == Phase::ExecutingActions && !g.manager.using_card) {
                 g.manager.phase = Phase::WaitingOnUser;

@@ -1,0 +1,41 @@
+{
+  "deck": [
+    {
+      "id": "Infernal Blade",
+      "upgrades": 0
+    },
+    {
+      "id": "Enlightenment",
+      "upgrades": 0
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Cursed Key",
+    "Snecko Eye"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    }
+  ]
+}

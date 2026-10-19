@@ -1,0 +1,33 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "Nilry's Codex"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "deck": [
+    {
+      "id": "MasterReality",
+      "upgrades": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}

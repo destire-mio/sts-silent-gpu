@@ -1,0 +1,25 @@
+{
+  "deck": [
+    {
+      "id": "Skewer",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Chemical X"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "3 Byrds",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

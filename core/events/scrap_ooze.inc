@@ -15,7 +15,11 @@ struct ScrapOoze : EventHooks {
                 const RelicId relic = random_screenless_relic(g, random_relic_tier(g));
                 event_options(g, 1); s.screenNum = 1;
                 equip_relic(g, relic);
-            } else { s.relicObtainChance += 10; ++s.dmg; }
+            } else {
+                s.relicObtainChance += 10; ++s.dmg;
+                // GenericEventDialog.updateDialogOption appends after DeathScreen cleared the dialogs.
+                event_options(g, 2);
+            }
         } else { event_options(g, 1); s.screenNum = 1; }
     }
 };

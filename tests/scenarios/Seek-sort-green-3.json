@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    },
+    {
+      "id": "Footwork",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 0
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Grand Finale",
+      "upgrades": 0
+    },
+    {
+      "id": "Grand Finale",
+      "upgrades": 1
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 0
+    },
+    {
+      "id": "Heel Hook",
+      "upgrades": 1
+    },
+    {
+      "id": "Infinite Blades",
+      "upgrades": 0
+    },
+    {
+      "id": "Infinite Blades",
+      "upgrades": 1
+    },
+    {
+      "id": "Leg Sweep",
+      "upgrades": 0
+    },
+    {
+      "id": "Leg Sweep",
+      "upgrades": 1
+    },
+    {
+      "id": "Malaise",
+      "upgrades": 0
+    },
+    {
+      "id": "Malaise",
+      "upgrades": 1
+    },
+    {
+      "id": "Masterful Stab",
+      "upgrades": 0
+    },
+    {
+      "id": "Masterful Stab",
+      "upgrades": 1
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 1
+    },
+    {
+      "id": "Night Terror",
+      "upgrades": 0
+    },
+    {
+      "id": "Night Terror",
+      "upgrades": 1
+    },
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 0
+    },
+    {
+      "id": "Noxious Fumes",
+      "upgrades": 1
+    },
+    {
+      "id": "Outmaneuver",
+      "upgrades": 0
+    },
+    {
+      "id": "Outmaneuver",
+      "upgrades": 1
+    },
+    {
+      "id": "Phantasmal Killer",
+      "upgrades": 0
+    },
+    {
+      "id": "Phantasmal Killer",
+      "upgrades": 1
+    },
+    {
+      "id": "PiercingWail",
+      "upgrades": 0
+    },
+    {
+      "id": "PiercingWail",
+      "upgrades": 1
+    },
+    {
+      "id": "Poisoned Stab",
+      "upgrades": 0
+    },
+    {
+      "id": "Poisoned Stab",
+      "upgrades": 1
+    },
+    {
+      "id": "Predator",
+      "upgrades": 0
+    },
+    {
+      "id": "Predator",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 0
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Quick Slash",
+      "upgrades": 0
+    },
+    {
+      "id": "Quick Slash",
+      "upgrades": 1
+    },
+    {
+      "id": "Reflex",
+      "upgrades": 0
+    },
+    {
+      "id": "Reflex",
+      "upgrades": 1
+    },
+    {
+      "id": "Riddle With Holes",
+      "upgrades": 0
+    },
+    {
+      "id": "Riddle With Holes",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 3,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}
