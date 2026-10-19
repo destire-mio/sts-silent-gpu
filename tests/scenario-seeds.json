@@ -644,7 +644,7 @@
     1000000068,
     1000000069
   ],
-  "SpireShield-first-smoke-right": [
+  "SpireShield-first-smoke-left": [
     111,
     122,
     149
@@ -719,7 +719,7 @@
     788,
     988
   ],
-  "UnceasingTop-draw-without-discard": [
+  "UnceasingTop-no-draw-empty-discard": [
     165,
     201,
     423
