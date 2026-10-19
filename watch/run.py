@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 import argparse
 import gzip
 import hashlib
@@ -59,7 +60,7 @@ def checkpoint_policy(path, sampling_seed):
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     checkpoint = torch.load(path, map_location="cpu", weights_only=True)
-    assert checkpoint["config"]["observation_version"] == 2
+    assert checkpoint["config"]["observation_version"] == OBSERVATION_VERSION
     assert checkpoint["config"]["memory"] == "none"
     model = Policy(ModelConfig(**checkpoint["config"]["model"]))
     model.load_state_dict(checkpoint["model"])
@@ -167,7 +168,7 @@ def read_root(path, index):
         with gzip.open(path, "rt") as stream:
             return [json.loads(line) for line in stream][index]["root"]
     document = json.loads(path.read_text())
-    assert document["observation_version"] == 2
+    assert document["observation_version"] == OBSERVATION_VERSION
     return document["roots"][index]
 
 

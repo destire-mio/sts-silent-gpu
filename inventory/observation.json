@@ -1,5 +1,5 @@
 {
-  "protocol_version": 2,
+  "protocol_version": 13,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -117,8 +117,16 @@
       "reason": "No legal policy decision exists; covered by the batch no-decision fault test, not an oracle decision trace."
     },
     {
-      "field": "Intent visibility during selection/reward overlays",
-      "reason": "Renderer intent alpha is absent from Game; the protocol omits these intents by default deny."
+      "field": "Intent visibility during selections after turn end",
+      "reason": "Protocol 12 restores player-turn overlay intents. Per-monster alpha/target during enemy-turn selections is absent from Game, so those overlays remain denied."
+    },
+    {
+      "field": "Card modified flags after base changes",
+      "reason": "Protocol 13 emits base damage/block for uninitialized -1 caches. Game lacks Java modified flags needed when base values change after the last calculation, including Accuracy/Shiv. Discard damage and exhaust stat-copy rules remain as in v2."
+    },
+    {
+      "field": "Conditional extended card previews",
+      "reason": "Blizzard/Stack/ThunderStrike/MindBlast/SpiritShield raw-description state is absent from Game; protocol 9 denies those variables."
     }
   ],
   "representation": {
@@ -159,5 +167,101 @@
     "decisions": 172725,
     "method": "Expand each typed observation to the original semantic rows and byte masks. SHA256 of every boundary per trace matches the reference, including candidate order and padding.",
     "sha256_of_sorted_trace_observation_digests": "ce0a211152c0ad79bceaa0f01613a72d8d365418c67f872bbbf447330b03aa73"
-  }
+  },
+  "changes": [
+    {
+      "version": 3,
+      "fields": [
+        "Card.values[2]",
+        "Card.values[3]",
+        "Card.values[4]"
+      ],
+      "rule": "Use SingleCardViewPopup base damage/block/magic in every zone; deny live caches without retained Java modification flags.",
+      "test": "tests/test_observation.cpp:hidden_card_caches"
+    },
+    {
+      "version": 4,
+      "fields": [
+        "Card.flags[3:5]"
+      ],
+      "rule": "Bottle flags only on master deck or noncombat grid; deny combat instance identity.",
+      "test": "tests/test_observation.cpp:combat_bottle_identity"
+    },
+    {
+      "version": 5,
+      "fields": [
+        "DeadAdventurer Option.values[1]"
+      ],
+      "rule": "Enemy clue only while the constructor introduction body remains, before numRewards changes.",
+      "test": "tests/test_observation.cpp:adventurer_previous_clue"
+    },
+    {
+      "version": 6,
+      "fields": [
+        "History card entity"
+      ],
+      "rule": "Emit only current Match faces; caller recurrent memory owns previous reveals. History retains current RestOption labels only.",
+      "test": "tests/test_observation.cpp:match_current_screen"
+    },
+    {
+      "version": 7,
+      "fields": [
+        "Monster.values[1]"
+      ],
+      "rule": "Deny max HP when HP is zero: AbstractCreature.renderHealthText displays Dead.",
+      "test": "tests/test_observation.cpp:dead_health_label"
+    },
+    {
+      "version": 8,
+      "fields": [
+        "Screen.aux selection prompt 15"
+      ],
+      "rule": "Meditate shares prompt 14 with BetterDiscardPileToHand: both render BetterToHandAction UI strings.",
+      "test": "tests/test_observation.cpp:identical_selection_text"
+    },
+    {
+      "version": 9,
+      "fields": [
+        "Card variable mask",
+        "Card.values[2:4] for conditional description variables"
+      ],
+      "rule": "Deny EXTENDED_DESCRIPTION-only variables absent from popup stat-copy descriptions; retain Expunger setX description.",
+      "test": "tests/test_observation.cpp:conditional_card_description"
+    },
+    {
+      "version": 10,
+      "fields": [
+        "DeadAdventurer Option.values[1]",
+        "History card entity"
+      ],
+      "rule": "Caller-owned memory records only displayed facts: the initial adventurer clue through INTRO and the clicked Match face for one settled boundary; reset clears and forks copy it.",
+      "test": "tests/test_observation.cpp:adventurer_previous_clue,match_current_screen"
+    },
+    {
+      "version": 11,
+      "fields": [
+        "Card.values[2:4]"
+      ],
+      "rule": "Restore v2 live combat caches, base damage for discard, and stat-equivalent base numbers for exhaust/master/noncombat views; retain conditional-variable and bottle masks.",
+      "test": "tests/test_observation.cpp:combat_card_values,discard_damage,conditional_card_description"
+    },
+    {
+      "version": 12,
+      "fields": [
+        "Monster intent/damage/hits on player-turn overlays",
+        "Screen.aux grid prompts 15-18"
+      ],
+      "rule": "Render current intents behind player-turn selection/reward overlays; distinguish displayed attack/skill/exhaust/discard-to-top grid texts while keeping Meditate and BetterToHand shared.",
+      "test": "tests/test_observation.cpp:selection_intents,grid_prompt_text,identical_selection_text"
+    },
+    {
+      "version": 13,
+      "fields": [
+        "Card.values[2:3]"
+      ],
+      "rule": "Emit base damage/block when the live cache is -1, matching AbstractCard field initialization:105-113 and renderDynamicVariable:1775-1806; preserve other live caches, discard damage and exhaust stat-copy rules.",
+      "test": "tests/test_observation.cpp:uninitialized_card_numbers,combat_card_values,discard_damage"
+    }
+  ],
+  "measurements_protocol_version": 2
 }

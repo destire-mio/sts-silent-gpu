@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 """Bounded V100 rooted collection, memory probes and DDP weak scaling."""
 import argparse
 from dataclasses import asdict
@@ -195,7 +196,7 @@ def exact(workers, output, roots):
     model_config, ppo = ModelConfig(), PPOConfig(epochs=1, minibatch_size=256)
     config = PipelineConfig(workers=workers, batch_size=32, decision_cap=16, storage_mib=16,
                             inference_chunk=16)
-    manifest = dict(model=asdict(model_config), ppo=asdict(ppo), engine_commit='day-one', observation_version=2)
+    manifest = dict(model=asdict(model_config), ppo=asdict(ppo), engine_commit='day-one', observation_version=OBSERVATION_VERSION)
     output.mkdir()
     with Pipeline(model_config, ppo, config, 1729, output, manifest) as pipeline:
         pipeline.initialize()
@@ -213,7 +214,7 @@ def scaling(workers, size, chunk, storage, output, roots):
     ppo = PPOConfig(epochs=1, minibatch_size=MINIBATCH_PER_GPU * workers, gae_lambda=.95)
     config = PipelineConfig(workers=workers, batch_size=size, inference_chunk=chunk,
                             decision_cap=CAP, storage_mib=storage)
-    manifest = dict(model=asdict(model_config), ppo=asdict(ppo), engine_commit='day-one', observation_version=2)
+    manifest = dict(model=asdict(model_config), ppo=asdict(ppo), engine_commit='day-one', observation_version=OBSERVATION_VERSION)
     group = cycled_roots(roots, size, workers)
     total = len(group)
     output.mkdir()

@@ -61,7 +61,7 @@ SPIRE_FN inline int event_page(const Game& g) {
     SPIRE_ASSERT(false);
     return 0;
 }
-SPIRE_FN inline void event_values(const Game& g, int slot, bool disabled, Token& t) {
+SPIRE_FN inline void event_values(const Game& g, const History& history, int slot, bool disabled, Token& t) {
     const int page = event_page(g);
     const auto& s = g.event.state;
     switch (g.event.id) {
@@ -108,7 +108,7 @@ SPIRE_FN inline void event_values(const Game& g, int slot, bool disabled, Token&
         break;
     case EventId::DeadAdventurer:
         if (page == 0) {
-            t.values[1] = s.DeadAdventurer.enemy + 1;
+            t.values[1] = history.adventurer_clue;
             if (slot == 0) t.values[2] = s.DeadAdventurer.encounterChance;
         }
         break;
@@ -137,7 +137,7 @@ SPIRE_FN inline void event_values(const Game& g, int slot, bool disabled, Token&
     default: break;
     }
 }
-SPIRE_FN inline void event_entities(Writer& w, const Game& g, int* choices) {
+SPIRE_FN inline void event_entities(Writer& w, const Game& g, const History& history, int* choices) {
     const int page = event_page(g);
     const auto& s = g.event.state;
     if (g.event.id == EventId::GremlinMatchGame && page == 2) {
@@ -162,7 +162,7 @@ SPIRE_FN inline void event_entities(Writer& w, const Game& g, int* choices) {
         Token t = option(Control::EventButton, slot + 1, static_cast<int>(g.event.id) + 1);
         t.values[0] = dialog[i].disabled;
         t.values[9] = page;
-        event_values(g, slot, dialog[i].disabled, t);
+        event_values(g, history, slot, dialog[i].disabled, t);
         const int entity = w.add(t);
         if (!dialog[i].disabled) choices[choice++] = entity;
         if (g.event.id == EventId::Falling && page == 1 && !dialog[i].disabled) {

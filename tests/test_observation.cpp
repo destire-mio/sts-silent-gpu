@@ -14,13 +14,16 @@ static int positives = 0;
 static void require(bool value, const char* message) {
     if (!value) { std::fprintf(stderr, "%s\n", message); std::abort(); }
 }
-static obs::Observation observe(const Game& g, obs::History reveal = {}) {
+static obs::Observation observe_recorded(const Game& g, obs::History& reveal) {
     const Game before = g;
     obs::Observation o; ActionSet actions;
     const auto result = obs::encode(g, reveal, o.view(), actions);
     require(!result.fault, "observation fault");
     require(std::memcmp(&before, &g, sizeof(Game)) == 0, "encoder mutated Game");
     return o;
+}
+static obs::Observation observe(const Game& g, obs::History reveal = {}) {
+    return observe_recorded(g, reveal);
 }
 static void equal(const Game& a, const Game& b) {
     const auto x = observe(a), y = observe(b);
@@ -143,6 +146,180 @@ static void discard_damage() {
     a.screen = b.screen = Screen::Combat;
     different(a, b);
 }
+static void combat_card_values() {
+    Game a = combat();
+    const int index = a.hand[0];
+    a.cards[index] = make_card(CardId::IronWave);
+    apply_power(a, player_target, player_target, PowerId::Strength, 3);
+    apply_power(a, player_target, player_target, PowerId::Dexterity, 2);
+    card_applyPowers(a, index);
+    const auto& card = a.cards[index];
+    require(card.damage == card.base_damage + 3 && card.block == card_baseBlock(card) + 2, "live card fixture");
+    const auto live = obs::card_token(a, card, obs::Zone::Hand, 1, true);
+    require(live.values[3] == card.damage && live.values[4] == card.block, "combat preview lost live damage/block");
+    Game b = a; b.cards[index].damage += 7; b.cards[index].block += 9;
+    different(a, b);
+    a.cards[index] = make_card(CardId::PoisonedStab);
+    b = a; b.cards[index].magic += 4;
+    different(a, b);
+    a.hand.erase(0); a.draw.push_back(index);
+    b = a; b.cards[index].damage += 5; b.cards[index].magic += 3;
+    different(a, b);
+    open_grid_selection(a, PileId::Draw, 1, false);
+    open_grid_selection(b, PileId::Draw, 1, false);
+    different(a, b);
+    a.screen = b.screen = Screen::Combat;
+    a.draw.pop_back(); a.exhaust.push_back(index); b = a;
+    b.cards[index].damage += 5; b.cards[index].block += 9; b.cards[index].magic += 3;
+    equal(a, b);
+    b.cards[index].base_damage += 1;
+    different(a, b);
+}
+static void uninitialized_card_numbers() {
+    Game a = combat();
+    const int index = a.hand[0];
+    a.cards[index] = make_card(CardId::IronWave);
+    require(a.cards[index].damage == -1 && a.cards[index].block == -1, "uninitialized cache fixture");
+    Game b = a;
+    b.cards[index].damage = b.cards[index].base_damage;
+    b.cards[index].block = card_baseBlock(b.cards[index]);
+    equal(a, b);
+    a.hand.erase(0); a.draw.push_back(index);
+    b.hand.erase(0); b.draw.push_back(index);
+    equal(a, b);
+    open_grid_selection(a, PileId::Draw, 1, false);
+    open_grid_selection(b, PileId::Draw, 1, false);
+    equal(a, b);
+    // AbstractCard.renderDynamicVariable uses base numbers while the initial modified flags are false.
+    for (int cache : {-2, 0, 8}) {
+        a.cards[index].damage = a.cards[index].block = cache;
+        const auto t = obs::card_token(a, a.cards[index], obs::Zone::Grid, 1, true);
+        require(t.values[3] == cache && t.values[4] == cache, "initialized live cache was replaced by base");
+    }
+}
+static void conditional_card_description() {
+    // SingleCardViewPopup.open rebuilds descriptions through makeStatEquivalentCopy.
+    // These cards' conditional EXTENDED_DESCRIPTION variables do not survive that copy.
+    for (auto id : {CardId::Blizzard, CardId::Stack, CardId::ThunderStrike, CardId::MindBlast, CardId::SpiritShield}) {
+        Game a = combat();
+        const int index = a.hand.pop_back();
+        a.cards[index] = make_card(id);
+        a.exhaust.push_back(index);
+        Game b = a;
+        if (id == CardId::Blizzard || id == CardId::MindBlast) b.cards[index].base_damage += 7;
+        if (id == CardId::Stack || id == CardId::SpiritShield) b.cards[index].base_block_adjust += 9;
+        if (id == CardId::ThunderStrike) b.cards[index].base_magic += 3;
+        equal(a, b);
+    }
+    // Expunger.makeStatEquivalentCopy explicitly preserves its setX description.
+    Game a = combat();
+    a.cards[a.hand[0]] = make_card(CardId::Expunger);
+    a.cards[a.hand[0]].base_magic = a.cards[a.hand[0]].magic = 3;
+    Game b = a;
+    b.cards[b.hand[0]].base_magic = b.cards[b.hand[0]].magic = 4;
+    different(a, b);
+}
+static void combat_bottle_identity() {
+    Game a = combat(), b = a;
+    const int index = a.hand[0];
+    b.cards[index].bottle_flame = true;
+    equal(a, b);
+    a.hand.erase(0); a.draw.push_back(index);
+    b = a; b.cards[index].bottle_flame = true;
+    equal(a, b);
+    a.draw.pop_back(); a.discard.push_back(index);
+    b = a; b.cards[index].bottle_lightning = true;
+    equal(a, b);
+    a.discard.pop_back(); a.exhaust.push_back(index);
+    b = a; b.cards[index].bottle_tornado = true;
+    equal(a, b);
+    open_grid_selection(a, PileId::Exhaust, 1, false);
+    open_grid_selection(b, PileId::Exhaust, 1, false);
+    equal(a, b);
+    a = combat(); b = a;
+    b.run.master_deck[0].bottle_flame = true;
+    different(a, b);
+    a.room_phase = b.room_phase = RoomPhase::Complete;
+    open_grid_selection(a, PileId::MasterDeck, 1, false);
+    open_grid_selection(b, PileId::MasterDeck, 1, false);
+    different(a, b);
+}
+static void dead_health_label() {
+    Game a; reset(a, 123);
+    CombatSetup setup; setup.encounter = EncounterId::Darkling;
+    setup.deck = a.run.master_deck; setup.relics = a.run.relics;
+    start_combat(a, setup);
+    DamageInfo hit{}; hit.source = player_target; hit.target = 0; hit.amount = 999;
+    monster_damage(a, 0, hit); run_until_decision(a);
+    require(a.monsters[0].creature.hp == 0 && a.monsters[0].creature.half_dead, "Darkling death fixture");
+    Game b = a; b.monsters[0].creature.max_hp += 5;
+    equal(a, b);
+    a.monsters[0].creature.hp = b.monsters[0].creature.hp = 1;
+    a.monsters[0].creature.half_dead = b.monsters[0].creature.half_dead = false;
+    different(a, b);
+}
+static void identical_selection_text() {
+    Game a = combat();
+    a.discard.push_back(a.draw.pop_back()); a.discard.push_back(a.draw.pop_back());
+    Game b = a;
+    Effect retrieve{}; retrieve.kind = EffectKind::BetterDiscardPileToHand;
+    action_initialize_state(retrieve);
+    retrieve.payload.state.BetterDiscardPileToHand.numberOfCards = 1;
+    Effect meditate{}; meditate.kind = EffectKind::Meditate; meditate.extra = 1;
+    action_initialize_state(meditate);
+    add_bottom(a, retrieve); add_bottom(b, meditate);
+    run_until_decision(a); run_until_decision(b);
+    require(a.screen == Screen::Grid && b.screen == Screen::Grid, "retrieval prompt fixture");
+    equal(a, b);
+}
+static void selection_intents() {
+    for (auto screen : {Screen::Discard, Screen::Grid, Screen::CardReward}) {
+        Game a = combat();
+        if (screen == Screen::Discard) {
+            Effect discard{}; discard.kind = EffectKind::Discard; discard.amount = 1;
+            discard.source = discard.target = player_target;
+            add_bottom(a, discard); run_until_decision(a);
+        } else if (screen == Screen::Grid) {
+            a.grid_cards = a.draw; open_grid_selection(a, PileId::Grid, 1, false);
+        } else {
+            a.reward_cards.push_back(create_card(a, make_card(CardId::Strike_G)));
+            a.screen = Screen::CardReward;
+        }
+        require(a.screen == screen && !a.manager.turn_has_ended, "player selection fixture");
+        Game b = a;
+        b.monsters[0].intent = Intent::Attack; b.monsters[0].intent_damage = 39;
+        b.monsters[0].intent_multi = true; b.monsters[0].intent_hits = 4;
+        different(a, b);
+        b = a; b.monsters[0].pending_intent = Intent::Attack; b.monsters[0].pending_base_damage = 39;
+        equal(a, b);
+        b = a; b.monsters[0].intent_damage += 9;
+        a.monsters[0].intent = b.monsters[0].intent = Intent::Attack;
+        different(a, b);
+        equip_relic(a, RelicId::RunicDome); equip_relic(b, RelicId::RunicDome);
+        equal(a, b);
+        unequip_relic(a, RelicId::RunicDome); unequip_relic(b, RelicId::RunicDome);
+        a.manager.turn_has_ended = b.manager.turn_has_ended = true;
+        equal(a, b);
+    }
+}
+static void grid_prompt_text() {
+    const EffectKind kinds[]{EffectKind::AttackFromDeckToHand, EffectKind::SkillFromDeckToHand,
+                             EffectKind::Exhume, EffectKind::DiscardPileToTopOfDeck};
+    const int prompts[]{15, 16, 17, 18};
+    for (int i = 0; i < 4; ++i) {
+        Game g = combat();
+        if (i == 2) { g.exhaust.push_back(g.draw.pop_back()); g.exhaust.push_back(g.draw.pop_back()); }
+        if (i == 3) { g.discard.push_back(g.draw.pop_back()); g.discard.push_back(g.draw.pop_back()); }
+        Effect e{}; e.kind = kinds[i]; e.amount = 1; action_initialize_state(e);
+        add_bottom(g, e); run_until_decision(g);
+        require(g.screen == Screen::Grid, "grid text fixture");
+        const auto o = observe(g);
+        require(o.tags[3 * obs::entity_capacity] == prompts[i], "distinct grid text lost its prompt identity");
+        Game h = g;
+        h.action_objects[h.manager.current_action].source = no_target;
+        equal(g, h);
+    }
+}
 static Game event(EventId id) {
     Game g; reset(g, 101);
     g.event = {}; g.event.id = id; event_initialize_state(g.event);
@@ -173,11 +350,78 @@ static void event_secrets() {
     const auto& s = b.event.state.GremlinMatchGame;
     Card temp = b.cards[s.cards[0]]; b.cards[s.cards[0]] = b.cards[s.cards[1]]; b.cards[s.cards[1]] = temp;
     equal(a, b);
-    obs::History reveal; obs::record_action(reveal, a, {ActionKind::Choose, 0});
-    require(reveal.shown, "clicked Match face must be recorded as visible history");
+    b = a; step(b, {ActionKind::Choose, 0});
+    different(a, b);
+}
+static int adventurer_clue(const obs::Observation& o) {
+    for (int i = 0; i < o.entities; ++i)
+        if (o.tags[i] == static_cast<int>(obs::Kind::Option) &&
+            o.ids[3 * obs::entity_capacity + i] == static_cast<int>(EventId::DeadAdventurer) + 1)
+            return o.values[obs::entity_capacity + i];
+    return 0;
+}
+static void adventurer_previous_clue() {
+    Game a = event(EventId::DeadAdventurer), b = a;
+    b.event.state.DeadAdventurer.enemy = (a.event.state.DeadAdventurer.enemy + 1) % 3;
+    different(a, b);
+    obs::History history;
+    const int clue = adventurer_clue(observe_recorded(a, history));
+    require(clue == a.event.state.DeadAdventurer.enemy + 1, "displayed adventurer clue missing");
+    for (int seed = 1; ; ++seed) {
+        b = a; b.rng.misc.reset(seed);
+        step(b, {ActionKind::Choose, 0});
+        if (b.event.state.DeadAdventurer.screen == 0) break;
+    }
+    require(b.event.state.DeadAdventurer.numRewards == 1, "adventurer search fixture");
+    a = b;
+    b.event.state.DeadAdventurer.enemy = (a.event.state.DeadAdventurer.enemy + 1) % 3;
+    equal(a, b);
+    require(adventurer_clue(observe(a)) == 0, "unseen adventurer clue was inferred from hidden state");
+    const auto remembered = observe_recorded(a, history), changed = observe(b, history);
+    require(adventurer_clue(remembered) == clue, "displayed adventurer clue lost after search");
+    require(std::memcmp(&remembered, &changed, sizeof(remembered)) == 0, "hidden enemy overwrote remembered clue");
+    const auto copied = observe(a, history);
+    require(std::memcmp(&remembered, &copied, sizeof(copied)) == 0, "copied adventurer history changed");
+    b.event.state.DeadAdventurer.encounterChance += 25;
+    different(a, b);
+    step(a, {ActionKind::Choose, 1});
+    require(adventurer_clue(observe_recorded(a, history)) == 0, "clue outlived v2 INTRO page");
+    require(history.adventurer_clue == 0, "finished adventurer memory not cleared");
+}
+static void match_current_screen() {
+    Game a = event(EventId::GremlinMatchGame);
+    step(a, {ActionKind::Choose, 0}); step(a, {ActionKind::Choose, 0});
     step(a, {ActionKind::Choose, 0});
-    const auto with = observe(a, reveal), without = observe(a);
-    require(std::memcmp(&with, &without, sizeof(with)) != 0, "transient card reveal missing");
+    const auto& s = a.event.state.GremlinMatchGame;
+    int first = -1, second = -1;
+    for (int i = 1; i < s.count; ++i) {
+        const auto id = a.cards[s.cards[i]].id;
+        if (id == a.cards[s.cards[0]].id) continue;
+        if (first < 0) first = i;
+        else if (id != a.cards[s.cards[first]].id) { second = i; break; }
+    }
+    require(second >= 0, "Match fixture needs two distinct mismatches");
+    Game b = a;
+    const Action x{ActionKind::Choose, first - 1}, y{ActionKind::Choose, second - 1};
+    obs::History hx, hy;
+    obs::record_action(hx, a, x); obs::record_action(hy, b, y);
+    step(a, x); step(b, y);
+    equal(a, b);
+    const auto one = observe(a, hx), two = observe(b, hy), copied = observe(a, hx);
+    require(std::memcmp(&one, &two, sizeof(one)) != 0, "displayed second Match face lost before next boundary");
+    require(std::memcmp(&one, &copied, sizeof(one)) == 0, "copied Match memory changed");
+    Game hidden = a;
+    hidden.cards[s.cards[first]].id = CardId::Apotheosis;
+    const auto unseen = observe(hidden, hx);
+    require(std::memcmp(&one, &unseen, sizeof(one)) == 0, "covered face overwrote remembered face");
+    hx = {}; hy = {};
+    const auto cleared = observe(a, hx), other = observe(b, hy);
+    require(std::memcmp(&cleared, &other, sizeof(cleared)) == 0, "reset retained Match history");
+    obs::record_action(hx, a, {ActionKind::Choose, 0});
+    require(hx.shown && hx.card.ids[4] == 1, "next Match action did not replace previous face");
+    a.event.state.GremlinMatchGame.screen = 3;
+    obs::record_action(hx, a, {ActionKind::Choose, 0});
+    require(!hx.shown, "Match memory outlived the next action");
 }
 static void private_counters() {
     Game a = combat(), b;
@@ -222,7 +466,7 @@ static void screen_local_state() {
     require(!obs::encode(a, history, before.view(), actions).fault, "rest observation failed");
     const int max_hp = a.player.creature.max_hp;
     const Action drink{ActionKind::PotionUse, 0};
-    obs::record_action(history, a, drink); step(a, drink);
+    step(a, drink);
     require(a.player.creature.max_hp > max_hp, "fruit juice positive control failed");
     require(!obs::encode(a, history, after.view(), actions).fault, "rest after potion failed");
     int rest_options = 0;
@@ -294,7 +538,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37888);
-    draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    selection_intents(); grid_prompt_text(); conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); uninitialized_card_numbers(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

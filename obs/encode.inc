@@ -14,17 +14,20 @@ SPIRE_FN inline int selection_prompt(const Game& g) {
     case EffectKind::Discard: case EffectKind::GamblingChipAction: return 4;
     case EffectKind::Exhaust: case EffectKind::Recycle: return 5;
     case EffectKind::RetainCards: return 6;
-    case EffectKind::PutOnDeck: case EffectKind::DiscardPileToTopOfDeck: return 7;
+    case EffectKind::PutOnDeck: return 7;
+    case EffectKind::DiscardPileToTopOfDeck: return 18;
     case EffectKind::Forethought: return 8;
     case EffectKind::DualWield: return 9;
     case EffectKind::NightmareAction: return 10;
     case EffectKind::Setup: return 11;
     case EffectKind::Scry: return 12;
     case EffectKind::Omniscience: return 13;
+    // MeditateAction.update and BetterDiscardPileToHandAction.update share BetterToHandAction text.
     case EffectKind::BetterDiscardPileToHand: case EffectKind::BetterDrawPileToHand:
-    case EffectKind::AttackFromDeckToHand: case EffectKind::SkillFromDeckToHand:
-    case EffectKind::Exhume: return 14;
-    case EffectKind::Meditate: return 15;
+    case EffectKind::Meditate: return 14;
+    case EffectKind::AttackFromDeckToHand: return 15;
+    case EffectKind::SkillFromDeckToHand: return 16;
+    case EffectKind::Exhume: return 17;
     default: return 0;
     }
 }
@@ -74,6 +77,7 @@ SPIRE_FN inline void map_entities(Writer& w, const Game& g, int* options) {
 SPIRE_FN inline Result encode(const Game& g, History& history, View view, ActionSet& actions) {
     actions.clear();
     if (g.fault) { view.finish(0, 0); return {g.fault, 0, 0}; }
+    record_event(history, g);
     Writer w{view};
     int hands[hand_limit]{}, monsters[monster_capacity]{}, potions[potion_capacity]{}, options[card_capacity]{};
     Token screen = token(Kind::Screen, static_cast<int>(g.screen) + 1);
@@ -117,9 +121,14 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
             const auto& c = m.creature;
             if (c.dead || c.escaped) continue;
             Token t = token(Kind::Monster, static_cast<int>(m.id) + 1, Zone::None, ++position);
-            t.values[0] = c.hp; t.values[1] = c.max_hp; t.values[2] = c.block;
+            t.values[0] = c.hp; t.values[2] = c.block;
+            // AbstractCreature.renderHealthText shows Dead instead of HP/max HP at zero health.
+            if (c.hp > 0) t.values[1] = c.max_hp;
             t.values[3] = static_cast<int>(c.draw_x); t.values[4] = c.flip_horizontal;
-            const bool show_intent = g.screen == Screen::Combat && !c.dying && !c.half_dead &&
+            // AbstractRoom.render keeps monsters behind overlays; GameActionManager flashes intents only in monster turns.
+            const bool player_selection = !g.manager.turn_has_ended &&
+                (g.screen == Screen::Discard || g.screen == Screen::Grid || g.screen == Screen::CardReward);
+            const bool show_intent = (g.screen == Screen::Combat || player_selection) && !c.dying && !c.half_dead &&
                 !has_relic(g, RelicId::RunicDome) && m.intent != Intent::None;
             if (show_intent) {
                 t.values[6] = static_cast<int>(m.intent) + 1;
@@ -160,7 +169,7 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
         const int first = w.result.entities + 1;
         for (int i = 0; i < g.screen_rewards.size; ++i) {
             const auto& r = g.reward_objects[g.screen_rewards[i]];
-            Token t = token(Kind::Reward, static_cast<int>(r.kind) + 1, Zone::Offer, i + 1);
+            Token t = token(Kind::Reward, static_cast<int>(r.kind) + 1, Zone::Offer, i + 1, false);
             if (r.kind == RewardKind::Gold || r.kind == RewardKind::StolenGold) t.values[0] = r.amount + r.bonus_gold;
             if (r.kind == RewardKind::Relic) t.ids[5] = static_cast<int>(r.relic.id) + 1;
             if (r.kind == RewardKind::Potion) t.ids[5] = static_cast<int>(r.potion) + 1;
@@ -175,7 +184,7 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
         break;
     case Screen::Map: map_entities(w, g, options); break;
     case Screen::Shop: shop_entities(w, g, options); break;
-    case Screen::Event: event_entities(w, g, options); break;
+    case Screen::Event: event_entities(w, g, history, options); break;
     case Screen::Room:
         if (g.room_kind == RoomKind::Rest && !g.campfire.something_selected) {
             if (history.rest_floor != g.run.floor) {

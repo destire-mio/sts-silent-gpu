@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 import argparse
 from dataclasses import asdict
 import hashlib
@@ -50,6 +51,7 @@ def main():
     if args.resume is not None:
         checkpoint = torch.load(args.resume, map_location="cpu", weights_only=True)
         previous = checkpoint["config"]
+        assert previous["observation_version"] == OBSERVATION_VERSION
         assert checkpoint["format_version"] == 1 and previous["entrypoint"] == "train.run"
         assert previous["engine_commit"] == commit, "Resume requires the checkpoint's engine revision"
         assert previous["torch_version"] == str(torch.__version__), "Resume requires the checkpoint's PyTorch version"
@@ -82,12 +84,12 @@ def main():
         roots = read_roots(args.roots) if args.roots else natural_roots(args.first_seed, args.updates * args.episodes, "train")
     validate_training_roots(roots)
     assert roots
-    roots_text = json.dumps(dict(observation_version=2, roots=roots)) + "\n"
+    roots_text = json.dumps(dict(observation_version=OBSERVATION_VERSION, roots=roots)) + "\n"
     roots_sha256 = hashlib.sha256(roots_text.encode()).hexdigest()
     if checkpoint is not None:
         assert roots_sha256 == previous["roots_sha256"], "Resume roots differ from the checkpoint"
     args.output.mkdir(parents=True, exist_ok=False)
-    config = dict(entrypoint="train.run", model=asdict(model_config), ppo=asdict(ppo_config), observation_version=2, memory="none",
+    config = dict(entrypoint="train.run", model=asdict(model_config), ppo=asdict(ppo_config), observation_version=OBSERVATION_VERSION, memory="none",
                   engine_commit=commit, torch_version=str(torch.__version__), roots_sha256=roots_sha256,
                   parameters=sum(p.numel() for p in Policy(model_config).parameters()), pipeline=asdict(pipeline_config),
                   run=run,
