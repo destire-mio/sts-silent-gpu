@@ -1,0 +1,236 @@
+{
+  "deck": [
+    {
+      "id": "EmptyFist",
+      "upgrades": 0
+    },
+    {
+      "id": "EmptyFist",
+      "upgrades": 1
+    },
+    {
+      "id": "EmptyMind",
+      "upgrades": 0
+    },
+    {
+      "id": "EmptyMind",
+      "upgrades": 1
+    },
+    {
+      "id": "Establishment",
+      "upgrades": 0
+    },
+    {
+      "id": "Establishment",
+      "upgrades": 1
+    },
+    {
+      "id": "Evaluate",
+      "upgrades": 0
+    },
+    {
+      "id": "Evaluate",
+      "upgrades": 1
+    },
+    {
+      "id": "Fasting2",
+      "upgrades": 0
+    },
+    {
+      "id": "Fasting2",
+      "upgrades": 1
+    },
+    {
+      "id": "FearNoEvil",
+      "upgrades": 0
+    },
+    {
+      "id": "FearNoEvil",
+      "upgrades": 1
+    },
+    {
+      "id": "FlurryOfBlows",
+      "upgrades": 0
+    },
+    {
+      "id": "FlurryOfBlows",
+      "upgrades": 1
+    },
+    {
+      "id": "FlyingSleeves",
+      "upgrades": 0
+    },
+    {
+      "id": "FlyingSleeves",
+      "upgrades": 1
+    },
+    {
+      "id": "FollowUp",
+      "upgrades": 0
+    },
+    {
+      "id": "FollowUp",
+      "upgrades": 1
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 0
+    },
+    {
+      "id": "ForeignInfluence",
+      "upgrades": 1
+    },
+    {
+      "id": "Halt",
+      "upgrades": 0
+    },
+    {
+      "id": "Halt",
+      "upgrades": 1
+    },
+    {
+      "id": "Indignation",
+      "upgrades": 0
+    },
+    {
+      "id": "Indignation",
+      "upgrades": 1
+    },
+    {
+      "id": "InnerPeace",
+      "upgrades": 0
+    },
+    {
+      "id": "InnerPeace",
+      "upgrades": 1
+    },
+    {
+      "id": "Judgement",
+      "upgrades": 0
+    },
+    {
+      "id": "Judgement",
+      "upgrades": 1
+    },
+    {
+      "id": "JustLucky",
+      "upgrades": 0
+    },
+    {
+      "id": "JustLucky",
+      "upgrades": 1
+    },
+    {
+      "id": "LessonLearned",
+      "upgrades": 0
+    },
+    {
+      "id": "LessonLearned",
+      "upgrades": 1
+    },
+    {
+      "id": "LikeWater",
+      "upgrades": 0
+    },
+    {
+      "id": "LikeWater",
+      "upgrades": 1
+    },
+    {
+      "id": "MasterReality",
+      "upgrades": 0
+    },
+    {
+      "id": "MasterReality",
+      "upgrades": 1
+    },
+    {
+      "id": "Meditate",
+      "upgrades": 0
+    },
+    {
+      "id": "Meditate",
+      "upgrades": 1
+    },
+    {
+      "id": "MentalFortress",
+      "upgrades": 0
+    },
+    {
+      "id": "MentalFortress",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    "SmokeBomb",
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    }
+  ]
+}
