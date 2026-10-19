@@ -1,0 +1,1930 @@
+{
+  "observation_version": 13,
+  "status": "stopped_insufficient_data",
+  "recorded_at": "2026-10-19T21:17:17.216948+08:00",
+  "source_commit": "383389ab8228b9b148b0f7853e103bec2bb415a7",
+  "rule_revision": "66621552383508a7d2156a1d84154a148ebc94bf",
+  "engine_build_commit": "5adc725afbb3a3ed2209db1d54fd35949fdb04ef",
+  "native_binary_sha256": "61963a36732bf752544f0e745116e433c59b58a3a1f59dc9720bece04bbc1a83",
+  "final_summary": {
+    "source_sha256": "43eb580745d14a387d2ad955a6c5c6d294c3398e8a8480c8fca1301eff41b4e2",
+    "stop_reason": "search_budget",
+    "started_epoch": 1792405750.1108513,
+    "wall_seconds": 9853.89482831955,
+    "cpu_seconds": 504759.423444271,
+    "searched_decisions": 4285418617,
+    "retained_lines": 29,
+    "replay_cost": {
+      "status": "replayed_and_cpu_gpu_parity_passed",
+      "observation_version": 13,
+      "source_commit": "5adc725afbb3a3ed2209db1d54fd35949fdb04ef",
+      "source_file": "/home/zhuyouwei/spire-downloads/e3-search-extended/winning-lines.jsonl",
+      "source_sha256": "9a133cb0acaf407f7d01554117d963f1e179762884d493cc26e90b134bc282c7",
+      "source_lines": 29,
+      "retained_lines": 29,
+      "rejected_lines": [],
+      "families": {
+        "train": 22,
+        "dev": 7
+      },
+      "bands": [
+        {
+          "band": "k8",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "k8",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "k32",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "k32",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "k64",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "k64",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "k128",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "k128",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "k256",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "k256",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "k512",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "k512",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "act4_entry",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "act4_entry",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "act3_boss",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "act3_boss",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        },
+        {
+          "band": "act3_entry",
+          "partition": "train",
+          "roots": 22,
+          "families": 22
+        },
+        {
+          "band": "act3_entry",
+          "partition": "dev",
+          "roots": 7,
+          "families": 7
+        }
+      ],
+      "decisions": 50388,
+      "elapsed_seconds": 12.042288780212402,
+      "cpu_seconds": 11.610837347,
+      "prior_search_wall_seconds": 10787.651907205582,
+      "prior_search_cpu_seconds": 30190.63,
+      "search_wall_seconds_remaining": 12.348092794418335,
+      "new_search_attempts": 0,
+      "search_budget_reset": false,
+      "root_rows": 261,
+      "eligible_train_bands": [
+        "k8",
+        "k32",
+        "k64",
+        "k128",
+        "k256",
+        "k512",
+        "act4_entry",
+        "act3_boss",
+        "act3_entry"
+      ],
+      "complete_game_history_state_equal": true,
+      "unique_prefixes": 261,
+      "collector_parity_passed": true,
+      "gpu_check_seconds": 37.91724252700806
+    },
+    "families": {
+      "train": 24,
+      "dev": 10
+    },
+    "bands": [
+      {
+        "partition": "train",
+        "band": "k8",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "k8",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "k32",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "k32",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "k64",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "k64",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "k128",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "k128",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "k256",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "k256",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "k512",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "k512",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "act4_entry",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "act4_entry",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "act3_boss",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "act3_boss",
+        "roots": 10,
+        "families": 10
+      },
+      {
+        "partition": "train",
+        "band": "act3_entry",
+        "roots": 24,
+        "families": 24
+      },
+      {
+        "partition": "dev",
+        "band": "act3_entry",
+        "roots": 10,
+        "families": 10
+      }
+    ],
+    "unique_winning_decks": 34,
+    "unique_winning_relic_sets": 34,
+    "attempted_stage_counts": {
+      "act3_entry": 500097,
+      "heart_turn5": 87040,
+      "heart_turn3": 114648,
+      "heart_turn2": 137856,
+      "heart_start": 140256
+    },
+    "outcomes": {
+      "death": 979840,
+      "victory": 5,
+      "cutoff": 52
+    },
+    "completed_attempts": 979897,
+    "audit_roots": 36,
+    "audit_status": "pending_mac",
+    "costs": [
+      {
+        "kind": "cost",
+        "decisions": 4638844,
+        "cpu_seconds": 518.085,
+        "wall_seconds": 529.51,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 4617901,
+        "cpu_seconds": 569.331,
+        "wall_seconds": 582.308,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5332721,
+        "cpu_seconds": 581.152,
+        "wall_seconds": 594.42,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5151896,
+        "cpu_seconds": 583.13,
+        "wall_seconds": 595.953,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 4747224,
+        "cpu_seconds": 584.676,
+        "wall_seconds": 599.794,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5058758,
+        "cpu_seconds": 588.337,
+        "wall_seconds": 602.104,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 4983779,
+        "cpu_seconds": 599.148,
+        "wall_seconds": 613.03,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5383045,
+        "cpu_seconds": 616.582,
+        "wall_seconds": 629.736,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5132864,
+        "cpu_seconds": 615.352,
+        "wall_seconds": 629.426,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5664099,
+        "cpu_seconds": 615.938,
+        "wall_seconds": 630.516,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5365373,
+        "cpu_seconds": 612.551,
+        "wall_seconds": 629.589,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5421593,
+        "cpu_seconds": 621.969,
+        "wall_seconds": 636.303,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5283345,
+        "cpu_seconds": 619.343,
+        "wall_seconds": 636.111,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5860641,
+        "cpu_seconds": 625.799,
+        "wall_seconds": 641.043,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5005921,
+        "cpu_seconds": 626.056,
+        "wall_seconds": 640.657,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5412389,
+        "cpu_seconds": 629.045,
+        "wall_seconds": 643.112,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6105954,
+        "cpu_seconds": 628.84,
+        "wall_seconds": 643.076,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5293668,
+        "cpu_seconds": 629.917,
+        "wall_seconds": 644.63,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5442957,
+        "cpu_seconds": 629.1,
+        "wall_seconds": 644.199,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5739204,
+        "cpu_seconds": 632.467,
+        "wall_seconds": 646.615,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6052402,
+        "cpu_seconds": 635.967,
+        "wall_seconds": 651.455,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6152194,
+        "cpu_seconds": 640.108,
+        "wall_seconds": 655.365,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5603976,
+        "cpu_seconds": 639.137,
+        "wall_seconds": 654.045,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6144735,
+        "cpu_seconds": 644.339,
+        "wall_seconds": 658.555,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5869467,
+        "cpu_seconds": 644.748,
+        "wall_seconds": 660.048,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5678767,
+        "cpu_seconds": 650.102,
+        "wall_seconds": 665.145,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6098145,
+        "cpu_seconds": 658.525,
+        "wall_seconds": 672.684,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5993174,
+        "cpu_seconds": 657.888,
+        "wall_seconds": 672.285,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6000863,
+        "cpu_seconds": 659.933,
+        "wall_seconds": 675.061,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6250956,
+        "cpu_seconds": 661.331,
+        "wall_seconds": 677.255,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6004084,
+        "cpu_seconds": 662.069,
+        "wall_seconds": 676.296,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5644225,
+        "cpu_seconds": 662.614,
+        "wall_seconds": 677.723,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6029656,
+        "cpu_seconds": 666.016,
+        "wall_seconds": 680.761,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 5946022,
+        "cpu_seconds": 668.428,
+        "wall_seconds": 682.845,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6464518,
+        "cpu_seconds": 671.074,
+        "wall_seconds": 685.922,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6948358,
+        "cpu_seconds": 675.452,
+        "wall_seconds": 690.173,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6618552,
+        "cpu_seconds": 675.952,
+        "wall_seconds": 691.529,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6909953,
+        "cpu_seconds": 674.864,
+        "wall_seconds": 690.284,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6157616,
+        "cpu_seconds": 676.051,
+        "wall_seconds": 691.358,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6517080,
+        "cpu_seconds": 678.707,
+        "wall_seconds": 693.592,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6337764,
+        "cpu_seconds": 679.291,
+        "wall_seconds": 694.963,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6786658,
+        "cpu_seconds": 679.092,
+        "wall_seconds": 694.851,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6782977,
+        "cpu_seconds": 679.413,
+        "wall_seconds": 694.859,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6491228,
+        "cpu_seconds": 679.382,
+        "wall_seconds": 694.209,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6857805,
+        "cpu_seconds": 680.223,
+        "wall_seconds": 694.739,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6846646,
+        "cpu_seconds": 682.188,
+        "wall_seconds": 697.398,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 7108733,
+        "cpu_seconds": 682.325,
+        "wall_seconds": 697.767,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 7038488,
+        "cpu_seconds": 685.077,
+        "wall_seconds": 700.294,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 7477696,
+        "cpu_seconds": 684.627,
+        "wall_seconds": 699.976,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 7538330,
+        "cpu_seconds": 685.509,
+        "wall_seconds": 701.666,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 7454037,
+        "cpu_seconds": 688.265,
+        "wall_seconds": 703.026,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 6986372,
+        "cpu_seconds": 688.289,
+        "wall_seconds": 702.813,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 7636674,
+        "cpu_seconds": 690.873,
+        "wall_seconds": 705.871,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 8628522,
+        "cpu_seconds": 698.93,
+        "wall_seconds": 714.358,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "source": "3602_coordinator",
+        "cpu_seconds": 12.490180768996652,
+        "decisions": 0
+      },
+      {
+        "kind": "cost",
+        "decisions": 20150562,
+        "cpu_seconds": 2344.67,
+        "wall_seconds": 2397.19,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 20285582,
+        "cpu_seconds": 2620.43,
+        "wall_seconds": 2679.53,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 20987268,
+        "cpu_seconds": 2640.76,
+        "wall_seconds": 2700.42,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 21892270,
+        "cpu_seconds": 2640.94,
+        "wall_seconds": 2701.69,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 22319523,
+        "cpu_seconds": 2702.99,
+        "wall_seconds": 2763.75,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 23084209,
+        "cpu_seconds": 2710.88,
+        "wall_seconds": 2771.99,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 22521708,
+        "cpu_seconds": 2717.65,
+        "wall_seconds": 2780.5,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 20947260,
+        "cpu_seconds": 2734.62,
+        "wall_seconds": 2795.02,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 23065194,
+        "cpu_seconds": 2784.04,
+        "wall_seconds": 2846.84,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 22066193,
+        "cpu_seconds": 2788.33,
+        "wall_seconds": 2849.29,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 23289663,
+        "cpu_seconds": 2786.36,
+        "wall_seconds": 2849.77,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 24585099,
+        "cpu_seconds": 2849.7,
+        "wall_seconds": 2912,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 23370438,
+        "cpu_seconds": 2852.22,
+        "wall_seconds": 2914.4,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 22744070,
+        "cpu_seconds": 2869.79,
+        "wall_seconds": 2933.79,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 22825040,
+        "cpu_seconds": 2874.59,
+        "wall_seconds": 2939.44,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 24302708,
+        "cpu_seconds": 2874.81,
+        "wall_seconds": 2943.66,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 23702600,
+        "cpu_seconds": 2891.4,
+        "wall_seconds": 2953.95,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 25655581,
+        "cpu_seconds": 2896.12,
+        "wall_seconds": 2960.93,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 24677530,
+        "cpu_seconds": 2898.99,
+        "wall_seconds": 2963.55,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 24824565,
+        "cpu_seconds": 2901.86,
+        "wall_seconds": 2965.44,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 23104125,
+        "cpu_seconds": 2910.86,
+        "wall_seconds": 2974.54,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 25651115,
+        "cpu_seconds": 2909.7,
+        "wall_seconds": 2976.31,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 25104886,
+        "cpu_seconds": 2918.22,
+        "wall_seconds": 2982.82,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 24836983,
+        "cpu_seconds": 2942.17,
+        "wall_seconds": 3007.12,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 25489834,
+        "cpu_seconds": 2965.55,
+        "wall_seconds": 3028.58,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 26330786,
+        "cpu_seconds": 2971.96,
+        "wall_seconds": 3038.72,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 25450256,
+        "cpu_seconds": 2985.76,
+        "wall_seconds": 3050.63,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 26316695,
+        "cpu_seconds": 2986.06,
+        "wall_seconds": 3054.05,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 28146135,
+        "cpu_seconds": 3005.37,
+        "wall_seconds": 3072.26,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 26542593,
+        "cpu_seconds": 3021.61,
+        "wall_seconds": 3087.44,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 26028619,
+        "cpu_seconds": 3023.04,
+        "wall_seconds": 3088.25,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 26946903,
+        "cpu_seconds": 3025.71,
+        "wall_seconds": 3092.72,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 27161426,
+        "cpu_seconds": 3025.94,
+        "wall_seconds": 3091.89,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 27218066,
+        "cpu_seconds": 3035.78,
+        "wall_seconds": 3099.65,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 26643639,
+        "cpu_seconds": 3037.23,
+        "wall_seconds": 3103.2,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 25621202,
+        "cpu_seconds": 3036.04,
+        "wall_seconds": 3103.84,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 29799963,
+        "cpu_seconds": 3043.13,
+        "wall_seconds": 3107.97,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 26634520,
+        "cpu_seconds": 3044.49,
+        "wall_seconds": 3110.37,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 29305708,
+        "cpu_seconds": 3043.33,
+        "wall_seconds": 3112.52,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 30714583,
+        "cpu_seconds": 3062.63,
+        "wall_seconds": 3129.81,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 28769264,
+        "cpu_seconds": 3064.58,
+        "wall_seconds": 3133.13,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 28776348,
+        "cpu_seconds": 3078.13,
+        "wall_seconds": 3143,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 27519383,
+        "cpu_seconds": 3078.69,
+        "wall_seconds": 3145.87,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 29725640,
+        "cpu_seconds": 3079.84,
+        "wall_seconds": 3148.71,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 29470468,
+        "cpu_seconds": 3090.73,
+        "wall_seconds": 3157.26,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 30502821,
+        "cpu_seconds": 3092.76,
+        "wall_seconds": 3158.85,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 28325579,
+        "cpu_seconds": 3090.8,
+        "wall_seconds": 3157.7,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 32135036,
+        "cpu_seconds": 3100.73,
+        "wall_seconds": 3167.78,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 32476767,
+        "cpu_seconds": 3103.07,
+        "wall_seconds": 3171.03,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 31403729,
+        "cpu_seconds": 3109.81,
+        "wall_seconds": 3174.79,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 29765234,
+        "cpu_seconds": 3113.29,
+        "wall_seconds": 3181.8,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 32870091,
+        "cpu_seconds": 3117.64,
+        "wall_seconds": 3182.96,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 30348050,
+        "cpu_seconds": 3117.51,
+        "wall_seconds": 3184.8,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 36888238,
+        "cpu_seconds": 3163.42,
+        "wall_seconds": 3234.03,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 43007338,
+        "cpu_seconds": 5761.71,
+        "wall_seconds": 5886.59,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45354193,
+        "cpu_seconds": 5759.28,
+        "wall_seconds": 5886.57,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49283373,
+        "cpu_seconds": 5757.29,
+        "wall_seconds": 5886.54,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48331046,
+        "cpu_seconds": 5761.6,
+        "wall_seconds": 5886.51,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 47501283,
+        "cpu_seconds": 5756.9,
+        "wall_seconds": 5886.5,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 47185814,
+        "cpu_seconds": 5759.96,
+        "wall_seconds": 5886.47,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48598026,
+        "cpu_seconds": 5757.93,
+        "wall_seconds": 5886.43,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45981377,
+        "cpu_seconds": 5757.96,
+        "wall_seconds": 5886.44,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49592841,
+        "cpu_seconds": 5760.59,
+        "wall_seconds": 5886.39,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45771886,
+        "cpu_seconds": 5759.5,
+        "wall_seconds": 5886.4,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48941916,
+        "cpu_seconds": 5757.51,
+        "wall_seconds": 5886.38,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49197971,
+        "cpu_seconds": 5758.3,
+        "wall_seconds": 5886.36,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45593658,
+        "cpu_seconds": 5755.01,
+        "wall_seconds": 5886.33,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 44438946,
+        "cpu_seconds": 5758.29,
+        "wall_seconds": 5886.31,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 47328513,
+        "cpu_seconds": 5756.95,
+        "wall_seconds": 5886.3,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 43136868,
+        "cpu_seconds": 5759,
+        "wall_seconds": 5886.25,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 51861624,
+        "cpu_seconds": 5753.46,
+        "wall_seconds": 5886.23,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45392224,
+        "cpu_seconds": 5756.18,
+        "wall_seconds": 5886.21,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45725986,
+        "cpu_seconds": 5756.71,
+        "wall_seconds": 5886.19,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45242088,
+        "cpu_seconds": 5754.05,
+        "wall_seconds": 5886.15,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 44342277,
+        "cpu_seconds": 5757.29,
+        "wall_seconds": 5886.16,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 51066072,
+        "cpu_seconds": 5758.61,
+        "wall_seconds": 5886.13,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 46189219,
+        "cpu_seconds": 5757.75,
+        "wall_seconds": 5886.1,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 53189448,
+        "cpu_seconds": 5758.51,
+        "wall_seconds": 5886.08,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 50615547,
+        "cpu_seconds": 5756.43,
+        "wall_seconds": 5886.04,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 44817123,
+        "cpu_seconds": 5757.74,
+        "wall_seconds": 5886.02,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49877130,
+        "cpu_seconds": 5758.09,
+        "wall_seconds": 5886.01,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45572509,
+        "cpu_seconds": 5758.3,
+        "wall_seconds": 5886,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49167430,
+        "cpu_seconds": 5756.21,
+        "wall_seconds": 5885.97,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48375686,
+        "cpu_seconds": 5756.81,
+        "wall_seconds": 5885.92,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 44698620,
+        "cpu_seconds": 5759.7,
+        "wall_seconds": 5885.88,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 43871409,
+        "cpu_seconds": 5760.04,
+        "wall_seconds": 5885.84,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 47455557,
+        "cpu_seconds": 5759.13,
+        "wall_seconds": 5885.79,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45527002,
+        "cpu_seconds": 5754.63,
+        "wall_seconds": 5885.75,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49006063,
+        "cpu_seconds": 5755.92,
+        "wall_seconds": 5885.69,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 44796599,
+        "cpu_seconds": 5757.41,
+        "wall_seconds": 5885.65,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49026497,
+        "cpu_seconds": 5758.86,
+        "wall_seconds": 5885.6,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 46589945,
+        "cpu_seconds": 5756.88,
+        "wall_seconds": 5885.59,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 46689545,
+        "cpu_seconds": 5757.46,
+        "wall_seconds": 5885.53,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 41881458,
+        "cpu_seconds": 5755.74,
+        "wall_seconds": 5885.5,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 43899165,
+        "cpu_seconds": 5759.62,
+        "wall_seconds": 5885.41,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 47139694,
+        "cpu_seconds": 5757.61,
+        "wall_seconds": 5885.37,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 47135948,
+        "cpu_seconds": 5756.55,
+        "wall_seconds": 5885.38,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48640378,
+        "cpu_seconds": 5758.25,
+        "wall_seconds": 5885.3,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48827215,
+        "cpu_seconds": 5759.63,
+        "wall_seconds": 5885.25,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45628756,
+        "cpu_seconds": 5759.44,
+        "wall_seconds": 5885.22,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48009004,
+        "cpu_seconds": 5755.26,
+        "wall_seconds": 5885.21,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 47632962,
+        "cpu_seconds": 5755.94,
+        "wall_seconds": 5885.16,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 48274882,
+        "cpu_seconds": 5757.57,
+        "wall_seconds": 5885.13,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 44185933,
+        "cpu_seconds": 5760.09,
+        "wall_seconds": 5885.07,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 50226683,
+        "cpu_seconds": 5757.76,
+        "wall_seconds": 5885.03,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 42140985,
+        "cpu_seconds": 5757.36,
+        "wall_seconds": 5884.97,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 49738536,
+        "cpu_seconds": 5755.67,
+        "wall_seconds": 5884.95,
+        "stop_requested": false
+      },
+      {
+        "kind": "cost",
+        "decisions": 45645384,
+        "cpu_seconds": 5756.98,
+        "wall_seconds": 5884.9,
+        "stop_requested": false
+      }
+    ],
+    "search_bias": "First winning line per seed; later Heart roots before Act 3 entry; true-future beam with HP/card heuristics; no policy labels",
+    "eligible_bands": [],
+    "excluded_bands": [
+      "k8",
+      "k32",
+      "k64",
+      "k128",
+      "k256",
+      "k512",
+      "act4_entry",
+      "act3_boss",
+      "act3_entry"
+    ],
+    "training_data_sufficient": false,
+    "parent_job": 3602,
+    "job": 3603,
+    "phase_allocation_seconds": 9123.855625152588,
+    "source_commit": "383389ab8228b9b148b0f7853e103bec2bb415a7",
+    "budget_continuation": true
+  },
+  "budget": {
+    "wall_limit_seconds": 10800,
+    "cpu_limit_seconds": 540000,
+    "measured_cpu_seconds": 504759.423444271,
+    "measured_wall_seconds": 9853.89482831955,
+    "continuation_cpu_upper_bound_seconds": 536749.7674015083,
+    "stop_policy": "Conservative 55-CPU allocation-time bound with 60 seconds reserved for shutdown/export; actual CPU consumption was below 150 core-hours.",
+    "accounting": "Cumulative final summary includes jobs 3602 and 3603, all repeated streams and old-line replay once. Do not add the parent summary or replay again.",
+    "unused_cpu_seconds": 35240.57655572903,
+    "unused_wall_seconds": 946.1051716804504,
+    "additional_search_submitted": false
+  },
+  "slurm_jobs": [
+    {
+      "job": 3602,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 718,
+      "cpus": 55,
+      "workers": 54,
+      "gpus": 0
+    },
+    {
+      "job": 3603,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "allocation_seconds": 9124,
+      "cpus": 55,
+      "workers": 54,
+      "gpus": 0
+    }
+  ],
+  "source_roots": {
+    "archive_sha256": "43eb580745d14a387d2ad955a6c5c6d294c3398e8a8480c8fca1301eff41b4e2",
+    "final_root_count": 306,
+    "roots_by_partition": {
+      "train": 216,
+      "dev": 90
+    },
+    "root_stage_counts": {
+      "train": {
+        "heart_turn5": 52,
+        "heart_turn3": 15,
+        "act4_entry": 49,
+        "act3_boss": 41,
+        "act3_entry": 52,
+        "heart_start": 4,
+        "heart_turn2": 3
+      },
+      "dev": {
+        "heart_turn5": 25,
+        "heart_turn3": 6,
+        "act4_entry": 20,
+        "act3_boss": 18,
+        "act3_entry": 19,
+        "heart_start": 2
+      }
+    },
+    "band_details": [
+      {
+        "band": "k8",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 8.0
+      },
+      {
+        "band": "k32",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 32.0
+      },
+      {
+        "band": "k64",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 64.0
+      },
+      {
+        "band": "k128",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 128.0
+      },
+      {
+        "band": "k256",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 256.0
+      },
+      {
+        "band": "k512",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 512.0
+      },
+      {
+        "band": "act4_entry",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 208.5
+      },
+      {
+        "band": "act3_boss",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 378.5
+      },
+      {
+        "band": "act3_entry",
+        "families": {
+          "train": 24,
+          "dev": 10
+        },
+        "eligible": false,
+        "exclusion_reason": "dev_families_below_20",
+        "missing_dev_families": 10,
+        "median_decisions_to_win": 814.5
+      }
+    ]
+  },
+  "winners": {
+    "retained_old_lines": 29,
+    "new_families": [
+      {
+        "seed": 1000003851,
+        "partition": "train",
+        "stage": "heart_turn3",
+        "attempt": 399,
+        "decisions": 7217,
+        "verification_decisions": 1773,
+        "prefix_decisions": 1644,
+        "continuation_decisions": 129
+      },
+      {
+        "seed": 2000002633,
+        "partition": "dev",
+        "stage": "heart_turn2",
+        "attempt": 508,
+        "decisions": 5494,
+        "verification_decisions": 1619,
+        "prefix_decisions": 1524,
+        "continuation_decisions": 95
+      },
+      {
+        "seed": 1000003016,
+        "partition": "train",
+        "stage": "act3_entry",
+        "attempt": 454,
+        "decisions": 44550,
+        "verification_decisions": 1573,
+        "prefix_decisions": 744,
+        "continuation_decisions": 829
+      },
+      {
+        "seed": 2000002382,
+        "partition": "dev",
+        "stage": "act3_entry",
+        "attempt": 462,
+        "decisions": 25117,
+        "verification_decisions": 1471,
+        "prefix_decisions": 794,
+        "continuation_decisions": 677
+      },
+      {
+        "seed": 2000002721,
+        "partition": "dev",
+        "stage": "act3_entry",
+        "attempt": 163,
+        "decisions": 35140,
+        "verification_decisions": 1598,
+        "prefix_decisions": 868,
+        "continuation_decisions": 730
+      }
+    ],
+    "source_stage_counts": {
+      "heart_turn2": 7,
+      "heart_turn3": 6,
+      "act3_entry": 9,
+      "heart_turn5": 7,
+      "heart_start": 5
+    },
+    "diversity": {
+      "unique_ordered_decks": 34,
+      "unique_card_multisets": 34,
+      "unique_ordered_relics": 34,
+      "unique_relic_sets": 34,
+      "deck_size": {
+        "min": 36,
+        "median": 44.0,
+        "max": 63
+      },
+      "relic_count": {
+        "min": 11,
+        "median": 15.0,
+        "max": 20
+      }
+    }
+  },
+  "selection_bias": {
+    "method": "First winning line per seed; later Heart roots before Act 3 entry; true-future beam with HP/card heuristics; no policy labels",
+    "population": "Previously collected E2 roots, not independent Neow starts",
+    "limitations": [
+      "One winner per family; stop exploring a family after its first win.",
+      "Later Heart roots are searched before Act 3 entry.",
+      "Repeated 32/128/512 streams are counted as costs, not independent new seed families.",
+      "Observed winning deck/relic diversity does not establish which combinations are easier without denominator data.",
+      "Engine search success is not a policy win rate or an action label."
+    ]
+  },
+  "audit": {
+    "name": "v13-parallel-search",
+    "round": "v13-parallel-search",
+    "observation_version": 13,
+    "status": "pending_mac",
+    "source_search_commit": "383389ab8228b9b148b0f7853e103bec2bb415a7",
+    "engine_commit": "383389ab8228b9b148b0f7853e103bec2bb415a7",
+    "engine_build_commit": "5adc725afbb3a3ed2209db1d54fd35949fdb04ef",
+    "job": 3603,
+    "source_sha256": "43eb580745d14a387d2ad955a6c5c6d294c3398e8a8480c8fca1301eff41b4e2",
+    "summary_sha256": "68ef8ca9c0d3b25e6dcfa0f17fb10a618f269d3b7017ca3c8567d28721b3422f",
+    "roots": 45,
+    "families": 5,
+    "family_partition_counts": {
+      "train": 2,
+      "dev": 3
+    },
+    "selection": "All nine bands of all five newly discovered winning families; no new family omitted.",
+    "native_winning_line_verification_decisions": 8034,
+    "cpu_gpu_parity_status": "not_run_for_new_roots_because_training_data_insufficient",
+    "generated_random_sample_roots": 36,
+    "generated_random_sample_note": "The original 36-root random sample remains in the evidence archive; this published round covers all new families instead.",
+    "search_complete": true
+  },
+  "validation": {
+    "search_native_failures_observed": 0,
+    "nonempty_worker_stderr": 0,
+    "old_v13_roots_native_cpu_gpu_passed": 261,
+    "old_v13_collector_scope": "First 16 train roots and fixed natural/invalid-prefix fixtures only",
+    "new_root_cpu_gpu": "not_run_data_insufficient",
+    "new_round_original_game": "pending_mac",
+    "previous_v13_original_game": {
+      "source_commit": "14e4021a5c99056ba1dc13f23662f7809774ed81",
+      "prefixes": 36,
+      "recordings_passed": 21,
+      "decisions": 32179,
+      "basis": "Mac report on main"
+    }
+  },
+  "training": {
+    "started": false,
+    "reason": "All nine bands have 10 dev families, below 20; 0 eligible bands, below 4.",
+    "checkpoint_source": null,
+    "initialization": "fresh_required_if_new_data_and_budget_are_authorized",
+    "old_v2_checkpoint": "preserve_only_do_not_resume",
+    "new_training_decisions": 0,
+    "new_gpu_node_hours": 0,
+    "throughput": null,
+    "peak_gpu_memory": null,
+    "evaluations": [],
+    "A": [
+      {
+        "init_seed": 1729,
+        "status": "not_started",
+        "decisions": 0
+      },
+      {
+        "init_seed": 2718,
+        "status": "not_started",
+        "decisions": 0
+      },
+      {
+        "init_seed": 31415,
+        "status": "not_started",
+        "decisions": 0
+      }
+    ],
+    "B": [
+      {
+        "init_seed": 1729,
+        "status": "not_started",
+        "decisions": 0
+      },
+      {
+        "init_seed": 2718,
+        "status": "not_started",
+        "decisions": 0
+      },
+      {
+        "init_seed": 31415,
+        "status": "not_started",
+        "decisions": 0
+      }
+    ],
+    "assessment": "Data collection insufficient; no v13 A/B efficacy conclusion is available."
+  },
+  "node_budget": {
+    "total_seconds": 28800,
+    "prior_conservative_reservation_seconds": 14400,
+    "resume_allocation_used_seconds": 1718.1810357570648,
+    "repair_allocation_charges": {
+      "3598": {
+        "allocation_seconds": 368,
+        "final": true,
+        "gpus": 0,
+        "cpus": 32,
+        "conservative_budget_charge_seconds": 368
+      },
+      "3599": {
+        "allocation_seconds": 684,
+        "final": true,
+        "gpus": 3,
+        "cpus": 3,
+        "conservative_budget_charge_seconds": 684
+      },
+      "3600": {
+        "allocation_seconds": 57,
+        "final": true,
+        "gpus": 3,
+        "cpus": 3,
+        "conservative_budget_charge_seconds": 57
+      },
+      "3601": {
+        "allocation_seconds": 25,
+        "final": true,
+        "gpus": 0,
+        "cpus": 3,
+        "conservative_budget_charge_seconds": 25
+      }
+    },
+    "remaining_upper_bound_seconds": 11547.818964242935,
+    "cpu_search_budget_separately_authorized": true
+  },
+  "next_work": {
+    "minimum_additional_dev_families_per_band": 10,
+    "target_gap": {
+      "train": 176,
+      "dev": 50
+    },
+    "recommendation": "Review search coverage and acquisition efficiency before authorizing more compute; do not loosen the dev threshold or train on insufficient data.",
+    "naive_extrapolation": {
+      "status": "inference_not_a_forecast",
+      "observed_new_dev_families": 3,
+      "charged_cpu_core_hours": 140.21095095674193,
+      "cpu_core_hours_for_ten_more_dev": 467.3698365224731,
+      "wall_hours_at_54_workers": 8.654996972638392,
+      "caveat": "Includes repeated streams; family difficulty changes as solved families are removed. No additional budget or job is authorized by this estimate."
+    }
+  },
+  "evidence": {
+    "server_directory": "/home/zhuyouwei/spire-downloads/e3-v13-search-extended-3603",
+    "archive": "/home/zhuyouwei/spire-downloads/e3-v13-search-evidence.tar.gz",
+    "archive_sha256": "80b781437b22deb8a9bd18e3c713e49f0a61eaa95fee44b8de1cf998af8dc41b",
+    "artifact_sha256": {
+      "e3-v13-search-3602/config.json": {
+        "sha256": "b4565bc303887ea425115035d6bca82351f8378e91f028020a338c3772b071c2",
+        "bytes": 1336
+      },
+      "e3-v13-search-3602/summary.json": {
+        "sha256": "4b3672998718204d1bb66bd0156ee42697b919422a28ca627a265cc6f13d7e24",
+        "bytes": 14475
+      },
+      "e3-v13-search-3602/progress.json": {
+        "sha256": "fb382aada1fe859b9e81fad4694567834cd93fd4bb5efb0263c67e2a876f964a",
+        "bytes": 175
+      },
+      "e3-v13-search-3602/train.json": {
+        "sha256": "98ff4552257c15abfd7ea20721f732e2ae94a3c9ed74dc564c84dc8fbc192ca9",
+        "bytes": 901971
+      },
+      "e3-v13-search-3602/dev.json": {
+        "sha256": "f9969080f38615a61cdca4e68bc3d85917563d156fd9cbc8024b9992b3c60f65",
+        "bytes": 310634
+      },
+      "e3-v13-search-3602/winning-lines.jsonl": {
+        "sha256": "9a133cb0acaf407f7d01554117d963f1e179762884d493cc26e90b134bc282c7",
+        "bytes": 183410
+      },
+      "e3-v13-search-3602/audit-roots.json": {
+        "sha256": "f246b00d3c4b4debc6f70c331d7b4b3848d507ef3edbe5d992d1f80637b51b76",
+        "bytes": 623299
+      },
+      "e3-v13-search-3602.log": {
+        "sha256": "f59cd9fd1338b1aa4eeefda109ca8953328101a162416b8ae1215cacb8e2febf",
+        "bytes": 23166
+      },
+      "e3-v13-search-extended-3603/config.json": {
+        "sha256": "6b7f60489816a625c6bbdaa0648c5cde8eeeb6c97e6b7b9b7f34d8a22067c3f6",
+        "bytes": 1010
+      },
+      "e3-v13-search-extended-3603/summary.json": {
+        "sha256": "68ef8ca9c0d3b25e6dcfa0f17fb10a618f269d3b7017ca3c8567d28721b3422f",
+        "bytes": 31553
+      },
+      "e3-v13-search-extended-3603/progress.json": {
+        "sha256": "9db00c26e86a3ed8d77b60b800193dd121959b656bdee10365ae97ac43dfd129",
+        "bytes": 324
+      },
+      "e3-v13-search-extended-3603/train.json": {
+        "sha256": "6cb6edb2628f9f1305b29b969b59b979416ec55236f80fc12a8305be26e94f1b",
+        "bytes": 982037
+      },
+      "e3-v13-search-extended-3603/dev.json": {
+        "sha256": "c45f1026f63e4e6e9911e902bcb3cf39b2e45a27bfb041bc2e2633720c809d7e",
+        "bytes": 423589
+      },
+      "e3-v13-search-extended-3603/winning-lines.jsonl": {
+        "sha256": "f5408aebaa05f5789685fb40931bf0eaeb6963e14f3a777a9282bcbed9366fc5",
+        "bytes": 213102
+      },
+      "e3-v13-search-extended-3603/audit-roots.json": {
+        "sha256": "6b3e530435b1c7839fb8607654af7f03f60b29554d75c72b4efe4b1c8809a9cf",
+        "bytes": 589088
+      },
+      "e3-v13-search-extended-3603.log": {
+        "sha256": "b0a6fab63638b76a6788101b19bf3f238638e909d0e714fa4df2c21a8d64b14f",
+        "bytes": 314813
+      },
+      "e3-v13-search-extended-3603/slurm-final.txt": {
+        "sha256": "443f71b55974c87ab2267694070ba73be6f37470a5e213a616d0fe819ce10d62",
+        "bytes": 1270
+      },
+      "continue-search-v13.py": {
+        "sha256": "0b474fa5d23dfff4aa7c8ef4f655a8842d7d3d6ba18e66cae0539efb0812ba0a",
+        "bytes": 9498
+      },
+      "continue-search-v13.sh": {
+        "sha256": "37aebb8073fc41bde2b75f6c64956637552444271ad54f5146c82b74277baca1",
+        "bytes": 683
+      }
+    },
+    "raw_worker_outputs": "Preserved on server, not copied into Git."
+  }
+}

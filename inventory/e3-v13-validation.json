@@ -262,7 +262,14 @@
       "dev": 20
     },
     "minimum_eligible_bands": 4,
-    "status": "running"
+    "status": "completed_insufficient_data",
+    "continuation_job": 3603,
+    "result_inventory": "inventory/e3-v13-search-results.json",
+    "families": {
+      "train": 24,
+      "dev": 10
+    },
+    "training_started": false
   },
   "checkpoint_policy": "Preserve v2 update-56 checkpoint as evidence only; fresh v13 initialization required",
   "node_budget": {
