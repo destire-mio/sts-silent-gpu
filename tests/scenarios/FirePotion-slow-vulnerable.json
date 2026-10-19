@@ -1,0 +1,25 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Bag of Marbles"
+  ],
+  "potions": [
+    "Fire Potion",
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Giant Head",
+  "actions": [
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": 0
+    }
+  ]
+}

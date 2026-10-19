@@ -19,7 +19,17 @@
     135,
     143
   ],
+  "BouncingFlask-half-dead-target": [
+    102,
+    120,
+    146
+  ],
   "BronzeAutomaton-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "CalculatedGamble-empty-hand": [
     101,
     102,
     103
@@ -44,6 +54,31 @@
     102,
     103
   ],
+  "Discovery-MasterReality-nine": [
+    107,
+    125,
+    129
+  ],
+  "Discovery-full-hand-one": [
+    101,
+    102,
+    103
+  ],
+  "Discovery-full-hand-two": [
+    101,
+    102,
+    103
+  ],
+  "EntropicBrew-SacredBark": [
+    101,
+    102,
+    103
+  ],
+  "Envenom-BlueCandle-self-damage": [
+    101,
+    103,
+    104
+  ],
   "FiendFire-shared-info-retaliation": [
     101,
     113,
@@ -53,6 +88,16 @@
     101,
     111,
     132
+  ],
+  "FirePotion-flying-vulnerable": [
+    101,
+    102,
+    103
+  ],
+  "FirePotion-slow-vulnerable": [
+    101,
+    102,
+    103
   ],
   "Flechettes-shared-info-retaliation": [
     101,
@@ -104,6 +149,16 @@
     123,
     138
   ],
+  "Forethought-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "Forethought-one-card": [
+    101,
+    103,
+    104
+  ],
   "FrozenEgg-reward-preview": [
     1354,
     1670,
@@ -144,10 +199,25 @@
     102,
     103
   ],
+  "Impatience-no-attacks": [
+    102,
+    103,
+    106
+  ],
   "MoltenEgg-reward-preview": [
     594,
     887,
     2017
+  ],
+  "Nightmare-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "PenNib-nine-attacks": [
+    127,
+    175,
+    206
   ],
   "PhilosopherStone-darkling-revive": [
     101,
@@ -183,6 +253,31 @@
     126,
     147,
     240
+  ],
+  "SecretTechnique-duplicated-full-hand": [
+    107,
+    125,
+    283
+  ],
+  "SecretTechnique-single-remaining-full-hand": [
+    406,
+    556,
+    1408
+  ],
+  "SecretWeapon-duplicated-full-hand": [
+    107,
+    125,
+    283
+  ],
+  "Setup-empty-hand": [
+    101,
+    102,
+    103
+  ],
+  "Skewer-flight-overflow": [
+    101,
+    102,
+    103
   ],
   "SlimeBoss-last-acid-large": [
     101,
@@ -239,6 +334,11 @@
     111,
     117
   ],
+  "StormOfSteel-empty-hand": [
+    101,
+    102,
+    103
+  ],
   "TheCollector-poison-victory": [
     101,
     102,
@@ -249,9 +349,44 @@
     102,
     103
   ],
+  "TimeWarp-burst-pending": [
+    221,
+    240,
+    299
+  ],
+  "TimeWarp-twelve-cards": [
+    101,
+    102,
+    103
+  ],
+  "Tingsha-half-dead-target": [
+    171,
+    281,
+    310
+  ],
   "ToxicEgg-reward-preview": [
     391,
     788,
     988
+  ],
+  "VelvetChoker-secret-card-gates": [
+    1632,
+    3300,
+    3494
+  ],
+  "VelvetChoker-six-cards": [
+    101,
+    102,
+    103
+  ],
+  "Violence-full-hand": [
+    107,
+    125,
+    129
+  ],
+  "WarpedTongs-exhausted-piles": [
+    101,
+    103,
+    104
   ]
 }
