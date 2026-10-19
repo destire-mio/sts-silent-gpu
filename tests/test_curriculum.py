@@ -10,6 +10,7 @@ import unittest
 
 import torch
 
+from train import OBSERVATION_VERSION
 from train.curriculum import Curriculum, assess, family_statistics, paired_statistics
 from train.model import ModelConfig
 from train.pipeline import Pipeline, PipelineConfig
@@ -120,7 +121,7 @@ class CurriculumTests(unittest.TestCase):
         model = ModelConfig(width=32, layers=1, heads=4, feedforward=64)
         ppo = PPOConfig(epochs=1, minibatch_size=8)
         config = PipelineConfig(workers=2, device="cpu", batch_size=2, decision_cap=3, storage_mib=4)
-        manifest = dict(engine_commit="test", model=asdict(model), observation_version=2)
+        manifest = dict(engine_commit="test", model=asdict(model), observation_version=OBSERVATION_VERSION)
         train, _ = roots()
         group = train[:4]
         curriculum = self.make()

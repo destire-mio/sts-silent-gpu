@@ -14,6 +14,7 @@ import numpy as np
 import torch
 
 from tools.evaluation import partition
+from . import OBSERVATION_VERSION
 from .checkpoint import engine_commit
 from .metrics import summarize
 from .model import ModelConfig
@@ -237,6 +238,8 @@ def main():
     bands.sort(key=lambda band: (float(np.median([r["distance_to_win"] for r in train if r["band"] == band])),
                                  BANDS.index(band)))
     checkpoint = torch.load(args.resume, map_location="cpu", weights_only=True) if args.resume else None
+    if checkpoint:
+        assert checkpoint["config"]["observation_version"] == OBSERVATION_VERSION
     curriculum = Curriculum(train, far, bands, args.init_seed, checkpoint["curriculum"] if checkpoint else None)
     model, ppo = ModelConfig(), PPOConfig(epochs=1, minibatch_size=8192, microbatch_size=128)
     config = PipelineConfig(workers=8, batch_size=8192, decision_cap=3000, storage_mib=2549, inference_chunk=512)
@@ -246,7 +249,7 @@ def main():
     if checkpoint:
         assert checkpoint["config"]["engine_commit"] == commit, "Resume requires a checkpoint prepared for this source revision"
     manifest = dict(entrypoint="train.curriculum", engine_commit=commit, torch_version=str(torch.__version__),
-                    observation_version=2, memory="none", model=asdict(model), ppo=asdict(ppo), pipeline=asdict(config),
+                    observation_version=OBSERVATION_VERSION, memory="none", model=asdict(model), ppo=asdict(ppo), pipeline=asdict(config),
                     group=args.group, init_seed=args.init_seed, source_hashes=source_hashes, bands=bands,
                     sampling=SCHEME, repeats=REPEATS, evaluation_interval=EVALUATION_INTERVAL,
                     decision_target=args.decisions, interval="Two-sided Hoeffding over seed families; paired range [-1,1]",

@@ -10,6 +10,7 @@ import spire
 
 from tools.e2_roots import STAGES, partition
 from tools.e3_roots import BANDS, extract
+from train import OBSERVATION_VERSION
 
 
 def replay_line(line):
@@ -64,7 +65,7 @@ def main():
     replayed = [replay_line(line) for line in selected]
     roots = extract(replayed)
     assert len({(r["seed"], tuple(r["candidates"])) for r in roots}) >= 20
-    document = dict(observation_version=2, status="pending_mac", round=args.round,
+    document = dict(observation_version=OBSERVATION_VERSION, status="pending_mac", round=args.round,
         source_sha256=hashlib.sha256(args.lines.read_bytes()).hexdigest(),
         native_replay_decisions=sum(len(r["candidates"]) for r in replayed),
         native_replay_seconds=time.perf_counter() - started, roots=roots)

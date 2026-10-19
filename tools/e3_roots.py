@@ -9,6 +9,7 @@ import subprocess
 import time
 
 from tools.e2_roots import STAGES, digest, partition, rows
+from train import OBSERVATION_VERSION
 
 
 BANDS = ("k8", "k32", "k64", "k128", "k256", "k512", "act4_entry", "act3_boss", "act3_entry")
@@ -48,7 +49,7 @@ def summarize(output, source, records, costs, started, reason):
     roots = extract(wins)
     assert len({row["seed"] for row in wins}) == len(wins)
     for part in ("train", "dev"):
-        (output / f"{part}.json").write_text(json.dumps(dict(observation_version=2,
+        (output / f"{part}.json").write_text(json.dumps(dict(observation_version=OBSERVATION_VERSION,
             roots=[r for r in roots if r["partition"] == part])) + "\n")
     entries = []
     audit = []
@@ -59,7 +60,7 @@ def summarize(output, source, records, costs, started, reason):
             audit.extend(selected)
             entries.append(dict(partition=part, band=band, roots=len(group),
                                 families=len({r["seed"] for r in group})))
-    document = dict(observation_version=2, engine_commit=subprocess.check_output(
+    document = dict(observation_version=OBSERVATION_VERSION, engine_commit=subprocess.check_output(
         ["git", "rev-parse", "HEAD"], text=True).strip(), source_sha256=digest(source), roots=audit)
     (output / "audit-roots.json").write_text(json.dumps(document, indent=2) + "\n")
     report = dict(source_sha256=digest(source), stop_reason=reason, started_epoch=started,
