@@ -9,7 +9,7 @@ struct History {
     int adventurer_floor = -1, adventurer_clue = 0;
     int rest_floor = -1, rest_heal = 0, rest_bonus = 0;
 };
-SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int position) {
+SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int position, bool live) {
     Token t = token(Kind::Card, static_cast<int>(c.id) + 1, zone, position);
     const auto& d = card_data(c.id);
     const int variables = card_variables[static_cast<int>(c.id)][c.upgrades != 0];
@@ -20,10 +20,11 @@ SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int po
         (c.free_to_play_once || (g.room_phase == RoomPhase::Combat && d.type == CardType::Attack &&
          has_power(g, g.player.creature, PowerId::FreeAttack))) ? 0 : c.cost_for_turn;
     t.values[2] = variables;
-    // SingleCardViewPopup.renderDynamicVariable shows base stats; AbstractCard's cache-visibility flags are not retained.
-    if (variables & 1) t.values[3] = c.base_damage;
-    if (variables & 2) t.values[4] = card_baseBlock(c);
-    if (variables & 4) t.values[5] = c.base_magic;
+    // Soul.update may clear GlassKnife damage between duplicate ModifyDamageAction.update calls.
+    const bool discard = zone == Zone::Discard || (zone == Zone::Grid && g.grid_source == PileId::Discard);
+    if (variables & 1) t.values[3] = live && !discard ? c.damage : c.base_damage;
+    if (variables & 2) t.values[4] = live ? c.block : card_baseBlock(c);
+    if (variables & 4) t.values[5] = live ? c.magic : c.base_magic;
     // MasterDeckViewScreen.render and noncombat GridCardSelectScreen.render show bottle badges.
     if (zone == Zone::Master || (zone == Zone::Grid && g.room_phase != RoomPhase::Combat)) {
         t.values[6] = c.bottle_flame; t.values[7] = c.bottle_lightning; t.values[8] = c.bottle_tornado;
@@ -55,30 +56,30 @@ SPIRE_FN inline void record_action(History& history, const Game& g, Action actio
         if (!card.is_flipped) continue;
         if (choice++ != action.index) continue;
         // GremlinMatchGame.updateMatchGameLogic reveals the clicked face before hiding a mismatch.
-        history.card = card_token(g, card, Zone::History, i + 1);
+        history.card = card_token(g, card, Zone::History, i + 1, false);
         history.shown = true;
         break;
     }
 }
-SPIRE_FN inline void pile(Writer& w, const Game& g, const Pile& cards, Zone zone, bool unordered) {
+SPIRE_FN inline void pile(Writer& w, const Game& g, const Pile& cards, Zone zone, bool unordered, bool copy) {
     uint8_t sorted[card_capacity];
     for (int i = 0; i < cards.size; ++i) {
         const int index = !unordered && (zone == Zone::Draw || zone == Zone::Exhaust) ? cards.size - i - 1 : i;
         const Card& c = g.cards[cards[index]];
-        Token t = card_token(g, c, zone, unordered ? 0 : i + 1);
+        Token t = card_token(g, c, zone, unordered ? 0 : i + 1, !copy);
         if (unordered) {
             int at = i;
             while (at > 0) {
                 const auto& previous = g.cards[sorted[at - 1]];
                 if (c.id > previous.id || (c.id == previous.id &&
-                    !less(t, card_token(g, previous, zone, 0)))) break;
+                    !less(t, card_token(g, previous, zone, 0, !copy)))) break;
                 sorted[at] = sorted[at - 1]; --at;
             }
             sorted[at] = cards[index];
         } else w.add(t);
     }
     if (unordered) for (int i = 0; i < cards.size; ++i)
-        w.add(card_token(g, g.cards[sorted[i]], zone, 0));
+        w.add(card_token(g, g.cards[sorted[i]], zone, 0, !copy));
 }
 SPIRE_FN inline void powers(Writer& w, const Game& g, const Creature& c, int owner) {
     int position = 0;
@@ -130,7 +131,7 @@ SPIRE_FN inline Token option(Control control, int position, int variant = 0) {
 SPIRE_FN inline int master_offer(Writer& w, const Game& g, uint16_t uuid, int owner) {
     if (!uuid) return 0;
     const Card& card = master_card_by_uuid(g, uuid);
-    Token t = card_token(g, card, Zone::Event, 0);
+    Token t = card_token(g, card, Zone::Event, 0, false);
     t.ids[3] = owner;
     return w.add(t);
 }

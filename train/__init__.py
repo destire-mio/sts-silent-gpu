@@ -1,3 +1,3 @@
 """Visible-observation, feed-forward E1 policy and synchronous PPO."""
 
-OBSERVATION_VERSION = 10
+OBSERVATION_VERSION = 11

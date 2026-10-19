@@ -1,5 +1,5 @@
 {
-  "protocol_version": 10,
+  "protocol_version": 11,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -121,8 +121,8 @@
       "reason": "Renderer intent alpha is absent from Game; the protocol omits these intents by default deny."
     },
     {
-      "field": "Live card damage/block/magic previews",
-      "reason": "Java modification flags are absent from Game.Card. Protocol 3 uses the freely inspectable popup base values."
+      "field": "Card modified flags after base changes",
+      "reason": "Combat caches restored in protocol 11; Game lacks Java modified flags needed when base values change after the last calculation. Discard damage and exhaust stat-copy rules remain as in v2."
     },
     {
       "field": "Conditional extended card previews",
@@ -236,6 +236,14 @@
       ],
       "rule": "Caller-owned memory records only displayed facts: the initial adventurer clue through INTRO and the clicked Match face for one settled boundary; reset clears and forks copy it.",
       "test": "tests/test_observation.cpp:adventurer_previous_clue,match_current_screen"
+    },
+    {
+      "version": 11,
+      "fields": [
+        "Card.values[2:4]"
+      ],
+      "rule": "Restore v2 live combat caches, base damage for discard, and stat-equivalent base numbers for exhaust/master/noncombat views; retain conditional-variable and bottle masks.",
+      "test": "tests/test_observation.cpp:combat_card_values,discard_damage,conditional_card_description"
     }
   ],
   "measurements_protocol_version": 2

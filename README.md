@@ -325,7 +325,7 @@ source = Path.home() / "spire-downloads/native-audit.roots.jsonl.gz"
 roots = [json.loads(line)["root"] for line in gzip.open(source, "rt")]
 roots = [root for root in roots if partition(root["seed"]) == "train"]
 target = source.with_name("e2-train.roots.json")
-target.write_text(json.dumps(dict(observation_version=10, roots=roots)) + "\n")
+target.write_text(json.dumps(dict(observation_version=11, roots=roots)) + "\n")
 print(len(roots), target)
 PY
 "$SPIRE_PYTHON" -m train.run --device cuda --workers 8 \
