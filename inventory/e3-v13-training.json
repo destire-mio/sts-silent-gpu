@@ -10680,12 +10680,24 @@
         "mac_interpretation": "Terminal animation/cache refresh timing; no subsequent policy decision. Fix and original-game regression are planned on Mac.",
         "evidence_scope": "Transcribed from the main-branch Mac report, not an independent server-side original-game recording check.",
         "server_action": "Stopped job3606 under the explicit user heartbeat comparison-mismatch rule. The repository note requesting an exemption does not itself change that rule.",
-        "resumption_gate": "Wait for Mac original-game fix/regression merged into main, or explicit user exemption limited to this terminal-only mismatch. All other mismatch/fault stop conditions remain."
+        "resumption_gate": "User explicitly declined the terminal-only exemption. Keep training stopped until the Mac fix and original-game regression are merged into main, then integrate, rebuild, complete affected-root and CPU/GPU checks, and document checkpoint source migration before resuming within the cumulative remaining budget.",
+        "previous_resumption_gate": "Wait for Mac original-game fix/regression merged into main, or explicit user exemption limited to this terminal-only mismatch. All other mismatch/fault stop conditions remain.",
+        "user_training_pause_decision": {
+          "answered_at": "2026-10-19T23:49:30.649597+08:00",
+          "answer": "保持暂停，等 Mac 修复进入 main（推荐）",
+          "scope": "GPU training only; keep GitHub monitor active.",
+          "terminal_mismatch_exemption": false,
+          "requires": [
+            "Mac fix and original-game regression evidence merged into main",
+            "Review/integrate the fix, rebuild backend, rerun affected-root and CPU/GPU checks",
+            "Document checkpoint source migration before resuming A/2718 within cumulative remaining budget"
+          ]
+        }
       }
     },
     {
       "observation_version": 13,
-      "status": "pending_mac",
+      "status": "passed_reported_by_mac",
       "round": "A-1729-20418439",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -10718,11 +10730,20 @@
       "job": 3606,
       "selection": "Three distinct families per train/dev band; candidate prefixes from frozen policy version31. Deduplicated within this round.",
       "native_replay_faults": 0,
-      "source_archive_sha256": "96c3bf23bfeeb0e1534d15a42b7ce59ae0a63d3256b09faa561ed948bc0ba0f8"
+      "source_archive_sha256": "96c3bf23bfeeb0e1534d15a42b7ce59ae0a63d3256b09faa561ed948bc0ba0f8",
+      "mac_comparison": {
+        "status": "passed_reported_by_mac",
+        "report_key": "ce5f97a2e3168925cc9582deec6daf3375d7cb56:3",
+        "source_commit": "ce5f97a2e3168925cc9582deec6daf3375d7cb56",
+        "source_document": "docs/messages/claude-to-gpt.md",
+        "message": 3,
+        "counts_scope": "Shared combined report for A-1729-20418439 and A-1729-30402239; no per-round recording or decision count supplied.",
+        "terminal_frames": "all_match_reported_by_mac"
+      }
     },
     {
       "observation_version": 13,
-      "status": "pending_mac",
+      "status": "passed_reported_by_mac",
       "round": "A-1729-30402239",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -10755,7 +10776,16 @@
       "job": 3606,
       "selection": "Three distinct families per train/dev band; candidate prefixes from frozen policy version45. Deduplicated within this round.",
       "native_replay_faults": 0,
-      "source_archive_sha256": "0be4e98aff8e62bf384e35ea3ea11c721186edc92f267d5c9a7af3071eb6e87a"
+      "source_archive_sha256": "0be4e98aff8e62bf384e35ea3ea11c721186edc92f267d5c9a7af3071eb6e87a",
+      "mac_comparison": {
+        "status": "passed_reported_by_mac",
+        "report_key": "ce5f97a2e3168925cc9582deec6daf3375d7cb56:3",
+        "source_commit": "ce5f97a2e3168925cc9582deec6daf3375d7cb56",
+        "source_document": "docs/messages/claude-to-gpt.md",
+        "message": 3,
+        "counts_scope": "Shared combined report for A-1729-20418439 and A-1729-30402239; no per-round recording or decision count supplied.",
+        "terminal_frames": "all_match_reported_by_mac"
+      }
     },
     {
       "observation_version": 13,
@@ -20201,7 +20231,19 @@
     "mac_interpretation": "Terminal animation/cache refresh timing; no subsequent policy decision. Fix and original-game regression are planned on Mac.",
     "evidence_scope": "Transcribed from the main-branch Mac report, not an independent server-side original-game recording check.",
     "server_action": "Stopped job3606 under the explicit user heartbeat comparison-mismatch rule. The repository note requesting an exemption does not itself change that rule.",
-    "resumption_gate": "Wait for Mac original-game fix/regression merged into main, or explicit user exemption limited to this terminal-only mismatch. All other mismatch/fault stop conditions remain."
+    "resumption_gate": "User explicitly declined the terminal-only exemption. Keep training stopped until the Mac fix and original-game regression are merged into main, then integrate, rebuild, complete affected-root and CPU/GPU checks, and document checkpoint source migration before resuming within the cumulative remaining budget.",
+    "previous_resumption_gate": "Wait for Mac original-game fix/regression merged into main, or explicit user exemption limited to this terminal-only mismatch. All other mismatch/fault stop conditions remain.",
+    "user_training_pause_decision": {
+      "answered_at": "2026-10-19T23:49:30.649597+08:00",
+      "answer": "保持暂停，等 Mac 修复进入 main（推荐）",
+      "scope": "GPU training only; keep GitHub monitor active.",
+      "terminal_mismatch_exemption": false,
+      "requires": [
+        "Mac fix and original-game regression evidence merged into main",
+        "Review/integrate the fix, rebuild backend, rerun affected-root and CPU/GPU checks",
+        "Document checkpoint source migration before resuming A/2718 within cumulative remaining budget"
+      ]
+    }
   },
   "stop_evidence_archives": [
     {
@@ -20220,5 +20262,52 @@
       "filename": "e3-training-truncations-3610-86cbae2.tar.gz",
       "sha256": "72a15c5baeeb326aa719880dfb71b2735e07e106b1a80c49b7711cedeac37703"
     }
-  ]
+  ],
+  "mac_policy_audit_reports": [
+    {
+      "report_key": "ce5f97a2e3168925cc9582deec6daf3375d7cb56:3",
+      "source_commit": "ce5f97a2e3168925cc9582deec6daf3375d7cb56",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "message": 3,
+      "reported_at": "2026-10-20T00:00:00+08:00",
+      "status": "passed_reported_by_mac",
+      "rounds": [
+        "A-1729-20418439",
+        "A-1729-30402239"
+      ],
+      "engine_commit": "45fe15e48c2ef60115b305873c9d30b08afdacad",
+      "training_source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+      "engine_equivalence_reported": "core/oracle/gpu are identical between 45fe15e and 6ae1956",
+      "counts_scope": "Combined across the two named rounds; per-round recordings and decisions were not reported.",
+      "prefixes": 108,
+      "original_recordings": 104,
+      "original_decisions": 153450,
+      "matching_recordings_by_scope": {
+        "combat": 104,
+        "run": 104
+      },
+      "differences": 0,
+      "terminal_frames": "all_match_reported_by_mac",
+      "pending_policy_rounds": [
+        "A-1729-40112574",
+        "A-1729-50143932",
+        "A-2718-10476021"
+      ],
+      "pending_prefixes": 162,
+      "evidence_scope": "Transcribed from the main-branch Mac report; the server did not independently execute original-game recordings.",
+      "fix_included": false,
+      "training_resumption_authorized": false
+    }
+  ],
+  "user_training_pause_decision": {
+    "answered_at": "2026-10-19T23:49:30.649597+08:00",
+    "answer": "保持暂停，等 Mac 修复进入 main（推荐）",
+    "scope": "GPU training only; keep GitHub monitor active.",
+    "terminal_mismatch_exemption": false,
+    "requires": [
+      "Mac fix and original-game regression evidence merged into main",
+      "Review/integrate the fix, rebuild backend, rerun affected-root and CPU/GPU checks",
+      "Document checkpoint source migration before resuming A/2718 within cumulative remaining budget"
+    ]
+  }
 }
