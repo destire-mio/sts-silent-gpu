@@ -1943,7 +1943,7 @@
       "act3_entry"
     ],
     "training_data_sufficient": true,
-    "status": "new_root_cpu_gpu_validation_pending",
+    "status": "new_root_validation_passed_fresh_training_started",
     "mac_audit": {
       "status": "passed_reported_by_mac",
       "source_commit": "a657aa250ef0d7f9ac90e960c81c42157b708cd1",
@@ -1959,6 +1959,12 @@
       "differences": 0,
       "verification_basis": "Original-game result reported on main; server did not execute Mac recordings."
     },
-    "historical_result_note": "The original search summary and insufficient-data decision above use the old dev>=20 rule and remain unchanged as evidence."
+    "historical_result_note": "The original search summary and insufficient-data decision above use the old dev>=20 rule and remain unchanged as evidence.",
+    "root_validation_job": 3605,
+    "root_validation_inventory": "inventory/e3-v13-validation.json",
+    "training_job": 3606,
+    "training_source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+    "initialization": "fresh",
+    "checkpoint_source": null
   }
 }

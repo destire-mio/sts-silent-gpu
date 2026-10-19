@@ -1,0 +1,295 @@
+{
+  "total_seconds": 28800,
+  "rule_revision": "a657aa250ef0d7f9ac90e960c81c42157b708cd1",
+  "allocation_ledger": [
+    {
+      "job_id": 3546,
+      "charged_seconds": 7,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 5,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-search-3546.log",
+      "timestamp_evidence": "1792340166 1792340171 2026-10-19 00:16:06.478357327 +0800 2026-10-19 00:16:11.432357212 +0800"
+    },
+    {
+      "job_id": 3547,
+      "charged_seconds": 39,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 37,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-build-3547.log",
+      "timestamp_evidence": "1792340338 1792340375 2026-10-19 00:18:58.484353343 +0800 2026-10-19 00:19:35.540352484 +0800"
+    },
+    {
+      "job_id": 3548,
+      "charged_seconds": 1578,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 1576,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-search-3548.log",
+      "timestamp_evidence": "1792340416 1792341992 2026-10-19 00:20:16.856351527 +0800 2026-10-19 00:46:32.447315032 +0800"
+    },
+    {
+      "job_id": 3549,
+      "charged_seconds": 20,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 18,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-tests-3549.log",
+      "timestamp_evidence": "1792340487 1792340505 2026-10-19 00:21:27.932349881 +0800 2026-10-19 00:21:45.670349470 +0800"
+    },
+    {
+      "job_id": 3550,
+      "charged_seconds": 458,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 456,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-gates-3550.log",
+      "timestamp_evidence": "1792340614 1792341070 2026-10-19 00:23:34.134346958 +0800 2026-10-19 00:31:10.200336394 +0800"
+    },
+    {
+      "job_id": 3552,
+      "charged_seconds": 659,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 657,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-gates-3552.log",
+      "timestamp_evidence": "1792341187 1792341844 2026-10-19 00:33:07.861333668 +0800 2026-10-19 00:44:04.193318466 +0800"
+    },
+    {
+      "job_id": 3553,
+      "charged_seconds": 117,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 115,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-gpu-check-3553.log",
+      "timestamp_evidence": "1792341844 1792341959 2026-10-19 00:44:04.568318457 +0800 2026-10-19 00:45:59.419315797 +0800"
+    },
+    {
+      "job_id": 3554,
+      "charged_seconds": 9216,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 9214,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-search-more-3554.log",
+      "timestamp_evidence": "1792341992 1792351206 2026-10-19 00:46:32.943315020 +0800 2026-10-19 03:20:06.070101616 +0800"
+    },
+    {
+      "job_id": 3555,
+      "charged_seconds": 3,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 1,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-audit-check-3555.log",
+      "timestamp_evidence": "1792341792 1792341793 2026-10-19 00:43:12.663319659 +0800 2026-10-19 00:43:13.942319630 +0800"
+    },
+    {
+      "job_id": 3556,
+      "charged_seconds": 55,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 53,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-cpu-check-3556.log",
+      "timestamp_evidence": "1792342214 1792342267 2026-10-19 00:50:14.587309886 +0800 2026-10-19 00:51:07.386308663 +0800"
+    },
+    {
+      "job_id": 3557,
+      "charged_seconds": 25,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 23,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-cpu-check-3557.log",
+      "timestamp_evidence": "1792342239 1792342262 2026-10-19 00:50:39.304309314 +0800 2026-10-19 00:51:02.811308769 +0800"
+    },
+    {
+      "job_id": 3558,
+      "charged_seconds": 16,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 14,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-cpu-check-3558.log",
+      "timestamp_evidence": "1792342268 1792342282 2026-10-19 00:51:08.318308642 +0800 2026-10-19 00:51:22.433308315 +0800"
+    },
+    {
+      "job_id": 3559,
+      "charged_seconds": 6,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 4,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-root-audit-3559.log",
+      "timestamp_evidence": "1792342472 1792342476 2026-10-19 00:54:32.552303911 +0800 2026-10-19 00:54:36.048303830 +0800"
+    },
+    {
+      "job_id": 3561,
+      "charged_seconds": 39,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 37,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-assessment-check-3561.log",
+      "timestamp_evidence": "1792342729 1792342766 2026-10-19 00:58:49.612297957 +0800 2026-10-19 00:59:26.196297109 +0800"
+    },
+    {
+      "job_id": 3562,
+      "charged_seconds": 17,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 15,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-cpu-check-3562.log",
+      "timestamp_evidence": "1792342820 1792342835 2026-10-19 01:00:20.605295849 +0800 2026-10-19 01:00:35.200295511 +0800"
+    },
+    {
+      "job_id": 3563,
+      "charged_seconds": 195,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 195,
+      "log_interval_seconds": 195,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-assessment-check-3563.log",
+      "timestamp_evidence": "1792342851 1792343046 2026-10-19 01:00:51.964295123 +0800 2026-10-19 01:04:06.883290608 +0800"
+    },
+    {
+      "job_id": 3564,
+      "charged_seconds": 2038,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 2036,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-training-3564.log",
+      "timestamp_evidence": "1792351254 1792353290 2026-10-19 03:20:54.477100495 +0800 2026-10-19 03:54:50.368053337 +0800"
+    },
+    {
+      "job_id": 3565,
+      "charged_seconds": 50,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 48,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-final-root-check-3565.log",
+      "timestamp_evidence": "1792351206 1792351254 2026-10-19 03:20:06.353101609 +0800 2026-10-19 03:20:54.056100504 +0800"
+    },
+    {
+      "job_id": 3587,
+      "charged_seconds": 1720,
+      "final": true,
+      "measurement_source": "log_birth_to_last_write_plus_2_seconds_estimate",
+      "slurm_elapsed_seconds": null,
+      "log_interval_seconds": 1718,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-resume-3587.log",
+      "timestamp_evidence": "1792389443 1792391161 2026-10-19 13:57:23.737215914 +0800 2026-10-19 14:26:01.937176115 +0800"
+    },
+    {
+      "job_id": 3598,
+      "charged_seconds": 368,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 368,
+      "log_interval_seconds": 368,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-v13-build-3598.log",
+      "timestamp_evidence": "1792404246 1792404614 2026-10-19 18:04:06.936873026 +0800 2026-10-19 18:10:14.508864512 +0800"
+    },
+    {
+      "job_id": 3599,
+      "charged_seconds": 684,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 684,
+      "log_interval_seconds": 684,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-v13-gates-3599.log",
+      "timestamp_evidence": "1792404615 1792405299 2026-10-19 18:10:15.432864490 +0800 2026-10-19 18:21:39.875848637 +0800"
+    },
+    {
+      "job_id": 3600,
+      "charged_seconds": 57,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 57,
+      "log_interval_seconds": 58,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-v13-roots-3600.log",
+      "timestamp_evidence": "1792405300 1792405358 2026-10-19 18:21:40.352848626 +0800 2026-10-19 18:22:38.042847289 +0800"
+    },
+    {
+      "job_id": 3601,
+      "charged_seconds": 25,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 25,
+      "log_interval_seconds": 25,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-bootstrap-tests-3601.log",
+      "timestamp_evidence": "1792405724 1792405749 2026-10-19 18:28:44.928838791 +0800 2026-10-19 18:29:09.711838217 +0800"
+    },
+    {
+      "job_id": 3604,
+      "charged_seconds": 20,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 20,
+      "log_interval_seconds": 20,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-bootstrap-tests-3604.log",
+      "timestamp_evidence": "1792417064 1792417084 2026-10-19 21:37:44.929576122 +0800 2026-10-19 21:38:04.542575667 +0800"
+    },
+    {
+      "job_id": 3605,
+      "charged_seconds": 103,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 103,
+      "log_interval_seconds": 103,
+      "log_path": "/home/zhuyouwei/spire-downloads/e3-final-roots-3605.log",
+      "timestamp_evidence": "1792417064 1792417167 2026-10-19 21:37:44.884576123 +0800 2026-10-19 21:39:27.559573745 +0800"
+    }
+  ],
+  "prior_charged_seconds": 17515,
+  "remaining_seconds_before_run": 11285,
+  "allocation_limit_seconds": 11280,
+  "accounting_note": "sacct is disabled (accounting_storage/none), JobComp is none, and old controller records expired. Saved final scontrol RunTime is used where available; remaining old jobs use original log birth-to-last-write intervals plus two seconds for timestamp granularity, explicitly estimated, not sacct elapsed. Full wall time for CPU-only and partial-GPU E3 jobs is conservatively charged as before. This total is a conservative operational ledger, not a complete measured eight-GPU allocation total.",
+  "retired_reservation": {
+    "seconds": 14400,
+    "charged": false,
+    "reason": "Replaced by itemized evidence per main a657aa2"
+  },
+  "separately_authorized_search": {
+    "jobs": [
+      3602,
+      3603
+    ],
+    "authorization": "66621552383508a7d2156a1d84154a148ebc94bf",
+    "wall_seconds": 9853.89482831955,
+    "cpu_seconds": 504759.423444271,
+    "additional_search_authorized": false
+  },
+  "uncertainty_note": "Log intervals do not prove exact Slurm allocation boundaries. Future runs record final controller RunTime before records expire. No historical estimate is described as measured Slurm elapsed.",
+  "recorded_at": "2026-10-19T21:49:49.607982+08:00",
+  "active_allocation": {
+    "job_id": 3606,
+    "status": "RUNNING",
+    "gpus": 8,
+    "cpus": 8,
+    "time_limit_seconds": 11280,
+    "slurm_start": "2026-10-19T21:47:27+08:00",
+    "charged_seconds": 359,
+    "final": false,
+    "observation": "2026-10-19T21:53:26.154302+08:00",
+    "measurement_source": "live_scontrol_RunTime"
+  },
+  "observed_cumulative_charge_seconds": 17874,
+  "remaining_seconds_at_observation": 10926,
+  "final_slurm_recorder": {
+    "pid": 3820032,
+    "output": "/home/zhuyouwei/spire-downloads/e3-training-3606/slurm-final.txt"
+  }
+}

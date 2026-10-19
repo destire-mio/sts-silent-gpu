@@ -279,5 +279,89 @@
     "repair_allocation_seconds": 1134,
     "remaining_upper_bound_seconds": 11547.818964242935,
     "new_cpu_search_budget": "Separate CPU-only budget explicitly renewed by main 6662155; historical and GPU-node charges retained"
+  },
+  "final_roots_dev10_validation": {
+    "job": 3605,
+    "slurm_status": "COMPLETED",
+    "exit_code": "0:0",
+    "slurm_elapsed_seconds": 103,
+    "cpus": 3,
+    "gpus": 3,
+    "source_cpu_search": "/home/zhuyouwei/spire-downloads/e3-v13-search-extended-3603",
+    "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+    "observation_version": 13,
+    "input_sha256": {
+      "train.json": "6cb6edb2628f9f1305b29b969b59b979416ec55236f80fc12a8305be26e94f1b",
+      "dev.json": "c45f1026f63e4e6e9911e902bcb3cf39b2e45a27bfb041bc2e2633720c809d7e",
+      "winning-lines.jsonl": "f5408aebaa05f5789685fb40931bf0eaeb6963e14f3a777a9282bcbed9366fc5",
+      "summary.json": "68ef8ca9c0d3b25e6dcfa0f17fb10a618f269d3b7017ca3c8567d28721b3422f"
+    },
+    "module_sha256": {
+      "spire.cpython-312-x86_64-linux-gnu.so": "cb6895969e438866bd9d8dffc3044f2f1f7dc6accd88a8aa4f4a67ec334b8bd5",
+      "spire_gpu.cpython-312-x86_64-linux-gnu.so": "fad153de160ae258d7211c48459010b2513286e1c1ec45421b92d71575000c5c"
+    },
+    "unique_prefixes": 306,
+    "full_state_binary_sha256": "f86e6e6dd00f429f79dbf3056b1bd170f8b145b1dc8818663d7090cf921605c4",
+    "status": "cpu_gpu_parity_passed",
+    "complete_game_history_state_equal": true,
+    "collector_roots_checked": 306,
+    "collector_shards": [
+      {
+        "status": "passed",
+        "roots_checked": 102,
+        "decisions": 1731,
+        "faults": 0,
+        "exact_actions_outcomes_observations": true,
+        "max_absolute_error": {
+          "log_probs": 1.6689300537109375e-05,
+          "values": 3.248453140258789e-06,
+          "returns": 2.5033950805664062e-06,
+          "advantages": 3.069639205932617e-06
+        }
+      },
+      {
+        "status": "passed",
+        "roots_checked": 102,
+        "decisions": 1791,
+        "faults": 0,
+        "exact_actions_outcomes_observations": true,
+        "max_absolute_error": {
+          "log_probs": 1.9788742065429688e-05,
+          "values": 4.410743713378906e-06,
+          "returns": 2.3245811462402344e-06,
+          "advantages": 3.9637088775634766e-06
+        }
+      },
+      {
+        "status": "passed",
+        "roots_checked": 102,
+        "decisions": 1973,
+        "faults": 0,
+        "exact_actions_outcomes_observations": true,
+        "max_absolute_error": {
+          "log_probs": 1.5735626220703125e-05,
+          "values": 3.4570693969726562e-06,
+          "returns": 2.384185791015625e-06,
+          "advantages": 3.159046173095703e-06
+        }
+      }
+    ],
+    "gpu_check_seconds": 96.42237567901611,
+    "collector_atol": 3e-05,
+    "collector_rtol": 3e-05,
+    "collector_decisions": 5495,
+    "cpu_tests": {
+      "job": 3604,
+      "passed": 14,
+      "failed": 0,
+      "slurm_elapsed_seconds": 20,
+      "test_seconds": 13.882
+    },
+    "evidence_archive": {
+      "filename": "e3-dev10-gates-evidence.tar.gz",
+      "sha256": "5b39ca4d1565baf51268e3a4f23c26aec3fbb0f9bf99a2d8b93749643a1de64f",
+      "summary_sha256": "9c5248d255d92a167127afbfd2cc2f789560e8161bb9ff75659a7f4aca314328"
+    },
+    "note": "All final306prefixes were checked; this supersedes previous new-root pending status. Original-game verification is separately reported by Mac in maina657aa2."
   }
 }
