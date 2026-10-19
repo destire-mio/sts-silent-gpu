@@ -14,17 +14,20 @@ SPIRE_FN inline int selection_prompt(const Game& g) {
     case EffectKind::Discard: case EffectKind::GamblingChipAction: return 4;
     case EffectKind::Exhaust: case EffectKind::Recycle: return 5;
     case EffectKind::RetainCards: return 6;
-    case EffectKind::PutOnDeck: case EffectKind::DiscardPileToTopOfDeck: return 7;
+    case EffectKind::PutOnDeck: return 7;
+    case EffectKind::DiscardPileToTopOfDeck: return 18;
     case EffectKind::Forethought: return 8;
     case EffectKind::DualWield: return 9;
     case EffectKind::NightmareAction: return 10;
     case EffectKind::Setup: return 11;
     case EffectKind::Scry: return 12;
     case EffectKind::Omniscience: return 13;
-    case EffectKind::BetterDiscardPileToHand: case EffectKind::BetterDrawPileToHand:
-    case EffectKind::AttackFromDeckToHand: case EffectKind::SkillFromDeckToHand:
     // MeditateAction.update and BetterDiscardPileToHandAction.update share BetterToHandAction text.
-    case EffectKind::Exhume: case EffectKind::Meditate: return 14;
+    case EffectKind::BetterDiscardPileToHand: case EffectKind::BetterDrawPileToHand:
+    case EffectKind::Meditate: return 14;
+    case EffectKind::AttackFromDeckToHand: return 15;
+    case EffectKind::SkillFromDeckToHand: return 16;
+    case EffectKind::Exhume: return 17;
     default: return 0;
     }
 }
@@ -122,7 +125,10 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
             // AbstractCreature.renderHealthText shows Dead instead of HP/max HP at zero health.
             if (c.hp > 0) t.values[1] = c.max_hp;
             t.values[3] = static_cast<int>(c.draw_x); t.values[4] = c.flip_horizontal;
-            const bool show_intent = g.screen == Screen::Combat && !c.dying && !c.half_dead &&
+            // AbstractRoom.render keeps monsters behind overlays; GameActionManager flashes intents only in monster turns.
+            const bool player_selection = !g.manager.turn_has_ended &&
+                (g.screen == Screen::Discard || g.screen == Screen::Grid || g.screen == Screen::CardReward);
+            const bool show_intent = (g.screen == Screen::Combat || player_selection) && !c.dying && !c.half_dead &&
                 !has_relic(g, RelicId::RunicDome) && m.intent != Intent::None;
             if (show_intent) {
                 t.values[6] = static_cast<int>(m.intent) + 1;

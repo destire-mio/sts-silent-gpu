@@ -250,6 +250,54 @@ static void identical_selection_text() {
     require(a.screen == Screen::Grid && b.screen == Screen::Grid, "retrieval prompt fixture");
     equal(a, b);
 }
+static void selection_intents() {
+    for (auto screen : {Screen::Discard, Screen::Grid, Screen::CardReward}) {
+        Game a = combat();
+        if (screen == Screen::Discard) {
+            Effect discard{}; discard.kind = EffectKind::Discard; discard.amount = 1;
+            discard.source = discard.target = player_target;
+            add_bottom(a, discard); run_until_decision(a);
+        } else if (screen == Screen::Grid) {
+            a.grid_cards = a.draw; open_grid_selection(a, PileId::Grid, 1, false);
+        } else {
+            a.reward_cards.push_back(create_card(a, make_card(CardId::Strike_G)));
+            a.screen = Screen::CardReward;
+        }
+        require(a.screen == screen && !a.manager.turn_has_ended, "player selection fixture");
+        Game b = a;
+        b.monsters[0].intent = Intent::Attack; b.monsters[0].intent_damage = 39;
+        b.monsters[0].intent_multi = true; b.monsters[0].intent_hits = 4;
+        different(a, b);
+        b = a; b.monsters[0].pending_intent = Intent::Attack; b.monsters[0].pending_base_damage = 39;
+        equal(a, b);
+        b = a; b.monsters[0].intent_damage += 9;
+        a.monsters[0].intent = b.monsters[0].intent = Intent::Attack;
+        different(a, b);
+        equip_relic(a, RelicId::RunicDome); equip_relic(b, RelicId::RunicDome);
+        equal(a, b);
+        unequip_relic(a, RelicId::RunicDome); unequip_relic(b, RelicId::RunicDome);
+        a.manager.turn_has_ended = b.manager.turn_has_ended = true;
+        equal(a, b);
+    }
+}
+static void grid_prompt_text() {
+    const EffectKind kinds[]{EffectKind::AttackFromDeckToHand, EffectKind::SkillFromDeckToHand,
+                             EffectKind::Exhume, EffectKind::DiscardPileToTopOfDeck};
+    const int prompts[]{15, 16, 17, 18};
+    for (int i = 0; i < 4; ++i) {
+        Game g = combat();
+        if (i == 2) { g.exhaust.push_back(g.draw.pop_back()); g.exhaust.push_back(g.draw.pop_back()); }
+        if (i == 3) { g.discard.push_back(g.draw.pop_back()); g.discard.push_back(g.draw.pop_back()); }
+        Effect e{}; e.kind = kinds[i]; e.amount = 1; action_initialize_state(e);
+        add_bottom(g, e); run_until_decision(g);
+        require(g.screen == Screen::Grid, "grid text fixture");
+        const auto o = observe(g);
+        require(o.tags[3 * obs::entity_capacity] == prompts[i], "distinct grid text lost its prompt identity");
+        Game h = g;
+        h.action_objects[h.manager.current_action].source = no_target;
+        equal(g, h);
+    }
+}
 static Game event(EventId id) {
     Game g; reset(g, 101);
     g.event = {}; g.event.id = id; event_initialize_state(g.event);
@@ -468,7 +516,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    selection_intents(); grid_prompt_text(); conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

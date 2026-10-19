@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 11 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 12 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -115,9 +115,14 @@ energyGainAmount; `MalleablePower.updateDescription` displays basePower. These u
 variant is its catalog ID + 1 and numeric row 2 its upgrade suffix. The referenced card's
 other stats and engine reference are denied. Invincible maxAmt, Flight storedAmount,
 Echo cardsDoubledThisTurn, poison/constriction sources and just-applied flags are denied.
-Intents at interrupted selection/reward overlays are omitted: the engine does not retain
-the renderer's intent-alpha visibility state at those boundaries. This is a documented
-information omission, not permission to expose pending moves.
+Player-turn HAND_SELECT, GRID and combat CARD_REWARD overlays retain the current intents.
+`AbstractRoom.render:459–473` calls `MonsterGroup.render:276–282`, which renders monsters
+behind these screens; `AbstractMonster.render:735–738` has no screen exclusion. The selection
+screens' PeekButton also permits inspection behind the overlay. `GameActionManager.getNextAction`
+queues IntentFlash only in the monster-turn branch (lines 296–303), and recreates intents before
+player-turn selections (lines 338–354). Thus `!turn_has_ended` identifies the supported overlay
+case using existing state. Selections after turn end remain omitted because per-monster intent
+alpha/target is absent. Runic Dome and pending moves remain hidden in every screen.
 
 ## HAND_SELECT (engine Discard)
 
@@ -288,7 +293,12 @@ Card variables are numeric metadata extracted from the pinned English descriptio
 The base/upgrade masks include extended description variables used by dynamic card text.
 Selection prompt IDs are an explicit semantic whitelist: 1 upgrade, 2 purge, 3 transform,
 4 discard, 5 exhaust, 6 retain, 7 put on top, 8 put on bottom, 9 duplicate, 10 nightmare,
-11 setup, 12 scry, 13 omniscience, 14 retrieve (including Meditate); zero means no additional prompt.
+11 setup, 12 scry, 13 omniscience, 14 retrieve (including Meditate), 15 retrieve attack,
+16 retrieve skill, 17 return from exhaust, 18 discard to draw-pile top; zero means no additional prompt.
+The added grid identities follow `AttackFromDeckToHandAction.update:60`,
+`SkillFromDeckToHandAction.update:60`, `ExhumeAction.update:83`, and
+`DiscardPileToTopOfDeckAction.update:44`, each passing its own localized text to
+`GridCardSelectScreen.open/render`. They identify displayed text, not private continuation effects.
 They encode the displayed selection message, not an action queue or object number.
 Meditate and BetterDiscardPileToHand use the same `BetterToHandAction` UI strings and
 therefore share prompt 14; the hidden continuation effect cannot distinguish them.
@@ -383,7 +393,7 @@ All words are little endian; records need no alignment or end padding. There are
 in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
 8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
 return/recurrent-state storage belongs to the trainer and is not included in these sizes.
-The format is tied to protocol version 11; it is not a save/load format for games.
+The format is tied to protocol version 12; it is not a save/load format for games.
 
 Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
 gathers records by int32 indices into its preallocated dense arrays with the same shapes,

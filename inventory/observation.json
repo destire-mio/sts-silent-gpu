@@ -1,5 +1,5 @@
 {
-  "protocol_version": 11,
+  "protocol_version": 12,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -117,8 +117,8 @@
       "reason": "No legal policy decision exists; covered by the batch no-decision fault test, not an oracle decision trace."
     },
     {
-      "field": "Intent visibility during selection/reward overlays",
-      "reason": "Renderer intent alpha is absent from Game; the protocol omits these intents by default deny."
+      "field": "Intent visibility during selections after turn end",
+      "reason": "Protocol 12 restores player-turn overlay intents. Per-monster alpha/target during enemy-turn selections is absent from Game, so those overlays remain denied."
     },
     {
       "field": "Card modified flags after base changes",
@@ -244,6 +244,15 @@
       ],
       "rule": "Restore v2 live combat caches, base damage for discard, and stat-equivalent base numbers for exhaust/master/noncombat views; retain conditional-variable and bottle masks.",
       "test": "tests/test_observation.cpp:combat_card_values,discard_damage,conditional_card_description"
+    },
+    {
+      "version": 12,
+      "fields": [
+        "Monster intent/damage/hits on player-turn overlays",
+        "Screen.aux grid prompts 15-18"
+      ],
+      "rule": "Render current intents behind player-turn selection/reward overlays; distinguish displayed attack/skill/exhaust/discard-to-top grid texts while keeping Meditate and BetterToHand shared.",
+      "test": "tests/test_observation.cpp:selection_intents,grid_prompt_text,identical_selection_text"
     }
   ],
   "measurements_protocol_version": 2
