@@ -171,6 +171,8 @@ def ownership():
                             java_path='com/megacrit/cardcrawl/' + java.replace('.', '/') + '.java')
             unit = dict(unit, header=filename)
             result[filename] = unit
+            if kind == 'card':
+                result['@card-id:' + enum] = unit
             result['@' + catalog.parent.name + ':' + typename] = unit
     for path in (ROOT / 'core').glob('*/*.inc'):
         text = path.read_text()
@@ -193,6 +195,19 @@ def java_basis(function, source, owners, line):
         unit = owners['@' + symbol[1] + ':' + typename]
     method = function.split('(')[0].rsplit('::', 1)[-1]
     method = re.sub(r'<.*>', '', method)
+    if method in ('card_rarity', 'card_sort_order', 'card_colorless', 'card_name_order'):
+        statement = source.read_text().splitlines()[line - 1]
+        case = re.search(r'case CardId::(\w+):', statement)
+        if case:
+            unit = owners['@card-id:' + case[1]]
+            caller = {'card_rarity': 'cards.CardGroup.getRandomCard',
+                      'card_sort_order': 'cards.AbstractCard.compareTo',
+                      'card_colorless': 'dungeons.AbstractDungeon.transformCard',
+                      'card_name_order': 'cards.CardGroup.sortAlphabetically'}[method]
+            return dict(owning_unit=unit['key'], java_class=unit['java_class'], java_method='<init>',
+                        java_path=unit['java_path'], generated_property=method,
+                        java_rule_caller='com.megacrit.cardcrawl.' + caller,
+                        mapping='Generated property consumed by a Java rule; constructor defines card color, rarity, ID or localized name')
     if source.name == 'random.hpp':
         xs = 'RandomXS128::' in function or method in ('rng_murmur_hash', 'signed_long', 'set_state')
         java = 'com.badlogic.gdx.math.RandomXS128' if xs else 'com.megacrit.cardcrawl.random.Random'
