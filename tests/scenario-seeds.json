@@ -39,6 +39,41 @@
     108,
     111
   ],
+  "Bonfire-no-purge": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-common": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-curse": [
+    102,
+    319,
+    336
+  ],
+  "Bonfire-offer-rare": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-special": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-offer-uncommon": [
+    162,
+    164,
+    171
+  ],
+  "Bonfire-repeat-curse": [
+    141,
+    194,
+    440
+  ],
   "BossReward-starter-replacement": [
     139,
     142,
@@ -79,10 +114,30 @@
     1000001179,
     1000001180
   ],
+  "DeadAdventurer-lagavulin-ambush": [
+    145,
+    260,
+    383
+  ],
+  "DeadAdventurer-three-rewards": [
+    1568,
+    1625,
+    2125
+  ],
   "Deca-poison-victory": [
     101,
     102,
     103
+  ],
+  "Designer-random-adjustment": [
+    164,
+    448,
+    477
+  ],
+  "Designer-transform-two-cards": [
+    657,
+    685,
+    757
   ],
   "Discovery-MasterReality-nine": [
     107,
@@ -214,6 +269,36 @@
     2000003428,
     2000003429
   ],
+  "GoldenIdolEvent-injury": [
+    151,
+    182,
+    185
+  ],
+  "GoldenIdolEvent-max-hp": [
+    151,
+    182,
+    185
+  ],
+  "GremlinWheelGame-outcomes": [
+    893,
+    1447,
+    2071,
+    258,
+    269,
+    754,
+    1408,
+    1521,
+    2710,
+    137,
+    599,
+    793,
+    1255,
+    1676,
+    2368,
+    436,
+    901,
+    1063
+  ],
   "Grid-shop-cancel": [
     1000050000,
     1000050001,
@@ -238,6 +323,16 @@
     102,
     103,
     106
+  ],
+  "LivingWall-bottled-only": [
+    108,
+    114,
+    128
+  ],
+  "LivingWall-grow": [
+    108,
+    114,
+    128
   ],
   "MawBank-shop-spend": [
     101,
@@ -528,6 +623,11 @@
     171,
     281,
     310
+  ],
+  "TombRedMask-owned-gold": [
+    126,
+    129,
+    142
   ],
   "Toolbox-duplicate-choices": [
     105,
