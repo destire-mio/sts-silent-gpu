@@ -86,6 +86,40 @@ class HostInterface(unittest.TestCase):
         self.assertEqual([], pile(game.snapshot(), "hand"))
         self.assertEqual([{"type": "end_turn"}], game.legal_actions())
 
+    def test_death_cache_projection_preserves_bases_and_revived_hands(self):
+        for revive in (None, "Lizard Tail", "FairyPotion"):
+            with self.subTest(revive=revive):
+                game = spire.start_combat(101, {
+                    "encounter": "Cultist", "hp": 1, "max_hp": 66,
+                    "deck": [{"id": name, "upgrades": 0} for name in ("Offering", "Bite", "Defend_G")],
+                    "relics": ["Vajra", "Oddly Smooth Stone"] + ([revive] if revive == "Lizard Tail" else []),
+                    "potions": [revive if revive == "FairyPotion" else None, None],
+                })
+                hand = pile(game.snapshot(), "hand")
+                offering = next(i for i, card in enumerate(hand) if card["AbstractCard.cardID"] == "Offering")
+                game.step({"type": "play", "card": offering, "target": -1})
+                state = game.snapshot()
+                self.assertEqual({None: 0, "Lizard Tail": 33, "FairyPotion": 19}[revive],
+                                 player(state)["AbstractCreature.currentHealth"])
+                self.assertEqual(revive is None, player(state)["AbstractCreature.isDead"])
+                if revive is None:
+                    self.assertEqual("DEATH", state["screen"]["type"])
+                    bases = {"Offering": (-1, -1), "Bite": (7, -1), "Defend_G": (-1, 5)}
+                    cards = [obj["fields"] for obj in state["objects"]
+                             if "AbstractCard.cardID" in obj["fields"]]
+                    self.assertEqual(6, len(cards))
+                    self.assertEqual(set(bases), {card["AbstractCard.cardID"] for card in cards})
+                    for card in cards:
+                        self.assertIsNone(card["AbstractCard.damage"])
+                        self.assertIsNone(card["AbstractCard.block"])
+                        self.assertEqual(bases[card["AbstractCard.cardID"]],
+                                         (card["AbstractCard.baseDamage"], card["AbstractCard.baseBlock"]))
+                else:
+                    self.assertEqual("NONE", state["screen"]["type"])
+                    hand = {card["AbstractCard.cardID"]: card for card in pile(state, "hand")}
+                    self.assertEqual(8, hand["Bite"]["AbstractCard.damage"])
+                    self.assertEqual(6, hand["Defend_G"]["AbstractCard.block"])
+
     def test_hand_selection_preserves_card_and_group_identity(self):
         game = spire.start_combat(11, {
             "encounter": "Cultist", "relics": [],
