@@ -84,6 +84,11 @@
     123,
     138
   ],
+  "FrozenEgg-reward-preview": [
+    1354,
+    1670,
+    1711
+  ],
   "GlassKnife-duplicate": [
     2000003426,
     2000003428,
@@ -114,6 +119,11 @@
     1000050001,
     1000050003
   ],
+  "MoltenEgg-reward-preview": [
+    594,
+    887,
+    2017
+  ],
   "PrismaticShard-upgraded-reward": [
     101,
     102,
@@ -128,5 +138,10 @@
     1000000067,
     1000000068,
     1000000069
+  ],
+  "ToxicEgg-reward-preview": [
+    391,
+    788,
+    988
   ]
 }
