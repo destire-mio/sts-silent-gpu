@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+from collections import Counter, defaultdict
 
 ROOT = Path(__file__).resolve().parents[1]
 LLVM = Path('/opt/homebrew/opt/llvm/bin')
@@ -245,27 +246,71 @@ def analyze(export, build):
     functions = export['data'][0]['functions']
     names = subprocess.run([LLVM / 'llvm-cxxfilt'], input='\n'.join(f['name'] for f in functions),
                            text=True, capture_output=True, check=True).stdout.splitlines()
-    region_counts, branch_counts = {}, {}
+    groups = defaultdict(list)
     for function, name in zip(functions, names):
+        filename = function['filenames'][0]
+        if filename not in files:
+            continue
+        outer = next(r for r in function['regions'] if r[5] == 0 and r[7] == 0)
+        groups[(filename, *outer[:4])].append((function, name))
+    selected = [max(group, key=lambda item: sum(r[4] > 0 for r in item[0]['regions'] if r[7] == 0))
+                for group in groups.values()]
+    identities = {(tuple(f['filenames']), tuple(tuple(r) for r in f['regions'])) for f, _ in selected}
+    region_counts, branch_counts = {}, {}
+    function_spans = defaultdict(list)
+    for function, name in selected:
+        filename = function['filenames'][0]
+        if filename not in files:
+            continue
+        outer = next(r for r in function['regions'] if r[5] == 0 and r[7] == 0)
+        function_spans[filename].append((*outer[:4], name))
         for region in function['regions']:
             line, column, end_line, end_column, count, file_id, expanded, kind = region
-            filename = function['filenames'][file_id]
-            if filename not in files or kind != 0:
+            if file_id != 0 or kind != 0:
                 continue
             key = (filename, line, column, end_line, end_column)
             entry = region_counts.setdefault(key, dict(count=0, function=name))
             entry['count'] += count
         for branch in function['branches']:
             line, column, end_line, end_column, true_count, false_count, file_id, expanded, kind = branch
-            filename = function['filenames'][file_id]
-            if filename in files:
+            if file_id == 0:
                 key = (filename, line, column, end_line, end_column)
                 entry = branch_counts.setdefault(key, dict(true_count=0, false_count=0, function=name))
                 entry['true_count'] += true_count
                 entry['false_count'] += false_count
+    for filename, file in files.items():
+        for expansion in file['expansions']:
+            identity = (tuple(expansion['filenames']), tuple(tuple(r) for r in expansion['target_regions']))
+            if identity not in identities:
+                continue
+            line, column, end_line, end_column, count, source_id, target_id, kind = expansion['source_region']
+            span = min((span for span in function_spans[filename]
+                        if (span[0], span[1]) <= (line, column) < (span[2], span[3])),
+                       key=lambda span: (span[2] - span[0], span[3] - span[1]))
+            for records, counts, branch in ((expansion['target_regions'], region_counts, False),
+                                            (expansion['branches'], branch_counts, True)):
+                duplicates = Counter()
+                for record in records:
+                    file_id, region_kind = (record[6], record[8]) if branch else (record[5], record[7])
+                    if file_id != target_id or region_kind != (4 if branch else 0):
+                        continue
+                    geometry = tuple(record[:4])
+                    duplicates[geometry] += 1
+                    macro = (geometry, duplicates[geometry])
+                    key = (filename, line, column, end_line, end_column, macro)
+                    initial = dict(true_count=0, false_count=0) if branch else dict(count=0)
+                    entry = counts.setdefault(key, dict(function=span[4], macro_definition=dict(
+                        file=expansion['filenames'][target_id], line=record[0], column=record[1],
+                        end_line=record[2], end_column=record[3], ordinal=duplicates[geometry]), **initial))
+                    if branch:
+                        entry['true_count'] += record[4]
+                        entry['false_count'] += record[5]
+                    else:
+                        entry['count'] += record[4]
     regions, branches = [], []
     for counts, target in ((region_counts, regions), (branch_counts, branches)):
-        for (filename, line, column, end_line, end_column), entry in counts.items():
+        for key, entry in counts.items():
+            filename, line, column, end_line, end_column = key[:5]
             missing = entry['count'] == 0 if target is regions else entry['true_count'] == 0 or entry['false_count'] == 0
             if not missing:
                 continue
@@ -274,6 +319,7 @@ def analyze(export, build):
                                end_line=logical + end_line - line, end_column=end_column,
                                location=f'{source}:{logical}', generated_file=filename, generated_line=line,
                                **entry, **java_basis(entry['function'], source, owners, logical)))
+    assert len(regions) == sum(f['summary']['regions']['notcovered'] for f in files.values())
     totals = {}
     areas = {}
     for filename, entry in files.items():
@@ -292,7 +338,19 @@ def analyze(export, build):
     for values in [totals, *areas.values()]:
         for item in values.values():
             item['percent'] = 100 * item['covered'] / item['count'] if item['count'] else 100
-    return files, dict(overall=totals, areas=areas), regions, branches
+    instantiations = []
+    for group in groups.values():
+        for function, name in group:
+            filename = function['filenames'][0]
+            outer = next(r for r in function['regions'] if r[5] == 0 and r[7] == 0)
+            source, line = source_location(filename, outer[0], build, name, owners)
+            code = [r for r in function['regions'] if r[7] == 0]
+            identity = (tuple(function['filenames']), tuple(tuple(r) for r in function['regions']))
+            instantiations.append(dict(function=name, count=function['count'], file=str(source), line=line,
+                                       regions=len(code), covered=sum(r[4] > 0 for r in code),
+                                       selected_for_file_summary=identity in identities,
+                                       **java_basis(name, source, owners, line)))
+    return files, dict(overall=totals, areas=areas), regions, branches, instantiations
 
 
 def main():
@@ -345,11 +403,12 @@ def main():
     with (output / 'coverage.json').open('w') as stream:
         subprocess.run(command, stdout=stream, check=True)
     export = json.loads((output / 'coverage.json').read_text())
-    files, summary, regions, branches = analyze(export, build)
+    files, summary, regions, branches, instantiations = analyze(export, build)
     summary['all_replays_passed'] = all(status == 0 for status in statuses)
     summary['trace_count'] = len(corpus)
     summary['commit'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-    for name, value in [('summary', summary), ('uncovered-regions', regions), ('uncovered-branches', branches)]:
+    for name, value in [('summary', summary), ('uncovered-regions', regions), ('uncovered-branches', branches),
+                        ('function-coverage', instantiations)]:
         (output / (name + '.json')).write_text(json.dumps(value, indent=2) + '\n')
     assert run([LLVM / 'llvm-cov', 'report', module, '-instr-profile=' + str(output / 'merged.profdata'),
                 '-show-region-summary', '-show-branch-summary', *sorted(files)], output / 'report.txt') == 0
