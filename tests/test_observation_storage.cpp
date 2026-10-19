@@ -98,7 +98,7 @@ static void deep_roundtrips() {
             ++decisions;
             int kind, index, target; input >> kind >> index >> target;
             const Action action{static_cast<ActionKind>(kind), index, target};
-            step(game, action);
+            obs::record_action(history, game, action); step(game, action);
         }
     }
     require(decisions == 15038, "deep fixture coverage changed");

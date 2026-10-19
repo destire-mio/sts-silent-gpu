@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 9 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 10 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -48,7 +48,8 @@ Seven network arrays occupy 10,176 bytes per decision (24 bytes/entity, 7 bytes/
 outside these arrays and outside the unchanged 37,872-byte `Game`.
 
 Device callers own one `obs::History` and a zero-initialized `obs::Observation` beside each
-game. Clear the displayed-label cache on reset, then call `obs::encode(game, history, view, private_actions)` at each settled boundary.
+game. Clear history on reset, call `obs::record_action(history, game, action)` before each
+step, then call `obs::encode(game, history, view, private_actions)` at each settled boundary.
 A borrowed `View` requires zero-initialized backing arrays/counts on first use; preserve its
 counts across subsequent calls, including game resets and forks. The encoder overwrites
 valid rows, clears only the previously used tail, and regenerates the used mask bytes.
@@ -56,7 +57,9 @@ Faults clear the previous and partially written prefixes. It never clears all ca
 per decision. Pile sorting initializes only populated scratch tokens, retains the version 1
 public-tuple ordering and never introduces a hidden tie-breaker. Legal actions are enumerated
 once, shared by candidate encoding and the next step. Encoding reads `Game` without mutation;
-it records only the visible RestOption label in history. Copy history with a training fork.
+it records displayed labels in history. The sidecar is caller-owned memory: it may retain
+facts the player saw earlier in the same event, never facts that were not displayed.
+Copy history with a training fork and root cache; replay actions rebuilds it.
 
 ## Common entities
 
@@ -155,8 +158,10 @@ information omission, not permission to expose pending moves.
 | Wheel | spin control; result only after spin completes and the dialog reveals it | `events/shrines/GremlinWheelGame.preApplyResult`; preselected result denied |
 
 `DeadAdventurer.randomReward` replaces the introduction body after each successful search.
-The enemy clue is therefore denied after that first search even though the internal page
-returns to INTRO. Remembering that clue belongs to the caller.
+The initial displayed enemy clue is recorded in caller-owned `History` and retained while
+the event returns to INTRO, as in version 2. After the initial display, encoding reads the
+recorded clue, not the private enemy field. Starting from a later state without that history
+cannot recover an unseen clue. Leaving INTRO or resetting clears it.
 
 Event dynamic whitelist (unlisted event state denied):
 
@@ -167,7 +172,7 @@ Event dynamic whitelist (unlisted event state denied):
 | Designer main (1) | one upgrade vs two random, remove vs transform; costs 50/75/110, damage 5 | `Designer.buttonEffect`, OPTIONS 1-13 |
 | WeMeetAgain intro (0) | offered potion/card, goldAmount | constructor OPTIONS 0/2/4 |
 | Nloth intro (0) | offered relics | constructor OPTIONS 0 |
-| DeadAdventurer intro (0) | encounterChance; enemy clue only before the first successful search; no shuffled rewards | constructor body DESCRIPTIONS 3/4/5; `randomReward` |
+| DeadAdventurer intro (0) | encounterChance; initial enemy clue remembered through History; no shuffled rewards | constructor body DESCRIPTIONS 3/4/5; `randomReward` |
 | KnowingSkull ask (1) | potion/gold/card/leave HP costs, 90 gold | `obtainReward` dialog updates |
 | ScrapOoze intro (0) | dmg, relicObtainChance | constructor and `buttonEffect` |
 | GoopPuddle intro (0) | goldLoss, 75 gold, 11 damage | constructor |
@@ -185,16 +190,17 @@ Event dynamic whitelist (unlisted event state denied):
 | GremlinMatchGame play (2) | attemptCount, visible faces | `render/update` |
 | GremlinWheelGame complete (1) | revealed result, displayed gold/damage | `preApplyResult` |
 
-Match positions are compact left-to-right order of remaining cards. Only the currently
-face-up cards are emitted. A mismatched pair is covered before the next settled boundary
-(`GremlinMatchGame.updateMatchGameLogic`); its previous faces are not observation fields.
-The caller owns recurrent memory. The second transient reveal is currently omitted because
-there is no observation boundary during its 1.25-second display. Exposing that transition
-requires an engine/caller interface change, not an encoded history token.
+Match positions are compact left-to-right order of remaining cards. Currently face-up
+cards are emitted. `GremlinMatchGame.updateMatchGameLogic` also displays the clicked second
+face for 1.25 seconds before covering a mismatch. The caller's action recorder saves only
+that clicked face as a `History` card token for the next settled boundary. This restores
+version 2's lifetime: repeated encoding and copying preserve it, and the next action clears
+or replaces it. Other covered faces never enter history. Earlier faces beyond that single
+boundary require caller memory; the sidecar does not expose the hidden board.
 
-The `History` sidecar caches only RestOption's displayed healing numbers on entry to each
-rest-room floor. Java constructs that description once, so later Fruit Juice use changes
-the top-panel max HP but not the button's text. Reset clears this cache and clone copies it.
+The sidecar also caches RestOption's displayed healing numbers on entry to each rest-room
+floor. Java constructs that description once, so later Fruit Juice use changes the top-panel
+max HP but not the button's text. Reset clears the sidecar and clone copies it.
 
 ## MAP
 
@@ -374,7 +380,7 @@ All words are little endian; records need no alignment or end padding. There are
 in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
 8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
 return/recurrent-state storage belongs to the trainer and is not included in these sizes.
-The format is tied to protocol version 9; it is not a save/load format for games.
+The format is tied to protocol version 10; it is not a save/load format for games.
 
 Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
 gathers records by int32 indices into its preallocated dense arrays with the same shapes,

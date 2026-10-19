@@ -14,13 +14,16 @@ static int positives = 0;
 static void require(bool value, const char* message) {
     if (!value) { std::fprintf(stderr, "%s\n", message); std::abort(); }
 }
-static obs::Observation observe(const Game& g, obs::History reveal = {}) {
+static obs::Observation observe_recorded(const Game& g, obs::History& reveal) {
     const Game before = g;
     obs::Observation o; ActionSet actions;
     const auto result = obs::encode(g, reveal, o.view(), actions);
     require(!result.fault, "observation fault");
     require(std::memcmp(&before, &g, sizeof(Game)) == 0, "encoder mutated Game");
     return o;
+}
+static obs::Observation observe(const Game& g, obs::History reveal = {}) {
+    return observe_recorded(g, reveal);
 }
 static void equal(const Game& a, const Game& b) {
     const auto x = observe(a), y = observe(b);
@@ -272,10 +275,20 @@ static void event_secrets() {
     b = a; step(b, {ActionKind::Choose, 0});
     different(a, b);
 }
+static int adventurer_clue(const obs::Observation& o) {
+    for (int i = 0; i < o.entities; ++i)
+        if (o.tags[i] == static_cast<int>(obs::Kind::Option) &&
+            o.ids[3 * obs::entity_capacity + i] == static_cast<int>(EventId::DeadAdventurer) + 1)
+            return o.values[obs::entity_capacity + i];
+    return 0;
+}
 static void adventurer_previous_clue() {
     Game a = event(EventId::DeadAdventurer), b = a;
     b.event.state.DeadAdventurer.enemy = (a.event.state.DeadAdventurer.enemy + 1) % 3;
     different(a, b);
+    obs::History history;
+    const int clue = adventurer_clue(observe_recorded(a, history));
+    require(clue == a.event.state.DeadAdventurer.enemy + 1, "displayed adventurer clue missing");
     for (int seed = 1; ; ++seed) {
         b = a; b.rng.misc.reset(seed);
         step(b, {ActionKind::Choose, 0});
@@ -285,8 +298,17 @@ static void adventurer_previous_clue() {
     a = b;
     b.event.state.DeadAdventurer.enemy = (a.event.state.DeadAdventurer.enemy + 1) % 3;
     equal(a, b);
+    require(adventurer_clue(observe(a)) == 0, "unseen adventurer clue was inferred from hidden state");
+    const auto remembered = observe_recorded(a, history), changed = observe(b, history);
+    require(adventurer_clue(remembered) == clue, "displayed adventurer clue lost after search");
+    require(std::memcmp(&remembered, &changed, sizeof(remembered)) == 0, "hidden enemy overwrote remembered clue");
+    const auto copied = observe(a, history);
+    require(std::memcmp(&remembered, &copied, sizeof(copied)) == 0, "copied adventurer history changed");
     b.event.state.DeadAdventurer.encounterChance += 25;
     different(a, b);
+    step(a, {ActionKind::Choose, 1});
+    require(adventurer_clue(observe_recorded(a, history)) == 0, "clue outlived v2 INTRO page");
+    require(history.adventurer_clue == 0, "finished adventurer memory not cleared");
 }
 static void match_current_screen() {
     Game a = event(EventId::GremlinMatchGame);
@@ -303,9 +325,25 @@ static void match_current_screen() {
     require(second >= 0, "Match fixture needs two distinct mismatches");
     Game b = a;
     const Action x{ActionKind::Choose, first - 1}, y{ActionKind::Choose, second - 1};
+    obs::History hx, hy;
+    obs::record_action(hx, a, x); obs::record_action(hy, b, y);
     step(a, x); step(b, y);
-    const auto one = observe(a), two = observe(b);
-    require(std::memcmp(&one, &two, sizeof(one)) == 0, "covered Match faces remain in policy input as history");
+    equal(a, b);
+    const auto one = observe(a, hx), two = observe(b, hy), copied = observe(a, hx);
+    require(std::memcmp(&one, &two, sizeof(one)) != 0, "displayed second Match face lost before next boundary");
+    require(std::memcmp(&one, &copied, sizeof(one)) == 0, "copied Match memory changed");
+    Game hidden = a;
+    hidden.cards[s.cards[first]].id = CardId::Apotheosis;
+    const auto unseen = observe(hidden, hx);
+    require(std::memcmp(&one, &unseen, sizeof(one)) == 0, "covered face overwrote remembered face");
+    hx = {}; hy = {};
+    const auto cleared = observe(a, hx), other = observe(b, hy);
+    require(std::memcmp(&cleared, &other, sizeof(cleared)) == 0, "reset retained Match history");
+    obs::record_action(hx, a, {ActionKind::Choose, 0});
+    require(hx.shown && hx.card.ids[4] == 1, "next Match action did not replace previous face");
+    a.event.state.GremlinMatchGame.screen = 3;
+    obs::record_action(hx, a, {ActionKind::Choose, 0});
+    require(!hx.shown, "Match memory outlived the next action");
 }
 static void private_counters() {
     Game a = combat(), b;

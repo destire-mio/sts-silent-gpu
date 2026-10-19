@@ -13,7 +13,7 @@ constexpr int candidate_mask_bytes = candidate_capacity / 8;
 constexpr int entity_bytes = tag_rows + 2 * (id_rows + value_rows);
 constexpr int candidate_bytes = 1 + 2 * candidate_rows;
 enum class Kind : int { Screen = 1, Player, Card, Monster, Power, Relic, Potion, Orb, Stance, MapNode, Option, Reward };
-enum class Zone : int { None, Master, Hand, Draw, Discard, Exhaust, Selected, Grid, Offer, Shop, Event };
+enum class Zone : int { None, Master, Hand, Draw, Discard, Exhaust, Selected, Grid, Offer, Shop, Event, History };
 enum class Fault : uint32_t { None, Entities = 0xe0000001, Candidates, NoDecision, InvalidCandidate, SeedsExhausted, NumericRange, StorageCapacity };
 enum class Control : int { Bowl = 1, Purge, OpenChest, Merchant, Campfire, EventButton, Spin, CardBack, Boss };
 

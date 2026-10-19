@@ -74,6 +74,7 @@ SPIRE_FN inline void map_entities(Writer& w, const Game& g, int* options) {
 SPIRE_FN inline Result encode(const Game& g, History& history, View view, ActionSet& actions) {
     actions.clear();
     if (g.fault) { view.finish(0, 0); return {g.fault, 0, 0}; }
+    record_event(history, g);
     Writer w{view};
     int hands[hand_limit]{}, monsters[monster_capacity]{}, potions[potion_capacity]{}, options[card_capacity]{};
     Token screen = token(Kind::Screen, static_cast<int>(g.screen) + 1);
@@ -177,7 +178,7 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
         break;
     case Screen::Map: map_entities(w, g, options); break;
     case Screen::Shop: shop_entities(w, g, options); break;
-    case Screen::Event: event_entities(w, g, options); break;
+    case Screen::Event: event_entities(w, g, history, options); break;
     case Screen::Room:
         if (g.room_kind == RoomKind::Rest && !g.campfire.something_selected) {
             if (history.rest_floor != g.run.floor) {
@@ -207,6 +208,7 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
         break;
     default: break;
     }
+    if (history.shown) w.add(history.card);
     legal_actions(g, actions);
     if (actions.size > candidate_capacity) w.result.fault = static_cast<uint32_t>(Fault::Candidates);
     if (w.result.fault) { view.finish(0, 0, w.result.entities); actions.clear(); return {w.result.fault, 0, 0}; }

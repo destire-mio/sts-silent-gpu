@@ -71,6 +71,7 @@ extern "C" __global__ void spire_training_step(spire::cuda::TrainingState b, con
     if (candidate < 0 || candidate >= b.actions[i].size) {
         b.fail(i, static_cast<uint32_t>(spire::obs::Fault::InvalidCandidate)); return;
     }
+    spire::obs::record_action(b.histories[i], g, b.actions[i][candidate]);
     ++b.decision_counts[i]; b.advanced[i] = 1;
     spire::step(g, b.actions[i][candidate]);
 }
@@ -113,6 +114,7 @@ static SPIRE_FN void replay_root(spire::cuda::TrainingState b, int i, int64_t se
         if (candidate < 0 || candidate >= b.actions[i].size) {
             b.fail(i, static_cast<uint32_t>(spire::obs::Fault::InvalidCandidate)); return;
         }
+        spire::obs::record_action(b.histories[i], b.games[i], b.actions[i][candidate]);
         spire::step(b.games[i], b.actions[i][candidate]);
         b.publish(i);
     }

@@ -1,5 +1,5 @@
 {
-  "protocol_version": 9,
+  "protocol_version": 10,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -125,10 +125,6 @@
       "reason": "Java modification flags are absent from Game.Card. Protocol 3 uses the freely inspectable popup base values."
     },
     {
-      "field": "Second transient Match face",
-      "reason": "Settled decisions occur after the mismatched pair is covered. A transient observation boundary requires engine/caller work; remembered faces are denied as current fields."
-    },
-    {
       "field": "Conditional extended card previews",
       "reason": "Blizzard/Stack/ThunderStrike/MindBlast/SpiritShield raw-description state is absent from Game; protocol 9 denies those variables."
     }
@@ -231,6 +227,15 @@
       ],
       "rule": "Deny EXTENDED_DESCRIPTION-only variables absent from popup stat-copy descriptions; retain Expunger setX description.",
       "test": "tests/test_observation.cpp:conditional_card_description"
+    },
+    {
+      "version": 10,
+      "fields": [
+        "DeadAdventurer Option.values[1]",
+        "History card entity"
+      ],
+      "rule": "Caller-owned memory records only displayed facts: the initial adventurer clue through INTRO and the clicked Match face for one settled boundary; reset clears and forks copy it.",
+      "test": "tests/test_observation.cpp:adventurer_previous_clue,match_current_screen"
     }
   ],
   "measurements_protocol_version": 2
