@@ -173,7 +173,23 @@
     "complete_game_history_state_equal": true,
     "unique_prefixes": 261,
     "collector_parity_passed": true,
-    "gpu_check_seconds": 37.91724252700806
+    "gpu_check_seconds": 37.91724252700806,
+    "original_game_audit_report": {
+      "status": "passed_reported_by_mac",
+      "source_commit": "14e4021a5c99056ba1dc13f23662f7809774ed81",
+      "source_document": "docs/e3-curriculum.md",
+      "engine_commit": "45fe15e48c2ef60115b305873c9d30b08afdacad",
+      "prefixes": 36,
+      "recordings": 21,
+      "matching_recordings_by_scope": {
+        "combat": 21,
+        "run": 21
+      },
+      "decisions": 32179,
+      "differences": 0,
+      "verification_basis": "Original-game recording result reported on main; server did not execute Mac recordings"
+    },
+    "collector_scope": "First 16 train roots plus fixed natural-start and invalid-prefix fixtures; complete native Game/history root comparison covered all 261 roots"
   },
   "modules_sha256": {
     "spire.cpython-312-x86_64-linux-gnu.so": "cb6895969e438866bd9d8dffc3044f2f1f7dc6accd88a8aa4f4a67ec334b8bd5",
