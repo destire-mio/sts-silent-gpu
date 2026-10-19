@@ -1,0 +1,260 @@
+{
+  "observation_version": 13,
+  "source_commit": "5adc725afbb3a3ed2209db1d54fd35949fdb04ef",
+  "build_job": 3598,
+  "build_allocation_seconds": 368,
+  "ctest": {
+    "job": 3599,
+    "passed": 58,
+    "failed": 0,
+    "seconds": 388.88
+  },
+  "gates": {
+    "passed": true,
+    "observation_version": 13,
+    "e2_roots": 8721,
+    "full_game_history_observation_state_equal": true,
+    "e2_faults": 0,
+    "fault_3587": {
+      "seed": 1000002810,
+      "decisions": 1299,
+      "matched_boundaries": 1300,
+      "fault": 0,
+      "complete_final_game_history_equal": true,
+      "every_boundary_observation_status_equal": true,
+      "boundary_bytes_sha256": "6e463bff1a39bc8021acc0d6117b37197f30e5c474cdc1d8aa074f5a1cbda6aa"
+    },
+    "source_sha256": "43eb580745d14a387d2ad955a6c5c6d294c3398e8a8480c8fca1301eff41b4e2",
+    "elapsed_seconds": 273.0362298488617
+  },
+  "root_revalidation": {
+    "status": "replayed_and_cpu_gpu_parity_passed",
+    "observation_version": 13,
+    "source_commit": "5adc725afbb3a3ed2209db1d54fd35949fdb04ef",
+    "source_file": "/home/zhuyouwei/spire-downloads/e3-search-extended/winning-lines.jsonl",
+    "source_sha256": "9a133cb0acaf407f7d01554117d963f1e179762884d493cc26e90b134bc282c7",
+    "source_lines": 29,
+    "retained_lines": 29,
+    "rejected_lines": [],
+    "families": {
+      "train": 22,
+      "dev": 7
+    },
+    "bands": [
+      {
+        "band": "k8",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "k8",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "k32",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "k32",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "k64",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "k64",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "k128",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "k128",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "k256",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "k256",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "k512",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "k512",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "act4_entry",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "act4_entry",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "act3_boss",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "act3_boss",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      },
+      {
+        "band": "act3_entry",
+        "partition": "train",
+        "roots": 22,
+        "families": 22
+      },
+      {
+        "band": "act3_entry",
+        "partition": "dev",
+        "roots": 7,
+        "families": 7
+      }
+    ],
+    "decisions": 50388,
+    "elapsed_seconds": 12.042288780212402,
+    "cpu_seconds": 11.610837347,
+    "prior_search_wall_seconds": 10787.651907205582,
+    "prior_search_cpu_seconds": 30190.63,
+    "search_wall_seconds_remaining": 12.348092794418335,
+    "new_search_attempts": 0,
+    "search_budget_reset": false,
+    "root_rows": 261,
+    "eligible_train_bands": [
+      "k8",
+      "k32",
+      "k64",
+      "k128",
+      "k256",
+      "k512",
+      "act4_entry",
+      "act3_boss",
+      "act3_entry"
+    ],
+    "complete_game_history_state_equal": true,
+    "unique_prefixes": 261,
+    "collector_parity_passed": true,
+    "gpu_check_seconds": 37.91724252700806
+  },
+  "modules_sha256": {
+    "spire.cpython-312-x86_64-linux-gnu.so": "cb6895969e438866bd9d8dffc3044f2f1f7dc6accd88a8aa4f4a67ec334b8bd5",
+    "spire_gpu.cpython-312-x86_64-linux-gnu.so": "fad153de160ae258d7211c48459010b2513286e1c1ec45421b92d71575000c5c"
+  },
+  "archive_sha256": "30f7131e077474abe4bc29d4dfd93e719c93d8fecab8fda77463221dc2e423ae",
+  "artifact_sha256": {
+    "e3-v13-build-3598.log": "d4720b4b7488acfcb0604f188bf5a0476c35042fe3febe8fa03fc4ff98443997",
+    "e3-v13-gates-3599/collector-parity.log": "b4855d0f2ab59af82218c5b46bad9c67135233fe5b954d8e84ed51e3b783c82b",
+    "e3-v13-gates-3599/ctest.log": "b9320e22632e1a6e7560739beb40010ff02c375e05201e0aeac8f9d81e572dbe",
+    "e3-v13-gates-3599/e2-roots-0.log": "43194a2f108d7e0f5a34f010d35ddcf0d2d934a9091bb370381e58b52d3bdff3",
+    "e3-v13-gates-3599/e2-roots-1.log": "43194a2f108d7e0f5a34f010d35ddcf0d2d934a9091bb370381e58b52d3bdff3",
+    "e3-v13-gates-3599/e2-roots-2.log": "43194a2f108d7e0f5a34f010d35ddcf0d2d934a9091bb370381e58b52d3bdff3",
+    "e3-v13-gates-3599/fault-3587-full-state.log": "46c608dfcba9d18290fa613b314d319df305a6b44bf4f36b3e843547fdccb7c2",
+    "e3-v13-gates-3599/fault-3587-parity.json": "0bc2a482ada44c5bac2db96f084df5feede95a9fb970bbff8dc9f0320836eaf6",
+    "e3-v13-gates-3599/LastTest.log": "9a3e39ccea987baa5d2a172c2e49d40255b6ef595ef71348e746e95d3526b834",
+    "e3-v13-gates-3599/modules.sha256": "b8b1bbdec2006eecf4c1c2a78deed9206766b3d0ded2cdd44a8722e65644cf77",
+    "e3-v13-gates-3599/root-gates.json": "cc8dbe967709f4f7a1ac1d1950b517a5c470ef7d1869ad6e64f248a14ea54676",
+    "e3-v13-gates-3599/root-gates.log": "2244b77c2e728521ec820cc5fdf3f5367938f9dbe39afd3df2105ba12ebb9f35",
+    "e3-v13-gates-3599.log": "e36e74f47629988339e648d2abaccfe9ac026d2a52f315a2b99f227b0c89883e",
+    "e3-v13-roots-3600/audit-roots.json": "1b93141d277aefff3e5a479a6bc800a9dca5e60c6c0b7cbb6aa4ee60aa5643db",
+    "e3-v13-roots-3600/collector-parity.log": "fa7af1ee062edaeae6df54a02b7d01a91497c63acb81118bd35a2396929dc1fb",
+    "e3-v13-roots-3600/current-line.json": "57439106ec436003090a8cbe2b23aee539e9d65b407c2e3fa4359f1e0c579142",
+    "e3-v13-roots-3600/dev.json": "d96709ef2eeba9e78d3d4bc86e56e1bcb41b7a16f21d2f98e2e3623f8f1c44ee",
+    "e3-v13-roots-3600/gpu-roots-0.log": "390ca56d37113c58f0638c321a5078c18633473a92648093e0170d1eb38fe525",
+    "e3-v13-roots-3600/gpu-roots-1.log": "390ca56d37113c58f0638c321a5078c18633473a92648093e0170d1eb38fe525",
+    "e3-v13-roots-3600/gpu-roots-2.log": "390ca56d37113c58f0638c321a5078c18633473a92648093e0170d1eb38fe525",
+    "e3-v13-roots-3600/rejected-lines.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "e3-v13-roots-3600/summary.json": "8302a560a7b3531c10f89b28657e701446a8189e0f48e360c93c19641aabc3bb",
+    "e3-v13-roots-3600/train.json": "5c95a82f4f84e6f1a573ff0f07d2fcacc13b0b5673c5b34b7bc4c2b7b283a7c8",
+    "e3-v13-roots-3600.log": "3dfc0ac85f83610f346c118220bd82c26b80407780b3b993434d932d90f92185"
+  },
+  "bootstrap_tests": {
+    "source_commit": "383389ab8228b9b148b0f7853e103bec2bb415a7",
+    "job": 3601,
+    "tests": 12,
+    "failures": 0,
+    "test_seconds": 13.523,
+    "allocation_seconds": 25,
+    "log_sha256": "dbb2cf297c45582b64df1c074d495579683155c8ec99e8a5479b49956c941c76",
+    "bootstrap_seed": 63008,
+    "bootstrap_samples": 10000,
+    "rng": "PCG64",
+    "quantile": "linear",
+    "required_cases": [
+      "7 perfect families cannot promote",
+      "30 families at 80 percent promote",
+      "30 families at 60 percent cannot promote",
+      "fixed seed is reproducible"
+    ]
+  },
+  "next_search": {
+    "job": 3602,
+    "source_commit": "383389ab8228b9b148b0f7853e103bec2bb415a7",
+    "partition": "N56_128G",
+    "cpus": 55,
+    "workers": 54,
+    "gpus": 0,
+    "cpu_limit_seconds": 540000,
+    "wall_limit_seconds": 10800,
+    "rule_revision": "66621552383508a7d2156a1d84154a148ebc94bf",
+    "replay_seconds_charged": 12.042288780212402,
+    "replay_cpu_seconds_charged": 11.610837347,
+    "target_families": {
+      "train": 200,
+      "dev": 60
+    },
+    "minimum_band_families": {
+      "train": 20,
+      "dev": 20
+    },
+    "minimum_eligible_bands": 4,
+    "status": "running"
+  },
+  "checkpoint_policy": "Preserve v2 update-56 checkpoint as evidence only; fresh v13 initialization required",
+  "node_budget": {
+    "total_seconds": 28800,
+    "prior_conservative_reservation_seconds": 14400,
+    "prior_resume_allocation_seconds": 1718.1810357570648,
+    "repair_allocation_seconds": 1134,
+    "remaining_upper_bound_seconds": 11547.818964242935,
+    "new_cpu_search_budget": "Separate CPU-only budget explicitly renewed by main 6662155; historical and GPU-node charges retained"
+  }
+}
