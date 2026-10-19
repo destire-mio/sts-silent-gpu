@@ -1,0 +1,57 @@
+{
+  "deck": [
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    },
+    {
+      "id": "Prepared",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Tingsha"
+  ],
+  "potions": [
+    "ColorlessPotion",
+    null
+  ],
+  "hp": 20,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    },
+    {
+      "type": "proceed"
+    }
+  ]
+}

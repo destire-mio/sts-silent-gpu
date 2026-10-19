@@ -94,6 +94,7 @@ struct AwakenedOne : MonsterHooks {
             }
             set_monster_move(g, owner, 3, Intent::Unknown);
             monster_createIntent(g, owner);
+            add_bottom(g, actions::Shout::make(owner));
             queue_monster_move(g, owner, 3, Intent::Unknown);
             monster_applyPowers(g, owner);
             m.state.AwakenedOne.firstTurn = true;

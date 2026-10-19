@@ -2,6 +2,8 @@
 #include "core/monsters/base.hpp"
 #include "core/actions/summon_gremlin.hpp"
 #include "core/actions/apply_power.hpp"
+#include "core/actions/intent_flash.hpp"
+#include "core/actions/change_state.hpp"
 
 namespace spire::units::monsters {
 struct GremlinLeader : MonsterHooks {
@@ -59,21 +61,30 @@ struct GremlinLeader : MonsterHooks {
         Monster& m = g.monsters[owner];
         auto& s = m.state.GremlinLeader;
         if (m.move == 2) {
+            add_bottom(g, actions::ChangeState::make(g, owner, "CALL"));
             add_bottom(g, actions::SummonGremlinAction::construct(g, s.gremlins));
             add_bottom(g, actions::SummonGremlinAction::construct(g, s.gremlins));
         } else if (m.move == 3) {
             g.rng.ai.random(0, 2);
+            add_bottom(g, actions::Shout::make(owner));
             for (int i = 0; i < g.monster_order.size; ++i) {
                 const int target = g.monster_order[i];
                 if (target != owner && g.monsters[target].creature.dying) continue;
                 queue_power(g, owner, target, PowerId::Strength, (g.run.ascension >= 18 ? 5 : g.run.ascension >= 3 ? 4 : 3));
                 if (target != owner) queue_block(g, target, (g.run.ascension >= 18 ? 10 : 6));
             }
-        } else for (int i = 0; i < 3; ++i) queue_monster_damage(g, owner, player_target, 0);
+        } else {
+            add_bottom(g, actions::ChangeState::make(g, owner, "ATTACK"));
+            for (int i = 0; i < 3; ++i) queue_monster_damage(g, owner, player_target, 0);
+        }
         queue_monster_roll(g, owner);
     }
     SPIRE_FN static void die(Game& g, int owner, bool trigger_relics = true) {
         monster_die_base(g, owner, trigger_relics);
+        for (int i = 0; i < g.monster_order.size; ++i) {
+            const int target = g.monster_order[i];
+            if (!g.monsters[target].creature.dying) add_bottom(g, actions::Shout::make(target));
+        }
         for (int i = 0; i < g.monster_order.size; ++i) {
             const int target = g.monster_order[i];
             if (g.monsters[target].creature.dying) continue;

@@ -11,6 +11,7 @@ struct Tingsha : RelicHooks {
         add_bottom(g, show);
         Effect hit{};
         hit.kind = EffectKind::DamageRandomEnemy;
+        hit.target = no_target;
         hit.amount = hit.info_base = 3;
         hit.damage_type = DamageType::Thorns;
         add_bottom(g, hit);
