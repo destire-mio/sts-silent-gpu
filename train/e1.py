@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 import argparse
 import collections
 from dataclasses import asdict
@@ -72,7 +73,7 @@ def main():
     groups = family_groups(roots)
     schedules = {"train": evaluation_sets(roots), "dev": evaluation_sets(dev) if dev else {}}
     args.output.mkdir(parents=True, exist_ok=False)
-    config = dict(model=asdict(model_config), ppo=asdict(ppo_config), observation_version=2, memory="none",
+    config = dict(model=asdict(model_config), ppo=asdict(ppo_config), observation_version=OBSERVATION_VERSION, memory="none",
                   engine_commit=engine_commit(), torch_version=str(torch.__version__),
                   parameters=sum(p.numel() for p in model.parameters()),
                   run={name: str(value) if isinstance(value, Path) else value for name, value in vars(args).items()},
@@ -104,7 +105,7 @@ def main():
                 result = evaluate(model, schedule, device, 4096, 32, 62001, list(range(200)),
                                   inference_chunk=args.inference_chunk)
                 result.update(sampling_seed=62001, decision_cap=4096, sampling=SCHEME,
-                              observation_version=2, evaluation_engine_commit=config["engine_commit"],
+                              observation_version=OBSERVATION_VERSION, evaluation_engine_commit=config["engine_commit"],
                               train_decisions=total, partition=part, band=name, label=label)
                 if label == "initial":
                     initial[part, name] = result

@@ -1,5 +1,5 @@
 {
-  "protocol_version": 2,
+  "protocol_version": 3,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -119,6 +119,10 @@
     {
       "field": "Intent visibility during selection/reward overlays",
       "reason": "Renderer intent alpha is absent from Game; the protocol omits these intents by default deny."
+    },
+    {
+      "field": "Live card damage/block/magic previews",
+      "reason": "Java modification flags are absent from Game.Card. Protocol 3 uses the freely inspectable popup base values."
     }
   ],
   "representation": {
@@ -159,5 +163,18 @@
     "decisions": 172725,
     "method": "Expand each typed observation to the original semantic rows and byte masks. SHA256 of every boundary per trace matches the reference, including candidate order and padding.",
     "sha256_of_sorted_trace_observation_digests": "ce0a211152c0ad79bceaa0f01613a72d8d365418c67f872bbbf447330b03aa73"
-  }
+  },
+  "changes": [
+    {
+      "version": 3,
+      "fields": [
+        "Card.values[2]",
+        "Card.values[3]",
+        "Card.values[4]"
+      ],
+      "rule": "Use SingleCardViewPopup base damage/block/magic in every zone; deny live caches without retained Java modification flags.",
+      "test": "tests/test_observation.cpp:hidden_card_caches"
+    }
+  ],
+  "measurements_protocol_version": 2
 }

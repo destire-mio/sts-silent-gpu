@@ -89,17 +89,17 @@ static void pile_sorting_matches_tokens() {
             Pile cards;
             for (int i = 0; i < count; ++i) cards.push_back((i * 101 + rotation) % card_capacity);
             for (auto zone : {obs::Zone::Master, obs::Zone::Hand, obs::Zone::Draw, obs::Zone::Discard,
-                              obs::Zone::Exhaust, obs::Zone::Grid}) for (bool unordered : {false, true}) for (bool copy : {false, true}) {
+                              obs::Zone::Exhaust, obs::Zone::Grid}) for (bool unordered : {false, true}) {
                 const Game before = g;
                 std::vector<obs::Token> tokens;
                 for (int i = 0; i < count; ++i) {
                     const int index = !unordered && (zone == obs::Zone::Draw || zone == obs::Zone::Exhaust) ? count - i - 1 : i;
-                    tokens.push_back(obs::card_token(g, g.cards[cards[index]], zone, unordered ? 0 : i + 1, !copy));
+                    tokens.push_back(obs::card_token(g, g.cards[cards[index]], zone, unordered ? 0 : i + 1));
                 }
                 if (unordered) std::stable_sort(tokens.begin(), tokens.end(), obs::less);
                 obs::Observation actual, expected;
                 obs::Writer left{actual.view()}, right{expected.view()};
-                obs::pile(left, g, cards, zone, unordered, copy);
+                obs::pile(left, g, cards, zone, unordered);
                 for (const auto& token : tokens) right.add(token);
                 left.view.finish(left.result.entities, 0); right.view.finish(right.result.entities, 0);
                 require(!left.result.fault && !right.result.fault, "pile sorting fixture overflow");
@@ -141,7 +141,28 @@ static void discard_damage() {
     a.discard.clear(); b.discard.clear();
     a.hand.push_back(index); b.hand.push_back(index);
     a.screen = b.screen = Screen::Combat;
+    equal(a, b);
+}
+static void hidden_card_caches() {
+    // AbstractCard.renderDynamicVariable ignores caches when modification flags are false.
+    // SingleCardViewPopup.renderDynamicVariable always shows the base numbers.
+    Game a = combat();
+    const int index = a.hand[0];
+    a.cards[index] = make_card(CardId::IronWave);
+    Game b = a;
+    b.cards[index].damage += 7; b.cards[index].block += 9;
+    equal(a, b);
+    b.cards[index].base_damage += 1;
     different(a, b);
+    a.cards[index] = make_card(CardId::PoisonedStab);
+    b = a; b.cards[index].magic += 4;
+    equal(a, b);
+    a.hand.erase(0); a.draw.push_back(index);
+    b = a; b.cards[index].damage += 5; b.cards[index].magic += 3;
+    equal(a, b);
+    open_grid_selection(a, PileId::Draw, 1, false);
+    open_grid_selection(b, PileId::Draw, 1, false);
+    equal(a, b);
 }
 static Game event(EventId id) {
     Game g; reset(g, 101);
@@ -294,7 +315,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

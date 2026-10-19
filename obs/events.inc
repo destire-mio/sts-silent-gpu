@@ -144,7 +144,7 @@ SPIRE_FN inline void event_entities(Writer& w, const Game& g, int* choices) {
         int choice = 0;
         for (int i = 0; i < s.GremlinMatchGame.count; ++i) {
             const Card& card = g.cards[s.GremlinMatchGame.cards[i]];
-            Token t = card.is_flipped ? option(Control::CardBack, i + 1) : card_token(g, card, Zone::Event, i + 1, false);
+            Token t = card.is_flipped ? option(Control::CardBack, i + 1) : card_token(g, card, Zone::Event, i + 1);
             t.values[10] = s.GremlinMatchGame.attemptCount;
             const int entity = w.add(t);
             if (card.is_flipped) choices[choice++] = entity;

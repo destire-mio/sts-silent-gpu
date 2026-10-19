@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 2 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 3 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -70,13 +70,15 @@ it records only the visible RestOption label in history. Copy history with a tra
 | Potions | slot, ID, displayed potency | `ui/panels/TopPanel.renderPotions`, each potion's `initializeData/getPotency`; empty slots retained |
 | Cards | upgrades, displayed cost, damage/block/magic only for description variables; bottle badges | `cards/AbstractCard.render/renderEnergy/renderDescription/renderDynamicVariable`; UUID, misc and internal flags denied |
 
-Card dynamic variables use a source-audited per-card variable mask. Noncombat/deck displays
-use base numbers; combat hand/draw use displayed caches. Discard damage uses baseDamage, including
-discard-source grids, because Soul.update can clear a duplicated Glass Knife between its two
-base-damage changes; discard block/magic retain displayed caches. Exhaust inspection uses
-stat-equivalent copies (`ExhaustPileViewScreen.open`), not the exhausted card's stale cache.
-X and unplayable costs retain their UI meaning. Free attack/one-use free effects are reflected
-in the rendered cost (`AbstractCard.getCost/freeToPlay`).
+Card dynamic variables use a source-audited per-card variable mask. All zones use the base
+numbers available in `screens/SingleCardViewPopup.open/renderDynamicVariable`. Live damage,
+block and magic caches are denied: `AbstractCard.renderDynamicVariable` reads them only while
+the corresponding modification flag is set, and `Game::Card` does not retain those flags.
+This omits the live combat previews until their display conditions can be represented by the
+engine; it does not change card calculations. Exhaust inspection also uses base numbers from
+stat-equivalent copies (`ExhaustPileViewScreen.open`). X and unplayable costs retain their UI
+meaning. Free attack/one-use free effects are reflected in the rendered cost
+(`AbstractCard.getCost/freeToPlay`).
 
 ## COMBAT
 
@@ -244,7 +246,7 @@ numeric amounts/coordinates are unshifted. A card cost of -1 means X; -2 means n
 | --- | --- | --- | --- |
 | Screen | act, floor, ascension, event page, requested count (0 at confirmation), selected count | ruby, emerald, sapphire, any-number, can-pick-zero (HAND_SELECT), confirmation | selection prompt |
 | Player | HP, max HP, gold, block, energy, 0 | 0 | 0 |
-| Card | upgrades, printed cost, damage, block, magic, shop price | description D/B/M in bits 0–2; bottle flame/lightning/tornado in 3–5; grid selected/confirmation target in 6–7 | Match attempts remaining |
+| Card | upgrades, printed cost, popup base damage, popup base block, popup base magic, shop price | description D/B/M in bits 0–2; bottle flame/lightning/tornado in 3–5; grid selected/confirmation target in 6–7 | Match attempts remaining |
 | Monster | HP, max HP, block, screen x, shown damage, shown hits | facing | shown intent + 1 (0 hidden) |
 | Power | shown amount, whitelisted tooltip number, referenced card upgrade suffix, 0, 0, 0 | amount-visible | 0 |
 | Relic | shown counter, shop price, 0, 0, 0, 0 | counter-visible, grayscale, used-up tooltip | 0 |
@@ -355,7 +357,7 @@ All words are little endian; records need no alignment or end padding. There are
 in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
 8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
 return/recurrent-state storage belongs to the trainer and is not included in these sizes.
-The format is tied to protocol version 2; it is not a save/load format for games.
+The format is tied to protocol version 3; it is not a save/load format for games.
 
 Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
 gathers records by int32 indices into its preallocated dense arrays with the same shapes,

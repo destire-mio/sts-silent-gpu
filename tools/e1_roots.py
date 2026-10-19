@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 import argparse
 import collections
 import gzip
@@ -105,7 +106,7 @@ def main():
                     break
                 episodes_file.flush()
     for part in ("train", "dev"):
-        (args.output / f"{part}.json").write_text(json.dumps(dict(observation_version=2, roots=selected[part])) + "\n")
+        (args.output / f"{part}.json").write_text(json.dumps(dict(observation_version=OBSERVATION_VERSION, roots=selected[part])) + "\n")
     summary = dict(counts={part: dict(collections.Counter(r["distance_to_win"] for r in roots))
                           for part, roots in selected.items()},
                    candidates_measured=len(all_results), decisions=decisions, replay_decisions=replay_decisions,

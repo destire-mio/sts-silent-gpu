@@ -38,7 +38,7 @@ SPIRE_FN inline void shop_entities(Writer& w, const Game& g, int* options) {
         const bool colorless = i >= g.shop.colored.size;
         const int pos = colorless ? i - g.shop.colored.size : i;
         const Card& c = g.cards[colorless ? g.shop.colorless[pos] : g.shop.colored[pos]];
-        Token t = card_token(g, c, Zone::Shop, (colorless ? 6 : 1) + pos, false);
+        Token t = card_token(g, c, Zone::Shop, (colorless ? 6 : 1) + pos);
         t.values[11] = c.price;
         stock[(colorless ? 6 : 1) + pos] = w.add(t);
     }
@@ -95,7 +95,7 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
     player.values[0] = g.player.creature.hp; player.values[1] = g.player.creature.max_hp; player.values[2] = g.run.gold;
     if (combat) { player.values[3] = g.player.creature.block; player.values[4] = g.player.energy; }
     const int player_id = w.add(player);
-    for (int i = 0; i < g.run.master_deck.size; ++i) w.add(card_token(g, g.run.master_deck[i], Zone::Master, i + 1, false));
+    for (int i = 0; i < g.run.master_deck.size; ++i) w.add(card_token(g, g.run.master_deck[i], Zone::Master, i + 1));
     for (int i = 0; i < g.run.relics.size; ++i) w.add(relic_token(g.run.relics[i], Zone::None, i + 1, true));
     for (int i = 0; i < g.run.potion_slots; ++i) {
         Token t = token(Kind::Potion, static_cast<int>(g.run.potions[i]) + 1, Zone::None, i + 1);
@@ -130,22 +130,22 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
             monsters[i] = w.add(t);
             if (!c.dying && !c.half_dead) powers(w, g, c, monsters[i]);
         }
-        for (int i = 0; i < g.hand.size; ++i) hands[i] = w.add(card_token(g, g.cards[g.hand[i]], Zone::Hand, i + 1, true));
+        for (int i = 0; i < g.hand.size; ++i) hands[i] = w.add(card_token(g, g.cards[g.hand[i]], Zone::Hand, i + 1));
         const bool eye = has_relic(g, RelicId::FrozenEye);
-        pile(w, g, g.draw, Zone::Draw, !eye, false);
-        pile(w, g, g.discard, Zone::Discard, false, false);
-        pile(w, g, g.exhaust, Zone::Exhaust, !eye, true);
+        pile(w, g, g.draw, Zone::Draw, !eye);
+        pile(w, g, g.discard, Zone::Discard, false);
+        pile(w, g, g.exhaust, Zone::Exhaust, !eye);
     }
     switch (g.screen) {
     case Screen::Discard:
         for (int i = 0; i < g.hand.size; ++i) options[i] = hands[i];
-        for (int i = 0; i < g.selected_cards.size; ++i) w.add(card_token(g, g.cards[g.selected_cards[i]], Zone::Selected, i + 1, true));
+        for (int i = 0; i < g.selected_cards.size; ++i) w.add(card_token(g, g.cards[g.selected_cards[i]], Zone::Selected, i + 1));
         break;
     case Screen::Grid: {
         const auto& grid = get_pile(g, g.grid_source);
         for (int i = 0; i < grid.size; ++i) {
             const Card& c = get_card(g, g.grid_source == PileId::MasterDeck ? -grid[i] - 2 : grid[i]);
-            Token t = card_token(g, c, Zone::Grid, i + 1, combat);
+            Token t = card_token(g, c, Zone::Grid, i + 1);
             for (int j = 0; j < g.selected_cards.size; ++j) if (g.selected_cards[j] == grid[i]) t.values[12] = 1;
             if (g.grid_confirm_screen && g.grid_hovered_card == grid[i]) t.values[13] = 1;
             options[i] = w.add(t);
@@ -153,7 +153,7 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
         break;
     }
     case Screen::CardReward:
-        for (int i = 0; i < g.reward_cards.size; ++i) options[i] = w.add(card_token(g, g.cards[g.reward_cards[i]], Zone::Offer, i + 1, false));
+        for (int i = 0; i < g.reward_cards.size; ++i) options[i] = w.add(card_token(g, g.cards[g.reward_cards[i]], Zone::Offer, i + 1));
         if (!g.room_in_combat && has_relic(g, RelicId::SingingBowl)) options[g.reward_cards.size] = w.add(option(Control::Bowl, g.reward_cards.size + 1));
         break;
     case Screen::CombatReward: {
