@@ -164,6 +164,28 @@ static void hidden_card_caches() {
     open_grid_selection(b, PileId::Draw, 1, false);
     equal(a, b);
 }
+static void conditional_card_description() {
+    // SingleCardViewPopup.open rebuilds descriptions through makeStatEquivalentCopy.
+    // These cards' conditional EXTENDED_DESCRIPTION variables do not survive that copy.
+    for (auto id : {CardId::Blizzard, CardId::Stack, CardId::ThunderStrike, CardId::MindBlast, CardId::SpiritShield}) {
+        Game a = combat();
+        const int index = a.hand.pop_back();
+        a.cards[index] = make_card(id);
+        a.exhaust.push_back(index);
+        Game b = a;
+        if (id == CardId::Blizzard || id == CardId::MindBlast) b.cards[index].base_damage += 7;
+        if (id == CardId::Stack || id == CardId::SpiritShield) b.cards[index].base_block_adjust += 9;
+        if (id == CardId::ThunderStrike) b.cards[index].base_magic += 3;
+        equal(a, b);
+    }
+    // Expunger.makeStatEquivalentCopy explicitly preserves its setX description.
+    Game a = combat();
+    a.cards[a.hand[0]] = make_card(CardId::Expunger);
+    a.cards[a.hand[0]].base_magic = a.cards[a.hand[0]].magic = 3;
+    Game b = a;
+    b.cards[b.hand[0]].base_magic = b.cards[b.hand[0]].magic = 4;
+    different(a, b);
+}
 static void combat_bottle_identity() {
     Game a = combat(), b = a;
     const int index = a.hand[0];
@@ -400,7 +422,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

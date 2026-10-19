@@ -19,7 +19,9 @@ def generate(jar, root):
         entry = cards[java_id]
         masks = []
         for text in [entry["DESCRIPTION"], entry.get("UPGRADE_DESCRIPTION", entry["DESCRIPTION"])]:
-            text += " ".join(entry.get("EXTENDED_DESCRIPTION", []))
+            # Expunger.makeStatEquivalentCopy preserves the description built by setX.
+            if java_id == "Expunger":
+                text += " ".join(entry["EXTENDED_DESCRIPTION"])
             masks.append(sum(1 << i for i, key in enumerate(["!D!", "!B!", "!M!"]) if key in text))
         output.append('    {' + ', '.join(map(str, masks)) + '},')
     output.extend(['};', 'static_assert(sizeof(card_variables) / sizeof(*card_variables) == static_cast<int>(CardId::Count));', '}'])

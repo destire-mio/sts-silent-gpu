@@ -1,5 +1,5 @@
 {
-  "protocol_version": 8,
+  "protocol_version": 9,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -127,6 +127,10 @@
     {
       "field": "Second transient Match face",
       "reason": "Settled decisions occur after the mismatched pair is covered. A transient observation boundary requires engine/caller work; remembered faces are denied as current fields."
+    },
+    {
+      "field": "Conditional extended card previews",
+      "reason": "Blizzard/Stack/ThunderStrike/MindBlast/SpiritShield raw-description state is absent from Game; protocol 9 denies those variables."
     }
   ],
   "representation": {
@@ -218,6 +222,15 @@
       ],
       "rule": "Meditate shares prompt 14 with BetterDiscardPileToHand: both render BetterToHandAction UI strings.",
       "test": "tests/test_observation.cpp:identical_selection_text"
+    },
+    {
+      "version": 9,
+      "fields": [
+        "Card variable mask",
+        "Card.values[2:4] for conditional description variables"
+      ],
+      "rule": "Deny EXTENDED_DESCRIPTION-only variables absent from popup stat-copy descriptions; retain Expunger setX description.",
+      "test": "tests/test_observation.cpp:conditional_card_description"
     }
   ],
   "measurements_protocol_version": 2
