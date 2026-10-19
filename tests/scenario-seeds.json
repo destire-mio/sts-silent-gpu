@@ -29,7 +29,622 @@
     102,
     103
   ],
+  "Astrolabe-transform-AThousandCuts": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Accuracy": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Acrobatics": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Adrenaline": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-AfterImage": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Alchemize": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-AllOutAttack": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Apotheosis": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Apparition": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Backflip": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Backstab": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BandageUp": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Bane": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Bite": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BladeDance": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Blind": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Blur": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BouncingFlask": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-BulletTime": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Burst": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CalculatedGamble": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Caltrops": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Catalyst": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Choke": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Chrysalis": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CloakAndDagger": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Clumsy": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Concentrate": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CorpseExplosion": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-CripplingPoison": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DaggerSpray": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DaggerThrow": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DarkShackles": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Dash": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DeadlyPoison": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Decay": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DeepBreath": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Defend_Green": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Deflect": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DieDieDie": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Discovery": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Distraction": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DodgeAndRoll": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Doppelganger": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Doubt": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-DramaticEntrance": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-EndlessAgony": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Enlightenment": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Envenom": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-EscapePlan": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Eviscerate": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Expertise": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Finesse": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Finisher": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-FlashOfSteel": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Flechettes": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-FlyingKnee": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Footwork": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Forethought": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-GlassKnife": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-GoodInstincts": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-GrandFinale": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-HandOfGreed": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-HeelHook": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Impatience": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-InfiniteBlades": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Injury": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-JAX": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-JackOfAllTrades": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-LegSweep": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Madness": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Magnetism": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Malaise": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-MasterOfStrategy": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-MasterfulStab": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Mayhem": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Metamorphosis": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-MindBlast": [
+    101,
+    102,
+    104
+  ],
   "Astrolabe-transform-Neutralize": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Nightmare": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Normality": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-NoxiousFumes": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Outmaneuver": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Pain": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Panacea": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Panache": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PanicButton": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Parasite": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PhantasmalKiller": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PiercingWail": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-PoisonedStab": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Predator": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Prepared": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Purity": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-QuickSlash": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Reflex": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Regret": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-RiddleWithHoles": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-RitualDagger": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SadisticNature": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SecretTechnique": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SecretWeapon": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Setup": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Shame": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Skewer": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Slice": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SneakyStrike": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-StormOfSteel": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Strike_Green": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SuckerPunch": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Survivor": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-SwiftStrike": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Tactician": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Terror": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-TheBomb": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-ThinkingAhead": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-ToolsOfTheTrade": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Transmutation": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Trip": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Unload": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Violence": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-WellLaidPlans": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-WraithForm": [
+    101,
+    102,
+    104
+  ],
+  "Astrolabe-transform-Writhe": [
     101,
     102,
     104
