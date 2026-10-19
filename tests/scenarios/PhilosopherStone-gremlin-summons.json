@@ -1,0 +1,37 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Philosopher's Stone",
+    "SacredBark"
+  ],
+  "potions": [
+    "Fire Potion",
+    "Fire Potion"
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Gremlin Leader",
+  "actions": [
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": 0
+    },
+    {
+      "type": "potion_use",
+      "slot": 1,
+      "target": 1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

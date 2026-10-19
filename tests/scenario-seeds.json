@@ -4,10 +4,25 @@
     127,
     131
   ],
+  "ApplyStasis-no-piles": [
+    101,
+    102,
+    103
+  ],
+  "AwakenedOne-poison-victory": [
+    101,
+    102,
+    103
+  ],
   "Barrage-retaliation": [
     101,
     135,
     143
+  ],
+  "BronzeAutomaton-poison-victory": [
+    101,
+    102,
+    103
   ],
   "CompileDriver-same-orbs": [
     101,
@@ -23,6 +38,11 @@
     1000001178,
     1000001179,
     1000001180
+  ],
+  "Deca-poison-victory": [
+    101,
+    102,
+    103
   ],
   "FiendFire-shared-info-retaliation": [
     101,
@@ -119,10 +139,30 @@
     1000050001,
     1000050003
   ],
+  "Hexaghost-poison-victory": [
+    101,
+    102,
+    103
+  ],
   "MoltenEgg-reward-preview": [
     594,
     887,
     2017
+  ],
+  "PhilosopherStone-darkling-revive": [
+    101,
+    102,
+    103
+  ],
+  "PhilosopherStone-gremlin-summons": [
+    101,
+    102,
+    103
+  ],
+  "PhilosopherStone-prebattle-strength": [
+    101,
+    102,
+    103
   ],
   "PrismaticShard-upgraded-reward": [
     101,
@@ -159,10 +199,55 @@
     102,
     103
   ],
+  "SlimeBoss-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "SlimeBoss-split-boss-victory": [
+    101,
+    102,
+    103
+  ],
+  "Sling-elite-victory": [
+    102,
+    103,
+    107
+  ],
   "SnakePlant-queued-death": [
     1000000067,
     1000000068,
     1000000069
+  ],
+  "SpireSpear-blocked-poison-control": [
+    109,
+    126,
+    131
+  ],
+  "SpireSpear-first-poison": [
+    111,
+    122,
+    149
+  ],
+  "Stasis-full-hand-release": [
+    101,
+    104,
+    107
+  ],
+  "Stasis-seven-card-control": [
+    102,
+    111,
+    117
+  ],
+  "TheCollector-poison-victory": [
+    101,
+    102,
+    103
+  ],
+  "TheGuardian-poison-victory": [
+    101,
+    102,
+    103
   ],
   "ToxicEgg-reward-preview": [
     391,

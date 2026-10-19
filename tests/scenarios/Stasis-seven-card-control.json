@@ -1,0 +1,95 @@
+{
+  "deck": [
+    {
+      "id": "Wraith Form v2",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "Snecko Eye",
+    "SacredBark"
+  ],
+  "potions": [
+    "Fire Potion",
+    "Fire Potion"
+  ],
+  "hp": 40,
+  "max_hp": 66,
+  "encounter": "Automaton",
+  "actions": [
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": 0
+    },
+    {
+      "type": "potion_use",
+      "slot": 1,
+      "target": 0
+    }
+  ]
+}
