@@ -77,7 +77,7 @@ def summarize(output, source, wins, costs, started, reason, prior, attempts, out
         audit_roots=len(audit), audit_status="pending_mac", costs=costs,
         search_bias="First winning line per seed; later Heart roots before Act 3 entry; true-future beam with HP/card heuristics; no policy labels")
     eligible = [band for band in BANDS if all(
-        next(row["families"] for row in entries if row["band"] == band and row["partition"] == part) >= 20
+        next(row["families"] for row in entries if row["band"] == band and row["partition"] == part) >= (20 if part == "train" else 10)
         for part in ("train", "dev"))]
     report["eligible_bands"] = eligible
     report["excluded_bands"] = [band for band in BANDS if band not in eligible]

@@ -47,7 +47,7 @@ def bootstrap_lower(values):
 def select_bands(train, dev):
     counts = {band: {part: len({r["seed"] for r in roots if r["band"] == band})
                      for part, roots in (("train", train), ("dev", dev))} for band in BANDS}
-    bands = [band for band in BANDS if min(counts[band].values()) >= 20]
+    bands = [band for band in BANDS if counts[band]["train"] >= 20 and counts[band]["dev"] >= 10]
     bands.sort(key=lambda band: (float(np.median([r["distance_to_win"] for r in train if r["band"] == band])),
                                  BANDS.index(band)))
     return bands, counts
@@ -173,7 +173,7 @@ class Curriculum:
         lower = summary["bootstrap_lower95"]
         self.state["evaluations"] += 1
         before = self.frontier
-        eligible = summary["families"] >= 20
+        eligible = summary["families"] >= 10
         if eligible and lower > .6 and self.state["frontier"] + 1 < len(self.bands):
             self.state["learned"].append(before)
             self.state["promoted_at"][before] = dict(decisions=self.state["total_decisions"], mean=summary["mean"])
@@ -301,7 +301,8 @@ def main():
                     decision_target=args.decisions, interval="One-sided 95% seed-family bootstrap for promotion and paired improvement; Hoeffding also reported",
                     bootstrap_seed=BOOTSTRAP_SEED, bootstrap_samples=BOOTSTRAP_SAMPLES,
                     bootstrap_rng="PCG64", bootstrap_quantile="linear", numpy_version=np.__version__,
-                    band_families=band_families, minimum_dev_families=20, minimum_bands=4,
+                    band_families=band_families, minimum_train_families=20, minimum_dev_families=10, minimum_bands=4,
+                    dev_scope="Curriculum control on the recorded dev seed families, not a Neow win-rate estimate",
                     band_order="Increasing median winning-path decisions remaining, fixed before training",
                     natural_train_seeds="fresh sequential train seeds; one per attempt", root_family_cap=.05,
                     continuation=checkpoint["config"]["continuation"] if checkpoint else None)

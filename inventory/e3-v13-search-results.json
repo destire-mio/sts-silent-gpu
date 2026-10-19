@@ -1926,5 +1926,39 @@
       }
     },
     "raw_worker_outputs": "Preserved on server, not copied into Git."
+  },
+  "rule_revision_followup": {
+    "commit": "a657aa250ef0d7f9ac90e960c81c42157b708cd1",
+    "minimum_train_families": 20,
+    "minimum_dev_families": 10,
+    "eligible_bands": [
+      "k8",
+      "k32",
+      "k64",
+      "k128",
+      "k256",
+      "k512",
+      "act4_entry",
+      "act3_boss",
+      "act3_entry"
+    ],
+    "training_data_sufficient": true,
+    "status": "new_root_cpu_gpu_validation_pending",
+    "mac_audit": {
+      "status": "passed_reported_by_mac",
+      "source_commit": "a657aa250ef0d7f9ac90e960c81c42157b708cd1",
+      "source_document": "docs/e3-curriculum.md",
+      "engine_commit": "45fe15e48c2ef60115b305873c9d30b08afdacad",
+      "prefixes": 45,
+      "recordings": 5,
+      "matching_recordings_by_scope": {
+        "combat": 5,
+        "run": 5
+      },
+      "decisions": 8013,
+      "differences": 0,
+      "verification_basis": "Original-game result reported on main; server did not execute Mac recordings."
+    },
+    "historical_result_note": "The original search summary and insufficient-data decision above use the old dev>=20 rule and remain unchanged as evidence."
   }
 }

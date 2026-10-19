@@ -101,6 +101,22 @@ class CurriculumTests(unittest.TestCase):
         self.assertFalse(event["eligible"])
         self.assertEqual(curriculum.frontier, "k8")
 
+    def test_ten_perfect_dev_families_promote(self):
+        curriculum = self.make()
+        summary = family_statistics(episodes(10, 10))
+        self.assertEqual(summary["bootstrap_lower95"], 1.)
+        event = curriculum.assess(summary)
+        self.assertTrue(event["eligible"])
+        self.assertEqual(curriculum.frontier, "k32")
+
+    def test_ten_families_at_eighty_percent_do_not_promote(self):
+        curriculum = self.make()
+        summary = family_statistics(episodes(10, 8))
+        self.assertEqual(summary["bootstrap_lower95"], .6)
+        event = curriculum.assess(summary)
+        self.assertTrue(event["eligible"])
+        self.assertEqual(curriculum.frontier, "k8")
+
     def test_thirty_families_at_eighty_percent_promote(self):
         curriculum = self.make()
         summary = family_statistics(episodes(30, 24))
@@ -126,16 +142,16 @@ class CurriculumTests(unittest.TestCase):
         self.assertGreater(paired["bootstrap_lower95"], 0.)
         self.assertEqual(paired_statistics(after, after)["bootstrap_lower95"], 0.)
 
-    def test_band_selection_requires_twenty_train_and_dev_families(self):
+    def test_band_selection_requires_twenty_train_and_ten_dev_families(self):
         train = [dict(seed=1000000000 + i, band=band, distance_to_win=distance)
                  for band, distance in (("k8", 8), ("k32", 32), ("k64", 64), ("k128", 128))
                  for i in range(20)]
         dev = [dict(seed=2000000000 + i, band=band) for band in ("k8", "k32", "k64", "k128")
-               for i in range(20 if band != "k8" else 7)]
+               for i in range(10 if band != "k8" else 9)]
         bands, counts = select_bands(train, dev)
         self.assertEqual(bands, ["k32", "k64", "k128"])
         self.assertLess(len(bands), 4)
-        self.assertEqual(counts["k8"], {"train": 20, "dev": 7})
+        self.assertEqual(counts["k8"], {"train": 20, "dev": 9})
 
     def test_assessment_preserves_fault_reproduction_before_aborting(self):
         root = dict(seed=1000000000, candidates=[1, 2])
