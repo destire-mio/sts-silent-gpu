@@ -306,6 +306,10 @@ SPIRE_FN inline void monster_die_base(Game& g, int owner, bool trigger_relics) {
             for (int p = next_power_onDeath(g, c.powers.head); p != 255; p = next_power_onDeath(g, g.power_objects[p].next)) power_onDeath(g, g.power_objects[p], owner);
         for (int i = next_relic_onMonsterDeath(g, 0); i < g.run.relics.size; i = next_relic_onMonsterDeath(g, i + 1)) relic_onMonsterDeath(g, i, owner);
     }
+    if (monsters_basically_dead(g)) {
+        g.end_turn_enabled = false;
+        g.limbo.clear();
+    }
     c.hp = max(0, c.hp);
 }
 SPIRE_FN inline void settle_deaths_after_wait(Game& g, int frames) {
