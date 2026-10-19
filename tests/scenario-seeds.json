@@ -9,6 +9,16 @@
     102,
     103
   ],
+  "Astrolabe-no-purge": [
+    101,
+    102,
+    103
+  ],
+  "Astrolabe-one-purge": [
+    101,
+    102,
+    103
+  ],
   "AwakenedOne-poison-victory": [
     101,
     102,
@@ -18,6 +28,21 @@
     101,
     135,
     143
+  ],
+  "BlackStar-campfire-reroll": [
+    951,
+    1001,
+    1044
+  ],
+  "BlackStar-emerald-victory": [
+    102,
+    108,
+    111
+  ],
+  "BossReward-starter-replacement": [
+    139,
+    142,
+    191
   ],
   "BouncingFlask-half-dead-target": [
     102,
@@ -33,6 +58,11 @@
     101,
     102,
     103
+  ],
+  "Chest-relic-counters": [
+    101,
+    102,
+    104
   ],
   "CompileDriver-same-orbs": [
     101,
@@ -164,6 +194,11 @@
     1670,
     1711
   ],
+  "Girya-third-campfire-rejected": [
+    172,
+    263,
+    343
+  ],
   "GlassKnife-duplicate": [
     2000003426,
     2000003428,
@@ -204,6 +239,11 @@
     103,
     106
   ],
+  "MawBank-shop-spend": [
+    101,
+    102,
+    105
+  ],
   "MoltenEgg-reward-preview": [
     594,
     887,
@@ -213,6 +253,101 @@
     101,
     102,
     103
+  ],
+  "Nloth-trade-BottledFlame": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-BottledLightning": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-BottledTornado": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-BustedCrown": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-CoffeeDripper": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-CursedKey": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-Ectoplasm": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-FusionHammer": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-Necronomicon": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-PhilosopherStone": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-RingOfTheSerpent": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-RunicDome": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-SneckoEye": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-Sozu": [
+    206,
+    579,
+    696
+  ],
+  "Nloth-trade-VelvetChoker": [
+    206,
+    579,
+    696
+  ],
+  "NlothsMask-gold-before-relic": [
+    102,
+    104,
+    110
+  ],
+  "PandorasBox-no-basics": [
+    101,
+    102,
+    103
+  ],
+  "PeacePipe-all-protected": [
+    101,
+    102,
+    103
+  ],
+  "PeacePipe-third-campfire-rejected": [
+    172,
+    229,
+    545
   ],
   "PenNib-nine-attacks": [
     127,
@@ -273,6 +408,36 @@
     101,
     102,
     103
+  ],
+  "Shop-buy-Orrery": [
+    216,
+    258,
+    315
+  ],
+  "Shop-buy-membership": [
+    118,
+    127,
+    129
+  ],
+  "Shop-discounted-restocks": [
+    101,
+    102,
+    105
+  ],
+  "Shop-potions-Sozu": [
+    101,
+    102,
+    105
+  ],
+  "Shop-potions-full": [
+    101,
+    102,
+    105
+  ],
+  "Shovel-third-campfire-rejected": [
+    138,
+    221,
+    307
   ],
   "Skewer-flight-overflow": [
     101,
@@ -364,6 +529,11 @@
     281,
     310
   ],
+  "Toolbox-duplicate-choices": [
+    105,
+    135,
+    142
+  ],
   "ToxicEgg-reward-preview": [
     391,
     788,
@@ -388,5 +558,10 @@
     101,
     103,
     104
+  ],
+  "WingBoots-third-flight": [
+    108,
+    118,
+    121
   ]
 }

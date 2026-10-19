@@ -1,0 +1,117 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Neutralize",
+      "upgrades": 0
+    },
+    {
+      "id": "Survivor",
+      "upgrades": 0
+    },
+    {
+      "id": "AscendersBane",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "The Courier"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 1,
+    "floor": 10,
+    "node": [
+      3,
+      9
+    ],
+    "room": "ShopRoom",
+    "gold": 2000,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 10
+    },
+    {
+      "type": "choose",
+      "option": 6
+    },
+    {
+      "type": "choose",
+      "option": 6
+    },
+    {
+      "type": "choose",
+      "option": 11
+    },
+    {
+      "type": "choose",
+      "option": 11
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}

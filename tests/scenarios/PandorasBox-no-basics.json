@@ -1,0 +1,22 @@
+{
+  "deck": [
+    {
+      "id": "Footwork",
+      "upgrades": 0
+    },
+    {
+      "id": "AscendersBane",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Pandora's Box"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist"
+}

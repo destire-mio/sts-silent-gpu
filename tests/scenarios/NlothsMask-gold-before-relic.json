@@ -1,0 +1,45 @@
+{
+  "deck": [
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "NlothsMask"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 1,
+    "floor": 9,
+    "node": [
+      3,
+      8
+    ],
+    "room": "TreasureRoom",
+    "gold": 0,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}
