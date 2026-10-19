@@ -1,5 +1,5 @@
 {
-  "protocol_version": 7,
+  "protocol_version": 8,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -210,6 +210,14 @@
       ],
       "rule": "Deny max HP when HP is zero: AbstractCreature.renderHealthText displays Dead.",
       "test": "tests/test_observation.cpp:dead_health_label"
+    },
+    {
+      "version": 8,
+      "fields": [
+        "Screen.aux selection prompt 15"
+      ],
+      "rule": "Meditate shares prompt 14 with BetterDiscardPileToHand: both render BetterToHandAction UI strings.",
+      "test": "tests/test_observation.cpp:identical_selection_text"
     }
   ],
   "measurements_protocol_version": 2

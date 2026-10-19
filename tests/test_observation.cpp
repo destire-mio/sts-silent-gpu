@@ -203,6 +203,20 @@ static void dead_health_label() {
     a.monsters[0].creature.half_dead = b.monsters[0].creature.half_dead = false;
     different(a, b);
 }
+static void identical_selection_text() {
+    Game a = combat();
+    a.discard.push_back(a.draw.pop_back()); a.discard.push_back(a.draw.pop_back());
+    Game b = a;
+    Effect retrieve{}; retrieve.kind = EffectKind::BetterDiscardPileToHand;
+    action_initialize_state(retrieve);
+    retrieve.payload.state.BetterDiscardPileToHand.numberOfCards = 1;
+    Effect meditate{}; meditate.kind = EffectKind::Meditate; meditate.extra = 1;
+    action_initialize_state(meditate);
+    add_bottom(a, retrieve); add_bottom(b, meditate);
+    run_until_decision(a); run_until_decision(b);
+    require(a.screen == Screen::Grid && b.screen == Screen::Grid, "retrieval prompt fixture");
+    equal(a, b);
+}
 static Game event(EventId id) {
     Game g; reset(g, 101);
     g.event = {}; g.event.id = id; event_initialize_state(g.event);
@@ -386,7 +400,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

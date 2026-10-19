@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 7 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 8 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -274,8 +274,10 @@ Card variables are numeric metadata extracted from the pinned English descriptio
 The base/upgrade masks include extended description variables used by dynamic card text.
 Selection prompt IDs are an explicit semantic whitelist: 1 upgrade, 2 purge, 3 transform,
 4 discard, 5 exhaust, 6 retain, 7 put on top, 8 put on bottom, 9 duplicate, 10 nightmare,
-11 setup, 12 scry, 13 omniscience, 14 retrieve, 15 meditate; zero means no additional prompt.
-They encode the action's displayed selection message, not an action queue or object number.
+11 setup, 12 scry, 13 omniscience, 14 retrieve (including Meditate); zero means no additional prompt.
+They encode the displayed selection message, not an action queue or object number.
+Meditate and BetterDiscardPileToHand use the same `BetterToHandAction` UI strings and
+therefore share prompt 14; the hidden continuation effect cannot distinguish them.
 
 ## Batch interface and episode boundaries
 
@@ -367,7 +369,7 @@ All words are little endian; records need no alignment or end padding. There are
 in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
 8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
 return/recurrent-state storage belongs to the trainer and is not included in these sizes.
-The format is tied to protocol version 7; it is not a save/load format for games.
+The format is tied to protocol version 8; it is not a save/load format for games.
 
 Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
 gathers records by int32 indices into its preallocated dense arrays with the same shapes,

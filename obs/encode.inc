@@ -23,8 +23,8 @@ SPIRE_FN inline int selection_prompt(const Game& g) {
     case EffectKind::Omniscience: return 13;
     case EffectKind::BetterDiscardPileToHand: case EffectKind::BetterDrawPileToHand:
     case EffectKind::AttackFromDeckToHand: case EffectKind::SkillFromDeckToHand:
-    case EffectKind::Exhume: return 14;
-    case EffectKind::Meditate: return 15;
+    // MeditateAction.update and BetterDiscardPileToHandAction.update share BetterToHandAction text.
+    case EffectKind::Exhume: case EffectKind::Meditate: return 14;
     default: return 0;
     }
 }
