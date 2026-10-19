@@ -94,6 +94,21 @@
     142,
     191
   ],
+  "BottledFlame-combat-reward": [
+    6442,
+    34478,
+    38999
+  ],
+  "BottledLightning-combat-reward": [
+    7516,
+    8714,
+    9009
+  ],
+  "BottledTornado-combat-reward": [
+    5495,
+    8688,
+    9816
+  ],
   "BouncingFlask-half-dead-target": [
     102,
     120,
@@ -683,6 +698,11 @@
     391,
     788,
     988
+  ],
+  "UnceasingTop-draw-without-discard": [
+    165,
+    201,
+    423
   ],
   "VelvetChoker-secret-card-gates": [
     1632,
