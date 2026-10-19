@@ -1,0 +1,61 @@
+{
+  "deck": [
+    {
+      "id": "Inflame",
+      "upgrades": 1
+    },
+    {
+      "id": "Bullet Time",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    },
+    {
+      "id": "Glass Knife",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Cursed Key",
+    "Lantern",
+    "Bag of Marbles"
+  ],
+  "potions": [
+    "DuplicationPotion",
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "3 Darklings",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

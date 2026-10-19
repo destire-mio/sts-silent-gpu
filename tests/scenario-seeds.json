@@ -309,6 +309,16 @@
     2000003428,
     2000003429
   ],
+  "GlassKnife-rejected-copy-no-exhaust-hooks": [
+    107,
+    109,
+    127
+  ],
+  "GlassKnife-rejected-copy-resets-cost": [
+    111,
+    178,
+    179
+  ],
   "GlassKnife-single": [
     2000003426,
     2000003428,

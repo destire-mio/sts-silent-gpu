@@ -308,6 +308,7 @@ SPIRE_FN inline void monster_die_base(Game& g, int owner, bool trigger_relics) {
     }
     if (monsters_basically_dead(g)) {
         g.end_turn_enabled = false;
+        for (int i = 0; i < g.limbo.size; ++i) card_resetAttributes(g, g.limbo[i]);
         g.limbo.clear();
     }
     c.hp = max(0, c.hp);
@@ -609,6 +610,7 @@ SPIRE_FN inline void end_turn_early(Game& g) {
         add_bottom(g, units::actions::UseCard::construct(g, item.card, no_target));
     }
     g.manager.card_queue.clear();
+    for (int i = 0; i < g.limbo.size; ++i) card_resetAttributes(g, g.limbo[i]);
     g.limbo.clear();
     add_bottom(g, units::actions::NewQueueCard::construct());
 }
@@ -798,7 +800,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                     g.manager.card_queue[0].target = queued.target;
                 }
                 if (!card_canUse(g, queued.card, queued.target) && !card.dont_trigger_on_use_card) {
-                    remove_from_pile(g.limbo, queued.card);
+                    if (remove_from_pile(g.limbo, queued.card)) card_resetAttributes(g, queued.card);
                     g.manager.card_queue.pop_front();
                     if (card.in_autoplay) {
                         card.dont_trigger_on_use_card = true;
@@ -818,7 +820,11 @@ SPIRE_FN inline void run_until_decision(Game& g) {
                 if (card.target != CardTarget::Enemy ||
                     (queued.target != no_target && alive(get_creature(g, queued.target))))
                     use_card(g, queued.card, queued.target);
-                else remove_from_pile(g.limbo, queued.card);
+                else {
+                    const bool removed = remove_from_pile(g.limbo, queued.card);
+                    // ExhaustCardEffect.update resets rejected cards before the next settled observation.
+                    if (removed || queued.target == no_target) card_resetAttributes(g, queued.card);
+                }
             }
             remove_queued_card(g, queued.card);
         } else if (g.player.end_turn_queued && !monsters_basically_dead(g)) {
