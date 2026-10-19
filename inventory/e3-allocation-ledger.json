@@ -281,13 +281,13 @@
     "cpus": 8,
     "time_limit_seconds": 11280,
     "slurm_start": "2026-10-19T21:47:27+08:00",
-    "charged_seconds": 359,
+    "charged_seconds": 901,
     "final": false,
-    "observation": "2026-10-19T21:53:26.154302+08:00",
+    "observation": "2026-10-19T22:02:28.388127+08:00",
     "measurement_source": "live_scontrol_RunTime"
   },
-  "observed_cumulative_charge_seconds": 17874,
-  "remaining_seconds_at_observation": 10926,
+  "observed_cumulative_charge_seconds": 18416,
+  "remaining_seconds_at_observation": 10384,
   "final_slurm_recorder": {
     "pid": 3820032,
     "output": "/home/zhuyouwei/spire-downloads/e3-training-3606/slurm-final.txt"
