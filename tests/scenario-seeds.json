@@ -1,4 +1,9 @@
 {
+  "AcidSlime-long-move-history": [
+    103,
+    104,
+    106
+  ],
   "Amplify-stacked": [
     101,
     127,
@@ -28,6 +33,11 @@
     101,
     102,
     103
+  ],
+  "AwakenedOne-victory-with-cultists": [
+    136,
+    138,
+    169
   ],
   "Barrage-retaliation": [
     101,
@@ -583,6 +593,11 @@
     1000000067,
     1000000068,
     1000000069
+  ],
+  "SpireShield-first-smoke-right": [
+    111,
+    122,
+    149
   ],
   "SpireSpear-blocked-poison-control": [
     109,
