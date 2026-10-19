@@ -2,7 +2,7 @@ import argparse
 import json
 from pathlib import Path
 import subprocess
-import time
+import tempfile
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = Path(__file__).resolve().parent
@@ -12,8 +12,7 @@ def run_jobs(jobs):
     instance = ROOT / 'instance'
     for job in jobs:
         Path(job['output']).parent.mkdir(parents=True, exist_ok=True)
-    job_dir = instance / ('job-' + str(time.time_ns()))
-    job_dir.mkdir()
+    job_dir = Path(tempfile.mkdtemp(prefix='oracle-job-'))
     for name in ('desktop-1.0.jar', 'jre', 'ModTheSpire.jar', 'launcher.jar', 'mods'):
         (job_dir / name).symlink_to(instance / name)
     (job_dir / 'tmp').mkdir()

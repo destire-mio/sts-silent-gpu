@@ -146,7 +146,7 @@ def record_content(output, cases):
     sys.path.insert(0, str(ROOT / "oracle"))
     from record import run_jobs
     jobs = [dict(seed=seed, scenario=json.loads(path.read_text()),
-                 output=str(output.resolve() / name / f"{seed}.jsonl"))
+                 output=str(output.resolve() / name / f"{seed}.jsonl.gz"))
             for name, (path, _) in cases.items() for seed in SCENARIO_SEEDS.get(name, SEEDS)]
     run_jobs(jobs)
 
@@ -251,7 +251,7 @@ def replay_content(output, units, cases, trace_paths=()):
         missing = missing_content(scenario)
         rules = [dict(kind="rule", id=name.split("--")[1].removeprefix("rule-"))] if name.startswith("blocked--rule-") else []
         rows = []
-        paths = sorted((output / name).glob("*.jsonl"), key=lambda path: int(path.stem))
+        paths = sorted((output / name).glob("*.jsonl*"), key=lambda path: int(path.name.split('.')[0]))
         assert len(paths) >= 3, (name, len(paths))
         for path in paths:
             seed = int(path.stem)

@@ -30,10 +30,10 @@ def jobs(output, paths=()):
             if index >= len(fixtures) and key in seen:
                 continue
             seen.add(key)
-            destination = output / 'scenarios' / path.name[:-3] if index < len(fixtures) else output / 'extra' / f'{index}.jsonl'
+            destination = output / 'scenarios' / path.name if index < len(fixtures) else output / 'extra' / f'{index}.jsonl.gz'
             recordings.append(dict(seed=header['seed'], scenario=header['scenario'],
                                    output=str(destination)))
-    recordings[:0] = [dict(seed=seed, scenario=None, output=str(output / 'full' / f'{seed}.jsonl'))
+    recordings[:0] = [dict(seed=seed, scenario=None, output=str(output / 'full' / f'{seed}.jsonl.gz'))
                       for seed in sorted(full_seeds)]
     for job in run_start_jobs(output / 'run-starts'):
         key = json.dumps([job['seed'], job['scenario']], sort_keys=True)
@@ -78,16 +78,16 @@ def check(output, paths=(), inputs=()):
     first = jobs(output / 'a', paths)
     second = jobs(output / 'b', paths)
     first.extend(inputs)
-    second.extend(dict(job, output=str(output / 'b' / 'fresh' / f'{index}.jsonl'))
+    second.extend(dict(job, output=str(output / 'b' / 'fresh' / f'{index}.jsonl.gz'))
                   for index, job in enumerate(inputs))
     run_jobs(first)
-    with (output / 'a/full/16.jsonl').open() as stream:
+    with open_trace(output / 'a/full/16.jsonl.gz') as stream:
         snapshots = [json.loads(line)['snapshot'] for line in list(stream)[1:]]
     assert any(snapshot['screen']['type'] == 'GRID'
                and snapshot['objects'][snapshot['screen']['state']['ref']]['fields']['GridCardSelectScreen.forTransform']
                and snapshot['objects'][snapshot['screen']['state']['ref']]['fields']['GridCardSelectScreen.confirmScreenUp']
                for snapshot in snapshots)
-    with (output / 'a/scenarios/Thievery-seed101.jsonl').open() as stream:
+    with open_trace(output / 'a/scenarios/Thievery-seed101.jsonl.gz') as stream:
         terminal = json.loads(list(stream)[-1])['snapshot']
     escaped = [obj['fields'] for obj in terminal['objects']
                if obj['fields'].get('AbstractMonster.escaped')]
