@@ -1,4 +1,6 @@
+from contextlib import nullcontext
 from dataclasses import dataclass
+import json
 import time
 
 import torch
@@ -20,6 +22,7 @@ class PPOConfig:
     max_grad_norm: float = 0.5
     gae_lambda: float = 1.0
     gamma: float = 1.0
+    microbatch_size: int = 128
 
 
 def objective(logits, values, legal, actions, old_log_probs, returns, advantages, config):
@@ -61,6 +64,7 @@ def empty_inputs(device):
 
 def update(model, optimizer, rollout, config, device, rng, *, policy_version):
     assert config.gamma == 1 and 0 <= config.gae_lambda <= 1
+    assert config.minibatch_size > 0 and config.microbatch_size > 0
     distributed = isinstance(model, DistributedDataParallel)
     rank, world = (dist.get_rank(), dist.get_world_size()) if distributed else (0, 1)
     version_ok = (rollout.policy_versions[:rollout.count] == policy_version).all().int()
@@ -78,6 +82,8 @@ def update(model, optimizer, rollout, config, device, rng, *, policy_version):
         return dict(samples=0, minibatches=0, update_seconds=0.0)
     assert len(torch.unique(metadata[:, 0])) == len(metadata), "Duplicate global sample IDs"
     synchronize(device)
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
     start = time.perf_counter()
     advantages = rollout.advantages[indices].double()
     moments = torch.stack((advantages.sum(), advantages.square().sum(), advantages.new_tensor(len(indices))))
@@ -89,29 +95,51 @@ def update(model, optimizer, rollout, config, device, rng, *, policy_version):
     normalized[indices] = ((advantages - mean) / (std + 1e-8)).float()
     totals, weight, minibatches = {}, 0, 0
     model.train()
-    for _ in range(config.epochs):
+    for epoch in range(config.epochs):
         for global_indices in length_batches(torch.arange(len(metadata), device=device), metadata[:, 1],
                                              metadata[:, 2], config.minibatch_size, rng):
             records = metadata[global_indices]
-            selected = records[records[:, 3] == rank, 4]
+            local = records[records[:, 3] == rank]
+            selected = local[:, 4]
             local_count = len(selected)
-            inputs = packed_inputs(rollout.data, rollout.offsets, selected, device) if local_count else empty_inputs(device)
+            counts = torch.bincount(records[:, 3], minlength=world).tolist()
+            steps = (max(counts) + config.microbatch_size - 1) // config.microbatch_size
+            entities, candidates = local[:, 1:3].amax(0).tolist() if local_count else (0, 0)
+            diagnostic = dict(event="ppo_batch", policy_version=policy_version, epoch=epoch,
+                              minibatch=minibatches, rank=rank, global_samples=len(records),
+                              samples_by_rank=counts, local_samples=local_count,
+                              microbatch_size=config.microbatch_size, accumulation_steps=steps,
+                              max_entities=entities, max_candidates=candidates)
+            if device.type == "cuda":
+                free, total = torch.cuda.mem_get_info(device)
+                diagnostic.update(allocated_bytes=torch.cuda.memory_allocated(device),
+                                  reserved_bytes=torch.cuda.memory_reserved(device),
+                                  peak_allocated_bytes=torch.cuda.max_memory_allocated(device),
+                                  free_bytes=free, total_bytes=total)
+            print(json.dumps(diagnostic) + "\n", end="", flush=True)
             optimizer.zero_grad(set_to_none=True)
-            logits, value = model(inputs)
-            if local_count:
-                loss, metrics = objective(logits, value, inputs["candidate_mask"],
-                    rollout.actions[selected].long(), rollout.log_probs[selected],
-                    rollout.returns[selected], normalized[selected], config)
-            else:
-                loss = (logits.sum() + value.sum()) * 0
-                metrics = {name: loss for name in ("policy_loss", "value_loss", "entropy", "kl", "clip_fraction")}
-            assert torch.isfinite(loss).item(), "Non-finite PPO loss"
-            (loss * (local_count * world / len(global_indices))).backward()
+            for step in range(steps):
+                chunk = selected[step * config.microbatch_size:(step + 1) * config.microbatch_size]
+                count = len(chunk)
+                inputs = packed_inputs(rollout.data, rollout.offsets, chunk, device) if count else empty_inputs(device)
+                with model.no_sync() if distributed and step + 1 < steps else nullcontext():
+                    logits, value = model(inputs)
+                    if count:
+                        loss, metrics = objective(logits, value, inputs["candidate_mask"],
+                            rollout.actions[chunk].long(), rollout.log_probs[chunk],
+                            rollout.returns[chunk], normalized[chunk], config)
+                    else:
+                        loss = (logits.sum() + value.sum()) * 0
+                        metrics = {name: loss for name in ("policy_loss", "value_loss", "entropy", "kl", "clip_fraction")}
+                    assert torch.isfinite(loss).item(), "Non-finite PPO loss"
+                    (loss * (count * world / len(global_indices))).backward()
+                metrics["loss"] = loss
+                for name, metric in metrics.items():
+                    totals[name] = totals.get(name, 0.) + metric.detach().double() * count
+                del inputs, logits, value, loss, metrics, metric
             norm = torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm, error_if_nonfinite=True)
             optimizer.step()
-            metrics.update(loss=loss, grad_norm=norm)
-            for name, value in metrics.items():
-                totals[name] = totals.get(name, 0.) + value.detach().double() * local_count
+            totals["grad_norm"] = totals.get("grad_norm", 0.) + norm.detach().double() * local_count
             weight += local_count
             minibatches += 1
     combined = torch.stack([*totals.values(), torch.tensor(weight, device=device, dtype=torch.float64)])

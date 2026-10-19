@@ -42,6 +42,7 @@ def main():
     parser.add_argument("--learning-rate", type=float, default=0.0003)
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--minibatch-size", type=int, default=32)
+    parser.add_argument("--microbatch-size", type=int, default=128)
     parser.add_argument("--gae-lambda", type=float, default=1.0)
     parser.add_argument("--entropy-coefficient", type=float, default=0.01)
     args = parser.parse_args()
@@ -66,14 +67,15 @@ def main():
             "Resume preserves training arguments; only --output and --updates may change"
         assert args.updates > checkpoint["policy_version"], "Update target is already complete"
     assert args.updates > 0 and args.episodes > 0 and args.batch_size > 0 and args.decision_cap > 0
-    assert args.epochs > 0 and args.minibatch_size > 0 and 0 <= args.gae_lambda <= 1
+    assert args.epochs > 0 and args.minibatch_size > 0 and args.microbatch_size > 0 and 0 <= args.gae_lambda <= 1
     assert args.torch_threads > 0
     torch.set_num_threads(args.torch_threads)
     torch.set_num_interop_threads(1)
     torch.manual_seed(args.init_seed)
     model_config = ModelConfig(args.width, args.layers, args.heads, args.feedforward)
     ppo_config = PPOConfig(learning_rate=args.learning_rate, epochs=args.epochs, minibatch_size=args.minibatch_size,
-                           gae_lambda=args.gae_lambda, entropy_coefficient=args.entropy_coefficient)
+                           gae_lambda=args.gae_lambda, entropy_coefficient=args.entropy_coefficient,
+                           microbatch_size=args.microbatch_size)
     pipeline_config = PipelineConfig(args.workers, args.batch_size, args.decision_cap,
                                      args.storage_mib, args.device, args.torch_threads, args.inference_chunk)
     if checkpoint is not None:

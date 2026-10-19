@@ -238,17 +238,21 @@ def main():
                                  BANDS.index(band)))
     checkpoint = torch.load(args.resume, map_location="cpu", weights_only=True) if args.resume else None
     curriculum = Curriculum(train, far, bands, args.init_seed, checkpoint["curriculum"] if checkpoint else None)
-    model, ppo = ModelConfig(), PPOConfig(epochs=1, minibatch_size=8192)
+    model, ppo = ModelConfig(), PPOConfig(epochs=1, minibatch_size=8192, microbatch_size=128)
     config = PipelineConfig(workers=8, batch_size=8192, decision_cap=3000, storage_mib=2549, inference_chunk=512)
     source_hashes = {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in
                      (("train", args.roots), ("dev", args.dev_roots), ("e2", args.e2))}
-    manifest = dict(entrypoint="train.curriculum", engine_commit=engine_commit(), torch_version=str(torch.__version__),
+    commit = engine_commit()
+    if checkpoint:
+        assert checkpoint["config"]["engine_commit"] == commit, "Resume requires a checkpoint prepared for this source revision"
+    manifest = dict(entrypoint="train.curriculum", engine_commit=commit, torch_version=str(torch.__version__),
                     observation_version=2, memory="none", model=asdict(model), ppo=asdict(ppo), pipeline=asdict(config),
                     group=args.group, init_seed=args.init_seed, source_hashes=source_hashes, bands=bands,
                     sampling=SCHEME, repeats=REPEATS, evaluation_interval=EVALUATION_INTERVAL,
                     decision_target=args.decisions, interval="Two-sided Hoeffding over seed families; paired range [-1,1]",
                     band_order="Increasing median winning-path decisions remaining, fixed before training",
-                    natural_train_seeds="fresh sequential train seeds; one per attempt", root_family_cap=.05)
+                    natural_train_seeds="fresh sequential train seeds; one per attempt", root_family_cap=.05,
+                    continuation=checkpoint["config"]["continuation"] if checkpoint else None)
     if checkpoint:
         assert checkpoint["config"] == manifest, "Resume requires identical source, environment, roots and experiment"
         assert checkpoint["curriculum"] is not None
