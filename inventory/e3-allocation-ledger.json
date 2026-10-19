@@ -251,11 +251,63 @@
       "log_interval_seconds": 103,
       "log_path": "/home/zhuyouwei/spire-downloads/e3-final-roots-3605.log",
       "timestamp_evidence": "1792417064 1792417167 2026-10-19 21:37:44.884576123 +0800 2026-10-19 21:39:27.559573745 +0800"
+    },
+    {
+      "job_id": 3606,
+      "charged_seconds": 4821,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 4821,
+      "cpus": 8,
+      "gpus": 8,
+      "status": "CANCELLED",
+      "exit_code": "0:15",
+      "evidence_file": "e3-v13-training-stop-3606-86cbae2/e3-training-3606/slurm-final.txt",
+      "evidence_sha256": "1e4d66527fd18d9208fa41c56aec4cd08ce0e911e35f9b62fc7feca07af9ddf9"
+    },
+    {
+      "job_id": 3607,
+      "charged_seconds": 25,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 25,
+      "cpus": 2,
+      "gpus": 0,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "evidence_file": "e3-k8-diagnostic-3607-86cbae2/e3-diagnostic-86cbae2/slurm-final.txt",
+      "evidence_sha256": "b6dece3c78ebadd967b9aea519fb4aa2293a74029a68d373fa5f50f01b8ffdba"
+    },
+    {
+      "job_id": 3609,
+      "charged_seconds": 20,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 20,
+      "cpus": 1,
+      "gpus": 0,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "evidence_file": "e3-history-diagnostic-3609-86cbae2/e3-diagnostic-86cbae2/history-3609-slurm-final.txt",
+      "evidence_sha256": "e69440d6124003f306db9cd1ae1ac11d399d532af3d67d1813e652d742ee7561"
+    },
+    {
+      "job_id": 3610,
+      "charged_seconds": 5,
+      "final": true,
+      "measurement_source": "saved_final_scontrol_RunTime",
+      "slurm_elapsed_seconds": 5,
+      "cpus": 1,
+      "gpus": 0,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "evidence_file": "e3-training-truncations-3610-86cbae2/e3-diagnostic-86cbae2/truncations-3610-slurm-final.txt",
+      "evidence_sha256": "eb8603a9d846dc92acec4422cb0431d9023b1d066f819382c9bc7189f244988a"
     }
   ],
-  "prior_charged_seconds": 17515,
-  "remaining_seconds_before_run": 11285,
-  "allocation_limit_seconds": 11280,
+  "prior_charged_seconds": 22386,
+  "remaining_seconds_before_run": 6414,
+  "allocation_limit_seconds": 6360,
   "accounting_note": "sacct is disabled (accounting_storage/none), JobComp is none, and old controller records expired. Saved final scontrol RunTime is used where available; remaining old jobs use original log birth-to-last-write intervals plus two seconds for timestamp granularity, explicitly estimated, not sacct elapsed. Full wall time for CPU-only and partial-GPU E3 jobs is conservatively charged as before. This total is a conservative operational ledger, not a complete measured eight-GPU allocation total.",
   "retired_reservation": {
     "seconds": 14400,
@@ -274,22 +326,22 @@
   },
   "uncertainty_note": "Log intervals do not prove exact Slurm allocation boundaries. Future runs record final controller RunTime before records expire. No historical estimate is described as measured Slurm elapsed.",
   "recorded_at": "2026-10-19T21:49:49.607982+08:00",
-  "active_allocation": {
-    "job_id": 3606,
-    "status": "RUNNING",
-    "gpus": 8,
-    "cpus": 8,
-    "time_limit_seconds": 11280,
-    "slurm_start": "2026-10-19T21:47:27+08:00",
-    "charged_seconds": 3717,
-    "final": false,
-    "observation": "2026-10-19T22:49:24.840904+08:00",
-    "measurement_source": "live_scontrol_RunTime"
-  },
-  "observed_cumulative_charge_seconds": 21232,
-  "remaining_seconds_at_observation": 7568,
+  "active_allocation": null,
+  "observed_cumulative_charge_seconds": 22386,
+  "remaining_seconds_at_observation": 6414,
   "final_slurm_recorder": {
     "pid": 3820032,
-    "output": "/home/zhuyouwei/spire-downloads/e3-training-3606/slurm-final.txt"
-  }
+    "output": "/home/zhuyouwei/spire-downloads/e3-training-3606/slurm-final.txt",
+    "status": "exited_final_record_saved",
+    "final_job_state": "CANCELLED",
+    "final_runtime_seconds": 4821
+  },
+  "completed_training_allocation_baseline": {
+    "job_id": 3606,
+    "prior_charged_seconds": 17515,
+    "remaining_seconds_before_run": 11285,
+    "allocation_limit_seconds": 11280
+  },
+  "observed_at": "2026-10-19T23:30:52.542299+08:00",
+  "allocation_limit_scope": "Maximum next allocation rounded down to whole minutes, contingent on resumption gate. No new GPU job submitted."
 }
