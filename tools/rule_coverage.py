@@ -96,6 +96,32 @@ JAVA_METHODS = {
     'step': ('rooms.ShopRoom', 'updatePurge'),
 }
 
+UNIT_JAVA_METHODS = {
+    ('PhilosopherStone', 'add_strength'): ('relics.PhilosopherStone', 'atBattleStart'),
+    ('Omamori', 'onCurseObtain'): ('vfx.cardManip.ShowCardAndObtainEffect', '<init>'),
+    ('EntropicBrew', 'constructPotion'): ('potions.EntropicBrew', '<init>'),
+    ('JawWorm', 'bellow_block'): ('monsters.exordium.JawWorm', '<init>'),
+    ('JawWorm', 'bellow_strength'): ('monsters.exordium.JawWorm', '<init>'),
+    ('TheLibrary', 'draw'): ('events.city.TheLibrary', 'getBook'),
+    ('Looter', 'gold_amount'): ('monsters.exordium.Looter', '<init>'),
+    ('Mugger', 'gold_amount'): ('monsters.city.Mugger', '<init>'),
+    ('RemoveSpecificPowerAction', 'from_instance'): ('actions.common.RemoveSpecificPowerAction', '<init>'),
+    ('Falling', 'pick'): ('events.beyond.Falling', 'setCards'),
+    ('SplitPower', 'initialPower'): ('powers.SplitPower', '<init>'),
+    ('DeadAdventurer', 'encounter'): ('events.exordium.DeadAdventurer', 'getMonster'),
+    ('AttackFromDeckToHandAction', 'move_card'): ('actions.unique.AttackFromDeckToHandAction', 'update'),
+    ('ChooseOneColorless', 'generate_card_choices'): ('actions.utility.ChooseOneColorless', 'generateCardChoices'),
+    ('Designer', 'upgrade_random'): ('events.shrines.Designer', 'upgradeTwoRandomCards'),
+    ('NoBlockPower', 'initFromSource'): ('powers.NoBlockPower', '<init>'),
+    ('BetterDrawPileToHandAction', 'move'): ('actions.common.BetterDrawPileToHandAction', 'update'),
+    ('ExhumeAction', 'move'): ('actions.unique.ExhumeAction', 'update'),
+    ('MeditateAction', 'move'): ('actions.watcher.MeditateAction', 'update'),
+    ('RecycleAction', 'recycle'): ('actions.defect.RecycleAction', 'update'),
+    ('Blizzard', 'frost_count'): ('cards.blue.Blizzard', 'applyPowers'),
+    ('ForceField', 'constructCard'): ('cards.blue.ForceField', 'configureCostsOnNewCard'),
+    ('SearingBlow', 'makeStatEquivalentCopy'): ('cards.AbstractCard', 'makeStatEquivalentCopy'),
+}
+
 
 def run(command, log, env=None):
     with (log.parent / 'commands.jsonl').open('a') as stream:
@@ -176,14 +202,17 @@ def java_basis(function, source, owners, line):
         return dict(owning_unit='rule:random.Random', java_class=java, java_method=method,
                     java_path=java.replace('.', '/') + '.java', mapping='Java RNG wrapper or libGDX generator')
     method = {'execute': 'update', 'prepare': '<init>', 'construct': '<init>',
-              'make': '<init>', 'data': '<init>', 'enter': '<init>',
+              'make': '<init>', 'data': '<init>', 'value': '<init>', 'enter': '<init>',
               'choose': 'buttonEffect', 'build': '<init>', 'constructPower': '<init>',
               'damageGive': 'atDamageGive', 'damageReceive': 'atDamageReceive'}.get(method, method)
     if unit:
         if unit['kind'] == 'rule' and unit['key'].count(':') == 2:
             method = unit['key'].rsplit(':', 1)[-1]
-        return dict(owning_unit=unit['key'], java_class=unit['java_class'],
-                    java_method=method, java_path=unit['java_path'], mapping='unit hook')
+        java = unit['java_class'].removeprefix('com.megacrit.cardcrawl.')
+        java, method = UNIT_JAVA_METHODS.get((java.rsplit('.', 1)[-1], method), (java, method))
+        return dict(owning_unit=unit['key'], java_class='com.megacrit.cardcrawl.' + java,
+                    java_method=method, java_path='com/megacrit/cardcrawl/' + java.replace('.', '/') + '.java',
+                    mapping='unit hook or original helper body')
     if method == 'apply_decision':
         before = '\n'.join(source.read_text().splitlines()[:line])
         screens = re.findall(r'if \([^\n]*g.screen == Screen::(Room|BossReward|Event|Shop|Map|CombatReward|CardReward|Grid|Discard|Combat)\b', before)
