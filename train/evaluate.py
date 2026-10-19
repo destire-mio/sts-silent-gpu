@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 import argparse
 import hashlib
 import json
@@ -76,7 +77,7 @@ def main():
     torch.set_num_interop_threads(1)
     device = torch.device(args.device)
     checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=True)
-    assert checkpoint["config"]["observation_version"] == 2 and checkpoint["config"]["memory"] == "none"
+    assert checkpoint["config"]["observation_version"] == OBSERVATION_VERSION and checkpoint["config"]["memory"] == "none"
     model = Policy(ModelConfig(**checkpoint["config"]["model"])).to(device)
     model.load_state_dict(checkpoint["model"])
     roots = read_roots(args.roots) if args.roots else natural_roots(args.first_seed, args.episodes, args.partition)
@@ -86,7 +87,7 @@ def main():
                       inference_chunk=args.inference_chunk)
     result.update(checkpoint=str(args.checkpoint), checkpoint_sha256=hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
                   training_engine_commit=checkpoint["engine_commit"], evaluation_engine_commit=engine_commit(),
-                  observation_version=2, sampling_seed=args.sampling_seed, decision_cap=args.decision_cap,
+                  observation_version=OBSERVATION_VERSION, sampling_seed=args.sampling_seed, decision_cap=args.decision_cap,
                   sampling=SCHEME, roots=roots)
     if args.reference:
         result["paired"] = compare(json.loads(args.reference.read_text()), result)

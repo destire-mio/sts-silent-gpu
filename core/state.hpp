@@ -215,18 +215,17 @@ struct Orb {
     int evoke = 0;
 };
 struct OrbState {
-    List<Orb, 128> objects{};
+    Pool<Orb, 128> objects{};
     uint8_t kinds[32]{};
     List<int8_t, 10> slots{};
     List<uint8_t, 256> channeled{};
     uint16_t turn_start = 0;
     SPIRE_FN SPIRE_INLINE OrbKind kind(int index) const {
-        SPIRE_ASSERT(index >= 0 && index < objects.size);
+        SPIRE_ASSERT(index >= 0 && index < 128 && objects.contains(index));
         return static_cast<OrbKind>((kinds[index / 4] >> ((index % 4) * 2)) & 3);
     }
     SPIRE_FN SPIRE_INLINE int add(OrbKind kind, int passive, int evoke) {
-        const int index = objects.size;
-        objects.push_back({passive, evoke});
+        const int index = objects.add({passive, evoke});
         const int shift = (index % 4) * 2;
         kinds[index / 4] = (kinds[index / 4] & ~(3 << shift)) | (static_cast<int>(kind) << shift);
         return index;

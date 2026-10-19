@@ -15,13 +15,6 @@ struct NotStanceCheck : ActionHooks {
         e.payload.state.NotStanceCheck.action = hold_action(g, action);
         return e;
     }
-    static SPIRE_FN void release(Game& g, Effect& e) {
-        // EmptyBody/EmptyFist/EmptyMind.use buffer only a VFXAction, which owns no payload.
-        const int action = e.payload.state.NotStanceCheck.action;
-        if (g.action_objects[action].held) {
-            g.action_objects.release(action);
-        }
-    }
     static SPIRE_FN void execute(Game& g, Effect& e) {
         if (g.player.stance != e.payload.state.NotStanceCheck.stance) {
             g.action_objects[e.payload.state.NotStanceCheck.action].held = false;

@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 import ast
 from pathlib import Path
 import unittest
@@ -195,7 +196,7 @@ class TrainerTests(unittest.TestCase):
         self.assertIsNone(first["summary"]["wilson95"])
         with self.assertRaises(AssertionError):
             evaluate(self.model, [roots[0], roots[0]], self.device, 5, 1, 2718)
-        common = dict(sampling_seed=2718, decision_cap=5, sampling="test", observation_version=2, evaluation_engine_commit="test")
+        common = dict(sampling_seed=2718, decision_cap=5, sampling="test", observation_version=OBSERVATION_VERSION, evaluation_engine_commit="test")
         self.assertEqual(compare(dict(**first, **common), dict(**second, **common))["truncated_pairs"], 3)
         episodes = [dict(seed=1, outcome="victory"), dict(seed=2, outcome="death")]
         self.assertIsNotNone(outcome_summary(episodes)["wilson95"])
@@ -209,7 +210,7 @@ class TrainerTests(unittest.TestCase):
         b = {e["attempt"]: e["candidates"] for e in second["episodes"]}
         self.assertEqual(a, b)
         self.assertGreater(len({tuple(path) for path in a.values()}), 1)
-        common = dict(sampling_seed=2718, decision_cap=8, sampling="test", observation_version=2, evaluation_engine_commit="test")
+        common = dict(sampling_seed=2718, decision_cap=8, sampling="test", observation_version=OBSERVATION_VERSION, evaluation_engine_commit="test")
         paired = compare(dict(**first, **common), dict(**second, **common))
         self.assertEqual(paired["truncated_pairs"], 4)
         self.assertEqual(paired["attempt_pairs"], 4)

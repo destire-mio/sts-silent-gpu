@@ -1,0 +1,63 @@
+{
+  "deck": [
+    {
+      "id": "Zap",
+      "upgrades": 0
+    }
+  ],
+  "relics": [],
+  "potions": [
+    "SmokeBomb",
+    null
+  ],
+  "hp": 5000,
+  "max_hp": 5000,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    }
+  ]
+}

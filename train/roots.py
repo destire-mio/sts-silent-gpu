@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 import argparse
 import hashlib
 import json
@@ -8,7 +9,7 @@ from tools.evaluation import partition
 
 def read_roots(path):
     document = json.loads(Path(path).read_text())
-    assert document["observation_version"] == 2
+    assert document["observation_version"] == OBSERVATION_VERSION
     return document["roots"]
 
 
@@ -43,7 +44,7 @@ def route_roots(inventory, seed, distances):
     assert observation[-1] == 0 and observation[1][0, 0] == 4
     assert len(candidates) == entry["decisions"]
     assert all(0 < distance < len(candidates) for distance in distances)
-    return dict(observation_version=2, source_sha256=entry["scenario_sha256"],
+    return dict(observation_version=OBSERVATION_VERSION, source_sha256=entry["scenario_sha256"],
                 source_decisions=len(candidates), roots=[
                     dict(seed=seed, candidates=candidates[:-distance], distance_to_win=distance)
                     for distance in distances])

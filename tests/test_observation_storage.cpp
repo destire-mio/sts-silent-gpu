@@ -105,7 +105,7 @@ static void deep_roundtrips() {
     std::printf("compact roundtrips: %d decisions, 12 terminal observations\n", decisions);
 }
 int main() {
-    static_assert(sizeof(Game) == 37872);
+    static_assert(sizeof(Game) == 37888);
     static_assert(sizeof(obs::Observation) == 10184);
     ranges(); storage_bytes(); packed_masks_and_tail(); deep_roundtrips();
 }

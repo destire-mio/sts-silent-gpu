@@ -1,0 +1,46 @@
+{
+  "deck": [
+    {
+      "id": "Searing Blow",
+      "upgrades": 13
+    },
+    {
+      "id": "Dagger Throw",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Throw",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Throw",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Throw",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Vajra"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 59,
+  "max_hp": 66,
+  "encounter": "Gremlin Leader",
+  "actions": [
+    {
+      "type": "play",
+      "card": 4,
+      "target": 2
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": 2
+    }
+  ]
+}

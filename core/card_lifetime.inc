@@ -1,5 +1,6 @@
 #pragma once
 #include "core/api.hpp"
+#include "core/power_lifetime.hpp"
 
 namespace spire {
 struct CardReferences {
@@ -32,11 +33,13 @@ SPIRE_FN inline CardReferences card_references(const Game& g) {
         refs.add(g.selected_cards);
     for (int i = 0; i < g.reward_objects.size; ++i) refs.add(g.reward_objects[i].cards);
     if (g.room_kind == RoomKind::Shop) { refs.add(g.shop.colored); refs.add(g.shop.colorless); }
-    const Powers& player_powers = g.player.creature.powers;
-    for (int i = 0; i < player_powers.size; ++i) refs.power(player_powers.at(g.power_objects, i));
-    for (int m = 0; m < g.monster_order.size; ++m) {
-        const Powers& powers = g.monsters[g.monster_order[m]].creature.powers;
-        for (int i = 0; i < powers.size; ++i) refs.power(powers.at(g.power_objects, i));
+    const PowerReferences powers = power_references(g);
+    for (int word = 0; word < (power_object_capacity + 63) / 64; ++word) {
+        uint64_t used = powers.words[word];
+        while (used) {
+            refs.power(g.power_objects[word * 64 + __builtin_ctzll(used)]);
+            used &= used - 1;
+        }
     }
     for (int word = 0; word < (action_capacity + 63) / 64; ++word) {
         uint64_t used = g.action_objects.used[word];
@@ -46,9 +49,8 @@ SPIRE_FN inline CardReferences card_references(const Game& g) {
             const Effect& e = g.action_objects[i];
             // SetMoveAction.update reads damage here; the other users store card references.
             if (e.kind != EffectKind::SetMove) refs.add(static_cast<int>(e.card));
-            if (e.kind == EffectKind::ApplyPower && e.power_constructed) refs.power(e.payload.power);
-            if ((e.kind == EffectKind::RemovePower || e.kind == EffectKind::ReducePower || e.kind == EffectKind::MayhemPlay) && e.extra != 0)
-                refs.power(power_instance(g, e.extra));
+            if ((e.kind == EffectKind::ApplyPower && e.power_constructed) || e.kind == EffectKind::ApplyPowerToRandomEnemy)
+                refs.power(e.payload.power);
             switch (e.kind) {
             case EffectKind::Armaments:
                 for (int j = 0; j < e.payload.state.Armaments.cannot_upgrade_count; ++j)
@@ -66,11 +68,6 @@ SPIRE_FN inline CardReferences card_references(const Game& g) {
             case EffectKind::Exhume:
                 if (e.payload.state.Exhume.selecting) refs.add(g.selection_excluded);
                 break;
-            case EffectKind::SpawnMonster: {
-                const Powers& powers = g.monsters[e.payload.state.SpawnMonster.m].creature.powers;
-                for (int p = 0; p < powers.size; ++p) refs.power(powers.at(g.power_objects, p));
-                break;
-            }
             default: break;
             }
         }

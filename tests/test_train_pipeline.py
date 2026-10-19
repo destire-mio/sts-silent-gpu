@@ -1,3 +1,4 @@
+from train import OBSERVATION_VERSION
 from dataclasses import asdict
 from pathlib import Path
 import tempfile
@@ -23,7 +24,7 @@ class PipelineTests(unittest.TestCase):
         model = Policy(model_config)
         roots = [dict(seed=1000000000 + i, candidates=[]) for i in range(5)]
         expected = Collector(2, 4, 4, torch.device("cpu"), 1).collect(model, roots, 1729, range(5), policy_version=0)
-        manifest = dict(model=asdict(model_config), ppo=asdict(ppo_config), engine_commit="test", observation_version=2)
+        manifest = dict(model=asdict(model_config), ppo=asdict(ppo_config), engine_commit="test", observation_version=OBSERVATION_VERSION)
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory)
             with Pipeline(model_config, ppo_config, config, 1729, output, manifest) as pipeline:

@@ -226,7 +226,8 @@ static void card_reference_lifetimes() {
     choose.payload.state.ChooseOne.count = 1; choose.payload.state.ChooseOne.choices[0] = add();
     game.action_objects.add(choose);
     Effect apply{}; apply.kind = EffectKind::ApplyStasisAction; apply.payload.state.ApplyStasisAction.card = add();
-    game.action_objects.add(apply);
+    apply.payload.state.ApplyStasisAction.owner = 0;
+    const int apply_stasis_action = game.action_objects.add(apply);
     game.event.id = EventId::GremlinMatchGame;
     auto& match = game.event.state.GremlinMatchGame;
     match.chosen = add(); match.count = 1; match.cards[0] = add();
@@ -255,7 +256,10 @@ static void card_reference_lifetimes() {
             "detached powers and expired master-reference bookkeeping do not retain cards");
     copy.monster_order.clear();
     collect_cards(copy);
-    require(!copy.cards.contains(captured.state.Stasis.card), "an expired room's monster arena is not a card root");
+    require(copy.cards.contains(captured.state.Stasis.card), "ApplyStasisAction retains its owner after the room releases the monster");
+    copy.action_objects[apply_stasis_action].payload.state.ApplyStasisAction.owner = no_target;
+    collect_cards(copy);
+    require(!copy.cards.contains(captured.state.Stasis.card), "a monster without room or action references is not a card root");
 
     Game event{};
     event.event.id = EventId::Bonfire;
