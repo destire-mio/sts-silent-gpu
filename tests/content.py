@@ -254,7 +254,7 @@ def replay_content(output, units, cases, trace_paths=()):
         paths = sorted((output / name).glob("*.jsonl*"), key=lambda path: int(path.name.split('.')[0]))
         assert len(paths) >= 3, (name, len(paths))
         for path in paths:
-            seed = int(path.stem)
+            seed = int(path.name.split('.')[0])
             header, observed, generated_missing, decisions, invoked = trace_evidence(path, units)
             assert header["seed"] == seed and header["scenario"] == scenario, path
             dependencies = missing + generated_missing
