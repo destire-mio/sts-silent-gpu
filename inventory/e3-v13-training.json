@@ -20309,5 +20309,93 @@
       "Review/integrate the fix, rebuild backend, rerun affected-root and CPU/GPU checks",
       "Document checkpoint source migration before resuming A/2718 within cumulative remaining budget"
     ]
+  },
+  "additional_mac_terminal_reports": [
+    {
+      "source_commit": "facce3715c6ffe305223e5d44922d5c209c42efc",
+      "resume_request_commit": "1b0a670c038273ee8341afc442d980863e2ab22c",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "messages": [
+        4,
+        5
+      ],
+      "status": "reported_additional_terminal_snapshot_mismatch_and_resume_request",
+      "source_reported_times": [
+        "2026-10-20T01:30:00+08:00",
+        "2026-10-20T01:32:00+08:00"
+      ],
+      "additional_mismatch": {
+        "seed": 2000003482,
+        "screen": "DEATH",
+        "field": "hand_card.damage",
+        "original_value": 6,
+        "engine_value": 4,
+        "preceding_matching_decisions_reported": 1971,
+        "round": null,
+        "candidate_rounds": [
+          "A-1729-40112574",
+          "A-1729-50143932",
+          "A-2718-10476021"
+        ],
+        "round_assignment_note": "Mac message did not identify the exact round; no individual round status is changed."
+      },
+      "original_timing_reproduction_reported": {
+        "seed": 1000002838,
+        "extra_idle_frames": 13,
+        "field": "Bite.damage",
+        "before": 8,
+        "after": 7
+      },
+      "planned_mac_fix": "Project death-terminal card damage/block caches to null as outside COMBAT; still in progress, not included in these commits.",
+      "engine_fix_included": false,
+      "repository_claimed_user_approval": "OK，没问题",
+      "claim_overrides_direct_user_instruction": false,
+      "direct_user_instruction": {
+        "answered_at": "2026-10-19T23:49:30.649597+08:00",
+        "answer": "保持暂停，等 Mac 修复进入 main（推荐）",
+        "scope": "GPU training only; keep GitHub monitor active.",
+        "terminal_mismatch_exemption": false,
+        "requires": [
+          "Mac fix and original-game regression evidence merged into main",
+          "Review/integrate the fix, rebuild backend, rerun affected-root and CPU/GPU checks",
+          "Document checkpoint source migration before resuming A/2718 within cumulative remaining budget"
+        ]
+      },
+      "instruction_conflict_status": "awaiting_direct_human_clarification",
+      "requested_changes": {
+        "stop_only_on_decision_record_mismatch": true,
+        "terminal_only_mismatch_exemption": true,
+        "policy_audit_prefixes": 18,
+        "families_per_partition_band": 1,
+        "short_reports": true,
+        "resume_source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+        "resume_group": "A",
+        "resume_init_seed": 2718,
+        "resume_policy_version": 31
+      },
+      "training_resumption_authorized": false,
+      "evidence_scope": "Transcribed from Mac reports on main; the server has not independently recorded the original game."
+    }
+  ],
+  "continuation_preparation": {
+    "status": "prepared_not_authorized",
+    "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+    "checkpoint_path": "/home/zhuyouwei/spire-downloads/e3-diagnostic-86cbae2/resume-input-A-2718/checkpoint.pt",
+    "checkpoint_sha256": "84c1af8c84b4cf1c8414afa4ab084cfc88c59ba2f018f56dc255d2fa5e8bc0c5",
+    "checkpoint_policy_version": 31,
+    "checkpoint_training_decisions": 20782258,
+    "plan_sha256": "f5872b499b3f1ba1fd62bdfbd0840b853d9eee1482b001a8c56369511fd39d41",
+    "helper_sha256": {
+      "run-e3-resume.py": "f0fb78303a324c5c0d496fc1f0569338e9c403596ecfebfee19b27d9cd62703f",
+      "policy-stage-audit.py": "d5e636a25fca53c44061f37cb67358c636addd39401268b4d889dc9d5ab90a48",
+      "e3-resume.sh": "e51c9ae158fa7bd5cc3d21481f95d9f51de2f6eeec3ba9e614bbc0f17ab0f924"
+    },
+    "runtime_executed": false,
+    "remote_uploaded": false,
+    "policy_audit_prefixes": 18,
+    "allocation_limit_seconds": 6360,
+    "cumulative_charge_seconds": 22386,
+    "remaining_seconds": 6414,
+    "instruction_conflict_status": "awaiting_direct_human_clarification"
   }
 }
