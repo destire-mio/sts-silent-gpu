@@ -1,5 +1,5 @@
 {
-  "protocol_version": 12,
+  "protocol_version": 13,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -122,7 +122,7 @@
     },
     {
       "field": "Card modified flags after base changes",
-      "reason": "Combat caches restored in protocol 11; Game lacks Java modified flags needed when base values change after the last calculation. Discard damage and exhaust stat-copy rules remain as in v2."
+      "reason": "Protocol 13 emits base damage/block for uninitialized -1 caches. Game lacks Java modified flags needed when base values change after the last calculation, including Accuracy/Shiv. Discard damage and exhaust stat-copy rules remain as in v2."
     },
     {
       "field": "Conditional extended card previews",
@@ -253,6 +253,14 @@
       ],
       "rule": "Render current intents behind player-turn selection/reward overlays; distinguish displayed attack/skill/exhaust/discard-to-top grid texts while keeping Meditate and BetterToHand shared.",
       "test": "tests/test_observation.cpp:selection_intents,grid_prompt_text,identical_selection_text"
+    },
+    {
+      "version": 13,
+      "fields": [
+        "Card.values[2:3]"
+      ],
+      "rule": "Emit base damage/block when the live cache is -1, matching AbstractCard field initialization:105-113 and renderDynamicVariable:1775-1806; preserve other live caches, discard damage and exhaust stat-copy rules.",
+      "test": "tests/test_observation.cpp:uninitialized_card_numbers,combat_card_values,discard_damage"
     }
   ],
   "measurements_protocol_version": 2

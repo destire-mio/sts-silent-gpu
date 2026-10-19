@@ -22,8 +22,9 @@ SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int po
     t.values[2] = variables;
     // Soul.update may clear GlassKnife damage between duplicate ModifyDamageAction.update calls.
     const bool discard = zone == Zone::Discard || (zone == Zone::Grid && g.grid_source == PileId::Discard);
-    if (variables & 1) t.values[3] = live && !discard ? c.damage : c.base_damage;
-    if (variables & 2) t.values[4] = live ? c.block : card_baseBlock(c);
+    // AbstractCard initializes these caches to -1; renderDynamicVariable then shows the base.
+    if (variables & 1) t.values[3] = live && !discard && c.damage != -1 ? c.damage : c.base_damage;
+    if (variables & 2) t.values[4] = live && c.block != -1 ? c.block : card_baseBlock(c);
     if (variables & 4) t.values[5] = live ? c.magic : c.base_magic;
     // MasterDeckViewScreen.render and noncombat GridCardSelectScreen.render show bottle badges.
     if (zone == Zone::Master || (zone == Zone::Grid && g.room_phase != RoomPhase::Combat)) {

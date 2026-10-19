@@ -175,6 +175,28 @@ static void combat_card_values() {
     b.cards[index].base_damage += 1;
     different(a, b);
 }
+static void uninitialized_card_numbers() {
+    Game a = combat();
+    const int index = a.hand[0];
+    a.cards[index] = make_card(CardId::IronWave);
+    require(a.cards[index].damage == -1 && a.cards[index].block == -1, "uninitialized cache fixture");
+    Game b = a;
+    b.cards[index].damage = b.cards[index].base_damage;
+    b.cards[index].block = card_baseBlock(b.cards[index]);
+    equal(a, b);
+    a.hand.erase(0); a.draw.push_back(index);
+    b.hand.erase(0); b.draw.push_back(index);
+    equal(a, b);
+    open_grid_selection(a, PileId::Draw, 1, false);
+    open_grid_selection(b, PileId::Draw, 1, false);
+    equal(a, b);
+    // AbstractCard.renderDynamicVariable uses base numbers while the initial modified flags are false.
+    for (int cache : {-2, 0, 8}) {
+        a.cards[index].damage = a.cards[index].block = cache;
+        const auto t = obs::card_token(a, a.cards[index], obs::Zone::Grid, 1, true);
+        require(t.values[3] == cache && t.values[4] == cache, "initialized live cache was replaced by base");
+    }
+}
 static void conditional_card_description() {
     // SingleCardViewPopup.open rebuilds descriptions through makeStatEquivalentCopy.
     // These cards' conditional EXTENDED_DESCRIPTION variables do not survive that copy.
@@ -516,7 +538,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    selection_intents(); grid_prompt_text(); conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    selection_intents(); grid_prompt_text(); conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); uninitialized_card_numbers(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }
