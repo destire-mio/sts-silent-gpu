@@ -189,6 +189,20 @@ static void combat_bottle_identity() {
     open_grid_selection(b, PileId::MasterDeck, 1, false);
     different(a, b);
 }
+static void dead_health_label() {
+    Game a; reset(a, 123);
+    CombatSetup setup; setup.encounter = EncounterId::Darkling;
+    setup.deck = a.run.master_deck; setup.relics = a.run.relics;
+    start_combat(a, setup);
+    DamageInfo hit{}; hit.source = player_target; hit.target = 0; hit.amount = 999;
+    monster_damage(a, 0, hit); run_until_decision(a);
+    require(a.monsters[0].creature.hp == 0 && a.monsters[0].creature.half_dead, "Darkling death fixture");
+    Game b = a; b.monsters[0].creature.max_hp += 5;
+    equal(a, b);
+    a.monsters[0].creature.hp = b.monsters[0].creature.hp = 1;
+    a.monsters[0].creature.half_dead = b.monsters[0].creature.half_dead = false;
+    different(a, b);
+}
 static Game event(EventId id) {
     Game g; reset(g, 101);
     g.event = {}; g.event.id = id; event_initialize_state(g.event);
@@ -372,7 +386,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

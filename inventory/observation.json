@@ -1,5 +1,5 @@
 {
-  "protocol_version": 6,
+  "protocol_version": 7,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -202,6 +202,14 @@
       ],
       "rule": "Emit only current Match faces; caller recurrent memory owns previous reveals. History retains current RestOption labels only.",
       "test": "tests/test_observation.cpp:match_current_screen"
+    },
+    {
+      "version": 7,
+      "fields": [
+        "Monster.values[1]"
+      ],
+      "rule": "Deny max HP when HP is zero: AbstractCreature.renderHealthText displays Dead.",
+      "test": "tests/test_observation.cpp:dead_health_label"
     }
   ],
   "measurements_protocol_version": 2

@@ -325,7 +325,7 @@ source = Path.home() / "spire-downloads/native-audit.roots.jsonl.gz"
 roots = [json.loads(line)["root"] for line in gzip.open(source, "rt")]
 roots = [root for root in roots if partition(root["seed"]) == "train"]
 target = source.with_name("e2-train.roots.json")
-target.write_text(json.dumps(dict(observation_version=6, roots=roots)) + "\n")
+target.write_text(json.dumps(dict(observation_version=7, roots=roots)) + "\n")
 print(len(roots), target)
 PY
 "$SPIRE_PYTHON" -m train.run --device cuda --workers 8 \
@@ -628,7 +628,7 @@ They can establish continuation wiring, not unseen-seed performance.
 Root files have this format (every prefix starts at fresh Neow):
 
 ```json
-{"observation_version": 6, "roots": [{"seed": 1000000000, "candidates": [0, 1]}]}
+{"observation_version": 7, "roots": [{"seed": 1000000000, "candidates": [0, 1]}]}
 ```
 
 Training cycles supplied roots in order. Natural starts use consecutive train seeds for the

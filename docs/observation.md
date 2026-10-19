@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 6 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 7 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -89,10 +89,13 @@ which otherwise identical combat copy the player is inspecting. Free attack/one-
 | Hand | ordered visible cards; candidate subject points to the chosen card | `AbstractPlayer.renderHand`, `AbstractCard.render` |
 | Draw pile | multiset sorted by the complete emitted public card tuple; position zero, duplicates retained; with Frozen Eye preserve displayed order | `screens/DrawPileViewScreen.open:218-229`; no hidden tie-breaking key |
 | Discard / exhaust | discard display order; exhaust multiset unless Frozen Eye | `DiscardPileViewScreen.open/hideCards`, `ExhaustPileViewScreen.open:209-221` |
-| Monsters | visible living/dying/half-dead creatures, compact public order, HP/max/block, screen x and facing | `monsters/AbstractMonster.render`, `AbstractCreature.renderHealth` |
+| Monsters | visible living/dying/half-dead creatures, compact public order, HP/block, max HP only above zero HP, screen x and facing | `monsters/AbstractMonster.render`, `AbstractCreature.renderHealth` |
 | Intents | displayed icon; damage and multiplicity only for ATTACK variants; all three absent under Runic Dome, dying/escaping creatures, or noncombat room | `AbstractMonster.render:735`, `renderDamageRange`, `renderTip:244`; pending move, base damage and move history denied |
 | Powers | ID, owner, order, amount only when >0 or negative with canGoNegative; tooltip additions below | `powers/AbstractPower.renderAmount:184-195`; unlisted private counters and object IDs denied |
 | Orbs / stance | slot, type, passive/evoke numbers, visible stance | `orbs/*Orb.renderText/updateDescription`, `stances/*Stance.updateDescription`, `AbstractPlayer.render` |
+
+`AbstractCreature.renderHealthText` displays the dead label at zero HP, so maximum HP is
+denied there, including half-dead Darklings. A caller can remember earlier health displays.
 
 `TheBombPower.updateDescription` and `PanachePower.updateDescription` display their damage;
 `CombustPower.updateDescription` displays HP loss; `DevaPower.updateDescription` displays
@@ -254,7 +257,7 @@ numeric amounts/coordinates are unshifted. A card cost of -1 means X; -2 means n
 | Screen | act, floor, ascension, event page, requested count (0 at confirmation), selected count | ruby, emerald, sapphire, any-number, can-pick-zero (HAND_SELECT), confirmation | selection prompt |
 | Player | HP, max HP, gold, block, energy, 0 | 0 | 0 |
 | Card | upgrades, printed cost, popup base damage, popup base block, popup base magic, shop price | description D/B/M in bits 0–2; bottle flame/lightning/tornado in 3–5 (master/noncombat grid only); grid selected/confirmation target in 6–7 | Match attempts remaining |
-| Monster | HP, max HP, block, screen x, shown damage, shown hits | facing | shown intent + 1 (0 hidden) |
+| Monster | HP, max HP (zero when HP is zero), block, screen x, shown damage, shown hits | facing | shown intent + 1 (0 hidden) |
 | Power | shown amount, whitelisted tooltip number, referenced card upgrade suffix, 0, 0, 0 | amount-visible | 0 |
 | Relic | shown counter, shop price, 0, 0, 0, 0 | counter-visible, grayscale, used-up tooltip | 0 |
 | Potion | owned potency, shop price, 0, 0, 0, 0 | 0 | 0 |
@@ -364,7 +367,7 @@ All words are little endian; records need no alignment or end padding. There are
 in storage: counts determine them. Size is `4 + 24*entities + 7*candidates` bytes, plus one
 8-byte offset per decision and one final 8-byte offset for the entire stream. Reward/action/
 return/recurrent-state storage belongs to the trainer and is not included in these sizes.
-The format is tied to protocol version 6; it is not a save/load format for games.
+The format is tied to protocol version 7; it is not a save/load format for games.
 
 Create `spire.ObservationBatch(minibatch_size)` once. `minibatch.pad(data, offsets, indices)`
 gathers records by int32 indices into its preallocated dense arrays with the same shapes,

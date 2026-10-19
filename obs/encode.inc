@@ -117,7 +117,9 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
             const auto& c = m.creature;
             if (c.dead || c.escaped) continue;
             Token t = token(Kind::Monster, static_cast<int>(m.id) + 1, Zone::None, ++position);
-            t.values[0] = c.hp; t.values[1] = c.max_hp; t.values[2] = c.block;
+            t.values[0] = c.hp; t.values[2] = c.block;
+            // AbstractCreature.renderHealthText shows Dead instead of HP/max HP at zero health.
+            if (c.hp > 0) t.values[1] = c.max_hp;
             t.values[3] = static_cast<int>(c.draw_x); t.values[4] = c.flip_horizontal;
             const bool show_intent = g.screen == Screen::Combat && !c.dying && !c.half_dead &&
                 !has_relic(g, RelicId::RunicDome) && m.intent != Intent::None;
