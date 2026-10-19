@@ -283,10 +283,10 @@ def replay_content(output, units, cases, trace_paths=()):
     for path in trace_paths:
         header, observed, missing, decisions, invoked = trace_evidence(path, units)
         scenario = header["scenario"]
-        if scenario is not None and "start" not in scenario:
+        if scenario is not None and "encounter" in scenario and "start" not in scenario:
             observed.update(key for key, unit in units.items()
                             if unit["kind"] == "encounter" and unit["game_id"] == scenario["encounter"])
-        name = ("fixture:" if scenario is not None and "start" not in scenario else "run:") + path.parent.name + "/" + path.name.removesuffix(".gz").removesuffix(".jsonl")
+        name = ("fixture:" if scenario is not None and "encounter" in scenario and "start" not in scenario else "run:") + path.parent.name + "/" + path.name.removesuffix(".gz").removesuffix(".jsonl")
         assert name not in document["scenarios"], name
         row = dict(status="blocked", decisions=decisions, waiting_for=missing) if missing else replay_trace(path, spire)
         row.update(seed=header["seed"], trace_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
