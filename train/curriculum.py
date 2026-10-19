@@ -28,6 +28,29 @@ BANDS = ("k8", "k32", "k64", "k128", "k256", "k512", "act4_entry", "act3_boss", 
 EVALUATION_INTERVAL = 10_000_000
 EVALUATION_STREAM = 63003
 REPEATS = 4
+BOOTSTRAP_SEED = 63008
+BOOTSTRAP_SAMPLES = 10_000
+
+
+def bootstrap_lower(values):
+    values = np.asarray(values, dtype=np.float64)
+    assert values.ndim == 1 and len(values) > 0
+    rng = np.random.Generator(np.random.PCG64(BOOTSTRAP_SEED))
+    means = np.empty(BOOTSTRAP_SAMPLES)
+    for begin in range(0, BOOTSTRAP_SAMPLES, 256):
+        end = min(begin + 256, BOOTSTRAP_SAMPLES)
+        indices = rng.integers(len(values), size=(end - begin, len(values)))
+        means[begin:end] = values[indices].mean(axis=1)
+    return float(np.quantile(means, .05, method="linear"))
+
+
+def select_bands(train, dev):
+    counts = {band: {part: len({r["seed"] for r in roots if r["band"] == band})
+                     for part, roots in (("train", train), ("dev", dev))} for band in BANDS}
+    bands = [band for band in BANDS if min(counts[band].values()) >= 20]
+    bands.sort(key=lambda band: (float(np.median([r["distance_to_win"] for r in train if r["band"] == band])),
+                                 BANDS.index(band)))
+    return bands, counts
 
 
 def family_statistics(episodes):
@@ -52,13 +75,17 @@ def family_statistics(episodes):
                 truncated=sum(e["outcome"] == "truncated" for e in episodes), mean=mean,
                 interval95=[max(0., mean - radius), min(1., optimistic + radius)],
                 interval_method="Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+                bootstrap_lower95=bootstrap_lower(rates), bootstrap_seed=BOOTSTRAP_SEED,
+                bootstrap_samples=BOOTSTRAP_SAMPLES,
+                bootstrap_method="One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
                 per_family=families)
 
 
 def paired_statistics(reference, current):
     assert reference["per_family"].keys() == current["per_family"].keys()
     differences, unknown = [], 0
-    for seed, before in reference["per_family"].items():
+    for seed in sorted(reference["per_family"], key=int):
+        before = reference["per_family"][seed]
         after = current["per_family"][seed]
         assert before["attempts"] == after["attempts"]
         differences.append(after["rate"] - before["rate"])
@@ -67,7 +94,10 @@ def paired_statistics(reference, current):
     radius = math.sqrt(2 * math.log(40) / len(differences))
     return dict(families=len(differences), mean_change=mean, unresolved=unknown,
                 interval95=[max(-1., mean - radius), min(1., mean + radius)] if unknown == 0 else [-1., 1.],
-                interval_method="Two-sided Hoeffding bound on paired seed-family rate differences")
+                interval_method="Two-sided Hoeffding bound on paired seed-family rate differences",
+                bootstrap_lower95=bootstrap_lower(differences) if unknown == 0 else -1.,
+                bootstrap_seed=BOOTSTRAP_SEED, bootstrap_samples=BOOTSTRAP_SAMPLES,
+                bootstrap_method="One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1")
 
 
 class Curriculum:
@@ -88,7 +118,10 @@ class Curriculum:
             sampling_counts={}, decision_counts={}, family_counts={}, queues={}, total_decisions=0,
             ppo_decisions=0, episodes=0, wins=0, truncated=0, budget_cutoffs=0,
             next_evaluation=EVALUATION_INTERVAL, evaluations=0, stagnant=0, best_lower=-1., stopped=None,
-            promoted_at={}, evaluation_decisions=0, evaluation_seconds=0.)
+            promoted_at={}, evaluation_decisions=0, evaluation_seconds=0.,
+            bootstrap_seed=BOOTSTRAP_SEED, bootstrap_samples=BOOTSTRAP_SAMPLES)
+        assert self.state["bootstrap_seed"] == BOOTSTRAP_SEED
+        assert self.state["bootstrap_samples"] == BOOTSTRAP_SAMPLES
         self.rng = random.Random(seed)
         if state is not None:
             self.rng.setstate(state["rng_state"])
@@ -135,10 +168,13 @@ class Curriculum:
         return dict(counts)
 
     def assess(self, summary):
-        lower = summary["interval95"][0]
+        assert summary["bootstrap_seed"] == self.state["bootstrap_seed"]
+        assert summary["bootstrap_samples"] == self.state["bootstrap_samples"]
+        lower = summary["bootstrap_lower95"]
         self.state["evaluations"] += 1
         before = self.frontier
-        if lower > .6 and self.state["frontier"] + 1 < len(self.bands):
+        eligible = summary["families"] >= 20
+        if eligible and lower > .6 and self.state["frontier"] + 1 < len(self.bands):
             self.state["learned"].append(before)
             self.state["promoted_at"][before] = dict(decisions=self.state["total_decisions"], mean=summary["mean"])
             self.state["frontier"] += 1
@@ -149,7 +185,11 @@ class Curriculum:
             if self.state["stagnant"] >= 3:
                 self.state["stopped"] = "three_evaluations_without_frontier_improvement"
         self.state["next_evaluation"] = (self.state["total_decisions"] // EVALUATION_INTERVAL + 1) * EVALUATION_INTERVAL
-        return dict(before=before, after=self.frontier, lower95=lower, stagnant=self.state["stagnant"])
+        return dict(before=before, after=self.frontier, lower95=lower, stagnant=self.state["stagnant"],
+                    dev_families=summary["families"], eligible=eligible,
+                    interval_method="One-sided 95% seed-family percentile bootstrap",
+                    hoeffding_interval95=summary["interval95"], bootstrap_seed=BOOTSTRAP_SEED,
+                    bootstrap_samples=BOOTSTRAP_SAMPLES)
 
     def state_dict(self):
         return deepcopy(dict(self.state, rng_state=self.rng.getstate()))
@@ -233,10 +273,16 @@ def main():
         e2 = [json.loads(line) for line in stream]
     far = [r["root"] for r in e2 if r["partition"] == "train" and r["stage"] == "act3_entry"]
     sets = evaluation_sets(train, dev, e2)
-    bands = [band for band in BANDS if len({r["seed"] for r in train if r["band"] == band}) >= 20
-             and f"dev/{band}" in sets]
-    bands.sort(key=lambda band: (float(np.median([r["distance_to_win"] for r in train if r["band"] == band])),
-                                 BANDS.index(band)))
+    bands, band_families = select_bands(train, dev)
+    args.output.mkdir(parents=True, exist_ok=False)
+    eligibility = dict(bands=bands, family_counts=band_families,
+                       excluded_bands={band: counts for band, counts in band_families.items() if band not in bands})
+    (args.output / "band-eligibility.json").write_text(json.dumps(eligibility, indent=2) + "\n")
+    if len(bands) < 4:
+        report = dict(status="insufficient_data", training_started=False, minimum_bands=4, **eligibility)
+        (args.output / "summary.json").write_text(json.dumps(report, indent=2) + "\n")
+        print(json.dumps(report), flush=True)
+        return
     checkpoint = torch.load(args.resume, map_location="cpu", weights_only=True) if args.resume else None
     if checkpoint:
         assert checkpoint["config"]["observation_version"] == OBSERVATION_VERSION
@@ -252,14 +298,16 @@ def main():
                     observation_version=OBSERVATION_VERSION, memory="none", model=asdict(model), ppo=asdict(ppo), pipeline=asdict(config),
                     group=args.group, init_seed=args.init_seed, source_hashes=source_hashes, bands=bands,
                     sampling=SCHEME, repeats=REPEATS, evaluation_interval=EVALUATION_INTERVAL,
-                    decision_target=args.decisions, interval="Two-sided Hoeffding over seed families; paired range [-1,1]",
+                    decision_target=args.decisions, interval="One-sided 95% seed-family bootstrap for promotion and paired improvement; Hoeffding also reported",
+                    bootstrap_seed=BOOTSTRAP_SEED, bootstrap_samples=BOOTSTRAP_SAMPLES,
+                    bootstrap_rng="PCG64", bootstrap_quantile="linear", numpy_version=np.__version__,
+                    band_families=band_families, minimum_dev_families=20, minimum_bands=4,
                     band_order="Increasing median winning-path decisions remaining, fixed before training",
                     natural_train_seeds="fresh sequential train seeds; one per attempt", root_family_cap=.05,
                     continuation=checkpoint["config"]["continuation"] if checkpoint else None)
     if checkpoint:
         assert checkpoint["config"] == manifest, "Resume requires identical source, environment, roots and experiment"
         assert checkpoint["curriculum"] is not None
-    args.output.mkdir(parents=True, exist_ok=False)
     (args.output / "config.json").write_text(json.dumps(manifest, indent=2) + "\n")
     initial = json.loads((args.resume.parent / "initial-evaluation.json").read_text()) if checkpoint else {}
     started = time.time()
@@ -274,7 +322,7 @@ def main():
                 curriculum.state["stopped"] = "wall_budget_during_initial_evaluation"
         (args.output / "initial-evaluation.json").write_text(json.dumps(initial) + "\n")
         if not checkpoint and not curriculum.state["stopped"]:
-            curriculum.state["best_lower"] = initial[f"dev/{curriculum.frontier}"]["interval95"][0]
+            curriculum.state["best_lower"] = initial[f"dev/{curriculum.frontier}"]["bootstrap_lower95"]
         pipeline.save_curriculum(curriculum.state_dict())
         last_evaluated = curriculum.state.get("last_evaluated_decisions", 0)
 
@@ -290,7 +338,7 @@ def main():
                 if args.group == "B":
                     curriculum.state["next_evaluation"] = (total // EVALUATION_INTERVAL + 1) * EVALUATION_INTERVAL
                 elif event["before"] != event["after"]:
-                    curriculum.state["best_lower"] = results[f"dev/{curriculum.frontier}"]["interval95"][0]
+                    curriculum.state["best_lower"] = results[f"dev/{curriculum.frontier}"]["bootstrap_lower95"]
                 print(json.dumps(dict(event="frontier", **event)), flush=True)
                 last_evaluated = total
                 curriculum.state["last_evaluated_decisions"] = total

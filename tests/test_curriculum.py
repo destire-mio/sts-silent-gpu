@@ -11,7 +11,8 @@ import unittest
 import torch
 
 from train import OBSERVATION_VERSION
-from train.curriculum import Curriculum, assess, family_statistics, paired_statistics
+from train.curriculum import (BOOTSTRAP_SAMPLES, BOOTSTRAP_SEED, Curriculum, assess,
+                              family_statistics, paired_statistics, select_bands)
 from train.model import ModelConfig
 from train.pipeline import Pipeline, PipelineConfig
 from train.ppo import PPOConfig
@@ -22,6 +23,15 @@ def roots():
     train = [dict(seed=1000000000 + i, candidates=[], band=band) for band in ("k8", "k32") for i in range(20)]
     far = [dict(seed=1000001000 + i, candidates=[]) for i in range(20)]
     return train, far
+
+
+def statistics(lower, mean):
+    return dict(interval95=[0., 1.], mean=mean, families=30, bootstrap_lower95=lower,
+                bootstrap_seed=BOOTSTRAP_SEED, bootstrap_samples=BOOTSTRAP_SAMPLES)
+
+
+def episodes(families, wins):
+    return [dict(seed=2000000000 + i, outcome="victory" if i < wins else "death") for i in range(families)]
 
 
 class CurriculumTests(unittest.TestCase):
@@ -36,7 +46,7 @@ class CurriculumTests(unittest.TestCase):
         for source in set(sources):
             counts = Counter(r["seed"] for r, s in zip(group, sources) if s == source)
             self.assertLessEqual(max(counts.values()) / sum(counts.values()), .05)
-        curriculum.assess(dict(interval95=[.8, 1.], mean=.9))
+        curriculum.assess(statistics(.8, .9))
         group, sources = curriculum.draw(10000)
         self.assertEqual(Counter(sources), {"frontier": 6000, "learned": 2000, "far": 2000})
         self.assertTrue(all(r["band"] == "k8" for r, s in zip(group, sources) if s == "learned"))
@@ -46,13 +56,13 @@ class CurriculumTests(unittest.TestCase):
 
     def test_promotion_uses_strict_family_lower_bound_and_stagnation(self):
         curriculum = self.make()
-        curriculum.assess(dict(interval95=[.6, .99], mean=.9))
+        curriculum.assess(statistics(.6, .9))
         self.assertEqual(curriculum.frontier, "k8")
-        curriculum.assess(dict(interval95=[.600001, .99], mean=.9))
+        curriculum.assess(statistics(.600001, .9))
         self.assertEqual(curriculum.frontier, "k32")
         self.assertEqual(curriculum.state["learned"], ["k8"])
         for _ in range(4):
-            curriculum.assess(dict(interval95=[.5, .9], mean=.7))
+            curriculum.assess(statistics(.5, .7))
         self.assertEqual(curriculum.state["stopped"], "three_evaluations_without_frontier_improvement")
 
     def test_state_and_next_draws_survive_checkpoint(self):
@@ -60,13 +70,15 @@ class CurriculumTests(unittest.TestCase):
         _, sources = curriculum.draw(137)
         episodes = [dict(attempt=i, records=list(range(i % 5 + 1)), outcome="death") for i in range(137)]
         curriculum.record(episodes, sources, 0)
-        curriculum.assess(dict(interval95=[.8, 1.], mean=.9))
+        curriculum.assess(statistics(.8, .9))
         snapshot = curriculum.state_dict()
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "state.pt"
             torch.save(snapshot, path)
             loaded = torch.load(path, weights_only=True)
         self.assertEqual(snapshot, loaded)
+        self.assertEqual(loaded["bootstrap_seed"], BOOTSTRAP_SEED)
+        self.assertEqual(loaded["bootstrap_samples"], 10000)
         restored = self.make(loaded)
         self.assertEqual(curriculum.draw(1000), restored.draw(1000))
         self.assertEqual(curriculum.state_dict(), restored.state_dict())
@@ -80,6 +92,50 @@ class CurriculumTests(unittest.TestCase):
         self.assertEqual(paired_statistics(summary, summary)["mean_change"], 0)
         with self.assertRaises(AssertionError):
             family_statistics([dict(seed=3000000000, outcome="victory")])
+
+    def test_seven_perfect_dev_families_cannot_promote(self):
+        curriculum = self.make()
+        summary = family_statistics(episodes(7, 7))
+        self.assertEqual(summary["bootstrap_lower95"], 1.)
+        event = curriculum.assess(summary)
+        self.assertFalse(event["eligible"])
+        self.assertEqual(curriculum.frontier, "k8")
+
+    def test_thirty_families_at_eighty_percent_promote(self):
+        curriculum = self.make()
+        summary = family_statistics(episodes(30, 24))
+        self.assertGreater(summary["bootstrap_lower95"], .6)
+        curriculum.assess(summary)
+        self.assertEqual(curriculum.frontier, "k32")
+
+    def test_thirty_families_at_sixty_percent_do_not_promote(self):
+        curriculum = self.make()
+        summary = family_statistics(episodes(30, 18))
+        self.assertLessEqual(summary["bootstrap_lower95"], .6)
+        curriculum.assess(summary)
+        self.assertEqual(curriculum.frontier, "k8")
+
+    def test_family_bootstrap_is_reproducible_and_pairs_by_seed(self):
+        before = family_statistics(episodes(30, 0))
+        after = family_statistics(episodes(30, 24))
+        reordered = family_statistics(list(reversed(episodes(30, 24))))
+        self.assertEqual(after, reordered)
+        paired = paired_statistics(before, after)
+        self.assertEqual(paired, paired_statistics(before, reordered))
+        self.assertEqual(paired["bootstrap_lower95"], after["bootstrap_lower95"])
+        self.assertGreater(paired["bootstrap_lower95"], 0.)
+        self.assertEqual(paired_statistics(after, after)["bootstrap_lower95"], 0.)
+
+    def test_band_selection_requires_twenty_train_and_dev_families(self):
+        train = [dict(seed=1000000000 + i, band=band, distance_to_win=distance)
+                 for band, distance in (("k8", 8), ("k32", 32), ("k64", 64), ("k128", 128))
+                 for i in range(20)]
+        dev = [dict(seed=2000000000 + i, band=band) for band in ("k8", "k32", "k64", "k128")
+               for i in range(20 if band != "k8" else 7)]
+        bands, counts = select_bands(train, dev)
+        self.assertEqual(bands, ["k32", "k64", "k128"])
+        self.assertLess(len(bands), 4)
+        self.assertEqual(counts["k8"], {"train": 20, "dev": 7})
 
     def test_assessment_preserves_fault_reproduction_before_aborting(self):
         root = dict(seed=1000000000, candidates=[1, 2])
