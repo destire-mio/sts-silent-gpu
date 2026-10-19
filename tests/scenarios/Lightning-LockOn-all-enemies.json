@@ -1,0 +1,38 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "3 Darklings",
+  "deck": [
+    {
+      "id": "Lockon",
+      "upgrades": 0
+    },
+    {
+      "id": "Electrodynamics",
+      "upgrades": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

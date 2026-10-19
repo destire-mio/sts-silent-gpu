@@ -9,6 +9,16 @@
     127,
     131
   ],
+  "ApplyStasis-basic-card-order": [
+    104,
+    106,
+    108
+  ],
+  "ApplyStasis-curse-card-order": [
+    101,
+    102,
+    103
+  ],
   "ApplyStasis-last-draw-card": [
     101,
     102,
@@ -18,6 +28,11 @@
     101,
     102,
     103
+  ],
+  "ApplyStasis-special-card-order": [
+    104,
+    106,
+    108
   ],
   "Astrolabe-no-purge": [
     101,
@@ -664,6 +679,11 @@
     135,
     143
   ],
+  "Beta-snecko-discounted-upgrade": [
+    113,
+    140,
+    145
+  ],
   "BlackStar-campfire-reroll": [
     951,
     1001,
@@ -754,6 +774,16 @@
     102,
     104
   ],
+  "Clash-choker-base-rejection": [
+    112,
+    115,
+    121
+  ],
+  "ClearCardQueue-awakened-copied-finale": [
+    101,
+    102,
+    103
+  ],
   "Codex-MasterReality-upgrade": [
     101,
     102,
@@ -764,6 +794,11 @@
     200,
     222
   ],
+  "ConjureBlade-ChemicalX": [
+    101,
+    102,
+    103
+  ],
   "CoreSurge-prevent-bias": [
     101,
     102,
@@ -773,6 +808,11 @@
     1000001178,
     1000001179,
     1000001180
+  ],
+  "Darkness-LockOn-evoke": [
+    113,
+    125,
+    132
   ],
   "DeadAdventurer-lagavulin-ambush": [
     145,
@@ -819,12 +859,27 @@
     102,
     103
   ],
+  "Entrench-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
   "EntropicBrew-SacredBark": [
     101,
     102,
     103
   ],
   "Envenom-BlueCandle-self-damage": [
+    101,
+    103,
+    104
+  ],
+  "Exhume-discounted-upgrade": [
+    113,
+    125,
+    132
+  ],
+  "Expunger-armaments-upgrade": [
     101,
     103,
     104
@@ -858,6 +913,11 @@
     3,
     4,
     7
+  ],
+  "ForceField-created-after-power": [
+    113,
+    125,
+    132
   ],
   "ForeignInfluence": [
     14,
@@ -989,6 +1049,11 @@
     1000050001,
     1000050003
   ],
+  "Havoc-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
   "Hexaghost-poison-victory": [
     101,
     102,
@@ -998,6 +1063,21 @@
     102,
     103,
     106
+  ],
+  "InfernalBlade-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
+  "LessonLearned-lethal-solo": [
+    113,
+    125,
+    132
+  ],
+  "Lightning-LockOn-all-enemies": [
+    101,
+    103,
+    104
   ],
   "LivingWall-bottled-only": [
     108,
@@ -1119,6 +1199,11 @@
     102,
     103
   ],
+  "PeacePipe-bottled-card-filter": [
+    101,
+    102,
+    103
+  ],
   "PeacePipe-third-campfire-rejected": [
     172,
     229,
@@ -1154,10 +1239,25 @@
     102,
     104
   ],
+  "Pummel-half-dead-before-last-hit": [
+    101,
+    103,
+    104
+  ],
+  "Pummel-lethal-before-last-hit": [
+    101,
+    103,
+    104
+  ],
   "Rampage-duplicate": [
     2000003426,
     2000003428,
     2000003429
+  ],
+  "Reboot-shuffle-relics": [
+    129,
+    132,
+    137
   ],
   "ScrapOoze-lethal-failure": [
     108,
@@ -1359,6 +1459,11 @@
     103,
     107
   ],
+  "SmokeBomb-during-gambling-selection": [
+    101,
+    102,
+    103
+  ],
   "SnakePlant-queued-death": [
     1000000067,
     1000000068,
@@ -1379,6 +1484,11 @@
     122,
     149
   ],
+  "SpireSpear-first-smoke-right": [
+    111,
+    122,
+    149
+  ],
   "Stasis-full-hand-release": [
     101,
     104,
@@ -1389,10 +1499,25 @@
     111,
     117
   ],
+  "StoneCalendar-clears-queued-burn": [
+    101,
+    102,
+    103
+  ],
   "StormOfSteel-empty-hand": [
     101,
     102,
     103
+  ],
+  "Study-snecko-discounted-upgrade": [
+    113,
+    140,
+    141
+  ],
+  "Sunder-half-dead-energy": [
+    101,
+    103,
+    104
   ],
   "TheCollector-poison-victory": [
     101,
@@ -1413,6 +1538,11 @@
     221,
     240,
     299
+  ],
+  "TimeWarp-conclude-on-twelfth-card": [
+    141,
+    207,
+    375
   ],
   "TimeWarp-twelve-cards": [
     101,
@@ -1439,6 +1569,16 @@
     788,
     988
   ],
+  "Transient-reflected-death-before-fading": [
+    774,
+    1312,
+    1490
+  ],
+  "UnceasingTop-draw-without-discard": [
+    101,
+    117,
+    119
+  ],
   "UnceasingTop-no-draw-empty-discard": [
     165,
     201,
@@ -1460,6 +1600,11 @@
     129
   ],
   "WarpedTongs-exhausted-piles": [
+    101,
+    103,
+    104
+  ],
+  "WellLaidPlans-burn-before-retain": [
     101,
     103,
     104

@@ -1,0 +1,76 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Velvet Choker"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "deck": [
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Clash",
+      "upgrades": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}
