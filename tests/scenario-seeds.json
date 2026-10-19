@@ -134,6 +134,16 @@
     2000003428,
     2000003429
   ],
+  "ScrapOoze-lethal-failure": [
+    108,
+    172,
+    204
+  ],
+  "ScrapOoze-lethal-success": [
+    126,
+    147,
+    240
+  ],
   "SlimeBoss-last-acid-large": [
     101,
     102,
