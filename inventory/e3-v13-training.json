@@ -79,18 +79,28 @@
   ],
   "progress": {
     "current_group": "A",
-    "current_init_seed": 1729,
+    "current_init_seed": 2718,
     "phase": "training",
-    "completed_runs": [],
-    "training_decisions": 42107085,
-    "completed_evaluation_sets": 105,
-    "optimizer_updates": 65,
+    "completed_runs": [
+      {
+        "group": "A",
+        "init_seed": 1729,
+        "decisions": 50143932,
+        "stop_reason": "three_evaluations_without_frontier_improvement"
+      }
+    ],
+    "training_decisions": 1804134,
+    "completed_evaluation_sets": 21,
+    "optimizer_updates": 3,
     "faults": 0,
     "frontier": "k8",
-    "evaluation_truncated": 3,
-    "stagnant": 2
+    "evaluation_truncated": 0,
+    "stagnant": 0,
+    "total_training_decisions": 51948066,
+    "total_completed_evaluation_sets": 147,
+    "total_evaluation_truncated": 3
   },
-  "result_note": "Live snapshot; no complete A/B result yet. Each A run has100million decision cap; B matches corresponding actual A decisions within cumulative wall budget. F partition untouched.",
+  "result_note": "A/1729 stopped at 50143932 decisions by the preregistered three-stagnation rule without promotion. A/2718 started fresh within the same fixed allocation. A/31415 and all B runs are not started at the observation; no complete A/B conclusion. Historical costs and unresolved evaluation cutoffs remain preserved.",
   "observed": {
     "checked_at": "2026-10-19T21:51:47.850272+08:00",
     "slurm": {
@@ -151,7 +161,9 @@
         2717515264,
         2717511680,
         2717511680
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -188,7 +200,9 @@
         2715957760,
         2715958784,
         2715957760
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -225,7 +239,9 @@
         2715356160,
         2715356672,
         2715355648
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -262,7 +278,9 @@
         2714915328,
         2714915328,
         2714915328
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -299,7 +317,9 @@
         2714194432,
         2713499648,
         2713493504
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -336,7 +356,9 @@
         2715209216,
         2715064320,
         2715211264
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -373,7 +395,9 @@
         2713769472,
         2713355776,
         2711030272
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -410,7 +434,9 @@
         2714630656,
         2713916416,
         2714058240
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -447,7 +473,9 @@
         2711195136,
         2711195136,
         2711195136
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -484,7 +512,9 @@
         2707648512,
         2707651072,
         2707650560
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -521,7 +551,9 @@
         2705585664,
         2705707520,
         2705585664
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -558,7 +590,9 @@
         2704930304,
         2704882176,
         2704757760
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -595,7 +629,9 @@
         2705018880,
         2705018368,
         2705008640
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -632,7 +668,9 @@
         2705050624,
         2705040896,
         2705050624
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -669,7 +707,9 @@
         2703341568,
         2703341568,
         2703389696
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -706,7 +746,9 @@
         2703390208,
         2703059456,
         2703294976
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -743,7 +785,9 @@
         2703586816,
         2703489024,
         2703537152
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -780,7 +824,9 @@
         2703102464,
         2703102464,
         2703102464
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -817,7 +863,9 @@
         3038517248,
         3038517248,
         3038517248
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -854,7 +902,9 @@
         2908945408,
         2908789760,
         2908789760
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "initial",
@@ -891,7 +941,828 @@
         2874782208,
         2870720000,
         2874782208
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "initial",
+      "set": "train/k8",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 62,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.6458333333333334,
+        "interval95": [
+          0.36861202229458884,
+          0.923054644372078
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.5104166666666666,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 562,
+      "seconds": 10.634266171022318,
+      "peak_allocated_bytes_by_rank": [
+        2719818752,
+        2719818240,
+        2720333824,
+        2719481344,
+        2717515264,
+        2717515264,
+        2717511680,
+        2717511680
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/k32",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 4,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.041666666666666664,
+        "interval95": [
+          0.0,
+          0.3188879777054112
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.010416666666666666,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1147,
+      "seconds": 10.364312414079905,
+      "peak_allocated_bytes_by_rank": [
+        2718871040,
+        2718868992,
+        2718875648,
+        2718875648,
+        2715954688,
+        2715957760,
+        2715958784,
+        2716570112
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/k64",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1149,
+      "seconds": 10.065613185986876,
+      "peak_allocated_bytes_by_rank": [
+        2715064320,
+        2715064320,
+        2715064320,
+        2715211776,
+        2715355648,
+        2715356160,
+        2715354624,
+        2715355648
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/k128",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2013,
+      "seconds": 9.698786217952147,
+      "peak_allocated_bytes_by_rank": [
+        2716264448,
+        2716882944,
+        2716416000,
+        2716885504,
+        2714915328,
+        2714915328,
+        2714915328,
+        2714915328
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/k256",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2416,
+      "seconds": 9.032170530990697,
+      "peak_allocated_bytes_by_rank": [
+        2715963392,
+        2715963392,
+        2715963392,
+        2715963392,
+        2713499648,
+        2713492992,
+        2713499648,
+        2713630720
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/k512",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 3182,
+      "seconds": 7.643970135017298,
+      "peak_allocated_bytes_by_rank": [
+        2711496704,
+        2711495168,
+        2711418880,
+        2711567872,
+        2714201088,
+        2715213824,
+        2715064320,
+        2715211264
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/act4_entry",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 3054,
+      "seconds": 9.706270191003568,
+      "peak_allocated_bytes_by_rank": [
+        2711872512,
+        2711872512,
+        2709570560,
+        2713790976,
+        2711737344,
+        2713217024,
+        2711671808,
+        2711032832
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/act3_boss",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1801,
+      "seconds": 7.61134329601191,
+      "peak_allocated_bytes_by_rank": [
+        2712419328,
+        2713357312,
+        2712947200,
+        2712811520,
+        2714195456,
+        2714630656,
+        2713916416,
+        2714057728
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "train/act3_entry",
+      "training_decisions": 0,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2493,
+      "seconds": 5.286351782036945,
+      "peak_allocated_bytes_by_rank": [
+        2710916096,
+        2710912512,
+        2710906368,
+        2710916096,
+        2711195136,
+        2711195136,
+        2711195136,
+        2711195136
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/k8",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 25,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.625,
+        "interval95": [
+          0.19553059165326242,
+          1.0
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.45,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 237,
+      "seconds": 5.478647337993607,
+      "peak_allocated_bytes_by_rank": [
+        2705958912,
+        2705958400,
+        2705770496,
+        2705768448,
+        2707648512,
+        2707648512,
+        2707651072,
+        2707650560
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/k32",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 1,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.025,
+        "interval95": [
+          0.0,
+          0.4544694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 494,
+      "seconds": 5.540195498964749,
+      "peak_allocated_bytes_by_rank": [
+        2705343488,
+        2705402368,
+        2705524224,
+        2705343488,
+        2705647104,
+        2705585664,
+        2705707520,
+        2705585664
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/k64",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 538,
+      "seconds": 5.552765510044992,
+      "peak_allocated_bytes_by_rank": [
+        2704928256,
+        2705104384,
+        2705222656,
+        2704988672,
+        2704757760,
+        2704988160,
+        2704757248,
+        2704757760
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/k128",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 829,
+      "seconds": 5.237510161008686,
+      "peak_allocated_bytes_by_rank": [
+        2704989696,
+        2705074176,
+        2705019904,
+        2704882176,
+        2705008128,
+        2705018880,
+        2705018368,
+        2705029632
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/k256",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 723,
+      "seconds": 4.99786669400055,
+      "peak_allocated_bytes_by_rank": [
+        2707909120,
+        2707856896,
+        2707856896,
+        2707909632,
+        2705038336,
+        2705050624,
+        2705051136,
+        2705050624
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/k512",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 849,
+      "seconds": 3.9389391160802916,
+      "peak_allocated_bytes_by_rank": [
+        2703944192,
+        2705072128,
+        2705029632,
+        2705008128,
+        2703389696,
+        2703341568,
+        2703341568,
+        2703389696
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/act4_entry",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1340,
+      "seconds": 5.131940777995624,
+      "peak_allocated_bytes_by_rank": [
+        2703175680,
+        2703588864,
+        2703739392,
+        2703890944,
+        2702767104,
+        2703390208,
+        2702877184,
+        2703199232
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/act3_boss",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 718,
+      "seconds": 4.151859244098887,
+      "peak_allocated_bytes_by_rank": [
+        2705040896,
+        2703945728,
+        2705009664,
+        2705040896,
+        2703586816,
+        2703636480,
+        2703537152,
+        2703537152
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/act3_entry",
+      "training_decisions": 0,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1124,
+      "seconds": 2.8744455369887874,
+      "peak_allocated_bytes_by_rank": [
+        2703584256,
+        2703584256,
+        2703584256,
+        2703584256,
+        2703102464,
+        2703102464,
+        2703102464,
+        2703102464
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/e2_all",
+      "training_decisions": 0,
+      "summary": {
+        "families": 740,
+        "attempts": 11624,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.04992480463301335
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 228683,
+      "seconds": 62.2174789221026,
+      "peak_allocated_bytes_by_rank": [
+        3035527168,
+        3035527168,
+        3035527168,
+        3035527168,
+        3038517248,
+        3038517248,
+        3038517248,
+        3038517248
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/e2_act3_entry",
+      "training_decisions": 0,
+      "summary": {
+        "families": 440,
+        "attempts": 1760,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.06474494938282073
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 39494,
+      "seconds": 9.185153259080835,
+      "peak_allocated_bytes_by_rank": [
+        2917814272,
+        2917650944,
+        2917650944,
+        2917650944,
+        2908789760,
+        2908945408,
+        2908789760,
+        2908789760
+      ],
+      "group": "A",
+      "init_seed": 2718
+    },
+    {
+      "label": "initial",
+      "set": "dev/neow",
+      "training_decisions": 0,
+      "summary": {
+        "families": 1024,
+        "attempts": 4096,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.04244067236689436
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile"
+      },
+      "policy_version": 0,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 216263,
+      "seconds": 5.635971466079354,
+      "peak_allocated_bytes_by_rank": [
+        2874349568,
+        2872743424,
+        2870728192,
+        2874300416,
+        2870720000,
+        2874782208,
+        2870720000,
+        2874782208
+      ],
+      "group": "A",
+      "init_seed": 2718
     }
   ],
   "evidence_archive": {
@@ -2054,25 +2925,29 @@
   },
   "training_progress_sha256": "054dc81fb83e5561e5e6781382f07429d4c6bbb10519cb6ea79ac1837716c9ac",
   "latest_stage_snapshot": {
-    "observed_at": "2026-10-19T22:27:23.419643+08:00",
+    "observed_at": "2026-10-19T22:37:36.671134+08:00",
     "job_id": 3606,
     "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
     "slurm": {
       "JobState": "RUNNING",
-      "RunTime": "00:39:56",
+      "RunTime": "00:50:09",
       "ExitCode": "0:0",
       "StartTime": "2026-10-19T21:47:27",
       "EndTime": "2026-10-20T00:55:27",
       "TimeLimit": "03:08:00"
     },
+    "group": "A",
+    "init_seed": 1729,
+    "run_status": "stopped_by_protocol",
     "current_group": "A",
-    "current_init_seed": 1729,
-    "updates": 65,
-    "training_decisions": 42107085,
+    "current_init_seed": 2718,
+    "updates": 80,
+    "training_decisions": 50143932,
     "frontier": "k8",
     "training_faults": 0,
     "evaluation_faults": 0,
-    "completed_evaluation_sets": 105,
+    "evaluation_truncated": 3,
+    "completed_evaluation_sets": 126,
     "stages": [
       {
         "decisions": 10293603,
@@ -2157,26 +3032,74 @@
           "bootstrap_seed": 63008,
           "bootstrap_samples": 10000
         }
+      },
+      {
+        "decisions": 50143932,
+        "policy_version": 80,
+        "frontier": "k8",
+        "learned": [],
+        "event": {
+          "before": "k8",
+          "after": "k8",
+          "lower95": 0.525,
+          "stagnant": 3,
+          "dev_families": 10,
+          "eligible": true,
+          "interval_method": "One-sided 95% seed-family percentile bootstrap",
+          "hoeffding_interval95": [
+            0.2705305916532624,
+            1.0
+          ],
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000
+        }
       }
     ],
-    "audit_round": "A-1729-40112574",
+    "audit_round": "A-1729-50143932",
     "audit_roots": 54,
     "audit_status": "pending_mac",
     "checkpoint": {
       "path": "/home/zhuyouwei/spire-downloads/e3-training-3606/A-1729/checkpoint.pt",
-      "bytes": 11315623,
-      "sha256": "14ad977ab855fd391cac64fdbae055073b8f27b0f768aade8274143dad4a122d",
-      "update_observation_note": "Hash from one open descriptor; completed update count from updates log; training may advance after observation."
+      "bytes": 11312487,
+      "sha256": "865f3cbfe7e2bd262f4faa78fd2fb2d864b26c483cc72757fcca713411b63300",
+      "final": true
     },
     "last_update_timing": {
-      "root_prepare_seconds": 0.017178623914718628,
-      "reset_seconds": 0.3455733757019043,
-      "step_encode_seconds": 3.9832023079693317,
-      "inference_seconds": 27.06621340417862,
-      "storage_seconds": 0.5137821443080902,
-      "collection_seconds": 7.116621749009937,
-      "total_seconds": 24.049459344008937,
-      "decisions_per_second": 21040.971972039686
+      "root_prepare_seconds": 0.01750220799446106,
+      "reset_seconds": 0.3470438461303711,
+      "step_encode_seconds": 5.205860363960266,
+      "inference_seconds": 34.57763430285454,
+      "storage_seconds": 0.6415053443908691,
+      "collection_seconds": 9.041450761025771,
+      "total_seconds": 29.693029587040655,
+      "decisions_per_second": 20894.600807954615
+    },
+    "completed_run": {
+      "group": "A",
+      "init_seed": 1729,
+      "decisions": 50143932,
+      "frontier": "k8",
+      "learned": [],
+      "stop_reason": "three_evaluations_without_frontier_improvement",
+      "evaluation_decisions": 2984215,
+      "evaluation_seconds": 424.8642966724001,
+      "elapsed_seconds": 2806.0535271167755,
+      "eight_gpu_node_hours": 0.7794593134853575,
+      "last_evaluated_decisions": 50143932,
+      "sampling_counts": {
+        "frontier": 4194304,
+        "far": 1048576
+      },
+      "decision_counts": {
+        "frontier": 27907223,
+        "far": 22236709
+      },
+      "updates": 80,
+      "ppo_decisions": 50143932,
+      "episodes": 5242880,
+      "wins": 3480220,
+      "truncated": 0,
+      "budget_cutoffs": 0
     }
   },
   "stages": [
@@ -2271,6 +3194,29 @@
         "bootstrap_seed": 63008,
         "bootstrap_samples": 10000
       }
+    },
+    {
+      "group": "A",
+      "init_seed": 1729,
+      "decisions": 50143932,
+      "policy_version": 80,
+      "frontier": "k8",
+      "learned": [],
+      "event": {
+        "before": "k8",
+        "after": "k8",
+        "lower95": 0.525,
+        "stagnant": 3,
+        "dev_families": 10,
+        "eligible": true,
+        "interval_method": "One-sided 95% seed-family percentile bootstrap",
+        "hoeffding_interval95": [
+          0.2705305916532624,
+          1.0
+        ],
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000
+      }
     }
   ],
   "stage_evaluations": [
@@ -2323,7 +3269,9 @@
         2728669696,
         2728669696,
         2728669696
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2374,7 +3322,9 @@
         2727264768,
         2727112192,
         2727264768
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2425,7 +3375,9 @@
         2726661632,
         2726511104,
         2726661632
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2476,7 +3428,9 @@
         2726069760,
         2726071296,
         2726071296
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2527,7 +3481,9 @@
         2724925952,
         2724654080,
         2724646400
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2578,7 +3534,9 @@
         2726370816,
         2726366208,
         2726370816
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2629,7 +3587,9 @@
         2725924864,
         2722502656,
         2722016256
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2680,7 +3640,9 @@
         2725210624,
         2725070848,
         2725351936
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2731,7 +3693,9 @@
         2722349568,
         2722349568,
         2722349568
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2782,7 +3746,9 @@
         2718856704,
         2718856704,
         2718856704
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2833,7 +3799,9 @@
         2716925440,
         2716861952,
         2716861952
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2884,7 +3852,9 @@
         2715912192,
         2715912192,
         2715912192
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2935,7 +3905,9 @@
         2716172800,
         2716172800,
         2716172800
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -2986,7 +3958,9 @@
         2716205056,
         2716195328,
         2716226560
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -3037,7 +4011,9 @@
         2714400256,
         2714544640,
         2714544128
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -3088,7 +4064,9 @@
         2714496512,
         2713988096,
         2714449408
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -3139,7 +4117,9 @@
         2714691584,
         2714643456,
         2714691584
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -3190,7 +4170,9 @@
         2714256896,
         2714256896,
         2714256896
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -3241,7 +4223,9 @@
         3049671680,
         3049671680,
         3049671680
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -3292,7 +4276,9 @@
         2920099840,
         2920099840,
         2920099840
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "10293603",
@@ -3343,7 +4329,9 @@
         2885936640,
         2885936640,
         2885936640
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3394,7 +4382,9 @@
         2728669696,
         2728669696,
         2728669696
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3445,7 +4435,9 @@
         2727264768,
         2727264768,
         2727264768
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3496,7 +4488,9 @@
         2726511104,
         2726511104,
         2726511104
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3547,7 +4541,9 @@
         2726069760,
         2726071296,
         2726071296
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3598,7 +4594,9 @@
         2725066752,
         2724654080,
         2724785152
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3649,7 +4647,9 @@
         2726370816,
         2726366208,
         2726370816
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3700,7 +4700,9 @@
         2723894784,
         2724154880,
         2723642368
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3751,7 +4753,9 @@
         2725352960,
         2725070848,
         2725212160
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3802,7 +4806,9 @@
         2722357760,
         2722349568,
         2722349568
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3853,7 +4859,9 @@
         2718906880,
         2718906880,
         2718906880
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3904,7 +4912,9 @@
         2716925440,
         2716925440,
         2716925440
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -3955,7 +4965,9 @@
         2715912192,
         2715912192,
         2715912192
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4006,7 +5018,9 @@
         2716173312,
         2716173312,
         2716173312
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4057,7 +5071,9 @@
         2716205056,
         2716195328,
         2716204544
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4108,7 +5124,9 @@
         2714496000,
         2714496000,
         2714544128
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4159,7 +5177,9 @@
         2714597376,
         2713988096,
         2714545664
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4210,7 +5230,9 @@
         2714741760,
         2715044352,
         2714691584
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4261,7 +5283,9 @@
         2714256896,
         2714256896,
         2714256896
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4312,7 +5336,9 @@
         3049671680,
         3049671680,
         3049671680
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4363,7 +5389,9 @@
         2920099840,
         2919944192,
         2919944192
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "20418439",
@@ -4414,7 +5442,9 @@
         2885936640,
         2881874432,
         2885936640
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4465,7 +5495,9 @@
         2728669696,
         2728669696,
         2728669696
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4516,7 +5548,9 @@
         2727264768,
         2727112192,
         2727112192
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4567,7 +5601,9 @@
         2726811136,
         2726661632,
         2726510080
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4618,7 +5654,9 @@
         2726069760,
         2726071296,
         2726071808
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4669,7 +5707,9 @@
         2724924416,
         2724654080,
         2724785152
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4720,7 +5760,9 @@
         2726370816,
         2726218752,
         2726370816
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4771,7 +5813,9 @@
         2723028992,
         2723515392,
         2722186240
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4822,7 +5866,9 @@
         2725785088,
         2725070848,
         2725212160
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4873,7 +5919,9 @@
         2722349568,
         2722349568,
         2722349568
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4924,7 +5972,9 @@
         2718856704,
         2718856704,
         2718856704
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -4975,7 +6025,9 @@
         2716925440,
         2716925440,
         2716925440
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5026,7 +6078,9 @@
         2715912192,
         2715912192,
         2715912192
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5077,7 +6131,9 @@
         2716173312,
         2716173312,
         2716173312
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5128,7 +6184,9 @@
         2716205056,
         2716205568,
         2716205056
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5179,7 +6237,9 @@
         2714496000,
         2714496000,
         2714544128
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5230,7 +6290,9 @@
         2714597376,
         2713988096,
         2714545664
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5281,7 +6343,9 @@
         2714741760,
         2714643456,
         2714691584
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5332,7 +6396,9 @@
         2714256896,
         2714256896,
         2714256896
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5383,7 +6449,9 @@
         3049671680,
         3050245120,
         3049671680
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5434,7 +6502,9 @@
         2920099840,
         2919944192,
         2919944192
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "30402239",
@@ -5485,7 +6555,9 @@
         2885936640,
         2881874432,
         2885936640
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5536,7 +6608,9 @@
         2728666112,
         2728666112,
         2728666112
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5587,7 +6661,9 @@
         2727109120,
         2727109120,
         2727109120
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5638,7 +6714,9 @@
         2726509056,
         2726509056,
         2726509056
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5689,7 +6767,9 @@
         2726069760,
         2726069760,
         2726069760
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5740,7 +6820,9 @@
         2724647424,
         2724654080,
         2724647424
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5791,7 +6873,9 @@
         2726370816,
         2726366720,
         2726375936
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5842,7 +6926,9 @@
         2722513408,
         2722575360,
         2721991680
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5893,7 +6979,9 @@
         2725352960,
         2725071360,
         2725212672
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5944,7 +7032,9 @@
         2722349568,
         2722349568,
         2722357248
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -5995,7 +7085,9 @@
         2718802944,
         2718802944,
         2718802944
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6046,7 +7138,9 @@
         2716740096,
         2716740096,
         2716740096
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6097,7 +7191,9 @@
         2715800576,
         2715800576,
         2715800576
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6148,7 +7244,9 @@
         2716163072,
         2716163072,
         2716163072
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6199,7 +7297,9 @@
         2716192768,
         2716205568,
         2716204544
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6250,7 +7350,9 @@
         2714496000,
         2714496000,
         2714544128
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6301,7 +7403,9 @@
         2714076160,
         2713988096,
         2714450432
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6352,7 +7456,9 @@
         2714543616,
         2714742784,
         2714691584
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6403,7 +7509,9 @@
         2714256896,
         2714256896,
         2714256896
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6454,7 +7562,9 @@
         3049671680,
         3049671680,
         3049671680
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6505,7 +7615,9 @@
         2920099840,
         2919944192,
         2919944192
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
     },
     {
       "label": "40112574",
@@ -6556,7 +7668,1122 @@
         2885936640,
         2881874432,
         2885936640
-      ]
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/k8",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 76,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.7916666666666666,
+        "interval95": [
+          0.514445355627922,
+          1.0
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.6666666666666666,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.15625,
+          "unresolved": 0,
+          "interval95": [
+            -0.39819262207748907,
+            0.7106926220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.07291666666666667,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 580,
+      "seconds": 0.2614524350501597,
+      "peak_allocated_bytes_by_rank": [
+        2730635776,
+        2730635776,
+        2731488256,
+        2730805248,
+        2728669696,
+        2728666112,
+        2728669696,
+        2728666112
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/k32",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 10,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.10416666666666667,
+        "interval95": [
+          0.0,
+          0.3813879777054112
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.041666666666666664,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0625,
+          "unresolved": 0,
+          "interval95": [
+            -0.49194262207748907,
+            0.6169426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.010416666666666666,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1227,
+      "seconds": 0.6172451890306547,
+      "peak_allocated_bytes_by_rank": [
+        2730023424,
+        2730023424,
+        2730023424,
+        2730023424,
+        2727112192,
+        2727111168,
+        2727112192,
+        2727724544
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/k64",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1362,
+      "seconds": 0.9489618999650702,
+      "peak_allocated_bytes_by_rank": [
+        2726366720,
+        2726217728,
+        2726364672,
+        2726218240,
+        2726510592,
+        2726661632,
+        2726511104,
+        2726510080
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/k128",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2129,
+      "seconds": 1.300369904958643,
+      "peak_allocated_bytes_by_rank": [
+        2727572480,
+        2728037376,
+        2727417856,
+        2728039936,
+        2726072320,
+        2726069760,
+        2726071296,
+        2726071296
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/k256",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2652,
+      "seconds": 1.6950937040382996,
+      "peak_allocated_bytes_by_rank": [
+        2727117824,
+        2727117824,
+        2727117824,
+        2727117824,
+        2725782016,
+        2724924416,
+        2724654080,
+        2724646400
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/k512",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 3053,
+      "seconds": 1.3888258909573779,
+      "peak_allocated_bytes_by_rank": [
+        2722722304,
+        2722649600,
+        2722573312,
+        2722722304,
+        2726220800,
+        2726370816,
+        2726218752,
+        2726368256
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/act4_entry",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 3050,
+      "seconds": 1.223070860025473,
+      "peak_allocated_bytes_by_rank": [
+        2722004992,
+        2725067776,
+        2720724992,
+        2725487616,
+        2722892800,
+        2723029504,
+        2722051072,
+        2722186240
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/act3_boss",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1818,
+      "seconds": 0.9642257790546864,
+      "peak_allocated_bytes_by_rank": [
+        2723573760,
+        2723832320,
+        2724101632,
+        2724100096,
+        2725351424,
+        2725352960,
+        2725069824,
+        2725212672
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "train/act3_entry",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2725,
+      "seconds": 1.6307458069641143,
+      "peak_allocated_bytes_by_rank": [
+        2722070528,
+        2722060800,
+        2722060800,
+        2722070528,
+        2722349568,
+        2722349568,
+        2722349568,
+        2722349568
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/k8",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 28,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.7,
+        "interval95": [
+          0.2705305916532624,
+          1.0
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.525,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.075,
+          "unresolved": 0,
+          "interval95": [
+            -0.7839388166934752,
+            0.9339388166934751
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": -0.05,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 260,
+      "seconds": 0.20341075502801687,
+      "peak_allocated_bytes_by_rank": [
+        2717113344,
+        2716925440,
+        2716986368,
+        2716922880,
+        2718804992,
+        2718802944,
+        2718804992,
+        2718804992
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/k32",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 1,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.025,
+        "interval95": [
+          0.0,
+          0.4544694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.025,
+          "unresolved": 0,
+          "interval95": [
+            -0.8339388166934751,
+            0.8839388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 530,
+      "seconds": 0.4904340950306505,
+      "peak_allocated_bytes_by_rank": [
+        2716497920,
+        2716497920,
+        2716617216,
+        2716497920,
+        2716924928,
+        2716740096,
+        2716925440,
+        2716801536
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/k64",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 668,
+      "seconds": 0.6273149939952418,
+      "peak_allocated_bytes_by_rank": [
+        2716084736,
+        2716435968,
+        2716259328,
+        2716143104,
+        2716027392,
+        2716143104,
+        2715911680,
+        2716027904
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/k128",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 807,
+      "seconds": 0.7972514670109376,
+      "peak_allocated_bytes_by_rank": [
+        2716144128,
+        2716195328,
+        2716174336,
+        2716020224,
+        2716184064,
+        2716172800,
+        2716172800,
+        2716163072
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/k256",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 912,
+      "seconds": 1.2230263180099428,
+      "peak_allocated_bytes_by_rank": [
+        2718907392,
+        2719063552,
+        2719011328,
+        2719064064,
+        2716192768,
+        2716216832,
+        2716195328,
+        2716226048
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/k512",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 890,
+      "seconds": 0.9857021430507302,
+      "peak_allocated_bytes_by_rank": [
+        2715098624,
+        2716226560,
+        2716184064,
+        2716163072,
+        2714544128,
+        2714400256,
+        2714496000,
+        2714544128
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/act4_entry",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1322,
+      "seconds": 0.9933949540136382,
+      "peak_allocated_bytes_by_rank": [
+        2714220032,
+        2716186112,
+        2714892800,
+        2716172288,
+        2713680896,
+        2714544640,
+        2713988096,
+        2714353664
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/act3_boss",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 755,
+      "seconds": 0.7791815219679847,
+      "peak_allocated_bytes_by_rank": [
+        2716164608,
+        2715099648,
+        2716164096,
+        2716174336,
+        2714741760,
+        2714741248,
+        2714643456,
+        2714691584
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/act3_entry",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1075,
+      "seconds": 0.9456295599229634,
+      "peak_allocated_bytes_by_rank": [
+        2714738688,
+        2714738688,
+        2714738688,
+        2714738688,
+        2714256896,
+        2714256896,
+        2714256896,
+        2714256896
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/e2_all",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 740,
+        "attempts": 11624,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.04992480463301335
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 740,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.0998496092660267,
+            0.0998496092660267
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 230618,
+      "seconds": 12.016974286059849,
+      "peak_allocated_bytes_by_rank": [
+        3046681600,
+        3046681600,
+        3046681600,
+        3046681600,
+        3049671680,
+        3049671680,
+        3053841920,
+        3049671680
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/e2_act3_entry",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 440,
+        "attempts": 1760,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.06474494938282073
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 440,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.12948989876564146,
+            0.12948989876564146
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 40477,
+      "seconds": 2.1695856859441847,
+      "peak_allocated_bytes_by_rank": [
+        2928968704,
+        2928805376,
+        2928805376,
+        2928805376,
+        2919944192,
+        2920099840,
+        2919944192,
+        2919944192
+      ],
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "label": "50143932",
+      "set": "dev/neow",
+      "training_decisions": 50143932,
+      "summary": {
+        "families": 1024,
+        "attempts": 4096,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.04244067236689436
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 1024,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.08488134473378872,
+            0.08488134473378872
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 80,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 210348,
+      "seconds": 5.885868799057789,
+      "peak_allocated_bytes_by_rank": [
+        2883448832,
+        2881866240,
+        2881882624,
+        2885463040,
+        2881866240,
+        2885936640,
+        2881874432,
+        2885936640
+      ],
+      "group": "A",
+      "init_seed": 1729
     }
   ],
   "policy_audits": [
@@ -6707,13 +8934,52 @@
       "selection": "Three distinct families per train/dev band; candidate prefixes from frozen policy version61. Deduplicated within this round.",
       "native_replay_faults": 0,
       "source_archive_sha256": "facb0317dbed8226f52c446f16abe342080b928742d37ab66570cddfadcf2d41"
+    },
+    {
+      "observation_version": 13,
+      "status": "pending_mac",
+      "round": "A-1729-50143932",
+      "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+      "group": "A",
+      "init_seed": 1729,
+      "decisions": 50143932,
+      "evaluation_sha256": {
+        "eval-50143932-dev-act3_boss.jsonl.gz": "abc270a9d9485a77ae04509549635ef8f44d9c6265e7d3c0739eecd4b4f065e8",
+        "eval-50143932-dev-act3_entry.jsonl.gz": "80803b1a7e6236d83ab3f44e25297ffa20bcab0f07f9fea9268ba7baeddba13b",
+        "eval-50143932-dev-act4_entry.jsonl.gz": "2ae89c32a75909d6442b70ab2b0f0058838dfd9710f181480ddd30e51dbcd757",
+        "eval-50143932-dev-k128.jsonl.gz": "e02be5e7f92ef14a3714214ef21d289e3596bf796fa7f878475a703ecafb8097",
+        "eval-50143932-dev-k256.jsonl.gz": "d849dc6e1de1bafeb0827806b15755ba321e99541457dd7fccc59a4848596a6a",
+        "eval-50143932-dev-k32.jsonl.gz": "821485eb95fdea0a2d09de5a231937c5972945b3278508df9707a6926f1a6b66",
+        "eval-50143932-dev-k512.jsonl.gz": "83394fc45b2ba01ded5f1833df4d6179ae675742f45d6520ea96c7da12a65dac",
+        "eval-50143932-dev-k64.jsonl.gz": "f128911be90b0f167c6c793cbff87b7290030e9d03e65a4a12df684b7a1d686e",
+        "eval-50143932-dev-k8.jsonl.gz": "0b6804c80198314153b11220449317035187e07c6d4fdca187de9705b38d11ca",
+        "eval-50143932-train-act3_boss.jsonl.gz": "b7bba48b82603713399144a51f32527a6a202753c2d26a0aa111aa81a9d0a27a",
+        "eval-50143932-train-act3_entry.jsonl.gz": "054d3e4ccaf8a859c072acdb9749a81b6722af95246175c1be98c52bf549625a",
+        "eval-50143932-train-act4_entry.jsonl.gz": "91ece31ff2c92c2ac4888257fa8109ec8ce61fafd418c8e310129b7f8d52aeea",
+        "eval-50143932-train-k128.jsonl.gz": "551cef7212ebea9e64996b59121d298a28164c8be8c851f80876124a85bb0139",
+        "eval-50143932-train-k256.jsonl.gz": "47d0d318c9e967aed91bb0589b674548886b495e98e6ba3cfe9de0c33ccb19cc",
+        "eval-50143932-train-k32.jsonl.gz": "fbc2f206633ea87a73d9f51c1682e77a1e251d7cb1030774a1548337ea7bfb86",
+        "eval-50143932-train-k512.jsonl.gz": "4d2b7e153eddd2d33ef8e1ca0c674cc11f9d31929106b84a942b79a4a9aff0e6",
+        "eval-50143932-train-k64.jsonl.gz": "94aceeecddf22a6b6d6e5cef7d42910262e991c69ea27308ffb2beac6272b1e0",
+        "eval-50143932-train-k8.jsonl.gz": "62ba98912c264745d721618459342e3e1a5fd037c3c58efe5635956dde54407c"
+      },
+      "native_replay_decisions": 79980,
+      "native_replay_seconds": 1.3541184939676896,
+      "name": "A-1729-50143932",
+      "roots": 54,
+      "job": 3606,
+      "selection": "Three distinct families per train/dev band; candidate prefixes from frozen policy version80. Deduplicated within this round.",
+      "native_replay_faults": 0,
+      "source_archive_sha256": "d75b1cbd53fc917ded8bb9b25da3584252562363cf95c32cf3e9e5f9522e7f6f"
     }
   ],
   "stage_evidence_archive": {
-    "filename": "e3-v13-training-stage-3606-40112574.tar.gz",
-    "sha256": "facb0317dbed8226f52c446f16abe342080b928742d37ab66570cddfadcf2d41",
+    "filename": "e3-v13-training-stage-3606-50143932.tar.gz",
+    "sha256": "d75b1cbd53fc917ded8bb9b25da3584252562363cf95c32cf3e9e5f9522e7f6f",
     "source_output": "/home/zhuyouwei/spire-downloads/e3-training-3606",
-    "stage_decisions": 40112574
+    "group": "A",
+    "init_seed": 1729,
+    "stage_decisions": 50143932
   },
   "stage_snapshots": [
     {
@@ -7094,6 +9360,184 @@
         "total_seconds": 24.049459344008937,
         "decisions_per_second": 21040.971972039686
       }
+    },
+    {
+      "observed_at": "2026-10-19T22:37:36.671134+08:00",
+      "job_id": 3606,
+      "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+      "slurm": {
+        "JobState": "RUNNING",
+        "RunTime": "00:50:09",
+        "ExitCode": "0:0",
+        "StartTime": "2026-10-19T21:47:27",
+        "EndTime": "2026-10-20T00:55:27",
+        "TimeLimit": "03:08:00"
+      },
+      "group": "A",
+      "init_seed": 1729,
+      "run_status": "stopped_by_protocol",
+      "current_group": "A",
+      "current_init_seed": 2718,
+      "updates": 80,
+      "training_decisions": 50143932,
+      "frontier": "k8",
+      "training_faults": 0,
+      "evaluation_faults": 0,
+      "evaluation_truncated": 3,
+      "completed_evaluation_sets": 126,
+      "stages": [
+        {
+          "decisions": 10293603,
+          "policy_version": 16,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.5,
+            "stagnant": 0,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.2705305916532624,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        },
+        {
+          "decisions": 20418439,
+          "policy_version": 31,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.6,
+            "stagnant": 0,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.37053059165326246,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        },
+        {
+          "decisions": 30402239,
+          "policy_version": 45,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.6,
+            "stagnant": 1,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.37053059165326246,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        },
+        {
+          "decisions": 40112574,
+          "policy_version": 61,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.2,
+            "stagnant": 2,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.0,
+              0.8294694083467375
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        },
+        {
+          "decisions": 50143932,
+          "policy_version": 80,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.525,
+            "stagnant": 3,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.2705305916532624,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        }
+      ],
+      "audit_round": "A-1729-50143932",
+      "audit_roots": 54,
+      "audit_status": "pending_mac",
+      "checkpoint": {
+        "path": "/home/zhuyouwei/spire-downloads/e3-training-3606/A-1729/checkpoint.pt",
+        "bytes": 11312487,
+        "sha256": "865f3cbfe7e2bd262f4faa78fd2fb2d864b26c483cc72757fcca713411b63300",
+        "final": true
+      },
+      "last_update_timing": {
+        "root_prepare_seconds": 0.01750220799446106,
+        "reset_seconds": 0.3470438461303711,
+        "step_encode_seconds": 5.205860363960266,
+        "inference_seconds": 34.57763430285454,
+        "storage_seconds": 0.6415053443908691,
+        "collection_seconds": 9.041450761025771,
+        "total_seconds": 29.693029587040655,
+        "decisions_per_second": 20894.600807954615
+      },
+      "completed_run": {
+        "group": "A",
+        "init_seed": 1729,
+        "decisions": 50143932,
+        "frontier": "k8",
+        "learned": [],
+        "stop_reason": "three_evaluations_without_frontier_improvement",
+        "evaluation_decisions": 2984215,
+        "evaluation_seconds": 424.8642966724001,
+        "elapsed_seconds": 2806.0535271167755,
+        "eight_gpu_node_hours": 0.7794593134853575,
+        "last_evaluated_decisions": 50143932,
+        "sampling_counts": {
+          "frontier": 4194304,
+          "far": 1048576
+        },
+        "decision_counts": {
+          "frontier": 27907223,
+          "far": 22236709
+        },
+        "updates": 80,
+        "ppo_decisions": 50143932,
+        "episodes": 5242880,
+        "wins": 3480220,
+        "truncated": 0,
+        "budget_cutoffs": 0
+      }
     }
   ],
   "stage_evidence_archives": [
@@ -7119,6 +9563,14 @@
       "sha256": "facb0317dbed8226f52c446f16abe342080b928742d37ab66570cddfadcf2d41",
       "source_output": "/home/zhuyouwei/spire-downloads/e3-training-3606",
       "stage_decisions": 40112574
+    },
+    {
+      "filename": "e3-v13-training-stage-3606-50143932.tar.gz",
+      "sha256": "d75b1cbd53fc917ded8bb9b25da3584252562363cf95c32cf3e9e5f9522e7f6f",
+      "source_output": "/home/zhuyouwei/spire-downloads/e3-training-3606",
+      "group": "A",
+      "init_seed": 1729,
+      "stage_decisions": 50143932
     }
   ],
   "evaluation_truncation_records": [
@@ -7302,5 +9754,1101 @@
       }
     ],
     "interpretation": "Observed finite update statistics and zero engine faults do not identify the cause of the evaluation decline. Continue the preregistered stopping rule without changing hyperparameters."
-  }
+  },
+  "evaluation_scope_note": "Every evaluation is identified by group, init_seed, label and set. Labels and training decision counts are per initialization. Existing A/1729 metric values were preserved when run identifiers were added.",
+  "completed_runs": [
+    {
+      "group": "A",
+      "init_seed": 1729,
+      "decisions": 50143932,
+      "frontier": "k8",
+      "learned": [],
+      "stop_reason": "three_evaluations_without_frontier_improvement",
+      "evaluation_decisions": 2984215,
+      "evaluation_seconds": 424.8642966724001,
+      "elapsed_seconds": 2806.0535271167755,
+      "eight_gpu_node_hours": 0.7794593134853575,
+      "last_evaluated_decisions": 50143932,
+      "sampling_counts": {
+        "frontier": 4194304,
+        "far": 1048576
+      },
+      "decision_counts": {
+        "frontier": 27907223,
+        "far": 22236709
+      },
+      "updates": 80,
+      "ppo_decisions": 50143932,
+      "episodes": 5242880,
+      "wins": 3480220,
+      "truncated": 0,
+      "budget_cutoffs": 0,
+      "status": "stopped_by_protocol",
+      "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+      "checkpoint": {
+        "path": "/home/zhuyouwei/spire-downloads/e3-training-3606/A-1729/checkpoint.pt",
+        "bytes": 11312487,
+        "sha256": "865f3cbfe7e2bd262f4faa78fd2fb2d864b26c483cc72757fcca713411b63300",
+        "final": true
+      },
+      "observed_at": "2026-10-19T22:37:36.671134+08:00",
+      "evaluation_faults": 0,
+      "evaluation_truncated_total": 3,
+      "best_frontier_lower95": 0.6,
+      "final_frontier_lower95": 0.525,
+      "final_stagnant": 3,
+      "source_archive_sha256": "d75b1cbd53fc917ded8bb9b25da3584252562363cf95c32cf3e9e5f9522e7f6f",
+      "diagnostics": {
+        "group": "A",
+        "init_seed": 1729,
+        "updates": 80,
+        "all_recorded_ppo_numeric_values_finite": true,
+        "training_faults": 0,
+        "training_truncated": 0,
+        "selected_updates": [
+          {
+            "update": 1,
+            "cumulative_decisions": 594602,
+            "wins": 33106,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.505157470703125,
+            "source_episode_shares": {
+              "frontier": 0.800018310546875,
+              "far": 0.199981689453125
+            },
+            "source_decision_shares": {
+              "frontier": 0.49135724400523373,
+              "far": 0.5086427559947663
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.24625463783740997,
+              "predicted": 0.4979597330093384,
+              "observed": 0.505157470703125
+            },
+            "selected_action_probability": {
+              "mean": 0.3724553883075714,
+              "min": 0.018246224150061607,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 392807,
+                "normalized": 0.9176656603813171
+              },
+              "hand_select": {
+                "decisions": 128701,
+                "normalized": 0.6309425234794617
+              },
+              "grid": {
+                "decisions": 533,
+                "normalized": 0.9968993663787842
+              },
+              "card_reward": {
+                "decisions": 3323,
+                "normalized": 0.9982272982597351
+              },
+              "combat_reward": {
+                "decisions": 9092,
+                "normalized": 0.7623769044876099
+              },
+              "event": {
+                "decisions": 2972,
+                "normalized": 0.36593902111053467
+              },
+              "map": {
+                "decisions": 21208,
+                "normalized": 0.9981400966644287
+              },
+              "room": {
+                "decisions": 34745,
+                "normalized": 0.051344431936740875
+              },
+              "shop": {
+                "decisions": 1221,
+                "normalized": 0.574640154838562
+              }
+            },
+            "ppo": {
+              "policy_loss": -0.0013485208577996594,
+              "value_loss": 0.19166622380711237,
+              "entropy": 0.7998080063162036,
+              "kl": 0.005360723459156243,
+              "clip_fraction": 0.06293285260633594,
+              "loss": 0.08648651103095299,
+              "grad_norm": 0.4486208780332176
+            }
+          },
+          {
+            "update": 16,
+            "cumulative_decisions": 10293603,
+            "wins": 52423,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.7999114990234375,
+            "source_episode_shares": {
+              "frontier": 0.800018310546875,
+              "far": 0.199981689453125
+            },
+            "source_decision_shares": {
+              "frontier": 0.6142906786741492,
+              "far": 0.38570932132585084
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.0007115653133951128,
+              "predicted": 0.7906835079193115,
+              "observed": 0.7999114990234375
+            },
+            "selected_action_probability": {
+              "mean": 0.6362781524658203,
+              "min": 1.4738033314642962e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 449094,
+                "normalized": 0.48955926299095154
+              },
+              "hand_select": {
+                "decisions": 143465,
+                "normalized": 0.35959455370903015
+              },
+              "grid": {
+                "decisions": 315,
+                "normalized": 0.9897216558456421
+              },
+              "card_reward": {
+                "decisions": 2197,
+                "normalized": 0.9602223038673401
+              },
+              "combat_reward": {
+                "decisions": 5714,
+                "normalized": 0.7196031808853149
+              },
+              "event": {
+                "decisions": 1953,
+                "normalized": 0.3670309782028198
+              },
+              "map": {
+                "decisions": 19261,
+                "normalized": 0.9900637269020081
+              },
+              "room": {
+                "decisions": 53344,
+                "normalized": 0.01617460697889328
+              },
+              "shop": {
+                "decisions": 902,
+                "normalized": 0.49965620040893555
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.004198150834556074,
+              "value_loss": 0.0001866891913456117,
+              "entropy": 0.44124775481372025,
+              "kl": 0.013334032995568911,
+              "clip_fraction": 0.07271624932602011,
+              "loss": -0.00012098202817943263,
+              "grad_norm": 0.19235688415221255
+            }
+          },
+          {
+            "update": 31,
+            "cumulative_decisions": 20418439,
+            "wins": 52430,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.800018310546875,
+            "source_episode_shares": {
+              "frontier": 0.800018310546875,
+              "far": 0.199981689453125
+            },
+            "source_decision_shares": {
+              "frontier": 0.6037481922487117,
+              "far": 0.3962518077512883
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 4.4805792640545405e-06,
+              "predicted": 0.7991975545883179,
+              "observed": 0.800018310546875
+            },
+            "selected_action_probability": {
+              "mean": 0.6990548372268677,
+              "min": 2.7941636290051974e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 454834,
+                "normalized": 0.44610148668289185
+              },
+              "hand_select": {
+                "decisions": 147803,
+                "normalized": 0.15667051076889038
+              },
+              "grid": {
+                "decisions": 397,
+                "normalized": 0.994467556476593
+              },
+              "card_reward": {
+                "decisions": 2309,
+                "normalized": 0.9940308928489685
+              },
+              "combat_reward": {
+                "decisions": 6111,
+                "normalized": 0.8021683692932129
+              },
+              "event": {
+                "decisions": 2371,
+                "normalized": 0.39409729838371277
+              },
+              "map": {
+                "decisions": 19273,
+                "normalized": 0.9951417446136475
+              },
+              "room": {
+                "decisions": 53363,
+                "normalized": 0.016669435426592827
+              },
+              "shop": {
+                "decisions": 857,
+                "normalized": 0.6405423879623413
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.0017037499009203549,
+              "value_loss": 1.2110151121962403e-05,
+              "entropy": 0.3684228698183781,
+              "kl": 0.030369832962418433,
+              "clip_fraction": 0.012852857060433017,
+              "loss": -0.001974424040725241,
+              "grad_norm": 0.03212286917454872
+            }
+          },
+          {
+            "update": 45,
+            "cumulative_decisions": 30402239,
+            "wins": 50243,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.7666473388671875,
+            "source_episode_shares": {
+              "frontier": 0.79998779296875,
+              "far": 0.20001220703125
+            },
+            "source_decision_shares": {
+              "frontier": 0.575601001142761,
+              "far": 0.42439899885723903
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.033261410892009735,
+              "predicted": 0.7993934750556946,
+              "observed": 0.7666473388671875
+            },
+            "selected_action_probability": {
+              "mean": 0.698067307472229,
+              "min": 8.7316047938657e-06,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 483306,
+                "normalized": 0.4473910331726074
+              },
+              "hand_select": {
+                "decisions": 141749,
+                "normalized": 0.13814041018486023
+              },
+              "grid": {
+                "decisions": 410,
+                "normalized": 0.9974998831748962
+              },
+              "card_reward": {
+                "decisions": 2871,
+                "normalized": 0.9973142147064209
+              },
+              "combat_reward": {
+                "decisions": 8300,
+                "normalized": 0.7822906970977783
+              },
+              "event": {
+                "decisions": 2899,
+                "normalized": 0.36926430463790894
+              },
+              "map": {
+                "decisions": 20856,
+                "normalized": 0.9972062110900879
+              },
+              "room": {
+                "decisions": 51555,
+                "normalized": 0.024454860016703606
+              },
+              "shop": {
+                "decisions": 1239,
+                "normalized": 0.6028046607971191
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.0008965664152464322,
+              "value_loss": 0.015303090051090908,
+              "entropy": 0.380978737971138,
+              "kl": 0.04414138938311334,
+              "clip_fraction": 0.007794611498151868,
+              "loss": 0.004738323064446194,
+              "grad_norm": 0.017329196032981102
+            }
+          },
+          {
+            "update": 49,
+            "cumulative_decisions": 33229005,
+            "wins": 50223,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.7663421630859375,
+            "source_episode_shares": {
+              "far": 0.20001220703125,
+              "frontier": 0.79998779296875
+            },
+            "source_decision_shares": {
+              "far": 0.41611000035076645,
+              "frontier": 0.5838899996492336
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.006524371448904276,
+              "predicted": 0.7667388916015625,
+              "observed": 0.7663421630859375
+            },
+            "selected_action_probability": {
+              "mean": 0.6770352125167847,
+              "min": 1.3999674592923839e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 484489,
+                "normalized": 0.476896733045578
+              },
+              "hand_select": {
+                "decisions": 142577,
+                "normalized": 0.1565931737422943
+              },
+              "grid": {
+                "decisions": 366,
+                "normalized": 0.9972627758979797
+              },
+              "card_reward": {
+                "decisions": 2724,
+                "normalized": 0.9979570508003235
+              },
+              "combat_reward": {
+                "decisions": 7491,
+                "normalized": 0.8006947636604309
+              },
+              "event": {
+                "decisions": 2602,
+                "normalized": 0.38383913040161133
+              },
+              "map": {
+                "decisions": 20232,
+                "normalized": 0.9981551766395569
+              },
+              "room": {
+                "decisions": 51306,
+                "normalized": 0.020057791844010353
+              },
+              "shop": {
+                "decisions": 938,
+                "normalized": 0.6271432042121887
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.036465434597562685,
+              "value_loss": 0.011705244774403024,
+              "entropy": 0.4128789022023895,
+              "kl": 0.12264503608414813,
+              "clip_fraction": 0.06129713425436099,
+              "loss": 0.03818926867263176,
+              "grad_norm": 0.47038220515194595
+            }
+          },
+          {
+            "update": 50,
+            "cumulative_decisions": 33951055,
+            "wins": 50962,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.777618408203125,
+            "source_episode_shares": {
+              "frontier": 0.79998779296875,
+              "far": 0.20001220703125
+            },
+            "source_decision_shares": {
+              "frontier": 0.5711737414306488,
+              "far": 0.42882625856935114
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.011134873144328594,
+              "predicted": 0.7643545269966125,
+              "observed": 0.777618408203125
+            },
+            "selected_action_probability": {
+              "mean": 0.6491051316261292,
+              "min": 2.1332851247279905e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 487374,
+                "normalized": 0.49564266204833984
+              },
+              "hand_select": {
+                "decisions": 145747,
+                "normalized": 0.24973642826080322
+              },
+              "grid": {
+                "decisions": 558,
+                "normalized": 0.998269259929657
+              },
+              "card_reward": {
+                "decisions": 2861,
+                "normalized": 0.9940989017486572
+              },
+              "combat_reward": {
+                "decisions": 8478,
+                "normalized": 0.7875704765319824
+              },
+              "event": {
+                "decisions": 2783,
+                "normalized": 0.38396531343460083
+              },
+              "map": {
+                "decisions": 20889,
+                "normalized": 0.9987547397613525
+              },
+              "room": {
+                "decisions": 52170,
+                "normalized": 0.02228226698935032
+              },
+              "shop": {
+                "decisions": 1190,
+                "normalized": 0.6432902216911316
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.005244194920440547,
+              "value_loss": 0.013439442939184684,
+              "entropy": 0.42650071212639373,
+              "kl": 0.33980301737739826,
+              "clip_fraction": 0.15234263566558212,
+              "loss": 0.007698909604016024,
+              "grad_norm": 0.18339570229408464
+            }
+          },
+          {
+            "update": 55,
+            "cumulative_decisions": 37138606,
+            "wins": 48570,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.741119384765625,
+            "source_episode_shares": {
+              "frontier": 0.79998779296875,
+              "far": 0.20001220703125
+            },
+            "source_decision_shares": {
+              "frontier": 0.627745250667584,
+              "far": 0.37225474933241604
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.06807933747768402,
+              "predicted": 0.766322672367096,
+              "observed": 0.741119384765625
+            },
+            "selected_action_probability": {
+              "mean": 0.6129344701766968,
+              "min": 9.634419257054105e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 344514,
+                "normalized": 0.5326746106147766
+              },
+              "hand_select": {
+                "decisions": 146312,
+                "normalized": 0.39662042260169983
+              },
+              "grid": {
+                "decisions": 188,
+                "normalized": 0.9986771941184998
+              },
+              "card_reward": {
+                "decisions": 1620,
+                "normalized": 0.9984944462776184
+              },
+              "combat_reward": {
+                "decisions": 3123,
+                "normalized": 0.7662734389305115
+              },
+              "event": {
+                "decisions": 1247,
+                "normalized": 0.3960406482219696
+              },
+              "map": {
+                "decisions": 16867,
+                "normalized": 0.9986695051193237
+              },
+              "room": {
+                "decisions": 49720,
+                "normalized": 0.02930520847439766
+              },
+              "shop": {
+                "decisions": 383,
+                "normalized": 0.6653594374656677
+              }
+            },
+            "ppo": {
+              "policy_loss": -0.002955799066800326,
+              "value_loss": 0.03281508808884063,
+              "entropy": 0.43216134594618744,
+              "kl": 0.47493382209422413,
+              "clip_fraction": 0.152150631093354,
+              "loss": 0.009130131528058222,
+              "grad_norm": 0.09345721166736377
+            }
+          },
+          {
+            "update": 56,
+            "cumulative_decisions": 37741564,
+            "wins": 51801,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.7904205322265625,
+            "source_episode_shares": {
+              "frontier": 0.800018310546875,
+              "far": 0.199981689453125
+            },
+            "source_decision_shares": {
+              "frontier": 0.7030157987786877,
+              "far": 0.29698420122131225
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.024114863947033882,
+              "predicted": 0.766211986541748,
+              "observed": 0.7904205322265625
+            },
+            "selected_action_probability": {
+              "mean": 0.6890926957130432,
+              "min": 1.658532528381329e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 398010,
+                "normalized": 0.3827019929885864
+              },
+              "hand_select": {
+                "decisions": 131863,
+                "normalized": 0.3557697832584381
+              },
+              "grid": {
+                "decisions": 133,
+                "normalized": 0.9985626935958862
+              },
+              "card_reward": {
+                "decisions": 1415,
+                "normalized": 0.9985013604164124
+              },
+              "combat_reward": {
+                "decisions": 2244,
+                "normalized": 0.750809371471405
+              },
+              "event": {
+                "decisions": 887,
+                "normalized": 0.37645190954208374
+              },
+              "map": {
+                "decisions": 16116,
+                "normalized": 0.9982354044914246
+              },
+              "room": {
+                "decisions": 52076,
+                "normalized": 0.005064782220870256
+              },
+              "shop": {
+                "decisions": 214,
+                "normalized": 0.6070147156715393
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.0004665361089202043,
+              "value_loss": 0.019321194124162965,
+              "entropy": 0.369557146929437,
+              "kl": 0.46574276990130214,
+              "clip_fraction": 0.13859340124269418,
+              "loss": 0.006431561269334885,
+              "grad_norm": 0.16187132611579852
+            }
+          },
+          {
+            "update": 57,
+            "cumulative_decisions": 38227152,
+            "wins": 38117,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.5816192626953125,
+            "source_episode_shares": {
+              "frontier": 0.79998779296875,
+              "far": 0.20001220703125
+            },
+            "source_decision_shares": {
+              "frontier": 0.6059354844024152,
+              "far": 0.39406451559758476
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.22909651696681976,
+              "predicted": 0.7667009830474854,
+              "observed": 0.5816192626953125
+            },
+            "selected_action_probability": {
+              "mean": 0.5897954106330872,
+              "min": 3.441724766162224e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 284159,
+                "normalized": 0.5283302068710327
+              },
+              "hand_select": {
+                "decisions": 140889,
+                "normalized": 0.42291703820228577
+              },
+              "grid": {
+                "decisions": 166,
+                "normalized": 0.9981082677841187
+              },
+              "card_reward": {
+                "decisions": 1473,
+                "normalized": 0.9972267746925354
+              },
+              "combat_reward": {
+                "decisions": 2551,
+                "normalized": 0.7742506265640259
+              },
+              "event": {
+                "decisions": 940,
+                "normalized": 0.3548179268836975
+              },
+              "map": {
+                "decisions": 16281,
+                "normalized": 0.9966325759887695
+              },
+              "room": {
+                "decisions": 38724,
+                "normalized": 0.03328750282526016
+              },
+              "shop": {
+                "decisions": 405,
+                "normalized": 0.5917832851409912
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.04467663966196483,
+              "value_loss": 0.12678992064843567,
+              "entropy": 0.48863549949717605,
+              "kl": 0.6560433408798297,
+              "clip_fraction": 0.1727719795372197,
+              "loss": 0.10318524383171608,
+              "grad_norm": 0.29479700256912134
+            }
+          },
+          {
+            "update": 58,
+            "cumulative_decisions": 38755043,
+            "wins": 47173,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.7198028564453125,
+            "source_episode_shares": {
+              "frontier": 0.800018310546875,
+              "far": 0.199981689453125
+            },
+            "source_decision_shares": {
+              "frontier": 0.6159585975135018,
+              "far": 0.38404140248649815
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.08010948449373245,
+              "predicted": 0.7995328903198242,
+              "observed": 0.7198028564453125
+            },
+            "selected_action_probability": {
+              "mean": 0.5972154140472412,
+              "min": 2.3903305191197433e-05,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 311610,
+                "normalized": 0.507448136806488
+              },
+              "hand_select": {
+                "decisions": 145719,
+                "normalized": 0.47555848956108093
+              },
+              "grid": {
+                "decisions": 243,
+                "normalized": 0.9971965551376343
+              },
+              "card_reward": {
+                "decisions": 1596,
+                "normalized": 0.9981457591056824
+              },
+              "combat_reward": {
+                "decisions": 3040,
+                "normalized": 0.77804034948349
+              },
+              "event": {
+                "decisions": 1109,
+                "normalized": 0.36855998635292053
+              },
+              "map": {
+                "decisions": 16538,
+                "normalized": 0.9973477125167847
+              },
+              "room": {
+                "decisions": 47650,
+                "normalized": 0.009551598690450191
+              },
+              "shop": {
+                "decisions": 386,
+                "normalized": 0.6103561520576477
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.022375421358625996,
+              "value_loss": 0.031701182250255526,
+              "entropy": 0.45592488069813747,
+              "kl": 1.5086509072450238,
+              "clip_fraction": 0.21904143089476152,
+              "loss": 0.033666764488005194,
+              "grad_norm": 0.11381473784784994
+            }
+          },
+          {
+            "update": 59,
+            "cumulative_decisions": 39195420,
+            "wins": 26214,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.399993896484375,
+            "source_episode_shares": {
+              "far": 0.20001220703125,
+              "frontier": 0.79998779296875
+            },
+            "source_decision_shares": {
+              "far": 0.5138529033078476,
+              "frontier": 0.4861470966921524
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.36856627464294434,
+              "predicted": 0.7673565149307251,
+              "observed": 0.399993896484375
+            },
+            "selected_action_probability": {
+              "mean": 0.49631673097610474,
+              "min": 3.6820140394411283e-06,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 239438,
+                "normalized": 0.67497718334198
+              },
+              "hand_select": {
+                "decisions": 149429,
+                "normalized": 0.5302119851112366
+              },
+              "grid": {
+                "decisions": 155,
+                "normalized": 0.998868465423584
+              },
+              "card_reward": {
+                "decisions": 1787,
+                "normalized": 0.9977275729179382
+              },
+              "combat_reward": {
+                "decisions": 3856,
+                "normalized": 0.764906644821167
+              },
+              "event": {
+                "decisions": 1301,
+                "normalized": 0.3809047341346741
+              },
+              "map": {
+                "decisions": 17092,
+                "normalized": 0.9954712986946106
+              },
+              "room": {
+                "decisions": 26804,
+                "normalized": 0.021150022745132446
+              },
+              "shop": {
+                "decisions": 515,
+                "normalized": 0.624383270740509
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.0002555308394675458,
+              "value_loss": 0.1402625911613776,
+              "entropy": 0.602882384499829,
+              "kl": 0.0019246985222601753,
+              "clip_fraction": 0.008179355421128083,
+              "loss": 0.06435800238756087,
+              "grad_norm": 0.1373143932658339
+            }
+          },
+          {
+            "update": 61,
+            "cumulative_decisions": 40112574,
+            "wins": 26215,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.4000091552734375,
+            "source_episode_shares": {
+              "frontier": 0.800018310546875,
+              "far": 0.199981689453125
+            },
+            "source_decision_shares": {
+              "frontier": 0.46017484163440603,
+              "far": 0.539825158365594
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.1998167335987091,
+              "predicted": 0.4093875288963318,
+              "observed": 0.4000091552734375
+            },
+            "selected_action_probability": {
+              "mean": 0.4869120419025421,
+              "min": 0.022803766652941704,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 258649,
+                "normalized": 0.695473849773407
+              },
+              "hand_select": {
+                "decisions": 151722,
+                "normalized": 0.5318841934204102
+              },
+              "grid": {
+                "decisions": 292,
+                "normalized": 0.9989579916000366
+              },
+              "card_reward": {
+                "decisions": 2141,
+                "normalized": 0.9992939233779907
+              },
+              "combat_reward": {
+                "decisions": 5080,
+                "normalized": 0.7964798808097839
+              },
+              "event": {
+                "decisions": 1661,
+                "normalized": 0.3695400059223175
+              },
+              "map": {
+                "decisions": 18107,
+                "normalized": 0.998482346534729
+              },
+              "room": {
+                "decisions": 26928,
+                "normalized": 0.025087028741836548
+              },
+              "shop": {
+                "decisions": 641,
+                "normalized": 0.6019258499145508
+              }
+            },
+            "ppo": {
+              "policy_loss": 0.00035764234571454784,
+              "value_loss": 0.11614716085524551,
+              "entropy": 0.6195829748548288,
+              "kl": 0.001155525956629124,
+              "clip_fraction": 0.009724410552720452,
+              "loss": 0.052235394202867394,
+              "grad_norm": 0.08342380721741548
+            }
+          },
+          {
+            "update": 80,
+            "cumulative_decisions": 50143932,
+            "wins": 38176,
+            "completed": 65536,
+            "training_batch_win_fraction": 0.58251953125,
+            "source_episode_shares": {
+              "frontier": 0.79998779296875,
+              "far": 0.20001220703125
+            },
+            "source_decision_shares": {
+              "frontier": 0.47382918778125926,
+              "far": 0.5261708122187407
+            },
+            "value_episode_start": {
+              "count": 65536,
+              "brier": 0.09469901025295258,
+              "predicted": 0.5114884376525879,
+              "observed": 0.58251953125
+            },
+            "selected_action_probability": {
+              "mean": 0.4109436273574829,
+              "min": 0.0005019004456698895,
+              "max": 1.0
+            },
+            "per_screen_entropy": {
+              "combat": {
+                "decisions": 406039,
+                "normalized": 0.8550840616226196
+              },
+              "hand_select": {
+                "decisions": 133572,
+                "normalized": 0.6183077096939087
+              },
+              "grid": {
+                "decisions": 468,
+                "normalized": 0.9982670545578003
+              },
+              "card_reward": {
+                "decisions": 3218,
+                "normalized": 0.9990001320838928
+              },
+              "combat_reward": {
+                "decisions": 9932,
+                "normalized": 0.7871842384338379
+              },
+              "event": {
+                "decisions": 3694,
+                "normalized": 0.38348662853240967
+              },
+              "map": {
+                "decisions": 22219,
+                "normalized": 0.9997650384902954
+              },
+              "room": {
+                "decisions": 39865,
+                "normalized": 0.04181074723601341
+              },
+              "shop": {
+                "decisions": 1417,
+                "normalized": 0.6013681292533875
+              }
+            },
+            "ppo": {
+              "policy_loss": -0.0033447578086021976,
+              "value_loss": 0.047767348850185236,
+              "entropy": 0.73185840993793,
+              "kl": 0.08105828407460489,
+              "clip_fraction": 0.10570996610606029,
+              "loss": 0.013220332615167196,
+              "grad_norm": 0.17854825566734578
+            }
+          }
+        ],
+        "maximum_recorded_kl": {
+          "update": 58,
+          "value": 1.5086509072450238
+        },
+        "interpretation": "The run stopped because three successive scheduled assessments failed to exceed its best frontier bootstrap lower bound of 0.6. Large recorded KL at updates55-58 and increased value calibration error accompany the observed training-return decline; these observations suggest update instability but do not establish a root cause. No hyperparameters, model size or rewards were changed."
+      }
+    }
+  ],
+  "active_run_snapshot": {
+    "observed_at": "2026-10-19T22:40:10.128413+08:00",
+    "job_id": 3606,
+    "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+    "slurm": {
+      "JobState": "RUNNING",
+      "RunTime": "00:52:43",
+      "ExitCode": "0:0",
+      "StartTime": "2026-10-19T21:47:27",
+      "EndTime": "2026-10-20T00:55:27",
+      "TimeLimit": "03:08:00"
+    },
+    "group": "A",
+    "init_seed": 2718,
+    "initialization": "fresh",
+    "checkpoint_source": null,
+    "updates": 3,
+    "training_decisions": 1804134,
+    "frontier": "k8",
+    "training_faults": 0,
+    "evaluation_faults": 0,
+    "evaluation_truncated": 0,
+    "completed_evaluation_sets": 21,
+    "completed_runs": [
+      {
+        "group": "A",
+        "init_seed": 1729,
+        "decisions": 50143932,
+        "frontier": "k8",
+        "learned": [],
+        "stop_reason": "three_evaluations_without_frontier_improvement",
+        "evaluation_decisions": 2984215,
+        "evaluation_seconds": 424.8642966724001,
+        "elapsed_seconds": 2806.0535271167755,
+        "eight_gpu_node_hours": 0.7794593134853575,
+        "last_evaluated_decisions": 50143932,
+        "sampling_counts": {
+          "frontier": 4194304,
+          "far": 1048576
+        },
+        "decision_counts": {
+          "frontier": 27907223,
+          "far": 22236709
+        },
+        "updates": 80,
+        "ppo_decisions": 50143932,
+        "episodes": 5242880,
+        "wins": 3480220,
+        "truncated": 0,
+        "budget_cutoffs": 0,
+        "subprocess_and_audit_seconds": 2821.3856246471405,
+        "resumed_decisions": 0,
+        "new_training_decisions": 50143932
+      }
+    ],
+    "checkpoint": {
+      "path": "/home/zhuyouwei/spire-downloads/e3-training-3606/A-2718/checkpoint.pt",
+      "bytes": 11314663,
+      "sha256": "6d95f820edd295b2c1eb9cfeca8882ec783064577ef61f821b8c5a06a75cb602",
+      "update_observation_note": "Hash from one open descriptor; completed update count from updates log; training may advance after observation."
+    },
+    "last_update_timing": {
+      "root_prepare_seconds": 29.916334228515623,
+      "reset_seconds": 0.3374274559020996,
+      "step_encode_seconds": 4.743851010531187,
+      "inference_seconds": 31.915551748037338,
+      "storage_seconds": 0.5385565119683743,
+      "collection_seconds": 12.997253093053587,
+      "total_seconds": 33.2288778120419,
+      "decisions_per_second": 18117.31360310438
+    }
+  },
+  "run_start_evidence_archives": [
+    {
+      "filename": "e3-v13-training-start-3606.tar.gz",
+      "sha256": "eeae59b5163da7b5c510a6b7c2dfe882a492481709d14120fc43f648ea9d7dde",
+      "group": "A",
+      "init_seed": 1729
+    },
+    {
+      "filename": "e3-v13-training-start-3606-A2718.tar.gz",
+      "sha256": "6651be0154832a613d36548332de05ca7ae3fc9ad879102897e6a4c1d73d841c",
+      "group": "A",
+      "init_seed": 2718,
+      "source_output": "/home/zhuyouwei/spire-downloads/e3-training-3606/A-2718"
+    }
+  ]
 }
