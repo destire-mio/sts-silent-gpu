@@ -126,3 +126,27 @@
 - Slurm 八卡分配时长 **195 秒（0.05417 节点小时）**，评估耗时 **155.03 秒**，单卡峰值分配显存 **3,038,517,248 字节（2.830 GiB）**。详细分档统计和族区间见 [结构化记录](../inventory/e3-assessment-check.json)。
 - 从真实冻结策略轨迹新增 **36 个**合法前缀，九档各有 2 train / 2 dev，抽查清单现共 **117 个**，等待 Mac 原版核对。`source_k` 是原课程起点的已知距离；对没有走到胜利的策略轨迹，新的 `distance_to_win` 记为 `null`，不虚构胜利距离。
 - 服务器证据目录：`/home/zhuyouwei/spire-downloads/e3-assessment-check-3563`。完整检查包已下载并校验 SHA-256：`b91ae7b3fae525e87fd6626d32646fdd87157c82c022eecc2ab1adcdffbf569c`。
+
+### 正式训练因 Power 对象池耗尽停止（2026-10-19 14:23）
+
+- 作业 `3564` 在第 51 轮 PPO 前向计算时显存不足，留下第 50 轮、34,012,256 个训练决策的 checkpoint。`668ae48` 将每卡 PPO 前向/反向限制为 128 条记录，按样本数加权累积梯度；全局 minibatch 仍为 8,192，每个全局 minibatch 只做一次梯度裁剪和优化器更新。续训使用显式迁移副本，保留原 checkpoint，模型、Adam、RNG 和课程状态未改；不声称不同归约顺序下逐位相同。
+- 作业 `3587` 在 **13:55:13–14:23:51（UTC+8）** 使用八卡，分配时长 **1,718.18 秒（0.47727 八卡节点小时）**。A/1729 从第 50 轮完成至第 **56** 轮，累计 **42,234,388** 个训练决策，本次新增 **8,222,132** 个；这六轮未发生 CUDA OOM。第 57 轮采样出现一条引擎 fault，整批没有进入 PPO 更新，调度脚本随后终止实验，其余初始化和 B 组尚未启动。
+- **实测定位**：种子 `1000002810`，E2 Act 3 train 根的 769 步前缀，加策略生成的 530 步，合计 **1,299 步**。第 1,299 个动作（零基索引 `1298`）是 `proceed`，位于第 3 幕、第 39 层、第 59 回合的手牌保留确认界面。GPU fault `4241151297`（`0xfccad541`）对应该服务器编译路径下的 `core/fixed.hpp:56`；故障码包含 `__FILE__`，换机器或源码路径后不能直接比较数值。
+- 同一条完整前缀在未修改的 CPU 引擎上于同一步触发 `SIGILL`，GDB 栈顶是 `spire::apply_prepared_power`。耗尽的是 **128 格 Power 对象池**：`remove_power` 仅从生物的链表中移除效果，对象保留到战斗重置，长战斗会积累已移除的效果。故障前快照只有 7 个可达 Power 对象。此结果确认了原生引擎的容量故障，**尚未证明该完整路径与原版逐步一致，也不是本例完整 CPU/GPU 状态对照通过**。
+- 交给 Mac 原版端的自包含输入在 [故障清单](../inventory/e3-fault-3587.json)：包含未改动的完整候选序列、1,299 个具名动作组成的 `scenario`、来源、定位、文件哈希和恢复点。先在原版原样回放；若原版更早拒绝输入，以首个差异为准。修复存储回收或容量时须保留队列对已移除效果的对象引用及身份，不能仅在移除时直接释放，也不能跳过 fault、当作死亡或丢弃该种子。修复与原版录制回归由 Mac 端完成后合入 main，再重编译、重新收集受影响的根并恢复训练。
+- 第 56 轮 checkpoint 保存在 `/home/zhuyouwei/spire-downloads/e3-training-3587/A-1729/checkpoint.pt`，SHA-256 为 `4b04c5cfdfa576f12535a66fa1bfe9d4e9eeb9be467e9c14a10d4522f10c4e90`。复现脚本、调用栈、故障前完整快照和逐步定位记录在 `/home/zhuyouwei/spire-downloads/e3-fault-3587`。当前状态是 **等待 Mac 原版确认及引擎修复，训练已停**；服务器引擎保持不变。
+
+在 Mac 工作副本中提取原样场景并录制（以下命令尚未在原版端执行）：
+
+```sh
+python3 - <<'PY'
+import json
+from pathlib import Path
+case = json.loads(Path('inventory/e3-fault-3587.json').read_text())
+output = Path('/tmp/e3-fault-3587')
+output.mkdir(exist_ok=True)
+(output / 'scenario.json').write_text(json.dumps(case['scenario']) + '\n')
+PY
+python3 oracle/record.py --seed 1000002810 --count 1 \
+  --scenario /tmp/e3-fault-3587/scenario.json --output /tmp/e3-fault-3587/oracle
+```
