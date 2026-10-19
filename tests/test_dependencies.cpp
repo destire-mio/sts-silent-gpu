@@ -34,6 +34,7 @@ static void stasis_returns_identity() {
     g.monster_order.push_back(1);
     const int original = g.hand.pop_back();
     g.draw.push_back(original);
+    g.discard.push_back(create_card(g, make_card(CardId::Defend_G)));
     Effect steal{};
     steal.kind = EffectKind::ApplyStasisAction;
     steal.target = 0;

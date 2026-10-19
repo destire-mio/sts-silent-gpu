@@ -42,6 +42,8 @@ struct ApplyStasisAction : ActionHooks {
         for (int i = 0; i < pile.size; ++i) if (pile[i] == card) { pile.erase(i); break; }
         e.payload.state.ApplyStasisAction.card = card;
         g.limbo.insert(0, card);
+        // ApplyStasisAction.update returns on the next frame if selection emptied both piles.
+        if (g.draw.empty() && g.discard.empty()) { e.done = true; return; }
         Power power{PowerId::Stasis, -1};
         const int owner = e.payload.state.ApplyStasisAction.owner;
         power_constructPower(g, power, owner, owner, 0, card);
