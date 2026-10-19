@@ -10,6 +10,8 @@
 #include "core/orbs.hpp"
 #include "core/stances.hpp"
 #include "core/card_lifetime.hpp"
+#include "core/power_lifetime.hpp"
+#include "core/action_lifetime.hpp"
 
 namespace spire {
 constexpr ReadOnly<Game> initial_game{};
@@ -1721,6 +1723,8 @@ SPIRE_FN inline void step(Game& g, Action action) {
         // ShopRoom.updatePurge and ShopScreen.updatePurge run only on their active screens.
         if (g.room_kind == RoomKind::Shop && (g.screen == Screen::Room || g.screen == Screen::Shop))
             finish_shop_purge(g);
+        collect_actions(g);
+        collect_powers(g);
         if (card_capacity - g.cards.count() < 80) collect_cards(g);
         else prune_detached_master_cards(g);
     }

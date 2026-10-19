@@ -229,15 +229,19 @@ from an object's current position in an ordered list:
 - Each creature holds the head and size of an ordered list in the shared 128-object power arena.
   `Power::next` links the objects with byte indices; the per-creature budget remains 32. Use
   `creature.powers.at(game.power_objects, index)` and pass `game` to power queries. Removing a
-  power removes its list entry, retaining the object until combat reset so queued Java object
-  references still observe it. These 128 slots include detached powers, not just active powers.
+  power removes its list entry. Decision-boundary collection retains powers reachable through
+  creatures and queued object references, then reuses unreferenced slots without renumbering
+  surviving objects. ReducePowerAction can still modify a detached power through its stored
+  powerInstance; a replacement power with the same ID is a different object.
 - Prepared powers and other action state share the tagged `EffectPayload` union; access action
   state through `effect.payload.state.Type`. A queued ApplyPower owns its prepared Power until
   execution, preserving constructor-time fields and identity.
 - The 64 action slots are shared by the current action, both queues and held follow-ups.
   Queues hold byte indices. Completed ordinary actions release their slot. Clear queues with
-  `clear_actions(game, queue)` to release discarded slots as well. `hold_action` pins
-  an object until combat reset; queue its index to preserve identity. Java
+  `clear_actions(game, queue)` to release discarded slots as well. `hold_action` retains
+  a buffered object; queue its index to preserve identity. Decision-boundary collection traces
+  current/queued actions and Draw/NotStanceCheck follow-ups, releasing abandoned children and
+  their owned damage exceptions. Java
   `GameActionManager.update` skips an already completed action, including a reused follow-up.
 - The monster arena retains 64 objects, including dead and escaped monsters. Java
   `SpawnMonsterAction.update` inserts without removing earlier objects. Reptomancer recordings
