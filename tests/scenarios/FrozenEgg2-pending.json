@@ -1,0 +1,65 @@
+{
+  "deck": [
+    {
+      "id": "Searing Blow",
+      "upgrades": 30
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Gremlin Nob",
+  "start": {
+    "act": 1,
+    "floor": 10,
+    "node": [
+      3,
+      0
+    ],
+    "room": "MonsterRoomElite",
+    "gold": 0,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 2
+    }
+  ]
+}
