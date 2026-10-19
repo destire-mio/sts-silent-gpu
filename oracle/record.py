@@ -26,12 +26,13 @@ def run_jobs(jobs):
                'oracle', '--skip-intro']
     print('JVM log:', job_dir / 'game.log', flush=True)
     with (job_dir / 'game.log').open('w') as log:
-        subprocess.run(command, cwd=job_dir, stdout=log, stderr=subprocess.STDOUT, check=True)
+        process = subprocess.run(command, cwd=job_dir, stdout=log, stderr=subprocess.STDOUT)
     audit = (job_dir / 'bytecode-audit.txt').read_text().splitlines()
     assert audit[0] == 'loaded 2306 original 2306', audit[0]
     changed = {line.split()[0].removeprefix('com.megacrit.cardcrawl.') for line in audit[1:]}
     expected = json.loads((ROOT.parent / 'inventory/runtime-patches.json').read_text())
     assert changed == expected.keys(), (changed - expected.keys(), expected.keys() - changed)
+    process.check_returncode()
     result = json.loads((job_dir / 'result.json').read_text())
     print(json.dumps(result), flush=True)
     return result

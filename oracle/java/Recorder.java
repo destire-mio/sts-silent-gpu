@@ -297,6 +297,7 @@ public final class Recorder {
 
     public static void run() throws Exception {
         initialize();
+        Class.forName("oracle.audit.BytecodeAudit", true, ClassLoader.getSystemClassLoader()).getMethod("write").invoke(null);
         JsonArray jobs;
         try (Reader reader = Files.newBufferedReader(Paths.get(System.getProperty("oracle.jobs")), StandardCharsets.UTF_8)) {
             jobs = new JsonParser().parse(reader).getAsJsonArray();
@@ -317,7 +318,6 @@ public final class Recorder {
         result.addProperty("seconds", seconds);
         result.addProperty("decisions_per_second", decisions / seconds);
         Files.write(Paths.get("result.json"), JSON.toJson(result).getBytes(StandardCharsets.UTF_8));
-        Class.forName("oracle.audit.BytecodeAudit", true, ClassLoader.getSystemClassLoader()).getMethod("write").invoke(null);
         System.exit(0);
     }
 }
