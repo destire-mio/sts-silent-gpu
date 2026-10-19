@@ -22,7 +22,7 @@ struct Offering : CardHooks {
         e.amount = 6;
         add_bottom(g, e);
         add_bottom(g, units::actions::GainEnergy::make(2));
-        add_bottom(g, units::actions::Draw::construct(g.cards[card].magic));
+        add_bottom(g, units::actions::Draw::construct(g.cards[card].magic, true, -1, player_target));
     }
     static SPIRE_FN void upgrade(Card& card) {
         if (card.upgrades == 0) {
