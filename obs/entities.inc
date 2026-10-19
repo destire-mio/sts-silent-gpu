@@ -23,7 +23,10 @@ SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int po
     if (variables & 1) t.values[3] = c.base_damage;
     if (variables & 2) t.values[4] = card_baseBlock(c);
     if (variables & 4) t.values[5] = c.base_magic;
-    t.values[6] = c.bottle_flame; t.values[7] = c.bottle_lightning; t.values[8] = c.bottle_tornado;
+    // MasterDeckViewScreen.render and noncombat GridCardSelectScreen.render show bottle badges.
+    if (zone == Zone::Master || (zone == Zone::Grid && g.room_phase != RoomPhase::Combat)) {
+        t.values[6] = c.bottle_flame; t.values[7] = c.bottle_lightning; t.values[8] = c.bottle_tornado;
+    }
     return t;
 }
 SPIRE_FN inline void pile(Writer& w, const Game& g, const Pile& cards, Zone zone, bool unordered) {

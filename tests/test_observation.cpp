@@ -164,6 +164,31 @@ static void hidden_card_caches() {
     open_grid_selection(b, PileId::Draw, 1, false);
     equal(a, b);
 }
+static void combat_bottle_identity() {
+    Game a = combat(), b = a;
+    const int index = a.hand[0];
+    b.cards[index].bottle_flame = true;
+    equal(a, b);
+    a.hand.erase(0); a.draw.push_back(index);
+    b = a; b.cards[index].bottle_flame = true;
+    equal(a, b);
+    a.draw.pop_back(); a.discard.push_back(index);
+    b = a; b.cards[index].bottle_lightning = true;
+    equal(a, b);
+    a.discard.pop_back(); a.exhaust.push_back(index);
+    b = a; b.cards[index].bottle_tornado = true;
+    equal(a, b);
+    open_grid_selection(a, PileId::Exhaust, 1, false);
+    open_grid_selection(b, PileId::Exhaust, 1, false);
+    equal(a, b);
+    a = combat(); b = a;
+    b.run.master_deck[0].bottle_flame = true;
+    different(a, b);
+    a.room_phase = b.room_phase = RoomPhase::Complete;
+    open_grid_selection(a, PileId::MasterDeck, 1, false);
+    open_grid_selection(b, PileId::MasterDeck, 1, false);
+    different(a, b);
+}
 static Game event(EventId id) {
     Game g; reset(g, 101);
     g.event = {}; g.event.id = id; event_initialize_state(g.event);
@@ -315,7 +340,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37872);
-    hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    combat_bottle_identity(); hidden_card_caches(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }

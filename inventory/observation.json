@@ -1,5 +1,5 @@
 {
-  "protocol_version": 3,
+  "protocol_version": 4,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -174,6 +174,14 @@
       ],
       "rule": "Use SingleCardViewPopup base damage/block/magic in every zone; deny live caches without retained Java modification flags.",
       "test": "tests/test_observation.cpp:hidden_card_caches"
+    },
+    {
+      "version": 4,
+      "fields": [
+        "Card.flags[3:5]"
+      ],
+      "rule": "Bottle flags only on master deck or noncombat grid; deny combat instance identity.",
+      "test": "tests/test_observation.cpp:combat_bottle_identity"
     }
   ],
   "measurements_protocol_version": 2
