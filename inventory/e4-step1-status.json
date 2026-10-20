@@ -1,41 +1,49 @@
 {
-  "recorded_at": "2026-10-21T02:25:35.856173+08:00",
+  "recorded_at": "2026-10-21T02:27:57.269193+08:00",
   "step": 1,
-  "status": "Claude28_fresh1729_prepared",
-  "fixed_commit": "5cf2432d96c4dd47066f5b02aa33c352b30cb8c4",
+  "status": "fresh1729_training_health_observed",
+  "fixed_commit": "9c082f74df8613003dd223ebde9d8132f654c95d",
   "main_reviewed": "627e417cb0112ba386886d20d1c8590ae56aacdf",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 43200,
     "settled_node_seconds": 10999,
-    "reserved_node_seconds": 0,
-    "active_elapsed_at_snapshot": 0,
-    "used_including_active_snapshot": 10999
+    "reserved_node_seconds": 7200,
+    "active_elapsed_at_snapshot": 94,
+    "used_including_active_snapshot": 11093
   },
   "job": {
-    "id": 3638,
+    "id": 3639,
     "gpus": 8,
-    "state": "CANCELLED",
-    "start": "2026-10-21T02:16:48+08:00",
-    "time_limit_seconds": 3600,
-    "output": "/home/zhuyouwei/spire-downloads/e4-training-3638/A-1729",
-    "log": "/home/zhuyouwei/spire-downloads/e4-training-3638.slurm.log",
-    "elapsed_seconds": 409,
-    "exit_code": "0:15",
-    "end": "2026-10-21T02:23:37+08:00"
+    "state": "RUNNING",
+    "start": "2026-10-21T02:26:23+08:00",
+    "time_limit_seconds": 7200,
+    "output": "/home/zhuyouwei/spire-downloads/e4-training-3639/A-1729",
+    "log": "/home/zhuyouwei/spire-downloads/e4-training-3639.slurm.log"
   },
   "initialization": 1729,
   "training_seconds_target": 3600,
   "latest_update": {
-    "version": 784,
-    "trained_seconds": 3602.47594499588,
-    "cumulative_actual_steps": 12845056,
-    "actual_steps_per_second": 3526.1328125,
-    "sl_trial_steps_per_second": 709.3587646484375,
-    "throughput_scope": "Last completed update global8rank sums / maximum rank wall time"
+    "event": "update",
+    "version": 3,
+    "trained_seconds": 72.41399192810059,
+    "update_seconds": 22.446596145629883,
+    "actual_steps": 16384,
+    "sl_trial_steps": 301506,
+    "actual_steps_per_second": 729.9102172851562,
+    "sl_trial_steps_per_second": 13432.1474609375,
+    "initialization": 1729,
+    "completed_episodes": 155,
+    "completed_average_floor": 6.367741935483871,
+    "stalled_episodes": 0,
+    "active_max_floor_steps": 61,
+    "policy_loss": 0.8328536410099332,
+    "value_loss": 0.03013032541077946,
+    "imitation_fraction": 0.70770263671875,
+    "loss": 0.8453737035160884
   },
-  "saved_checkpoint_version": 784,
-  "next": "Deploysame-floor3000actual-decision stall terminal and perupdatehealth metrics/stop; fresh1729 only",
+  "saved_checkpoint_version": 0,
+  "next": "Monitor healthstop/fault/queue and savedcheckpoints; evaluate4096dev at3600trainingseconds; then2718 aftercost/maincheck.",
   "evaluation_complete": false,
   "prior_attempts": [
     {
@@ -110,11 +118,29 @@
       "exit_code": "0:0",
       "checkpoint_reason": "allocation_limit_during_evaluation",
       "version": 784
+    },
+    {
+      "job": {
+        "id": 3638,
+        "gpus": 8,
+        "state": "CANCELLED",
+        "start": "2026-10-21T02:16:48+08:00",
+        "time_limit_seconds": 3600,
+        "output": "/home/zhuyouwei/spire-downloads/e4-training-3638/A-1729",
+        "log": "/home/zhuyouwei/spire-downloads/e4-training-3638.slurm.log",
+        "elapsed_seconds": 409,
+        "exit_code": "0:15",
+        "end": "2026-10-21T02:23:37+08:00"
+      },
+      "state": "CANCELLED",
+      "elapsed_seconds": 409,
+      "exit_code": "0:15",
+      "authorization": "Claude28"
     }
   ],
   "runner_update": {
-    "commit": "5cf2432d96c4dd47066f5b02aa33c352b30cb8c4",
-    "authorization": "Claude26+27",
+    "commit": "9c082f74df8613003dd223ebde9d8132f654c95d",
+    "authorization": "Claude28",
     "status": "deployed_running",
     "evaluation_training_interval_seconds": 3600,
     "event_search": "All pending parents and all their options cloned, simulated and scored in one batch; select winner separately for each parent",
@@ -129,7 +155,9 @@
       "executions": 1,
       "log": "/home/zhuyouwei/spire-downloads/e4-training-3637/e4-replay.log",
       "sha256": "92c6b57a912faa5861c31f76dfed84207f4c5d6d4c1a56edca4ba04e7cb87866"
-    }
+    },
+    "floor_stall": "Morethan3000samefloor actualdecisions endsasstalled, nofuturebootstrap",
+    "training_health": "globalperupdate completedcount/floors/stalled + maxongoingfloorsteps; completed0or>5percentstalled savesandstops"
   },
   "evaluation_delay": {
     "checked_at": "2026-10-21T01:51:40+08:00",
@@ -172,7 +200,7 @@
     "diagnostic": "inventory/e4-784-evaluation-diagnostic.json"
   },
   "updated_at": "2026-10-21T02:20:59.267065+08:00",
-  "current_job": 3638,
+  "current_job": 3639,
   "cost_ledger": [
     {
       "job_id": 3628,
@@ -246,13 +274,13 @@
     "step_1": {
       "charged_node_seconds": 10999,
       "limit_node_seconds": 43200,
-      "reserved_node_seconds": 0,
+      "reserved_node_seconds": 7200,
       "limit_authorization": "Claude28 at627e417; priorcharges retained"
     }
   },
   "floor_stall_update": {
     "authorization": "Claude28",
-    "status": "prepared",
+    "status": "deployed",
     "actual_floor_steps_limit": 3000,
     "condition": "Morethan3000actualdecisions withoutfloorchange; nofuturebootstrap; stalled notengine death; validactualaction remains PPO/IL sample",
     "health_rule": "Stopafterupdate andcheckpoint ifglobalcompleted0 orstalled/completed>0.05",
@@ -271,6 +299,159 @@
       "value_loss",
       "version"
     ],
-    "onset": "Old784updates contain no episodecounts/floors; onsetcannotbedetermined; noextra run"
+    "onset": "Old784updates contain no episodecounts/floors; onsetcannotbedetermined; noextra run",
+    "commit": "9c082f74df8613003dd223ebde9d8132f654c95d",
+    "first_updates": [
+      {
+        "event": "update",
+        "version": 1,
+        "trained_seconds": 25.512744903564453,
+        "update_seconds": 25.512744903564453,
+        "actual_steps": 16384,
+        "sl_trial_steps": 413542,
+        "actual_steps_per_second": 642.1888427734375,
+        "sl_trial_steps_per_second": 16209.232421875,
+        "initialization": 1729,
+        "completed_episodes": 12,
+        "completed_average_floor": 3.1666666666666665,
+        "stalled_episodes": 0,
+        "active_max_floor_steps": 38,
+        "policy_loss": 0.8466221768425184,
+        "value_loss": 0.005847312023036446,
+        "imitation_fraction": 0.7060546875,
+        "loss": 0.8468930089729838
+      },
+      {
+        "event": "update",
+        "version": 2,
+        "trained_seconds": 49.9673957824707,
+        "update_seconds": 24.45465087890625,
+        "actual_steps": 16384,
+        "sl_trial_steps": 343794,
+        "actual_steps_per_second": 669.9747924804688,
+        "sl_trial_steps_per_second": 14058.4296875,
+        "initialization": 1729,
+        "completed_episodes": 147,
+        "completed_average_floor": 5.653061224489796,
+        "stalled_episodes": 0,
+        "active_max_floor_steps": 52,
+        "policy_loss": 0.8148487335183745,
+        "value_loss": 0.04632912961461387,
+        "imitation_fraction": 0.7105712890625,
+        "loss": 0.8354834925848991
+      },
+      {
+        "event": "update",
+        "version": 3,
+        "trained_seconds": 72.41399192810059,
+        "update_seconds": 22.446596145629883,
+        "actual_steps": 16384,
+        "sl_trial_steps": 301506,
+        "actual_steps_per_second": 729.9102172851562,
+        "sl_trial_steps_per_second": 13432.1474609375,
+        "initialization": 1729,
+        "completed_episodes": 155,
+        "completed_average_floor": 6.367741935483871,
+        "stalled_episodes": 0,
+        "active_max_floor_steps": 61,
+        "policy_loss": 0.8328536410099332,
+        "value_loss": 0.03013032541077946,
+        "imitation_fraction": 0.70770263671875,
+        "loss": 0.8453737035160884
+      }
+    ],
+    "startup_snapshot": {
+      "checked_at": "2026-10-21T02:27:57.269193+08:00",
+      "job": 3639,
+      "accounting": "JobId=3639 JobName=spire-e4-health1729\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899980 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:01:34 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-10-21T02:26:23 EligibleTime=2026-10-21T02:26:23\n   AccrueTime=2026-10-21T02:26:23\n   StartTime=2026-10-21T02:26:23 EndTime=2026-10-21T04:26:23 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T02:26:23 Scheduler=Backfill\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1267797\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-claude28-fresh1729.sh\n   WorkDir=/home/zhuyouwei/sts-silent-gpu-split\n   StdErr=/home/zhuyouwei/spire-downloads/e4-training-3639.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-training-3639.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n\n",
+      "queue": "3639|zhuyouwei|RUNNING|1:34|gres:gpu:V100:8|spire-e4-health1729\n",
+      "status": {
+        "reason": "started",
+        "task": "train",
+        "phase": "training",
+        "version": 0,
+        "initialization": 1729,
+        "trials": 32,
+        "trained_seconds": 0.0,
+        "allocation_process_seconds": 0.41671811998821795,
+        "job": "3639",
+        "commit": "9c082f74df8613003dd223ebde9d8132f654c95d",
+        "stagnant": 0,
+        "assessments": [],
+        "calibration_index": 0,
+        "checkpoint_files": [
+          "rank-0.pt",
+          "rank-1.pt",
+          "rank-2.pt",
+          "rank-3.pt",
+          "rank-4.pt",
+          "rank-5.pt",
+          "rank-6.pt",
+          "rank-7.pt"
+        ]
+      },
+      "updates": [
+        {
+          "event": "update",
+          "version": 1,
+          "trained_seconds": 25.512744903564453,
+          "update_seconds": 25.512744903564453,
+          "actual_steps": 16384,
+          "sl_trial_steps": 413542,
+          "actual_steps_per_second": 642.1888427734375,
+          "sl_trial_steps_per_second": 16209.232421875,
+          "initialization": 1729,
+          "completed_episodes": 12,
+          "completed_average_floor": 3.1666666666666665,
+          "stalled_episodes": 0,
+          "active_max_floor_steps": 38,
+          "policy_loss": 0.8466221768425184,
+          "value_loss": 0.005847312023036446,
+          "imitation_fraction": 0.7060546875,
+          "loss": 0.8468930089729838
+        },
+        {
+          "event": "update",
+          "version": 2,
+          "trained_seconds": 49.9673957824707,
+          "update_seconds": 24.45465087890625,
+          "actual_steps": 16384,
+          "sl_trial_steps": 343794,
+          "actual_steps_per_second": 669.9747924804688,
+          "sl_trial_steps_per_second": 14058.4296875,
+          "initialization": 1729,
+          "completed_episodes": 147,
+          "completed_average_floor": 5.653061224489796,
+          "stalled_episodes": 0,
+          "active_max_floor_steps": 52,
+          "policy_loss": 0.8148487335183745,
+          "value_loss": 0.04632912961461387,
+          "imitation_fraction": 0.7105712890625,
+          "loss": 0.8354834925848991
+        },
+        {
+          "event": "update",
+          "version": 3,
+          "trained_seconds": 72.41399192810059,
+          "update_seconds": 22.446596145629883,
+          "actual_steps": 16384,
+          "sl_trial_steps": 301506,
+          "actual_steps_per_second": 729.9102172851562,
+          "sl_trial_steps_per_second": 13432.1474609375,
+          "initialization": 1729,
+          "completed_episodes": 155,
+          "completed_average_floor": 6.367741935483871,
+          "stalled_episodes": 0,
+          "active_max_floor_steps": 61,
+          "policy_loss": 0.8328536410099332,
+          "value_loss": 0.03013032541077946,
+          "imitation_fraction": 0.70770263671875,
+          "loss": 0.8453737035160884
+        }
+      ],
+      "fault_files": [],
+      "log_sha256": "880a6c915d12a584ce9cc639800c334de04cce941734e58f950165e4eaa5991c"
+    },
+    "validation": "Requested freshtraining observed3updates; no extra tests/GPUvalidationjob. No healthstop yet; floorlimit boundary not separately tested."
   }
 }
