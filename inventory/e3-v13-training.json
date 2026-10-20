@@ -1,6 +1,6 @@
 {
   "observation_version": 13,
-  "status": "training",
+  "status": "stopped_remaining_budget_below_resume_window",
   "job_id": 3620,
   "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
   "curriculum_rule_commit": "a657aa250ef0d7f9ac90e960c81c42157b708cd1",
@@ -79,7 +79,7 @@
   "progress": {
     "current_group": "A",
     "current_init_seed": 2718,
-    "phase": "training",
+    "phase": "stopped_wall_budget_during_evaluation",
     "completed_runs": [
       {
         "group": "A",
@@ -88,23 +88,26 @@
         "stop_reason": "three_evaluations_without_frontier_improvement"
       }
     ],
-    "training_decisions": 63187811,
-    "completed_evaluation_sets": 147,
-    "optimizer_updates": 82,
+    "training_decisions": 70774222,
+    "completed_evaluation_sets": 163,
+    "optimizer_updates": 88,
     "faults": 0,
     "frontier": "k32",
-    "evaluation_truncated": 194,
+    "evaluation_truncated": 207,
     "stagnant": 1,
-    "total_training_decisions": 113331743,
-    "total_completed_evaluation_sets": 273,
-    "total_evaluation_truncated": 197,
+    "total_training_decisions": 120918154,
+    "total_completed_evaluation_sets": 289,
+    "total_evaluation_truncated": 210,
     "training_truncated": 255,
     "total_training_truncated": 255,
-    "resume_execution_inventory": "inventory/e3-oom-3625.json",
+    "resume_execution_inventory": "inventory/e3-final-3627.json",
     "evaluation_counting_scope": "Distinct group/init_seed/policy/set. Partial executions in3606 and3625 are retained separately from their complete repeats; repeated sets and truncations are counted once.",
     "learned": [
       "k8"
-    ]
+    ],
+    "completed_post_learning_assessments": 6,
+    "incomplete_current_assessment_sets": 16,
+    "expected_current_assessment_sets": 21
   },
   "result_note": "Cancelled3620 for Mac report9: a nonterminal combat snapshot cache differs before subsequent decisions; the human terminal-only exemption does not cover this case. Server training logs have no engine faults. A2718 is unfinished atupdate76/56051597 decisions. Policy71 assessment at50651118 completed21sets with no faults/truncations; devk8 is33/40, lower95 0.625, promoting tok32. All three global evaluation sets still have zero wins.18new auditprefixes pendingMac. Frozen checkpoint and full evidence preserved; remaining cumulative budget3340seconds.",
   "observed": {
@@ -2671,144 +2674,84 @@
     "sha256": "d153d85761f8e38231a6e48cdd40cbe5ff6963443cdcf410f511bb5269557b06"
   },
   "training_progress_snapshot": {
-    "observed_at": "2026-10-20T19:35:45.350248+08:00",
+    "observed_at": "2026-10-20T19:51:55.821237+08:00",
     "job_id": 3627,
     "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
     "group": "A",
     "init_seed": 2718,
-    "status": "running_after_interrupted_assessment_completed",
-    "slurm": {
-      "JobId": "3627",
-      "JobName": "spire-e3-v13-resume",
-      "UserId": "zhuyouwei(1017)",
-      "GroupId": "zhuyouwei(1018)",
-      "MCS_label": "N/A",
-      "Priority": "4294899991",
-      "Nice": "0",
-      "Account": "(null)",
-      "QOS": "(null)",
-      "JobState": "RUNNING",
-      "Reason": "None",
-      "Dependency": "(null)",
-      "Requeue": "1",
-      "Restarts": "0",
-      "BatchFlag": "1",
-      "Reboot": "0",
-      "ExitCode": "0:0",
-      "RunTime": "00:06:34",
-      "TimeLimit": "00:27:00",
-      "TimeMin": "N/A",
-      "SubmitTime": "2026-10-20T19:29:09",
-      "EligibleTime": "2026-10-20T19:29:09",
-      "AccrueTime": "2026-10-20T19:29:09",
-      "StartTime": "2026-10-20T19:29:10",
-      "EndTime": "2026-10-20T19:56:10",
-      "Deadline": "N/A",
-      "SuspendTime": "None",
-      "SecsPreSuspend": "0",
-      "LastSchedEval": "2026-10-20T19:29:10",
-      "Scheduler": "Main",
-      "Partition": "N56_128G_V100",
-      "Sid": "gpu01:401955",
-      "ReqNodeList": "gpu01",
-      "ExcNodeList": "(null)",
-      "NodeList": "gpu01",
-      "BatchHost": "gpu01",
-      "NumNodes": "1",
-      "NumCPUs": "8",
-      "NumTasks": "1",
-      "Task": "8",
-      "T": "0:0:*:*",
-      "TRES": "cpu=8,mem=96G,node=1,billing=8",
-      "Node": "*",
-      "C": "0:0:*:*",
-      "CoreSpec": "*",
-      "MinCPUsNode": "8",
-      "MinMemoryNode": "96G",
-      "MinTmpDiskNode": "0",
-      "Features": "(null)",
-      "DelayBoot": "00:00:00",
-      "OverSubscribe": "OK",
-      "Contiguous": "0",
-      "Licenses": "(null)",
-      "Network": "(null)",
-      "Command": "/home/zhuyouwei/spire-downloads/e3-resume.sh",
-      "WorkDir": "/home/zhuyouwei",
-      "StdErr": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
-      "StdIn": "/dev/null",
-      "StdOut": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
-      "TresPerNode": "gres:gpu:V100:8"
-    },
-    "updates": 82,
-    "training_decisions": 63187811,
+    "status": "stopped_wall_budget_during_evaluation",
+    "allocation_state": "COMPLETED",
+    "exit_code": "0:0",
+    "final_allocation_seconds": 916,
+    "updates": 88,
+    "training_decisions": 70774222,
     "frontier": "k32",
     "learned": [
       "k8"
     ],
     "checkpoint": {
       "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627/A-2718/checkpoint.pt",
-      "snapshot_path": "/home/zhuyouwei/spire-downloads/e3-resume-3627-stage-60758596/checkpoint.pt",
-      "sha256": "7ff9884f8c37315cb56b4bf45fc9f9924d1d6ab63f24396dc3dbd48d45b978a1",
-      "bytes": 11315495,
-      "policy_version": 82,
+      "sha256": "cab8302d613a59f070c51cba63b5db91edf42d95fbd502a8a677e7a09905c9d9",
+      "bytes": 11318567,
+      "policy_version": 88,
       "engine_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
-      "next_attempt": 5373952,
+      "next_attempt": 5767168,
       "curriculum": {
         "frontier": 1,
         "learned": [
           "k8"
         ],
-        "draws": 5373952,
+        "draws": 5767168,
         "sampling_counts": {
-          "frontier": 4154982,
-          "far": 1074790,
-          "learned": 144180
+          "frontier": 4390912,
+          "far": 1153432,
+          "learned": 222824
         },
         "decision_counts": {
-          "frontier": 36220719,
-          "far": 25811821,
-          "learned": 1155271
+          "frontier": 41536361,
+          "far": 27455186,
+          "learned": 1782675
         },
-        "total_decisions": 63187811,
-        "ppo_decisions": 63187811,
-        "episodes": 5373952,
-        "wins": 3828908,
+        "total_decisions": 70774222,
+        "ppo_decisions": 70774222,
+        "episodes": 5767168,
+        "wins": 4036591,
         "truncated": 255,
         "budget_cutoffs": 0,
         "next_evaluation": 70000000,
         "evaluations": 6,
         "stagnant": 1,
         "best_lower": 0.0,
-        "stopped": null,
+        "stopped": "wall_budget_during_evaluation",
         "promoted_at": {
           "k8": {
             "decisions": 50651118,
             "mean": 0.825
           }
         },
-        "evaluation_decisions": 5477862,
-        "evaluation_seconds": 1558.0122701574583,
+        "evaluation_decisions": 5584797,
+        "evaluation_seconds": 1740.9440345022595,
         "bootstrap_seed": 63008,
         "bootstrap_samples": 10000,
         "last_evaluated_decisions": 60758596
       }
     },
-    "new_optimizer_updates": 2,
-    "new_training_decisions": 2429215,
-    "completed_evaluation_sets_this_job": 21,
-    "completed_evaluation_sets": 147,
+    "new_optimizer_updates": 8,
+    "new_training_decisions": 10015626,
     "training_faults": 0,
     "evaluation_faults": 0,
-    "evaluation_truncated": 194,
+    "new_training_truncations": 0,
     "training_truncated": 255,
-    "audit_round": "A-2718-60758596",
-    "audit_roots": 18,
-    "audit_status": "pending_mac",
+    "last_completed_assessment_decisions": 60758596,
+    "incomplete_assessment_decisions": 70774222,
+    "incomplete_assessment_completed_sets": 16,
+    "expected_assessment_sets": 21,
+    "new_incomplete_assessment_truncations": 13,
     "initialization_completed": false,
-    "next_assessment_threshold": 70000000,
-    "evidence_inventory": "inventory/e3-oom-3625.json"
+    "next_initialization": null,
+    "evidence_inventory": "inventory/e3-final-3627.json"
   },
-  "training_progress_sha256": "1ce4a4ab049b283f7aedd5973ee404e69867cd3254557dc9d3e4b57ab249993b",
+  "training_progress_sha256": "1a2806d7959f1d4fbd8f7337afea79580dd3cb438d6881e2a32631fed0611cd4",
   "latest_stage_snapshot": {
     "observed_at": "2026-10-20T19:35:45.350248+08:00",
     "job_id": 3627,
@@ -17811,6 +17754,918 @@
       "job_id": 3627,
       "assessment_completed": true,
       "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/k8",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 92,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.9583333333333334,
+        "interval95": [
+          0.6811120222945888,
+          1.0
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.875,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.3125,
+          "unresolved": 0,
+          "interval95": [
+            -0.24194262207748907,
+            0.8669426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.1875,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 734,
+      "seconds": 0.22091453801840544,
+      "peak_allocated_bytes_by_rank": [
+        2730972672,
+        2730972672,
+        2730972672,
+        2730972672,
+        2728666112,
+        2728666112,
+        2728666112,
+        2728666112
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/k32",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 57,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.59375,
+        "interval95": [
+          0.31652868896125547,
+          0.8709713110387445
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.4375,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.5520833333333334,
+          "unresolved": 0,
+          "interval95": [
+            -0.0023592887441556964,
+            1.0
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.40625,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2178,
+      "seconds": 0.8471709359437227,
+      "peak_allocated_bytes_by_rank": [
+        2730804736,
+        2730806272,
+        2730804736,
+        2730025472,
+        2727113216,
+        2727111168,
+        2727111168,
+        2727111168
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/k64",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 6,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0625,
+        "interval95": [
+          0.0,
+          0.33972131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0625,
+          "unresolved": 0,
+          "interval95": [
+            -0.49194262207748907,
+            0.6169426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 2053,
+      "seconds": 1.0166765690082684,
+      "peak_allocated_bytes_by_rank": [
+        2726365696,
+        2726365696,
+        2726365696,
+        2726365696,
+        2726510080,
+        2726510080,
+        2726510080,
+        2726510080
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/k128",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 5633,
+      "seconds": 16.55541023099795,
+      "peak_allocated_bytes_by_rank": [
+        2727881728,
+        2727723520,
+        2728035328,
+        2727570432,
+        2726071296,
+        2726071296,
+        2726071296,
+        2726071296
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/k256",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 3,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.30847131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 3,
+          "interval95": [
+            -1.0,
+            1.0
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": -1.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 19003,
+      "seconds": 34.01173251599539,
+      "peak_allocated_bytes_by_rank": [
+        2727117824,
+        2727117824,
+        2727117824,
+        2727117824,
+        2724659712,
+        2725349888,
+        2724654080,
+        2725208576
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/k512",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 1,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.2876379777054112
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 1,
+          "interval95": [
+            -1.0,
+            1.0
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": -1.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 10057,
+      "seconds": 27.82148069201503,
+      "peak_allocated_bytes_by_rank": [
+        2723494912,
+        2722648064,
+        2722573312,
+        2722721280,
+        2726370816,
+        2726369792,
+        2726218752,
+        2726366720
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/act4_entry",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 8,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.36055464437207785
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 8,
+          "interval95": [
+            -1.0,
+            1.0
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": -1.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 39484,
+      "seconds": 42.1155687039718,
+      "peak_allocated_bytes_by_rank": [
+        2722962432,
+        2723187200,
+        2722532864,
+        2723025408,
+        2723406336,
+        2725930496,
+        2726998016,
+        2728546816
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/act3_boss",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 5044,
+      "seconds": 5.926944447914138,
+      "peak_allocated_bytes_by_rank": [
+        2724679680,
+        2724926464,
+        2724928000,
+        2723574784,
+        2725210624,
+        2725070848,
+        2725640192,
+        2725638656
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "train/act3_entry",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 24,
+        "attempts": 96,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.27722131103874453
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 24,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.5544426220774891,
+            0.5544426220774891
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 3886,
+      "seconds": 2.035863320925273,
+      "peak_allocated_bytes_by_rank": [
+        2722070528,
+        2722060800,
+        2722284032,
+        2722070528,
+        2722349568,
+        2722349568,
+        2722349568,
+        2722349568
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "dev/k8",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 29,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.725,
+        "interval95": [
+          0.2955305916532624,
+          1.0
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.5,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.1,
+          "unresolved": 0,
+          "interval95": [
+            -0.7589388166934752,
+            0.9589388166934751
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": -0.05,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 287,
+      "seconds": 0.18655886803753674,
+      "peak_allocated_bytes_by_rank": [
+        2716922880,
+        2716922880,
+        2716922880,
+        2716922880,
+        2718804992,
+        2718906880,
+        2718906880,
+        2718804992
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "dev/k32",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 4,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.1,
+        "interval95": [
+          0.0,
+          0.5294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.075,
+          "unresolved": 0,
+          "interval95": [
+            -0.7839388166934752,
+            0.9339388166934751
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 673,
+      "seconds": 0.6032016329700127,
+      "peak_allocated_bytes_by_rank": [
+        2716557312,
+        2716679168,
+        2716497920,
+        2716497920,
+        2716925440,
+        2716925440,
+        2716925440,
+        2716925440
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "dev/k64",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 944,
+      "seconds": 1.0581631970126182,
+      "peak_allocated_bytes_by_rank": [
+        2716082688,
+        2716082688,
+        2716082688,
+        2716318720,
+        2716020224,
+        2716020224,
+        2716026880,
+        2716020224
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "dev/k128",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1092,
+      "seconds": 1.1790674560470507,
+      "peak_allocated_bytes_by_rank": [
+        2716217856,
+        2716217856,
+        2716216832,
+        2716227072,
+        2716172800,
+        2716172800,
+        2716172800,
+        2716172800
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "dev/k256",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 1,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4544694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 1,
+          "interval95": [
+            -1.0,
+            1.0
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": -1.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 4558,
+      "seconds": 26.43560999596957,
+      "peak_allocated_bytes_by_rank": [
+        2718960128,
+        2718960640,
+        2718960128,
+        2718960128,
+        2716204544,
+        2716227072,
+        2716216320,
+        2718041600
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "dev/k512",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 1724,
+      "seconds": 2.338158483034931,
+      "peak_allocated_bytes_by_rank": [
+        2716184576,
+        2716226560,
+        2716184064,
+        2716184064,
+        2714892288,
+        2714691072,
+        2714593280,
+        2714544128
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+    },
+    {
+      "label": "70774222",
+      "set": "dev/act4_entry",
+      "training_decisions": 70774222,
+      "summary": {
+        "families": 10,
+        "attempts": 40,
+        "wins": 0,
+        "faults": 0,
+        "truncated": 0,
+        "mean": 0.0,
+        "interval95": [
+          0.0,
+          0.4294694083467376
+        ],
+        "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+        "bootstrap_lower95": 0.0,
+        "bootstrap_seed": 63008,
+        "bootstrap_samples": 10000,
+        "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+        "paired_initial": {
+          "families": 10,
+          "mean_change": 0.0,
+          "unresolved": 0,
+          "interval95": [
+            -0.8589388166934752,
+            0.8589388166934752
+          ],
+          "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+        }
+      },
+      "policy_version": 88,
+      "sampling_seed": 63003,
+      "repeats": 4,
+      "decisions": 9585,
+      "seconds": 20.579242756939493,
+      "peak_allocated_bytes_by_rank": [
+        2714897920,
+        2717886976,
+        2714994176,
+        2715098624,
+        2713696256,
+        2714496512,
+        2714353152,
+        2714544128
+      ],
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "assessment_completed": false,
+      "interrupted_by": "wall_budget_during_evaluation",
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
     }
   ],
   "policy_audits": [
@@ -20911,6 +21766,84 @@
       "initialization_completed": false,
       "next_assessment_threshold": 70000000,
       "evidence_inventory": "inventory/e3-oom-3625.json"
+    },
+    {
+      "observed_at": "2026-10-20T19:51:55.821237+08:00",
+      "job_id": 3627,
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+      "group": "A",
+      "init_seed": 2718,
+      "status": "stopped_wall_budget_during_evaluation",
+      "allocation_state": "COMPLETED",
+      "exit_code": "0:0",
+      "final_allocation_seconds": 916,
+      "updates": 88,
+      "training_decisions": 70774222,
+      "frontier": "k32",
+      "learned": [
+        "k8"
+      ],
+      "checkpoint": {
+        "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627/A-2718/checkpoint.pt",
+        "sha256": "cab8302d613a59f070c51cba63b5db91edf42d95fbd502a8a677e7a09905c9d9",
+        "bytes": 11318567,
+        "policy_version": 88,
+        "engine_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+        "next_attempt": 5767168,
+        "curriculum": {
+          "frontier": 1,
+          "learned": [
+            "k8"
+          ],
+          "draws": 5767168,
+          "sampling_counts": {
+            "frontier": 4390912,
+            "far": 1153432,
+            "learned": 222824
+          },
+          "decision_counts": {
+            "frontier": 41536361,
+            "far": 27455186,
+            "learned": 1782675
+          },
+          "total_decisions": 70774222,
+          "ppo_decisions": 70774222,
+          "episodes": 5767168,
+          "wins": 4036591,
+          "truncated": 255,
+          "budget_cutoffs": 0,
+          "next_evaluation": 70000000,
+          "evaluations": 6,
+          "stagnant": 1,
+          "best_lower": 0.0,
+          "stopped": "wall_budget_during_evaluation",
+          "promoted_at": {
+            "k8": {
+              "decisions": 50651118,
+              "mean": 0.825
+            }
+          },
+          "evaluation_decisions": 5584797,
+          "evaluation_seconds": 1740.9440345022595,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "last_evaluated_decisions": 60758596
+        }
+      },
+      "new_optimizer_updates": 8,
+      "new_training_decisions": 10015626,
+      "training_faults": 0,
+      "evaluation_faults": 0,
+      "new_training_truncations": 0,
+      "training_truncated": 255,
+      "last_completed_assessment_decisions": 60758596,
+      "incomplete_assessment_decisions": 70774222,
+      "incomplete_assessment_completed_sets": 16,
+      "expected_assessment_sets": 21,
+      "new_incomplete_assessment_truncations": 13,
+      "initialization_completed": false,
+      "next_initialization": null,
+      "evidence_inventory": "inventory/e3-final-3627.json"
     }
   ],
   "stage_evidence_archives": [
@@ -21900,262 +22833,496 @@
       "job_id": 3627,
       "repeats_partial_evidence_job": 3625,
       "counted_once": true
+    },
+    {
+      "seed": 1000003121,
+      "root_key": "a7c9f95dd88883e974f315f2b2a0b028b2cde9e4dc32f21fae4a00b4c5d726f8",
+      "prefix_decisions": 1733,
+      "attempt": 0,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.9393236041069031,
+      "initial_value": 0.9393236041069031,
+      "set": "train/k256",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k256.jsonl.gz",
+      "raw_file_sha256": "69629be61cc3d9709c7b8d19b31e708b383cd8688c4f09d2b3118ca0ab38560b"
+    },
+    {
+      "seed": 1000003851,
+      "root_key": "3835b86b2d746cad47f98af5376ad90ea242a161298668e46d5bf2463bb2c9de",
+      "prefix_decisions": 1517,
+      "attempt": 1,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.9690097570419312,
+      "initial_value": 0.9811190366744995,
+      "set": "train/k256",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k256.jsonl.gz",
+      "raw_file_sha256": "69629be61cc3d9709c7b8d19b31e708b383cd8688c4f09d2b3118ca0ab38560b"
+    },
+    {
+      "seed": 1000003851,
+      "root_key": "3835b86b2d746cad47f98af5376ad90ea242a161298668e46d5bf2463bb2c9de",
+      "prefix_decisions": 1517,
+      "attempt": 3,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.9690097570419312,
+      "initial_value": 0.9811190366744995,
+      "set": "train/k256",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k256.jsonl.gz",
+      "raw_file_sha256": "69629be61cc3d9709c7b8d19b31e708b383cd8688c4f09d2b3118ca0ab38560b"
+    },
+    {
+      "seed": 1000002362,
+      "root_key": "546c390ae13b875ec954bc1ed99af90b8d483ed7ddbbe3fd9896baf61a3a6efb",
+      "prefix_decisions": 1014,
+      "attempt": 1,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.9413350820541382,
+      "initial_value": 0.03532662242650986,
+      "set": "train/k512",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k512.jsonl.gz",
+      "raw_file_sha256": "b0ba21eb204ce328c34a731122c0239dfe81e4dec10374346c98d34fa6a777ef"
+    },
+    {
+      "seed": 1000003121,
+      "root_key": "db03d8354a92e05e83d07152e342ecb56b91353ccbe3891706c2c586454c4571",
+      "prefix_decisions": 1721,
+      "attempt": 0,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.10888545960187912,
+      "initial_value": 0.07693091779947281,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 1000002362,
+      "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+      "prefix_decisions": 1323,
+      "attempt": 0,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.5782356262207031,
+      "initial_value": 0.6186334490776062,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 1000002362,
+      "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+      "prefix_decisions": 1323,
+      "attempt": 1,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.5832720398902893,
+      "initial_value": 0.6186334490776062,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 1000003121,
+      "root_key": "db03d8354a92e05e83d07152e342ecb56b91353ccbe3891706c2c586454c4571",
+      "prefix_decisions": 1721,
+      "attempt": 2,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.08803059160709381,
+      "initial_value": 0.07693091779947281,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 1000002362,
+      "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+      "prefix_decisions": 1323,
+      "attempt": 2,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.5782357454299927,
+      "initial_value": 0.6186334490776062,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 1000003851,
+      "root_key": "fc92622296f4336dbfbce380e8053d14b2a6cc1fcb5caa8597dd27ef21b024df",
+      "prefix_decisions": 1526,
+      "attempt": 2,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.9690097570419312,
+      "initial_value": 0.037522073835134506,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 1000002362,
+      "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+      "prefix_decisions": 1323,
+      "attempt": 3,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.5828386545181274,
+      "initial_value": 0.6186334490776062,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 1000003851,
+      "root_key": "fc92622296f4336dbfbce380e8053d14b2a6cc1fcb5caa8597dd27ef21b024df",
+      "prefix_decisions": 1526,
+      "attempt": 3,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.00815138965845108,
+      "initial_value": 0.037522073835134506,
+      "set": "train/act4_entry",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+      "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    {
+      "seed": 2000003441,
+      "root_key": "f8395279168fcdab4424481f4c945cd20bd069f0a201aae2e89ec027a968d66e",
+      "prefix_decisions": 1870,
+      "attempt": 3,
+      "policy_version": 88,
+      "outcome": "truncated",
+      "fault": 0,
+      "bootstrap": 0.9606483578681946,
+      "initial_value": 0.9770375490188599,
+      "set": "dev/k256",
+      "candidate_count": 3000,
+      "group": "A",
+      "init_seed": 2718,
+      "job_id": 3627,
+      "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-dev-k256.jsonl.gz",
+      "raw_file_sha256": "b52e366d9623b853bfaaf31c822c23f8426def1aca5b1ff7e871f70bcb151b6a"
     }
   ],
   "latest_update_diagnostics": {
     "episodes": 65536,
     "completed": 65536,
-    "wins": 29135,
-    "deaths": 36401,
+    "wins": 36372,
+    "deaths": 29164,
     "episode_decisions": {
       "min": 2,
-      "p50": 18.0,
-      "p95": 35.0,
-      "p99": 53.0,
+      "p50": 20.0,
+      "p95": 38.0,
+      "p99": 52.0,
       "max": 150,
-      "mean": 18.519302368164062
+      "mean": 20.447311401367188
     },
     "lane_utilization": {
-      "waves": 1008,
-      "active_lane_steps": 1213681,
-      "available_lane_steps": 8257536,
-      "active_lane_seconds": 321194.57209912775,
-      "available_lane_seconds": 585267.0058125,
-      "step_fraction": 0.1469785902235243,
-      "time_fraction": 0.5488000671646058
+      "waves": 1015,
+      "active_lane_steps": 1340035,
+      "available_lane_steps": 8314880,
+      "active_lane_seconds": 362412.24075602053,
+      "available_lane_seconds": 629438.48053125,
+      "step_fraction": 0.16116107508466748,
+      "time_fraction": 0.5757707098716658
     },
     "workers": [
       {
         "rank": 0,
-        "decisions": 151395,
-        "compact_bytes": 458662830,
+        "decisions": 166969,
+        "compact_bytes": 511370114,
         "timing": {
-          "root_prepare_seconds": 7.371232421875,
-          "reset_seconds": 0.040458240509033204,
-          "step_encode_seconds": 1.0785843267142772,
-          "inference_seconds": 7.7437665226459504,
-          "storage_seconds": 0.08987414398789406,
-          "collection_seconds": 18.796858684974723
+          "root_prepare_seconds": 0.0023736319541931153,
+          "reset_seconds": 0.04611481475830078,
+          "step_encode_seconds": 1.0831708212196827,
+          "inference_seconds": 8.023769078731537,
+          "storage_seconds": 0.18075708907842636,
+          "collection_seconds": 11.698300146032125
         },
         "utilization": {
-          "waves": 143,
-          "active_lane_steps": 151395,
-          "available_lane_steps": 1171456,
-          "active_lane_seconds": 40302.24963223362,
-          "available_lane_seconds": 74768.4265703125
+          "waves": 110,
+          "active_lane_steps": 166969,
+          "available_lane_steps": 901120,
+          "active_lane_seconds": 45219.977667040825,
+          "available_lane_seconds": 76704.9871015625
         },
         "memory": {
-          "allocated_bytes": 761305600,
-          "reserved_bytes": 12622757888,
-          "peak_allocated_bytes": 3962208256,
-          "peak_reserved_bytes": 12662603776,
-          "free_bytes": 1834483712,
+          "allocated_bytes": 761514496,
+          "reserved_bytes": 3613392896,
+          "peak_allocated_bytes": 3892921344,
+          "peak_reserved_bytes": 14145290240,
+          "free_bytes": 10843848704,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 98067676
+        "root_cache_bytes": 98523628
       },
       {
         "rank": 1,
-        "decisions": 152811,
-        "compact_bytes": 462322475,
+        "decisions": 167506,
+        "compact_bytes": 515659057,
         "timing": {
-          "root_prepare_seconds": 7.60218212890625,
-          "reset_seconds": 0.041366527557373044,
-          "step_encode_seconds": 1.1020615743100644,
-          "inference_seconds": 7.679431671142578,
-          "storage_seconds": 0.08219065600633621,
-          "collection_seconds": 18.81806775496807
+          "root_prepare_seconds": 0.0022773759365081786,
+          "reset_seconds": 0.04638617706298828,
+          "step_encode_seconds": 1.080408061951399,
+          "inference_seconds": 8.370940933227539,
+          "storage_seconds": 0.0857878720164299,
+          "collection_seconds": 11.96054457302671
         },
         "utilization": {
-          "waves": 129,
-          "active_lane_steps": 152811,
-          "available_lane_steps": 1056768,
-          "active_lane_seconds": 40206.71607012367,
-          "available_lane_seconds": 74301.1555859375
+          "waves": 136,
+          "active_lane_steps": 167506,
+          "available_lane_steps": 1114112,
+          "active_lane_seconds": 45449.47790271473,
+          "available_lane_seconds": 79951.2191015625
         },
         "memory": {
-          "allocated_bytes": 764352000,
-          "reserved_bytes": 12039749632,
-          "peak_allocated_bytes": 3960392192,
-          "peak_reserved_bytes": 12039749632,
-          "free_bytes": 2415394816,
+          "allocated_bytes": 765708800,
+          "reserved_bytes": 12975079424,
+          "peak_allocated_bytes": 3895273984,
+          "peak_reserved_bytes": 12975079424,
+          "free_bytes": 1480065024,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 98067676
+        "root_cache_bytes": 98523628
       },
       {
         "rank": 2,
-        "decisions": 152591,
-        "compact_bytes": 462401357,
+        "decisions": 168478,
+        "compact_bytes": 517598033,
         "timing": {
-          "root_prepare_seconds": 7.45753515625,
-          "reset_seconds": 0.04289843368530273,
-          "step_encode_seconds": 1.054985217154026,
-          "inference_seconds": 7.435620356082916,
-          "storage_seconds": 0.07413123208284378,
-          "collection_seconds": 18.410882514086552
+          "root_prepare_seconds": 0.002279423952102661,
+          "reset_seconds": 0.04573081588745117,
+          "step_encode_seconds": 1.1243253785967826,
+          "inference_seconds": 8.422689783573151,
+          "storage_seconds": 0.17995001667737962,
+          "collection_seconds": 12.228755943011492
         },
         "utilization": {
-          "waves": 113,
-          "active_lane_steps": 152591,
-          "available_lane_steps": 925696,
-          "active_lane_seconds": 40317.90241518402,
-          "available_lane_seconds": 71630.5919140625
+          "waves": 147,
+          "active_lane_steps": 168478,
+          "available_lane_steps": 1204224,
+          "active_lane_seconds": 45197.550171985626,
+          "available_lane_seconds": 80850.7632734375
         },
         "memory": {
-          "allocated_bytes": 764430848,
-          "reserved_bytes": 13342081024,
-          "peak_allocated_bytes": 3973836288,
-          "peak_reserved_bytes": 13342081024,
-          "free_bytes": 1134034944,
+          "allocated_bytes": 767805952,
+          "reserved_bytes": 3619684352,
+          "peak_allocated_bytes": 3894754816,
+          "peak_reserved_bytes": 14233370624,
+          "free_bytes": 10856431616,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 97991684
+        "root_cache_bytes": 98523628
       },
       {
         "rank": 3,
-        "decisions": 151466,
-        "compact_bytes": 459037635,
+        "decisions": 168203,
+        "compact_bytes": 514829389,
         "timing": {
-          "root_prepare_seconds": 7.36773828125,
-          "reset_seconds": 0.04209971237182617,
-          "step_encode_seconds": 1.036840952038765,
-          "inference_seconds": 7.3844521026611325,
-          "storage_seconds": 0.07247532814741135,
-          "collection_seconds": 18.244648613967
+          "root_prepare_seconds": 0.002203648090362549,
+          "reset_seconds": 0.042471424102783206,
+          "step_encode_seconds": 1.0924287917464972,
+          "inference_seconds": 8.383864842653274,
+          "storage_seconds": 0.2011728644967079,
+          "collection_seconds": 12.143014515051618
         },
         "utilization": {
-          "waves": 109,
-          "active_lane_steps": 151466,
-          "available_lane_steps": 892928,
-          "active_lane_seconds": 40084.40054072761,
-          "available_lane_seconds": 71028.94421875
+          "waves": 142,
+          "active_lane_steps": 168203,
+          "available_lane_steps": 1163264,
+          "active_lane_seconds": 45407.417238071444,
+          "available_lane_seconds": 80239.6109921875
         },
         "memory": {
-          "allocated_bytes": 761305600,
-          "reserved_bytes": 12700352512,
-          "peak_allocated_bytes": 3982594560,
-          "peak_reserved_bytes": 12767461376,
-          "free_bytes": 1761083392,
+          "allocated_bytes": 764639232,
+          "reserved_bytes": 3617587200,
+          "peak_allocated_bytes": 3892904960,
+          "peak_reserved_bytes": 13956546560,
+          "free_bytes": 10843848704,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 98181664
+        "root_cache_bytes": 98523628
       },
       {
         "rank": 4,
-        "decisions": 151927,
-        "compact_bytes": 460822623,
+        "decisions": 166471,
+        "compact_bytes": 511473470,
         "timing": {
-          "root_prepare_seconds": 7.60034814453125,
-          "reset_seconds": 0.03982745742797852,
-          "step_encode_seconds": 1.052863485366106,
-          "inference_seconds": 7.4129643521308894,
-          "storage_seconds": 0.07402972787618638,
-          "collection_seconds": 18.55086721701082
+          "root_prepare_seconds": 0.0021729280948638917,
+          "reset_seconds": 0.04533145523071289,
+          "step_encode_seconds": 1.072158715367317,
+          "inference_seconds": 8.084123665332795,
+          "storage_seconds": 0.0784313601255417,
+          "collection_seconds": 11.879252780927345
         },
         "utilization": {
-          "waves": 111,
-          "active_lane_steps": 151927,
-          "available_lane_steps": 909312,
-          "active_lane_seconds": 40109.3206950655,
-          "available_lane_seconds": 71457.03164843749
+          "waves": 118,
+          "active_lane_steps": 166471,
+          "available_lane_steps": 966656,
+          "active_lane_seconds": 44836.652185357096,
+          "available_lane_seconds": 77277.8280859375
         },
         "memory": {
-          "allocated_bytes": 763402752,
-          "reserved_bytes": 13404995584,
-          "peak_allocated_bytes": 4015732736,
-          "peak_reserved_bytes": 13404995584,
-          "free_bytes": 1071120384,
+          "allocated_bytes": 761514496,
+          "reserved_bytes": 7138705408,
+          "peak_allocated_bytes": 3893822464,
+          "peak_reserved_bytes": 7138705408,
+          "free_bytes": 7337410560,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 98485632
+        "root_cache_bytes": 99093568
       },
       {
         "rank": 5,
-        "decisions": 150736,
-        "compact_bytes": 455600336,
+        "decisions": 166591,
+        "compact_bytes": 508903890,
         "timing": {
-          "root_prepare_seconds": 7.59448779296875,
-          "reset_seconds": 0.04219289779663086,
-          "step_encode_seconds": 1.075879932999611,
-          "inference_seconds": 7.528554487466812,
-          "storage_seconds": 0.08098515194654465,
-          "collection_seconds": 18.901111070998013
+          "root_prepare_seconds": 0.0020930559635162355,
+          "reset_seconds": 0.04532121658325195,
+          "step_encode_seconds": 1.0540840963125229,
+          "inference_seconds": 7.966337021827698,
+          "storage_seconds": 0.07291599988937378,
+          "collection_seconds": 11.529893856029958
         },
         "utilization": {
-          "waves": 133,
-          "active_lane_steps": 150736,
-          "available_lane_steps": 1089536,
-          "active_lane_seconds": 39698.428017662045,
-          "available_lane_seconds": 72815.9952421875
+          "waves": 104,
+          "active_lane_steps": 166591,
+          "available_lane_steps": 851968,
+          "active_lane_seconds": 44949.223992689134,
+          "available_lane_seconds": 75978.78553125
         },
         "memory": {
-          "allocated_bytes": 757629952,
-          "reserved_bytes": 12731809792,
-          "peak_allocated_bytes": 4064401408,
-          "peak_reserved_bytes": 12731809792,
-          "free_bytes": 1727528960,
+          "allocated_bytes": 759417344,
+          "reserved_bytes": 14120124416,
+          "peak_allocated_bytes": 3894756352,
+          "peak_reserved_bytes": 14120124416,
+          "free_bytes": 339214336,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 98485632
+        "root_cache_bytes": 99093568
       },
       {
         "rank": 6,
-        "decisions": 151266,
-        "compact_bytes": 458013142,
+        "decisions": 168634,
+        "compact_bytes": 517361358,
         "timing": {
-          "root_prepare_seconds": 7.19113330078125,
-          "reset_seconds": 0.041046016693115236,
-          "step_encode_seconds": 1.0970316798985005,
-          "inference_seconds": 7.844290563583374,
-          "storage_seconds": 0.08965260806679726,
-          "collection_seconds": 18.7361506880261
+          "root_prepare_seconds": 0.0021667840480804443,
+          "reset_seconds": 0.04458291244506836,
+          "step_encode_seconds": 1.137524742782116,
+          "inference_seconds": 8.485808122396469,
+          "storage_seconds": 0.18512099146842956,
+          "collection_seconds": 12.278908269945532
         },
         "utilization": {
           "waves": 150,
-          "active_lane_steps": 151266,
+          "active_lane_steps": 168634,
           "available_lane_steps": 1228800,
-          "active_lane_seconds": 40097.84670346737,
-          "available_lane_seconds": 75918.0263203125
+          "active_lane_seconds": 45920.47145725822,
+          "available_lane_seconds": 81504.67978125
         },
         "memory": {
-          "allocated_bytes": 760042496,
-          "reserved_bytes": 11999903744,
-          "peak_allocated_bytes": 4004699648,
-          "peak_reserved_bytes": 11999903744,
-          "free_bytes": 2474115072,
+          "allocated_bytes": 767805952,
+          "reserved_bytes": 3617587200,
+          "peak_allocated_bytes": 3894757888,
+          "peak_reserved_bytes": 14292090880,
+          "free_bytes": 10856431616,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 98675612
+        "root_cache_bytes": 99093568
       },
       {
         "rank": 7,
-        "decisions": 151489,
-        "compact_bytes": 459047054,
+        "decisions": 167183,
+        "compact_bytes": 513891191,
         "timing": {
-          "root_prepare_seconds": 7.5611484375,
-          "reset_seconds": 0.04020019149780273,
-          "step_encode_seconds": 1.0815365090966225,
-          "inference_seconds": 7.5969413278102875,
-          "storage_seconds": 0.10290428900718689,
-          "collection_seconds": 18.954893113928847
+          "root_prepare_seconds": 0.002238464117050171,
+          "reset_seconds": 0.0446033935546875,
+          "step_encode_seconds": 1.0688573414087297,
+          "inference_seconds": 8.061259758234025,
+          "storage_seconds": 0.07571030408143997,
+          "collection_seconds": 11.61196710797958
         },
         "utilization": {
-          "waves": 120,
-          "active_lane_steps": 151489,
-          "available_lane_steps": 983040,
-          "active_lane_seconds": 40377.70802466392,
-          "available_lane_seconds": 73346.8343125
+          "waves": 108,
+          "active_lane_steps": 167183,
+          "available_lane_steps": 884736,
+          "active_lane_seconds": 45431.470140903475,
+          "available_lane_seconds": 76930.6066640625
         },
         "memory": {
-          "allocated_bytes": 761305600,
-          "reserved_bytes": 12031361024,
-          "peak_allocated_bytes": 3982265856,
-          "peak_reserved_bytes": 12031361024,
-          "free_bytes": 2425880576,
+          "allocated_bytes": 763700736,
+          "reserved_bytes": 14046724096,
+          "peak_allocated_bytes": 3894757888,
+          "peak_reserved_bytes": 14046724096,
+          "free_bytes": 410517504,
           "total_bytes": 16928342016
         },
-        "root_cache_bytes": 98333648
+        "root_cache_bytes": 99093568
       }
     ],
     "root_families": 871,
@@ -22165,422 +23332,506 @@
     "truncated": 0,
     "budget_cutoffs": 0,
     "faults": 0,
-    "decisions": 1213681,
-    "training_decisions": 1213681,
-    "replay_decisions": 98498087,
-    "compact_bytes": 3685616964,
+    "decisions": 1340035,
+    "training_decisions": 1340035,
+    "replay_decisions": 98497578,
+    "compact_bytes": 4121806846,
     "per_screen_entropy": {
       "combat": {
-        "decisions": 863725,
-        "normalized": 0.39382731914520264
+        "decisions": 957974,
+        "normalized": 0.330920547246933
       },
       "hand_select": {
-        "decisions": 281995,
-        "normalized": 0.4217850863933563
+        "decisions": 307009,
+        "normalized": 0.3852995038032532
       },
       "grid": {
-        "decisions": 444,
-        "normalized": 0.9952540397644043
+        "decisions": 551,
+        "normalized": 0.938745379447937
       },
       "card_reward": {
-        "decisions": 4369,
-        "normalized": 0.8669387102127075
+        "decisions": 4217,
+        "normalized": 0.8786266446113586
       },
       "combat_reward": {
-        "decisions": 8317,
-        "normalized": 0.7555220723152161
+        "decisions": 8167,
+        "normalized": 0.7552139163017273
       },
       "event": {
-        "decisions": 2749,
-        "normalized": 0.3691299557685852
+        "decisions": 2487,
+        "normalized": 0.35744163393974304
       },
       "map": {
-        "decisions": 20632,
-        "normalized": 0.9998670220375061
+        "decisions": 20783,
+        "normalized": 0.9993649125099182
       },
       "room": {
-        "decisions": 30373,
-        "normalized": 0.03951290622353554
+        "decisions": 37712,
+        "normalized": 0.03424619883298874
       },
       "shop": {
-        "decisions": 1077,
-        "normalized": 0.5788146257400513
+        "decisions": 1135,
+        "normalized": 0.5710142850875854
       }
     },
     "value_calibration": {
       "episode_start": {
         "count": 65536,
-        "brier": 0.04326397925615311,
-        "predicted": 0.4581165909767151,
-        "observed": 0.4445648193359375,
+        "brier": 0.057664260268211365,
+        "predicted": 0.5547879934310913,
+        "observed": 0.55499267578125,
         "bins": [
           {
             "bin": 0,
-            "count": 30039,
-            "predicted": 0.02233230508863926,
-            "observed": 0.013116282410919666
+            "count": 26215,
+            "predicted": 0.005182420369237661,
+            "observed": 0.005493038333952427
           },
           {
             "bin": 1,
-            "count": 4915,
-            "predicted": 0.12694309651851654,
-            "observed": 0.19186164438724518
+            "count": 1639,
+            "predicted": 0.15220749378204346,
+            "observed": 0.8194020986557007
           },
           {
             "bin": 6,
-            "count": 3276,
-            "predicted": 0.6159238219261169,
-            "observed": 0.4017094075679779
+            "count": 1639,
+            "predicted": 0.6410346031188965,
+            "observed": 0.9438682198524475
+          },
+          {
+            "bin": 7,
+            "count": 1638,
+            "predicted": 0.7445594668388367,
+            "observed": 0.8992673754692078
           },
           {
             "bin": 8,
-            "count": 1092,
-            "predicted": 0.8706414699554443,
-            "observed": 0.982600748538971
+            "count": 3277,
+            "predicted": 0.8848446011543274,
+            "observed": 0.499847412109375
           },
           {
             "bin": 9,
-            "count": 26214,
-            "predicted": 0.9826754927635193,
-            "observed": 0.9692912101745605
+            "count": 31128,
+            "predicted": 0.9895714521408081,
+            "observed": 0.9710549712181091
           }
         ]
       },
       "decision_weighted": {
-        "count": 1213681,
-        "brier": 0.03899316489696503,
-        "predicted": 0.4733440577983856,
-        "observed": 0.45690011978149414,
+        "count": 1340035,
+        "brier": 0.058244798332452774,
+        "predicted": 0.6091457605361938,
+        "observed": 0.5986835956573486,
         "bins": [
           {
             "bin": 0,
-            "count": 556725,
-            "predicted": 0.01886986754834652,
-            "observed": 0.012129866518080235
+            "count": 465756,
+            "predicted": 0.004708881955593824,
+            "observed": 0.0033858930692076683
           },
           {
             "bin": 1,
-            "count": 44818,
-            "predicted": 0.14450955390930176,
-            "observed": 0.16067205369472504
+            "count": 11899,
+            "predicted": 0.15599019825458527,
+            "observed": 0.6357676982879639
           },
           {
             "bin": 2,
-            "count": 16040,
-            "predicted": 0.24461783468723297,
-            "observed": 0.16471321880817413
+            "count": 17629,
+            "predicted": 0.2506009340286255,
+            "observed": 0.7389528751373291
           },
           {
             "bin": 3,
-            "count": 18879,
-            "predicted": 0.34750470519065857,
-            "observed": 0.2795698940753937
+            "count": 4872,
+            "predicted": 0.31668612360954285,
+            "observed": 0.6894499063491821
           },
           {
             "bin": 4,
-            "count": 10591,
-            "predicted": 0.44548851251602173,
-            "observed": 0.3687092959880829
+            "count": 7929,
+            "predicted": 0.4250985085964203,
+            "observed": 0.8409635424613953
           },
           {
             "bin": 5,
-            "count": 8718,
-            "predicted": 0.5522744059562683,
-            "observed": 0.41592109203338623
+            "count": 7159,
+            "predicted": 0.5743851661682129,
+            "observed": 0.8829445242881775
           },
           {
             "bin": 6,
-            "count": 21920,
-            "predicted": 0.646439254283905,
-            "observed": 0.5138686299324036
+            "count": 11494,
+            "predicted": 0.6422761082649231,
+            "observed": 0.8688881397247314
           },
           {
             "bin": 7,
-            "count": 11062,
-            "predicted": 0.7634298801422119,
-            "observed": 0.5995299220085144
+            "count": 31477,
+            "predicted": 0.7700400352478027,
+            "observed": 0.9101248383522034
           },
           {
             "bin": 8,
-            "count": 20728,
-            "predicted": 0.851945698261261,
-            "observed": 0.6330567598342896
+            "count": 34247,
+            "predicted": 0.8515483736991882,
+            "observed": 0.7907553911209106
           },
           {
             "bin": 9,
-            "count": 504200,
-            "predicted": 0.9861472249031067,
-            "observed": 0.9799841046333313
+            "count": 747573,
+            "predicted": 0.9871945381164551,
+            "observed": 0.9337201714515686
           }
         ]
       },
       "by_screen": {
         "combat": {
-          "count": 863725,
-          "brier": 0.04393908008933067,
-          "predicted": 0.47157782316207886,
-          "observed": 0.452798068523407,
+          "count": 957974,
+          "brier": 0.07184354960918427,
+          "predicted": 0.6149333119392395,
+          "observed": 0.5931538939476013,
           "bins": [
             {
               "bin": 0,
-              "count": 390286,
-              "predicted": 0.0184651929885149,
-              "observed": 0.011122612282633781
+              "count": 324719,
+              "predicted": 0.004668479785323143,
+              "observed": 0.002802422968670726
             },
             {
               "bin": 1,
-              "count": 35137,
-              "predicted": 0.14456410706043243,
-              "observed": 0.1727239042520523
+              "count": 4212,
+              "predicted": 0.15228544175624847,
+              "observed": 0.49335232377052307
             },
             {
               "bin": 2,
-              "count": 13399,
-              "predicted": 0.2449604570865631,
-              "observed": 0.1689678281545639
+              "count": 16648,
+              "predicted": 0.2502368688583374,
+              "observed": 0.7630345821380615
             },
             {
               "bin": 3,
-              "count": 14220,
-              "predicted": 0.35080885887145996,
-              "observed": 0.2876933813095093
+              "count": 3828,
+              "predicted": 0.31501305103302,
+              "observed": 0.8030303120613098
             },
             {
               "bin": 4,
-              "count": 8902,
-              "predicted": 0.44577401876449585,
-              "observed": 0.395304411649704
+              "count": 5195,
+              "predicted": 0.4336472451686859,
+              "observed": 0.8048123121261597
             },
             {
               "bin": 5,
-              "count": 7499,
-              "predicted": 0.5526856780052185,
-              "observed": 0.4504600465297699
+              "count": 6991,
+              "predicted": 0.5746847987174988,
+              "observed": 0.8982977867126465
             },
             {
               "bin": 6,
-              "count": 15657,
-              "predicted": 0.6451178789138794,
-              "observed": 0.5011816024780273
+              "count": 10648,
+              "predicted": 0.6412715911865234,
+              "observed": 0.9007325172424316
             },
             {
               "bin": 7,
-              "count": 9065,
-              "predicted": 0.7657290697097778,
-              "observed": 0.6263651251792908
+              "count": 25113,
+              "predicted": 0.7668343782424927,
+              "observed": 0.918289303779602
             },
             {
               "bin": 8,
-              "count": 19069,
-              "predicted": 0.8509332537651062,
-              "observed": 0.64764803647995
+              "count": 27741,
+              "predicted": 0.8485766053199768,
+              "observed": 0.7664467692375183
             },
             {
               "bin": 9,
-              "count": 350491,
-              "predicted": 0.9854042530059814,
-              "observed": 0.974507212638855
+              "count": 532879,
+              "predicted": 0.9864610433578491,
+              "observed": 0.9103116989135742
             }
           ]
         },
         "hand_select": {
-          "count": 281995,
-          "brier": 0.03322014957666397,
-          "predicted": 0.48364996910095215,
-          "observed": 0.47109344601631165,
+          "count": 307009,
+          "brier": 0.029913462698459625,
+          "predicted": 0.6176514029502869,
+          "observed": 0.6394405364990234,
           "bins": [
             {
               "bin": 0,
-              "count": 129080,
-              "predicted": 0.023204509168863297,
-              "observed": 0.01868608593940735
+              "count": 103859,
+              "predicted": 0.005750488955527544,
+              "observed": 0.006422168575227261
             },
             {
               "bin": 1,
-              "count": 9678,
-              "predicted": 0.1443161815404892,
-              "observed": 0.11696631461381912
+              "count": 7638,
+              "predicted": 0.15815341472625732,
+              "observed": 0.7183817625045776
             },
             {
               "bin": 2,
-              "count": 2638,
-              "predicted": 0.2428930550813675,
-              "observed": 0.14329037070274353
+              "count": 973,
+              "predicted": 0.257002592086792,
+              "observed": 0.33299073576927185
             },
             {
               "bin": 3,
-              "count": 4659,
-              "predicted": 0.3374200165271759,
-              "observed": 0.2547757029533386
+              "count": 1022,
+              "predicted": 0.3218079209327698,
+              "observed": 0.2788649797439575
             },
             {
               "bin": 4,
-              "count": 1689,
-              "predicted": 0.4439837336540222,
-              "observed": 0.22853758931159973
+              "count": 2716,
+              "predicted": 0.40855276584625244,
+              "observed": 0.9156848192214966
             },
             {
               "bin": 5,
-              "count": 1216,
-              "predicted": 0.5497263073921204,
-              "observed": 0.20394736528396606
+              "count": 144,
+              "predicted": 0.5627758502960205,
+              "observed": 0.2847222089767456
             },
             {
               "bin": 6,
-              "count": 6263,
-              "predicted": 0.6497426629066467,
-              "observed": 0.5455851554870605
+              "count": 834,
+              "predicted": 0.6548750400543213,
+              "observed": 0.4748201370239258
             },
             {
               "bin": 7,
-              "count": 1997,
-              "predicted": 0.7529933452606201,
-              "observed": 0.4777165651321411
+              "count": 6351,
+              "predicted": 0.7827713489532471,
+              "observed": 0.8797039985656738
             },
             {
               "bin": 8,
-              "count": 1659,
-              "predicted": 0.8635835647583008,
-              "observed": 0.4653405547142029
+              "count": 6499,
+              "predicted": 0.8642644882202148,
+              "observed": 0.8953685164451599
             },
             {
               "bin": 9,
-              "count": 123116,
-              "predicted": 0.9857211709022522,
-              "observed": 0.9906104803085327
+              "count": 176973,
+              "predicted": 0.9883728623390198,
+              "observed": 0.9901002049446106
             }
           ]
         },
         "grid": {
-          "count": 444,
-          "brier": 0.00013178995868656784,
-          "predicted": 0.011002246290445328,
+          "count": 551,
+          "brier": 0.043389078229665756,
+          "predicted": 0.08849383145570755,
           "observed": 0.0,
           "bins": [
             {
               "bin": 0,
-              "count": 444,
-              "predicted": 0.011002246290445328,
+              "count": 454,
+              "predicted": 0.010684503242373466,
+              "observed": 0.0
+            },
+            {
+              "bin": 1,
+              "count": 20,
+              "predicted": 0.13471347093582153,
+              "observed": 0.0
+            },
+            {
+              "bin": 3,
+              "count": 18,
+              "predicted": 0.3791154623031616,
+              "observed": 0.0
+            },
+            {
+              "bin": 4,
+              "count": 18,
+              "predicted": 0.45440542697906494,
+              "observed": 0.0
+            },
+            {
+              "bin": 5,
+              "count": 19,
+              "predicted": 0.5580406188964844,
+              "observed": 0.0
+            },
+            {
+              "bin": 6,
+              "count": 9,
+              "predicted": 0.6608906388282776,
+              "observed": 0.0
+            },
+            {
+              "bin": 7,
+              "count": 13,
+              "predicted": 0.7431463003158569,
               "observed": 0.0
             }
           ]
         },
         "card_reward": {
-          "count": 4369,
-          "brier": 0.000396592979086563,
-          "predicted": 0.33507779240608215,
-          "observed": 0.3334859311580658,
+          "count": 4217,
+          "brier": 0.0009256365010514855,
+          "predicted": 0.3234052062034607,
+          "observed": 0.31894710659980774,
           "bins": [
             {
               "bin": 0,
-              "count": 2906,
-              "predicted": 0.008596770465373993,
+              "count": 2835,
+              "predicted": 0.004175792448222637,
               "observed": 0.0
             },
             {
               "bin": 1,
-              "count": 3,
-              "predicted": 0.12968404591083527,
+              "count": 21,
+              "predicted": 0.1260274201631546,
               "observed": 0.0
             },
             {
               "bin": 2,
-              "count": 2,
-              "predicted": 0.22214409708976746,
+              "count": 7,
+              "predicted": 0.22868435084819794,
+              "observed": 0.0
+            },
+            {
+              "bin": 3,
+              "count": 1,
+              "predicted": 0.3235500454902649,
+              "observed": 0.0
+            },
+            {
+              "bin": 5,
+              "count": 5,
+              "predicted": 0.5518460273742676,
+              "observed": 0.0
+            },
+            {
+              "bin": 6,
+              "count": 3,
+              "predicted": 0.6492562890052795,
               "observed": 0.0
             },
             {
               "bin": 9,
-              "count": 1458,
-              "predicted": 0.9863781332969666,
-              "observed": 0.9993141293525696
+              "count": 1345,
+              "predicted": 0.9982776641845703,
+              "observed": 1.0
             }
           ]
         },
         "combat_reward": {
-          "count": 8317,
-          "brier": 4.2412098991917446e-05,
-          "predicted": 0.0064457012340426445,
+          "count": 8167,
+          "brier": 1.5881458239164203e-05,
+          "predicted": 0.0018064406467601657,
           "observed": 0.0,
           "bins": [
             {
               "bin": 0,
-              "count": 8317,
-              "predicted": 0.0064457012340426445,
+              "count": 8164,
+              "predicted": 0.00174447160679847,
               "observed": 0.0
-            }
-          ]
-        },
-        "event": {
-          "count": 2749,
-          "brier": 4.7306311898864806e-05,
-          "predicted": 0.006761134602129459,
-          "observed": 0.0,
-          "bins": [
+            },
             {
-              "bin": 0,
-              "count": 2749,
-              "predicted": 0.006761134602129459,
-              "observed": 0.0
-            }
-          ]
-        },
-        "map": {
-          "count": 20632,
-          "brier": 8.190248627215624e-05,
-          "predicted": 0.008983475156128407,
-          "observed": 0.0,
-          "bins": [
-            {
-              "bin": 0,
-              "count": 20632,
-              "predicted": 0.008983475156128407,
-              "observed": 0.0
-            }
-          ]
-        },
-        "room": {
-          "count": 30373,
-          "brier": 6.747231964254752e-05,
-          "predicted": 0.9565911293029785,
-          "observed": 0.9592401385307312,
-          "bins": [
-            {
-              "bin": 0,
-              "count": 1234,
-              "predicted": 0.007040974218398333,
+              "bin": 1,
+              "count": 2,
+              "predicted": 0.13789114356040955,
               "observed": 0.0
             },
             {
               "bin": 2,
               "count": 1,
-              "predicted": 0.2486618608236313,
+              "predicted": 0.23555222153663635,
               "observed": 0.0
-            },
-            {
-              "bin": 5,
-              "count": 3,
-              "predicted": 0.5571932196617126,
-              "observed": 0.0
-            },
-            {
-              "bin": 9,
-              "count": 29135,
-              "predicted": 0.9968743324279785,
-              "observed": 1.0
             }
           ]
         },
-        "shop": {
-          "count": 1077,
-          "brier": 4.725248072645627e-05,
-          "predicted": 0.006763309706002474,
+        "event": {
+          "count": 2487,
+          "brier": 2.062244902845123e-06,
+          "predicted": 0.0014165779575705528,
           "observed": 0.0,
           "bins": [
             {
               "bin": 0,
-              "count": 1077,
-              "predicted": 0.006763309706002474,
+              "count": 2487,
+              "predicted": 0.0014165779575705528,
+              "observed": 0.0
+            }
+          ]
+        },
+        "map": {
+          "count": 20783,
+          "brier": 3.3678322779451264e-06,
+          "predicted": 0.0018260348588228226,
+          "observed": 0.0,
+          "bins": [
+            {
+              "bin": 0,
+              "count": 20783,
+              "predicted": 0.0018260348588228226,
+              "observed": 0.0
+            }
+          ]
+        },
+        "room": {
+          "count": 37712,
+          "brier": 0.0003688895667437464,
+          "predicted": 0.9569398760795593,
+          "observed": 0.9644675254821777,
+          "bins": [
+            {
+              "bin": 0,
+              "count": 1321,
+              "predicted": 0.0020334438886493444,
+              "observed": 0.0
+            },
+            {
+              "bin": 1,
+              "count": 5,
+              "predicted": 0.1959734708070755,
+              "observed": 0.0
+            },
+            {
+              "bin": 3,
+              "count": 3,
+              "predicted": 0.3298182487487793,
+              "observed": 0.0
+            },
+            {
+              "bin": 8,
+              "count": 7,
+              "predicted": 0.8227428793907166,
+              "observed": 0.0
+            },
+            {
+              "bin": 9,
+              "count": 36376,
+              "predicted": 0.991799533367157,
+              "observed": 0.9998900294303894
+            }
+          ]
+        },
+        "shop": {
+          "count": 1135,
+          "brier": 0.000171202453202568,
+          "predicted": 0.004443963523954153,
+          "observed": 0.0,
+          "bins": [
+            {
+              "bin": 0,
+              "count": 1134,
+              "predicted": 0.004334375262260437,
+              "observed": 0.0
+            },
+            {
+              "bin": 1,
+              "count": 1,
+              "predicted": 0.12871712446212769,
               "observed": 0.0
             }
           ]
@@ -22588,233 +23839,269 @@
       },
       "by_act": {
         "3": {
-          "count": 297562,
-          "brier": 9.306568244937807e-05,
-          "predicted": 0.009180787950754166,
+          "count": 290881,
+          "brier": 0.00025094239390455186,
+          "predicted": 0.002433270448818803,
           "observed": 0.0,
           "bins": [
             {
               "bin": 0,
-              "count": 297557,
-              "predicted": 0.009174038656055927,
+              "count": 290608,
+              "predicted": 0.0020206396002322435,
               "observed": 0.0
             },
             {
               "bin": 1,
-              "count": 1,
-              "predicted": 0.1341719627380371,
+              "count": 78,
+              "predicted": 0.14117997884750366,
               "observed": 0.0
             },
             {
               "bin": 2,
-              "count": 1,
-              "predicted": 0.2486618608236313,
+              "count": 20,
+              "predicted": 0.2339569330215454,
+              "observed": 0.0
+            },
+            {
+              "bin": 3,
+              "count": 31,
+              "predicted": 0.3655083477497101,
+              "observed": 0.0
+            },
+            {
+              "bin": 4,
+              "count": 27,
+              "predicted": 0.45676130056381226,
               "observed": 0.0
             },
             {
               "bin": 5,
-              "count": 3,
-              "predicted": 0.5571932196617126,
+              "count": 41,
+              "predicted": 0.5522579550743103,
+              "observed": 0.0
+            },
+            {
+              "bin": 6,
+              "count": 22,
+              "predicted": 0.660234272480011,
+              "observed": 0.0
+            },
+            {
+              "bin": 7,
+              "count": 24,
+              "predicted": 0.7430400848388672,
+              "observed": 0.0
+            },
+            {
+              "bin": 8,
+              "count": 19,
+              "predicted": 0.8482804298400879,
+              "observed": 0.0
+            },
+            {
+              "bin": 9,
+              "count": 11,
+              "predicted": 0.9186863303184509,
               "observed": 0.0
             }
           ]
         },
         "4": {
-          "count": 916119,
-          "brier": 0.051628194749355316,
-          "predicted": 0.6241075396537781,
-          "observed": 0.6053045392036438,
+          "count": 1049154,
+          "brier": 0.07432376593351364,
+          "predicted": 0.7773585319519043,
+          "observed": 0.7646703720092773,
           "bins": [
             {
               "bin": 0,
-              "count": 259168,
-              "predicted": 0.03000187873840332,
-              "observed": 0.026056457310914993
+              "count": 175148,
+              "predicted": 0.009169249795377254,
+              "observed": 0.009003814309835434
             },
             {
               "bin": 1,
-              "count": 44817,
-              "predicted": 0.14450979232788086,
-              "observed": 0.16067562997341156
+              "count": 11821,
+              "predicted": 0.1560879349708557,
+              "observed": 0.6399627923965454
             },
             {
               "bin": 2,
-              "count": 16039,
-              "predicted": 0.24461758136749268,
-              "observed": 0.1647234857082367
+              "count": 17609,
+              "predicted": 0.2506197988986969,
+              "observed": 0.7397921681404114
             },
             {
               "bin": 3,
-              "count": 18879,
-              "predicted": 0.34750470519065857,
-              "observed": 0.2795698940753937
+              "count": 4841,
+              "predicted": 0.31637346744537354,
+              "observed": 0.6938648819923401
             },
             {
               "bin": 4,
-              "count": 10591,
-              "predicted": 0.44548851251602173,
-              "observed": 0.3687092959880829
+              "count": 7902,
+              "predicted": 0.4249902665615082,
+              "observed": 0.8438370227813721
             },
             {
               "bin": 5,
-              "count": 8715,
-              "predicted": 0.5522727370262146,
-              "observed": 0.4160642623901367
+              "count": 7118,
+              "predicted": 0.5745126008987427,
+              "observed": 0.8880303502082825
             },
             {
               "bin": 6,
-              "count": 21920,
-              "predicted": 0.646439254283905,
-              "observed": 0.5138686299324036
+              "count": 11472,
+              "predicted": 0.6422415971755981,
+              "observed": 0.8705543875694275
             },
             {
               "bin": 7,
-              "count": 11062,
-              "predicted": 0.7634298801422119,
-              "observed": 0.5995299220085144
+              "count": 31453,
+              "predicted": 0.770060658454895,
+              "observed": 0.9108192920684814
             },
             {
               "bin": 8,
-              "count": 20728,
-              "predicted": 0.851945698261261,
-              "observed": 0.6330567598342896
+              "count": 34228,
+              "predicted": 0.8515501618385315,
+              "observed": 0.7911943197250366
             },
             {
               "bin": 9,
-              "count": 504200,
-              "predicted": 0.9861472249031067,
-              "observed": 0.9799841046333313
+              "count": 747562,
+              "predicted": 0.987195611000061,
+              "observed": 0.9337339401245117
             }
           ]
         }
       }
     },
     "selected_action_probability": {
-      "mean": 0.6632315516471863,
-      "min": 8.984605301520787e-06,
+      "mean": 0.7072046399116516,
+      "min": 3.641429657363915e-06,
       "max": 1.0
     },
     "ppo": {
-      "samples": 1213681,
-      "minibatches": 149,
-      "update_seconds": 36.90903865592554,
-      "policy_loss": 0.007146054429113961,
-      "value_loss": 0.03915004799639401,
-      "entropy": 0.39750691938777544,
-      "kl": 0.022265857201142606,
-      "clip_fraction": 0.09079486294584335,
-      "loss": 0.022746009300538658,
-      "grad_norm": 0.2261466830203836,
+      "samples": 1340035,
+      "minibatches": 164,
+      "update_seconds": 41.38109613501001,
+      "policy_loss": -0.004329048390900104,
+      "value_loss": 0.02720844884331378,
+      "entropy": 0.3447031828869193,
+      "kl": 0.12182147223176387,
+      "clip_fraction": 0.14572007450913643,
+      "loss": 0.00582814432796927,
+      "grad_norm": 0.22315599913569986,
       "memory": [
         {
           "rank": 0,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 12645826560,
-          "peak_allocated_bytes": 1607032320,
-          "peak_reserved_bytes": 12645826560,
-          "free_bytes": 1811415040,
+          "reserved_bytes": 3642753024,
+          "peak_allocated_bytes": 1600380416,
+          "peak_reserved_bytes": 3642753024,
+          "free_bytes": 10814488576,
           "total_bytes": 16928342016
         },
         {
           "rank": 1,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 12062818304,
-          "peak_allocated_bytes": 1667187712,
-          "peak_reserved_bytes": 12062818304,
-          "free_bytes": 2392326144,
+          "reserved_bytes": 12975079424,
+          "peak_allocated_bytes": 1606042624,
+          "peak_reserved_bytes": 12975079424,
+          "free_bytes": 1480065024,
           "total_bytes": 16928342016
         },
         {
           "rank": 2,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 13367246848,
-          "peak_allocated_bytes": 1628766208,
-          "peak_reserved_bytes": 13367246848,
-          "free_bytes": 1108869120,
+          "reserved_bytes": 3651141632,
+          "peak_allocated_bytes": 1606697472,
+          "peak_reserved_bytes": 3651141632,
+          "free_bytes": 10824974336,
           "total_bytes": 16928342016
         },
         {
           "rank": 3,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 12723421184,
-          "peak_allocated_bytes": 1662959104,
-          "peak_reserved_bytes": 12723421184,
-          "free_bytes": 1738014720,
+          "reserved_bytes": 3649044480,
+          "peak_allocated_bytes": 1603523072,
+          "peak_reserved_bytes": 3649044480,
+          "free_bytes": 10812391424,
           "total_bytes": 16928342016
         },
         {
           "rank": 4,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 13428064256,
-          "peak_allocated_bytes": 1669556224,
-          "peak_reserved_bytes": 13428064256,
-          "free_bytes": 1048051712,
+          "reserved_bytes": 7138705408,
+          "peak_allocated_bytes": 1600380416,
+          "peak_reserved_bytes": 7138705408,
+          "free_bytes": 7337410560,
           "total_bytes": 16928342016
         },
         {
           "rank": 5,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 12756975616,
-          "peak_allocated_bytes": 1639786496,
-          "peak_reserved_bytes": 12756975616,
-          "free_bytes": 1702363136,
+          "reserved_bytes": 14120124416,
+          "peak_allocated_bytes": 1600251392,
+          "peak_reserved_bytes": 14120124416,
+          "free_bytes": 339214336,
           "total_bytes": 16928342016
         },
         {
           "rank": 6,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 12025069568,
-          "peak_allocated_bytes": 1605210112,
-          "peak_reserved_bytes": 12025069568,
-          "free_bytes": 2448949248,
+          "reserved_bytes": 3646947328,
+          "peak_allocated_bytes": 1606697472,
+          "peak_reserved_bytes": 3646947328,
+          "free_bytes": 10827071488,
           "total_bytes": 16928342016
         },
         {
           "rank": 7,
           "allocated_bytes": 35845120,
-          "reserved_bytes": 12054429696,
-          "peak_allocated_bytes": 1664138240,
-          "peak_reserved_bytes": 12054429696,
-          "free_bytes": 2402811904,
+          "reserved_bytes": 14046724096,
+          "peak_allocated_bytes": 1605177344,
+          "peak_reserved_bytes": 14046724096,
+          "free_bytes": 410517504,
           "total_bytes": 16928342016
         }
       ],
-      "policy_version": 81,
-      "published_version": 82,
-      "learner_seconds": 37.119944107951596
+      "policy_version": 87,
+      "published_version": 88,
+      "learner_seconds": 41.61418879206758
     },
-    "update": 82,
-    "cumulative_decisions": 63187811,
+    "update": 88,
+    "cumulative_decisions": 70774222,
     "frontier": "k32",
     "source_episodes": {
+      "frontier": 39322,
       "learned": 13108,
-      "far": 13108,
-      "frontier": 39320
+      "far": 13106
     },
     "source_decisions": {
-      "learned": 104316,
-      "far": 297562,
-      "frontier": 811803
+      "frontier": 945944,
+      "learned": 103210,
+      "far": 290881
     },
     "source_episode_shares": {
+      "frontier": 0.600006103515625,
       "learned": 0.20001220703125,
-      "far": 0.20001220703125,
-      "frontier": 0.5999755859375
+      "far": 0.199981689453125
     },
     "source_decision_shares": {
-      "learned": 0.08595009726608557,
-      "far": 0.24517315505474668,
-      "frontier": 0.6688767476791677
+      "frontier": 0.7059099202632767,
+      "learned": 0.07702037633345397,
+      "far": 0.2170697034032693
     },
     "timing": {
-      "root_prepare_seconds": 59.7458056640625,
-      "reset_seconds": 0.3300894775390625,
-      "step_encode_seconds": 8.579783677577971,
-      "inference_seconds": 60.62602138352394,
-      "storage_seconds": 0.6662431371212005,
-      "collection_seconds": 19.712963343015872,
-      "total_seconds": 60.100659895921126,
-      "decisions_per_second": 20194.13767006524
+      "root_prepare_seconds": 0.017805312156677248,
+      "reset_seconds": 0.36054220962524414,
+      "step_encode_seconds": 8.712957949385046,
+      "inference_seconds": 65.7987932059765,
+      "storage_seconds": 1.0598464978337288,
+      "collection_seconds": 13.070778938010335,
+      "total_seconds": 57.993817927083,
+      "decisions_per_second": 23106.514588931837
     }
   },
   "evaluation_scope_note": "Every evaluation is identified by group, init_seed, label and set. Labels and training decision counts are per initialization. Existing A/1729 metric values were preserved when run identifiers were added.",
@@ -24727,142 +26014,82 @@
     }
   ],
   "active_run_snapshot": {
-    "observed_at": "2026-10-20T19:35:45.350248+08:00",
+    "observed_at": "2026-10-20T19:51:55.821237+08:00",
     "job_id": 3627,
     "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
     "group": "A",
     "init_seed": 2718,
-    "status": "running_after_interrupted_assessment_completed",
-    "slurm": {
-      "JobId": "3627",
-      "JobName": "spire-e3-v13-resume",
-      "UserId": "zhuyouwei(1017)",
-      "GroupId": "zhuyouwei(1018)",
-      "MCS_label": "N/A",
-      "Priority": "4294899991",
-      "Nice": "0",
-      "Account": "(null)",
-      "QOS": "(null)",
-      "JobState": "RUNNING",
-      "Reason": "None",
-      "Dependency": "(null)",
-      "Requeue": "1",
-      "Restarts": "0",
-      "BatchFlag": "1",
-      "Reboot": "0",
-      "ExitCode": "0:0",
-      "RunTime": "00:06:34",
-      "TimeLimit": "00:27:00",
-      "TimeMin": "N/A",
-      "SubmitTime": "2026-10-20T19:29:09",
-      "EligibleTime": "2026-10-20T19:29:09",
-      "AccrueTime": "2026-10-20T19:29:09",
-      "StartTime": "2026-10-20T19:29:10",
-      "EndTime": "2026-10-20T19:56:10",
-      "Deadline": "N/A",
-      "SuspendTime": "None",
-      "SecsPreSuspend": "0",
-      "LastSchedEval": "2026-10-20T19:29:10",
-      "Scheduler": "Main",
-      "Partition": "N56_128G_V100",
-      "Sid": "gpu01:401955",
-      "ReqNodeList": "gpu01",
-      "ExcNodeList": "(null)",
-      "NodeList": "gpu01",
-      "BatchHost": "gpu01",
-      "NumNodes": "1",
-      "NumCPUs": "8",
-      "NumTasks": "1",
-      "Task": "8",
-      "T": "0:0:*:*",
-      "TRES": "cpu=8,mem=96G,node=1,billing=8",
-      "Node": "*",
-      "C": "0:0:*:*",
-      "CoreSpec": "*",
-      "MinCPUsNode": "8",
-      "MinMemoryNode": "96G",
-      "MinTmpDiskNode": "0",
-      "Features": "(null)",
-      "DelayBoot": "00:00:00",
-      "OverSubscribe": "OK",
-      "Contiguous": "0",
-      "Licenses": "(null)",
-      "Network": "(null)",
-      "Command": "/home/zhuyouwei/spire-downloads/e3-resume.sh",
-      "WorkDir": "/home/zhuyouwei",
-      "StdErr": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
-      "StdIn": "/dev/null",
-      "StdOut": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
-      "TresPerNode": "gres:gpu:V100:8"
-    },
-    "updates": 82,
-    "training_decisions": 63187811,
+    "status": "stopped_wall_budget_during_evaluation",
+    "allocation_state": "COMPLETED",
+    "exit_code": "0:0",
+    "final_allocation_seconds": 916,
+    "updates": 88,
+    "training_decisions": 70774222,
     "frontier": "k32",
     "learned": [
       "k8"
     ],
     "checkpoint": {
       "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627/A-2718/checkpoint.pt",
-      "snapshot_path": "/home/zhuyouwei/spire-downloads/e3-resume-3627-stage-60758596/checkpoint.pt",
-      "sha256": "7ff9884f8c37315cb56b4bf45fc9f9924d1d6ab63f24396dc3dbd48d45b978a1",
-      "bytes": 11315495,
-      "policy_version": 82,
+      "sha256": "cab8302d613a59f070c51cba63b5db91edf42d95fbd502a8a677e7a09905c9d9",
+      "bytes": 11318567,
+      "policy_version": 88,
       "engine_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
-      "next_attempt": 5373952,
+      "next_attempt": 5767168,
       "curriculum": {
         "frontier": 1,
         "learned": [
           "k8"
         ],
-        "draws": 5373952,
+        "draws": 5767168,
         "sampling_counts": {
-          "frontier": 4154982,
-          "far": 1074790,
-          "learned": 144180
+          "frontier": 4390912,
+          "far": 1153432,
+          "learned": 222824
         },
         "decision_counts": {
-          "frontier": 36220719,
-          "far": 25811821,
-          "learned": 1155271
+          "frontier": 41536361,
+          "far": 27455186,
+          "learned": 1782675
         },
-        "total_decisions": 63187811,
-        "ppo_decisions": 63187811,
-        "episodes": 5373952,
-        "wins": 3828908,
+        "total_decisions": 70774222,
+        "ppo_decisions": 70774222,
+        "episodes": 5767168,
+        "wins": 4036591,
         "truncated": 255,
         "budget_cutoffs": 0,
         "next_evaluation": 70000000,
         "evaluations": 6,
         "stagnant": 1,
         "best_lower": 0.0,
-        "stopped": null,
+        "stopped": "wall_budget_during_evaluation",
         "promoted_at": {
           "k8": {
             "decisions": 50651118,
             "mean": 0.825
           }
         },
-        "evaluation_decisions": 5477862,
-        "evaluation_seconds": 1558.0122701574583,
+        "evaluation_decisions": 5584797,
+        "evaluation_seconds": 1740.9440345022595,
         "bootstrap_seed": 63008,
         "bootstrap_samples": 10000,
         "last_evaluated_decisions": 60758596
       }
     },
-    "new_optimizer_updates": 2,
-    "new_training_decisions": 2429215,
-    "completed_evaluation_sets_this_job": 21,
-    "completed_evaluation_sets": 147,
+    "new_optimizer_updates": 8,
+    "new_training_decisions": 10015626,
     "training_faults": 0,
     "evaluation_faults": 0,
-    "evaluation_truncated": 194,
+    "new_training_truncations": 0,
     "training_truncated": 255,
-    "audit_round": "A-2718-60758596",
-    "audit_roots": 18,
-    "audit_status": "pending_mac",
+    "last_completed_assessment_decisions": 60758596,
+    "incomplete_assessment_decisions": 70774222,
+    "incomplete_assessment_completed_sets": 16,
+    "expected_assessment_sets": 21,
+    "new_incomplete_assessment_truncations": 13,
     "initialization_completed": false,
-    "next_assessment_threshold": 70000000,
-    "evidence_inventory": "inventory/e3-oom-3625.json"
+    "next_initialization": null,
+    "evidence_inventory": "inventory/e3-final-3627.json"
   },
   "run_start_evidence_archives": [
     {
@@ -27009,14 +28236,171 @@
         "checkpoint_bytes": 11314087
       },
       "note": "Final stopped-job 3606 snapshot retained before job 3620 resumed."
+    },
+    {
+      "observed_at": "2026-10-20T19:35:45.350248+08:00",
+      "job_id": 3627,
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+      "group": "A",
+      "init_seed": 2718,
+      "status": "running_after_interrupted_assessment_completed",
+      "slurm": {
+        "JobId": "3627",
+        "JobName": "spire-e3-v13-resume",
+        "UserId": "zhuyouwei(1017)",
+        "GroupId": "zhuyouwei(1018)",
+        "MCS_label": "N/A",
+        "Priority": "4294899991",
+        "Nice": "0",
+        "Account": "(null)",
+        "QOS": "(null)",
+        "JobState": "RUNNING",
+        "Reason": "None",
+        "Dependency": "(null)",
+        "Requeue": "1",
+        "Restarts": "0",
+        "BatchFlag": "1",
+        "Reboot": "0",
+        "ExitCode": "0:0",
+        "RunTime": "00:06:34",
+        "TimeLimit": "00:27:00",
+        "TimeMin": "N/A",
+        "SubmitTime": "2026-10-20T19:29:09",
+        "EligibleTime": "2026-10-20T19:29:09",
+        "AccrueTime": "2026-10-20T19:29:09",
+        "StartTime": "2026-10-20T19:29:10",
+        "EndTime": "2026-10-20T19:56:10",
+        "Deadline": "N/A",
+        "SuspendTime": "None",
+        "SecsPreSuspend": "0",
+        "LastSchedEval": "2026-10-20T19:29:10",
+        "Scheduler": "Main",
+        "Partition": "N56_128G_V100",
+        "Sid": "gpu01:401955",
+        "ReqNodeList": "gpu01",
+        "ExcNodeList": "(null)",
+        "NodeList": "gpu01",
+        "BatchHost": "gpu01",
+        "NumNodes": "1",
+        "NumCPUs": "8",
+        "NumTasks": "1",
+        "Task": "8",
+        "T": "0:0:*:*",
+        "TRES": "cpu=8,mem=96G,node=1,billing=8",
+        "Node": "*",
+        "C": "0:0:*:*",
+        "CoreSpec": "*",
+        "MinCPUsNode": "8",
+        "MinMemoryNode": "96G",
+        "MinTmpDiskNode": "0",
+        "Features": "(null)",
+        "DelayBoot": "00:00:00",
+        "OverSubscribe": "OK",
+        "Contiguous": "0",
+        "Licenses": "(null)",
+        "Network": "(null)",
+        "Command": "/home/zhuyouwei/spire-downloads/e3-resume.sh",
+        "WorkDir": "/home/zhuyouwei",
+        "StdErr": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
+        "StdIn": "/dev/null",
+        "StdOut": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
+        "TresPerNode": "gres:gpu:V100:8"
+      },
+      "updates": 82,
+      "training_decisions": 63187811,
+      "frontier": "k32",
+      "learned": [
+        "k8"
+      ],
+      "checkpoint": {
+        "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627/A-2718/checkpoint.pt",
+        "snapshot_path": "/home/zhuyouwei/spire-downloads/e3-resume-3627-stage-60758596/checkpoint.pt",
+        "sha256": "7ff9884f8c37315cb56b4bf45fc9f9924d1d6ab63f24396dc3dbd48d45b978a1",
+        "bytes": 11315495,
+        "policy_version": 82,
+        "engine_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+        "next_attempt": 5373952,
+        "curriculum": {
+          "frontier": 1,
+          "learned": [
+            "k8"
+          ],
+          "draws": 5373952,
+          "sampling_counts": {
+            "frontier": 4154982,
+            "far": 1074790,
+            "learned": 144180
+          },
+          "decision_counts": {
+            "frontier": 36220719,
+            "far": 25811821,
+            "learned": 1155271
+          },
+          "total_decisions": 63187811,
+          "ppo_decisions": 63187811,
+          "episodes": 5373952,
+          "wins": 3828908,
+          "truncated": 255,
+          "budget_cutoffs": 0,
+          "next_evaluation": 70000000,
+          "evaluations": 6,
+          "stagnant": 1,
+          "best_lower": 0.0,
+          "stopped": null,
+          "promoted_at": {
+            "k8": {
+              "decisions": 50651118,
+              "mean": 0.825
+            }
+          },
+          "evaluation_decisions": 5477862,
+          "evaluation_seconds": 1558.0122701574583,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "last_evaluated_decisions": 60758596
+        }
+      },
+      "new_optimizer_updates": 2,
+      "new_training_decisions": 2429215,
+      "completed_evaluation_sets_this_job": 21,
+      "completed_evaluation_sets": 147,
+      "training_faults": 0,
+      "evaluation_faults": 0,
+      "evaluation_truncated": 194,
+      "training_truncated": 255,
+      "audit_round": "A-2718-60758596",
+      "audit_roots": 18,
+      "audit_status": "pending_mac",
+      "initialization_completed": false,
+      "next_assessment_threshold": 70000000,
+      "evidence_inventory": "inventory/e3-oom-3625.json"
     }
   ],
   "training_progress_sha256_source": {
-    "path": "/home/zhuyouwei/spire-downloads/e3-resume-3627-stage-60758596/observation.json",
-    "sha256": "1ce4a4ab049b283f7aedd5973ee404e69867cd3254557dc9d3e4b57ab249993b"
+    "path": "/home/zhuyouwei/spire-downloads/e3-final-3627/observation.json",
+    "sha256": "1a2806d7959f1d4fbd8f7337afea79580dd3cb438d6881e2a32631fed0611cd4"
   },
-  "observed_at": "2026-10-20T19:35:45.350248+08:00",
-  "interrupted_assessment": null,
+  "observed_at": "2026-10-20T19:51:55.821237+08:00",
+  "interrupted_assessment": {
+    "job_id": 3627,
+    "group": "A",
+    "init_seed": 2718,
+    "policy_version": 88,
+    "decisions": 70774222,
+    "completed_sets": 16,
+    "expected_sets": 21,
+    "missing_sets": [
+      "dev/act3_boss",
+      "dev/act3_entry",
+      "dev/e2_act3_entry",
+      "dev/e2_all",
+      "dev/neow"
+    ],
+    "status": "waiting_usable_authorized_budget",
+    "raw_partial_results_preserved": true,
+    "frontier_update_applied": false,
+    "truncated": 13
+  },
   "training_truncation_records": [
     {
       "group": "A",
@@ -41332,6 +42716,921 @@
       ],
       "scope": "Combined training diagnostics; not source-specific entropy.",
       "diagnostic_inventory": "inventory/e3-resume-3620.json"
+    },
+    {
+      "episodes": 65536,
+      "completed": 65536,
+      "wins": 29135,
+      "deaths": 36401,
+      "episode_decisions": {
+        "min": 2,
+        "p50": 18.0,
+        "p95": 35.0,
+        "p99": 53.0,
+        "max": 150,
+        "mean": 18.519302368164062
+      },
+      "lane_utilization": {
+        "waves": 1008,
+        "active_lane_steps": 1213681,
+        "available_lane_steps": 8257536,
+        "active_lane_seconds": 321194.57209912775,
+        "available_lane_seconds": 585267.0058125,
+        "step_fraction": 0.1469785902235243,
+        "time_fraction": 0.5488000671646058
+      },
+      "workers": [
+        {
+          "rank": 0,
+          "decisions": 151395,
+          "compact_bytes": 458662830,
+          "timing": {
+            "root_prepare_seconds": 7.371232421875,
+            "reset_seconds": 0.040458240509033204,
+            "step_encode_seconds": 1.0785843267142772,
+            "inference_seconds": 7.7437665226459504,
+            "storage_seconds": 0.08987414398789406,
+            "collection_seconds": 18.796858684974723
+          },
+          "utilization": {
+            "waves": 143,
+            "active_lane_steps": 151395,
+            "available_lane_steps": 1171456,
+            "active_lane_seconds": 40302.24963223362,
+            "available_lane_seconds": 74768.4265703125
+          },
+          "memory": {
+            "allocated_bytes": 761305600,
+            "reserved_bytes": 12622757888,
+            "peak_allocated_bytes": 3962208256,
+            "peak_reserved_bytes": 12662603776,
+            "free_bytes": 1834483712,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 98067676
+        },
+        {
+          "rank": 1,
+          "decisions": 152811,
+          "compact_bytes": 462322475,
+          "timing": {
+            "root_prepare_seconds": 7.60218212890625,
+            "reset_seconds": 0.041366527557373044,
+            "step_encode_seconds": 1.1020615743100644,
+            "inference_seconds": 7.679431671142578,
+            "storage_seconds": 0.08219065600633621,
+            "collection_seconds": 18.81806775496807
+          },
+          "utilization": {
+            "waves": 129,
+            "active_lane_steps": 152811,
+            "available_lane_steps": 1056768,
+            "active_lane_seconds": 40206.71607012367,
+            "available_lane_seconds": 74301.1555859375
+          },
+          "memory": {
+            "allocated_bytes": 764352000,
+            "reserved_bytes": 12039749632,
+            "peak_allocated_bytes": 3960392192,
+            "peak_reserved_bytes": 12039749632,
+            "free_bytes": 2415394816,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 98067676
+        },
+        {
+          "rank": 2,
+          "decisions": 152591,
+          "compact_bytes": 462401357,
+          "timing": {
+            "root_prepare_seconds": 7.45753515625,
+            "reset_seconds": 0.04289843368530273,
+            "step_encode_seconds": 1.054985217154026,
+            "inference_seconds": 7.435620356082916,
+            "storage_seconds": 0.07413123208284378,
+            "collection_seconds": 18.410882514086552
+          },
+          "utilization": {
+            "waves": 113,
+            "active_lane_steps": 152591,
+            "available_lane_steps": 925696,
+            "active_lane_seconds": 40317.90241518402,
+            "available_lane_seconds": 71630.5919140625
+          },
+          "memory": {
+            "allocated_bytes": 764430848,
+            "reserved_bytes": 13342081024,
+            "peak_allocated_bytes": 3973836288,
+            "peak_reserved_bytes": 13342081024,
+            "free_bytes": 1134034944,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 97991684
+        },
+        {
+          "rank": 3,
+          "decisions": 151466,
+          "compact_bytes": 459037635,
+          "timing": {
+            "root_prepare_seconds": 7.36773828125,
+            "reset_seconds": 0.04209971237182617,
+            "step_encode_seconds": 1.036840952038765,
+            "inference_seconds": 7.3844521026611325,
+            "storage_seconds": 0.07247532814741135,
+            "collection_seconds": 18.244648613967
+          },
+          "utilization": {
+            "waves": 109,
+            "active_lane_steps": 151466,
+            "available_lane_steps": 892928,
+            "active_lane_seconds": 40084.40054072761,
+            "available_lane_seconds": 71028.94421875
+          },
+          "memory": {
+            "allocated_bytes": 761305600,
+            "reserved_bytes": 12700352512,
+            "peak_allocated_bytes": 3982594560,
+            "peak_reserved_bytes": 12767461376,
+            "free_bytes": 1761083392,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 98181664
+        },
+        {
+          "rank": 4,
+          "decisions": 151927,
+          "compact_bytes": 460822623,
+          "timing": {
+            "root_prepare_seconds": 7.60034814453125,
+            "reset_seconds": 0.03982745742797852,
+            "step_encode_seconds": 1.052863485366106,
+            "inference_seconds": 7.4129643521308894,
+            "storage_seconds": 0.07402972787618638,
+            "collection_seconds": 18.55086721701082
+          },
+          "utilization": {
+            "waves": 111,
+            "active_lane_steps": 151927,
+            "available_lane_steps": 909312,
+            "active_lane_seconds": 40109.3206950655,
+            "available_lane_seconds": 71457.03164843749
+          },
+          "memory": {
+            "allocated_bytes": 763402752,
+            "reserved_bytes": 13404995584,
+            "peak_allocated_bytes": 4015732736,
+            "peak_reserved_bytes": 13404995584,
+            "free_bytes": 1071120384,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 98485632
+        },
+        {
+          "rank": 5,
+          "decisions": 150736,
+          "compact_bytes": 455600336,
+          "timing": {
+            "root_prepare_seconds": 7.59448779296875,
+            "reset_seconds": 0.04219289779663086,
+            "step_encode_seconds": 1.075879932999611,
+            "inference_seconds": 7.528554487466812,
+            "storage_seconds": 0.08098515194654465,
+            "collection_seconds": 18.901111070998013
+          },
+          "utilization": {
+            "waves": 133,
+            "active_lane_steps": 150736,
+            "available_lane_steps": 1089536,
+            "active_lane_seconds": 39698.428017662045,
+            "available_lane_seconds": 72815.9952421875
+          },
+          "memory": {
+            "allocated_bytes": 757629952,
+            "reserved_bytes": 12731809792,
+            "peak_allocated_bytes": 4064401408,
+            "peak_reserved_bytes": 12731809792,
+            "free_bytes": 1727528960,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 98485632
+        },
+        {
+          "rank": 6,
+          "decisions": 151266,
+          "compact_bytes": 458013142,
+          "timing": {
+            "root_prepare_seconds": 7.19113330078125,
+            "reset_seconds": 0.041046016693115236,
+            "step_encode_seconds": 1.0970316798985005,
+            "inference_seconds": 7.844290563583374,
+            "storage_seconds": 0.08965260806679726,
+            "collection_seconds": 18.7361506880261
+          },
+          "utilization": {
+            "waves": 150,
+            "active_lane_steps": 151266,
+            "available_lane_steps": 1228800,
+            "active_lane_seconds": 40097.84670346737,
+            "available_lane_seconds": 75918.0263203125
+          },
+          "memory": {
+            "allocated_bytes": 760042496,
+            "reserved_bytes": 11999903744,
+            "peak_allocated_bytes": 4004699648,
+            "peak_reserved_bytes": 11999903744,
+            "free_bytes": 2474115072,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 98675612
+        },
+        {
+          "rank": 7,
+          "decisions": 151489,
+          "compact_bytes": 459047054,
+          "timing": {
+            "root_prepare_seconds": 7.5611484375,
+            "reset_seconds": 0.04020019149780273,
+            "step_encode_seconds": 1.0815365090966225,
+            "inference_seconds": 7.5969413278102875,
+            "storage_seconds": 0.10290428900718689,
+            "collection_seconds": 18.954893113928847
+          },
+          "utilization": {
+            "waves": 120,
+            "active_lane_steps": 151489,
+            "available_lane_steps": 983040,
+            "active_lane_seconds": 40377.70802466392,
+            "available_lane_seconds": 73346.8343125
+          },
+          "memory": {
+            "allocated_bytes": 761305600,
+            "reserved_bytes": 12031361024,
+            "peak_allocated_bytes": 3982265856,
+            "peak_reserved_bytes": 12031361024,
+            "free_bytes": 2425880576,
+            "total_bytes": 16928342016
+          },
+          "root_cache_bytes": 98333648
+        }
+      ],
+      "root_families": 871,
+      "root_families_won": 24,
+      "natural_starts": 0,
+      "completed_natural_starts": 0,
+      "truncated": 0,
+      "budget_cutoffs": 0,
+      "faults": 0,
+      "decisions": 1213681,
+      "training_decisions": 1213681,
+      "replay_decisions": 98498087,
+      "compact_bytes": 3685616964,
+      "per_screen_entropy": {
+        "combat": {
+          "decisions": 863725,
+          "normalized": 0.39382731914520264
+        },
+        "hand_select": {
+          "decisions": 281995,
+          "normalized": 0.4217850863933563
+        },
+        "grid": {
+          "decisions": 444,
+          "normalized": 0.9952540397644043
+        },
+        "card_reward": {
+          "decisions": 4369,
+          "normalized": 0.8669387102127075
+        },
+        "combat_reward": {
+          "decisions": 8317,
+          "normalized": 0.7555220723152161
+        },
+        "event": {
+          "decisions": 2749,
+          "normalized": 0.3691299557685852
+        },
+        "map": {
+          "decisions": 20632,
+          "normalized": 0.9998670220375061
+        },
+        "room": {
+          "decisions": 30373,
+          "normalized": 0.03951290622353554
+        },
+        "shop": {
+          "decisions": 1077,
+          "normalized": 0.5788146257400513
+        }
+      },
+      "value_calibration": {
+        "episode_start": {
+          "count": 65536,
+          "brier": 0.04326397925615311,
+          "predicted": 0.4581165909767151,
+          "observed": 0.4445648193359375,
+          "bins": [
+            {
+              "bin": 0,
+              "count": 30039,
+              "predicted": 0.02233230508863926,
+              "observed": 0.013116282410919666
+            },
+            {
+              "bin": 1,
+              "count": 4915,
+              "predicted": 0.12694309651851654,
+              "observed": 0.19186164438724518
+            },
+            {
+              "bin": 6,
+              "count": 3276,
+              "predicted": 0.6159238219261169,
+              "observed": 0.4017094075679779
+            },
+            {
+              "bin": 8,
+              "count": 1092,
+              "predicted": 0.8706414699554443,
+              "observed": 0.982600748538971
+            },
+            {
+              "bin": 9,
+              "count": 26214,
+              "predicted": 0.9826754927635193,
+              "observed": 0.9692912101745605
+            }
+          ]
+        },
+        "decision_weighted": {
+          "count": 1213681,
+          "brier": 0.03899316489696503,
+          "predicted": 0.4733440577983856,
+          "observed": 0.45690011978149414,
+          "bins": [
+            {
+              "bin": 0,
+              "count": 556725,
+              "predicted": 0.01886986754834652,
+              "observed": 0.012129866518080235
+            },
+            {
+              "bin": 1,
+              "count": 44818,
+              "predicted": 0.14450955390930176,
+              "observed": 0.16067205369472504
+            },
+            {
+              "bin": 2,
+              "count": 16040,
+              "predicted": 0.24461783468723297,
+              "observed": 0.16471321880817413
+            },
+            {
+              "bin": 3,
+              "count": 18879,
+              "predicted": 0.34750470519065857,
+              "observed": 0.2795698940753937
+            },
+            {
+              "bin": 4,
+              "count": 10591,
+              "predicted": 0.44548851251602173,
+              "observed": 0.3687092959880829
+            },
+            {
+              "bin": 5,
+              "count": 8718,
+              "predicted": 0.5522744059562683,
+              "observed": 0.41592109203338623
+            },
+            {
+              "bin": 6,
+              "count": 21920,
+              "predicted": 0.646439254283905,
+              "observed": 0.5138686299324036
+            },
+            {
+              "bin": 7,
+              "count": 11062,
+              "predicted": 0.7634298801422119,
+              "observed": 0.5995299220085144
+            },
+            {
+              "bin": 8,
+              "count": 20728,
+              "predicted": 0.851945698261261,
+              "observed": 0.6330567598342896
+            },
+            {
+              "bin": 9,
+              "count": 504200,
+              "predicted": 0.9861472249031067,
+              "observed": 0.9799841046333313
+            }
+          ]
+        },
+        "by_screen": {
+          "combat": {
+            "count": 863725,
+            "brier": 0.04393908008933067,
+            "predicted": 0.47157782316207886,
+            "observed": 0.452798068523407,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 390286,
+                "predicted": 0.0184651929885149,
+                "observed": 0.011122612282633781
+              },
+              {
+                "bin": 1,
+                "count": 35137,
+                "predicted": 0.14456410706043243,
+                "observed": 0.1727239042520523
+              },
+              {
+                "bin": 2,
+                "count": 13399,
+                "predicted": 0.2449604570865631,
+                "observed": 0.1689678281545639
+              },
+              {
+                "bin": 3,
+                "count": 14220,
+                "predicted": 0.35080885887145996,
+                "observed": 0.2876933813095093
+              },
+              {
+                "bin": 4,
+                "count": 8902,
+                "predicted": 0.44577401876449585,
+                "observed": 0.395304411649704
+              },
+              {
+                "bin": 5,
+                "count": 7499,
+                "predicted": 0.5526856780052185,
+                "observed": 0.4504600465297699
+              },
+              {
+                "bin": 6,
+                "count": 15657,
+                "predicted": 0.6451178789138794,
+                "observed": 0.5011816024780273
+              },
+              {
+                "bin": 7,
+                "count": 9065,
+                "predicted": 0.7657290697097778,
+                "observed": 0.6263651251792908
+              },
+              {
+                "bin": 8,
+                "count": 19069,
+                "predicted": 0.8509332537651062,
+                "observed": 0.64764803647995
+              },
+              {
+                "bin": 9,
+                "count": 350491,
+                "predicted": 0.9854042530059814,
+                "observed": 0.974507212638855
+              }
+            ]
+          },
+          "hand_select": {
+            "count": 281995,
+            "brier": 0.03322014957666397,
+            "predicted": 0.48364996910095215,
+            "observed": 0.47109344601631165,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 129080,
+                "predicted": 0.023204509168863297,
+                "observed": 0.01868608593940735
+              },
+              {
+                "bin": 1,
+                "count": 9678,
+                "predicted": 0.1443161815404892,
+                "observed": 0.11696631461381912
+              },
+              {
+                "bin": 2,
+                "count": 2638,
+                "predicted": 0.2428930550813675,
+                "observed": 0.14329037070274353
+              },
+              {
+                "bin": 3,
+                "count": 4659,
+                "predicted": 0.3374200165271759,
+                "observed": 0.2547757029533386
+              },
+              {
+                "bin": 4,
+                "count": 1689,
+                "predicted": 0.4439837336540222,
+                "observed": 0.22853758931159973
+              },
+              {
+                "bin": 5,
+                "count": 1216,
+                "predicted": 0.5497263073921204,
+                "observed": 0.20394736528396606
+              },
+              {
+                "bin": 6,
+                "count": 6263,
+                "predicted": 0.6497426629066467,
+                "observed": 0.5455851554870605
+              },
+              {
+                "bin": 7,
+                "count": 1997,
+                "predicted": 0.7529933452606201,
+                "observed": 0.4777165651321411
+              },
+              {
+                "bin": 8,
+                "count": 1659,
+                "predicted": 0.8635835647583008,
+                "observed": 0.4653405547142029
+              },
+              {
+                "bin": 9,
+                "count": 123116,
+                "predicted": 0.9857211709022522,
+                "observed": 0.9906104803085327
+              }
+            ]
+          },
+          "grid": {
+            "count": 444,
+            "brier": 0.00013178995868656784,
+            "predicted": 0.011002246290445328,
+            "observed": 0.0,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 444,
+                "predicted": 0.011002246290445328,
+                "observed": 0.0
+              }
+            ]
+          },
+          "card_reward": {
+            "count": 4369,
+            "brier": 0.000396592979086563,
+            "predicted": 0.33507779240608215,
+            "observed": 0.3334859311580658,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 2906,
+                "predicted": 0.008596770465373993,
+                "observed": 0.0
+              },
+              {
+                "bin": 1,
+                "count": 3,
+                "predicted": 0.12968404591083527,
+                "observed": 0.0
+              },
+              {
+                "bin": 2,
+                "count": 2,
+                "predicted": 0.22214409708976746,
+                "observed": 0.0
+              },
+              {
+                "bin": 9,
+                "count": 1458,
+                "predicted": 0.9863781332969666,
+                "observed": 0.9993141293525696
+              }
+            ]
+          },
+          "combat_reward": {
+            "count": 8317,
+            "brier": 4.2412098991917446e-05,
+            "predicted": 0.0064457012340426445,
+            "observed": 0.0,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 8317,
+                "predicted": 0.0064457012340426445,
+                "observed": 0.0
+              }
+            ]
+          },
+          "event": {
+            "count": 2749,
+            "brier": 4.7306311898864806e-05,
+            "predicted": 0.006761134602129459,
+            "observed": 0.0,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 2749,
+                "predicted": 0.006761134602129459,
+                "observed": 0.0
+              }
+            ]
+          },
+          "map": {
+            "count": 20632,
+            "brier": 8.190248627215624e-05,
+            "predicted": 0.008983475156128407,
+            "observed": 0.0,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 20632,
+                "predicted": 0.008983475156128407,
+                "observed": 0.0
+              }
+            ]
+          },
+          "room": {
+            "count": 30373,
+            "brier": 6.747231964254752e-05,
+            "predicted": 0.9565911293029785,
+            "observed": 0.9592401385307312,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 1234,
+                "predicted": 0.007040974218398333,
+                "observed": 0.0
+              },
+              {
+                "bin": 2,
+                "count": 1,
+                "predicted": 0.2486618608236313,
+                "observed": 0.0
+              },
+              {
+                "bin": 5,
+                "count": 3,
+                "predicted": 0.5571932196617126,
+                "observed": 0.0
+              },
+              {
+                "bin": 9,
+                "count": 29135,
+                "predicted": 0.9968743324279785,
+                "observed": 1.0
+              }
+            ]
+          },
+          "shop": {
+            "count": 1077,
+            "brier": 4.725248072645627e-05,
+            "predicted": 0.006763309706002474,
+            "observed": 0.0,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 1077,
+                "predicted": 0.006763309706002474,
+                "observed": 0.0
+              }
+            ]
+          }
+        },
+        "by_act": {
+          "3": {
+            "count": 297562,
+            "brier": 9.306568244937807e-05,
+            "predicted": 0.009180787950754166,
+            "observed": 0.0,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 297557,
+                "predicted": 0.009174038656055927,
+                "observed": 0.0
+              },
+              {
+                "bin": 1,
+                "count": 1,
+                "predicted": 0.1341719627380371,
+                "observed": 0.0
+              },
+              {
+                "bin": 2,
+                "count": 1,
+                "predicted": 0.2486618608236313,
+                "observed": 0.0
+              },
+              {
+                "bin": 5,
+                "count": 3,
+                "predicted": 0.5571932196617126,
+                "observed": 0.0
+              }
+            ]
+          },
+          "4": {
+            "count": 916119,
+            "brier": 0.051628194749355316,
+            "predicted": 0.6241075396537781,
+            "observed": 0.6053045392036438,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 259168,
+                "predicted": 0.03000187873840332,
+                "observed": 0.026056457310914993
+              },
+              {
+                "bin": 1,
+                "count": 44817,
+                "predicted": 0.14450979232788086,
+                "observed": 0.16067562997341156
+              },
+              {
+                "bin": 2,
+                "count": 16039,
+                "predicted": 0.24461758136749268,
+                "observed": 0.1647234857082367
+              },
+              {
+                "bin": 3,
+                "count": 18879,
+                "predicted": 0.34750470519065857,
+                "observed": 0.2795698940753937
+              },
+              {
+                "bin": 4,
+                "count": 10591,
+                "predicted": 0.44548851251602173,
+                "observed": 0.3687092959880829
+              },
+              {
+                "bin": 5,
+                "count": 8715,
+                "predicted": 0.5522727370262146,
+                "observed": 0.4160642623901367
+              },
+              {
+                "bin": 6,
+                "count": 21920,
+                "predicted": 0.646439254283905,
+                "observed": 0.5138686299324036
+              },
+              {
+                "bin": 7,
+                "count": 11062,
+                "predicted": 0.7634298801422119,
+                "observed": 0.5995299220085144
+              },
+              {
+                "bin": 8,
+                "count": 20728,
+                "predicted": 0.851945698261261,
+                "observed": 0.6330567598342896
+              },
+              {
+                "bin": 9,
+                "count": 504200,
+                "predicted": 0.9861472249031067,
+                "observed": 0.9799841046333313
+              }
+            ]
+          }
+        }
+      },
+      "selected_action_probability": {
+        "mean": 0.6632315516471863,
+        "min": 8.984605301520787e-06,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1213681,
+        "minibatches": 149,
+        "update_seconds": 36.90903865592554,
+        "policy_loss": 0.007146054429113961,
+        "value_loss": 0.03915004799639401,
+        "entropy": 0.39750691938777544,
+        "kl": 0.022265857201142606,
+        "clip_fraction": 0.09079486294584335,
+        "loss": 0.022746009300538658,
+        "grad_norm": 0.2261466830203836,
+        "memory": [
+          {
+            "rank": 0,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 12645826560,
+            "peak_allocated_bytes": 1607032320,
+            "peak_reserved_bytes": 12645826560,
+            "free_bytes": 1811415040,
+            "total_bytes": 16928342016
+          },
+          {
+            "rank": 1,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 12062818304,
+            "peak_allocated_bytes": 1667187712,
+            "peak_reserved_bytes": 12062818304,
+            "free_bytes": 2392326144,
+            "total_bytes": 16928342016
+          },
+          {
+            "rank": 2,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 13367246848,
+            "peak_allocated_bytes": 1628766208,
+            "peak_reserved_bytes": 13367246848,
+            "free_bytes": 1108869120,
+            "total_bytes": 16928342016
+          },
+          {
+            "rank": 3,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 12723421184,
+            "peak_allocated_bytes": 1662959104,
+            "peak_reserved_bytes": 12723421184,
+            "free_bytes": 1738014720,
+            "total_bytes": 16928342016
+          },
+          {
+            "rank": 4,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 13428064256,
+            "peak_allocated_bytes": 1669556224,
+            "peak_reserved_bytes": 13428064256,
+            "free_bytes": 1048051712,
+            "total_bytes": 16928342016
+          },
+          {
+            "rank": 5,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 12756975616,
+            "peak_allocated_bytes": 1639786496,
+            "peak_reserved_bytes": 12756975616,
+            "free_bytes": 1702363136,
+            "total_bytes": 16928342016
+          },
+          {
+            "rank": 6,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 12025069568,
+            "peak_allocated_bytes": 1605210112,
+            "peak_reserved_bytes": 12025069568,
+            "free_bytes": 2448949248,
+            "total_bytes": 16928342016
+          },
+          {
+            "rank": 7,
+            "allocated_bytes": 35845120,
+            "reserved_bytes": 12054429696,
+            "peak_allocated_bytes": 1664138240,
+            "peak_reserved_bytes": 12054429696,
+            "free_bytes": 2402811904,
+            "total_bytes": 16928342016
+          }
+        ],
+        "policy_version": 81,
+        "published_version": 82,
+        "learner_seconds": 37.119944107951596
+      },
+      "update": 82,
+      "cumulative_decisions": 63187811,
+      "frontier": "k32",
+      "source_episodes": {
+        "learned": 13108,
+        "far": 13108,
+        "frontier": 39320
+      },
+      "source_decisions": {
+        "learned": 104316,
+        "far": 297562,
+        "frontier": 811803
+      },
+      "source_episode_shares": {
+        "learned": 0.20001220703125,
+        "far": 0.20001220703125,
+        "frontier": 0.5999755859375
+      },
+      "source_decision_shares": {
+        "learned": 0.08595009726608557,
+        "far": 0.24517315505474668,
+        "frontier": 0.6688767476791677
+      },
+      "timing": {
+        "root_prepare_seconds": 59.7458056640625,
+        "reset_seconds": 0.3300894775390625,
+        "step_encode_seconds": 8.579783677577971,
+        "inference_seconds": 60.62602138352394,
+        "storage_seconds": 0.6662431371212005,
+        "collection_seconds": 19.712963343015872,
+        "total_seconds": 60.100659895921126,
+        "decisions_per_second": 20194.13767006524
+      }
     }
   ],
   "mac_comparison_blocker": null,
@@ -41351,6 +43650,12 @@
     {
       "filename": "e3-training-truncations-3610-86cbae2.tar.gz",
       "sha256": "72a15c5baeeb326aa719880dfb71b2735e07e106b1a80c49b7711cedeac37703"
+    },
+    {
+      "filename": "e3-final-3627.tar.gz",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e3-final-3627.tar.gz",
+      "sha256": "d6f0d8178622b2d8fdafb3730e720d739846ea45f40329aa62904fb9575b22ee",
+      "bytes": 35705726
     }
   ],
   "mac_policy_audit_reports": [
@@ -43691,6 +45996,144 @@
       "slurm_elapsed_seconds": 111,
       "observation_file": "D:\\google download\\sts-silent-gpu-results\\2026-10-19-e3\\resume-3625-observation.json",
       "observation_sha256": "6bf2fb54f165f9dd96f872e967f51d843e21a5811813c88354a00241470ae303"
+    },
+    {
+      "observed_at": "2026-10-20T19:35:45.350248+08:00",
+      "job_id": 3627,
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+      "group": "A",
+      "init_seed": 2718,
+      "status": "running_after_interrupted_assessment_completed",
+      "slurm": {
+        "JobId": "3627",
+        "JobName": "spire-e3-v13-resume",
+        "UserId": "zhuyouwei(1017)",
+        "GroupId": "zhuyouwei(1018)",
+        "MCS_label": "N/A",
+        "Priority": "4294899991",
+        "Nice": "0",
+        "Account": "(null)",
+        "QOS": "(null)",
+        "JobState": "RUNNING",
+        "Reason": "None",
+        "Dependency": "(null)",
+        "Requeue": "1",
+        "Restarts": "0",
+        "BatchFlag": "1",
+        "Reboot": "0",
+        "ExitCode": "0:0",
+        "RunTime": "00:06:34",
+        "TimeLimit": "00:27:00",
+        "TimeMin": "N/A",
+        "SubmitTime": "2026-10-20T19:29:09",
+        "EligibleTime": "2026-10-20T19:29:09",
+        "AccrueTime": "2026-10-20T19:29:09",
+        "StartTime": "2026-10-20T19:29:10",
+        "EndTime": "2026-10-20T19:56:10",
+        "Deadline": "N/A",
+        "SuspendTime": "None",
+        "SecsPreSuspend": "0",
+        "LastSchedEval": "2026-10-20T19:29:10",
+        "Scheduler": "Main",
+        "Partition": "N56_128G_V100",
+        "Sid": "gpu01:401955",
+        "ReqNodeList": "gpu01",
+        "ExcNodeList": "(null)",
+        "NodeList": "gpu01",
+        "BatchHost": "gpu01",
+        "NumNodes": "1",
+        "NumCPUs": "8",
+        "NumTasks": "1",
+        "Task": "8",
+        "T": "0:0:*:*",
+        "TRES": "cpu=8,mem=96G,node=1,billing=8",
+        "Node": "*",
+        "C": "0:0:*:*",
+        "CoreSpec": "*",
+        "MinCPUsNode": "8",
+        "MinMemoryNode": "96G",
+        "MinTmpDiskNode": "0",
+        "Features": "(null)",
+        "DelayBoot": "00:00:00",
+        "OverSubscribe": "OK",
+        "Contiguous": "0",
+        "Licenses": "(null)",
+        "Network": "(null)",
+        "Command": "/home/zhuyouwei/spire-downloads/e3-resume.sh",
+        "WorkDir": "/home/zhuyouwei",
+        "StdErr": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
+        "StdIn": "/dev/null",
+        "StdOut": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
+        "TresPerNode": "gres:gpu:V100:8"
+      },
+      "updates": 82,
+      "training_decisions": 63187811,
+      "frontier": "k32",
+      "learned": [
+        "k8"
+      ],
+      "checkpoint": {
+        "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627/A-2718/checkpoint.pt",
+        "snapshot_path": "/home/zhuyouwei/spire-downloads/e3-resume-3627-stage-60758596/checkpoint.pt",
+        "sha256": "7ff9884f8c37315cb56b4bf45fc9f9924d1d6ab63f24396dc3dbd48d45b978a1",
+        "bytes": 11315495,
+        "policy_version": 82,
+        "engine_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+        "next_attempt": 5373952,
+        "curriculum": {
+          "frontier": 1,
+          "learned": [
+            "k8"
+          ],
+          "draws": 5373952,
+          "sampling_counts": {
+            "frontier": 4154982,
+            "far": 1074790,
+            "learned": 144180
+          },
+          "decision_counts": {
+            "frontier": 36220719,
+            "far": 25811821,
+            "learned": 1155271
+          },
+          "total_decisions": 63187811,
+          "ppo_decisions": 63187811,
+          "episodes": 5373952,
+          "wins": 3828908,
+          "truncated": 255,
+          "budget_cutoffs": 0,
+          "next_evaluation": 70000000,
+          "evaluations": 6,
+          "stagnant": 1,
+          "best_lower": 0.0,
+          "stopped": null,
+          "promoted_at": {
+            "k8": {
+              "decisions": 50651118,
+              "mean": 0.825
+            }
+          },
+          "evaluation_decisions": 5477862,
+          "evaluation_seconds": 1558.0122701574583,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "last_evaluated_decisions": 60758596
+        }
+      },
+      "new_optimizer_updates": 2,
+      "new_training_decisions": 2429215,
+      "completed_evaluation_sets_this_job": 21,
+      "completed_evaluation_sets": 147,
+      "training_faults": 0,
+      "evaluation_faults": 0,
+      "evaluation_truncated": 194,
+      "training_truncated": 255,
+      "audit_round": "A-2718-60758596",
+      "audit_roots": 18,
+      "audit_status": "pending_mac",
+      "initialization_completed": false,
+      "next_assessment_threshold": 70000000,
+      "evidence_inventory": "inventory/e3-oom-3625.json"
     }
   ],
   "mac_comparison_blocker_history": [
@@ -43823,7 +46266,7 @@
     "explicit_resume_required": false,
     "currently_effective": true
   },
-  "current_resume_inventory": "inventory/e3-oom-3625.json",
+  "current_resume_inventory": "inventory/e3-final-3627.json",
   "next_engine_integration": {
     "status": "completed_resumed_3625",
     "base_main": "1b0a670c038273ee8341afc442d980863e2ab22c",
@@ -45687,30 +48130,7 @@
       "evidence_inventory": "inventory/e3-resume-3620.json"
     }
   ],
-  "active_allocation": {
-    "job_id": 3627,
-    "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
-    "prior_charged_seconds": 27123,
-    "allocation_limit_seconds": 1620,
-    "submitted_epoch": 1792495749.817763,
-    "recorder_pid": 402169,
-    "output": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627",
-    "log": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
-    "slurm_record": "/home/zhuyouwei/spire-downloads/e3-slurm-3627/final.txt",
-    "plan_sha256": "4c317563645b937dbc37bdb5f99662a3df6d7e9beccbdc30003322f44be301c7",
-    "kind": "training_resume_after_allocator_fix",
-    "state": "RUNNING",
-    "gpus": 8,
-    "cpus": 8,
-    "memory_gib": 96,
-    "final": false,
-    "observed_at": "2026-10-20T19:35:45.350248+08:00",
-    "checkpoint_update": 82,
-    "checkpoint_training_decisions": 63187811,
-    "checkpoint_sha256": "7ff9884f8c37315cb56b4bf45fc9f9924d1d6ab63f24396dc3dbd48d45b978a1",
-    "elapsed_seconds": 394,
-    "checkpoint_snapshot_path": "/home/zhuyouwei/spire-downloads/e3-resume-3627-stage-60758596/checkpoint.pt"
-  },
+  "active_allocation": null,
   "latest_resume_inventory": "inventory/e3-oom-3625.json",
   "runtime_failures": [
     {
@@ -45788,5 +48208,18 @@
       "frontier_update_applied": true,
       "preservation_note": "The original 18 partial-set records remain unchanged. The resumed execution records all 21 sets separately; distinct policy/set totals count the repeated 18 only once."
     }
-  ]
+  ],
+  "resource_blocker": {
+    "kind": "remaining_budget_below_existing_resume_window",
+    "training_stopped": true,
+    "finalized_charged_seconds": 28039,
+    "total_seconds": 28800,
+    "remaining_seconds": 761,
+    "checkpoint_update": 88,
+    "checkpoint_decisions": 70774222,
+    "incomplete_assessment_sets": 16,
+    "expected_assessment_sets": 21,
+    "engine_fault": false,
+    "next_step": "Await an explicit budget revision; preserve frozen policy88 and rerun the full21-set70M assessment before any further learning. A31415 only after A2718 finishes."
+  }
 }

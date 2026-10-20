@@ -1,5 +1,5 @@
 {
-  "status": "allocator_fix_validated_assessment_completed_training_running",
+  "status": "allocator_failure_recovered_later_stopped_by_wall_budget",
   "observed_at": "2026-10-20T19:34:12.795502+08:00",
   "failed_job": 3625,
   "failed_source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
@@ -1459,9 +1459,10 @@
     "remaining_seconds_at_observation": 1283
   },
   "remaining_work": [
-    "Monitor3627 at fixedaae69ca for next assessment/faults/completion.",
-    "Await Mac original-game check of18new60M prefixes.",
-    "Finalize3627cost once; A31415/B only after A2718completion, main review and remaining-budget reconciliation."
+    "Retain checkpoint88 and all16partial70M sets with13unresolved truncations.",
+    "Await Mac original-game review of18published60M audit prefixes; do not mark passed.",
+    "Keep GitHub monitor active; no new training allocation without a usable authorized budget.",
+    "A1729 remains complete. A2718 is incomplete; A31415/B remain unstarted. No complete A/B conclusion."
   ],
   "recovery_observation": {
     "observed_at": "2026-10-20T19:35:45.350248+08:00",
@@ -3105,5 +3106,6 @@
       "sha256": "a425af633ace5087d3b3eb2144a6b271b2791ce6077558553023cd00a61d5255"
     }
   },
-  "actual_runtime_validation": "All21sets of the interrupted60M assessment completed;19overlapping saved action/outcome records match the failed job. Two further optimizer updates completed without fault or truncation. This is evidence for this run, not a guarantee against every future OOM."
+  "actual_runtime_validation": "All21sets of the interrupted60M assessment completed;19overlapping saved action/outcome records match the failed job. Two further optimizer updates completed without fault or truncation. This is evidence for this run, not a guarantee against every future OOM.",
+  "final_followup_inventory": "inventory/e3-final-3627.json"
 }

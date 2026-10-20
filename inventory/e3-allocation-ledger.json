@@ -397,11 +397,28 @@
       "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
       "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3626/final.txt",
       "evidence_sha256": "1ece3fe2ba853119e41a8b4dd0ddab7fceb7c4ce40a0d606c8a05a136eeb2ebc"
+    },
+    {
+      "job_id": 3627,
+      "kind": "training_resume_after_allocator_fix",
+      "final": true,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "charged_seconds": 916,
+      "gpus": 8,
+      "cpus": 8,
+      "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+      "started_at": "2026-10-20T19:29:10",
+      "ended_at": "2026-10-20T19:44:26",
+      "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3627/final.txt",
+      "evidence_sha256": "3b89b3676ddb5154d5f7920f13b8392d6aae0a7786dc2e348d62920902d6c560",
+      "archive_sha256": "d6f0d8178622b2d8fdafb3730e720d739846ea45f40329aa62904fb9575b22ee",
+      "stop_reason": "wall_budget_during_evaluation"
     }
   ],
-  "prior_charged_seconds": 27123,
-  "remaining_seconds_before_run": 1677,
-  "allocation_limit_seconds": 1620,
+  "prior_charged_seconds": 28039,
+  "remaining_seconds_before_run": 761,
+  "allocation_limit_seconds": null,
   "accounting_note": "sacct is disabled (accounting_storage/none), JobComp is none, and old controller records expired. Saved final scontrol RunTime is used where available; remaining old jobs use original log birth-to-last-write intervals plus two seconds for timestamp granularity, explicitly estimated, not sacct elapsed. Full wall time for CPU-only and partial-GPU E3 jobs is conservatively charged as before. This total is a conservative operational ledger, not a complete measured eight-GPU allocation total.",
   "retired_reservation": {
     "seconds": 14400,
@@ -419,39 +436,17 @@
     "additional_search_authorized": false
   },
   "uncertainty_note": "Log intervals do not prove exact Slurm allocation boundaries. Future runs record final controller RunTime before records expire. No historical estimate is described as measured Slurm elapsed.",
-  "recorded_at": "2026-10-20T19:44:21.536421+08:00",
-  "active_allocation": {
-    "job_id": 3627,
-    "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
-    "prior_charged_seconds": 27123,
-    "allocation_limit_seconds": 1620,
-    "submitted_epoch": 1792495749.817763,
-    "recorder_pid": 402169,
-    "output": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627",
-    "log": "/home/zhuyouwei/spire-downloads/e3-resume-3627.log",
-    "slurm_record": "/home/zhuyouwei/spire-downloads/e3-slurm-3627/final.txt",
-    "plan_sha256": "4c317563645b937dbc37bdb5f99662a3df6d7e9beccbdc30003322f44be301c7",
-    "kind": "training_resume_after_allocator_fix",
-    "state": "RUNNING",
-    "gpus": 8,
-    "cpus": 8,
-    "memory_gib": 96,
-    "final": false,
-    "observed_at": "2026-10-20T19:35:45.350248+08:00",
-    "checkpoint_update": 82,
-    "checkpoint_training_decisions": 63187811,
-    "checkpoint_sha256": "7ff9884f8c37315cb56b4bf45fc9f9924d1d6ab63f24396dc3dbd48d45b978a1",
-    "elapsed_seconds": 394,
-    "checkpoint_snapshot_path": "/home/zhuyouwei/spire-downloads/e3-resume-3627-stage-60758596/checkpoint.pt"
-  },
-  "observed_cumulative_charge_seconds": 27517,
-  "remaining_seconds_at_observation": 1283,
+  "recorded_at": "2026-10-20T19:56:41.810958+08:00",
+  "active_allocation": null,
+  "observed_cumulative_charge_seconds": 28039,
+  "remaining_seconds_at_observation": 761,
   "final_slurm_recorder": {
     "job_id": 3627,
     "pid": 402169,
     "record": "/home/zhuyouwei/spire-downloads/e3-slurm-3627/final.txt",
-    "status": "recording_current_allocation",
-    "final": false
+    "status": "completed",
+    "final": true,
+    "record_sha256": "3b89b3676ddb5154d5f7920f13b8392d6aae0a7786dc2e348d62920902d6c560"
   },
   "completed_training_allocation_baseline": {
     "job_id": 3606,
@@ -459,8 +454,8 @@
     "remaining_seconds_before_run": 11285,
     "allocation_limit_seconds": 11280
   },
-  "observed_at": "2026-10-20T19:35:45.350248+08:00",
-  "allocation_limit_scope": "Finalized27123seconds plus3627 actual runtime; cap1620seconds. No budget reset.",
+  "observed_at": "2026-10-20T19:51:55.821237+08:00",
+  "allocation_limit_scope": "All36entries finalized28039seconds;761remain, below the existing resume window. No active allocation or renewed allowance.",
   "recorder_history": [
     {
       "pid": 3820032,
@@ -486,23 +481,24 @@
       "final": false
     }
   ],
-  "active_job": 3627,
+  "active_job": null,
   "completed_allocation": {
-    "job_id": 3625,
-    "kind": "training_resume",
+    "job_id": 3627,
+    "kind": "training_resume_after_allocator_fix",
     "final": true,
-    "status": "FAILED",
-    "exit_code": "1:0",
-    "charged_seconds": 470,
-    "cpus": 8,
+    "status": "COMPLETED",
+    "exit_code": "0:0",
+    "charged_seconds": 916,
     "gpus": 8,
-    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
-    "started_at": "2026-10-20T19:06:57",
-    "ended_at": "2026-10-20T19:14:47",
-    "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3625/final.txt",
-    "evidence_sha256": "d0b8c4c68d41dd37b5a586613c1a638371eb97cf3cc70db7cb0f9b92fc59f247",
-    "archive_sha256": "4a092de9669317d2478c13be5b4c96f3cd6eebd7cfab632abb0eaf548a8fe4ef",
-    "stop_reason": "CUDA_out_of_memory_during_assessment"
+    "cpus": 8,
+    "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+    "started_at": "2026-10-20T19:29:10",
+    "ended_at": "2026-10-20T19:44:26",
+    "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3627/final.txt",
+    "evidence_sha256": "3b89b3676ddb5154d5f7920f13b8392d6aae0a7786dc2e348d62920902d6c560",
+    "archive_sha256": "d6f0d8178622b2d8fdafb3730e720d739846ea45f40329aa62904fb9575b22ee",
+    "stop_reason": "wall_budget_during_evaluation"
   },
-  "next_allocation_max_seconds": null
+  "next_allocation_max_seconds": null,
+  "next_allocation_blocker": "Only761seconds remain. Existing resume runner requires cap>900seconds, plus its120second shutdown margin and curriculum600second per-set start reserve. Do not extend/reset the allowance or submit a no-training allocation."
 }

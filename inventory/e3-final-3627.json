@@ -1,0 +1,1882 @@
+{
+  "status": "allocation_completed_training_stopped_by_budget",
+  "observed_at": "2026-10-20T19:51:55.821237+08:00",
+  "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+  "final_job": {
+    "job_id": 3627,
+    "kind": "training_resume_after_allocator_fix",
+    "final": true,
+    "status": "COMPLETED",
+    "exit_code": "0:0",
+    "charged_seconds": 916,
+    "gpus": 8,
+    "cpus": 8,
+    "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+    "started_at": "2026-10-20T19:29:10",
+    "ended_at": "2026-10-20T19:44:26",
+    "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3627/final.txt",
+    "evidence_sha256": "3b89b3676ddb5154d5f7920f13b8392d6aae0a7786dc2e348d62920902d6c560",
+    "archive_sha256": "d6f0d8178622b2d8fdafb3730e720d739846ea45f40329aa62904fb9575b22ee",
+    "stop_reason": "wall_budget_during_evaluation"
+  },
+  "run_summary": {
+    "group": "A",
+    "init_seed": 2718,
+    "decisions": 70774222,
+    "frontier": "k32",
+    "learned": [
+      "k8"
+    ],
+    "stop_reason": "wall_budget_during_evaluation",
+    "evaluation_decisions": 5584797,
+    "evaluation_seconds": 1740.9440345022595,
+    "elapsed_seconds": 902.0650234222412,
+    "eight_gpu_node_hours": 0.2505736180146535,
+    "last_evaluated_decisions": 60758596,
+    "sampling_counts": {
+      "frontier": 4390912,
+      "far": 1153432,
+      "learned": 222824
+    },
+    "decision_counts": {
+      "frontier": 41536361,
+      "far": 27455186,
+      "learned": 1782675
+    },
+    "updates": 88,
+    "ppo_decisions": 70774222,
+    "episodes": 5767168,
+    "wins": 4036591,
+    "truncated": 255,
+    "budget_cutoffs": 0
+  },
+  "runner_summary": {
+    "status": "wall_budget",
+    "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+    "allocation_started_epoch": 1792495750.5553002,
+    "allocation_seconds": 916.1477975845337,
+    "prior_cumulative_charge_seconds": 27123,
+    "cumulative_charge_seconds": 28039.147797584534,
+    "resumed_decisions": 60758596,
+    "runs": [
+      {
+        "group": "A",
+        "init_seed": 2718,
+        "decisions": 70774222,
+        "frontier": "k32",
+        "learned": [
+          "k8"
+        ],
+        "stop_reason": "wall_budget_during_evaluation",
+        "evaluation_decisions": 5584797,
+        "evaluation_seconds": 1740.9440345022595,
+        "elapsed_seconds": 902.0650234222412,
+        "eight_gpu_node_hours": 0.2505736180146535,
+        "last_evaluated_decisions": 60758596,
+        "sampling_counts": {
+          "frontier": 4390912,
+          "far": 1153432,
+          "learned": 222824
+        },
+        "decision_counts": {
+          "frontier": 41536361,
+          "far": 27455186,
+          "learned": 1782675
+        },
+        "updates": 88,
+        "ppo_decisions": 70774222,
+        "episodes": 5767168,
+        "wins": 4036591,
+        "truncated": 255,
+        "budget_cutoffs": 0,
+        "resumed_decisions": 60758596,
+        "new_training_decisions": 10015626
+      }
+    ],
+    "next_initialization": null,
+    "next_step": "Reconcile final Slurm cost and inspect main at this initialization boundary before the next allocation."
+  },
+  "checkpoint": {
+    "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3627/A-2718/checkpoint.pt",
+    "sha256": "cab8302d613a59f070c51cba63b5db91edf42d95fbd502a8a677e7a09905c9d9",
+    "bytes": 11318567,
+    "policy_version": 88,
+    "engine_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+    "next_attempt": 5767168,
+    "curriculum": {
+      "frontier": 1,
+      "learned": [
+        "k8"
+      ],
+      "draws": 5767168,
+      "sampling_counts": {
+        "frontier": 4390912,
+        "far": 1153432,
+        "learned": 222824
+      },
+      "decision_counts": {
+        "frontier": 41536361,
+        "far": 27455186,
+        "learned": 1782675
+      },
+      "total_decisions": 70774222,
+      "ppo_decisions": 70774222,
+      "episodes": 5767168,
+      "wins": 4036591,
+      "truncated": 255,
+      "budget_cutoffs": 0,
+      "next_evaluation": 70000000,
+      "evaluations": 6,
+      "stagnant": 1,
+      "best_lower": 0.0,
+      "stopped": "wall_budget_during_evaluation",
+      "promoted_at": {
+        "k8": {
+          "decisions": 50651118,
+          "mean": 0.825
+        }
+      },
+      "evaluation_decisions": 5584797,
+      "evaluation_seconds": 1740.9440345022595,
+      "bootstrap_seed": 63008,
+      "bootstrap_samples": 10000,
+      "last_evaluated_decisions": 60758596
+    }
+  },
+  "initial_evaluation_sha256": "39cae98eca3f2ff0476d4168ba2669758a4fcccd2fc0cbd4631089080fb2407d",
+  "training_updates": [
+    {
+      "update": 81,
+      "training_decisions": 61974130,
+      "wins": 29216,
+      "deaths": 36320,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "frontier": 39324,
+        "learned": 13106,
+        "far": 13106
+      },
+      "source_decisions": {
+        "frontier": 810276,
+        "learned": 105401,
+        "far": 299857
+      },
+      "selected_action_probability": {
+        "mean": 0.6616914868354797,
+        "min": 8.477439905618667e-07,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1215534,
+        "minibatches": 149,
+        "update_seconds": 37.48192009201739,
+        "policy_loss": 0.0051295174035322095,
+        "value_loss": 0.03325995441188917,
+        "entropy": 0.40429330429386945,
+        "kl": 0.01401762670819583,
+        "clip_fraction": 0.06658966350863689,
+        "loss": 0.017716561681850197,
+        "grad_norm": 0.2154038839309027,
+        "policy_version": 80,
+        "published_version": 81,
+        "learner_seconds": 37.72527290706057
+      }
+    },
+    {
+      "update": 82,
+      "training_decisions": 63187811,
+      "wins": 29135,
+      "deaths": 36401,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "learned": 13108,
+        "far": 13108,
+        "frontier": 39320
+      },
+      "source_decisions": {
+        "learned": 104316,
+        "far": 297562,
+        "frontier": 811803
+      },
+      "selected_action_probability": {
+        "mean": 0.6632315516471863,
+        "min": 8.984605301520787e-06,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1213681,
+        "minibatches": 149,
+        "update_seconds": 36.90903865592554,
+        "policy_loss": 0.007146054429113961,
+        "value_loss": 0.03915004799639401,
+        "entropy": 0.39750691938777544,
+        "kl": 0.022265857201142606,
+        "clip_fraction": 0.09079486294584335,
+        "loss": 0.022746009300538658,
+        "grad_norm": 0.2261466830203836,
+        "policy_version": 81,
+        "published_version": 82,
+        "learner_seconds": 37.119944107951596
+      }
+    },
+    {
+      "update": 83,
+      "training_decisions": 64345315,
+      "wins": 30984,
+      "deaths": 34552,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "frontier": 39322,
+        "learned": 13108,
+        "far": 13106
+      },
+      "source_decisions": {
+        "frontier": 804812,
+        "learned": 104825,
+        "far": 247867
+      },
+      "selected_action_probability": {
+        "mean": 0.6918329000473022,
+        "min": 2.138739091606112e-06,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1157504,
+        "minibatches": 142,
+        "update_seconds": 35.55475391203072,
+        "policy_loss": 0.010063292844204602,
+        "value_loss": 0.036499627737338045,
+        "entropy": 0.37105268430080723,
+        "kl": 0.02883634792726627,
+        "clip_fraction": 0.08875476889461217,
+        "loss": 0.02460257997891338,
+        "grad_norm": 0.26008095229443123,
+        "policy_version": 82,
+        "published_version": 83,
+        "learner_seconds": 35.750573673984036
+      }
+    },
+    {
+      "update": 84,
+      "training_decisions": 65547497,
+      "wins": 32738,
+      "deaths": 32798,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "far": 13108,
+        "frontier": 39322,
+        "learned": 13106
+      },
+      "source_decisions": {
+        "far": 255224,
+        "frontier": 841929,
+        "learned": 105029
+      },
+      "selected_action_probability": {
+        "mean": 0.6961382627487183,
+        "min": 2.231877988378983e-05,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1202182,
+        "minibatches": 147,
+        "update_seconds": 37.01809777901508,
+        "policy_loss": 0.005533275648750204,
+        "value_loss": 0.02736253566485588,
+        "entropy": 0.36262203889719813,
+        "kl": 0.020023159707481836,
+        "clip_fraction": 0.07875679392045568,
+        "loss": 0.015588323256933939,
+        "grad_norm": 0.20184997060834067,
+        "policy_version": 83,
+        "published_version": 84,
+        "learner_seconds": 37.225465825991705
+      }
+    },
+    {
+      "update": 85,
+      "training_decisions": 66825092,
+      "wins": 34442,
+      "deaths": 31094,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "frontier": 39320,
+        "learned": 13108,
+        "far": 13108
+      },
+      "source_decisions": {
+        "frontier": 894095,
+        "learned": 104901,
+        "far": 278599
+      },
+      "selected_action_probability": {
+        "mean": 0.699781596660614,
+        "min": 4.353663371148286e-06,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1277595,
+        "minibatches": 156,
+        "update_seconds": 39.19990434800275,
+        "policy_loss": 0.0031589467085850215,
+        "value_loss": 0.03314632775002615,
+        "entropy": 0.3532734134142407,
+        "kl": 0.022326090347888673,
+        "clip_fraction": 0.09065314127898826,
+        "loss": 0.01619937651081282,
+        "grad_norm": 0.17807763116574943,
+        "policy_version": 84,
+        "published_version": 85,
+        "learner_seconds": 39.440914280945435
+      }
+    },
+    {
+      "update": 86,
+      "training_decisions": 68122454,
+      "wins": 36324,
+      "deaths": 29212,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "frontier": 39324,
+        "learned": 13106,
+        "far": 13106
+      },
+      "source_decisions": {
+        "frontier": 913045,
+        "learned": 104717,
+        "far": 279600
+      },
+      "selected_action_probability": {
+        "mean": 0.7142480611801147,
+        "min": 8.083858119789511e-06,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1297362,
+        "minibatches": 159,
+        "update_seconds": 39.84581336204428,
+        "policy_loss": 0.00486810400171119,
+        "value_loss": 0.023608285733509263,
+        "entropy": 0.34048904322483936,
+        "kl": 0.04016436056783848,
+        "clip_fraction": 0.09749553326945429,
+        "loss": 0.013267356623194771,
+        "grad_norm": 0.2055024684035263,
+        "policy_version": 85,
+        "published_version": 86,
+        "learner_seconds": 40.07694734202232
+      }
+    },
+    {
+      "update": 87,
+      "training_decisions": 69434187,
+      "wins": 36823,
+      "deaths": 28713,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "learned": 13108,
+        "far": 13108,
+        "frontier": 39320
+      },
+      "source_decisions": {
+        "learned": 104722,
+        "far": 291194,
+        "frontier": 915817
+      },
+      "selected_action_probability": {
+        "mean": 0.7048465609550476,
+        "min": 7.239824299176689e-06,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1311733,
+        "minibatches": 161,
+        "update_seconds": 40.33273584593553,
+        "policy_loss": 0.01093287314240883,
+        "value_loss": 0.02316217980117188,
+        "entropy": 0.3479088666780144,
+        "kl": 0.05912565194422564,
+        "clip_fraction": 0.09505364280186987,
+        "loss": 0.019034874473784866,
+        "grad_norm": 0.6644947819574729,
+        "policy_version": 86,
+        "published_version": 87,
+        "learner_seconds": 40.537740277010016
+      }
+    },
+    {
+      "update": 88,
+      "training_decisions": 70774222,
+      "wins": 36372,
+      "deaths": 29164,
+      "faults": 0,
+      "truncated": 0,
+      "source_episodes": {
+        "frontier": 39322,
+        "learned": 13108,
+        "far": 13106
+      },
+      "source_decisions": {
+        "frontier": 945944,
+        "learned": 103210,
+        "far": 290881
+      },
+      "selected_action_probability": {
+        "mean": 0.7072046399116516,
+        "min": 3.641429657363915e-06,
+        "max": 1.0
+      },
+      "ppo": {
+        "samples": 1340035,
+        "minibatches": 164,
+        "update_seconds": 41.38109613501001,
+        "policy_loss": -0.004329048390900104,
+        "value_loss": 0.02720844884331378,
+        "entropy": 0.3447031828869193,
+        "kl": 0.12182147223176387,
+        "clip_fraction": 0.14572007450913643,
+        "loss": 0.00582814432796927,
+        "grad_norm": 0.22315599913569986,
+        "policy_version": 87,
+        "published_version": 88,
+        "learner_seconds": 41.61418879206758
+      }
+    }
+  ],
+  "incomplete_assessment": {
+    "decisions": 70774222,
+    "policy_version": 88,
+    "completed_sets": 16,
+    "expected_sets": 21,
+    "missing_sets": [
+      "dev/act3_boss",
+      "dev/act3_entry",
+      "dev/e2_act3_entry",
+      "dev/e2_all",
+      "dev/neow"
+    ],
+    "frontier_update_applied": false,
+    "learning_curve": [
+      {
+        "label": "70774222",
+        "set": "train/k8",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 92,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.9583333333333334,
+          "interval95": [
+            0.6811120222945888,
+            1.0
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.875,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.3125,
+            "unresolved": 0,
+            "interval95": [
+              -0.24194262207748907,
+              0.8669426220774891
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.1875,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 734,
+        "seconds": 0.22091453801840544,
+        "peak_allocated_bytes_by_rank": [
+          2730972672,
+          2730972672,
+          2730972672,
+          2730972672,
+          2728666112,
+          2728666112,
+          2728666112,
+          2728666112
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/k32",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 57,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.59375,
+          "interval95": [
+            0.31652868896125547,
+            0.8709713110387445
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.4375,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.5520833333333334,
+            "unresolved": 0,
+            "interval95": [
+              -0.0023592887441556964,
+              1.0
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.40625,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 2178,
+        "seconds": 0.8471709359437227,
+        "peak_allocated_bytes_by_rank": [
+          2730804736,
+          2730806272,
+          2730804736,
+          2730025472,
+          2727113216,
+          2727111168,
+          2727111168,
+          2727111168
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/k64",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 6,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0625,
+          "interval95": [
+            0.0,
+            0.33972131103874453
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.0625,
+            "unresolved": 0,
+            "interval95": [
+              -0.49194262207748907,
+              0.6169426220774891
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 2053,
+        "seconds": 1.0166765690082684,
+        "peak_allocated_bytes_by_rank": [
+          2726365696,
+          2726365696,
+          2726365696,
+          2726365696,
+          2726510080,
+          2726510080,
+          2726510080,
+          2726510080
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/k128",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.27722131103874453
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.0,
+            "unresolved": 0,
+            "interval95": [
+              -0.5544426220774891,
+              0.5544426220774891
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 5633,
+        "seconds": 16.55541023099795,
+        "peak_allocated_bytes_by_rank": [
+          2727881728,
+          2727723520,
+          2728035328,
+          2727570432,
+          2726071296,
+          2726071296,
+          2726071296,
+          2726071296
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/k256",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 3,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.30847131103874453
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.0,
+            "unresolved": 3,
+            "interval95": [
+              -1.0,
+              1.0
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": -1.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 19003,
+        "seconds": 34.01173251599539,
+        "peak_allocated_bytes_by_rank": [
+          2727117824,
+          2727117824,
+          2727117824,
+          2727117824,
+          2724659712,
+          2725349888,
+          2724654080,
+          2725208576
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/k512",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 1,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.2876379777054112
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.0,
+            "unresolved": 1,
+            "interval95": [
+              -1.0,
+              1.0
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": -1.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 10057,
+        "seconds": 27.82148069201503,
+        "peak_allocated_bytes_by_rank": [
+          2723494912,
+          2722648064,
+          2722573312,
+          2722721280,
+          2726370816,
+          2726369792,
+          2726218752,
+          2726366720
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/act4_entry",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 8,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.36055464437207785
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.0,
+            "unresolved": 8,
+            "interval95": [
+              -1.0,
+              1.0
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": -1.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 39484,
+        "seconds": 42.1155687039718,
+        "peak_allocated_bytes_by_rank": [
+          2722962432,
+          2723187200,
+          2722532864,
+          2723025408,
+          2723406336,
+          2725930496,
+          2726998016,
+          2728546816
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/act3_boss",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.27722131103874453
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.0,
+            "unresolved": 0,
+            "interval95": [
+              -0.5544426220774891,
+              0.5544426220774891
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 5044,
+        "seconds": 5.926944447914138,
+        "peak_allocated_bytes_by_rank": [
+          2724679680,
+          2724926464,
+          2724928000,
+          2723574784,
+          2725210624,
+          2725070848,
+          2725640192,
+          2725638656
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "train/act3_entry",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 24,
+          "attempts": 96,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.27722131103874453
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 24,
+            "mean_change": 0.0,
+            "unresolved": 0,
+            "interval95": [
+              -0.5544426220774891,
+              0.5544426220774891
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 3886,
+        "seconds": 2.035863320925273,
+        "peak_allocated_bytes_by_rank": [
+          2722070528,
+          2722060800,
+          2722284032,
+          2722070528,
+          2722349568,
+          2722349568,
+          2722349568,
+          2722349568
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "dev/k8",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 10,
+          "attempts": 40,
+          "wins": 29,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.725,
+          "interval95": [
+            0.2955305916532624,
+            1.0
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.5,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 10,
+            "mean_change": 0.1,
+            "unresolved": 0,
+            "interval95": [
+              -0.7589388166934752,
+              0.9589388166934751
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": -0.05,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 287,
+        "seconds": 0.18655886803753674,
+        "peak_allocated_bytes_by_rank": [
+          2716922880,
+          2716922880,
+          2716922880,
+          2716922880,
+          2718804992,
+          2718906880,
+          2718906880,
+          2718804992
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "dev/k32",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 10,
+          "attempts": 40,
+          "wins": 4,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.1,
+          "interval95": [
+            0.0,
+            0.5294694083467376
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 10,
+            "mean_change": 0.075,
+            "unresolved": 0,
+            "interval95": [
+              -0.7839388166934752,
+              0.9339388166934751
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 673,
+        "seconds": 0.6032016329700127,
+        "peak_allocated_bytes_by_rank": [
+          2716557312,
+          2716679168,
+          2716497920,
+          2716497920,
+          2716925440,
+          2716925440,
+          2716925440,
+          2716925440
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "dev/k64",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 10,
+          "attempts": 40,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.4294694083467376
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 10,
+            "mean_change": 0.0,
+            "unresolved": 0,
+            "interval95": [
+              -0.8589388166934752,
+              0.8589388166934752
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 944,
+        "seconds": 1.0581631970126182,
+        "peak_allocated_bytes_by_rank": [
+          2716082688,
+          2716082688,
+          2716082688,
+          2716318720,
+          2716020224,
+          2716020224,
+          2716026880,
+          2716020224
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "dev/k128",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 10,
+          "attempts": 40,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.4294694083467376
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 10,
+            "mean_change": 0.0,
+            "unresolved": 0,
+            "interval95": [
+              -0.8589388166934752,
+              0.8589388166934752
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 1092,
+        "seconds": 1.1790674560470507,
+        "peak_allocated_bytes_by_rank": [
+          2716217856,
+          2716217856,
+          2716216832,
+          2716227072,
+          2716172800,
+          2716172800,
+          2716172800,
+          2716172800
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "dev/k256",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 10,
+          "attempts": 40,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 1,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.4544694083467376
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 10,
+            "mean_change": 0.0,
+            "unresolved": 1,
+            "interval95": [
+              -1.0,
+              1.0
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": -1.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 4558,
+        "seconds": 26.43560999596957,
+        "peak_allocated_bytes_by_rank": [
+          2718960128,
+          2718960640,
+          2718960128,
+          2718960128,
+          2716204544,
+          2716227072,
+          2716216320,
+          2718041600
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "dev/k512",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 10,
+          "attempts": 40,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.4294694083467376
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 10,
+            "mean_change": 0.0,
+            "unresolved": 0,
+            "interval95": [
+              -0.8589388166934752,
+              0.8589388166934752
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 1724,
+        "seconds": 2.338158483034931,
+        "peak_allocated_bytes_by_rank": [
+          2716184576,
+          2716226560,
+          2716184064,
+          2716184064,
+          2714892288,
+          2714691072,
+          2714593280,
+          2714544128
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      },
+      {
+        "label": "70774222",
+        "set": "dev/act4_entry",
+        "training_decisions": 70774222,
+        "summary": {
+          "families": 10,
+          "attempts": 40,
+          "wins": 0,
+          "faults": 0,
+          "truncated": 0,
+          "mean": 0.0,
+          "interval95": [
+            0.0,
+            0.4294694083467376
+          ],
+          "interval_method": "Two-sided Hoeffding bound on equally weighted independent seed-family rates",
+          "bootstrap_lower95": 0.0,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "bootstrap_method": "One-sided 95% seed-family percentile bootstrap; linear fifth percentile",
+          "paired_initial": {
+            "families": 10,
+            "mean_change": 0.0,
+            "unresolved": 0,
+            "interval95": [
+              -0.8589388166934752,
+              0.8589388166934752
+            ],
+            "interval_method": "Two-sided Hoeffding bound on paired seed-family rate differences",
+            "bootstrap_lower95": 0.0,
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000,
+            "bootstrap_method": "One-sided 95% paired seed-family percentile bootstrap; unresolved pairs bound to -1"
+          }
+        },
+        "policy_version": 88,
+        "sampling_seed": 63003,
+        "repeats": 4,
+        "decisions": 9585,
+        "seconds": 20.579242756939493,
+        "peak_allocated_bytes_by_rank": [
+          2714897920,
+          2717886976,
+          2714994176,
+          2715098624,
+          2713696256,
+          2714496512,
+          2714353152,
+          2714544128
+        ],
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "assessment_completed": false,
+        "interrupted_by": "wall_budget_during_evaluation",
+        "source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc"
+      }
+    ],
+    "unresolved_truncations": [
+      {
+        "seed": 1000003121,
+        "root_key": "a7c9f95dd88883e974f315f2b2a0b028b2cde9e4dc32f21fae4a00b4c5d726f8",
+        "prefix_decisions": 1733,
+        "attempt": 0,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.9393236041069031,
+        "initial_value": 0.9393236041069031,
+        "set": "train/k256",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k256.jsonl.gz",
+        "raw_file_sha256": "69629be61cc3d9709c7b8d19b31e708b383cd8688c4f09d2b3118ca0ab38560b"
+      },
+      {
+        "seed": 1000003851,
+        "root_key": "3835b86b2d746cad47f98af5376ad90ea242a161298668e46d5bf2463bb2c9de",
+        "prefix_decisions": 1517,
+        "attempt": 1,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.9690097570419312,
+        "initial_value": 0.9811190366744995,
+        "set": "train/k256",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k256.jsonl.gz",
+        "raw_file_sha256": "69629be61cc3d9709c7b8d19b31e708b383cd8688c4f09d2b3118ca0ab38560b"
+      },
+      {
+        "seed": 1000003851,
+        "root_key": "3835b86b2d746cad47f98af5376ad90ea242a161298668e46d5bf2463bb2c9de",
+        "prefix_decisions": 1517,
+        "attempt": 3,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.9690097570419312,
+        "initial_value": 0.9811190366744995,
+        "set": "train/k256",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k256.jsonl.gz",
+        "raw_file_sha256": "69629be61cc3d9709c7b8d19b31e708b383cd8688c4f09d2b3118ca0ab38560b"
+      },
+      {
+        "seed": 1000002362,
+        "root_key": "546c390ae13b875ec954bc1ed99af90b8d483ed7ddbbe3fd9896baf61a3a6efb",
+        "prefix_decisions": 1014,
+        "attempt": 1,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.9413350820541382,
+        "initial_value": 0.03532662242650986,
+        "set": "train/k512",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-k512.jsonl.gz",
+        "raw_file_sha256": "b0ba21eb204ce328c34a731122c0239dfe81e4dec10374346c98d34fa6a777ef"
+      },
+      {
+        "seed": 1000003121,
+        "root_key": "db03d8354a92e05e83d07152e342ecb56b91353ccbe3891706c2c586454c4571",
+        "prefix_decisions": 1721,
+        "attempt": 0,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.10888545960187912,
+        "initial_value": 0.07693091779947281,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 1000002362,
+        "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+        "prefix_decisions": 1323,
+        "attempt": 0,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.5782356262207031,
+        "initial_value": 0.6186334490776062,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 1000002362,
+        "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+        "prefix_decisions": 1323,
+        "attempt": 1,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.5832720398902893,
+        "initial_value": 0.6186334490776062,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 1000003121,
+        "root_key": "db03d8354a92e05e83d07152e342ecb56b91353ccbe3891706c2c586454c4571",
+        "prefix_decisions": 1721,
+        "attempt": 2,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.08803059160709381,
+        "initial_value": 0.07693091779947281,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 1000002362,
+        "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+        "prefix_decisions": 1323,
+        "attempt": 2,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.5782357454299927,
+        "initial_value": 0.6186334490776062,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 1000003851,
+        "root_key": "fc92622296f4336dbfbce380e8053d14b2a6cc1fcb5caa8597dd27ef21b024df",
+        "prefix_decisions": 1526,
+        "attempt": 2,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.9690097570419312,
+        "initial_value": 0.037522073835134506,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 1000002362,
+        "root_key": "81dbebe3f0c2c6551f98dd0ed9c6bd889e04b3f847c75cb26e4cbace51951616",
+        "prefix_decisions": 1323,
+        "attempt": 3,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.5828386545181274,
+        "initial_value": 0.6186334490776062,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 1000003851,
+        "root_key": "fc92622296f4336dbfbce380e8053d14b2a6cc1fcb5caa8597dd27ef21b024df",
+        "prefix_decisions": 1526,
+        "attempt": 3,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.00815138965845108,
+        "initial_value": 0.037522073835134506,
+        "set": "train/act4_entry",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-train-act4_entry.jsonl.gz",
+        "raw_file_sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+      },
+      {
+        "seed": 2000003441,
+        "root_key": "f8395279168fcdab4424481f4c945cd20bd069f0a201aae2e89ec027a968d66e",
+        "prefix_decisions": 1870,
+        "attempt": 3,
+        "policy_version": 88,
+        "outcome": "truncated",
+        "fault": 0,
+        "bootstrap": 0.9606483578681946,
+        "initial_value": 0.9770375490188599,
+        "set": "dev/k256",
+        "candidate_count": 3000,
+        "group": "A",
+        "init_seed": 2718,
+        "job_id": 3627,
+        "raw_archive_file": "e3-training-resume-3627/A-2718/eval-70774222-dev-k256.jsonl.gz",
+        "raw_file_sha256": "b52e366d9623b853bfaaf31c822c23f8426def1aca5b1ff7e871f70bcb151b6a"
+      }
+    ],
+    "audit_prefixes_generated": 0,
+    "reason": "No completed stage, so no frozen-stage Mac audit round was emitted."
+  },
+  "last_completed_assessment": {
+    "decisions": 60758596,
+    "policy_version": 80,
+    "sets": 21,
+    "audit_round": "A-2718-60758596",
+    "mac_status": "pending_mac",
+    "inventory": "inventory/e3-oom-3625.json"
+  },
+  "stop_interpretation": "Successful process exit after wall_budget_during_evaluation. This is not completion of the A2718 initialization, nor a three-stagnant-stage stop, and is not an engine fault.",
+  "evidence_archive": {
+    "filename": "e3-final-3627.tar.gz",
+    "remote_path": "/home/zhuyouwei/spire-downloads/e3-final-3627.tar.gz",
+    "sha256": "d6f0d8178622b2d8fdafb3730e720d739846ea45f40329aa62904fb9575b22ee",
+    "bytes": 35705726
+  },
+  "files": {
+    "config.json": {
+      "bytes": 22617,
+      "sha256": "cb52d13afd9e47f5cee0c81147d97470811a7ca80fc7ce36f26c39a5e333fb58"
+    },
+    "A-2718.command.json": {
+      "bytes": 634,
+      "sha256": "676039844d9d08de9851c9e7d8cc460596ee053c59d8d07ec83b7503988458f7"
+    },
+    "progress.json": {
+      "bytes": 1015,
+      "sha256": "1160e09935e64a47b790eab5aaac84f010fa6ed7a2a6fc960fcfda7ead244c21"
+    },
+    "A-2718.log": {
+      "bytes": 4370897,
+      "sha256": "8570fa9142690340936df375ba9e86f5f92161f3b89b354c40f354ae290dae5e"
+    },
+    "summary.json": {
+      "bytes": 1381,
+      "sha256": "dda8ee29bc77146ba49abffe772493bf5c73cfb9f6e4485e7e0d2f6bab4ae9a9"
+    },
+    "A-2718/band-eligibility.json": {
+      "bytes": 707,
+      "sha256": "f34cc74dda3eb0741b4bc91ad8d5c1c8cad472b5426e4b8376710da9e1192058"
+    },
+    "A-2718/config.json": {
+      "bytes": 5050,
+      "sha256": "a17de4fcdd44be1cbcdab91603b0c7c0a575e913c3515d6119660341bdd0a6d6"
+    },
+    "A-2718/initial.pt": {
+      "bytes": 11315943,
+      "sha256": "5bcdcdbde48f7a11e66edb924c45ae9f73ddf738e8903a2d2ce86f96d1dbeb4b"
+    },
+    "A-2718/checkpoint.pt": {
+      "bytes": 11318567,
+      "sha256": "cab8302d613a59f070c51cba63b5db91edf42d95fbd502a8a677e7a09905c9d9"
+    },
+    "A-2718/initial-evaluation.json": {
+      "bytes": 182798,
+      "sha256": "39cae98eca3f2ff0476d4168ba2669758a4fcccd2fc0cbd4631089080fb2407d"
+    },
+    "A-2718/learning-curve.jsonl": {
+      "bytes": 235820,
+      "sha256": "ac085df546698c2c6bf741b3eabf1cf195f9e7ffe0872ed6c2d47a52d43858b7"
+    },
+    "A-2718/eval-60758596-train-k8.jsonl.gz": {
+      "bytes": 2304,
+      "sha256": "44ddbcd9b3fa5f42f6dac87bbe920e9635f793c8bdb04e7c57286aaf35c1959d"
+    },
+    "A-2718/eval-60758596-train-k32.jsonl.gz": {
+      "bytes": 3100,
+      "sha256": "d14af606da78bc4784da5a942231ff430d295729cd0311222ef8fac41460dcc4"
+    },
+    "A-2718/eval-60758596-train-k64.jsonl.gz": {
+      "bytes": 3186,
+      "sha256": "6263b0a9ae6624dfc75fb88851395e921ac5032f7b260bec3a6173fa0b28a4bc"
+    },
+    "A-2718/eval-60758596-train-k128.jsonl.gz": {
+      "bytes": 3845,
+      "sha256": "6f11e96914fa82d4a6ef6c7be119c708bb8028b3807a4c54541e938ec42c82f2"
+    },
+    "A-2718/eval-60758596-train-k256.jsonl.gz": {
+      "bytes": 3996,
+      "sha256": "820b88486407216f8741df3d58184b85d8692edf698a1f28a2c938131c02472c"
+    },
+    "A-2718/eval-60758596-train-k512.jsonl.gz": {
+      "bytes": 4695,
+      "sha256": "d8fcea516456768b5e6c1bd723154609760f3faffc9b67ed1923cd54db15a9f8"
+    },
+    "A-2718/eval-60758596-train-act4_entry.jsonl.gz": {
+      "bytes": 4471,
+      "sha256": "83af001f0d80de097fdcb84920b7b5d77d9e2133612a8dc5bc881857a14d2bc1"
+    },
+    "A-2718/eval-60758596-train-act3_boss.jsonl.gz": {
+      "bytes": 4313,
+      "sha256": "0ae87831eb648aa852ed49b5cf066e22617adfb9a2a20dd25b48c3214f070cce"
+    },
+    "A-2718/eval-60758596-train-act3_entry.jsonl.gz": {
+      "bytes": 4198,
+      "sha256": "ca3c4cbe8f7a5d87c1d1f4531413052207a083fb70b75030f809af6f61eca517"
+    },
+    "A-2718/eval-60758596-dev-k8.jsonl.gz": {
+      "bytes": 1142,
+      "sha256": "39c61149c4cf3458ae3e1edf39fd4d5e2f1c17e5f0d7dc9e76962d1992b16893"
+    },
+    "A-2718/eval-60758596-dev-k32.jsonl.gz": {
+      "bytes": 1338,
+      "sha256": "01ad6cd04e59908f02d3f5293ee693a576142a04d1d11b57a517a40a9d13b26c"
+    },
+    "A-2718/eval-60758596-dev-k64.jsonl.gz": {
+      "bytes": 1465,
+      "sha256": "296afcea32b9f6d248c170bb91a9b64e2dafcf59633569856ea0553cba9b0548"
+    },
+    "A-2718/eval-60758596-dev-k128.jsonl.gz": {
+      "bytes": 1664,
+      "sha256": "64966da2f61fce7757034472b0de4d9f3f36e4dd613b366c2b935df03affaa00"
+    },
+    "A-2718/eval-60758596-dev-k256.jsonl.gz": {
+      "bytes": 1588,
+      "sha256": "91a0925e244180f2801246c53adbb7a20bea968c0514004c2ed661490266d08c"
+    },
+    "A-2718/eval-60758596-dev-k512.jsonl.gz": {
+      "bytes": 1732,
+      "sha256": "1a92d77c99d7d02ab994ea35aed6c97edbfeb5f9d9588bdffcb3185deb19a0b5"
+    },
+    "A-2718/eval-60758596-dev-act4_entry.jsonl.gz": {
+      "bytes": 1793,
+      "sha256": "3879de3ee16df0361b4c90f126b9d51b22ee979a03436682c3169c4a20c26461"
+    },
+    "A-2718/eval-60758596-dev-act3_boss.jsonl.gz": {
+      "bytes": 1682,
+      "sha256": "b2da1be51c91011d11529ee77796a2b3b2fd138b762134da9e2e6fe1c484b54a"
+    },
+    "A-2718/eval-60758596-dev-act3_entry.jsonl.gz": {
+      "bytes": 1881,
+      "sha256": "44e36433c6248985a7c2f09c20431f594f987fcfab4c8ba2aeaa020406233d3e"
+    },
+    "A-2718/eval-60758596-dev-e2_all.jsonl.gz": {
+      "bytes": 852033,
+      "sha256": "69afe3e7b244e531f7207dcad7982d5df9316dfbc41b04d29a5ce72cc49c17b5"
+    },
+    "A-2718/eval-60758596-dev-e2_act3_entry.jsonl.gz": {
+      "bytes": 134602,
+      "sha256": "cf775ce63cbf3a186aebd82af94ef74b87f4a283f53540431d7af9ed5974e437"
+    },
+    "A-2718/eval-60758596-dev-neow.jsonl.gz": {
+      "bytes": 302286,
+      "sha256": "854cdc244ff9237a85b7f52d28ba97974e7615ae76962ec3ae88d64bd3ad3b5b"
+    },
+    "A-2718/stages.jsonl": {
+      "bytes": 370,
+      "sha256": "09cd96768807f431694acd49859eaa43329e436cb5aee09222a5c2aa78195998"
+    },
+    "A-2718/audit-current.json": {
+      "bytes": 12026,
+      "sha256": "99c9f49c1324c153fa837ccc16e18eac7617a308a10bbf1361609f50d4277994"
+    },
+    "A-2718/audit-60758596.json": {
+      "bytes": 63863,
+      "sha256": "77e957e3fd851f537700ec2443d5734a443dbb1ed1c1eb946fd2183a209e83f2"
+    },
+    "A-2718/episodes.jsonl.gz": {
+      "bytes": 16778385,
+      "sha256": "2c8073a4faa70cf9e9b294ca778b5f890ac252b0ea26ede2bbb086f5c8a969b1"
+    },
+    "A-2718/updates.jsonl": {
+      "bytes": 142685,
+      "sha256": "6f0bc90deaf063a079aa4babf4fba1bc038c0b0132b15454b40f509c4aa518a6"
+    },
+    "A-2718/eval-70774222-train-k8.jsonl.gz": {
+      "bytes": 2306,
+      "sha256": "97df5fdc04529d58f4af70e04c0bf9a2cdce0f773ad95377190f076228871325"
+    },
+    "A-2718/eval-70774222-train-k32.jsonl.gz": {
+      "bytes": 3070,
+      "sha256": "e2d3fa59b6715c08c7f38d46fc8363f591492798b047b1935a04e159b6c5e38f"
+    },
+    "A-2718/eval-70774222-train-k64.jsonl.gz": {
+      "bytes": 3118,
+      "sha256": "aa354b3899c9a241cc4a42171d55ed50bf2fdf3f796eb4775059047a2a1ed185"
+    },
+    "A-2718/eval-70774222-train-k128.jsonl.gz": {
+      "bytes": 3877,
+      "sha256": "1f8e6f8cff093ad11f08b0091d6c782d8d9c81cdf6c33d12e4c21512cca726eb"
+    },
+    "A-2718/eval-70774222-train-k256.jsonl.gz": {
+      "bytes": 7583,
+      "sha256": "69629be61cc3d9709c7b8d19b31e708b383cd8688c4f09d2b3118ca0ab38560b"
+    },
+    "A-2718/eval-70774222-train-k512.jsonl.gz": {
+      "bytes": 7025,
+      "sha256": "b0ba21eb204ce328c34a731122c0239dfe81e4dec10374346c98d34fa6a777ef"
+    },
+    "A-2718/eval-70774222-train-act4_entry.jsonl.gz": {
+      "bytes": 8777,
+      "sha256": "d2291d612d46e2d3986625677a627de9855ac8a00ef94a8b1a2f85e800ddc15f"
+    },
+    "A-2718/eval-70774222-train-act3_boss.jsonl.gz": {
+      "bytes": 5097,
+      "sha256": "95ad1b3bfec3df7e81ae91bf4ad08b01a0ba50a4949b617367acf36b7e09ac0e"
+    },
+    "A-2718/eval-70774222-train-act3_entry.jsonl.gz": {
+      "bytes": 4659,
+      "sha256": "67bf42fefdcfafa1243dd3086bd98e6b571ecd7bbdce4b28c5158233f72e0432"
+    },
+    "A-2718/eval-70774222-dev-k8.jsonl.gz": {
+      "bytes": 1133,
+      "sha256": "372bc3a453deb091eb84fb6d6442b2a5de860dc6e5deb5bec2a0ab55ae52740c"
+    },
+    "A-2718/eval-70774222-dev-k32.jsonl.gz": {
+      "bytes": 1327,
+      "sha256": "2bcfe5dcb801444f67b5f4ad629da6ee32161bb41de6af8f66f20b68279f5b59"
+    },
+    "A-2718/eval-70774222-dev-k64.jsonl.gz": {
+      "bytes": 1513,
+      "sha256": "7128455b67e7d38bff657487b2272d783c04cd554943d9e9711a489f611f7dc4"
+    },
+    "A-2718/eval-70774222-dev-k128.jsonl.gz": {
+      "bytes": 1630,
+      "sha256": "438fbde03840dcc26f862e08bda562186b31305049f5dab02e957e97d0aeb549"
+    },
+    "A-2718/eval-70774222-dev-k256.jsonl.gz": {
+      "bytes": 2647,
+      "sha256": "b52e366d9623b853bfaaf31c822c23f8426def1aca5b1ff7e871f70bcb151b6a"
+    },
+    "A-2718/eval-70774222-dev-k512.jsonl.gz": {
+      "bytes": 2051,
+      "sha256": "7d3961328275a53791ea4e91e2688e1d11f3272636860f97511097222e10e7f3"
+    },
+    "A-2718/eval-70774222-dev-act4_entry.jsonl.gz": {
+      "bytes": 3583,
+      "sha256": "600e4478812eab9c49f759a293e157038c52c85e088fea1995ead9d1bc5ce8e5"
+    },
+    "A-2718/summary.json": {
+      "bytes": 694,
+      "sha256": "b2d47692c8525233cdd71322acddc0ee1ed841bf5da353445be2972cccaa701f"
+    }
+  },
+  "budget": {
+    "total_seconds": 28800,
+    "finalized_charged_seconds": 28039,
+    "remaining_seconds": 761,
+    "active_allocation": null,
+    "next_allocation_max_seconds": null,
+    "next_allocation_blocker": "Only761seconds remain. Existing resume runner requires cap>900seconds, plus its120second shutdown margin and curriculum600second per-set start reserve. Do not extend/reset the allowance or submit a no-training allocation.",
+    "historical_accounting_note": "sacct is disabled (accounting_storage/none), JobComp is none, and old controller records expired. Saved final scontrol RunTime is used where available; remaining old jobs use original log birth-to-last-write intervals plus two seconds for timestamp granularity, explicitly estimated, not sacct elapsed. Full wall time for CPU-only and partial-GPU E3 jobs is conservatively charged as before. This total is a conservative operational ledger, not a complete measured eight-GPU allocation total."
+  },
+  "current_blocker": {
+    "kind": "remaining_budget_below_existing_resume_window",
+    "training_stopped": true,
+    "finalized_charged_seconds": 28039,
+    "total_seconds": 28800,
+    "remaining_seconds": 761,
+    "checkpoint_update": 88,
+    "checkpoint_decisions": 70774222,
+    "incomplete_assessment_sets": 16,
+    "expected_assessment_sets": 21,
+    "engine_fault": false,
+    "next_step": "Await an explicit budget revision; preserve frozen policy88 and rerun the full21-set70M assessment before any further learning. A31415 only after A2718 finishes."
+  },
+  "queue_at_observation": "",
+  "server_head": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+  "next_actions": [
+    "Retain checkpoint88 and all16partial70M sets with13unresolved truncations.",
+    "Await Mac original-game review of18published60M audit prefixes; do not mark passed.",
+    "Keep GitHub monitor active; no new training allocation without a usable authorized budget.",
+    "A1729 remains complete. A2718 is incomplete; A31415/B remain unstarted. No complete A/B conclusion."
+  ]
+}
