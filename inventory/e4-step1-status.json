@@ -1,15 +1,16 @@
 {
-  "recorded_at": "2026-10-21T00:17:21.590044+08:00",
+  "recorded_at": "2026-10-21T01:51:40+08:00",
   "step": 1,
-  "status": "initialization1729_restarted_after_batched_events",
+  "status": "initialization1729_first_evaluation_delayed",
   "fixed_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
-  "main_reviewed": "6520fec25fb942277dca6c6be5b5ea9cd9412a6c",
+  "main_reviewed": "2ff6414ded60d1f9b45ab17fe17c3e94fe7fb2e9",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 28800,
     "settled_node_seconds": 3477,
     "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 72
+    "active_elapsed_at_snapshot": 5731,
+    "used_including_active_snapshot": 9208
   },
   "job": {
     "id": 3637,
@@ -23,45 +24,16 @@
   "initialization": 1729,
   "training_seconds_target": 3600,
   "latest_update": {
-    "version": 1,
-    "trained_seconds": 24.930091857910156,
-    "update_seconds": 24.930091857910156,
-    "actual_steps": 16384,
-    "sl_trial_steps": 413542,
-    "actual_steps_per_second": 657.19775390625,
-    "sl_trial_steps_per_second": 16588.06640625,
-    "source": "First completed distributed update, global8rank step sums / maxrank updatewall"
+    "version": 784,
+    "trained_seconds": 3602.47594499588,
+    "cumulative_actual_steps": 12845056,
+    "actual_steps_per_second": 3526.1328125,
+    "sl_trial_steps_per_second": 709.3587646484375,
+    "throughput_scope": "Last completed update global8rank sums / maximum rank wall time"
   },
-  "saved_checkpoint_version": 0,
+  "saved_checkpoint_version": 784,
   "next": "Monitor3637; evaluate all4096dev each3600training seconds after pre-evaluation checkpoint and queuecheck; report longest event trial path inclselected nestedcombat actions. No step cap. Then2718 after latestmain/cost check.",
   "evaluation_complete": false,
-  "evaluation_delay": {
-    "observed_at": "2026-10-21T00:06:18.749269+08:00",
-    "update103_first_observed_at": "2026-10-20T23:34:34.635333+08:00",
-    "completed_evaluation": false,
-    "any_per_rank_64_episode_log": false,
-    "fault_files": [],
-    "last_durable_checkpoint_version": 0,
-    "diagnostic_method": "Bounded GDB read-only stack samples; detach after each, no target code calls or memory writes. First full-symbol probe timed out20s and detached; subsequent minimal-symbol samples finished. py-bt unavailable; Python frame chain read through CPython structs.",
-    "rank0_chain": [
-      "network_inputs",
-      "scores",
-      "event",
-      "plan",
-      "choose",
-      "evaluate",
-      "main"
-    ],
-    "native_samples": "rank0 subtype_dealloc; rank1 PyLong_FromLong/libtorch_python",
-    "conclusion": "Evaluation delay confirmed, cause unconfirmed. Stack samples do not establish engine fault or successful evaluation. No terminal outcome inferred.",
-    "remote_archive": "/home/zhuyouwei/spire-downloads/e4-3632-evaluation-delay.tar.gz",
-    "archive_sha256": "f0c8d8f25e4fd33ed50c286667d8a3b9f63bdfa55199b905bb0a0c61c9e7fbf7",
-    "log_snapshot_sha256": "452e39c88d06e330a62ad84eb185ab350592321a863c50f2b4b3f845dc119ab1",
-    "queue_at_snapshot": [
-      "3632|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-1729"
-    ],
-    "checkpoint_policy": "Keep current runtime fixed and preserve partial evaluation at its allocation boundary; no new job submitted."
-  },
   "prior_attempts": [
     {
       "job": {
@@ -91,7 +63,34 @@
       "authorization": "Claude23 at6520fec25fb942277dca6c6be5b5ea9cd9412a6c",
       "decision": "Accept loss of unsaved20minutes and restart1729 from scratch after batching events and existingSLreplay",
       "accounting": "/home/zhuyouwei/spire-downloads/e4-training-3632/accounting-final.txt",
-      "accounting_sha256": "3d51712593eb58fa9d47c62baf5248fa599f2eba05126ebbdeaf6b609c9d4ff2"
+      "accounting_sha256": "3d51712593eb58fa9d47c62baf5248fa599f2eba05126ebbdeaf6b609c9d4ff2",
+      "evaluation_delay": {
+        "observed_at": "2026-10-21T00:06:18.749269+08:00",
+        "update103_first_observed_at": "2026-10-20T23:34:34.635333+08:00",
+        "completed_evaluation": false,
+        "any_per_rank_64_episode_log": false,
+        "fault_files": [],
+        "last_durable_checkpoint_version": 0,
+        "diagnostic_method": "Bounded GDB read-only stack samples; detach after each, no target code calls or memory writes. First full-symbol probe timed out20s and detached; subsequent minimal-symbol samples finished. py-bt unavailable; Python frame chain read through CPython structs.",
+        "rank0_chain": [
+          "network_inputs",
+          "scores",
+          "event",
+          "plan",
+          "choose",
+          "evaluate",
+          "main"
+        ],
+        "native_samples": "rank0 subtype_dealloc; rank1 PyLong_FromLong/libtorch_python",
+        "conclusion": "Evaluation delay confirmed, cause unconfirmed. Stack samples do not establish engine fault or successful evaluation. No terminal outcome inferred.",
+        "remote_archive": "/home/zhuyouwei/spire-downloads/e4-3632-evaluation-delay.tar.gz",
+        "archive_sha256": "f0c8d8f25e4fd33ed50c286667d8a3b9f63bdfa55199b905bb0a0c61c9e7fbf7",
+        "log_snapshot_sha256": "452e39c88d06e330a62ad84eb185ab350592321a863c50f2b4b3f845dc119ab1",
+        "queue_at_snapshot": [
+          "3632|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-1729"
+        ],
+        "checkpoint_policy": "Keep current runtime fixed and preserve partial evaluation at its allocation boundary; no new job submitted."
+      }
     }
   ],
   "runner_update": {
@@ -112,5 +111,23 @@
       "log": "/home/zhuyouwei/spire-downloads/e4-training-3637/e4-replay.log",
       "sha256": "92c6b57a912faa5861c31f76dfed84207f4c5d6d4c1a56edca4ba04e7cb87866"
     }
-  }
+  },
+  "evaluation_delay": {
+    "checked_at": "2026-10-21T01:51:40+08:00",
+    "estimated_elapsed_minutes": 35,
+    "completed_assessment": false,
+    "per_rank_64_episode_progress_seen": false,
+    "fault_files": [],
+    "checkpoint_reason": "before_evaluation",
+    "checkpoint_version": 784,
+    "cause": "unconfirmed",
+    "remote_evidence_directory": "/home/zhuyouwei/spire-downloads/e4-3637-evaluation-delay",
+    "sha256": {
+      "log-snapshot.txt": "d39844e35389524e3d4a5dedc1ac8a90379730be5f87c53e2f386b141ee05f93",
+      "status-snapshot.json": "a5b32ac7f7b35be8aacf6c33f17c7246fde1d355763c6f84401ecd656da6eb81",
+      "job-snapshot.txt": "673e4f2f5d086a7f11676d897660af7b97715a4624f6fefa2498e763e6617cb2"
+    },
+    "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
+  },
+  "latest_decision": "Claude25: only step1 now; later human-likeSL and MCTS fallback await separate task after step1."
 }
