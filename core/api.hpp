@@ -181,6 +181,7 @@ SPIRE_FN void settle_card_obtains(Game&);
 SPIRE_FN void legal_actions(const Game&, ActionSet&);
 SPIRE_FN void step(Game&, Action);
 SPIRE_FN void on_victory(Game&);
+SPIRE_FN void end_battle(Game&);
 SPIRE_FN void gain_energy(Game&, int);
 SPIRE_FN void creature_damage(Game&, const DamageInfo&);
 SPIRE_FN void move_to_bottom_of_deck(Game&, int);

@@ -735,6 +735,29 @@ SPIRE_FN inline void advance_escape(Game& g, int frames) {
         }
     }
 }
+SPIRE_FN inline void end_battle(Game& g) {
+    // AbstractRoom.endBattle clears pending actions, but leaves the monster queue.
+    g.battle_over = true;
+    settle_card_moves(g);
+    g.battle_callbacks_done = true;
+    on_victory(g);
+    clear_actions(g, g.manager.actions);
+    clear_actions(g, g.manager.pre_turn_actions);
+    g.manager.has_current_action = false;
+    g.manager.card_queue.clear();
+    g.manager.played_cards.clear();
+    g.orbs.channeled.clear(); g.orbs.turn_start = 0;
+    for (auto& count : g.stance_changes) count = 0;
+    g.manager.energy_gained_this_combat = 0;
+    g.manager.mantra_gained = 0;
+    g.manager.damage_received_this_combat = 0;
+    g.manager.damage_received_this_turn = 0;
+    g.manager.hp_loss_this_combat = 0;
+    g.manager.turn_has_ended = false;
+    g.manager.total_discarded_this_turn = 0;
+    g.turn = 1;
+    g.manager.phase = Phase::WaitingOnUser;
+}
 SPIRE_FN inline void run_until_decision(Game& g) {
     while (g.screen != Screen::Discard && g.screen != Screen::Grid && g.screen != Screen::CardReward && g.screen != Screen::Death) {
         bool dead = !g.monster_order.empty();
@@ -744,28 +767,7 @@ SPIRE_FN inline void run_until_decision(Game& g) {
             if (!monster.dead && (!monster.escaped || g.manager.has_current_action || !g.manager.actions.empty())) { dead = false; break; }
         }
         if (dead && !g.cannot_lose) g.battle_over = true;
-        if (g.battle_over && !g.battle_callbacks_done) {
-            // AbstractRoom.endBattle clears pending actions, but leaves the monster queue.
-            settle_card_moves(g);
-            g.battle_callbacks_done = true;
-            on_victory(g);
-            clear_actions(g, g.manager.actions);
-            clear_actions(g, g.manager.pre_turn_actions);
-            g.manager.has_current_action = false;
-            g.manager.card_queue.clear();
-            g.manager.played_cards.clear();
-            g.orbs.channeled.clear(); g.orbs.turn_start = 0;
-            for (auto& count : g.stance_changes) count = 0;
-            g.manager.energy_gained_this_combat = 0;
-            g.manager.mantra_gained = 0;
-            g.manager.damage_received_this_combat = 0;
-            g.manager.damage_received_this_turn = 0;
-            g.manager.hp_loss_this_combat = 0;
-            g.manager.turn_has_ended = false;
-            g.manager.total_discarded_this_turn = 0;
-            g.turn = 1;
-            g.manager.phase = Phase::WaitingOnUser;
-        }
+        if (g.battle_over && !g.battle_callbacks_done) end_battle(g);
         if (g.manager.has_current_action) {
             execute_effect(g, g.action_objects[g.manager.current_action]);
             if (g.screen == Screen::Discard || g.screen == Screen::Grid || g.screen == Screen::CardReward || g.screen == Screen::Death) break;
@@ -923,8 +925,19 @@ SPIRE_FN inline void run_until_decision(Game& g) {
     for (int i = 0; i < g.monster_order.size; ++i) {
         Creature& creature = g.monsters[g.monster_order[i]].creature;
         // AbstractDungeon.update freezes room animations behind GRID and CARD_REWARD.
-        if (creature.dying && g.screen != Screen::Grid && g.screen != Screen::CardReward)
+        if (creature.dying && g.screen != Screen::Grid && g.screen != Screen::CardReward) {
             creature.dead = true;
+            // DeathScreen.update still runs AbstractMonster.updateDeathAnimation:
+            // the final death calls endBattle before that monster's powers are cleared.
+            if (g.screen == Screen::Death && !g.battle_over && !g.cannot_lose) {
+                bool all_dead = true;
+                for (int j = 0; j < g.monster_order.size; ++j) {
+                    const Creature& monster = g.monsters[g.monster_order[j]].creature;
+                    if (!monster.dead && !monster.escaped) { all_dead = false; break; }
+                }
+                if (all_dead) end_battle(g);
+            }
+        }
         if (creature.dead) creature.powers.clear();
     }
 }
