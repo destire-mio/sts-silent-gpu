@@ -17502,7 +17502,7 @@
     },
     {
       "observation_version": 13,
-      "status": "pending_mac",
+      "status": "combined_mac_report_contains_nonterminal_mismatch",
       "round": "A-2718-30284100",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -17536,11 +17536,19 @@
       "policy_version": 43,
       "native_replay_faults": 0,
       "selection": "One family per train/dev band, eighteen prefixes total; frozen policy version 43. Deduplicated within this round.",
-      "source_archive_sha256": "ef728e17cf6fb1ad307556232132732c8a0385f64846327c0c01c39683f845ee"
+      "source_archive_sha256": "ef728e17cf6fb1ad307556232132732c8a0385f64846327c0c01c39683f845ee",
+      "mac_comparison": {
+        "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+        "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+        "message": 10,
+        "status": "combined_mac_report_contains_nonterminal_mismatch",
+        "counts_scope": "Combined across both named rounds. Per-round outcomes and category overlap are not specified; neither round is marked passed.",
+        "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run."
+      }
     },
     {
       "observation_version": 13,
-      "status": "pending_mac",
+      "status": "combined_mac_report_contains_nonterminal_mismatch",
       "round": "A-2718-40529025",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -17574,7 +17582,15 @@
       "policy_version": 57,
       "native_replay_faults": 0,
       "selection": "One family per train/dev band, eighteen prefixes total; frozen policy version 57. Deduplicated within this round.",
-      "source_archive_sha256": "ef728e17cf6fb1ad307556232132732c8a0385f64846327c0c01c39683f845ee"
+      "source_archive_sha256": "ef728e17cf6fb1ad307556232132732c8a0385f64846327c0c01c39683f845ee",
+      "mac_comparison": {
+        "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+        "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+        "message": 10,
+        "status": "combined_mac_report_contains_nonterminal_mismatch",
+        "counts_scope": "Combined across both named rounds. Per-round outcomes and category overlap are not specified; neither round is marked passed.",
+        "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run."
+      }
     },
     {
       "observation_version": 13,
@@ -40216,7 +40232,13 @@
     "checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
     "checkpoint_update": 76,
     "checkpoint_decisions": 56051597,
-    "observed_at": "2026-10-20T17:13:40.330911+08:00"
+    "observed_at": "2026-10-20T17:13:40.330911+08:00",
+    "mac_confirmation": {
+      "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+      "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+      "deterministic_rule_state_reported": true,
+      "engine_fix_included": false
+    }
   },
   "stop_evidence_archives": [
     {
@@ -40353,6 +40375,80 @@
       "local_disposition": "Stop affected E3 training under the direct human rule. A dead monster is not a player-death/victory terminal after the final decision. This broader exemption was not authorized.",
       "evidence_scope": "Mac report on main; original recording was not independently reproduced on the server. No CUDA fault or CPU/GPU decision divergence was observed in the training logs.",
       "engine_fix_included": false
+    },
+    {
+      "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+      "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "source_blob": "d2a6b91d19e91e10fbd2af5d817b416b16d6e0bb",
+      "message": 10,
+      "source_reported_at": "2026-10-20T18:00:00+08:00",
+      "observed_via_github_at": "2026-10-20T17:53:07.972002+08:00",
+      "rounds": [
+        "A-2718-30284100",
+        "A-2718-40529025"
+      ],
+      "status": "combined_mac_report_contains_nonterminal_mismatch",
+      "prefixes": 36,
+      "original_recordings": 36,
+      "original_decisions": 55167,
+      "recordings_matching_both_scopes": 29,
+      "reported_engine_commit": "384ca193fadeb4bdc019b1174cb22abab5aba7bf",
+      "server_source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+      "server_reproduced": false,
+      "counts_scope": "Combined across both named rounds. Per-round outcomes and category overlap are not specified; neither round is marked passed.",
+      "count_reconciliation": "The report states 36 total and 29 matching recordings, six dagger cases for two seeds, an additional dagger seed, and one terminal case. Distinct mismatch totals cannot be derived without knowing overlap; no counts are silently corrected.",
+      "nonterminal_mismatch": {
+        "entity": "Reptomancer dagger after Explode self-destruction",
+        "scope": "combat",
+        "field": "DamageInfo.isModified",
+        "original_value": false,
+        "engine_value": true,
+        "later_decisions_exist": true,
+        "reported_seed_groups": [
+          {
+            "seed": 2000002493,
+            "recordings": 4
+          },
+          {
+            "seed": 1000003717,
+            "recordings": 2
+          },
+          {
+            "seed": 2000002576,
+            "recordings": null
+          }
+        ],
+        "run_scope_legal_actions_and_rng": "reported identical",
+        "observation_timing_check": {
+          "additional_idle_frames": 13,
+          "result": "original recordings byte-identical, as reported by Mac"
+        },
+        "revised_interpretation": "Deterministic rule state, not observation timing. Supersedes the animation-timing interpretation in message 9."
+      },
+      "terminal_mismatch": {
+        "seed": 2000002633,
+        "recordings": 1,
+        "screen": "DEATH",
+        "scenario": "Player and final Spiker die during the same action",
+        "fields": {
+          "isBattleOver": {
+            "original": true,
+            "engine": false
+          },
+          "damagedThisCombat": {
+            "original": 0,
+            "engine": 7
+          }
+        },
+        "decision_differences": "Reported terminal-only; no subsequent decision",
+        "disposition": "Within the directly authorized terminal-only exception; recorded as a difference, not fixed or fully identical."
+      },
+      "mac_fix_status": "In progress on Mac; no engine fix or regression included in this commit",
+      "engine_fix_included": false,
+      "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run.",
+      "local_disposition": "Keep training stopped for the existing nonterminal blocker. Preserve checkpoint76 and the cumulative budget; wait for the specific fix and original-game regression in main.",
+      "pending_round": "A-2718-50651118"
     }
   ],
   "user_training_pause_decision": {
@@ -41619,8 +41715,8 @@
   "next_engine_integration": {
     "status": "blocked_waiting_for_this_nonterminal_fix_and_regression",
     "base_main": "1b0a670c038273ee8341afc442d980863e2ab22c",
-    "reviewed_main": "a37bf51840b061abf99f4a2be156b41fc1ba4296",
-    "new_commits_reviewed": 44,
+    "reviewed_main": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+    "new_commits_reviewed": 45,
     "source_messages": [
       6,
       7,
@@ -41672,7 +41768,13 @@
       "checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
       "checkpoint_update": 76,
       "checkpoint_decisions": 56051597,
-      "observed_at": "2026-10-20T17:13:40.330911+08:00"
+      "observed_at": "2026-10-20T17:13:40.330911+08:00",
+      "mac_confirmation": {
+        "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+        "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+        "deterministic_rule_state_reported": true,
+        "engine_fix_included": false
+      }
     }
   },
   "prior_allocation_provenance": {
