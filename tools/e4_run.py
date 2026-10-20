@@ -90,7 +90,7 @@ def main():
     search = RoomSearch(32, args.trials, device, search_rng)
     search.evidence_directory = args.output
     collector = SegmentCollector(search, seeds_rng, rank=rank)
-    version, trained_seconds, next_evaluation = 0, 0., 1200.
+    version, trained_seconds, next_evaluation = 0, 0., 3600.
     best, stagnant, assessments = dict.fromkeys(REACH, 0.), 0, []
     ready = None
     phase = "calibration" if args.task == "calibrate" else "training"
@@ -150,6 +150,8 @@ def main():
                 phase = "evaluation"
             if phase == "training":
                 start = time.monotonic()
+                actual_before = collector.decisions
+                searched_before = search.searched_decisions
                 expired = False
                 policy.eval()
                 try:
@@ -166,9 +168,17 @@ def main():
                 version += 1
                 elapsed = torch.tensor(time.monotonic() - start, device=device)
                 dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
+                steps = torch.tensor([collector.decisions - actual_before,
+                                      search.searched_decisions - searched_before],
+                                     dtype=torch.int64, device=device)
+                dist.all_reduce(steps, op=dist.ReduceOp.SUM)
                 trained_seconds += float(elapsed)
                 if rank == 0:
                     print(json.dumps(dict(event="update", version=version, trained_seconds=trained_seconds,
+                                          update_seconds=float(elapsed),
+                                          actual_steps=int(steps[0]), sl_trial_steps=int(steps[1]),
+                                          actual_steps_per_second=float(steps[0] / elapsed),
+                                          sl_trial_steps_per_second=float(steps[1] / elapsed),
                                           initialization=args.initialization, **metrics)), flush=True)
                 if trained_seconds < next_evaluation:
                     continue
@@ -226,7 +236,7 @@ def main():
                     collector.restore(train_state)
                     train_state = None
                     phase = "training"
-                    next_evaluation += 1200
+                    next_evaluation += 3600
                 checkpoint("assessment_complete")
                 waiting = [queue_waiting() if rank == 0 else None]
                 dist.broadcast_object_list(waiting, src=0)
