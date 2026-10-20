@@ -1,4 +1,5 @@
 import argparse
+from collections import deque
 from datetime import timedelta
 import json
 import os
@@ -99,6 +100,7 @@ def main():
     evaluation_state = None
     train_state = None
     evaluation_seconds = 0.
+    health_history = deque(maxlen=20)
     if args.resume:
         saved = torch.load(args.resume / f"rank-{rank}.pt", map_location="cpu", weights_only=False)
         assert saved["commit"] == commit and saved["initialization"] == args.initialization
@@ -118,6 +120,7 @@ def main():
         evaluation_seconds = saved["evaluation_seconds"]
         search.event_trial_max_steps = saved["event_trial_max_steps"]
         search.metrics = saved["search_metrics"]
+        health_history.extend(saved["health_history"])
     allocation_start = time.monotonic()
     search.deadline = allocation_start + args.seconds - 60
     dev_seeds = list(range(2000000000 + rank, 2000004096, world))
@@ -130,7 +133,8 @@ def main():
             next_evaluation=next_evaluation, best=best, stagnant=stagnant, assessments=assessments,
             ready=ready, phase=phase, calibration_index=calibration_index,
             evaluation_state=evaluation_state, train_state=train_state, evaluation_seconds=evaluation_seconds,
-            event_trial_max_steps=search.event_trial_max_steps, search_metrics=search.metrics))
+            event_trial_max_steps=search.event_trial_max_steps, search_metrics=search.metrics,
+            health_history=list(health_history)))
         dist.barrier()
         if rank == 0:
             atomic_json(args.output / "status.json", dict(reason=reason, task=args.task, phase=phase, version=version,
@@ -175,6 +179,9 @@ def main():
                 health_report = dict(completed_episodes=completed,
                     completed_average_floor=floor_sum / completed if completed else None,
                     stalled_episodes=stalled, active_max_floor_steps=max_floor_steps)
+                health_history.append((completed, stalled))
+                window_completed = sum(count for count, _ in health_history)
+                window_stalled = sum(count for _, count in health_history)
                 ready = None
                 version += 1
                 elapsed = torch.tensor(time.monotonic() - start, device=device)
@@ -191,10 +198,14 @@ def main():
                                           actual_steps_per_second=float(steps[0] / elapsed),
                                           sl_trial_steps_per_second=float(steps[1] / elapsed),
                                           initialization=args.initialization, **health_report, **metrics)), flush=True)
-                if completed == 0 or stalled * 20 > completed:
+                if version > 20 and (window_completed == 0
+                        or window_completed >= 40 and window_stalled * 20 > window_completed):
                     if rank == 0:
                         atomic_json(args.output / "training-health-stop.json",
-                                    dict(version=version, **health_report))
+                                    dict(version=version, **health_report,
+                                         window_updates=len(health_history),
+                                         window_completed_episodes=window_completed,
+                                         window_stalled_episodes=window_stalled))
                     checkpoint("training_health_stop")
                     break
                 if trained_seconds < next_evaluation:

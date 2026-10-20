@@ -1,25 +1,28 @@
 {
-  "recorded_at": "2026-10-21T02:27:57.269193+08:00",
+  "recorded_at": "2026-10-21T02:35:01.123127+08:00",
   "step": 1,
-  "status": "fresh1729_training_health_observed",
+  "status": "Claude29_rolling_health_prepared",
   "fixed_commit": "9c082f74df8613003dd223ebde9d8132f654c95d",
-  "main_reviewed": "627e417cb0112ba386886d20d1c8590ae56aacdf",
+  "main_reviewed": "2f59dfaae832651ea85525d7e83ee0caa454c94c",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 43200,
-    "settled_node_seconds": 10999,
-    "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 94,
-    "used_including_active_snapshot": 11093
+    "settled_node_seconds": 11434,
+    "reserved_node_seconds": 0,
+    "active_elapsed_at_snapshot": 0,
+    "used_including_active_snapshot": 11434
   },
   "job": {
     "id": 3639,
     "gpus": 8,
-    "state": "RUNNING",
+    "state": "CANCELLED",
     "start": "2026-10-21T02:26:23+08:00",
     "time_limit_seconds": 7200,
     "output": "/home/zhuyouwei/spire-downloads/e4-training-3639/A-1729",
-    "log": "/home/zhuyouwei/spire-downloads/e4-training-3639.slurm.log"
+    "log": "/home/zhuyouwei/spire-downloads/e4-training-3639.slurm.log",
+    "elapsed_seconds": 435,
+    "exit_code": "0:15",
+    "end": "2026-10-21T02:33:38+08:00"
   },
   "initialization": 1729,
   "training_seconds_target": 3600,
@@ -43,7 +46,7 @@
     "loss": 0.8453737035160884
   },
   "saved_checkpoint_version": 0,
-  "next": "Monitor healthstop/fault/queue and savedcheckpoints; evaluate4096dev at3600trainingseconds; then2718 aftercost/maincheck.",
+  "next": "Deployrolling20healthstop and fresh1729; preserveold3639evidence/cost",
   "evaluation_complete": false,
   "prior_attempts": [
     {
@@ -176,7 +179,7 @@
     },
     "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
   },
-  "latest_decision": "Claude28 discard784, fresh1729, samefloor3000actualsteps terminalstalled, perupdatehealthstop; step1limit43200",
+  "latest_decision": "Rolling20updatehealth; first20recordonly; then completed0 orcompleted>=40 andstalled>5percent stops. Fresh1729directrestart.",
   "prepared_resume": {
     "authorization": "Claude26+27",
     "status": "obsolete_policy784_invalidated",
@@ -262,6 +265,15 @@
       "source": "scontrol final00:06:49",
       "exit_code": "0:15",
       "accounting_sha256": "9bae84bd53e8dc0df62010217e6aa5caedf705a470332a39148f65b8991953d5"
+    },
+    {
+      "job_id": 3639,
+      "step": 1,
+      "charged_node_seconds": 435,
+      "gpu_seconds": 3480,
+      "source": "scontrol final00:07:15",
+      "exit_code": "0:15",
+      "accounting_sha256": "74ae414b18225e23468c7f07d0abb45128e4199686d16f568996451a5dad16a9"
     }
   ],
   "budgets": {
@@ -272,18 +284,18 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 10999,
+      "charged_node_seconds": 11434,
       "limit_node_seconds": 43200,
-      "reserved_node_seconds": 7200,
+      "reserved_node_seconds": 0,
       "limit_authorization": "Claude28 at627e417; priorcharges retained"
     }
   },
   "floor_stall_update": {
     "authorization": "Claude28",
-    "status": "deployed",
+    "status": "rolling_window_prepared",
     "actual_floor_steps_limit": 3000,
     "condition": "Morethan3000actualdecisions withoutfloorchange; nofuturebootstrap; stalled notengine death; validactualaction remains PPO/IL sample",
-    "health_rule": "Stopafterupdate andcheckpoint ifglobalcompleted0 orstalled/completed>0.05",
+    "health_rule": "Recent20updates summed; first20recordonly. Afterwards completed0 orcompleted>=40 andstalled>5percent =>saveandstop. Window checkpointed.",
     "old_log_fields": [
       "actual_steps",
       "actual_steps_per_second",
