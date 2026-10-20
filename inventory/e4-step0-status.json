@@ -256,6 +256,11 @@
       "sha256": "d13eda2b206004ced86e30800f8b0e50a9929cf29ce2973db1acedd39b11c804",
       "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N32-summary.json",
       "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N32-summary.json"
+    },
+    "e4-step0-3631-evidence.tar.gz": {
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631-evidence.tar.gz",
+      "sha256": "124fc5b91425c698df5b9daac03fe3dd583202111692646c733131003b3b443c",
+      "contains": "Slurm final accounting and log, validation logs, all calibration results and audits; excludes checkpoint tensors"
     }
   },
   "compiled_modules": [
