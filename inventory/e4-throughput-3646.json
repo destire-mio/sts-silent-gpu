@@ -1,0 +1,149 @@
+{
+  "job": {
+    "job_id": 3646,
+    "purpose": "Claude31+34 same1729checkpoint88:512/N32,512/N8,256/N32 each10update throughput comparison",
+    "state": "SUBMITTED",
+    "step": 1,
+    "gpus": 8,
+    "reserved_seconds": 9000,
+    "fixed_head": "7c918ddab4039750b3104b96f131155f17ddfce0",
+    "output": "/home/zhuyouwei/spire-downloads/e4-throughput-3646",
+    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-throughput-3646.slurm.log",
+    "submitted_at": "2026-10-21T07:53:55.488100+08:00",
+    "source_directory": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729",
+    "source_version": 88,
+    "cases": [
+      {
+        "lanes": 512,
+        "trials": 32,
+        "updates": 10
+      },
+      {
+        "lanes": 512,
+        "trials": 8,
+        "updates": 10
+      },
+      {
+        "lanes": 256,
+        "trials": 32,
+        "updates": 10
+      }
+    ],
+    "collector_resize": "Retain source32 lanes includingpendingactions/rewards/paths/RNG;appendemptylanes;benchmarkbranches neveroverwriteproduction",
+    "scripts": {
+      "e4-throughput.py": "34f346ca2a913c766fe04c787a4657f946a25208f4155f05ff7f2d4a060cbebf",
+      "e4-throughput.sh": "0497b269813e9a07a5da03dd448e2f141fade68cd6bb406055c622aebfa1d181"
+    }
+  },
+  "authorization": [
+    "Claude31: samecheckpoint samelanes N8/N32 tenupdates each",
+    "Claude34: after2718 fullassessment try512lanes and choose sustainable highestactualsteps/s;256N32 provides samecheckpoint lane baseline"
+  ],
+  "source_checkpoints": [
+    {
+      "name": "E4-1729-88-N32-D4096-audit.json",
+      "size": 19078,
+      "sha256": "7d86a58226dca61e0d423d97d81f48ec6ac291975c58c19f27230b649653a7d7"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-0.json",
+      "size": 585099,
+      "sha256": "f5670daf33a3c010396264f335ed5142defa73558c6888939d34a6d5e5b01d71"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-1.json",
+      "size": 554789,
+      "sha256": "95a90d8f185084020fbe78b960939330a19c03618d5c2c1574a7b9c0797a088b"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-2.json",
+      "size": 562480,
+      "sha256": "ec8236d674c043039dc1cb3d9cb64c7969157f015efbfd4062eedcb8c20b912f"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-3.json",
+      "size": 579995,
+      "sha256": "c4561ddf0582b07d3044985c5bb3ff3f51c3cc93ce26f0c6b7b6afcdb2b99a06"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-4.json",
+      "size": 583552,
+      "sha256": "51beed4e75acfbf873936aa63a41be5a4a8299d41ee30a0b6db130d6fa9acb41"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-5.json",
+      "size": 563168,
+      "sha256": "d6594f4fb9d3d2527d35e1ab546b6d6d3232beb6250a94b966f6120ea0ed1ba2"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-6.json",
+      "size": 568945,
+      "sha256": "0b771d3234cd004cb0d0eab8aab723eb34f3cf8a422b5c7645dd68acfb8ff4cc"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-rank-7.json",
+      "size": 567809,
+      "sha256": "185ddf2e922897fafa74bff49365407c8cc1651ee7df034cfd2c816838167816"
+    },
+    {
+      "name": "E4-1729-88-N32-D4096-summary.json",
+      "size": 1132,
+      "sha256": "cbc313bb4a6acafc3c1180e690657766e0ca84b26fa1c1eb6fecb6d4e02e7274"
+    },
+    {
+      "name": "rank-0.pt",
+      "size": 11818381,
+      "sha256": "0269357b3c810572b80b6d302aa42e6a07d54faa7085b767ca996185ac3c2720"
+    },
+    {
+      "name": "rank-1.pt",
+      "size": 11822861,
+      "sha256": "aaf573bc597536099629638814dc98a7c8e03319980259f274e0af297e78a849"
+    },
+    {
+      "name": "rank-2.pt",
+      "size": 11818317,
+      "sha256": "5db7e9107dd0afc1227fb1fefbf83514ce85b33a47f3ecb6554ef12afad5c987"
+    },
+    {
+      "name": "rank-3.pt",
+      "size": 11821261,
+      "sha256": "03136c6e2288003d2506831be28b6031a4e949bf93654efd7766d0a24aa68f91"
+    },
+    {
+      "name": "rank-4.pt",
+      "size": 11822093,
+      "sha256": "ae9f2e5730a832c52bf4eb1d0bfdae806af058637f6611a1bc5da290be9fd8a3"
+    },
+    {
+      "name": "rank-5.pt",
+      "size": 11820045,
+      "sha256": "dc006511dd0614a8e1dc62d040bfdd6aae22b0ae92b2e7e49365245868fedc8e"
+    },
+    {
+      "name": "rank-6.pt",
+      "size": 11816845,
+      "sha256": "7cd5081d843e327301289453a5fcddf0b0294476ecdbc18058d63578fd5e0905"
+    },
+    {
+      "name": "rank-7.pt",
+      "size": 11820429,
+      "sha256": "8f2a913334be723b9fb76bd1892c39b92cf47de361289ade73d9bdbd0484f571"
+    },
+    {
+      "name": "status.json",
+      "size": 1675,
+      "sha256": "6b2826dc5b5cbd81851bdf6889fdf4d51e63defdbce1f2cf13ad33a71f5bc20f"
+    }
+  ],
+  "code_sha256": "34f346ca2a913c766fe04c787a4657f946a25208f4155f05ff7f2d4a060cbebf",
+  "script": "#!/usr/bin/env bash\n#SBATCH --job-name=spire-e4-throughput\n#SBATCH --partition=N56_128G_V100\n#SBATCH --nodelist=gpu01\n#SBATCH --gres=gpu:V100:8\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=96G\n#SBATCH --time=02:30:00\nset -euo pipefail\nulimit -c 0\nexport OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1\nexport LD_LIBRARY_PATH=/usr/local/cuda-12.8/lib64\nrepo=/home/zhuyouwei/sts-silent-gpu-split\nbuild=/home/zhuyouwei/spire-build-e3-v13-5adc725\npython=/home/zhuyouwei/spire-env/bin/python\noutput=/home/zhuyouwei/spire-downloads/e4-throughput-$SLURM_JOB_ID\nsource=/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729\nmkdir -p \"$output\"\nexport PYTHONPATH=\"$build:$repo/tests:$repo\"\ncd \"$repo\"\ntest -z \"$(git status --porcelain)\"\ntest \"$(git rev-parse HEAD)\" = 7c918ddab4039750b3104b96f131155f17ddfce0\ngit rev-parse HEAD > \"$output/source.txt\"\nsha256sum \"$source\"/rank-*.pt > \"$output/input-checkpoints.sha256\"\ntrap 'code=$?; printf \"BENCH_EXIT=%s END=%s\\n\" \"$code\" \"$(date -Is)\"; scontrol show job \"$SLURM_JOB_ID\" > \"$output/accounting-at-exit.txt\"' EXIT\nSECONDS=0\nfor setting in 512:32 512:8 256:32; do\n  lanes=${setting%:*}\n  trials=${setting#*:}\n  case_output=\"$output/L$lanes-N$trials\"\n  remaining=$((8880-SECONDS))\n  if [ \"$remaining\" -lt 180 ]; then break; fi\n  \"$python\" -m torch.distributed.run --standalone --nnodes=1 --nproc-per-node=8 /home/zhuyouwei/spire-downloads/e4-throughput.py --source \"$source\" --output \"$case_output\" --lanes \"$lanes\" --trials \"$trials\" --seconds \"$remaining\"\n  reason=$(\"$python\" -c 'import json,sys;print(json.load(open(sys.argv[1]))[\"reason\"])' \"$case_output/status.json\")\n  if [ \"$reason\" != ten_updates_complete ]; then break; fi\ndone\nsha256sum -c \"$output/input-checkpoints.sha256\"\n",
+  "budget": {
+    "charged_node_seconds": 25286,
+    "limit_node_seconds": 43200,
+    "reserved_node_seconds": 9000,
+    "limit_authorization": "Claude28 at627e417; priorcharges retained",
+    "active_observed_node_seconds": 0
+  },
+  "scope": "Three diagnostic branches; source1729model/optimizer/RNG/collector copied independently eachcase; all32 source actual lanes preserved, newlanes empty. PendingN32 selected actions retained identically at case start, so N8 case initially consumes any queued sourceN32 actions. No benchmark policy promoted automatically."
+}
