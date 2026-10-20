@@ -1,0 +1,353 @@
+{
+  "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+  "main_integrated": "4e6d7607e55b5ad816ba05ed94b89172f4375edb",
+  "mac_reports": [
+    {
+      "report_key": "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+      "source_commit": "4e6d7607e55b5ad816ba05ed94b89172f4375edb",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "message": 11,
+      "source_reported_at": "2026-10-20T19:20:00+08:00",
+      "observed_via_github_at": "2026-10-20T18:23:15.093127+08:00",
+      "rounds": [
+        "A-2718-20782258",
+        "A-2718-30284100",
+        "A-2718-40529025"
+      ],
+      "status": "mac_passed_on_fixed_engine",
+      "original_recordings": 54,
+      "recordings_matching_both_scopes": 54,
+      "original_decisions": 83908,
+      "counts_scope": "Combined across the three named rounds; no per-round decision counts inferred",
+      "fix_commits": [
+        "fc39281802c77fefd9753449a7417afd54ee55a4",
+        "833fa93a0cdd89b2271c5208bee667edd1d1c802"
+      ],
+      "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+      "regressions": [
+        "SnakeDagger-explode-power-refresh-seed101",
+        "Spiker-double-death-seed2000002633"
+      ],
+      "server_reproduced_original_game": false,
+      "evidence_scope": "Mac report on main; original-game regression recordings supplied with engine fixes"
+    },
+    {
+      "report_key": "ce317bb3b1f96abca3433e574a2ce273ad9e1436:12",
+      "source_commit": "ce317bb3b1f96abca3433e574a2ce273ad9e1436",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "message": 12,
+      "source_reported_at": "2026-10-20T19:45:00+08:00",
+      "observed_via_github_at": "2026-10-20T18:36:49.200987+08:00",
+      "rounds": [
+        "A-2718-50651118"
+      ],
+      "status": "mac_passed_on_fixed_engine",
+      "original_recordings": 18,
+      "recordings_matching_both_scopes": 18,
+      "original_decisions": 25692,
+      "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+      "server_reproduced_original_game": false,
+      "evidence_scope": "Mac report on main; no independent server original-game recording"
+    }
+  ],
+  "build": {
+    "job_id": 3622,
+    "kind": "cpu_gpu_build",
+    "final": true,
+    "status": "COMPLETED",
+    "exit_code": "0:0",
+    "charged_seconds": 738,
+    "cpus": 32,
+    "gpus": 0,
+    "started_at": "2026-10-20T18:35:17",
+    "ended_at": "2026-10-20T18:47:35",
+    "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3622/final.txt",
+    "evidence_sha256": "3192ea1ecc1cc21c143bea45aaae35a50e1089a0a4fb05dc20d10cc255632f9a",
+    "module_hashes": "7ab764c67c63195c07d3e80de458e74afc7a3cfc762e6105f1f29aac57f828c1  /home/zhuyouwei/spire-build-e3-v13-5adc725/spire.cpython-312-x86_64-linux-gnu.so\n64259c91d9eef570eda82e85a8abb54c182f207d870f280e713844ef8893661c  /home/zhuyouwei/spire-build-e3-v13-5adc725/spire_gpu.cpython-312-x86_64-linux-gnu.so\n16d973b0be9eb54788c25e3307ef225068651ab3a95f7c7bc76c30a2953dea34  /home/zhuyouwei/spire-build-e3-v13-5adc725/test_cuda_parity\nd9e0b0cdf8a494ea339eacc7acd61fe4bea2d42cadcd1da452ea841f92cf025b  /home/zhuyouwei/spire-build-e3-v13-5adc725/test_cuda_root_cache\n",
+    "prior_charged_seconds": 25460,
+    "cumulative_charged_seconds": 26198,
+    "remaining_seconds": 2602
+  },
+  "prior_failed_gate": {
+    "job_id": 3623,
+    "kind": "fixed_engine_parity_and_checkpoint_migration",
+    "final": true,
+    "status": "FAILED",
+    "exit_code": "1:0",
+    "charged_seconds": 314,
+    "cpus": 3,
+    "gpus": 3,
+    "started_at": "2026-10-20T18:48:15",
+    "ended_at": "2026-10-20T18:53:29",
+    "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3623/final.txt",
+    "evidence_sha256": "992b3d18dd31969764b36ca0e893f269f77b445d2aee25cdb2bc44f0ddc58d6a",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5"
+  },
+  "harness_error_adjudication": {
+    "status": "harness_input_error_resolved",
+    "failed_job": 3623,
+    "reason": "Complete terminal winning paths were mistakenly included in a resumable-root zero-fault assertion. TrainingBatch.reset_to_many rejects empty-action terminal states as NoDecision by design.",
+    "fault_code": "0xe0000003",
+    "source_lines": [
+      "obs/schema.hpp:17",
+      "host/training_batch.hpp:240",
+      "cuda/batch.cu:121"
+    ],
+    "terminal_paths": 34,
+    "terminal_paths_native_replay_passed": true,
+    "terminal_paths_not_training_inputs": true,
+    "retained_winning_line_decisions": 58422,
+    "all_306_recut_roots_unchanged": true,
+    "e2_roots_zero_faults": 8721,
+    "policy_prefixes_zero_faults": 72,
+    "cpu_gpu_full_state_compared": 8827,
+    "cpu_gpu_full_state_all_equal": true,
+    "engine_code_changed": false,
+    "assertions_disabled": false,
+    "seeds_discarded": 0,
+    "prior_archive_sha256": "80f3aa5fa3926af8a29a8fba082e8c2ba8b3aefd0d169be2ffae4389b13ef82c",
+    "remaining_checks": [
+      "306curriculum roots full-state andcollector",
+      "existing collector parity",
+      "checkpoint76 metadata migration"
+    ]
+  },
+  "validation": {
+    "status": "passed",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "build_job": 3622,
+    "job_id": 3624,
+    "prior_gate_job": 3623,
+    "module_sha256": {
+      "spire_gpu.cpython-312-x86_64-linux-gnu.so": "64259c91d9eef570eda82e85a8abb54c182f207d870f280e713844ef8893661c",
+      "spire.cpython-312-x86_64-linux-gnu.so": "7ab764c67c63195c07d3e80de458e74afc7a3cfc762e6105f1f29aac57f828c1"
+    },
+    "checks": [
+      {
+        "check": "new-original-regressions",
+        "exit_code": 0,
+        "seconds": 0.150742769241333,
+        "log_sha256": "92ba228fb804709725647577f7ff100a400b789910e1324ed048ad7b1ab8d931"
+      },
+      {
+        "check": "cuda-parity",
+        "exit_code": 0,
+        "seconds": 26.21205711364746,
+        "log_sha256": "b99f3a1cc60e7d6240cbff67fccb8c1a169ccb9f2cb2f183373e4a88ec5aef77"
+      },
+      {
+        "check": "curriculum-root-parity",
+        "exit_code": 0,
+        "seconds": 99.57799744606018,
+        "log_sha256": "f49410b01111a9ca48bced46157da5006737739b5d3072e1f01f7deed85a0db5"
+      },
+      {
+        "check": "collector-parity",
+        "exit_code": 0,
+        "seconds": 17.04273796081543,
+        "log_sha256": "b4855d0f2ab59af82218c5b46bad9c67135233fe5b954d8e84ed51e3b783c82b"
+      }
+    ],
+    "e2_roots": 8721,
+    "curriculum_roots": 306,
+    "affected_policy_prefixes": 72,
+    "winning_lines": 34,
+    "winning_line_decisions": 58422,
+    "root_candidates_and_metadata_unchanged": true,
+    "terminal_prefix_validation": {
+      "status": "harness_input_error_resolved",
+      "failed_job": 3623,
+      "reason": "Complete terminal winning paths were mistakenly included in a resumable-root zero-fault assertion. TrainingBatch.reset_to_many rejects empty-action terminal states as NoDecision by design.",
+      "fault_code": "0xe0000003",
+      "source_lines": [
+        "obs/schema.hpp:17",
+        "host/training_batch.hpp:240",
+        "cuda/batch.cu:121"
+      ],
+      "terminal_paths": 34,
+      "terminal_paths_native_replay_passed": true,
+      "terminal_paths_not_training_inputs": true,
+      "retained_winning_line_decisions": 58422,
+      "all_306_recut_roots_unchanged": true,
+      "e2_roots_zero_faults": 8721,
+      "policy_prefixes_zero_faults": 72,
+      "cpu_gpu_full_state_compared": 8827,
+      "cpu_gpu_full_state_all_equal": true,
+      "engine_code_changed": false,
+      "assertions_disabled": false,
+      "seeds_discarded": 0,
+      "prior_archive_sha256": "80f3aa5fa3926af8a29a8fba082e8c2ba8b3aefd0d169be2ffae4389b13ef82c",
+      "remaining_checks": [
+        "306curriculum roots full-state andcollector",
+        "existing collector parity",
+        "checkpoint76 metadata migration"
+      ]
+    },
+    "elapsed_seconds": 116.92799401283264
+  },
+  "curriculum_roots": {
+    "source_cpu_search": "/home/zhuyouwei/spire-downloads/e3-v13-search-extended-3603",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "observation_version": 13,
+    "input_sha256": {
+      "train.json": "6cb6edb2628f9f1305b29b969b59b979416ec55236f80fc12a8305be26e94f1b",
+      "dev.json": "c45f1026f63e4e6e9911e902bcb3cf39b2e45a27bfb041bc2e2633720c809d7e",
+      "winning-lines.jsonl": "f5408aebaa05f5789685fb40931bf0eaeb6963e14f3a777a9282bcbed9366fc5",
+      "summary.json": "68ef8ca9c0d3b25e6dcfa0f17fb10a618f269d3b7017ca3c8567d28721b3422f"
+    },
+    "module_sha256": {
+      "spire.cpython-312-x86_64-linux-gnu.so": "7ab764c67c63195c07d3e80de458e74afc7a3cfc762e6105f1f29aac57f828c1",
+      "spire_gpu.cpython-312-x86_64-linux-gnu.so": "64259c91d9eef570eda82e85a8abb54c182f207d870f280e713844ef8893661c"
+    },
+    "unique_prefixes": 306,
+    "full_state_binary_sha256": "d9e0b0cdf8a494ea339eacc7acd61fe4bea2d42cadcd1da452ea841f92cf025b",
+    "status": "cpu_gpu_parity_passed",
+    "complete_game_history_state_equal": true,
+    "collector_roots_checked": 306,
+    "collector_shards": [
+      {
+        "status": "passed",
+        "roots_checked": 102,
+        "decisions": 1731,
+        "faults": 0,
+        "exact_actions_outcomes_observations": true,
+        "max_absolute_error": {
+          "log_probs": 1.6689300537109375e-05,
+          "values": 3.248453140258789e-06,
+          "returns": 2.5033950805664062e-06,
+          "advantages": 3.069639205932617e-06
+        }
+      },
+      {
+        "status": "passed",
+        "roots_checked": 102,
+        "decisions": 1791,
+        "faults": 0,
+        "exact_actions_outcomes_observations": true,
+        "max_absolute_error": {
+          "log_probs": 1.9788742065429688e-05,
+          "values": 4.410743713378906e-06,
+          "returns": 2.3245811462402344e-06,
+          "advantages": 3.9637088775634766e-06
+        }
+      },
+      {
+        "status": "passed",
+        "roots_checked": 102,
+        "decisions": 1973,
+        "faults": 0,
+        "exact_actions_outcomes_observations": true,
+        "max_absolute_error": {
+          "log_probs": 1.5735626220703125e-05,
+          "values": 3.4570693969726562e-06,
+          "returns": 2.384185791015625e-06,
+          "advantages": 3.159046173095703e-06
+        }
+      }
+    ],
+    "gpu_check_seconds": 96.43564367294312
+  },
+  "migration": {
+    "reason": "Resume after Mac original-game fixes integrated and existing server parity gates passed",
+    "parent_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
+    "parent_checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
+    "parent_engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+    "parent_policy_version": 76,
+    "parent_training_decisions": 56051597,
+    "target_engine_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "parent_initial_evaluation_sha256": "39cae98eca3f2ff0476d4168ba2669758a4fcccd2fc0cbd4631089080fb2407d",
+    "previous_continuation": null,
+    "mac_reports": [
+      "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+      "ce317bb3b1f96abca3433e574a2ce273ad9e1436:12"
+    ],
+    "gate_summary": "/home/zhuyouwei/spire-downloads/e3-fix-gates-3624/summary.json",
+    "gate_summary_sha256": "74fe376a04960f057d3d45141fb370e38c100b099eaa374e6927f6d0917ee3a9",
+    "engine_rules_changed": true,
+    "training_state_preserved": true,
+    "baseline": "Historical initial evaluation retained unchanged from original initialization",
+    "bitwise_continuation": false,
+    "output_checkpoint": "/home/zhuyouwei/spire-downloads/e3-fix-2314143-resume-input-A-2718/checkpoint.pt",
+    "output_checkpoint_sha256": "c4b3372b2b8f78c5a04f3a05307ce5bf126ed41bf78525496896339b0884fb55",
+    "training_state_sha256": "a1acf1fe32be84f1d2549c20decee0aa4569b12ec09bff6df224ceffe6826cd9",
+    "original_checkpoint_preserved": true,
+    "optimizer_rng_attempt_queues_preserved": true,
+    "next_evaluation": 60000000,
+    "last_evaluated_decisions": 50651118,
+    "training_started": false
+  },
+  "budget": {
+    "total_seconds": 28800,
+    "charged_seconds": 26632,
+    "remaining_seconds": 2168,
+    "maximum_next_allocation_seconds": 2160,
+    "observed_at": "2026-10-20T19:08:48.437092+08:00",
+    "running_elapsed_seconds": 111,
+    "observed_cumulative_charge_seconds": 26743,
+    "remaining_seconds_at_observation": 2057,
+    "running_job_finalized": false
+  },
+  "archives": [
+    {
+      "filename": "e3-fix-2314143-evidence.tar.gz",
+      "sha256": "80f3aa5fa3926af8a29a8fba082e8c2ba8b3aefd0d169be2ffae4389b13ef82c"
+    },
+    {
+      "filename": "e3-fix-2314143-gates-complete-evidence.tar.gz",
+      "sha256": "14e0083aaf708098c09534b9a7121383acdea2da875795ae12587022d5c72933"
+    }
+  ],
+  "training_status": "running",
+  "resume_job": {
+    "job_id": 3625,
+    "kind": "training_resume",
+    "state": "RUNNING",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "group": "A",
+    "init_seed": 2718,
+    "checkpoint_update": 76,
+    "checkpoint_training_decisions": 56051597,
+    "checkpoint_sha256": "c4b3372b2b8f78c5a04f3a05307ce5bf126ed41bf78525496896339b0884fb55",
+    "plan_sha256": "527ec806cffbba8090e04479a408f8388c01157db374f2124b20bf49d215f1b8",
+    "submitted_epoch": 1792494417.1706407,
+    "allocation_limit_seconds": 2160,
+    "prior_charged_seconds": 26632,
+    "gpus": 8,
+    "cpus": 8,
+    "memory_gib": 96,
+    "recorder_pid": 372894,
+    "output": "/home/zhuyouwei/spire-downloads/e3-training-resume-3625",
+    "log": "/home/zhuyouwei/spire-downloads/e3-resume-3625.log",
+    "slurm_record": "/home/zhuyouwei/spire-downloads/e3-slurm-3625/final.txt",
+    "final": false,
+    "observed_at": "2026-10-20T19:08:48.437092+08:00",
+    "slurm_elapsed_seconds_at_observation": 111,
+    "start_time": "2026-10-20T19:06:57",
+    "latest_completed_update": 77,
+    "latest_training_decisions": 57209061,
+    "last_completed_update_faults": 0,
+    "last_completed_update_truncated": 0
+  },
+  "continuation_plan_sha256": "527ec806cffbba8090e04479a408f8388c01157db374f2124b20bf49d215f1b8",
+  "resume_observation": {
+    "observed_at": "2026-10-20T19:08:48.437092+08:00",
+    "job_id": 3625,
+    "status": "running",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "group": "A",
+    "init_seed": 2718,
+    "resumed_update": 76,
+    "resumed_decisions": 56051597,
+    "updates": 77,
+    "training_decisions": 57209061,
+    "frontier": "k32",
+    "last_completed_update_faults": 0,
+    "last_completed_update_truncated": 0,
+    "completed_stages_this_job": [],
+    "checkpoint_exists": true,
+    "checkpoint_note": "Live checkpoint is present. Version/hash of the changing output file were not loaded in this observation; migrated input remains separately frozen.",
+    "slurm_elapsed_seconds": 111,
+    "observation_file": "D:\\google download\\sts-silent-gpu-results\\2026-10-19-e3\\resume-3625-observation.json",
+    "observation_sha256": "6bf2fb54f165f9dd96f872e967f51d843e21a5811813c88354a00241470ae303"
+  }
+}

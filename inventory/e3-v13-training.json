@@ -1,6 +1,6 @@
 {
   "observation_version": 13,
-  "status": "stopped_reported_nonterminal_snapshot_mismatch",
+  "status": "resumed_on_fixed_engine",
   "job_id": 3620,
   "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
   "curriculum_rule_commit": "a657aa250ef0d7f9ac90e960c81c42157b708cd1",
@@ -17430,7 +17430,7 @@
     },
     {
       "observation_version": 13,
-      "status": "reported_nonterminal_snapshot_mismatch",
+      "status": "mac_passed_on_fixed_engine",
       "round": "A-2718-20782258",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -17498,11 +17498,59 @@
         "local_disposition": "Stop affected E3 training under the direct human rule. A dead monster is not a player-death/victory terminal after the final decision. This broader exemption was not authorized.",
         "evidence_scope": "Mac report on main; original recording was not independently reproduced on the server. No CUDA fault or CPU/GPU decision divergence was observed in the training logs.",
         "engine_fix_included": false
+      },
+      "mac_comparison_history": [
+        {
+          "status": "reported_nonterminal_snapshot_mismatch",
+          "mac_report": {
+            "report_key": "a37bf51840b061abf99f4a2be156b41fc1ba4296:9",
+            "source_commit": "a37bf51840b061abf99f4a2be156b41fc1ba4296",
+            "source_document": "docs/messages/claude-to-gpt.md",
+            "message": 9,
+            "source_reported_at": "2026-10-20T17:20:00+08:00",
+            "observed_via_github_at": "2026-10-20T17:09:15.104164+08:00",
+            "round": "A-2718-20782258",
+            "prefixes": 18,
+            "original_recordings": 18,
+            "original_decisions": 28196,
+            "reported_engine_commit": "384ca193fadeb4bdc019b1174cb22abab5aba7bf",
+            "server_source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+            "server_reproduced": false,
+            "status": "reported_nonterminal_snapshot_mismatch",
+            "recordings_matching_both_scopes": 17,
+            "mismatch": {
+              "recording_index": 6,
+              "seed": 2000002493,
+              "scope": "combat",
+              "line": 1067,
+              "entity": "Reptomancer third dagger; isDead=true after prior-turn self-destruction",
+              "field": "damage[0].DamageInfo.isModified",
+              "original_value": false,
+              "engine_value": true,
+              "later_records_match": true,
+              "later_decisions_exist": true,
+              "run_scope_matching_rows": 1288
+            },
+            "mac_interpretation": "Dead-monster damage cache depends on animation timing; obs/encode.inc skips dead monsters, so the policy cannot observe this field; legal actions and RNG reportedly match.",
+            "mac_recommendation": "Continue training without extra checks.",
+            "local_disposition": "Stop affected E3 training under the direct human rule. A dead monster is not a player-death/victory terminal after the final decision. This broader exemption was not authorized.",
+            "evidence_scope": "Mac report on main; original recording was not independently reproduced on the server. No CUDA fault or CPU/GPU decision divergence was observed in the training logs.",
+            "engine_fix_included": false
+          },
+          "mac_comparison": null
+        }
+      ],
+      "mac_comparison": {
+        "report_key": "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+        "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+        "original_recordings_in_round": 18,
+        "both_scopes_passed": true,
+        "scope": "Original-game check reported by Mac on repaired engine; historical training used6ae1956"
       }
     },
     {
       "observation_version": 13,
-      "status": "combined_mac_report_contains_nonterminal_mismatch",
+      "status": "mac_passed_on_fixed_engine",
       "round": "A-2718-30284100",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -17538,17 +17586,30 @@
       "selection": "One family per train/dev band, eighteen prefixes total; frozen policy version 43. Deduplicated within this round.",
       "source_archive_sha256": "ef728e17cf6fb1ad307556232132732c8a0385f64846327c0c01c39683f845ee",
       "mac_comparison": {
-        "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
-        "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
-        "message": 10,
-        "status": "combined_mac_report_contains_nonterminal_mismatch",
-        "counts_scope": "Combined across both named rounds. Per-round outcomes and category overlap are not specified; neither round is marked passed.",
-        "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run."
-      }
+        "report_key": "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+        "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+        "original_recordings_in_round": 18,
+        "both_scopes_passed": true,
+        "scope": "Original-game check reported by Mac on repaired engine; historical training used6ae1956"
+      },
+      "mac_comparison_history": [
+        {
+          "status": "combined_mac_report_contains_nonterminal_mismatch",
+          "mac_report": null,
+          "mac_comparison": {
+            "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+            "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+            "message": 10,
+            "status": "combined_mac_report_contains_nonterminal_mismatch",
+            "counts_scope": "Combined across both named rounds. Per-round outcomes and category overlap are not specified; neither round is marked passed.",
+            "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run."
+          }
+        }
+      ]
     },
     {
       "observation_version": 13,
-      "status": "combined_mac_report_contains_nonterminal_mismatch",
+      "status": "mac_passed_on_fixed_engine",
       "round": "A-2718-40529025",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -17584,17 +17645,30 @@
       "selection": "One family per train/dev band, eighteen prefixes total; frozen policy version 57. Deduplicated within this round.",
       "source_archive_sha256": "ef728e17cf6fb1ad307556232132732c8a0385f64846327c0c01c39683f845ee",
       "mac_comparison": {
-        "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
-        "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
-        "message": 10,
-        "status": "combined_mac_report_contains_nonterminal_mismatch",
-        "counts_scope": "Combined across both named rounds. Per-round outcomes and category overlap are not specified; neither round is marked passed.",
-        "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run."
-      }
+        "report_key": "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+        "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+        "original_recordings_in_round": 18,
+        "both_scopes_passed": true,
+        "scope": "Original-game check reported by Mac on repaired engine; historical training used6ae1956"
+      },
+      "mac_comparison_history": [
+        {
+          "status": "combined_mac_report_contains_nonterminal_mismatch",
+          "mac_report": null,
+          "mac_comparison": {
+            "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+            "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+            "message": 10,
+            "status": "combined_mac_report_contains_nonterminal_mismatch",
+            "counts_scope": "Combined across both named rounds. Per-round outcomes and category overlap are not specified; neither round is marked passed.",
+            "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run."
+          }
+        }
+      ]
     },
     {
       "observation_version": 13,
-      "status": "pending_mac",
+      "status": "mac_passed_on_fixed_engine",
       "round": "A-2718-50651118",
       "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
       "group": "A",
@@ -17628,7 +17702,21 @@
       "policy_version": 71,
       "native_replay_faults": 0,
       "selection": "One family per train/dev band; eighteen prefixes under frozen policy71.",
-      "source_archive_sha256": "4ee4354bdf0a123bdb851fe490301b51944adc8bc61bd55cbf8f8419560c17e6"
+      "source_archive_sha256": "4ee4354bdf0a123bdb851fe490301b51944adc8bc61bd55cbf8f8419560c17e6",
+      "mac_comparison_history": [
+        {
+          "status": "pending_mac",
+          "mac_report": null,
+          "mac_comparison": null
+        }
+      ],
+      "mac_comparison": {
+        "report_key": "ce317bb3b1f96abca3433e574a2ce273ad9e1436:12",
+        "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+        "original_recordings_in_round": 18,
+        "both_scopes_passed": true,
+        "scope": "Original-game check reported by Mac on repaired engine; historical training used6ae1956"
+      }
     }
   ],
   "stage_evidence_archive": {
@@ -26509,923 +26597,30 @@
     }
   ],
   "active_run_snapshot": {
-    "observed_at": "2026-10-20T17:13:40.330911+08:00",
-    "job_id": 3620,
-    "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+    "job_id": 3625,
     "group": "A",
     "init_seed": 2718,
-    "status": "stopped_reported_nonterminal_snapshot_mismatch",
-    "slurm": {
-      "JobId": "3620",
-      "JobName": "spire-e3-v13-resume",
-      "UserId": "zhuyouwei(1017)",
-      "GroupId": "zhuyouwei(1018)",
-      "MCS_label": "N/A",
-      "Priority": "4294899998",
-      "Nice": "0",
-      "Account": "(null)",
-      "QOS": "(null)",
-      "JobState": "CANCELLED",
-      "Reason": "None",
-      "Dependency": "(null)",
-      "Requeue": "1",
-      "Restarts": "0",
-      "BatchFlag": "1",
-      "Reboot": "0",
-      "ExitCode": "0:15",
-      "RunTime": "00:51:14",
-      "TimeLimit": "01:46:00",
-      "TimeMin": "N/A",
-      "SubmitTime": "2026-10-20T16:19:45",
-      "EligibleTime": "2026-10-20T16:19:45",
-      "AccrueTime": "2026-10-20T16:19:45",
-      "StartTime": "2026-10-20T16:19:46",
-      "EndTime": "2026-10-20T17:11:00",
-      "Deadline": "N/A",
-      "SuspendTime": "None",
-      "SecsPreSuspend": "0",
-      "LastSchedEval": "2026-10-20T16:19:46",
-      "Scheduler": "Main",
-      "Partition": "N56_128G_V100",
-      "AllocNode:Sid": "gpu01:278791",
-      "ReqNodeList": "gpu01",
-      "ExcNodeList": "(null)",
-      "NodeList": "gpu01",
-      "BatchHost": "gpu01",
-      "NumNodes": "1",
-      "NumCPUs": "8",
-      "NumTasks": "1",
-      "CPUs/Task": "8",
-      "ReqB:S:C:T": "0:0:*:*",
-      "TRES": "cpu=8,mem=96G,node=1,billing=8",
-      "Socks/Node": "*",
-      "NtasksPerN:B:S:C": "0:0:*:*",
-      "CoreSpec": "*",
-      "MinCPUsNode": "8",
-      "MinMemoryNode": "96G",
-      "MinTmpDiskNode": "0",
-      "Features": "(null)",
-      "DelayBoot": "00:00:00",
-      "OverSubscribe": "OK",
-      "Contiguous": "0",
-      "Licenses": "(null)",
-      "Network": "(null)",
-      "Command": "/home/zhuyouwei/spire-downloads/e3-resume.sh",
-      "WorkDir": "/home/zhuyouwei",
-      "StdErr": "/home/zhuyouwei/spire-downloads/e3-resume-3620.log",
-      "StdIn": "/dev/null",
-      "StdOut": "/home/zhuyouwei/spire-downloads/e3-resume-3620.log",
-      "Power": "",
-      "TresPerNode": "gres:gpu:V100:8"
-    },
-    "updates": 76,
-    "training_decisions": 56051597,
+    "status": "running",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "resumed_checkpoint_update": 76,
+    "resumed_checkpoint_decisions": 56051597,
+    "resumed_checkpoint_sha256": "c4b3372b2b8f78c5a04f3a05307ce5bf126ed41bf78525496896339b0884fb55",
+    "source_output": "/home/zhuyouwei/spire-downloads/e3-training-resume-3625/A-2718",
+    "historical_evaluations_unchanged": true,
+    "observed_at": "2026-10-20T19:08:48.437092+08:00",
+    "resumed_update": 76,
+    "resumed_decisions": 56051597,
+    "updates": 77,
+    "training_decisions": 57209061,
     "frontier": "k32",
-    "learned": [
-      "k8"
-    ],
-    "new_optimizer_updates": 45,
-    "new_training_decisions": 35269339,
-    "completed_evaluation_sets_this_job": 84,
-    "completed_evaluation_sets": 126,
-    "training_faults": 0,
-    "evaluation_faults": 0,
-    "evaluation_truncated": 193,
-    "training_truncated": 255,
-    "stages": [
-      {
-        "decisions": 20782258,
-        "policy_version": 31,
-        "frontier": "k8",
-        "learned": [],
-        "event": {
-          "before": "k8",
-          "after": "k8",
-          "lower95": 0.5,
-          "stagnant": 1,
-          "dev_families": 10,
-          "eligible": true,
-          "interval_method": "One-sided 95% seed-family percentile bootstrap",
-          "hoeffding_interval95": [
-            0.2955305916532624,
-            1.0
-          ],
-          "bootstrap_seed": 63008,
-          "bootstrap_samples": 10000
-        }
-      },
-      {
-        "decisions": 30284100,
-        "policy_version": 43,
-        "frontier": "k8",
-        "learned": [],
-        "event": {
-          "before": "k8",
-          "after": "k8",
-          "lower95": 0.5,
-          "stagnant": 2,
-          "dev_families": 10,
-          "eligible": true,
-          "interval_method": "One-sided 95% seed-family percentile bootstrap",
-          "hoeffding_interval95": [
-            0.2705305916532624,
-            1.0
-          ],
-          "bootstrap_seed": 63008,
-          "bootstrap_samples": 10000
-        }
-      },
-      {
-        "decisions": 40529025,
-        "policy_version": 57,
-        "frontier": "k8",
-        "learned": [],
-        "event": {
-          "before": "k8",
-          "after": "k8",
-          "lower95": 0.575,
-          "stagnant": 0,
-          "dev_families": 10,
-          "eligible": true,
-          "interval_method": "One-sided 95% seed-family percentile bootstrap",
-          "hoeffding_interval95": [
-            0.34553059165326244,
-            1.0
-          ],
-          "bootstrap_seed": 63008,
-          "bootstrap_samples": 10000
-        }
-      },
-      {
-        "decisions": 50651118,
-        "policy_version": 71,
-        "frontier": "k32",
-        "learned": [
-          "k8"
-        ],
-        "event": {
-          "before": "k8",
-          "after": "k32",
-          "lower95": 0.625,
-          "stagnant": 0,
-          "dev_families": 10,
-          "eligible": true,
-          "interval_method": "One-sided 95% seed-family percentile bootstrap",
-          "hoeffding_interval95": [
-            0.3955305916532624,
-            1.0
-          ],
-          "bootstrap_seed": 63008,
-          "bootstrap_samples": 10000
-        }
-      }
-    ],
-    "checkpoint": {
-      "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3620/A-2718/checkpoint.pt",
-      "bytes": 11314087,
-      "sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
-      "policy_version": 76,
-      "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
-      "curriculum": {
-        "frontier": 1,
-        "learned": [
-          "k8"
-        ],
-        "draws": 4980736,
-        "sampling_counts": {
-          "frontier": 3919054,
-          "far": 996146,
-          "learned": 65536
-        },
-        "decision_counts": {
-          "frontier": 31496674,
-          "far": 24031847,
-          "learned": 523076
-        },
-        "total_decisions": 56051597,
-        "ppo_decisions": 56051597,
-        "episodes": 4980736,
-        "wins": 3667683,
-        "truncated": 255,
-        "budget_cutoffs": 0,
-        "next_evaluation": 60000000,
-        "evaluations": 5,
-        "stagnant": 0,
-        "best_lower": 0.0,
-        "stopped": null,
-        "promoted_at": {
-          "k8": {
-            "decisions": 50651118,
-            "mean": 0.825
-          }
-        },
-        "evaluation_decisions": 4943352,
-        "evaluation_seconds": 1322.5636512784986,
-        "bootstrap_seed": 63008,
-        "bootstrap_samples": 10000,
-        "last_evaluated_decisions": 50651118
-      }
-    },
-    "frozen_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
-    "latest_update": {
-      "episodes": 65536,
-      "completed": 65536,
-      "wins": 21824,
-      "deaths": 43712,
-      "episode_decisions": {
-        "min": 1,
-        "p50": 15.0,
-        "p95": 33.0,
-        "p99": 53.0,
-        "max": 297,
-        "mean": 17.229904174804688
-      },
-      "lane_utilization": {
-        "waves": 1195,
-        "active_lane_steps": 1129179,
-        "available_lane_steps": 9789440,
-        "active_lane_seconds": 293955.60989487456,
-        "available_lane_seconds": 567130.44928125,
-        "step_fraction": 0.11534663882714435,
-        "time_fraction": 0.518320979357426
-      },
-      "root_families": 871,
-      "root_families_won": 24,
-      "natural_starts": 0,
-      "completed_natural_starts": 0,
-      "truncated": 0,
-      "budget_cutoffs": 0,
-      "faults": 0,
-      "decisions": 1129179,
-      "training_decisions": 1129179,
-      "replay_decisions": 98497746,
-      "compact_bytes": 3421664027,
-      "per_screen_entropy": {
-        "combat": {
-          "decisions": 792831,
-          "normalized": 0.4441291391849518
-        },
-        "hand_select": {
-          "decisions": 274731,
-          "normalized": 0.42071062326431274
-        },
-        "grid": {
-          "decisions": 509,
-          "normalized": 0.9972978830337524
-        },
-        "card_reward": {
-          "decisions": 3857,
-          "normalized": 0.9380248785018921
-        },
-        "combat_reward": {
-          "decisions": 8521,
-          "normalized": 0.7570181488990784
-        },
-        "event": {
-          "decisions": 2924,
-          "normalized": 0.3607695400714874
-        },
-        "map": {
-          "decisions": 21284,
-          "normalized": 0.9989559054374695
-        },
-        "room": {
-          "decisions": 23158,
-          "normalized": 0.05602676793932915
-        },
-        "shop": {
-          "decisions": 1364,
-          "normalized": 0.6039959192276001
-        }
-      },
-      "value_calibration": {
-        "episode_start": {
-          "count": 65536,
-          "brier": 0.08675509691238403,
-          "predicted": 0.25283220410346985,
-          "observed": 0.3330078125,
-          "bins": [
-            {
-              "bin": 0,
-              "count": 44784,
-              "predicted": 0.021037541329860687,
-              "observed": 0.06665326654911041
-            },
-            {
-              "bin": 1,
-              "count": 3824,
-              "predicted": 0.1278037279844284,
-              "observed": 0.7248954176902771
-            },
-            {
-              "bin": 5,
-              "count": 547,
-              "predicted": 0.5379999279975891,
-              "observed": 1.0
-            },
-            {
-              "bin": 6,
-              "count": 2730,
-              "predicted": 0.6345349550247192,
-              "observed": 0.6897435784339905
-            },
-            {
-              "bin": 7,
-              "count": 1092,
-              "predicted": 0.760157585144043,
-              "observed": 1.0
-            },
-            {
-              "bin": 9,
-              "count": 12559,
-              "predicted": 0.9779508709907532,
-              "observed": 0.9988852739334106
-            }
-          ]
-        },
-        "decision_weighted": {
-          "count": 1129179,
-          "brier": 0.05728604272007942,
-          "predicted": 0.2693761885166168,
-          "observed": 0.30563798546791077,
-          "bins": [
-            {
-              "bin": 0,
-              "count": 750506,
-              "predicted": 0.01920309290289879,
-              "observed": 0.03828084096312523
-            },
-            {
-              "bin": 1,
-              "count": 43222,
-              "predicted": 0.13802048563957214,
-              "observed": 0.40525656938552856
-            },
-            {
-              "bin": 2,
-              "count": 12347,
-              "predicted": 0.2498692125082016,
-              "observed": 0.5284684300422668
-            },
-            {
-              "bin": 3,
-              "count": 11442,
-              "predicted": 0.35746705532073975,
-              "observed": 0.5690438747406006
-            },
-            {
-              "bin": 4,
-              "count": 25360,
-              "predicted": 0.4500810503959656,
-              "observed": 0.5336750745773315
-            },
-            {
-              "bin": 5,
-              "count": 19270,
-              "predicted": 0.543660581111908,
-              "observed": 0.5940840840339661
-            },
-            {
-              "bin": 6,
-              "count": 16479,
-              "predicted": 0.6429057121276855,
-              "observed": 0.8024758696556091
-            },
-            {
-              "bin": 7,
-              "count": 7514,
-              "predicted": 0.7449229955673218,
-              "observed": 0.8211339116096497
-            },
-            {
-              "bin": 8,
-              "count": 7331,
-              "predicted": 0.8553402423858643,
-              "observed": 0.8918291926383972
-            },
-            {
-              "bin": 9,
-              "count": 235708,
-              "predicted": 0.9854074716567993,
-              "observed": 0.9966738224029541
-            }
-          ]
-        },
-        "by_screen": {
-          "combat": {
-            "count": 792831,
-            "brier": 0.06540396064519882,
-            "predicted": 0.24117352068424225,
-            "observed": 0.2855047285556793,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 550819,
-                "predicted": 0.019475888460874557,
-                "observed": 0.048028480261564255
-              },
-              {
-                "bin": 1,
-                "count": 29889,
-                "predicted": 0.13840137422084808,
-                "observed": 0.43357089161872864
-              },
-              {
-                "bin": 2,
-                "count": 8386,
-                "predicted": 0.24896439909934998,
-                "observed": 0.6045790314674377
-              },
-              {
-                "bin": 3,
-                "count": 7298,
-                "predicted": 0.3561725914478302,
-                "observed": 0.5263085961341858
-              },
-              {
-                "bin": 4,
-                "count": 15905,
-                "predicted": 0.4526731073856354,
-                "observed": 0.5349889993667603
-              },
-              {
-                "bin": 5,
-                "count": 15438,
-                "predicted": 0.5398070812225342,
-                "observed": 0.5568726658821106
-              },
-              {
-                "bin": 6,
-                "count": 11708,
-                "predicted": 0.6477210521697998,
-                "observed": 0.8325076699256897
-              },
-              {
-                "bin": 7,
-                "count": 6550,
-                "predicted": 0.7457605004310608,
-                "observed": 0.8306870460510254
-              },
-              {
-                "bin": 8,
-                "count": 5829,
-                "predicted": 0.8518093824386597,
-                "observed": 0.8939783573150635
-              },
-              {
-                "bin": 9,
-                "count": 141009,
-                "predicted": 0.9835653305053711,
-                "observed": 0.9965817928314209
-              }
-            ]
-          },
-          "hand_select": {
-            "count": 274731,
-            "brier": 0.04556305706501007,
-            "predicted": 0.3290019929409027,
-            "observed": 0.35156571865081787,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 160100,
-                "predicted": 0.017897121608257294,
-                "observed": 0.013148032128810883
-              },
-              {
-                "bin": 1,
-                "count": 13141,
-                "predicted": 0.1373899132013321,
-                "observed": 0.3331557810306549
-              },
-              {
-                "bin": 2,
-                "count": 3949,
-                "predicted": 0.2518998682498932,
-                "observed": 0.36768803000450134
-              },
-              {
-                "bin": 3,
-                "count": 4143,
-                "predicted": 0.35974445939064026,
-                "observed": 0.6444605588912964
-              },
-              {
-                "bin": 4,
-                "count": 9455,
-                "predicted": 0.4457207918167114,
-                "observed": 0.5314648151397705
-              },
-              {
-                "bin": 5,
-                "count": 3831,
-                "predicted": 0.559178352355957,
-                "observed": 0.7439311146736145
-              },
-              {
-                "bin": 6,
-                "count": 4771,
-                "predicted": 0.6310888528823853,
-                "observed": 0.7287780046463013
-              },
-              {
-                "bin": 7,
-                "count": 964,
-                "predicted": 0.7392323613166809,
-                "observed": 0.7562240958213806
-              },
-              {
-                "bin": 8,
-                "count": 1502,
-                "predicted": 0.8690431118011475,
-                "observed": 0.883488655090332
-              },
-              {
-                "bin": 9,
-                "count": 72875,
-                "predicted": 0.9858765006065369,
-                "observed": 0.9958559274673462
-              }
-            ]
-          },
-          "grid": {
-            "count": 509,
-            "brier": 4.367640212876722e-05,
-            "predicted": 0.0056182704865932465,
-            "observed": 0.0,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 509,
-                "predicted": 0.0056182704865932465,
-                "observed": 0.0
-              }
-            ]
-          },
-          "card_reward": {
-            "count": 3857,
-            "brier": 0.07563070952892303,
-            "predicted": 0.023181535303592682,
-            "observed": 0.09152191132307053,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 3652,
-                "predicted": 0.01715446077287197,
-                "observed": 0.04654983431100845
-              },
-              {
-                "bin": 1,
-                "count": 191,
-                "predicted": 0.12168224900960922,
-                "observed": 0.9371727705001831
-              },
-              {
-                "bin": 2,
-                "count": 12,
-                "predicted": 0.21393974125385284,
-                "observed": 0.25
-              },
-              {
-                "bin": 3,
-                "count": 1,
-                "predicted": 0.36932289600372314,
-                "observed": 0.0
-              },
-              {
-                "bin": 5,
-                "count": 1,
-                "predicted": 0.5851773023605347,
-                "observed": 1.0
-              }
-            ]
-          },
-          "combat_reward": {
-            "count": 8521,
-            "brier": 4.876962339039892e-05,
-            "predicted": 0.006799787282943726,
-            "observed": 0.0,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 8521,
-                "predicted": 0.006799787282943726,
-                "observed": 0.0
-              }
-            ]
-          },
-          "event": {
-            "count": 2924,
-            "brier": 0.0003240556106902659,
-            "predicted": 0.016153914853930473,
-            "observed": 0.0,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 2924,
-                "predicted": 0.016153914853930473,
-                "observed": 0.0
-              }
-            ]
-          },
-          "map": {
-            "count": 21284,
-            "brier": 0.0008902237168513238,
-            "predicted": 0.029041189700365067,
-            "observed": 0.0,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 21284,
-                "predicted": 0.029041189700365067,
-                "observed": 0.0
-              }
-            ]
-          },
-          "room": {
-            "count": 23158,
-            "brier": 9.179629705613479e-05,
-            "predicted": 0.9391283392906189,
-            "observed": 0.9423956871032715,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 1333,
-                "predicted": 0.012805533595383167,
-                "observed": 0.0
-              },
-              {
-                "bin": 1,
-                "count": 1,
-                "predicted": 0.16060779988765717,
-                "observed": 0.0
-              },
-              {
-                "bin": 9,
-                "count": 21824,
-                "predicted": 0.995743453502655,
-                "observed": 1.0
-              }
-            ]
-          },
-          "shop": {
-            "count": 1364,
-            "brier": 0.0001113537437049672,
-            "predicted": 0.009643160738050938,
-            "observed": 0.0,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 1364,
-                "predicted": 0.009643160738050938,
-                "observed": 0.0
-              }
-            ]
-          }
-        },
-        "by_act": {
-          "3": {
-            "count": 297525,
-            "brier": 0.0002620694867800921,
-            "predicted": 0.014926900155842304,
-            "observed": 0.0,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 297524,
-                "predicted": 0.014926410280168056,
-                "observed": 0.0
-              },
-              {
-                "bin": 1,
-                "count": 1,
-                "predicted": 0.16060779988765717,
-                "observed": 0.0
-              }
-            ]
-          },
-          "4": {
-            "count": 831654,
-            "brier": 0.07768642157316208,
-            "predicted": 0.36040571331977844,
-            "observed": 0.4149802625179291,
-            "bins": [
-              {
-                "bin": 0,
-                "count": 452982,
-                "predicted": 0.022012069821357727,
-                "observed": 0.06342415511608124
-              },
-              {
-                "bin": 1,
-                "count": 43221,
-                "predicted": 0.13801994919776917,
-                "observed": 0.4052659571170807
-              },
-              {
-                "bin": 2,
-                "count": 12347,
-                "predicted": 0.2498692125082016,
-                "observed": 0.5284684300422668
-              },
-              {
-                "bin": 3,
-                "count": 11442,
-                "predicted": 0.35746705532073975,
-                "observed": 0.5690438747406006
-              },
-              {
-                "bin": 4,
-                "count": 25360,
-                "predicted": 0.4500810503959656,
-                "observed": 0.5336750745773315
-              },
-              {
-                "bin": 5,
-                "count": 19270,
-                "predicted": 0.543660581111908,
-                "observed": 0.5940840840339661
-              },
-              {
-                "bin": 6,
-                "count": 16479,
-                "predicted": 0.6429057121276855,
-                "observed": 0.8024758696556091
-              },
-              {
-                "bin": 7,
-                "count": 7514,
-                "predicted": 0.7449229955673218,
-                "observed": 0.8211339116096497
-              },
-              {
-                "bin": 8,
-                "count": 7331,
-                "predicted": 0.8553402423858643,
-                "observed": 0.8918291926383972
-              },
-              {
-                "bin": 9,
-                "count": 235708,
-                "predicted": 0.9854074716567993,
-                "observed": 0.9966738224029541
-              }
-            ]
-          }
-        }
-      },
-      "selected_action_probability": {
-        "mean": 0.6317965388298035,
-        "min": 6.411305548681412e-07,
-        "max": 1.0
-      },
-      "ppo": {
-        "samples": 1129179,
-        "minibatches": 138,
-        "update_seconds": 34.623050622991286,
-        "policy_loss": 0.0035384244229446065,
-        "value_loss": 0.04719195106800146,
-        "entropy": 0.44240481452634217,
-        "kl": 0.015775055930583592,
-        "clip_fraction": 0.08820302187229936,
-        "loss": 0.022710351661596385,
-        "grad_norm": 0.20073337959129592,
-        "memory": [
-          {
-            "rank": 0,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 12912164864,
-            "peak_allocated_bytes": 1616906752,
-            "peak_reserved_bytes": 12912164864,
-            "free_bytes": 1545076736,
-            "total_bytes": 16928342016
-          },
-          {
-            "rank": 1,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 13132365824,
-            "peak_allocated_bytes": 1657460736,
-            "peak_reserved_bytes": 13132365824,
-            "free_bytes": 1322778624,
-            "total_bytes": 16928342016
-          },
-          {
-            "rank": 2,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 12756975616,
-            "peak_allocated_bytes": 1619720704,
-            "peak_reserved_bytes": 12756975616,
-            "free_bytes": 1721237504,
-            "total_bytes": 16928342016
-          },
-          {
-            "rank": 3,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 12784238592,
-            "peak_allocated_bytes": 1689427456,
-            "peak_reserved_bytes": 12784238592,
-            "free_bytes": 1677197312,
-            "total_bytes": 16928342016
-          },
-          {
-            "rank": 4,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 13031702528,
-            "peak_allocated_bytes": 1662433792,
-            "peak_reserved_bytes": 13031702528,
-            "free_bytes": 1444413440,
-            "total_bytes": 16928342016
-          },
-          {
-            "rank": 5,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 12979273728,
-            "peak_allocated_bytes": 1675681792,
-            "peak_reserved_bytes": 12979273728,
-            "free_bytes": 1480065024,
-            "total_bytes": 16928342016
-          },
-          {
-            "rank": 6,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 13105102848,
-            "peak_allocated_bytes": 1620285440,
-            "peak_reserved_bytes": 13105102848,
-            "free_bytes": 1371013120,
-            "total_bytes": 16928342016
-          },
-          {
-            "rank": 7,
-            "allocated_bytes": 35845120,
-            "reserved_bytes": 13363052544,
-            "peak_allocated_bytes": 1635184640,
-            "peak_reserved_bytes": 13363052544,
-            "free_bytes": 1096286208,
-            "total_bytes": 16928342016
-          }
-        ],
-        "policy_version": 75,
-        "published_version": 76,
-        "learner_seconds": 34.81766276701819
-      },
-      "update": 76,
-      "cumulative_decisions": 56051597,
-      "frontier": "k32",
-      "source_episodes": {
-        "frontier": 39324,
-        "learned": 13106,
-        "far": 13106
-      },
-      "source_decisions": {
-        "frontier": 726519,
-        "learned": 105135,
-        "far": 297525
-      },
-      "source_episode_shares": {
-        "frontier": 0.60003662109375,
-        "learned": 0.199981689453125,
-        "far": 0.199981689453125
-      },
-      "source_decision_shares": {
-        "frontier": 0.6434046329235666,
-        "learned": 0.09310747011766957,
-        "far": 0.26348789695876385
-      },
-      "timing": {
-        "root_prepare_seconds": 0.018011136293411254,
-        "reset_seconds": 0.3793172492980957,
-        "step_encode_seconds": 8.254457851007581,
-        "inference_seconds": 58.45025282597542,
-        "storage_seconds": 0.6998941113948822,
-        "collection_seconds": 13.047236460959539,
-        "total_seconds": 51.1510847780155,
-        "decisions_per_second": 22075.367607556895
-      }
-    },
-    "audit_round": "A-2718-50651118",
-    "audit_roots": 18,
-    "audit_status": "pending_mac",
-    "stopped_due_to": {
-      "kind": "reported_nonterminal_snapshot_mismatch",
-      "fingerprint": "a37bf51:9:2000002493:combat1067:DamageInfo.isModified",
-      "main_commit": "a37bf51840b061abf99f4a2be156b41fc1ba4296",
-      "source_report": "a37bf51840b061abf99f4a2be156b41fc1ba4296:9",
-      "round": "A-2718-20782258",
-      "seed": 2000002493,
-      "reason": "Mismatch occurs before subsequent decisions. The directly authorized exception is limited to death/victory terminal frames after the final decision.",
-      "training_stopped": true,
-      "job_id": 3620,
-      "final_state": "CANCELLED",
-      "engine_fault_count": 0,
-      "requires": "Mac fix and original-game regression for this mismatch in main, then reviewed integration, required build/affected-root/CPU-GPU checks and explicit checkpoint migration within the cumulative budget.",
-      "frozen_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
-      "checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
-      "checkpoint_update": 76,
-      "checkpoint_decisions": 56051597,
-      "observed_at": "2026-10-20T17:13:40.330911+08:00"
-    },
-    "initialization_completed": false,
-    "evidence_inventory": "inventory/e3-stop-3620.json"
+    "last_completed_update_faults": 0,
+    "last_completed_update_truncated": 0,
+    "completed_stages_this_job": [],
+    "checkpoint_exists": true,
+    "checkpoint_note": "Live checkpoint is present. Version/hash of the changing output file were not loaded in this observation; migrated input remains separately frozen.",
+    "slurm_elapsed_seconds": 111,
+    "observation_file": "D:\\google download\\sts-silent-gpu-results\\2026-10-19-e3\\resume-3625-observation.json",
+    "observation_sha256": "6bf2fb54f165f9dd96f872e967f51d843e21a5811813c88354a00241470ae303"
   },
   "run_start_evidence_archives": [
     {
@@ -29575,7 +28770,7 @@
     }
   ],
   "training_progress_sha256_source": "Canonical sorted-key compact JSON of training_progress_snapshot; raw source observation and checkpoint archived in inventory/e3-resume-3620.json.",
-  "observed_at": "2026-10-20T17:13:40.330911+08:00",
+  "observed_at": "2026-10-20T19:08:48.437092+08:00",
   "interrupted_assessment": {
     "group": "A",
     "init_seed": 2718,
@@ -40215,31 +39410,7 @@
       "diagnostic_inventory": "inventory/e3-resume-3620.json"
     }
   ],
-  "mac_comparison_blocker": {
-    "kind": "reported_nonterminal_snapshot_mismatch",
-    "fingerprint": "a37bf51:9:2000002493:combat1067:DamageInfo.isModified",
-    "main_commit": "a37bf51840b061abf99f4a2be156b41fc1ba4296",
-    "source_report": "a37bf51840b061abf99f4a2be156b41fc1ba4296:9",
-    "round": "A-2718-20782258",
-    "seed": 2000002493,
-    "reason": "Mismatch occurs before subsequent decisions. The directly authorized exception is limited to death/victory terminal frames after the final decision.",
-    "training_stopped": true,
-    "job_id": 3620,
-    "final_state": "CANCELLED",
-    "engine_fault_count": 0,
-    "requires": "Mac fix and original-game regression for this mismatch in main, then reviewed integration, required build/affected-root/CPU-GPU checks and explicit checkpoint migration within the cumulative budget.",
-    "frozen_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
-    "checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
-    "checkpoint_update": 76,
-    "checkpoint_decisions": 56051597,
-    "observed_at": "2026-10-20T17:13:40.330911+08:00",
-    "mac_confirmation": {
-      "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
-      "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
-      "deterministic_rule_state_reported": true,
-      "engine_fix_included": false
-    }
-  },
+  "mac_comparison_blocker": null,
   "stop_evidence_archives": [
     {
       "filename": "e3-v13-training-stop-3606-86cbae2.tar.gz",
@@ -40449,6 +39620,53 @@
       "evidence_scope": "Mac original-game report on main; not an independent server recording. No new CPU/GPU comparison or experiment was run.",
       "local_disposition": "Keep training stopped for the existing nonterminal blocker. Preserve checkpoint76 and the cumulative budget; wait for the specific fix and original-game regression in main.",
       "pending_round": "A-2718-50651118"
+    },
+    {
+      "report_key": "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+      "source_commit": "4e6d7607e55b5ad816ba05ed94b89172f4375edb",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "message": 11,
+      "source_reported_at": "2026-10-20T19:20:00+08:00",
+      "observed_via_github_at": "2026-10-20T18:23:15.093127+08:00",
+      "rounds": [
+        "A-2718-20782258",
+        "A-2718-30284100",
+        "A-2718-40529025"
+      ],
+      "status": "mac_passed_on_fixed_engine",
+      "original_recordings": 54,
+      "recordings_matching_both_scopes": 54,
+      "original_decisions": 83908,
+      "counts_scope": "Combined across the three named rounds; no per-round decision counts inferred",
+      "fix_commits": [
+        "fc39281802c77fefd9753449a7417afd54ee55a4",
+        "833fa93a0cdd89b2271c5208bee667edd1d1c802"
+      ],
+      "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+      "regressions": [
+        "SnakeDagger-explode-power-refresh-seed101",
+        "Spiker-double-death-seed2000002633"
+      ],
+      "server_reproduced_original_game": false,
+      "evidence_scope": "Mac report on main; original-game regression recordings supplied with engine fixes"
+    },
+    {
+      "report_key": "ce317bb3b1f96abca3433e574a2ce273ad9e1436:12",
+      "source_commit": "ce317bb3b1f96abca3433e574a2ce273ad9e1436",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "message": 12,
+      "source_reported_at": "2026-10-20T19:45:00+08:00",
+      "observed_via_github_at": "2026-10-20T18:36:49.200987+08:00",
+      "rounds": [
+        "A-2718-50651118"
+      ],
+      "status": "mac_passed_on_fixed_engine",
+      "original_recordings": 18,
+      "recordings_matching_both_scopes": 18,
+      "original_decisions": 25692,
+      "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+      "server_reproduced_original_game": false,
+      "evidence_scope": "Mac report on main; no independent server original-game recording"
     }
   ],
   "user_training_pause_decision": {
@@ -41604,6 +40822,925 @@
       "training_truncated": 201,
       "checkpoint_path": "/home/zhuyouwei/spire-downloads/e3-training-3606/A-2718/checkpoint.pt",
       "checkpoint_bytes": 11314087
+    },
+    {
+      "observed_at": "2026-10-20T17:13:40.330911+08:00",
+      "job_id": 3620,
+      "source_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+      "group": "A",
+      "init_seed": 2718,
+      "status": "stopped_reported_nonterminal_snapshot_mismatch",
+      "slurm": {
+        "JobId": "3620",
+        "JobName": "spire-e3-v13-resume",
+        "UserId": "zhuyouwei(1017)",
+        "GroupId": "zhuyouwei(1018)",
+        "MCS_label": "N/A",
+        "Priority": "4294899998",
+        "Nice": "0",
+        "Account": "(null)",
+        "QOS": "(null)",
+        "JobState": "CANCELLED",
+        "Reason": "None",
+        "Dependency": "(null)",
+        "Requeue": "1",
+        "Restarts": "0",
+        "BatchFlag": "1",
+        "Reboot": "0",
+        "ExitCode": "0:15",
+        "RunTime": "00:51:14",
+        "TimeLimit": "01:46:00",
+        "TimeMin": "N/A",
+        "SubmitTime": "2026-10-20T16:19:45",
+        "EligibleTime": "2026-10-20T16:19:45",
+        "AccrueTime": "2026-10-20T16:19:45",
+        "StartTime": "2026-10-20T16:19:46",
+        "EndTime": "2026-10-20T17:11:00",
+        "Deadline": "N/A",
+        "SuspendTime": "None",
+        "SecsPreSuspend": "0",
+        "LastSchedEval": "2026-10-20T16:19:46",
+        "Scheduler": "Main",
+        "Partition": "N56_128G_V100",
+        "AllocNode:Sid": "gpu01:278791",
+        "ReqNodeList": "gpu01",
+        "ExcNodeList": "(null)",
+        "NodeList": "gpu01",
+        "BatchHost": "gpu01",
+        "NumNodes": "1",
+        "NumCPUs": "8",
+        "NumTasks": "1",
+        "CPUs/Task": "8",
+        "ReqB:S:C:T": "0:0:*:*",
+        "TRES": "cpu=8,mem=96G,node=1,billing=8",
+        "Socks/Node": "*",
+        "NtasksPerN:B:S:C": "0:0:*:*",
+        "CoreSpec": "*",
+        "MinCPUsNode": "8",
+        "MinMemoryNode": "96G",
+        "MinTmpDiskNode": "0",
+        "Features": "(null)",
+        "DelayBoot": "00:00:00",
+        "OverSubscribe": "OK",
+        "Contiguous": "0",
+        "Licenses": "(null)",
+        "Network": "(null)",
+        "Command": "/home/zhuyouwei/spire-downloads/e3-resume.sh",
+        "WorkDir": "/home/zhuyouwei",
+        "StdErr": "/home/zhuyouwei/spire-downloads/e3-resume-3620.log",
+        "StdIn": "/dev/null",
+        "StdOut": "/home/zhuyouwei/spire-downloads/e3-resume-3620.log",
+        "Power": "",
+        "TresPerNode": "gres:gpu:V100:8"
+      },
+      "updates": 76,
+      "training_decisions": 56051597,
+      "frontier": "k32",
+      "learned": [
+        "k8"
+      ],
+      "new_optimizer_updates": 45,
+      "new_training_decisions": 35269339,
+      "completed_evaluation_sets_this_job": 84,
+      "completed_evaluation_sets": 126,
+      "training_faults": 0,
+      "evaluation_faults": 0,
+      "evaluation_truncated": 193,
+      "training_truncated": 255,
+      "stages": [
+        {
+          "decisions": 20782258,
+          "policy_version": 31,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.5,
+            "stagnant": 1,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.2955305916532624,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        },
+        {
+          "decisions": 30284100,
+          "policy_version": 43,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.5,
+            "stagnant": 2,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.2705305916532624,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        },
+        {
+          "decisions": 40529025,
+          "policy_version": 57,
+          "frontier": "k8",
+          "learned": [],
+          "event": {
+            "before": "k8",
+            "after": "k8",
+            "lower95": 0.575,
+            "stagnant": 0,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.34553059165326244,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        },
+        {
+          "decisions": 50651118,
+          "policy_version": 71,
+          "frontier": "k32",
+          "learned": [
+            "k8"
+          ],
+          "event": {
+            "before": "k8",
+            "after": "k32",
+            "lower95": 0.625,
+            "stagnant": 0,
+            "dev_families": 10,
+            "eligible": true,
+            "interval_method": "One-sided 95% seed-family percentile bootstrap",
+            "hoeffding_interval95": [
+              0.3955305916532624,
+              1.0
+            ],
+            "bootstrap_seed": 63008,
+            "bootstrap_samples": 10000
+          }
+        }
+      ],
+      "checkpoint": {
+        "path": "/home/zhuyouwei/spire-downloads/e3-training-resume-3620/A-2718/checkpoint.pt",
+        "bytes": 11314087,
+        "sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
+        "policy_version": 76,
+        "engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+        "curriculum": {
+          "frontier": 1,
+          "learned": [
+            "k8"
+          ],
+          "draws": 4980736,
+          "sampling_counts": {
+            "frontier": 3919054,
+            "far": 996146,
+            "learned": 65536
+          },
+          "decision_counts": {
+            "frontier": 31496674,
+            "far": 24031847,
+            "learned": 523076
+          },
+          "total_decisions": 56051597,
+          "ppo_decisions": 56051597,
+          "episodes": 4980736,
+          "wins": 3667683,
+          "truncated": 255,
+          "budget_cutoffs": 0,
+          "next_evaluation": 60000000,
+          "evaluations": 5,
+          "stagnant": 0,
+          "best_lower": 0.0,
+          "stopped": null,
+          "promoted_at": {
+            "k8": {
+              "decisions": 50651118,
+              "mean": 0.825
+            }
+          },
+          "evaluation_decisions": 4943352,
+          "evaluation_seconds": 1322.5636512784986,
+          "bootstrap_seed": 63008,
+          "bootstrap_samples": 10000,
+          "last_evaluated_decisions": 50651118
+        }
+      },
+      "frozen_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
+      "latest_update": {
+        "episodes": 65536,
+        "completed": 65536,
+        "wins": 21824,
+        "deaths": 43712,
+        "episode_decisions": {
+          "min": 1,
+          "p50": 15.0,
+          "p95": 33.0,
+          "p99": 53.0,
+          "max": 297,
+          "mean": 17.229904174804688
+        },
+        "lane_utilization": {
+          "waves": 1195,
+          "active_lane_steps": 1129179,
+          "available_lane_steps": 9789440,
+          "active_lane_seconds": 293955.60989487456,
+          "available_lane_seconds": 567130.44928125,
+          "step_fraction": 0.11534663882714435,
+          "time_fraction": 0.518320979357426
+        },
+        "root_families": 871,
+        "root_families_won": 24,
+        "natural_starts": 0,
+        "completed_natural_starts": 0,
+        "truncated": 0,
+        "budget_cutoffs": 0,
+        "faults": 0,
+        "decisions": 1129179,
+        "training_decisions": 1129179,
+        "replay_decisions": 98497746,
+        "compact_bytes": 3421664027,
+        "per_screen_entropy": {
+          "combat": {
+            "decisions": 792831,
+            "normalized": 0.4441291391849518
+          },
+          "hand_select": {
+            "decisions": 274731,
+            "normalized": 0.42071062326431274
+          },
+          "grid": {
+            "decisions": 509,
+            "normalized": 0.9972978830337524
+          },
+          "card_reward": {
+            "decisions": 3857,
+            "normalized": 0.9380248785018921
+          },
+          "combat_reward": {
+            "decisions": 8521,
+            "normalized": 0.7570181488990784
+          },
+          "event": {
+            "decisions": 2924,
+            "normalized": 0.3607695400714874
+          },
+          "map": {
+            "decisions": 21284,
+            "normalized": 0.9989559054374695
+          },
+          "room": {
+            "decisions": 23158,
+            "normalized": 0.05602676793932915
+          },
+          "shop": {
+            "decisions": 1364,
+            "normalized": 0.6039959192276001
+          }
+        },
+        "value_calibration": {
+          "episode_start": {
+            "count": 65536,
+            "brier": 0.08675509691238403,
+            "predicted": 0.25283220410346985,
+            "observed": 0.3330078125,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 44784,
+                "predicted": 0.021037541329860687,
+                "observed": 0.06665326654911041
+              },
+              {
+                "bin": 1,
+                "count": 3824,
+                "predicted": 0.1278037279844284,
+                "observed": 0.7248954176902771
+              },
+              {
+                "bin": 5,
+                "count": 547,
+                "predicted": 0.5379999279975891,
+                "observed": 1.0
+              },
+              {
+                "bin": 6,
+                "count": 2730,
+                "predicted": 0.6345349550247192,
+                "observed": 0.6897435784339905
+              },
+              {
+                "bin": 7,
+                "count": 1092,
+                "predicted": 0.760157585144043,
+                "observed": 1.0
+              },
+              {
+                "bin": 9,
+                "count": 12559,
+                "predicted": 0.9779508709907532,
+                "observed": 0.9988852739334106
+              }
+            ]
+          },
+          "decision_weighted": {
+            "count": 1129179,
+            "brier": 0.05728604272007942,
+            "predicted": 0.2693761885166168,
+            "observed": 0.30563798546791077,
+            "bins": [
+              {
+                "bin": 0,
+                "count": 750506,
+                "predicted": 0.01920309290289879,
+                "observed": 0.03828084096312523
+              },
+              {
+                "bin": 1,
+                "count": 43222,
+                "predicted": 0.13802048563957214,
+                "observed": 0.40525656938552856
+              },
+              {
+                "bin": 2,
+                "count": 12347,
+                "predicted": 0.2498692125082016,
+                "observed": 0.5284684300422668
+              },
+              {
+                "bin": 3,
+                "count": 11442,
+                "predicted": 0.35746705532073975,
+                "observed": 0.5690438747406006
+              },
+              {
+                "bin": 4,
+                "count": 25360,
+                "predicted": 0.4500810503959656,
+                "observed": 0.5336750745773315
+              },
+              {
+                "bin": 5,
+                "count": 19270,
+                "predicted": 0.543660581111908,
+                "observed": 0.5940840840339661
+              },
+              {
+                "bin": 6,
+                "count": 16479,
+                "predicted": 0.6429057121276855,
+                "observed": 0.8024758696556091
+              },
+              {
+                "bin": 7,
+                "count": 7514,
+                "predicted": 0.7449229955673218,
+                "observed": 0.8211339116096497
+              },
+              {
+                "bin": 8,
+                "count": 7331,
+                "predicted": 0.8553402423858643,
+                "observed": 0.8918291926383972
+              },
+              {
+                "bin": 9,
+                "count": 235708,
+                "predicted": 0.9854074716567993,
+                "observed": 0.9966738224029541
+              }
+            ]
+          },
+          "by_screen": {
+            "combat": {
+              "count": 792831,
+              "brier": 0.06540396064519882,
+              "predicted": 0.24117352068424225,
+              "observed": 0.2855047285556793,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 550819,
+                  "predicted": 0.019475888460874557,
+                  "observed": 0.048028480261564255
+                },
+                {
+                  "bin": 1,
+                  "count": 29889,
+                  "predicted": 0.13840137422084808,
+                  "observed": 0.43357089161872864
+                },
+                {
+                  "bin": 2,
+                  "count": 8386,
+                  "predicted": 0.24896439909934998,
+                  "observed": 0.6045790314674377
+                },
+                {
+                  "bin": 3,
+                  "count": 7298,
+                  "predicted": 0.3561725914478302,
+                  "observed": 0.5263085961341858
+                },
+                {
+                  "bin": 4,
+                  "count": 15905,
+                  "predicted": 0.4526731073856354,
+                  "observed": 0.5349889993667603
+                },
+                {
+                  "bin": 5,
+                  "count": 15438,
+                  "predicted": 0.5398070812225342,
+                  "observed": 0.5568726658821106
+                },
+                {
+                  "bin": 6,
+                  "count": 11708,
+                  "predicted": 0.6477210521697998,
+                  "observed": 0.8325076699256897
+                },
+                {
+                  "bin": 7,
+                  "count": 6550,
+                  "predicted": 0.7457605004310608,
+                  "observed": 0.8306870460510254
+                },
+                {
+                  "bin": 8,
+                  "count": 5829,
+                  "predicted": 0.8518093824386597,
+                  "observed": 0.8939783573150635
+                },
+                {
+                  "bin": 9,
+                  "count": 141009,
+                  "predicted": 0.9835653305053711,
+                  "observed": 0.9965817928314209
+                }
+              ]
+            },
+            "hand_select": {
+              "count": 274731,
+              "brier": 0.04556305706501007,
+              "predicted": 0.3290019929409027,
+              "observed": 0.35156571865081787,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 160100,
+                  "predicted": 0.017897121608257294,
+                  "observed": 0.013148032128810883
+                },
+                {
+                  "bin": 1,
+                  "count": 13141,
+                  "predicted": 0.1373899132013321,
+                  "observed": 0.3331557810306549
+                },
+                {
+                  "bin": 2,
+                  "count": 3949,
+                  "predicted": 0.2518998682498932,
+                  "observed": 0.36768803000450134
+                },
+                {
+                  "bin": 3,
+                  "count": 4143,
+                  "predicted": 0.35974445939064026,
+                  "observed": 0.6444605588912964
+                },
+                {
+                  "bin": 4,
+                  "count": 9455,
+                  "predicted": 0.4457207918167114,
+                  "observed": 0.5314648151397705
+                },
+                {
+                  "bin": 5,
+                  "count": 3831,
+                  "predicted": 0.559178352355957,
+                  "observed": 0.7439311146736145
+                },
+                {
+                  "bin": 6,
+                  "count": 4771,
+                  "predicted": 0.6310888528823853,
+                  "observed": 0.7287780046463013
+                },
+                {
+                  "bin": 7,
+                  "count": 964,
+                  "predicted": 0.7392323613166809,
+                  "observed": 0.7562240958213806
+                },
+                {
+                  "bin": 8,
+                  "count": 1502,
+                  "predicted": 0.8690431118011475,
+                  "observed": 0.883488655090332
+                },
+                {
+                  "bin": 9,
+                  "count": 72875,
+                  "predicted": 0.9858765006065369,
+                  "observed": 0.9958559274673462
+                }
+              ]
+            },
+            "grid": {
+              "count": 509,
+              "brier": 4.367640212876722e-05,
+              "predicted": 0.0056182704865932465,
+              "observed": 0.0,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 509,
+                  "predicted": 0.0056182704865932465,
+                  "observed": 0.0
+                }
+              ]
+            },
+            "card_reward": {
+              "count": 3857,
+              "brier": 0.07563070952892303,
+              "predicted": 0.023181535303592682,
+              "observed": 0.09152191132307053,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 3652,
+                  "predicted": 0.01715446077287197,
+                  "observed": 0.04654983431100845
+                },
+                {
+                  "bin": 1,
+                  "count": 191,
+                  "predicted": 0.12168224900960922,
+                  "observed": 0.9371727705001831
+                },
+                {
+                  "bin": 2,
+                  "count": 12,
+                  "predicted": 0.21393974125385284,
+                  "observed": 0.25
+                },
+                {
+                  "bin": 3,
+                  "count": 1,
+                  "predicted": 0.36932289600372314,
+                  "observed": 0.0
+                },
+                {
+                  "bin": 5,
+                  "count": 1,
+                  "predicted": 0.5851773023605347,
+                  "observed": 1.0
+                }
+              ]
+            },
+            "combat_reward": {
+              "count": 8521,
+              "brier": 4.876962339039892e-05,
+              "predicted": 0.006799787282943726,
+              "observed": 0.0,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 8521,
+                  "predicted": 0.006799787282943726,
+                  "observed": 0.0
+                }
+              ]
+            },
+            "event": {
+              "count": 2924,
+              "brier": 0.0003240556106902659,
+              "predicted": 0.016153914853930473,
+              "observed": 0.0,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 2924,
+                  "predicted": 0.016153914853930473,
+                  "observed": 0.0
+                }
+              ]
+            },
+            "map": {
+              "count": 21284,
+              "brier": 0.0008902237168513238,
+              "predicted": 0.029041189700365067,
+              "observed": 0.0,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 21284,
+                  "predicted": 0.029041189700365067,
+                  "observed": 0.0
+                }
+              ]
+            },
+            "room": {
+              "count": 23158,
+              "brier": 9.179629705613479e-05,
+              "predicted": 0.9391283392906189,
+              "observed": 0.9423956871032715,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 1333,
+                  "predicted": 0.012805533595383167,
+                  "observed": 0.0
+                },
+                {
+                  "bin": 1,
+                  "count": 1,
+                  "predicted": 0.16060779988765717,
+                  "observed": 0.0
+                },
+                {
+                  "bin": 9,
+                  "count": 21824,
+                  "predicted": 0.995743453502655,
+                  "observed": 1.0
+                }
+              ]
+            },
+            "shop": {
+              "count": 1364,
+              "brier": 0.0001113537437049672,
+              "predicted": 0.009643160738050938,
+              "observed": 0.0,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 1364,
+                  "predicted": 0.009643160738050938,
+                  "observed": 0.0
+                }
+              ]
+            }
+          },
+          "by_act": {
+            "3": {
+              "count": 297525,
+              "brier": 0.0002620694867800921,
+              "predicted": 0.014926900155842304,
+              "observed": 0.0,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 297524,
+                  "predicted": 0.014926410280168056,
+                  "observed": 0.0
+                },
+                {
+                  "bin": 1,
+                  "count": 1,
+                  "predicted": 0.16060779988765717,
+                  "observed": 0.0
+                }
+              ]
+            },
+            "4": {
+              "count": 831654,
+              "brier": 0.07768642157316208,
+              "predicted": 0.36040571331977844,
+              "observed": 0.4149802625179291,
+              "bins": [
+                {
+                  "bin": 0,
+                  "count": 452982,
+                  "predicted": 0.022012069821357727,
+                  "observed": 0.06342415511608124
+                },
+                {
+                  "bin": 1,
+                  "count": 43221,
+                  "predicted": 0.13801994919776917,
+                  "observed": 0.4052659571170807
+                },
+                {
+                  "bin": 2,
+                  "count": 12347,
+                  "predicted": 0.2498692125082016,
+                  "observed": 0.5284684300422668
+                },
+                {
+                  "bin": 3,
+                  "count": 11442,
+                  "predicted": 0.35746705532073975,
+                  "observed": 0.5690438747406006
+                },
+                {
+                  "bin": 4,
+                  "count": 25360,
+                  "predicted": 0.4500810503959656,
+                  "observed": 0.5336750745773315
+                },
+                {
+                  "bin": 5,
+                  "count": 19270,
+                  "predicted": 0.543660581111908,
+                  "observed": 0.5940840840339661
+                },
+                {
+                  "bin": 6,
+                  "count": 16479,
+                  "predicted": 0.6429057121276855,
+                  "observed": 0.8024758696556091
+                },
+                {
+                  "bin": 7,
+                  "count": 7514,
+                  "predicted": 0.7449229955673218,
+                  "observed": 0.8211339116096497
+                },
+                {
+                  "bin": 8,
+                  "count": 7331,
+                  "predicted": 0.8553402423858643,
+                  "observed": 0.8918291926383972
+                },
+                {
+                  "bin": 9,
+                  "count": 235708,
+                  "predicted": 0.9854074716567993,
+                  "observed": 0.9966738224029541
+                }
+              ]
+            }
+          }
+        },
+        "selected_action_probability": {
+          "mean": 0.6317965388298035,
+          "min": 6.411305548681412e-07,
+          "max": 1.0
+        },
+        "ppo": {
+          "samples": 1129179,
+          "minibatches": 138,
+          "update_seconds": 34.623050622991286,
+          "policy_loss": 0.0035384244229446065,
+          "value_loss": 0.04719195106800146,
+          "entropy": 0.44240481452634217,
+          "kl": 0.015775055930583592,
+          "clip_fraction": 0.08820302187229936,
+          "loss": 0.022710351661596385,
+          "grad_norm": 0.20073337959129592,
+          "memory": [
+            {
+              "rank": 0,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 12912164864,
+              "peak_allocated_bytes": 1616906752,
+              "peak_reserved_bytes": 12912164864,
+              "free_bytes": 1545076736,
+              "total_bytes": 16928342016
+            },
+            {
+              "rank": 1,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 13132365824,
+              "peak_allocated_bytes": 1657460736,
+              "peak_reserved_bytes": 13132365824,
+              "free_bytes": 1322778624,
+              "total_bytes": 16928342016
+            },
+            {
+              "rank": 2,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 12756975616,
+              "peak_allocated_bytes": 1619720704,
+              "peak_reserved_bytes": 12756975616,
+              "free_bytes": 1721237504,
+              "total_bytes": 16928342016
+            },
+            {
+              "rank": 3,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 12784238592,
+              "peak_allocated_bytes": 1689427456,
+              "peak_reserved_bytes": 12784238592,
+              "free_bytes": 1677197312,
+              "total_bytes": 16928342016
+            },
+            {
+              "rank": 4,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 13031702528,
+              "peak_allocated_bytes": 1662433792,
+              "peak_reserved_bytes": 13031702528,
+              "free_bytes": 1444413440,
+              "total_bytes": 16928342016
+            },
+            {
+              "rank": 5,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 12979273728,
+              "peak_allocated_bytes": 1675681792,
+              "peak_reserved_bytes": 12979273728,
+              "free_bytes": 1480065024,
+              "total_bytes": 16928342016
+            },
+            {
+              "rank": 6,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 13105102848,
+              "peak_allocated_bytes": 1620285440,
+              "peak_reserved_bytes": 13105102848,
+              "free_bytes": 1371013120,
+              "total_bytes": 16928342016
+            },
+            {
+              "rank": 7,
+              "allocated_bytes": 35845120,
+              "reserved_bytes": 13363052544,
+              "peak_allocated_bytes": 1635184640,
+              "peak_reserved_bytes": 13363052544,
+              "free_bytes": 1096286208,
+              "total_bytes": 16928342016
+            }
+          ],
+          "policy_version": 75,
+          "published_version": 76,
+          "learner_seconds": 34.81766276701819
+        },
+        "update": 76,
+        "cumulative_decisions": 56051597,
+        "frontier": "k32",
+        "source_episodes": {
+          "frontier": 39324,
+          "learned": 13106,
+          "far": 13106
+        },
+        "source_decisions": {
+          "frontier": 726519,
+          "learned": 105135,
+          "far": 297525
+        },
+        "source_episode_shares": {
+          "frontier": 0.60003662109375,
+          "learned": 0.199981689453125,
+          "far": 0.199981689453125
+        },
+        "source_decision_shares": {
+          "frontier": 0.6434046329235666,
+          "learned": 0.09310747011766957,
+          "far": 0.26348789695876385
+        },
+        "timing": {
+          "root_prepare_seconds": 0.018011136293411254,
+          "reset_seconds": 0.3793172492980957,
+          "step_encode_seconds": 8.254457851007581,
+          "inference_seconds": 58.45025282597542,
+          "storage_seconds": 0.6998941113948822,
+          "collection_seconds": 13.047236460959539,
+          "total_seconds": 51.1510847780155,
+          "decisions_per_second": 22075.367607556895
+        }
+      },
+      "audit_round": "A-2718-50651118",
+      "audit_roots": 18,
+      "audit_status": "pending_mac",
+      "stopped_due_to": {
+        "kind": "reported_nonterminal_snapshot_mismatch",
+        "fingerprint": "a37bf51:9:2000002493:combat1067:DamageInfo.isModified",
+        "main_commit": "a37bf51840b061abf99f4a2be156b41fc1ba4296",
+        "source_report": "a37bf51840b061abf99f4a2be156b41fc1ba4296:9",
+        "round": "A-2718-20782258",
+        "seed": 2000002493,
+        "reason": "Mismatch occurs before subsequent decisions. The directly authorized exception is limited to death/victory terminal frames after the final decision.",
+        "training_stopped": true,
+        "job_id": 3620,
+        "final_state": "CANCELLED",
+        "engine_fault_count": 0,
+        "requires": "Mac fix and original-game regression for this mismatch in main, then reviewed integration, required build/affected-root/CPU-GPU checks and explicit checkpoint migration within the cumulative budget.",
+        "frozen_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
+        "checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
+        "checkpoint_update": 76,
+        "checkpoint_decisions": 56051597,
+        "observed_at": "2026-10-20T17:13:40.330911+08:00"
+      },
+      "initialization_completed": false,
+      "evidence_inventory": "inventory/e3-stop-3620.json"
     }
   ],
   "mac_comparison_blocker_history": [
@@ -41661,6 +41798,31 @@
       },
       "mac_fix_report": "384ca193fadeb4bdc019b1174cb22abab5aba7bf:8",
       "server_fix_integration": "reviewed_deferred_until_current_initialization_finishes"
+    },
+    {
+      "kind": "reported_nonterminal_snapshot_mismatch",
+      "fingerprint": "a37bf51:9:2000002493:combat1067:DamageInfo.isModified",
+      "main_commit": "a37bf51840b061abf99f4a2be156b41fc1ba4296",
+      "source_report": "a37bf51840b061abf99f4a2be156b41fc1ba4296:9",
+      "round": "A-2718-20782258",
+      "seed": 2000002493,
+      "reason": "Mismatch occurs before subsequent decisions. The directly authorized exception is limited to death/victory terminal frames after the final decision.",
+      "training_stopped": true,
+      "job_id": 3620,
+      "final_state": "CANCELLED",
+      "engine_fault_count": 0,
+      "requires": "Mac fix and original-game regression for this mismatch in main, then reviewed integration, required build/affected-root/CPU-GPU checks and explicit checkpoint migration within the cumulative budget.",
+      "frozen_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
+      "checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
+      "checkpoint_update": 76,
+      "checkpoint_decisions": 56051597,
+      "observed_at": "2026-10-20T17:13:40.330911+08:00",
+      "mac_confirmation": {
+        "report_key": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655:10",
+        "source_commit": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
+        "deterministic_rule_state_reported": true,
+        "engine_fix_included": false
+      }
     }
   ],
   "user_training_decision_history": [
@@ -41713,10 +41875,10 @@
   },
   "current_resume_inventory": "inventory/e3-resume-3620.json",
   "next_engine_integration": {
-    "status": "blocked_waiting_for_this_nonterminal_fix_and_regression",
+    "status": "completed_resumed_3625",
     "base_main": "1b0a670c038273ee8341afc442d980863e2ab22c",
-    "reviewed_main": "5cf4ac82f6d52d3ab99c7ffd760dd420c9145655",
-    "new_commits_reviewed": 45,
+    "reviewed_main": "ce317bb3b1f96abca3433e574a2ce273ad9e1436",
+    "new_commits_reviewed": 50,
     "source_messages": [
       6,
       7,
@@ -41735,22 +41897,35 @@
     "observation_fix": "Project damage/block caches only after player.isDead and the DEATH screen; base stats and live combat observations remain exact.",
     "other_changes": "Original recording scratch/compression/bytecode audit, Proceed-button recording fix, rule-coverage tooling and scenario/fixture evidence.",
     "mac_regression_report": {
-      "message": 7,
-      "ctest": "53/53",
-      "fixture_both_scopes": "899/899",
-      "fixture_decisions": 20394,
-      "deep": "12/12",
-      "training_pytest": "all passed, count not supplied",
-      "evidence_scope": "Reported by Mac; not rerun by this server."
+      "report_key": "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+      "main_commit": "4e6d7607e55b5ad816ba05ed94b89172f4375edb",
+      "fix_commits": [
+        "fc39281802c77fefd9753449a7417afd54ee55a4",
+        "833fa93a0cdd89b2271c5208bee667edd1d1c802"
+      ],
+      "reported_recordings": 54,
+      "reported_passed": 54,
+      "reported_decisions": 83908,
+      "scopes": [
+        "combat",
+        "full"
+      ],
+      "rounds": [
+        "A-2718-20782258",
+        "A-2718-30284100",
+        "A-2718-40529025"
+      ],
+      "evidence_scope": "Mac original-game report, not server replay",
+      "source_layout_changed": false
     },
     "running_checkout_unchanged": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
     "next_steps": [
-      "Await Mac fix plus original-game regression in main for the reported nonterminal cache mismatch.",
-      "Review and integrate fixes, rebuild and perform the required affected-root and existing CPU/GPU checks.",
-      "Record checkpoint source migration from frozen update76 before resuming A2718 within remaining cumulative budget.",
-      "Only after A2718 completes consider A31415, then B if budget remains."
+      "Upload integrated fixed source 2314143 to the clean idle server and perform a bounded 32-core CPU/GPU build.",
+      "After build, perform existing CPU/GPU parity and affected-root checks; record exact allocation costs.",
+      "If gates pass, explicitly migrate frozen A/2718 update76 checkpoint provenance while preserving optimizer/RNG/attempt/queues, then resume within remaining cumulative budget.",
+      "A/2718-50651118 remains pending Mac; A/1729 stays completed. A/31415 only after A/2718 completion and budget reconciliation."
     ],
-    "git_transport": "Fetch failed with schannel early EOF. Read all 43 commit records through the existing credentialed GitHub API; source integration is still pending.",
+    "git_transport": "Git smart HTTP with existing credential, pack SHA verified; normal fetch cancelled after no response.",
     "blocker": {
       "kind": "reported_nonterminal_snapshot_mismatch",
       "fingerprint": "a37bf51:9:2000002493:combat1067:DamageInfo.isModified",
@@ -41775,7 +41950,131 @@
         "deterministic_rule_state_reported": true,
         "engine_fix_included": false
       }
-    }
+    },
+    "local_integrated_head": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "build_job": 3622,
+    "mac_latest_round_report": {
+      "report_key": "ce317bb3b1f96abca3433e574a2ce273ad9e1436:12",
+      "round": "A-2718-50651118",
+      "recordings": 18,
+      "decisions": 25692,
+      "both_scopes_passed": true,
+      "engine": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+      "scope": "Reported by Mac, not independent server original-game verification"
+    },
+    "build_final_seconds": 738,
+    "gate_job": 3623,
+    "mac_reports": [
+      {
+        "report_key": "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+        "source_commit": "4e6d7607e55b5ad816ba05ed94b89172f4375edb",
+        "source_document": "docs/messages/claude-to-gpt.md",
+        "message": 11,
+        "source_reported_at": "2026-10-20T19:20:00+08:00",
+        "observed_via_github_at": "2026-10-20T18:23:15.093127+08:00",
+        "rounds": [
+          "A-2718-20782258",
+          "A-2718-30284100",
+          "A-2718-40529025"
+        ],
+        "status": "mac_passed_on_fixed_engine",
+        "original_recordings": 54,
+        "recordings_matching_both_scopes": 54,
+        "original_decisions": 83908,
+        "counts_scope": "Combined across the three named rounds; no per-round decision counts inferred",
+        "fix_commits": [
+          "fc39281802c77fefd9753449a7417afd54ee55a4",
+          "833fa93a0cdd89b2271c5208bee667edd1d1c802"
+        ],
+        "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+        "regressions": [
+          "SnakeDagger-explode-power-refresh-seed101",
+          "Spiker-double-death-seed2000002633"
+        ],
+        "server_reproduced_original_game": false,
+        "evidence_scope": "Mac report on main; original-game regression recordings supplied with engine fixes"
+      },
+      {
+        "report_key": "ce317bb3b1f96abca3433e574a2ce273ad9e1436:12",
+        "source_commit": "ce317bb3b1f96abca3433e574a2ce273ad9e1436",
+        "source_document": "docs/messages/claude-to-gpt.md",
+        "message": 12,
+        "source_reported_at": "2026-10-20T19:45:00+08:00",
+        "observed_via_github_at": "2026-10-20T18:36:49.200987+08:00",
+        "rounds": [
+          "A-2718-50651118"
+        ],
+        "status": "mac_passed_on_fixed_engine",
+        "original_recordings": 18,
+        "recordings_matching_both_scopes": 18,
+        "original_decisions": 25692,
+        "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+        "server_reproduced_original_game": false,
+        "evidence_scope": "Mac report on main; no independent server original-game recording"
+      }
+    ],
+    "gate_final_seconds": 120,
+    "gate_adjudication": {
+      "status": "harness_input_error_resolved",
+      "failed_job": 3623,
+      "reason": "Complete terminal winning paths were mistakenly included in a resumable-root zero-fault assertion. TrainingBatch.reset_to_many rejects empty-action terminal states as NoDecision by design.",
+      "fault_code": "0xe0000003",
+      "source_lines": [
+        "obs/schema.hpp:17",
+        "host/training_batch.hpp:240",
+        "cuda/batch.cu:121"
+      ],
+      "terminal_paths": 34,
+      "terminal_paths_native_replay_passed": true,
+      "terminal_paths_not_training_inputs": true,
+      "retained_winning_line_decisions": 58422,
+      "all_306_recut_roots_unchanged": true,
+      "e2_roots_zero_faults": 8721,
+      "policy_prefixes_zero_faults": 72,
+      "cpu_gpu_full_state_compared": 8827,
+      "cpu_gpu_full_state_all_equal": true,
+      "engine_code_changed": false,
+      "assertions_disabled": false,
+      "seeds_discarded": 0,
+      "prior_archive_sha256": "80f3aa5fa3926af8a29a8fba082e8c2ba8b3aefd0d169be2ffae4389b13ef82c",
+      "remaining_checks": [
+        "306curriculum roots full-state andcollector",
+        "existing collector parity",
+        "checkpoint76 metadata migration"
+      ]
+    },
+    "remaining_gate_job": 3624,
+    "validation_summary": "/home/zhuyouwei/spire-downloads/e3-fix-gates-3624/summary.json",
+    "checkpoint_migration": {
+      "reason": "Resume after Mac original-game fixes integrated and existing server parity gates passed",
+      "parent_checkpoint": "/home/zhuyouwei/spire-downloads/e3-stop-3620-a37bf51/checkpoint.pt",
+      "parent_checkpoint_sha256": "46761b8821a6106a7ed0b9d84cc1706cac08324c81c38888434b5cacd7d1ed74",
+      "parent_engine_commit": "6ae19561131e01b1dac7629eef2db3f91d4f70c3",
+      "parent_policy_version": 76,
+      "parent_training_decisions": 56051597,
+      "target_engine_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+      "parent_initial_evaluation_sha256": "39cae98eca3f2ff0476d4168ba2669758a4fcccd2fc0cbd4631089080fb2407d",
+      "previous_continuation": null,
+      "mac_reports": [
+        "4e6d7607e55b5ad816ba05ed94b89172f4375edb:11",
+        "ce317bb3b1f96abca3433e574a2ce273ad9e1436:12"
+      ],
+      "gate_summary": "/home/zhuyouwei/spire-downloads/e3-fix-gates-3624/summary.json",
+      "gate_summary_sha256": "74fe376a04960f057d3d45141fb370e38c100b099eaa374e6927f6d0917ee3a9",
+      "engine_rules_changed": true,
+      "training_state_preserved": true,
+      "baseline": "Historical initial evaluation retained unchanged from original initialization",
+      "bitwise_continuation": false,
+      "output_checkpoint": "/home/zhuyouwei/spire-downloads/e3-fix-2314143-resume-input-A-2718/checkpoint.pt",
+      "output_checkpoint_sha256": "c4b3372b2b8f78c5a04f3a05307ce5bf126ed41bf78525496896339b0884fb55",
+      "training_state_sha256": "a1acf1fe32be84f1d2549c20decee0aa4569b12ec09bff6df224ceffe6826cd9",
+      "original_checkpoint_preserved": true,
+      "optimizer_rng_attempt_queues_preserved": true,
+      "next_evaluation": 60000000,
+      "last_evaluated_decisions": 50651118,
+      "training_started": false
+    },
+    "resume_job": 3625
   },
   "prior_allocation_provenance": {
     "initialized_at": "2026-10-19T21:47:27+08:00",
@@ -43434,5 +43733,36 @@
       "audit_status": "pending_mac",
       "evidence_inventory": "inventory/e3-resume-3620.json"
     }
-  ]
+  ],
+  "active_allocation": {
+    "job_id": 3625,
+    "kind": "training_resume",
+    "state": "RUNNING",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "group": "A",
+    "init_seed": 2718,
+    "checkpoint_update": 76,
+    "checkpoint_training_decisions": 56051597,
+    "checkpoint_sha256": "c4b3372b2b8f78c5a04f3a05307ce5bf126ed41bf78525496896339b0884fb55",
+    "plan_sha256": "527ec806cffbba8090e04479a408f8388c01157db374f2124b20bf49d215f1b8",
+    "submitted_epoch": 1792494417.1706407,
+    "allocation_limit_seconds": 2160,
+    "prior_charged_seconds": 26632,
+    "gpus": 8,
+    "cpus": 8,
+    "memory_gib": 96,
+    "recorder_pid": 372894,
+    "output": "/home/zhuyouwei/spire-downloads/e3-training-resume-3625",
+    "log": "/home/zhuyouwei/spire-downloads/e3-resume-3625.log",
+    "slurm_record": "/home/zhuyouwei/spire-downloads/e3-slurm-3625/final.txt",
+    "final": false,
+    "observed_at": "2026-10-20T19:08:48.437092+08:00",
+    "slurm_elapsed_seconds_at_observation": 111,
+    "start_time": "2026-10-20T19:06:57",
+    "latest_completed_update": 77,
+    "latest_training_decisions": 57209061,
+    "last_completed_update_faults": 0,
+    "last_completed_update_truncated": 0
+  },
+  "latest_resume_inventory": "inventory/e3-fix-2314143.json"
 }

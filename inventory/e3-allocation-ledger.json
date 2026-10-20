@@ -320,11 +320,56 @@
       "evidence_sha256": "e7fa0a864057a2c215a2b03bd5ffe091d8cd337bcd5d15682d88cdd0c57864ff",
       "archive_sha256": "d153d85761f8e38231a6e48cdd40cbe5ff6963443cdcf410f511bb5269557b06",
       "stop_reason": "reported_nonterminal_snapshot_mismatch"
+    },
+    {
+      "job_id": 3622,
+      "kind": "cpu_gpu_build",
+      "final": true,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "charged_seconds": 738,
+      "cpus": 32,
+      "gpus": 0,
+      "started_at": "2026-10-20T18:35:17",
+      "ended_at": "2026-10-20T18:47:35",
+      "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3622/final.txt",
+      "evidence_sha256": "3192ea1ecc1cc21c143bea45aaae35a50e1089a0a4fb05dc20d10cc255632f9a",
+      "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5"
+    },
+    {
+      "job_id": 3623,
+      "kind": "fixed_engine_parity_and_checkpoint_migration",
+      "final": true,
+      "status": "FAILED",
+      "exit_code": "1:0",
+      "charged_seconds": 314,
+      "cpus": 3,
+      "gpus": 3,
+      "started_at": "2026-10-20T18:48:15",
+      "ended_at": "2026-10-20T18:53:29",
+      "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3623/final.txt",
+      "evidence_sha256": "992b3d18dd31969764b36ca0e893f269f77b445d2aee25cdb2bc44f0ddc58d6a",
+      "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5"
+    },
+    {
+      "job_id": 3624,
+      "kind": "remaining_fixed_engine_checks_and_migration",
+      "final": true,
+      "status": "COMPLETED",
+      "exit_code": "0:0",
+      "charged_seconds": 120,
+      "cpus": 3,
+      "gpus": 3,
+      "started_at": "2026-10-20T18:59:39",
+      "ended_at": "2026-10-20T19:01:39",
+      "evidence_file": "/home/zhuyouwei/spire-downloads/e3-slurm-3624/final.txt",
+      "evidence_sha256": "59f1f82d91b6b25144a441def679bd528b2966b66f18e6be87d4593bafd3cacd",
+      "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5"
     }
   ],
-  "prior_charged_seconds": 25460,
-  "remaining_seconds_before_run": 3340,
-  "allocation_limit_seconds": null,
+  "prior_charged_seconds": 26632,
+  "remaining_seconds_before_run": 2168,
+  "allocation_limit_seconds": 2160,
   "accounting_note": "sacct is disabled (accounting_storage/none), JobComp is none, and old controller records expired. Saved final scontrol RunTime is used where available; remaining old jobs use original log birth-to-last-write intervals plus two seconds for timestamp granularity, explicitly estimated, not sacct elapsed. Full wall time for CPU-only and partial-GPU E3 jobs is conservatively charged as before. This total is a conservative operational ledger, not a complete measured eight-GPU allocation total.",
   "retired_reservation": {
     "seconds": 14400,
@@ -342,18 +387,45 @@
     "additional_search_authorized": false
   },
   "uncertainty_note": "Log intervals do not prove exact Slurm allocation boundaries. Future runs record final controller RunTime before records expire. No historical estimate is described as measured Slurm elapsed.",
-  "recorded_at": "2026-10-20T17:13:40.330911+08:00",
-  "active_allocation": null,
-  "observed_cumulative_charge_seconds": 25460,
-  "remaining_seconds_at_observation": 3340,
+  "recorded_at": "2026-10-20T19:15:02.658938+08:00",
+  "active_allocation": {
+    "job_id": 3625,
+    "kind": "training_resume",
+    "state": "RUNNING",
+    "source_commit": "2314143d956064b2e3e76182063ac01a2977e2c5",
+    "group": "A",
+    "init_seed": 2718,
+    "checkpoint_update": 76,
+    "checkpoint_training_decisions": 56051597,
+    "checkpoint_sha256": "c4b3372b2b8f78c5a04f3a05307ce5bf126ed41bf78525496896339b0884fb55",
+    "plan_sha256": "527ec806cffbba8090e04479a408f8388c01157db374f2124b20bf49d215f1b8",
+    "submitted_epoch": 1792494417.1706407,
+    "allocation_limit_seconds": 2160,
+    "prior_charged_seconds": 26632,
+    "gpus": 8,
+    "cpus": 8,
+    "memory_gib": 96,
+    "recorder_pid": 372894,
+    "output": "/home/zhuyouwei/spire-downloads/e3-training-resume-3625",
+    "log": "/home/zhuyouwei/spire-downloads/e3-resume-3625.log",
+    "slurm_record": "/home/zhuyouwei/spire-downloads/e3-slurm-3625/final.txt",
+    "final": false,
+    "observed_at": "2026-10-20T19:08:48.437092+08:00",
+    "slurm_elapsed_seconds_at_observation": 111,
+    "start_time": "2026-10-20T19:06:57",
+    "latest_completed_update": 77,
+    "latest_training_decisions": 57209061,
+    "last_completed_update_faults": 0,
+    "last_completed_update_truncated": 0
+  },
+  "observed_cumulative_charge_seconds": 26743,
+  "remaining_seconds_at_observation": 2057,
   "final_slurm_recorder": {
-    "job_id": 3620,
-    "pid": 304872,
-    "output": "/home/zhuyouwei/spire-downloads/e3-resume-slurm-3620.txt",
-    "status": "terminal_record_saved",
-    "final_state": "CANCELLED",
-    "final_runtime_seconds": 3074,
-    "evidence_file": "e3-stop-3620-a37bf51.tar.gz/slurm-final.txt"
+    "job_id": 3625,
+    "pid": 372894,
+    "record": "/home/zhuyouwei/spire-downloads/e3-slurm-3625/final.txt",
+    "status": "recording_current_allocation",
+    "final": false
   },
   "completed_training_allocation_baseline": {
     "job_id": 3606,
@@ -361,8 +433,8 @@
     "remaining_seconds_before_run": 11285,
     "allocation_limit_seconds": 11280
   },
-  "observed_at": "2026-10-20T17:13:40.330911+08:00",
-  "allocation_limit_scope": "Job 3620 has a 6360-second allocation cap. Charge prior finalized 22386 seconds plus its current elapsed time; replace with the final controller duration once.",
+  "observed_at": "2026-10-20T19:08:48.437092+08:00",
+  "allocation_limit_scope": "Finalized26632seconds plus job3625actualelapsed, bounded2160seconds. Replace observations with final runtime once; allowance never resets.",
   "recorder_history": [
     {
       "pid": 3820032,
@@ -370,9 +442,18 @@
       "status": "exited_final_record_saved",
       "final_job_state": "CANCELLED",
       "final_runtime_seconds": 4821
+    },
+    {
+      "job_id": 3620,
+      "pid": 304872,
+      "output": "/home/zhuyouwei/spire-downloads/e3-resume-slurm-3620.txt",
+      "status": "terminal_record_saved",
+      "final_state": "CANCELLED",
+      "final_runtime_seconds": 3074,
+      "evidence_file": "e3-stop-3620-a37bf51.tar.gz/slurm-final.txt"
     }
   ],
-  "active_job": null,
+  "active_job": 3625,
   "completed_allocation": {
     "job_id": 3620,
     "kind": "training_resume",
@@ -396,5 +477,5 @@
     "prior_charged_seconds": 22386,
     "final": true
   },
-  "next_allocation_max_seconds": 3300
+  "next_allocation_max_seconds": null
 }
