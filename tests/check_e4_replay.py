@@ -17,6 +17,7 @@ def check():
     seed = 1000000000
     search.provenance[0] = (seed, [])
     search.batch.reset_to(0, seed, [])
+    search.reset_seen([0])
     prefix = []
     checks = []
     for kind in ("event", "combat"):

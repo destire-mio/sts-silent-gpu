@@ -14,7 +14,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
 from train.checkpoint import engine_commit
-from train.e4 import AllocationEnded, REACH, SEARCH_METRICS, RoomSearch, SegmentCollector
+from train.e4 import AllocationEnded, REACH, SEARCH_METRICS, LOOP_METRICS, RoomSearch, SegmentCollector
 from train.e4_learner import update
 from train.model import ModelConfig, Policy
 
@@ -131,6 +131,7 @@ def main():
         evaluation_seed_count = saved["evaluation_seed_count"]
         search.event_trial_max_steps = saved["event_trial_max_steps"]
         search.metrics = saved["search_metrics"]
+        search.loop_metrics = saved["loop_metrics"]
         health_history.extend(saved["health_history"])
     allocation_start = time.monotonic()
     search.deadline = allocation_start + args.seconds - 60
@@ -144,6 +145,7 @@ def main():
             ready=ready, phase=phase, calibration_index=calibration_index,
             evaluation_state=evaluation_state, train_state=train_state, evaluation_seconds=evaluation_seconds,
             event_trial_max_steps=search.event_trial_max_steps, search_metrics=search.metrics,
+            loop_metrics=search.loop_metrics,
             health_history=list(health_history), lanes=args.lanes, trials=args.trials,
             interim_dev_seeds=args.interim_dev_seeds, evaluation_seed_count=evaluation_seed_count))
         dist.barrier()
@@ -175,6 +177,7 @@ def main():
                 start = time.monotonic()
                 actual_before = collector.decisions
                 searched_before = search.searched_decisions
+                loops_before = search.loop_metrics.copy()
                 expired = False
                 policy.eval()
                 try:
@@ -214,6 +217,13 @@ def main():
                                       search.searched_decisions - searched_before],
                                      dtype=torch.int64, device=device)
                 dist.all_reduce(steps, op=dist.ReduceOp.SUM)
+                loop_time = torch.tensor(search.loop_metrics["repeat_check_seconds"] - loops_before["repeat_check_seconds"],
+                                         dtype=torch.float64, device=device)
+                loop_counts = torch.tensor([search.loop_metrics[k] - loops_before[k] for k in LOOP_METRICS[1:]],
+                                           dtype=torch.int64, device=device)
+                dist.all_reduce(loop_time, op=dist.ReduceOp.MAX)
+                dist.all_reduce(loop_counts, op=dist.ReduceOp.SUM)
+                loop_report = dict(zip(LOOP_METRICS, [float(loop_time)] + loop_counts.cpu().tolist()))
                 trained_seconds += float(elapsed)
                 memory_report = {}
                 if version <= 20:
@@ -233,7 +243,7 @@ def main():
                                           sl_trial_steps_per_second=float(steps[1] / elapsed),
                                           initialization=args.initialization, lanes=args.lanes,
                                           trials=search.trials, **memory_report,
-                                          **health_report, **metrics)), flush=True)
+                                          **health_report, **loop_report, **metrics)), flush=True)
                 if (version > 20 and window_completed == 0
                         or version > 40 and window_stalled * 20 > window_completed):
                     if rank == 0:

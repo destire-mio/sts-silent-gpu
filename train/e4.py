@@ -16,6 +16,7 @@ BOSS_ROOM, ELITE_ROOM, EVENT_ROOM, NEOW_ROOM = 2, 1, 6, 8
 MAX_REWARD = 156
 ACTION_KINDS = ("padding", "play", "end_turn", "choose", "potion_use", "potion_discard", "proceed", "skip")
 SEARCH_METRICS = ("combat_over_limit", "event_over_limit", "combat_normal_max_steps", "event_normal_max_steps")
+LOOP_METRICS = ("repeat_check_seconds", "repeat_check_decisions", "repeat_check_candidates", "all_candidates_repeat")
 REACH = ("act1_boss", "act2_boss", "act3_first_boss", "act3_second_boss",
          "act3_three_keys", "act4", "shield_spear", "heart")
 
@@ -73,12 +74,16 @@ class RewardLedger:
 class RoomSearch:
     def __init__(self, lanes, trials, device, rng, *, scratch_slots=4096, inference_chunk=128):
         self.lanes, self.trials, self.device, self.rng = lanes, trials, device, rng
-        self.batch = make_batch(lanes + scratch_slots, 2**63 - 1, device)
+        self.batch = make_batch(lanes + scratch_slots + 128, 2**63 - 1, device)
         self.arrays = views(self.batch, device)
         for name in ("entity_counts", "candidate_counts", "faults", "done", "truncated"):
             self.arrays[name] = torch.as_tensor(getattr(self.batch, name), device=device)
         self.progress_buffer = torch.empty(self.batch.size * 9, dtype=torch.int64, device=device)
-        self.available = list(range(lanes, self.batch.size))
+        self.available = list(range(lanes, lanes + scratch_slots))
+        self.probe_slots = list(range(lanes + scratch_slots, self.batch.size))
+        self.seen = {}
+        self.mask_cache = {}
+        self.loop_metrics = dict.fromkeys(LOOP_METRICS, 0)
         self.inference_chunk = inference_chunk
         self.deadline = float("inf")
         self.searched_decisions = 0
@@ -152,11 +157,12 @@ class RoomSearch:
     @torch.no_grad()
     def predict(self, model, slots):
         choices, values, logs = [], [], []
+        masks = self.policy_masks(slots)
+        offset = 0
         for group in torch.tensor(slots, device=self.device).split(self.inference_chunk):
             inputs = network_inputs({k: self.arrays[k] for k in views_fields}, self.device, group)
-            blocked = self.map_return_blocked(group)
-            inputs["candidate_mask"] &= ~(blocked[:, None] & (inputs["candidate_kinds"] == 7))
-            assert bool(inputs["candidate_mask"].any(-1).all()), "Map-return restriction removed every action"
+            inputs["candidate_mask"] &= masks[offset:offset + len(group), :inputs["candidate_mask"].shape[1]]
+            offset += len(group)
             logits, value = model(inputs)
             policy, _ = distribution(logits, inputs["candidate_mask"])
             action = torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
@@ -164,6 +170,70 @@ class RoomSearch:
             values.extend(value.cpu().tolist())
             logs.extend(policy.log_prob(action).cpu().tolist())
         return choices, values, logs
+
+    def loop_keys(self, slots):
+        indices = torch.tensor(slots, dtype=torch.int64, device=self.device)
+        keys = torch.empty(len(slots), dtype=torch.int64, device=self.device)
+        self.batch.loop_keys_tensors(indices, keys)
+        return keys.cpu().tolist()
+
+    def reset_seen(self, slots):
+        for s, key in zip(slots, self.loop_keys(slots)):
+            self.seen[s] = {key}
+            self.mask_cache.pop(s, None)
+
+    @torch.no_grad()
+    def policy_masks(self, slots):
+        missing = [s for s in slots if s not in self.mask_cache]
+        if missing:
+            started = time.monotonic()
+            progress = self.progress()
+            inputs = network_inputs({k: self.arrays[k] for k in views_fields}, self.device,
+                                    torch.tensor(missing, device=self.device))
+            legal = inputs["candidate_mask"] & ~(self.map_return_blocked(missing)[:, None]
+                                                & (inputs["candidate_kinds"] == 7))
+            assert bool(legal.any(-1).all()), "Map-return restriction removed every action"
+            legal = legal.cpu().tolist()
+            pairs = []
+            allowed = {}
+            for s, row in zip(missing, legal):
+                allowed[s] = row + [False] * (128 - len(row))
+                if progress[s][PHASE] != COMBAT_PHASE:
+                    pairs.extend((s, a) for a, valid in enumerate(row) if valid)
+            repeated = {s: [] for s in missing}
+            for begin in range(0, len(pairs), len(self.probe_slots)):
+                self.clock()
+                group = pairs[begin:begin + len(self.probe_slots)]
+                probes = self.probe_slots[:len(group)]
+                self.batch.clone_many([s for s, _ in group], probes)
+                selected = torch.zeros(self.batch.size, dtype=torch.int32, device=self.device)
+                active = torch.zeros(self.batch.size, dtype=torch.uint8, device=self.device)
+                selected[probes] = torch.tensor([a for _, a in group], dtype=torch.int32, device=self.device)
+                active[probes] = 1
+                for (s, a), p in zip(group, probes):
+                    seed, path = self.provenance[s]
+                    self.provenance[p] = (seed, path + [a])
+                self.batch.step_tensors(selected, active)
+                self.check(probes)
+                keys = self.loop_keys(probes)
+                self.batch.progress_tensors(self.progress_buffer)
+                floors = self.progress_buffer.view(-1, 9)[probes, FLOOR].cpu().tolist()
+                for (s, a), key, floor in zip(group, keys, floors):
+                    if floor == progress[s][FLOOR] and key in self.seen[s]:
+                        repeated[s].append(a)
+            for s in missing:
+                row = allowed[s]
+                if repeated[s] and len(repeated[s]) == sum(row):
+                    self.loop_metrics["all_candidates_repeat"] += 1
+                else:
+                    for a in repeated[s]:
+                        row[a] = False
+                self.mask_cache[s] = row
+            if pairs:
+                self.loop_metrics["repeat_check_seconds"] += time.monotonic() - started
+                self.loop_metrics["repeat_check_decisions"] += sum(progress[s][PHASE] != COMBAT_PHASE for s in missing)
+                self.loop_metrics["repeat_check_candidates"] += len(pairs)
+        return torch.tensor([self.mask_cache[s] for s in slots], dtype=torch.bool, device=self.device)
 
     def map_return_blocked(self, slots):
         self.batch.progress_tensors(self.progress_buffer)
@@ -198,6 +268,13 @@ class RoomSearch:
         for s, a in zip(slots, choices):
             self.provenance[s][1].append(a)
         self.check(slots)
+        floors_before = before[:, FLOOR].cpu().tolist()
+        floors_after = self.progress_buffer.view(-1, 9)[indices, FLOOR].cpu().tolist()
+        for s, key, old, new in zip(slots, self.loop_keys(slots), floors_before, floors_after):
+            if old != new:
+                self.seen[s] = set()
+            self.seen[s].add(key)
+            self.mask_cache.pop(s, None)
 
     def clone(self, sources, targets):
         self.batch.clone_many(sources, targets)
@@ -205,6 +282,11 @@ class RoomSearch:
         for s, t in zip(sources, targets):
             seed, path = self.provenance[s]
             self.provenance[t] = (seed, path.copy())
+            self.seen[t] = self.seen[s].copy()
+            if s in self.mask_cache:
+                self.mask_cache[t] = self.mask_cache[s].copy()
+            else:
+                self.mask_cache.pop(t, None)
 
     def take(self, count):
         assert count <= len(self.available)
@@ -270,9 +352,10 @@ class RoomSearch:
         options = []
         parents = []
         groups = []
-        for parent in sources:
+        masks = self.policy_masks(sources).cpu().tolist()
+        for parent, mask in zip(sources, masks):
             kinds = self.arrays["candidate_kinds"][parent].cpu().tolist()
-            choices = [i for i, kind in enumerate(kinds) if kind == 3]
+            choices = [i for i, kind in enumerate(kinds) if kind == 3 and mask[i]]
             assert choices
             groups.append((len(options), len(options) + len(choices)))
             options.extend(choices)
@@ -372,6 +455,7 @@ class SegmentCollector:
         self.search.batch.reset_to_many(slots, seeds, [[] for _ in slots])
         self.search.map_returned[slots] = False
         self.search.check(slots)
+        self.search.reset_seen(slots)
         for slot, seed in zip(slots, seeds):
             self.seeds[slot] = seed
             self.paths[slot] = []
@@ -390,6 +474,7 @@ class SegmentCollector:
         return dict(seeds=self.seeds, paths=self.paths, floor_steps=self.floor_steps,
                     noncombat_floor_steps=self.noncombat_floor_steps, tails=[list(t) for t in self.tails],
                     map_returned=self.search.map_returned[:self.search.lanes].cpu().tolist(),
+                    seen={s: self.search.seen[s] for s in range(self.search.lanes) if s in self.search.seen},
                     last_stall_classes=self.last_stall_classes,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
                     seed_rng=self.seed_rng.get_state(), search_rng=self.search.rng.get_state(),
@@ -402,6 +487,8 @@ class SegmentCollector:
             setattr(self, name, state[name])
         self.tails = [deque(t, maxlen=10) for t in state["tails"]]
         self.search.map_returned[:self.search.lanes] = torch.tensor(state["map_returned"], device=self.search.device)
+        self.search.seen = {s: keys.copy() for s, keys in state["seen"].items()}
+        self.search.mask_cache.clear()
         if self.partial:
             for name, value in self.partial["result"].items():
                 self.partial["result"][name] = value.to(self.search.device)
@@ -503,9 +590,10 @@ class SegmentCollector:
         index = torch.arange(lanes, device=device)
         if self.partial is None:
             result = dict(data=torch.empty(length * lanes * 32768, dtype=torch.uint8, device=device),
-                          offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device))
-            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "map_return_blocked"):
-                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid", "map_return_blocked") else torch.float32
+                          offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device),
+                          policy_mask=torch.empty((length, lanes, 128), dtype=torch.bool, device=device))
+            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid"):
+                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid") else torch.float32
                 result[name] = torch.zeros((length, lanes), device=device, dtype=dtype)
             self.partial = dict(result=result, next_step=0, length=length,
                                 completed_before=len(self.completed))
@@ -518,7 +606,7 @@ class SegmentCollector:
                 self.fresh(fresh)
             progress = self.search.progress()
             actions, values, logs, imitation = self.choose(model, slots, progress)
-            result["map_return_blocked"][t] = self.search.map_return_blocked(index)
+            result["policy_mask"][t] = self.search.policy_masks(slots)
             row = t * lanes
             store_inputs(self.search.batch, self.search.arrays, index, result["data"],
                          result["offsets"][row:row + lanes + 1])
@@ -542,7 +630,8 @@ class SegmentCollector:
             result["advantages"][t] = advantage
             bootstrap = result["values"][t]
         result["returns"] = result["values"] + result["advantages"]
-        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "map_return_blocked", "advantages", "returns"):
+        result["policy_mask"] = result["policy_mask"].reshape(-1, 128)
+        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "advantages", "returns"):
             result[name] = result[name].flatten()
         completed = self.completed[self.partial["completed_before"]:]
         self.last_stall_classes = dict(Counter(e["stall_class"] for e in completed if e["outcome"] == "stalled"))
