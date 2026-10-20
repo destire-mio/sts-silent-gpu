@@ -1,15 +1,15 @@
 {
-  "recorded_at": "2026-10-20T23:16:24.741774+08:00",
+  "recorded_at": "2026-10-20T23:24:07.947747+08:00",
   "step": 1,
   "status": "initialization1729_training",
   "fixed_commit": "05199891233d6c8b79cf84cace5ebf895e2ad883",
-  "main_reviewed": "b4100b7d70d03e3e4106852652ec5bab3316da49",
+  "main_reviewed": "0e040e47d170d956ba9268dbc400a86a4165f4fb",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 28800,
     "settled_node_seconds": 0,
     "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 77
+    "active_elapsed_at_snapshot": 482
   },
   "job": {
     "id": 3632,
@@ -23,13 +23,30 @@
   "initialization": 1729,
   "training_seconds_target": 3600,
   "latest_update": {
-    "version": 2,
-    "trained_seconds": 53.721879959106445,
-    "policy_loss": 0.7984670130172162,
-    "value_loss": 0.04346384805665251,
-    "imitation_fraction": 0.6964111328125
+    "version": 28,
+    "trained_seconds": 453.76200008392334,
+    "actual_steps": 458752,
+    "actual_steps_per_training_second": 1010.9969541635345,
+    "source": "28 completed updates x64 steps x32 lanes x8 ranks / sum training update wall times",
+    "sl_trial_steps_per_second": null,
+    "search_rate_note": "Running fixed version does not log search counters; do not infer a value"
   },
   "saved_checkpoint_version": 0,
   "next": "Evaluate all4096dev each1200 training seconds; preserve18actual paths; then initialization2718; select higher dev average floor; continue within cumulative budget",
-  "evaluation_complete": false
+  "evaluation_complete": false,
+  "pending_runner_update": {
+    "commit": "ce0975822992e044d271febd713c24a7de212fae",
+    "authorization": "Claude #21 at099443eced2eb74f522fa05c4c7cf5dee81a8336",
+    "evaluation_training_interval_seconds": 3600,
+    "metrics": [
+      "actual_steps",
+      "sl_trial_steps",
+      "update_seconds",
+      "actual_steps_per_second",
+      "sl_trial_steps_per_second"
+    ],
+    "status": "prepared, not deployed into running job3632",
+    "application": "At next checkpoint handoff or next initialization; preserve current fixed job and explicitly migrate checkpoint provenance if resuming across code commits",
+    "current_job_interval_seconds": 1200
+  }
 }
