@@ -1,7 +1,7 @@
 {
-  "recorded_at": "2026-10-20T22:38:38.807469+08:00",
+  "recorded_at": "2026-10-20T22:53:57.049235+08:00",
   "phase": "step_0",
-  "status": "step0_restarted_after_collector_action_shadowing_fix",
+  "status": "N8_complete_N16_running",
   "branch": "codex/e4",
   "implementation_commit": "05199891233d6c8b79cf84cace5ebf895e2ad883",
   "main": "b25f9cec7f77a9cf80ae4a3bc3b024f5ddbf8f3a",
@@ -45,14 +45,17 @@
     "step0_reserved_node_seconds": 3360,
     "step0_limit_node_seconds": 3600,
     "step1_limit_node_seconds": 28800,
-    "compile_cpu_seconds": 746.55
+    "compile_cpu_seconds": 746.55,
+    "active_elapsed_node_seconds": 887,
+    "step0_total_used_at_snapshot": 1089,
+    "active_elapsed_included_in_reservation": true
   },
   "validation": {
     "native_compilation": "passed",
     "existing_cpu_gpu_gates": "passed again on job3630: native parity, root cache, Python API",
     "python_syntax": "parsed four new sources before final progress-only edit",
     "sealed_10_percent": "registered; not opened",
-    "calibration_N8_N16_N32": "not started",
+    "calibration_N8_N16_N32": "N8 complete in 498.7803039550781 seconds; N16 running; N32 pending",
     "sl_replay_check": {
       "job": 3630,
       "seed": 1000000000,
@@ -76,7 +79,7 @@
     "normalization_max_reward": 156,
     "event_search": "Score complete current-room continuations for each event option; execute selected option and repeat search at the next actual event decision. Out-of-combat potion choices remain single policy samples."
   },
-  "next_action": "Monitor job3631; preserve failed checkpoints; identical initial policy/dev seeds, no completed N evaluations repeated.",
+  "next_action": "Finish N16 and N32 within existing allocation and cumulative budget, then choose N and start authorized step1.",
   "evidence_files": {
     "modules.sha256": {
       "sha256": "d230e56a748775133ce34b4537d2ce94cb638798cd76a360c94214e651464f02",
@@ -102,6 +105,56 @@
       "remote_path": "/home/zhuyouwei/spire-downloads/e4-gates-3628-3630.tar.gz",
       "sha256": "57d47c9fc1461c36d0c219339a1912592fadd3baf818a1e189d998976fb6eaa5",
       "contains": "GPU health, Slurm accounting, parity and replay logs, failed calibration traceback"
+    },
+    "E4-1729-0-N8-audit.json": {
+      "sha256": "39c898a6cf8cbb03387026cecbaea7aa6032843c4c85134841144ff2006e025c",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-audit.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-audit.json"
+    },
+    "E4-1729-0-N8-rank-0.json": {
+      "sha256": "0045b6a39cc2587ad635095cb6ef64b1375345fb3d61f1eea395caf28bd7ce1a",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-0.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-0.json"
+    },
+    "E4-1729-0-N8-rank-1.json": {
+      "sha256": "4cb849bb3e0167e98caa3a7236fa19ba5063d4e1f9f18daf3cdf83343745feea",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-1.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-1.json"
+    },
+    "E4-1729-0-N8-rank-2.json": {
+      "sha256": "398d7528700e5cadee1a7408a4d249a0ad315a69e62e207a2fb226a4daf42740",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-2.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-2.json"
+    },
+    "E4-1729-0-N8-rank-3.json": {
+      "sha256": "bc8561892367b67605ad8bd0f4a9482a19c2d7475b88d1db5ba67dafa030374e",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-3.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-3.json"
+    },
+    "E4-1729-0-N8-rank-4.json": {
+      "sha256": "bd0587443c21f2e2f92124f4c9a9888a0437a517fb2d76a6644915ca723426f2",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-4.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-4.json"
+    },
+    "E4-1729-0-N8-rank-5.json": {
+      "sha256": "2c43c2017cd02207572a6d143473b4d84dcfdeaacc075e1af5f5cf5c87c796d4",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-5.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-5.json"
+    },
+    "E4-1729-0-N8-rank-6.json": {
+      "sha256": "a33c08fa66cf52265139e5f8b043afe0eb151877fb01b89a561035c72b769875",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-6.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-6.json"
+    },
+    "E4-1729-0-N8-rank-7.json": {
+      "sha256": "07885e171a0c8db0bae7334e2c2374ed68c44e77cc043d4a8ace5c2579a6db68",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-rank-7.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-rank-7.json"
+    },
+    "E4-1729-0-N8-summary.json": {
+      "sha256": "bc32737c665eefa3d39835d3cc7d4ee34710c8e8c30dc744a84f7772522cb0cb",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\E4-1729-0-N8-summary.json",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-3631/calibration/E4-1729-0-N8-summary.json"
     }
   },
   "compiled_modules": [
@@ -139,8 +192,32 @@
       "id": 3631,
       "gpus": 8,
       "reserved_seconds": 3360,
-      "state": "SUBMITTED",
-      "output": "/home/zhuyouwei/spire-downloads/e4-step0-3631"
+      "state": "RUNNING",
+      "output": "/home/zhuyouwei/spire-downloads/e4-step0-3631",
+      "last_observed_elapsed_seconds": 887
+    }
+  ],
+  "calibration_assessments": [
+    {
+      "episodes": 4096,
+      "average_floor": 4.91943359375,
+      "reach": {
+        "act1_boss": 0.0,
+        "act2_boss": 0.0,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "shield_spear": 0.0,
+        "heart": 0.0
+      },
+      "victories": 0,
+      "faults": 0,
+      "truncated": 0,
+      "round": "E4-1729-0-N8",
+      "version": 0,
+      "trials": 8,
+      "evaluation_seconds": 498.7803039550781
     }
   ]
 }
