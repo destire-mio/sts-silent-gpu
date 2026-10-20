@@ -1,21 +1,21 @@
 {
-  "recorded_at": "2026-10-21T04:03:43.924878+08:00",
+  "recorded_at": "2026-10-21T04:18:34.946942+08:00",
   "step": 1,
-  "status": "fresh1729_claude32_running_with_stalled",
+  "status": "health_stopped41_claude33_pending",
   "fixed_commit": "20341d53766fdc5c87ee35155efb27e36c395183",
-  "main_reviewed": "464b1225957d97d72d4a3380b35002f4caeb78a8",
+  "main_reviewed": "52b7dbc3b6aef5873ec82b18a1d9801ce3a7e9e0",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 43200,
-    "settled_node_seconds": 12222,
-    "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 849,
-    "used_including_active_snapshot": 13071
+    "settled_node_seconds": 13770,
+    "reserved_node_seconds": 0,
+    "active_elapsed_at_snapshot": 0,
+    "used_including_active_snapshot": 13770
   },
   "job": {
     "job_id": 3641,
     "purpose": "Claude32 fresh1729 mapreturn mask and noncombat floorstall",
-    "state": "RUNNING",
+    "state": "EXITED",
     "step": 1,
     "gpus": 8,
     "reserved_seconds": 7200,
@@ -29,41 +29,46 @@
     "submitted_at": "2026-10-21T03:50:18.135748+08:00",
     "start_time": "2026-10-21T03:49:34+08:00",
     "last_observed_elapsed_seconds": 849,
-    "latest_completed_update": 32,
-    "last_durable_checkpoint_version": 0,
-    "checkpoint_reason": "started"
+    "latest_completed_update": 41,
+    "last_durable_checkpoint_version": 41,
+    "checkpoint_reason": "training_health_stop",
+    "batch_exit_code": 0,
+    "end_time": "2026-10-21T04:07:18+08:00",
+    "elapsed_seconds": 1064,
+    "elapsed_scope": "batch start to trap; scheduler epilog unavailable",
+    "charged_node_seconds": 1548
   },
   "initialization": 1729,
   "training_seconds_target": 3600,
   "latest_update": {
     "event": "update",
-    "version": 32,
-    "trained_seconds": 809.8911399841309,
-    "update_seconds": 27.074369430541992,
+    "version": 41,
+    "trained_seconds": 1036.1216163635254,
+    "update_seconds": 21.54106903076172,
     "actual_steps": 16384,
-    "sl_trial_steps": 125151,
-    "actual_steps_per_second": 605.1480102539062,
-    "sl_trial_steps_per_second": 4622.48974609375,
+    "sl_trial_steps": 146578,
+    "actual_steps_per_second": 760.5936279296875,
+    "sl_trial_steps_per_second": 6804.58349609375,
     "initialization": 1729,
     "lanes": 32,
     "trials": 32,
-    "completed_episodes": 138,
-    "completed_average_floor": 2.949275362318841,
-    "stalled_episodes": 42,
-    "active_max_floor_steps": 196,
+    "completed_episodes": 115,
+    "completed_average_floor": 3.4434782608695653,
+    "stalled_episodes": 37,
+    "active_max_floor_steps": 199,
     "stall_classes": {
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 22,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 18,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 21,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 13,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 2,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
     },
-    "policy_loss": 0.36557647765363477,
-    "value_loss": 0.0005633672098897402,
-    "imitation_fraction": 0.30230712890625,
-    "loss": 0.36488082765208674
+    "policy_loss": 0.41164911448085506,
+    "value_loss": 0.00013191334913257492,
+    "imitation_fraction": 0.34539794921875,
+    "loss": 0.41072024105960736
   },
-  "saved_checkpoint_version": 0,
-  "next": "Monitor3641 progress/checkpoint/faults and rolling20 health; settle final allocation once",
+  "saved_checkpoint_version": 41,
+  "next": "ImplementClaude33 readonly canonical observation+RNG key; excludeHistory/actioncounters; CPU/GPU parity",
   "evaluation_complete": false,
   "prior_attempts": [
     {
@@ -670,7 +675,7 @@
   },
   "claude32_preparation": {
     "authorization": "Claude32 at464b1225957d97d72d4a3380b35002f4caeb78a8",
-    "status": "deployed_running",
+    "status": "deployed_job3641_health_stopped41",
     "initialization": 1729,
     "source_checkpoint": null,
     "lanes": 32,
@@ -811,23 +816,30 @@
     "provisional_allocation_seconds": 57
   },
   "health_window": {
-    "job": 3641,
     "window_updates": 20,
-    "window_completed": 3862,
-    "window_stalled": 134,
-    "total_completed": 6178,
-    "total_stalled": 134,
-    "ending_version": 32,
+    "window_completed": 2858,
+    "window_stalled": 472,
+    "total_completed": 7245,
+    "total_stalled": 472,
+    "ending_version": 41,
     "window_stall_classes": {
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 61,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 68,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 3,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 210,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 215,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 2,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 35,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
     },
-    "first_stalled_update": 26,
-    "stop_triggered": false,
-    "observed_at": "2026-10-21T04:03:43.924878+08:00"
+    "stop_triggered": true,
+    "observed_at": "2026-10-21T04:15:21.104087+08:00"
   },
   "claude32_stall_observation": {
     "fixed_commit": "20341d53766fdc5c87ee35155efb27e36c395183",
@@ -856,5 +868,13 @@
     },
     "decision": "Keep fixed job running underClaude32: after40 rolling20 stalled>5percent triggers save/stop; no extra tests or enginechanges",
     "saved_checkpoint_version": 0
+  },
+  "claude33": {
+    "messages": [
+      33
+    ],
+    "main": "52b7dbc3b6aef5873ec82b18a1d9801ce3a7e9e0",
+    "status": "read_integrated_implementation_pending",
+    "decision": "Read-only64bit observation+RNG key; one-step noncombat repeatmask; sharedSL/train/eval/PPO; all_candidates_repeat fallback; CPU threecycle replays and CPU/GPUhash parity before fresh1729"
   }
 }

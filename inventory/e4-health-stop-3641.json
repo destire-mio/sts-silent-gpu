@@ -1,0 +1,144 @@
+{
+  "checked_at": "2026-10-21T04:15:21.104087+08:00",
+  "job_id": 3641,
+  "queue": [],
+  "accounting_source": "scontrol purged; known Slurm start03:49:34 to batch EXIT timestamp; final scheduler epilog time unavailable",
+  "batch_exit": 0,
+  "batch_end": "2026-10-21T04:07:18+08:00",
+  "batch_elapsed_seconds": 1064,
+  "source": "20341d53766fdc5c87ee35155efb27e36c395183",
+  "status": {
+    "reason": "training_health_stop",
+    "task": "train",
+    "phase": "training",
+    "version": 41,
+    "initialization": 1729,
+    "trials": 32,
+    "lanes": 32,
+    "scratch_slots": 4096,
+    "evaluation_seed_count": 4096,
+    "trained_seconds": 1036.1216163635254,
+    "allocation_process_seconds": 1037.4067179670092,
+    "job": "3641",
+    "commit": "20341d53766fdc5c87ee35155efb27e36c395183",
+    "stagnant": 0,
+    "assessments": [],
+    "calibration_index": 0,
+    "checkpoint_files": [
+      "rank-0.pt",
+      "rank-1.pt",
+      "rank-2.pt",
+      "rank-3.pt",
+      "rank-4.pt",
+      "rank-5.pt",
+      "rank-6.pt",
+      "rank-7.pt"
+    ]
+  },
+  "latest": {
+    "event": "update",
+    "version": 41,
+    "trained_seconds": 1036.1216163635254,
+    "update_seconds": 21.54106903076172,
+    "actual_steps": 16384,
+    "sl_trial_steps": 146578,
+    "actual_steps_per_second": 760.5936279296875,
+    "sl_trial_steps_per_second": 6804.58349609375,
+    "initialization": 1729,
+    "lanes": 32,
+    "trials": 32,
+    "completed_episodes": 115,
+    "completed_average_floor": 3.4434782608695653,
+    "stalled_episodes": 37,
+    "active_max_floor_steps": 199,
+    "stall_classes": {
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 21,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 13,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 2,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
+    },
+    "policy_loss": 0.41164911448085506,
+    "value_loss": 0.00013191334913257492,
+    "imitation_fraction": 0.34539794921875,
+    "loss": 0.41072024105960736
+  },
+  "actual_steps": 671744,
+  "window_completed": 2858,
+  "window_stalled": 472,
+  "window_classes": {
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 210,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 215,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 2,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 35,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+    "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
+  },
+  "total_completed": 7245,
+  "total_stalled": 472,
+  "contiguous_versions": true,
+  "log_sha256": "e13fbb103cb7148c7c6f98b9208c9782888b83a1d608811384eee127191b423f",
+  "traceback": false,
+  "fault_files": [],
+  "checkpoints": [
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-0.pt",
+      "size": 11567757,
+      "sha256": "17d280f572eb0f789872f6d6c1cfad14e655ac6225bda88a867fe7a5b267d22d"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-1.pt",
+      "size": 11573837,
+      "sha256": "6d4bf3a7e64caa3df81340348dee2830e8a845a938a2719b5f75529471b7548f"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-2.pt",
+      "size": 11566861,
+      "sha256": "aaaf013c1a8fe02f17cecdd3f3b8d9cf0dd93ba62518be4f97989b285d8fe019"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-3.pt",
+      "size": 11567501,
+      "sha256": "70654fb2fdcd3547977645932c35d5101d2f56a41cdd3f8c1e0e19158ddbafb5"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-4.pt",
+      "size": 11570381,
+      "sha256": "fdde59dc6e2ea20d0eb78b02c1b71a7271ea24141f14ad54c46ce034e2f50459"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-5.pt",
+      "size": 11569677,
+      "sha256": "94ca1dfcd9faae34aa488791263b215fa713c628ad3f15b2d8c4ed85bac6f924"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-6.pt",
+      "size": 11568141,
+      "sha256": "510035cbd7795acbbbbd37422fc34c20f495eb7f8e275b1b4cb707e2194074dc"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-7.pt",
+      "size": 11573069,
+      "sha256": "5547a1b313a2dc6cd52443d1e363312ddbe27b1cd8ecb3a7dd0be7a96eff0717"
+    }
+  ],
+  "budget_charge": {
+    "job_id": 3641,
+    "step": 1,
+    "charged_node_seconds": 1548,
+    "gpu_seconds": 12384,
+    "source": "Conservative upper bound from recorded Slurm start until confirmed emptyqueue; scontrol purged and sacct disabled",
+    "batch_elapsed_seconds": 1064,
+    "batch_exit_code": 0,
+    "exact_scheduler_elapsed_unavailable": true,
+    "bound_observed_at": "2026-10-21T04:15:21.104087+08:00",
+    "log_sha256": "e13fbb103cb7148c7c6f98b9208c9782888b83a1d608811384eee127191b423f"
+  }
+}
