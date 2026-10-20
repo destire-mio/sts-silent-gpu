@@ -302,11 +302,11 @@ class SegmentCollector:
         events = [s for s in idle if progress[s][PHASE] != COMBAT_PHASE and progress[s][SCREEN] == EVENT
                   and int(self.search.arrays["candidate_kinds"][s, chosen[s]]) == 3]
         if combat:
-            for s, actions in self.search.plan(model, combat, "combat").items():
-                self.pending[s].extend(actions)
+            for s, path in self.search.plan(model, combat, "combat").items():
+                self.pending[s].extend(path)
         if events:
-            for s, actions in self.search.plan(model, events, "event").items():
-                self.pending[s].append(actions[0])
+            for s, path in self.search.plan(model, events, "event").items():
+                self.pending[s].append(path[0])
         imitation = []
         for j, s in enumerate(slots):
             imitation.append(bool(self.pending[s]))
