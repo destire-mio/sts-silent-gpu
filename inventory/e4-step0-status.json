@@ -54,5 +54,28 @@
     "normalization_max_reward": 156,
     "event_search": "Score complete current-room continuations for each event option; execute selected option and repeat search at the next actual event decision. Out-of-combat potion choices remain single policy samples."
   },
-  "next_action": "Retry only read-only server preflight; after NVML works and GPUs are unused, run prepared step0 Slurm script within unchanged cumulative budget."
+  "next_action": "Retry only read-only server preflight; after NVML works and GPUs are unused, run prepared step0 Slurm script within unchanged cumulative budget.",
+  "evidence_files": {
+    "modules.sha256": {
+      "sha256": "d230e56a748775133ce34b4537d2ce94cb638798cd76a360c94214e651464f02",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\modules.sha256",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-build/modules.sha256"
+    },
+    "preflight.txt": {
+      "sha256": "5a01e65dcbf5679a9474edb8f05d30fad1f40ed94f8978327c1d7015e9fddc6e",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\preflight.txt",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-build/preflight.txt"
+    },
+    "build.log": {
+      "sha256": "e3799444564000c453e678fc0d7a9758e69cf53430bda2c8e82f14b155d5f224",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\build.log",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-build/build.log"
+    }
+  },
+  "compiled_modules": [
+    "cca348d0351ab6f7bfa234da7ffa10440f397565f549cfcacd0d7e3faabadd98  /home/zhuyouwei/spire-build-e3-v13-5adc725/spire.cpython-312-x86_64-linux-gnu.so",
+    "89edae588b55b5b6f36a281d236cd514fdeb206cff507c50b8be2af333836604  /home/zhuyouwei/spire-build-e3-v13-5adc725/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+    "70237e08d2f6754d8530363dbcf6dee2e749d7e12ad578031249746ef6917fa1  /home/zhuyouwei/spire-build-e3-v13-5adc725/test_cuda_parity",
+    "0f76fc2d422a9d62dde97ea881676b00f67c5e310b59b04df196ad4b2d0ed2dd  /home/zhuyouwei/spire-build-e3-v13-5adc725/test_cuda_root_cache"
+  ]
 }
