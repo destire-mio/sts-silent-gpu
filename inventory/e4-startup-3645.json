@@ -1,0 +1,112 @@
+{
+  "observed_at": "2026-10-21T06:25:56.751781+08:00",
+  "job_id": 3645,
+  "accounting": "JobId=3645 JobName=spire-e4-wide2718\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899974 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:02:50 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-10-21T06:23:06 EligibleTime=2026-10-21T06:23:06\n   AccrueTime=2026-10-21T06:23:06\n   StartTime=2026-10-21T06:23:06 EndTime=2026-10-21T08:23:06 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T06:23:06 Scheduler=Backfill\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1342019\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-wide2718.sh\n   WorkDir=/home/zhuyouwei\n   StdErr=/home/zhuyouwei/spire-downloads/e4-training-3645.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-training-3645.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n",
+  "queue": "3645|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-wide2718",
+  "status": {
+    "reason": "started",
+    "task": "train",
+    "phase": "training",
+    "version": 0,
+    "initialization": 2718,
+    "trials": 32,
+    "lanes": 256,
+    "scratch_slots": 8448,
+    "evaluation_seed_count": 4096,
+    "trained_seconds": 0.0,
+    "allocation_process_seconds": 0.3068973950576037,
+    "job": "3645",
+    "commit": "7c918ddab4039750b3104b96f131155f17ddfce0",
+    "stagnant": 0,
+    "assessments": [],
+    "calibration_index": 0,
+    "checkpoint_files": [
+      "rank-0.pt",
+      "rank-1.pt",
+      "rank-2.pt",
+      "rank-3.pt",
+      "rank-4.pt",
+      "rank-5.pt",
+      "rank-6.pt",
+      "rank-7.pt"
+    ]
+  },
+  "updates": [
+    {
+      "event": "update",
+      "version": 1,
+      "trained_seconds": 110.61893463134766,
+      "update_seconds": 110.61893463134766,
+      "actual_steps": 131072,
+      "sl_trial_steps": 3364362,
+      "actual_steps_per_second": 1184.8966064453125,
+      "sl_trial_steps_per_second": 30413.978515625,
+      "initialization": 2718,
+      "lanes": 256,
+      "trials": 32,
+      "peak_torch_allocated_bytes": 667220480,
+      "peak_torch_reserved_bytes": 706740224,
+      "estimated_peak_device_bytes": 3068788736,
+      "memory_scope": "max_across_ranks; device estimate adds static non-PyTorch allocation",
+      "completed_episodes": 1564,
+      "completed_average_floor": 2.661125319693095,
+      "stalled_episodes": 0,
+      "active_max_floor_steps": 60,
+      "stall_classes": {},
+      "repeat_check_seconds": 6.647168738534674,
+      "repeat_check_decisions": 87272,
+      "repeat_check_candidates": 394719,
+      "all_candidates_repeat": 41,
+      "policy_loss": 1.1075991000502938,
+      "value_loss": 0.043656079274777604,
+      "imitation_fraction": 0.8536605834960938,
+      "loss": 1.1283130395895569
+    }
+  ],
+  "error_markers": {
+    "Traceback": 0,
+    "OutOfMemoryError": 0,
+    "CUDA error": 0,
+    "AssertionError": 0
+  },
+  "script_sha256": "24a7598f8b3eae875c6507bee2b35f0cfdc98da235be8878be14101daaba0eab",
+  "checkpoint_files": {
+    "rank-0.pt": {
+      "size": 3797765,
+      "sha256": "f3dcd54b0ca8a5b2ba7f84cbefc3505ac63f2704864a4d05d5d35326f44bf7d7"
+    },
+    "rank-7.pt": {
+      "size": 3797765,
+      "sha256": "b879b5d2dfaacd7fd09f58b90fdc5ca543e9b70585880e9645eb877b7fc4bcbd"
+    },
+    "rank-1.pt": {
+      "size": 3797765,
+      "sha256": "04c5b1e5f87024dadf24b301d62988563918749e390f3b11fe9ece027909feba"
+    },
+    "rank-6.pt": {
+      "size": 3797765,
+      "sha256": "870fcfa356fd2e0990b98e4ef5bfbdbfcea4dd5a4aabd7437ca1971547923c7a"
+    },
+    "rank-4.pt": {
+      "size": 3797765,
+      "sha256": "5c45eb912e74683e6c80d972b581338f5b8a614cdd8b93f3aecd304d8a97e3d3"
+    },
+    "rank-3.pt": {
+      "size": 3797765,
+      "sha256": "e2874cbc845e9cb953894f48045407e3f87a4bceec48b93ae4e88f44cda69518"
+    },
+    "rank-2.pt": {
+      "size": 3797765,
+      "sha256": "fad6be25b0870db07587eecaa4bdf0099616191403af87cbc38388df09fcaeb8"
+    },
+    "rank-5.pt": {
+      "size": 3797765,
+      "sha256": "3d5de3e193d39550d2fca7665462a64e0314de4bc4def308c8cb9a40bb610828"
+    }
+  },
+  "step1_budget": {
+    "charged_node_seconds": 20120,
+    "reserved_node_seconds": 7200,
+    "limit_node_seconds": 43200
+  }
+}
