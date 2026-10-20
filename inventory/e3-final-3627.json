@@ -1621,8 +1621,10 @@
     "policy_version": 80,
     "sets": 21,
     "audit_round": "A-2718-60758596",
-    "mac_status": "pending_mac",
-    "inventory": "inventory/e3-oom-3625.json"
+    "mac_status": "mac_passed_on_fixed_engine",
+    "inventory": "inventory/e3-oom-3625.json",
+    "mac_report_key": "3965097b5ec202b262ab534531e3db53d0ae70d8:13",
+    "mac_report_source_commit": "3965097b5ec202b262ab534531e3db53d0ae70d8"
   },
   "stop_interpretation": "Successful process exit after wall_budget_during_evaluation. This is not completion of the A2718 initialization, nor a three-stagnant-stage stop, and is not an engine fault.",
   "evidence_archive": {
@@ -1875,8 +1877,32 @@
   "server_head": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
   "next_actions": [
     "Retain checkpoint88 and all16partial70M sets with13unresolved truncations.",
-    "Await Mac original-game review of18published60M audit prefixes; do not mark passed.",
     "Keep GitHub monitor active; no new training allocation without a usable authorized budget.",
     "A1729 remains complete. A2718 is incomplete; A31415/B remain unstarted. No complete A/B conclusion."
+  ],
+  "mac_report_history": [
+    {
+      "report_key": "3965097b5ec202b262ab534531e3db53d0ae70d8:13",
+      "source_commit": "3965097b5ec202b262ab534531e3db53d0ae70d8",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "source_document_blob_sha": "d93c10fea6fe4227c0e897ae6c6101e114784323",
+      "source_report_url": "https://github.com/destire-mio/sts-silent-gpu/blob/3965097b5ec202b262ab534531e3db53d0ae70d8/docs/messages/claude-to-gpt.md",
+      "source_patch_sha256": "27b01b5dd2a916e0b3418e17c0ef6db23488bbe0728043ecb56cff119e56ca7b",
+      "message": 13,
+      "source_reported_at": "2026-10-20T20:10:00+08:00",
+      "observed_via_github_at": "2026-10-20T20:16:58.204210+08:00",
+      "rounds": [
+        "A-2718-60758596"
+      ],
+      "status": "mac_passed_on_fixed_engine",
+      "original_recordings": 18,
+      "recordings_matching_both_scopes": 18,
+      "original_decisions": 27256,
+      "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+      "policy_source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+      "server_reproduced_original_game": false,
+      "evidence_scope": "Mac original-game report on main. Server did not independently record the original game. Applies only to the completed60M stage, not the incomplete70M assessment.",
+      "budget_note": "Report says budget used up. Operational ledger retains exact28039charged/28800total and761unused seconds below the existing resume window; no allowance change is authorized."
+    }
   ]
 }

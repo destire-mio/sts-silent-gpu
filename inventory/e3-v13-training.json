@@ -19281,7 +19281,7 @@
     },
     {
       "observation_version": 13,
-      "status": "pending_mac",
+      "status": "mac_passed_on_fixed_engine",
       "round": "A-2718-60758596",
       "engine_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
       "group": "A",
@@ -19315,7 +19315,23 @@
       "policy_version": 80,
       "native_replay_faults": 0,
       "selection": "One family per train/dev band; eighteen prefixes under frozen policy80.",
-      "source_archive_sha256": "f6540e23d997a01edb6913b7bfc7d8338b3d9737f5fc8ca40de016ead5ec8531"
+      "source_archive_sha256": "f6540e23d997a01edb6913b7bfc7d8338b3d9737f5fc8ca40de016ead5ec8531",
+      "mac_comparison_history": [
+        {
+          "status": "pending_mac",
+          "mac_comparison": null
+        }
+      ],
+      "mac_comparison": {
+        "report_key": "3965097b5ec202b262ab534531e3db53d0ae70d8:13",
+        "source_commit": "3965097b5ec202b262ab534531e3db53d0ae70d8",
+        "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+        "original_recordings_in_round": 18,
+        "original_decisions_in_round": 27256,
+        "both_scopes_passed": true,
+        "server_reproduced_original_game": false,
+        "scope": "Mac original-game check; applies to the18published60M prefixes."
+      }
     }
   ],
   "stage_evidence_archive": {
@@ -43896,6 +43912,29 @@
       "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
       "server_reproduced_original_game": false,
       "evidence_scope": "Mac report on main; no independent server original-game recording"
+    },
+    {
+      "report_key": "3965097b5ec202b262ab534531e3db53d0ae70d8:13",
+      "source_commit": "3965097b5ec202b262ab534531e3db53d0ae70d8",
+      "source_document": "docs/messages/claude-to-gpt.md",
+      "source_document_blob_sha": "d93c10fea6fe4227c0e897ae6c6101e114784323",
+      "source_report_url": "https://github.com/destire-mio/sts-silent-gpu/blob/3965097b5ec202b262ab534531e3db53d0ae70d8/docs/messages/claude-to-gpt.md",
+      "source_patch_sha256": "27b01b5dd2a916e0b3418e17c0ef6db23488bbe0728043ecb56cff119e56ca7b",
+      "message": 13,
+      "source_reported_at": "2026-10-20T20:10:00+08:00",
+      "observed_via_github_at": "2026-10-20T20:16:58.204210+08:00",
+      "rounds": [
+        "A-2718-60758596"
+      ],
+      "status": "mac_passed_on_fixed_engine",
+      "original_recordings": 18,
+      "recordings_matching_both_scopes": 18,
+      "original_decisions": 27256,
+      "reported_engine_commit": "e04d2cf1141333ef7dc2802ff59c0274e435efc0",
+      "policy_source_commit": "aae69cacab0ab282e59f6547ea1aeee7d58bc8dc",
+      "server_reproduced_original_game": false,
+      "evidence_scope": "Mac original-game report on main. Server did not independently record the original game. Applies only to the completed60M stage, not the incomplete70M assessment.",
+      "budget_note": "Report says budget used up. Operational ledger retains exact28039charged/28800total and761unused seconds below the existing resume window; no allowance change is authorized."
     }
   ],
   "user_training_pause_decision": {
