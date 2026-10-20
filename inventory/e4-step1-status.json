@@ -1,7 +1,7 @@
 {
-  "recorded_at": "2026-10-21T03:50:31.403254+08:00",
+  "recorded_at": "2026-10-21T04:03:43.924878+08:00",
   "step": 1,
-  "status": "fresh1729_claude32_running",
+  "status": "fresh1729_claude32_running_with_stalled",
   "fixed_commit": "20341d53766fdc5c87ee35155efb27e36c395183",
   "main_reviewed": "464b1225957d97d72d4a3380b35002f4caeb78a8",
   "trials": 32,
@@ -9,8 +9,8 @@
     "limit_node_seconds": 43200,
     "settled_node_seconds": 12222,
     "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 57,
-    "used_including_active_snapshot": 12279
+    "active_elapsed_at_snapshot": 849,
+    "used_including_active_snapshot": 13071
   },
   "job": {
     "job_id": 3641,
@@ -28,8 +28,8 @@
     "source_checkpoint": null,
     "submitted_at": "2026-10-21T03:50:18.135748+08:00",
     "start_time": "2026-10-21T03:49:34+08:00",
-    "last_observed_elapsed_seconds": 57,
-    "latest_completed_update": 1,
+    "last_observed_elapsed_seconds": 849,
+    "latest_completed_update": 32,
     "last_durable_checkpoint_version": 0,
     "checkpoint_reason": "started"
   },
@@ -37,29 +37,30 @@
   "training_seconds_target": 3600,
   "latest_update": {
     "event": "update",
-    "version": 1,
-    "trained_seconds": 26.907676696777344,
-    "update_seconds": 26.907676696777344,
+    "version": 32,
+    "trained_seconds": 809.8911399841309,
+    "update_seconds": 27.074369430541992,
     "actual_steps": 16384,
-    "sl_trial_steps": 438199,
-    "actual_steps_per_second": 608.8968505859375,
-    "sl_trial_steps_per_second": 16285.2783203125,
+    "sl_trial_steps": 125151,
+    "actual_steps_per_second": 605.1480102539062,
+    "sl_trial_steps_per_second": 4622.48974609375,
     "initialization": 1729,
     "lanes": 32,
     "trials": 32,
-    "peak_torch_allocated_bytes": 192895488,
-    "peak_torch_reserved_bytes": 232783872,
-    "estimated_peak_device_bytes": 2364145664,
-    "memory_scope": "max_across_ranks; device estimate adds static non-PyTorch allocation",
-    "completed_episodes": 23,
-    "completed_average_floor": 4.478260869565218,
-    "stalled_episodes": 0,
-    "active_max_floor_steps": 36,
-    "stall_classes": {},
-    "policy_loss": 0.8937298029665808,
-    "value_loss": 0.010802339154299305,
-    "imitation_fraction": 0.73797607421875,
-    "loss": 0.8968511935672723
+    "completed_episodes": 138,
+    "completed_average_floor": 2.949275362318841,
+    "stalled_episodes": 42,
+    "active_max_floor_steps": 196,
+    "stall_classes": {
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 22,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 18,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+    },
+    "policy_loss": 0.36557647765363477,
+    "value_loss": 0.0005633672098897402,
+    "imitation_fraction": 0.30230712890625,
+    "loss": 0.36488082765208674
   },
   "saved_checkpoint_version": 0,
   "next": "Monitor3641 progress/checkpoint/faults and rolling20 health; settle final allocation once",
@@ -808,5 +809,52 @@
     "source_checkpoint": null,
     "native_engine": "unchanged; no rebuild or new tests",
     "provisional_allocation_seconds": 57
+  },
+  "health_window": {
+    "job": 3641,
+    "window_updates": 20,
+    "window_completed": 3862,
+    "window_stalled": 134,
+    "total_completed": 6178,
+    "total_stalled": 134,
+    "ending_version": 32,
+    "window_stall_classes": {
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 61,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 68,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 3,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+    },
+    "first_stalled_update": 26,
+    "stop_triggered": false,
+    "observed_at": "2026-10-21T04:03:43.924878+08:00"
+  },
+  "claude32_stall_observation": {
+    "fixed_commit": "20341d53766fdc5c87ee35155efb27e36c395183",
+    "snapshot_log_sha256": "058ebafec2aa01754418a22ca651dadda077a9eab508d7453081f42f7dfff666",
+    "contiguous_updates": true,
+    "fault_files": [],
+    "traceback": false,
+    "health": {
+      "job": 3641,
+      "window_updates": 20,
+      "window_completed": 3862,
+      "window_stalled": 134,
+      "total_completed": 6178,
+      "total_stalled": 134,
+      "ending_version": 32,
+      "window_stall_classes": {
+        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 61,
+        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 68,
+        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
+        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 3,
+        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+      },
+      "first_stalled_update": 26,
+      "stop_triggered": false,
+      "observed_at": "2026-10-21T04:03:43.924878+08:00"
+    },
+    "decision": "Keep fixed job running underClaude32: after40 rolling20 stalled>5percent triggers save/stop; no extra tests or enginechanges",
+    "saved_checkpoint_version": 0
   }
 }
