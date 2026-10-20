@@ -74,13 +74,14 @@ class RewardLedger:
 class RoomSearch:
     def __init__(self, lanes, trials, device, rng, *, scratch_slots=4096, inference_chunk=128):
         self.lanes, self.trials, self.device, self.rng = lanes, trials, device, rng
-        self.batch = make_batch(lanes + scratch_slots + 128, 2**63 - 1, device)
+        self.size = lanes + scratch_slots + 128
+        self.batch = make_batch(self.size, 2**63 - 1, device)
         self.arrays = views(self.batch, device)
         for name in ("entity_counts", "candidate_counts", "faults", "done", "truncated"):
             self.arrays[name] = torch.as_tensor(getattr(self.batch, name), device=device)
-        self.progress_buffer = torch.empty(self.batch.size * 9, dtype=torch.int64, device=device)
+        self.progress_buffer = torch.empty(self.size * 9, dtype=torch.int64, device=device)
         self.available = list(range(lanes, lanes + scratch_slots))
-        self.probe_slots = list(range(lanes + scratch_slots, self.batch.size))
+        self.probe_slots = list(range(lanes + scratch_slots, self.size))
         self.seen = {}
         self.mask_cache = {}
         self.loop_metrics = dict.fromkeys(LOOP_METRICS, 0)
@@ -95,7 +96,7 @@ class RoomSearch:
         self.last_heartbeat = time.monotonic()
         self.actual_lanes = []
         self.combat_tails = {}
-        self.map_returned = torch.zeros(self.batch.size, dtype=torch.bool, device=device)
+        self.map_returned = torch.zeros(self.size, dtype=torch.bool, device=device)
 
     def clock(self):
         now = time.monotonic()
@@ -206,8 +207,8 @@ class RoomSearch:
                 group = pairs[begin:begin + len(self.probe_slots)]
                 probes = self.probe_slots[:len(group)]
                 self.batch.clone_many([s for s, _ in group], probes)
-                selected = torch.zeros(self.batch.size, dtype=torch.int32, device=self.device)
-                active = torch.zeros(self.batch.size, dtype=torch.uint8, device=self.device)
+                selected = torch.zeros(self.size, dtype=torch.int32, device=self.device)
+                active = torch.zeros(self.size, dtype=torch.uint8, device=self.device)
                 selected[probes] = torch.tensor([a for _, a in group], dtype=torch.int32, device=self.device)
                 active[probes] = 1
                 for (s, a), p in zip(group, probes):
@@ -258,8 +259,8 @@ class RoomSearch:
         returning = (before[:, SCREEN] == MAP) & (self.arrays["candidate_kinds"][indices, choices] == 7)
         assert not bool((returning & self.map_returned[indices]).any()), "Second map return on the same floor"
         self.map_returned[indices] |= returning
-        selected = torch.zeros(self.batch.size, dtype=torch.int32, device=self.device)
-        active = torch.zeros(self.batch.size, dtype=torch.uint8, device=self.device)
+        selected = torch.zeros(self.size, dtype=torch.int32, device=self.device)
+        active = torch.zeros(self.size, dtype=torch.uint8, device=self.device)
         selected[indices] = torch.tensor(choices, device=self.device, dtype=torch.int32)
         active[indices] = 1
         self.batch.step_tensors(selected, active)
