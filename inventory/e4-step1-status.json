@@ -1,7 +1,7 @@
 {
-  "recorded_at": "2026-10-20T23:24:07.947747+08:00",
+  "recorded_at": "2026-10-21T00:06:18.749269+08:00",
   "step": 1,
-  "status": "initialization1729_training",
+  "status": "initialization1729_evaluation_delayed_cause_unconfirmed",
   "fixed_commit": "05199891233d6c8b79cf84cace5ebf895e2ad883",
   "main_reviewed": "0e040e47d170d956ba9268dbc400a86a4165f4fb",
   "trials": 32,
@@ -9,7 +9,7 @@
     "limit_node_seconds": 28800,
     "settled_node_seconds": 0,
     "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 482
+    "active_elapsed_at_snapshot": 3145
   },
   "job": {
     "id": 3632,
@@ -23,16 +23,16 @@
   "initialization": 1729,
   "training_seconds_target": 3600,
   "latest_update": {
-    "version": 28,
-    "trained_seconds": 453.76200008392334,
-    "actual_steps": 458752,
-    "actual_steps_per_training_second": 1010.9969541635345,
-    "source": "28 completed updates x64 steps x32 lanes x8 ranks / sum training update wall times",
+    "version": 103,
+    "trained_seconds": 1205.80011844635,
+    "actual_steps": 1687552,
+    "actual_steps_per_training_second": 1399.52880596361,
+    "source": "103 completed updates x64 steps x32 lanes x8 ranks / sum training update wall times",
     "sl_trial_steps_per_second": null,
     "search_rate_note": "Running fixed version does not log search counters; do not infer a value"
   },
   "saved_checkpoint_version": 0,
-  "next": "Evaluate all4096dev each1200 training seconds; preserve18actual paths; then initialization2718; select higher dev average floor; continue within cumulative budget",
+  "next": "Inspect incomplete evaluation when saved; preserve all seeds and pending trajectories. Keep fixed runtime; latest authorized future evaluation interval3600training seconds. Check queue and cumulative budget before any resume.",
   "evaluation_complete": false,
   "pending_runner_update": {
     "commit": "ce0975822992e044d271febd713c24a7de212fae",
@@ -48,5 +48,32 @@
     "status": "prepared, not deployed into running job3632",
     "application": "At next checkpoint handoff or next initialization; preserve current fixed job and explicitly migrate checkpoint provenance if resuming across code commits",
     "current_job_interval_seconds": 1200
+  },
+  "evaluation_delay": {
+    "observed_at": "2026-10-21T00:06:18.749269+08:00",
+    "update103_first_observed_at": "2026-10-20T23:34:34.635333+08:00",
+    "completed_evaluation": false,
+    "any_per_rank_64_episode_log": false,
+    "fault_files": [],
+    "last_durable_checkpoint_version": 0,
+    "diagnostic_method": "Bounded GDB read-only stack samples; detach after each, no target code calls or memory writes. First full-symbol probe timed out20s and detached; subsequent minimal-symbol samples finished. py-bt unavailable; Python frame chain read through CPython structs.",
+    "rank0_chain": [
+      "network_inputs",
+      "scores",
+      "event",
+      "plan",
+      "choose",
+      "evaluate",
+      "main"
+    ],
+    "native_samples": "rank0 subtype_dealloc; rank1 PyLong_FromLong/libtorch_python",
+    "conclusion": "Evaluation delay confirmed, cause unconfirmed. Stack samples do not establish engine fault or successful evaluation. No terminal outcome inferred.",
+    "remote_archive": "/home/zhuyouwei/spire-downloads/e4-3632-evaluation-delay.tar.gz",
+    "archive_sha256": "f0c8d8f25e4fd33ed50c286667d8a3b9f63bdfa55199b905bb0a0c61c9e7fbf7",
+    "log_snapshot_sha256": "452e39c88d06e330a62ad84eb185ab350592321a863c50f2b4b3f845dc119ab1",
+    "queue_at_snapshot": [
+      "3632|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-1729"
+    ],
+    "checkpoint_policy": "Keep current runtime fixed and preserve partial evaluation at its allocation boundary; no new job submitted."
   }
 }
