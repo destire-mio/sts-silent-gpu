@@ -1,5 +1,6 @@
 from collections import deque
 from dataclasses import dataclass, field
+import json
 import time
 
 import torch
@@ -84,6 +85,8 @@ class RoomSearch:
         self.inference_chunk = inference_chunk
         self.deadline = float("inf")
         self.searched_decisions = 0
+        self.provenance = {}
+        self.evidence_directory = None
 
     def clock(self):
         if time.monotonic() >= self.deadline:
@@ -95,6 +98,10 @@ class RoomSearch:
 
     def check(self, slots):
         faults = self.arrays["faults"][slots].cpu().tolist()
+        if any(faults) and self.evidence_directory is not None:
+            evidence = [dict(slot=s, fault=f, seed=self.provenance[s][0],
+                             candidates=self.provenance[s][1]) for s, f in zip(slots, faults) if f]
+            (self.evidence_directory / f"fault-device-{self.device.index}.json").write_text(json.dumps(evidence))
         assert not any(faults), f"E4 engine fault: {list(zip(slots, faults))}"
         assert not bool(self.arrays["truncated"][slots].any()), "Unresolved search truncation"
 
@@ -130,7 +137,15 @@ class RoomSearch:
         selected[indices] = torch.tensor(choices, device=self.device, dtype=torch.int32)
         active[indices] = 1
         self.batch.step_tensors(selected, active)
+        for s, a in zip(slots, choices):
+            self.provenance[s][1].append(a)
         self.check(slots)
+
+    def clone(self, sources, targets):
+        self.batch.clone_many(sources, targets)
+        for s, t in zip(sources, targets):
+            seed, path = self.provenance[s]
+            self.provenance[t] = (seed, path.copy())
 
     def take(self, count):
         assert count <= len(self.available)
@@ -146,7 +161,7 @@ class RoomSearch:
             parents = sources[begin:begin + capacity]
             slots = self.take(len(parents) * self.trials)
             try:
-                self.batch.clone_many([s for s in parents for _ in range(self.trials)], slots)
+                self.clone([s for s in parents for _ in range(self.trials)], slots)
                 paths = {s: [] for s in slots}
                 live = slots[:]
                 while live:
@@ -162,7 +177,7 @@ class RoomSearch:
                 scores = self.scores(model, slots, progress)
                 winners = [max(slots[j * self.trials:(j + 1) * self.trials], key=scores.get)
                            for j in range(len(parents))]
-                self.batch.clone_many(winners, parents)
+                self.clone(winners, parents)
                 selected_paths.update((parent, paths[winner]) for parent, winner in zip(parents, winners))
             finally:
                 self.available.extend(slots)
@@ -183,7 +198,7 @@ class RoomSearch:
             assert count
             slots = self.take(count)
             try:
-                self.batch.clone_many([parent] * count, slots)
+                self.clone([parent] * count, slots)
                 paths = {s: [a] for a, s in zip(options, slots)}
                 self.step(slots, options)
                 self.searched_decisions += count
@@ -207,7 +222,7 @@ class RoomSearch:
                 progress = self.progress()
                 scores = self.scores(model, slots, progress)
                 winner = max(slots, key=scores.get)
-                self.batch.clone_many([winner], [parent])
+                self.clone([winner], [parent])
                 selected_paths[parent] = paths[winner]
             finally:
                 self.available.extend(slots)
@@ -215,7 +230,7 @@ class RoomSearch:
 
     def plan(self, model, sources, kind):
         backups = self.take(len(sources))
-        self.batch.clone_many(sources, backups)
+        self.clone(sources, backups)
         rng_before = self.rng.get_state()
         try:
             return self.combat(model, sources) if kind == "combat" else self.event(model, sources)
@@ -223,7 +238,7 @@ class RoomSearch:
             self.rng.set_state(rng_before)
             raise
         finally:
-            self.batch.clone_many(backups, sources)
+            self.clone(backups, sources)
             self.available.extend(backups)
 
 
@@ -237,8 +252,11 @@ class SegmentCollector:
         self.completed = []
         self.decisions = 0
         self.partial = None
+        self.evaluation_waiting = None
 
     def reset(self, slots, seeds):
+        for s, seed in zip(slots, seeds):
+            self.search.provenance[s] = (seed, [])
         self.search.batch.reset_to_many(slots, seeds, [[] for _ in slots])
         self.search.check(slots)
         for slot, seed in zip(slots, seeds):
@@ -256,10 +274,11 @@ class SegmentCollector:
         return dict(seeds=self.seeds, paths=self.paths,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
                     seed_rng=self.seed_rng.get_state(), search_rng=self.search.rng.get_state(),
-                    decisions=self.decisions, completed=self.completed, partial=self.partial)
+                    decisions=self.decisions, completed=self.completed, partial=self.partial,
+                    evaluation_waiting=self.evaluation_waiting)
 
     def restore(self, state):
-        for name in ("seeds", "paths", "rewards", "decisions", "completed", "partial"):
+        for name in ("seeds", "paths", "rewards", "decisions", "completed", "partial", "evaluation_waiting"):
             setattr(self, name, state[name])
         if self.partial:
             for name, value in self.partial["result"].items():
@@ -269,6 +288,8 @@ class SegmentCollector:
         self.search.rng.set_state(state["search_rng"])
         slots = [i for i, seed in enumerate(self.seeds) if seed is not None]
         if slots:
+            for s in slots:
+                self.search.provenance[s] = (self.seeds[s], self.paths[s].copy())
             self.search.batch.reset_to_many(slots, [self.seeds[i] for i in slots],
                                             [self.paths[i] for i in slots])
             self.search.check(slots)
@@ -362,10 +383,12 @@ class SegmentCollector:
 
     @torch.no_grad()
     def evaluate(self, model, seeds):
-        waiting = deque(seeds)
-        self.completed = []
-        self.seeds = [None] * self.search.lanes
-        self.pending = [deque() for _ in self.seeds]
+        if self.evaluation_waiting is None:
+            self.evaluation_waiting = deque(seeds)
+            self.completed = []
+            self.seeds = [None] * self.search.lanes
+            self.pending = [deque() for _ in self.seeds]
+        waiting = self.evaluation_waiting
         while waiting or any(s is not None for s in self.seeds):
             self.search.clock()
             free = [s for s in range(self.search.lanes) if self.seeds[s] is None]
@@ -376,4 +399,5 @@ class SegmentCollector:
             progress = self.search.progress()
             choices, _, _, _ = self.choose(model, slots, progress)
             self.advance(slots, choices, progress)
+        self.evaluation_waiting = None
         return self.completed

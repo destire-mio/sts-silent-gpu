@@ -15,6 +15,7 @@ def check():
     rng = torch.Generator(device=device).manual_seed(1729)
     search = RoomSearch(1, 8, device, rng, scratch_slots=256)
     seed = 1000000000
+    search.provenance[0] = (seed, [])
     search.batch.reset_to(0, seed, [])
     prefix = []
     checks = []
