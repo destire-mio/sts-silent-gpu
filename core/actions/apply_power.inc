@@ -46,10 +46,20 @@ struct ApplyPower : ActionHooks {
         if (monsters_basically_dead(g)) e.done = true;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
+        if (e.target == no_target) return;
+        const Creature& target = get_creature(g, e.target);
+        if (!alive(target)) return;
+        if (!power_data(e.payload.power.id).can_stack && has_power(g, target, e.payload.power.id)) return;
         if (e.target == player_target)
             for (int i = 0; i < g.run.relics.size; ++i)
-                if (relic_data(g.run.relics[i].id).blocked_debuff == e.payload.power.id) return;
+                if (relic_data(g.run.relics[i].id).blocked_debuff == e.payload.power.id) {
+                    settle_deaths_after_wait(g, 13);
+                    return;
+                }
         apply_prepared_power(g, e.source, e.target, e.payload.power, e.amount);
+        // ApplyPowerAction.update refreshes first, then waits at least ACTION_DUR_FASTER.
+        // Both normal-speed constructors guarantee 13 death-animation ticks before the next action.
+        settle_deaths_after_wait(g, 13);
     }
 };
 }

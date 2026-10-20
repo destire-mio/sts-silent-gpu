@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Corpse Explosion",
+      "upgrades": 0
+    },
+    {
+      "id": "Corpse Explosion",
+      "upgrades": 1
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Crippling Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Spray",
+      "upgrades": 1
+    },
+    {
+      "id": "Dagger Throw",
+      "upgrades": 0
+    },
+    {
+      "id": "Dagger Throw",
+      "upgrades": 1
+    },
+    {
+      "id": "Dash",
+      "upgrades": 0
+    },
+    {
+      "id": "Dash",
+      "upgrades": 1
+    },
+    {
+      "id": "Deadly Poison",
+      "upgrades": 0
+    },
+    {
+      "id": "Deadly Poison",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 1
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 0
+    },
+    {
+      "id": "Deflect",
+      "upgrades": 1
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 0
+    },
+    {
+      "id": "Die Die Die",
+      "upgrades": 1
+    },
+    {
+      "id": "Distraction",
+      "upgrades": 0
+    },
+    {
+      "id": "Distraction",
+      "upgrades": 1
+    },
+    {
+      "id": "Dodge and Roll",
+      "upgrades": 0
+    },
+    {
+      "id": "Dodge and Roll",
+      "upgrades": 1
+    },
+    {
+      "id": "Doppelganger",
+      "upgrades": 0
+    },
+    {
+      "id": "Doppelganger",
+      "upgrades": 1
+    },
+    {
+      "id": "Endless Agony",
+      "upgrades": 0
+    },
+    {
+      "id": "Endless Agony",
+      "upgrades": 1
+    },
+    {
+      "id": "Envenom",
+      "upgrades": 0
+    },
+    {
+      "id": "Envenom",
+      "upgrades": 1
+    },
+    {
+      "id": "Escape Plan",
+      "upgrades": 0
+    },
+    {
+      "id": "Escape Plan",
+      "upgrades": 1
+    },
+    {
+      "id": "Eviscerate",
+      "upgrades": 0
+    },
+    {
+      "id": "Eviscerate",
+      "upgrades": 1
+    },
+    {
+      "id": "Expertise",
+      "upgrades": 0
+    },
+    {
+      "id": "Expertise",
+      "upgrades": 1
+    },
+    {
+      "id": "Finisher",
+      "upgrades": 0
+    },
+    {
+      "id": "Finisher",
+      "upgrades": 1
+    },
+    {
+      "id": "Flechettes",
+      "upgrades": 0
+    },
+    {
+      "id": "Flechettes",
+      "upgrades": 1
+    },
+    {
+      "id": "Flying Knee",
+      "upgrades": 0
+    },
+    {
+      "id": "Flying Knee",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

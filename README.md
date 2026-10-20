@@ -516,9 +516,10 @@ validation and remaining gaps.
 `PYTHONPATH=/tmp/e2-r3-build "$SPIRE_PYTHON" tests/check_retained_death.py --output /tmp/retained-death-check`
 records the focused seed-1000042012 input in `tests/retained_death_cache.json`, replays both
 scopes, and compares another original recording with 13 extra idle frames. It serializes JVMs
-with the oracle lock and requires a fresh output directory. The original's death-terminal
-Leg Sweep block changes from 14 to 10 in this pair; the check fails under the frozen snapshot
-contract. The manifest retains that failure as a release blocker.
+with the oracle lock and requires a fresh output directory. The original's raw death-terminal
+Leg Sweep block changes from 14 to 10 in this pair. The terminal-DEATH snapshot projection
+records damage/block caches as null after final death; the check requires both replay scopes
+and the 13-frame recordings to agree.
 
 ## E1 training and evaluation
 

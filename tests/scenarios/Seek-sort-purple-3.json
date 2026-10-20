@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Nirvana",
+      "upgrades": 0
+    },
+    {
+      "id": "Nirvana",
+      "upgrades": 1
+    },
+    {
+      "id": "Omniscience",
+      "upgrades": 0
+    },
+    {
+      "id": "Omniscience",
+      "upgrades": 1
+    },
+    {
+      "id": "PathToVictory",
+      "upgrades": 0
+    },
+    {
+      "id": "PathToVictory",
+      "upgrades": 1
+    },
+    {
+      "id": "Perseverance",
+      "upgrades": 0
+    },
+    {
+      "id": "Perseverance",
+      "upgrades": 1
+    },
+    {
+      "id": "Pray",
+      "upgrades": 0
+    },
+    {
+      "id": "Pray",
+      "upgrades": 1
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 0
+    },
+    {
+      "id": "Prostrate",
+      "upgrades": 1
+    },
+    {
+      "id": "Protect",
+      "upgrades": 0
+    },
+    {
+      "id": "Protect",
+      "upgrades": 1
+    },
+    {
+      "id": "Ragnarok",
+      "upgrades": 0
+    },
+    {
+      "id": "Ragnarok",
+      "upgrades": 1
+    },
+    {
+      "id": "ReachHeaven",
+      "upgrades": 0
+    },
+    {
+      "id": "ReachHeaven",
+      "upgrades": 1
+    },
+    {
+      "id": "Sanctity",
+      "upgrades": 0
+    },
+    {
+      "id": "Sanctity",
+      "upgrades": 1
+    },
+    {
+      "id": "SandsOfTime",
+      "upgrades": 0
+    },
+    {
+      "id": "SandsOfTime",
+      "upgrades": 1
+    },
+    {
+      "id": "SashWhip",
+      "upgrades": 0
+    },
+    {
+      "id": "SashWhip",
+      "upgrades": 1
+    },
+    {
+      "id": "Scrawl",
+      "upgrades": 0
+    },
+    {
+      "id": "Scrawl",
+      "upgrades": 1
+    },
+    {
+      "id": "SignatureMove",
+      "upgrades": 0
+    },
+    {
+      "id": "SignatureMove",
+      "upgrades": 1
+    },
+    {
+      "id": "SpiritShield",
+      "upgrades": 0
+    },
+    {
+      "id": "SpiritShield",
+      "upgrades": 1
+    },
+    {
+      "id": "Study",
+      "upgrades": 0
+    },
+    {
+      "id": "Study",
+      "upgrades": 1
+    },
+    {
+      "id": "Swivel",
+      "upgrades": 0
+    },
+    {
+      "id": "Swivel",
+      "upgrades": 1
+    },
+    {
+      "id": "TalkToTheHand",
+      "upgrades": 0
+    },
+    {
+      "id": "TalkToTheHand",
+      "upgrades": 1
+    },
+    {
+      "id": "Tantrum",
+      "upgrades": 0
+    },
+    {
+      "id": "Tantrum",
+      "upgrades": 1
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 0
+    },
+    {
+      "id": "ThirdEye",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 8,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

@@ -117,11 +117,13 @@ struct SnapshotGraph {
             if (field == "baseDamage") return py::int_(card.base_damage);
             if (field == "baseMagicNumber") return py::int_(card.base_magic);
             if (field == "block") {
-                if (!game.room_in_combat || (definition.block == -1 && card_baseBlock(card) == -1)) return py::none();
+                if (!game.room_in_combat || (game.player.creature.dead && game.screen == Screen::Death)
+                    || (definition.block == -1 && card_baseBlock(card) == -1)) return py::none();
                 return py::int_(card.block);
             }
             if (field == "damage") {
-                if (!game.room_in_combat || (definition.damage == -1 && card.base_damage == -1)) return py::none();
+                if (!game.room_in_combat || (game.player.creature.dead && game.screen == Screen::Death)
+                    || (definition.damage == -1 && card.base_damage == -1)) return py::none();
                 if (!master)
                     for (int i = 0; i < game.discard.size; ++i)
                         if (game.discard[i] == index) return py::int_(card.base_damage);

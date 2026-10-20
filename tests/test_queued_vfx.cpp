@@ -27,8 +27,8 @@ int main() {
     Game plant = combat(1000000067, CardId::Defend_G, EncounterId::SnakePlant);
     step(plant, {ActionKind::EndTurn, -1, -1});
     SPIRE_ASSERT(plant.screen == Screen::Death);
-    SPIRE_ASSERT(plant.manager.actions.size == 5);
-    constexpr EffectKind plant_queue[]{EffectKind::VFX, EffectKind::Damage, EffectKind::VFX, EffectKind::Damage, EffectKind::RollMove};
-    for (int i = 0; i < 5; ++i)
+    SPIRE_ASSERT(plant.manager.actions.size == 6);
+    constexpr EffectKind plant_queue[]{EffectKind::VFX, EffectKind::Damage, EffectKind::VFX, EffectKind::Damage, EffectKind::RollMove, EffectKind::Wait};
+    for (int i = 0; i < 6; ++i)
         SPIRE_ASSERT(plant.action_objects[plant.manager.actions[i]].kind == plant_queue[i]);
 }

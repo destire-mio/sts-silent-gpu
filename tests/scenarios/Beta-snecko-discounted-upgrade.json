@@ -1,0 +1,57 @@
+{
+  "deck": [
+    {
+      "id": "Alpha",
+      "upgrades": 0
+    },
+    {
+      "id": "Enlightenment",
+      "upgrades": 0
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Snecko Eye",
+    "Cursed Key",
+    "Lantern"
+  ],
+  "potions": [
+    "Energy Potion",
+    "Swift Potion"
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "potion_use",
+      "slot": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "potion_use",
+      "slot": 1,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

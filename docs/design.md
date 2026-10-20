@@ -212,6 +212,29 @@ supply a later rule value. This preserves real hand damage/block caches during C
 Codex's ShowCardAndAddToDrawPileEffect/Soul hand refresh must run at hand-selection decisions,
 including the 9-versus-11 and 7-versus-5 regressions on seed 202610141365.
 
+At terminal death, when `player.isDead` and the screen is `DEATH`, the same projection sets
+every card's `damage` and `block` caches to null, including master/combat piles, drawnCards
+and cards reached through other references. Base stats, magic numbers, powers, monster intents
+and every other field remain exact. Before this projection, the retained Bite/Leg Sweep
+recordings on seed 102 with 13 extra idle frames change terminal damage 8 to 7 and block
+12 to 11. The retained-death scenario on seed 1000042012 changes terminal Leg Sweep block
+14 to 10. In both pairs the
+terminal caches are the only differing fields; the preceding decisions, legal actions and
+RNG streams agree. Three focused seeds 101/102/103 record terminal damage 7 versus the
+engine's refreshed 8, with baseDamage 7 on both sides. The committed fixtures are
+`Bite-retained-death-seed{101,102,103}` and the ordinary/idle13 pairs
+`Bite-retained-death-frame[-idle13]-seed102` and
+`LegSweep-retained-death-frame[-idle13]-seed1000042012` under `tests/traces/`.
+Soul.update may finish before or after RestoreRetainedCardsAction;
+the projection observes the original objects without changing either callback.
+AbstractPlayer.damage consumes FairyPotion or triggers LizardTail and returns before setting
+isDead and constructing DeathScreen. Those surviving paths therefore retain combat caches.
+AbstractDungeon.update's DEATH branch runs DeathScreen instead of AbstractRoom.update, so
+queued card use and draws stop. updateObjects still advances Souls, and DeathScreen.update
+advances monster deaths. Their possible endBattle/onVictory callbacks do not read card
+damage/block or clear the player's isDead flag; there is no player resurrection after DEATH.
+This changes snapshot serialization only, not Game storage, observation encoding or game rules.
+
 The discard pile's `damage` cache is observed as `baseDamage`. On seed 2000003426,
 duplicated Glass Knife reaches baseDamage 4 with cached damage 6. `ModifyDamageAction.update`
 changes the base stat of every matching UUID; `Soul.update` can call `clearPowers` between

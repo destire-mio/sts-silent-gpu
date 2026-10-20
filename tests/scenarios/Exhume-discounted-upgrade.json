@@ -1,0 +1,39 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "deck": [
+    {
+      "id": "Enlightenment",
+      "upgrades": 0
+    },
+    {
+      "id": "Exhume",
+      "upgrades": 0
+    },
+    {
+      "id": "Armaments",
+      "upgrades": 1
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    }
+  ]
+}

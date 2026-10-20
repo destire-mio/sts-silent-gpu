@@ -1,0 +1,27 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Chemical X"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "deck": [
+    {
+      "id": "ConjureBlade",
+      "upgrades": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

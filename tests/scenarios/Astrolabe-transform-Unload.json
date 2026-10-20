@@ -1,0 +1,49 @@
+{
+  "deck": [
+    {
+      "id": "Unload",
+      "upgrades": 0
+    },
+    {
+      "id": "Unload",
+      "upgrades": 0
+    },
+    {
+      "id": "Unload",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Astrolabe"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 3,
+    "floor": 50,
+    "node": [
+      3,
+      13
+    ],
+    "room": "RestRoom",
+    "gold": 0,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  },
+  "actions": [
+    {
+      "type": "choose",
+      "option": 0
+    }
+  ]
+}

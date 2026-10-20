@@ -1,0 +1,40 @@
+{
+  "deck": [
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Runic Pyramid",
+    "Anchor",
+    "HornCleat",
+    "CaptainsWheel"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Automaton",
+  "actions": [
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    },
+    {
+      "type": "end_turn"
+    }
+  ]
+}

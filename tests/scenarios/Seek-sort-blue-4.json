@@ -1,0 +1,155 @@
+{
+  "deck": [
+    {
+      "id": "Steam",
+      "upgrades": 0
+    },
+    {
+      "id": "Steam",
+      "upgrades": 1
+    },
+    {
+      "id": "Steam Power",
+      "upgrades": 0
+    },
+    {
+      "id": "Steam Power",
+      "upgrades": 1
+    },
+    {
+      "id": "Storm",
+      "upgrades": 0
+    },
+    {
+      "id": "Storm",
+      "upgrades": 1
+    },
+    {
+      "id": "Streamline",
+      "upgrades": 0
+    },
+    {
+      "id": "Streamline",
+      "upgrades": 1
+    },
+    {
+      "id": "Sunder",
+      "upgrades": 0
+    },
+    {
+      "id": "Sunder",
+      "upgrades": 1
+    },
+    {
+      "id": "Sweeping Beam",
+      "upgrades": 0
+    },
+    {
+      "id": "Sweeping Beam",
+      "upgrades": 1
+    },
+    {
+      "id": "Tempest",
+      "upgrades": 0
+    },
+    {
+      "id": "Tempest",
+      "upgrades": 1
+    },
+    {
+      "id": "Thunder Strike",
+      "upgrades": 0
+    },
+    {
+      "id": "Thunder Strike",
+      "upgrades": 1
+    },
+    {
+      "id": "Turbo",
+      "upgrades": 0
+    },
+    {
+      "id": "Turbo",
+      "upgrades": 1
+    },
+    {
+      "id": "Undo",
+      "upgrades": 0
+    },
+    {
+      "id": "Undo",
+      "upgrades": 1
+    },
+    {
+      "id": "White Noise",
+      "upgrades": 0
+    },
+    {
+      "id": "White Noise",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 5,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

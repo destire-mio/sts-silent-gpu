@@ -1,0 +1,39 @@
+{
+  "deck": [
+    {
+      "id": "AscendersBane",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Peace Pipe",
+    "Bottled Flame"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "start": {
+    "act": 1,
+    "floor": 14,
+    "node": [
+      3,
+      13
+    ],
+    "room": "RestRoom",
+    "gold": 0,
+    "keys": [
+      false,
+      false,
+      false
+    ],
+    "emerald": false
+  }
+}

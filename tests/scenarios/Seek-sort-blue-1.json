@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Aggregate",
+      "upgrades": 0
+    },
+    {
+      "id": "Aggregate",
+      "upgrades": 1
+    },
+    {
+      "id": "All For One",
+      "upgrades": 0
+    },
+    {
+      "id": "All For One",
+      "upgrades": 1
+    },
+    {
+      "id": "Amplify",
+      "upgrades": 0
+    },
+    {
+      "id": "Amplify",
+      "upgrades": 1
+    },
+    {
+      "id": "Auto Shields",
+      "upgrades": 0
+    },
+    {
+      "id": "Auto Shields",
+      "upgrades": 1
+    },
+    {
+      "id": "Ball Lightning",
+      "upgrades": 0
+    },
+    {
+      "id": "Ball Lightning",
+      "upgrades": 1
+    },
+    {
+      "id": "Barrage",
+      "upgrades": 0
+    },
+    {
+      "id": "Barrage",
+      "upgrades": 1
+    },
+    {
+      "id": "Beam Cell",
+      "upgrades": 0
+    },
+    {
+      "id": "Beam Cell",
+      "upgrades": 1
+    },
+    {
+      "id": "Biased Cognition",
+      "upgrades": 0
+    },
+    {
+      "id": "Biased Cognition",
+      "upgrades": 1
+    },
+    {
+      "id": "Blizzard",
+      "upgrades": 0
+    },
+    {
+      "id": "Blizzard",
+      "upgrades": 1
+    },
+    {
+      "id": "BootSequence",
+      "upgrades": 0
+    },
+    {
+      "id": "BootSequence",
+      "upgrades": 1
+    },
+    {
+      "id": "Buffer",
+      "upgrades": 0
+    },
+    {
+      "id": "Buffer",
+      "upgrades": 1
+    },
+    {
+      "id": "Capacitor",
+      "upgrades": 0
+    },
+    {
+      "id": "Capacitor",
+      "upgrades": 1
+    },
+    {
+      "id": "Chaos",
+      "upgrades": 0
+    },
+    {
+      "id": "Chaos",
+      "upgrades": 1
+    },
+    {
+      "id": "Chill",
+      "upgrades": 0
+    },
+    {
+      "id": "Chill",
+      "upgrades": 1
+    },
+    {
+      "id": "Cold Snap",
+      "upgrades": 0
+    },
+    {
+      "id": "Cold Snap",
+      "upgrades": 1
+    },
+    {
+      "id": "Compile Driver",
+      "upgrades": 0
+    },
+    {
+      "id": "Compile Driver",
+      "upgrades": 1
+    },
+    {
+      "id": "Conserve Battery",
+      "upgrades": 0
+    },
+    {
+      "id": "Conserve Battery",
+      "upgrades": 1
+    },
+    {
+      "id": "Consume",
+      "upgrades": 0
+    },
+    {
+      "id": "Consume",
+      "upgrades": 1
+    },
+    {
+      "id": "Coolheaded",
+      "upgrades": 0
+    },
+    {
+      "id": "Coolheaded",
+      "upgrades": 1
+    },
+    {
+      "id": "Core Surge",
+      "upgrades": 0
+    },
+    {
+      "id": "Core Surge",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 3,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

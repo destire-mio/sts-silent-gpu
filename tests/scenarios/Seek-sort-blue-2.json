@@ -1,0 +1,227 @@
+{
+  "deck": [
+    {
+      "id": "Creative AI",
+      "upgrades": 0
+    },
+    {
+      "id": "Creative AI",
+      "upgrades": 1
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 0
+    },
+    {
+      "id": "Darkness",
+      "upgrades": 1
+    },
+    {
+      "id": "Defragment",
+      "upgrades": 0
+    },
+    {
+      "id": "Defragment",
+      "upgrades": 1
+    },
+    {
+      "id": "Doom and Gloom",
+      "upgrades": 0
+    },
+    {
+      "id": "Doom and Gloom",
+      "upgrades": 1
+    },
+    {
+      "id": "Double Energy",
+      "upgrades": 0
+    },
+    {
+      "id": "Double Energy",
+      "upgrades": 1
+    },
+    {
+      "id": "Echo Form",
+      "upgrades": 0
+    },
+    {
+      "id": "Echo Form",
+      "upgrades": 1
+    },
+    {
+      "id": "Electrodynamics",
+      "upgrades": 0
+    },
+    {
+      "id": "Electrodynamics",
+      "upgrades": 1
+    },
+    {
+      "id": "FTL",
+      "upgrades": 0
+    },
+    {
+      "id": "FTL",
+      "upgrades": 1
+    },
+    {
+      "id": "Fission",
+      "upgrades": 0
+    },
+    {
+      "id": "Fission",
+      "upgrades": 1
+    },
+    {
+      "id": "Force Field",
+      "upgrades": 0
+    },
+    {
+      "id": "Force Field",
+      "upgrades": 1
+    },
+    {
+      "id": "Fusion",
+      "upgrades": 0
+    },
+    {
+      "id": "Fusion",
+      "upgrades": 1
+    },
+    {
+      "id": "Gash",
+      "upgrades": 0
+    },
+    {
+      "id": "Gash",
+      "upgrades": 1
+    },
+    {
+      "id": "Genetic Algorithm",
+      "upgrades": 0
+    },
+    {
+      "id": "Genetic Algorithm",
+      "upgrades": 1
+    },
+    {
+      "id": "Glacier",
+      "upgrades": 0
+    },
+    {
+      "id": "Glacier",
+      "upgrades": 1
+    },
+    {
+      "id": "Go for the Eyes",
+      "upgrades": 0
+    },
+    {
+      "id": "Go for the Eyes",
+      "upgrades": 1
+    },
+    {
+      "id": "Heatsinks",
+      "upgrades": 0
+    },
+    {
+      "id": "Heatsinks",
+      "upgrades": 1
+    },
+    {
+      "id": "Hello World",
+      "upgrades": 0
+    },
+    {
+      "id": "Hello World",
+      "upgrades": 1
+    },
+    {
+      "id": "Hologram",
+      "upgrades": 0
+    },
+    {
+      "id": "Hologram",
+      "upgrades": 1
+    },
+    {
+      "id": "Hyperbeam",
+      "upgrades": 0
+    },
+    {
+      "id": "Hyperbeam",
+      "upgrades": 1
+    },
+    {
+      "id": "Leap",
+      "upgrades": 0
+    },
+    {
+      "id": "Leap",
+      "upgrades": 1
+    },
+    {
+      "id": "Forethought",
+      "upgrades": 1
+    },
+    {
+      "id": "Seek",
+      "upgrades": 0
+    }
+  ],
+  "relics": [
+    "Ring of the Snake",
+    "Bag of Preparation",
+    "PrismaticShard"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "actions": [
+    {
+      "type": "play",
+      "card": 1,
+      "target": -1
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 0
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "choose",
+      "option": 1
+    },
+    {
+      "type": "proceed"
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

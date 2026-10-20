@@ -1,0 +1,33 @@
+{
+  "relics": [
+    "Ring of the Snake",
+    "PrismaticShard",
+    "Akabeko",
+    "Vajra",
+    "Bag of Marbles"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 60,
+  "max_hp": 66,
+  "encounter": "3 Darklings",
+  "deck": [
+    {
+      "id": "Sunder",
+      "upgrades": 1
+    },
+    {
+      "id": "Defend_G",
+      "upgrades": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": 0
+    }
+  ]
+}

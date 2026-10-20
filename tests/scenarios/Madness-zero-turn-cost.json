@@ -1,0 +1,38 @@
+{
+  "relics": [
+    "Ring of the Snake"
+  ],
+  "potions": [
+    null,
+    null
+  ],
+  "hp": 1,
+  "max_hp": 66,
+  "encounter": "Cultist",
+  "deck": [
+    {
+      "id": "Bullet Time",
+      "upgrades": 0
+    },
+    {
+      "id": "Madness",
+      "upgrades": 0
+    },
+    {
+      "id": "Strike_G",
+      "upgrades": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    },
+    {
+      "type": "play",
+      "card": 0,
+      "target": -1
+    }
+  ]
+}

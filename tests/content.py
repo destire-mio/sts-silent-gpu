@@ -146,7 +146,7 @@ def record_content(output, cases):
     sys.path.insert(0, str(ROOT / "oracle"))
     from record import run_jobs
     jobs = [dict(seed=seed, scenario=json.loads(path.read_text()),
-                 output=str(output.resolve() / name / f"{seed}.jsonl"))
+                 output=str(output.resolve() / name / f"{seed}.jsonl.gz"))
             for name, (path, _) in cases.items() for seed in SCENARIO_SEEDS.get(name, SEEDS)]
     run_jobs(jobs)
 
@@ -251,10 +251,10 @@ def replay_content(output, units, cases, trace_paths=()):
         missing = missing_content(scenario)
         rules = [dict(kind="rule", id=name.split("--")[1].removeprefix("rule-"))] if name.startswith("blocked--rule-") else []
         rows = []
-        paths = sorted((output / name).glob("*.jsonl"), key=lambda path: int(path.stem))
+        paths = sorted((output / name).glob("*.jsonl*"), key=lambda path: int(path.name.split('.')[0]))
         assert len(paths) >= 3, (name, len(paths))
         for path in paths:
-            seed = int(path.stem)
+            seed = int(path.name.split('.')[0])
             header, observed, generated_missing, decisions, invoked = trace_evidence(path, units)
             assert header["seed"] == seed and header["scenario"] == scenario, path
             dependencies = missing + generated_missing
@@ -283,10 +283,10 @@ def replay_content(output, units, cases, trace_paths=()):
     for path in trace_paths:
         header, observed, missing, decisions, invoked = trace_evidence(path, units)
         scenario = header["scenario"]
-        if scenario is not None and "start" not in scenario:
+        if scenario is not None and "encounter" in scenario and "start" not in scenario:
             observed.update(key for key, unit in units.items()
                             if unit["kind"] == "encounter" and unit["game_id"] == scenario["encounter"])
-        name = ("fixture:" if scenario is not None and "start" not in scenario else "run:") + path.parent.name + "/" + path.name.removesuffix(".gz").removesuffix(".jsonl")
+        name = ("fixture:" if scenario is not None and "encounter" in scenario and "start" not in scenario else "run:") + path.parent.name + "/" + path.name.removesuffix(".gz").removesuffix(".jsonl")
         assert name not in document["scenarios"], name
         row = dict(status="blocked", decisions=decisions, waiting_for=missing) if missing else replay_trace(path, spire)
         row.update(seed=header["seed"], trace_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
