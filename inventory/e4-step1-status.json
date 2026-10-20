@@ -1,249 +1,57 @@
 {
-  "recorded_at": "2026-10-21T04:18:34.946942+08:00",
-  "step": 1,
-  "status": "health_stopped41_claude33_pending",
-  "fixed_commit": "20341d53766fdc5c87ee35155efb27e36c395183",
-  "main_reviewed": "52b7dbc3b6aef5873ec82b18a1d9801ce3a7e9e0",
-  "trials": 32,
-  "budget": {
-    "limit_node_seconds": 43200,
-    "settled_node_seconds": 13770,
-    "reserved_node_seconds": 0,
-    "active_elapsed_at_snapshot": 0,
-    "used_including_active_snapshot": 13770
-  },
-  "job": {
-    "job_id": 3641,
-    "purpose": "Claude32 fresh1729 mapreturn mask and noncombat floorstall",
-    "state": "EXITED",
-    "step": 1,
-    "gpus": 8,
-    "reserved_seconds": 7200,
-    "fixed_head": "20341d53766fdc5c87ee35155efb27e36c395183",
-    "output": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729",
-    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-training-3641.slurm.log",
-    "trials": 32,
-    "lanes": 32,
-    "training_seconds_target": 3600,
-    "source_checkpoint": null,
-    "submitted_at": "2026-10-21T03:50:18.135748+08:00",
-    "start_time": "2026-10-21T03:49:34+08:00",
-    "last_observed_elapsed_seconds": 849,
-    "latest_completed_update": 41,
-    "last_durable_checkpoint_version": 41,
-    "checkpoint_reason": "training_health_stop",
-    "batch_exit_code": 0,
-    "end_time": "2026-10-21T04:07:18+08:00",
-    "elapsed_seconds": 1064,
-    "elapsed_scope": "batch start to trap; scheduler epilog unavailable",
-    "charged_node_seconds": 1548
-  },
-  "initialization": 1729,
-  "training_seconds_target": 3600,
-  "latest_update": {
-    "event": "update",
-    "version": 41,
-    "trained_seconds": 1036.1216163635254,
-    "update_seconds": 21.54106903076172,
-    "actual_steps": 16384,
-    "sl_trial_steps": 146578,
-    "actual_steps_per_second": 760.5936279296875,
-    "sl_trial_steps_per_second": 6804.58349609375,
+  "job": 3644,
+  "fixed_head": "7c918ddab4039750b3104b96f131155f17ddfce0",
+  "main": "52b7dbc3b6aef5873ec82b18a1d9801ce3a7e9e0",
+  "observed_at": "2026-10-21T04:36:23.274530+08:00",
+  "start_time": "2026-10-21T04:34:13+08:00",
+  "last_observed_elapsed_seconds": 130,
+  "source_checkpoint": null,
+  "checkpoint": {
+    "reason": "started",
+    "task": "train",
+    "phase": "training",
+    "version": 0,
     "initialization": 1729,
-    "lanes": 32,
     "trials": 32,
-    "completed_episodes": 115,
-    "completed_average_floor": 3.4434782608695653,
-    "stalled_episodes": 37,
-    "active_max_floor_steps": 199,
-    "stall_classes": {
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 21,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 13,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 2,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
-    },
-    "policy_loss": 0.41164911448085506,
-    "value_loss": 0.00013191334913257492,
-    "imitation_fraction": 0.34539794921875,
-    "loss": 0.41072024105960736
+    "lanes": 32,
+    "scratch_slots": 4096,
+    "evaluation_seed_count": 4096,
+    "trained_seconds": 0.0,
+    "allocation_process_seconds": 0.3731481960276142,
+    "job": "3644",
+    "commit": "7c918ddab4039750b3104b96f131155f17ddfce0",
+    "stagnant": 0,
+    "assessments": [],
+    "calibration_index": 0,
+    "checkpoint_files": [
+      "rank-0.pt",
+      "rank-1.pt",
+      "rank-2.pt",
+      "rank-3.pt",
+      "rank-4.pt",
+      "rank-5.pt",
+      "rank-6.pt",
+      "rank-7.pt"
+    ]
   },
-  "saved_checkpoint_version": 41,
-  "next": "ImplementClaude33 readonly canonical observation+RNG key; excludeHistory/actioncounters; CPU/GPU parity",
-  "evaluation_complete": false,
-  "prior_attempts": [
-    {
-      "job": {
-        "id": 3632,
-        "gpus": 8,
-        "state": "RUNNING",
-        "start": "2026-10-20T23:13:53+08:00",
-        "time_limit_seconds": 7200,
-        "output": "/home/zhuyouwei/spire-downloads/e4-training-3632/A-1729",
-        "log": "/home/zhuyouwei/spire-downloads/e4-training-3632.slurm.log"
-      },
-      "latest_update": {
-        "version": 103,
-        "trained_seconds": 1205.80011844635,
-        "actual_steps": 1687552,
-        "actual_steps_per_training_second": 1399.52880596361,
-        "source": "103 completed updates x64 steps x32 lanes x8 ranks / sum training update wall times",
-        "sl_trial_steps_per_second": null,
-        "search_rate_note": "Running fixed version does not log search counters; do not infer a value"
-      },
-      "last_durable_checkpoint_version": 0,
-      "state": "CANCELLED",
-      "exit_code": "0:15",
-      "charged_node_seconds": 3477,
-      "gpu_seconds": 27816,
-      "cancelled_at": "2026-10-21T00:11:50+08:00",
-      "authorization": "Claude23 at6520fec25fb942277dca6c6be5b5ea9cd9412a6c",
-      "decision": "Accept loss of unsaved20minutes and restart1729 from scratch after batching events and existingSLreplay",
-      "accounting": "/home/zhuyouwei/spire-downloads/e4-training-3632/accounting-final.txt",
-      "accounting_sha256": "3d51712593eb58fa9d47c62baf5248fa599f2eba05126ebbdeaf6b609c9d4ff2",
-      "evaluation_delay": {
-        "observed_at": "2026-10-21T00:06:18.749269+08:00",
-        "update103_first_observed_at": "2026-10-20T23:34:34.635333+08:00",
-        "completed_evaluation": false,
-        "any_per_rank_64_episode_log": false,
-        "fault_files": [],
-        "last_durable_checkpoint_version": 0,
-        "diagnostic_method": "Bounded GDB read-only stack samples; detach after each, no target code calls or memory writes. First full-symbol probe timed out20s and detached; subsequent minimal-symbol samples finished. py-bt unavailable; Python frame chain read through CPython structs.",
-        "rank0_chain": [
-          "network_inputs",
-          "scores",
-          "event",
-          "plan",
-          "choose",
-          "evaluate",
-          "main"
-        ],
-        "native_samples": "rank0 subtype_dealloc; rank1 PyLong_FromLong/libtorch_python",
-        "conclusion": "Evaluation delay confirmed, cause unconfirmed. Stack samples do not establish engine fault or successful evaluation. No terminal outcome inferred.",
-        "remote_archive": "/home/zhuyouwei/spire-downloads/e4-3632-evaluation-delay.tar.gz",
-        "archive_sha256": "f0c8d8f25e4fd33ed50c286667d8a3b9f63bdfa55199b905bb0a0c61c9e7fbf7",
-        "log_snapshot_sha256": "452e39c88d06e330a62ad84eb185ab350592321a863c50f2b4b3f845dc119ab1",
-        "queue_at_snapshot": [
-          "3632|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-1729"
-        ],
-        "checkpoint_policy": "Keep current runtime fixed and preserve partial evaluation at its allocation boundary; no new job submitted."
-      }
+  "fault_files": [],
+  "errors": [],
+  "queue": "3644 zhuyouwei RUNNING gres:gpu:V100:8\n",
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
     },
-    {
-      "job": {
-        "id": 3637,
-        "gpus": 8,
-        "state": "RUNNING",
-        "start": "2026-10-21T00:16:09+08:00",
-        "time_limit_seconds": 7200,
-        "output": "/home/zhuyouwei/spire-downloads/e4-training-3637/A-1729",
-        "log": "/home/zhuyouwei/spire-downloads/e4-training-3637.slurm.log"
-      },
-      "state": "COMPLETED",
-      "elapsed_seconds": 7113,
-      "exit_code": "0:0",
-      "checkpoint_reason": "allocation_limit_during_evaluation",
-      "version": 784
-    },
-    {
-      "job": {
-        "id": 3638,
-        "gpus": 8,
-        "state": "CANCELLED",
-        "start": "2026-10-21T02:16:48+08:00",
-        "time_limit_seconds": 3600,
-        "output": "/home/zhuyouwei/spire-downloads/e4-training-3638/A-1729",
-        "log": "/home/zhuyouwei/spire-downloads/e4-training-3638.slurm.log",
-        "elapsed_seconds": 409,
-        "exit_code": "0:15",
-        "end": "2026-10-21T02:23:37+08:00"
-      },
-      "state": "CANCELLED",
-      "elapsed_seconds": 409,
-      "exit_code": "0:15",
-      "authorization": "Claude28"
-    },
-    {
-      "job": {
-        "id": 3639,
-        "gpus": 8,
-        "state": "CANCELLED",
-        "start": "2026-10-21T02:26:23+08:00",
-        "time_limit_seconds": 7200,
-        "output": "/home/zhuyouwei/spire-downloads/e4-training-3639/A-1729",
-        "log": "/home/zhuyouwei/spire-downloads/e4-training-3639.slurm.log",
-        "elapsed_seconds": 435,
-        "exit_code": "0:15",
-        "end": "2026-10-21T02:33:38+08:00"
-      },
-      "state": "CANCELLED",
-      "elapsed_seconds": 435,
-      "exit_code": "0:15",
-      "authorization": "Claude29"
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 13778,
+      "limit_node_seconds": 43200,
+      "reserved_node_seconds": 7200,
+      "limit_authorization": "Claude28 at627e417; priorcharges retained",
+      "active_observed_node_seconds": 130
     }
-  ],
-  "runner_update": {
-    "commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
-    "authorization": "Claude29",
-    "status": "3640ended; Claude32newruntime preparednotdeployed",
-    "evaluation_training_interval_seconds": 3600,
-    "event_search": "All pending parents and all their options cloned, simulated and scored in one batch; select winner separately for each parent",
-    "event_trial_max_steps": "Normal event path maximum; combat cap3000/eventnoncombat500; independent cappedreplica counts and stalled outcomes; metrics start at migration.",
-    "checkpoint": "Before every evaluation; preserve optimizer,RNG,collector,trainingclock; queue checked before and after assessment",
-    "existing_replay": {
-      "seed": 1000000000,
-      "event_selected_steps": 5,
-      "combat_selected_steps": 21,
-      "total_prefix_steps": 27,
-      "full_game_and_history_equal": true,
-      "executions": 1,
-      "log": "/home/zhuyouwei/spire-downloads/e4-training-3637/e4-replay.log",
-      "sha256": "92c6b57a912faa5861c31f76dfed84207f4c5d6d4c1a56edca4ba04e7cb87866"
-    },
-    "floor_stall": "Morethan3000samefloor actualdecisions endsasstalled, nofuturebootstrap",
-    "training_health": "Recent20updates summed; first20recordonly. Afterwards completed0 orcompleted>=40 andstalled>5percent =>saveandstop. Window checkpointed."
   },
-  "evaluation_delay": {
-    "checked_at": "2026-10-21T01:51:40+08:00",
-    "estimated_elapsed_minutes": 35,
-    "completed_assessment": false,
-    "per_rank_64_episode_progress_seen": false,
-    "fault_files": [],
-    "checkpoint_reason": "before_evaluation",
-    "checkpoint_version": 784,
-    "cause": "Saved rank0 lane0 actual trajectory alternates event choose0 and map skip4 at floor0; all256 first-heartbeat lanes floor0, no longSL replica evidence. This identifies a cross-decision loop in sampled lane, not an engine fault.",
-    "remote_evidence_directory": "/home/zhuyouwei/spire-downloads/e4-3637-evaluation-delay",
-    "sha256": {
-      "log-snapshot.txt": "d39844e35389524e3d4a5dedc1ac8a90379730be5f87c53e2f386b141ee05f93",
-      "status-snapshot.json": "a5b32ac7f7b35be8aacf6c33f17c7246fde1d355763c6f84401ecd656da6eb81",
-      "job-snapshot.txt": "673e4f2f5d086a7f11676d897660af7b97715a4624f6fefa2498e763e6617cb2"
-    },
-    "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
-  },
-  "latest_decision": "Claude32 authorizes fresh1729 undermapreturn/noncombat restrictions; deploywhenSSHrecovers afterqueue/costcheck",
-  "prepared_resume": {
-    "authorization": "Claude26+27",
-    "status": "obsolete_policy784_invalidated",
-    "source_job": 3637,
-    "source_policy_version": 784,
-    "source_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
-    "wait": "Let3637 reach its existing allocation boundary and save partial evaluation; no concurrent job",
-    "changes": [
-      "60second SL heartbeat with lane progress and active trial last30 screen/action kinds",
-      "Combat trial still live after3000 actions scores0 and is excluded from adoption; event noncombat cap500",
-      "All trial failures terminate collector episode as stalled, separate from game death; no fake actual action and no actor loss on synthetic terminal value sample",
-      "Per-assessment over-limit counts and normal maxima",
-      "Remove future key+3 rewards; fixed denominator156 and three-key reach retained"
-    ],
-    "migration": "Explicit offline migration to new checkpoint directory with source and destination SHA256; preserve model, optimizer, RNGs, queues, partial assessment and historical earned rewards; cap counters begin at migration",
-    "next": "Resume version784 evaluation first; do not train again before completing this assessment",
-    "runtime_validation": "Resumed784 evaluation observed; all8 rank heartbeats emitted; full evaluation not complete",
-    "job": 3638,
-    "fixed_commit": "5cf2432d96c4dd47066f5b02aa33c352b30cb8c4",
-    "migration_manifest_sha256": "ac5f5c4955dab1aafce05ec13bdbff9badbdf391c38754e4ed37d2ea04d90608",
-    "diagnostic": "inventory/e4-784-evaluation-diagnostic.json"
-  },
-  "updated_at": "2026-10-21T03:06:52.055885+08:00",
-  "current_job": null,
   "cost_ledger": [
     {
       "job_id": 3628,
@@ -324,557 +132,165 @@
       "exit_code": "0:0",
       "accounting_sha256": "dc4e3ccec8092253eb964755e0c95754b0cd1dfa6be5503a3c0e9eec30b436e6",
       "reason": "Saved and exited at rolling20 health threshold; 55of60 completed episodes stalled"
+    },
+    {
+      "job_id": 3641,
+      "step": 1,
+      "charged_node_seconds": 1548,
+      "gpu_seconds": 12384,
+      "source": "Conservative upper bound from recorded Slurm start until confirmed emptyqueue; scontrol purged and sacct disabled",
+      "batch_elapsed_seconds": 1064,
+      "batch_exit_code": 0,
+      "exact_scheduler_elapsed_unavailable": true,
+      "bound_observed_at": "2026-10-21T04:15:21.104087+08:00",
+      "log_sha256": "e13fbb103cb7148c7c6f98b9208c9782888b83a1d608811384eee127191b423f"
+    },
+    {
+      "job_id": 3642,
+      "step": 1,
+      "charged_node_seconds": 4,
+      "gpu_seconds": 4,
+      "source": "scontrol final RunTime00:00:04; accounting-final.txt",
+      "exit_code": "1:0"
+    },
+    {
+      "job_id": 3643,
+      "step": 1,
+      "charged_node_seconds": 4,
+      "gpu_seconds": 4,
+      "source": "scontrol final RunTime00:00:04; accounting-final.txt",
+      "exit_code": "0:0",
+      "accounting_sha256": "3dd4940147784f1a6a2eabc4cf01f8da2f8ec341bb16936f96fa049a88708a1a"
     }
   ],
-  "budgets": {
-    "step_0": {
-      "charged_node_seconds": 2127,
-      "limit_node_seconds": 3600,
-      "reserved_node_seconds": 0
+  "first2": [
+    {
+      "event": "update",
+      "version": 1,
+      "trained_seconds": 38.12529373168945,
+      "update_seconds": 38.12529373168945,
+      "actual_steps": 16384,
+      "sl_trial_steps": 481001,
+      "actual_steps_per_second": 429.7409362792969,
+      "sl_trial_steps_per_second": 12616.322265625,
+      "initialization": 1729,
+      "lanes": 32,
+      "trials": 32,
+      "peak_torch_allocated_bytes": 193422336,
+      "peak_torch_reserved_bytes": 234881024,
+      "estimated_peak_device_bytes": 2370437120,
+      "memory_scope": "max_across_ranks; device estimate adds static non-PyTorch allocation",
+      "completed_episodes": 36,
+      "completed_average_floor": 5.138888888888889,
+      "stalled_episodes": 0,
+      "active_max_floor_steps": 37,
+      "stall_classes": {},
+      "repeat_check_seconds": 1.9498690558830276,
+      "repeat_check_decisions": 9528,
+      "repeat_check_candidates": 36561,
+      "all_candidates_repeat": 11,
+      "policy_loss": 0.9903424601720658,
+      "value_loss": 0.016147333743186932,
+      "imitation_fraction": 0.80670166015625,
+      "loss": 0.9969951015664265
     },
-    "later_steps_authorized": false,
-    "step_1": {
-      "charged_node_seconds": 12222,
-      "limit_node_seconds": 43200,
-      "reserved_node_seconds": 0,
-      "limit_authorization": "Claude28 at627e417; priorcharges retained"
+    {
+      "event": "update",
+      "version": 2,
+      "trained_seconds": 77.35437774658203,
+      "update_seconds": 39.22908401489258,
+      "actual_steps": 16384,
+      "sl_trial_steps": 379446,
+      "actual_steps_per_second": 417.6493225097656,
+      "sl_trial_steps_per_second": 9672.568359375,
+      "initialization": 1729,
+      "lanes": 32,
+      "trials": 32,
+      "peak_torch_allocated_bytes": 194640384,
+      "peak_torch_reserved_bytes": 236978176,
+      "estimated_peak_device_bytes": 2370437120,
+      "memory_scope": "max_across_ranks; device estimate adds static non-PyTorch allocation",
+      "completed_episodes": 185,
+      "completed_average_floor": 5.837837837837838,
+      "stalled_episodes": 0,
+      "active_max_floor_steps": 53,
+      "stall_classes": {},
+      "repeat_check_seconds": 2.523476906819269,
+      "repeat_check_decisions": 8793,
+      "repeat_check_candidates": 39328,
+      "all_candidates_repeat": 10,
+      "policy_loss": 0.9312720105644985,
+      "value_loss": 0.047155492981339774,
+      "imitation_fraction": 0.8011474609375,
+      "loss": 0.9534253294114023
     }
-  },
-  "floor_stall_update": {
-    "authorization": "Claude28",
-    "status": "triggered_saved85",
-    "actual_floor_steps_limit": 3000,
-    "condition": "Morethan3000actualdecisions withoutfloorchange; nofuturebootstrap; stalled notengine death; validactualaction remains PPO/IL sample",
-    "health_rule": "Recent20updates summed; first20recordonly. Afterwards completed0 orcompleted>=40 andstalled>5percent =>saveandstop. Window checkpointed.",
-    "old_log_fields": [
-      "actual_steps",
-      "actual_steps_per_second",
-      "event",
-      "imitation_fraction",
-      "initialization",
-      "loss",
-      "policy_loss",
-      "sl_trial_steps",
-      "sl_trial_steps_per_second",
-      "trained_seconds",
-      "update_seconds",
-      "value_loss",
-      "version"
-    ],
-    "onset": "Old784updates contain no episodecounts/floors; onsetcannotbedetermined; noextra run",
-    "commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
-    "first_updates": [
+  ],
+  "baseline": {
+    "job": 3641,
+    "first2": [
       {
         "event": "update",
         "version": 1,
-        "trained_seconds": 25.512744903564453,
-        "update_seconds": 25.512744903564453,
+        "trained_seconds": 26.907676696777344,
+        "update_seconds": 26.907676696777344,
         "actual_steps": 16384,
-        "sl_trial_steps": 413542,
-        "actual_steps_per_second": 642.1888427734375,
-        "sl_trial_steps_per_second": 16209.232421875,
+        "sl_trial_steps": 438199,
+        "actual_steps_per_second": 608.8968505859375,
+        "sl_trial_steps_per_second": 16285.2783203125,
         "initialization": 1729,
-        "completed_episodes": 12,
-        "completed_average_floor": 3.1666666666666665,
+        "lanes": 32,
+        "trials": 32,
+        "peak_torch_allocated_bytes": 192895488,
+        "peak_torch_reserved_bytes": 232783872,
+        "estimated_peak_device_bytes": 2364145664,
+        "memory_scope": "max_across_ranks; device estimate adds static non-PyTorch allocation",
+        "completed_episodes": 23,
+        "completed_average_floor": 4.478260869565218,
         "stalled_episodes": 0,
-        "active_max_floor_steps": 38,
-        "policy_loss": 0.8466221768425184,
-        "value_loss": 0.005847312023036446,
-        "imitation_fraction": 0.7060546875,
-        "loss": 0.8468930089729838
+        "active_max_floor_steps": 36,
+        "stall_classes": {},
+        "policy_loss": 0.8937298029665808,
+        "value_loss": 0.010802339154299305,
+        "imitation_fraction": 0.73797607421875,
+        "loss": 0.8968511935672723
       },
       {
         "event": "update",
         "version": 2,
-        "trained_seconds": 49.9673957824707,
-        "update_seconds": 24.45465087890625,
+        "trained_seconds": 55.774932861328125,
+        "update_seconds": 28.86725616455078,
         "actual_steps": 16384,
-        "sl_trial_steps": 343794,
-        "actual_steps_per_second": 669.9747924804688,
-        "sl_trial_steps_per_second": 14058.4296875,
+        "sl_trial_steps": 367917,
+        "actual_steps_per_second": 567.5634765625,
+        "sl_trial_steps_per_second": 12745.1328125,
         "initialization": 1729,
-        "completed_episodes": 147,
-        "completed_average_floor": 5.653061224489796,
-        "stalled_episodes": 0,
-        "active_max_floor_steps": 52,
-        "policy_loss": 0.8148487335183745,
-        "value_loss": 0.04632912961461387,
-        "imitation_fraction": 0.7105712890625,
-        "loss": 0.8354834925848991
-      },
-      {
-        "event": "update",
-        "version": 3,
-        "trained_seconds": 72.41399192810059,
-        "update_seconds": 22.446596145629883,
-        "actual_steps": 16384,
-        "sl_trial_steps": 301506,
-        "actual_steps_per_second": 729.9102172851562,
-        "sl_trial_steps_per_second": 13432.1474609375,
-        "initialization": 1729,
-        "completed_episodes": 155,
-        "completed_average_floor": 6.367741935483871,
-        "stalled_episodes": 0,
-        "active_max_floor_steps": 61,
-        "policy_loss": 0.8328536410099332,
-        "value_loss": 0.03013032541077946,
-        "imitation_fraction": 0.70770263671875,
-        "loss": 0.8453737035160884
-      }
-    ],
-    "startup_snapshot": {
-      "checked_at": "2026-10-21T02:36:16.241511+08:00",
-      "job": 3640,
-      "accounting": "JobId=3640 JobName=spire-e4-window1729\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899979 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:46 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-10-21T02:35:30 EligibleTime=2026-10-21T02:35:30\n   AccrueTime=2026-10-21T02:35:30\n   StartTime=2026-10-21T02:35:30 EndTime=2026-10-21T04:35:30 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T02:35:30 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1272884\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-claude29-fresh1729.sh\n   WorkDir=/home/zhuyouwei/sts-silent-gpu-split\n   StdErr=/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n\n",
-      "queue": "3640|zhuyouwei|RUNNING|0:46|gres:gpu:V100:8|spire-e4-window1729\n",
-      "status": {
-        "reason": "started",
-        "task": "train",
-        "phase": "training",
-        "version": 0,
-        "initialization": 1729,
-        "trials": 32,
-        "trained_seconds": 0.0,
-        "allocation_process_seconds": 0.39928164903540164,
-        "job": "3640",
-        "commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
-        "stagnant": 0,
-        "assessments": [],
-        "calibration_index": 0,
-        "checkpoint_files": [
-          "rank-0.pt",
-          "rank-1.pt",
-          "rank-2.pt",
-          "rank-3.pt",
-          "rank-4.pt",
-          "rank-5.pt",
-          "rank-6.pt",
-          "rank-7.pt"
-        ]
-      },
-      "updates": [],
-      "fault_files": [],
-      "log_sha256": "bf55333a5dbdec849df02bda5b9dcd8f090852f7698de01a6ad8c645546cc080"
-    },
-    "validation": "Freshrequestedtraining started, checkpoint0 confirmed; noextra tests; windowstop notyettriggered."
-  },
-  "health_stop": {
-    "job": 3640,
-    "fixed_commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
-    "status": {
-      "reason": "training_health_stop",
-      "task": "train",
-      "phase": "training",
-      "version": 85,
-      "initialization": 1729,
-      "trials": 32,
-      "trained_seconds": 755.484356880188,
-      "allocation_process_seconds": 756.8971341330325,
-      "job": "3640",
-      "commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
-      "stagnant": 0,
-      "assessments": [],
-      "calibration_index": 0,
-      "checkpoint_files": [
-        "rank-0.pt",
-        "rank-1.pt",
-        "rank-2.pt",
-        "rank-3.pt",
-        "rank-4.pt",
-        "rank-5.pt",
-        "rank-6.pt",
-        "rank-7.pt"
-      ]
-    },
-    "latest_update": {
-      "event": "update",
-      "version": 85,
-      "trained_seconds": 755.484356880188,
-      "update_seconds": 5.370429992675781,
-      "actual_steps": 16384,
-      "sl_trial_steps": 4408,
-      "actual_steps_per_second": 3050.780029296875,
-      "sl_trial_steps_per_second": 820.7908935546875,
-      "initialization": 1729,
-      "completed_episodes": 24,
-      "completed_average_floor": 3.375,
-      "stalled_episodes": 24,
-      "active_max_floor_steps": 2997,
-      "policy_loss": 0.0020733235313858955,
-      "value_loss": 0.00021378409488298584,
-      "imitation_fraction": 0.222900390625,
-      "loss": 0.0018957297652377747
-    },
-    "health_window": {
-      "window_updates": 20,
-      "window_completed": 60,
-      "window_stalled": 55,
-      "total_completed": 2815,
-      "total_stalled": 55,
-      "ending_version": 85,
-      "observed_at": "2026-10-21T02:53:44.017662+08:00",
-      "stop_triggered": true
-    },
-    "cumulative_actual_steps": 1392640,
-    "log_sha256": "1743035a9f3516256a0cb1f89e3c2f7ad68f29c419ed4ef56f4d153ede59748b",
-    "files": {
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/accounting-final.txt": {
-        "bytes": 1343,
-        "sha256": "dc4e3ccec8092253eb964755e0c95754b0cd1dfa6be5503a3c0e9eec30b436e6"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/status.json": {
-        "bytes": 465,
-        "sha256": "40a90a8074e4ad893cb1ec5de3fcfcefc76b72c9882a0c76340b753113143c82"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/training-health-stop.json": {
-        "bytes": 218,
-        "sha256": "8d18d737383fbcbc76976b50f11d8d97ce6eea4f936cb87b3c417107187cc2bc"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-0.pt": {
-        "bytes": 11642701,
-        "sha256": "f411faa1e7bf72a7557ff276f51d7d564b3eb1c1384cd9358578a5d6d74d4d5b"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-1.pt": {
-        "bytes": 11642317,
-        "sha256": "1f3ecbb1246cf9834fd0aeccc5d0c7e5e4ee00995ba98d9c25e9d769ad13d607"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-2.pt": {
-        "bytes": 11643021,
-        "sha256": "54bad34771ab06881a3f141f88f80f3dc74194b66f09fa4cc89a4f887041f819"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-3.pt": {
-        "bytes": 11644877,
-        "sha256": "777134a54b6f80f8762418f9e7d75c3becd28a21a1f4e5cbdd854169a0b66108"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-4.pt": {
-        "bytes": 11643533,
-        "sha256": "dc9ae71d1128ef81aa69af3d444f8b88d8fb84e2ffd159cb5682903aaef122b3"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-5.pt": {
-        "bytes": 11643725,
-        "sha256": "3189f9934250035d58798370f0698a2bc2c993c61fe59374e00425dfb51e2b7e"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-6.pt": {
-        "bytes": 11642637,
-        "sha256": "e407594984908625de992a686c16ecdfd4b52056640a73ded6e4d6657ebbaf7e"
-      },
-      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-7.pt": {
-        "bytes": 11643149,
-        "sha256": "acde287436568859cb97418f08aba052fc52d0334ca569cff2e576d798877d61"
-      }
-    },
-    "accounting": "JobId=3640 JobName=spire-e4-window1729\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899979 Nice=0 Account=(null) QOS=(null)\n   JobState=COMPLETED Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:13:08 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-10-21T02:35:30 EligibleTime=2026-10-21T02:35:30\n   AccrueTime=2026-10-21T02:35:30\n   StartTime=2026-10-21T02:35:30 EndTime=2026-10-21T02:48:38 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T02:35:30 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1272884\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-claude29-fresh1729.sh\n   WorkDir=/home/zhuyouwei/sts-silent-gpu-split\n   StdErr=/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n\n",
-    "budget": {
-      "charged_node_seconds": 12222,
-      "limit_node_seconds": 43200,
-      "reserved_node_seconds": 0,
-      "limit_authorization": "Claude28 at627e417; priorcharges retained"
-    },
-    "cost_ledger": [
-      {
-        "job_id": 3628,
-        "step": 0,
-        "charged_node_seconds": 1,
-        "gpu_seconds": 1,
-        "source": "scontrol RunTime=00:00:01; sacct disabled",
-        "policy": "conservative full-node elapsed charge"
-      },
-      {
-        "job_id": 3629,
-        "step": 0,
-        "charged_node_seconds": 85,
-        "gpu_seconds": 680,
-        "source": "scontrol RunTime=00:01:25",
-        "exit_code": "1:0",
-        "failure": "PyTorch CUDA UInt32 indexing in E4 orchestration"
-      },
-      {
-        "job_id": 3630,
-        "step": 0,
-        "charged_node_seconds": 116,
-        "gpu_seconds": 928,
-        "source": "scontrol RunTime=00:01:56",
-        "exit_code": "1:0",
-        "failure": "Collector choose actions variable shadowed by selected path"
-      },
-      {
-        "job_id": 3631,
-        "step": 0,
-        "charged_node_seconds": 1925,
-        "gpu_seconds": 15400,
-        "source": "scontrol RunTime=00:32:05",
-        "exit_code": "0:0"
-      },
-      {
-        "job_id": 3632,
-        "step": 1,
-        "charged_node_seconds": 3477,
-        "gpu_seconds": 27816,
-        "source": "scontrol final RunTime00:57:57, accounting-final.txt",
-        "exit_code": "0:15",
-        "reason": "Cancelled perClaude23; accept loss of20minutes unsaved training; preserve evidence"
-      },
-      {
-        "job_id": 3637,
-        "step": 1,
-        "charged_node_seconds": 7113,
-        "gpu_seconds": 56904,
-        "source": "scontrol final RunTime01:58:33, accounting-final.txt",
-        "exit_code": "0:0",
-        "accounting_sha256": "5a5dd4595552917a0364794a8405209fa5e07e8187534b6f8d2d5f28fb26810f"
-      },
-      {
-        "job_id": 3638,
-        "step": 1,
-        "charged_node_seconds": 409,
-        "gpu_seconds": 3272,
-        "source": "scontrol final00:06:49",
-        "exit_code": "0:15",
-        "accounting_sha256": "9bae84bd53e8dc0df62010217e6aa5caedf705a470332a39148f65b8991953d5"
-      },
-      {
-        "job_id": 3639,
-        "step": 1,
-        "charged_node_seconds": 435,
-        "gpu_seconds": 3480,
-        "source": "scontrol final00:07:15",
-        "exit_code": "0:15",
-        "accounting_sha256": "74ae414b18225e23468c7f07d0abb45128e4199686d16f568996451a5dad16a9"
-      },
-      {
-        "job_id": 3640,
-        "step": 1,
-        "charged_node_seconds": 788,
-        "gpu_seconds": 6304,
-        "source": "scontrol final RunTime00:13:08; accounting-final.txt",
-        "exit_code": "0:0",
-        "accounting_sha256": "dc4e3ccec8092253eb964755e0c95754b0cd1dfa6be5503a3c0e9eec30b436e6",
-        "reason": "Saved and exited at rolling20 health threshold; 55of60 completed episodes stalled"
-      }
-    ],
-    "action": "Preserved85 checkpoints; no restart or extraGPUjob; full1729assessment not reached",
-    "observed_at": "2026-10-21T02:53:44.017662+08:00"
-  },
-  "next_initialization_preparation": {
-    "authorization": "Claude30+31 at4ac47b6",
-    "status": "prepared_not_deployed_not_run",
-    "initialization": 2718,
-    "lanes_per_gpu": 256,
-    "memory_fallback_lanes": 128,
-    "scratch_slots": 8448,
-    "training_trials": 32,
-    "evaluation_trials": 32,
-    "interim_dev_seeds": 1024,
-    "comparison_dev_seeds": 4096,
-    "stagnation_confirmation_dev_seeds": 4096,
-    "telemetry": "first20updates actualsteps/sec, SLsteps/sec, max rank PyTorch allocated/reserved peaks; totaldevice peak estimate adds static nonTorch allocation and is labeled estimate",
-    "health_stop": "Existing immediate save/exit remains; no automatic evaluation or resume of unhealthy policy",
-    "benchmark": "Deferred until newlane setting runs: samecheckpoint and lanes, N8/N32 tenupdates each; report speedup; onlyClaude may authorizeN8switch",
-    "runtime_validation": "Not run; code inspected, no additionalGPUallocation",
-    "checkpoint_policy": "New runtime requires matchingcommit, lanes, trials and interimseedcount; no implicit oldcheckpoint migration"
-  },
-  "claude32_preparation": {
-    "authorization": "Claude32 at464b1225957d97d72d4a3380b35002f4caeb78a8",
-    "status": "deployed_job3641_health_stopped41",
-    "initialization": 1729,
-    "source_checkpoint": null,
-    "lanes": 32,
-    "trials": 32,
-    "training_seconds": 3600,
-    "interim_dev_seeds": 4096,
-    "policy_restriction": "Map skip at mostonce perfloor; Pythonmask cloned toSLslots, resetonfloorchange, saved/restored withcollector; PPO fragment storesidenticalmask",
-    "stall_rules": {
-      "noncombat_actual_floor_steps": 200,
-      "total_actual_floor_steps": 3000,
-      "semantics": "exceed limit on nonterminal actualtrajectory -> stalled, zero futurebootstrap, notengine death"
-    },
-    "health_rule": "Retain zero-completion stop after20; fromupdate41 stalled/windowcompleted>5percent stops; no minimum40completed for newstalled rule",
-    "diagnostics": "Stalled last10screen/actionkind, reason andperupdate/rollingwindow classifications; perrank JSONL retained",
-    "checkpoint85": "Invalidated for futuretraining; retained as evidence",
-    "native_engine": "unchanged",
-    "validation": "Job3641 firstupdate completed;8rank initialcheckpoints saved; no faultfiles ortraceback observed; healththreshold and fullassessment pending",
-    "connection": "SSH restored;emptyqueue before submission;ownfiles18G",
-    "cost_delta_seconds": 0,
-    "job_id": 3641
-  },
-  "claude32_deployment": {
-    "snapshot": {
-      "checked_at": "2026-10-21T03:50:31.403254+08:00",
-      "job_id": 3641,
-      "queue": [
-        "3641|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-map1729"
-      ],
-      "accounting": "JobId=3641 JobName=spire-e4-map1729\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899978 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:57 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-10-21T03:49:34 EligibleTime=2026-10-21T03:49:34\n   AccrueTime=2026-10-21T03:49:34\n   StartTime=2026-10-21T03:49:34 EndTime=2026-10-21T05:49:34 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T03:49:34 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1298138\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-claude32-fresh1729.sh\n   WorkDir=/home/zhuyouwei/sts-silent-gpu-split\n   StdErr=/home/zhuyouwei/spire-downloads/e4-training-3641.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-training-3641.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n\n",
-      "source": "20341d53766fdc5c87ee35155efb27e36c395183",
-      "status": {
-        "reason": "started",
-        "task": "train",
-        "phase": "training",
-        "version": 0,
-        "initialization": 1729,
-        "trials": 32,
         "lanes": 32,
-        "scratch_slots": 4096,
-        "evaluation_seed_count": 4096,
-        "trained_seconds": 0.0,
-        "allocation_process_seconds": 0.2961246100021526,
-        "job": "3641",
-        "commit": "20341d53766fdc5c87ee35155efb27e36c395183",
-        "stagnant": 0,
-        "assessments": [],
-        "calibration_index": 0,
-        "checkpoint_files": [
-          "rank-0.pt",
-          "rank-1.pt",
-          "rank-2.pt",
-          "rank-3.pt",
-          "rank-4.pt",
-          "rank-5.pt",
-          "rank-6.pt",
-          "rank-7.pt"
-        ]
-      },
-      "updates": [
-        {
-          "event": "update",
-          "version": 1,
-          "trained_seconds": 26.907676696777344,
-          "update_seconds": 26.907676696777344,
-          "actual_steps": 16384,
-          "sl_trial_steps": 438199,
-          "actual_steps_per_second": 608.8968505859375,
-          "sl_trial_steps_per_second": 16285.2783203125,
-          "initialization": 1729,
-          "lanes": 32,
-          "trials": 32,
-          "peak_torch_allocated_bytes": 192895488,
-          "peak_torch_reserved_bytes": 232783872,
-          "estimated_peak_device_bytes": 2364145664,
-          "memory_scope": "max_across_ranks; device estimate adds static non-PyTorch allocation",
-          "completed_episodes": 23,
-          "completed_average_floor": 4.478260869565218,
-          "stalled_episodes": 0,
-          "active_max_floor_steps": 36,
-          "stall_classes": {},
-          "policy_loss": 0.8937298029665808,
-          "value_loss": 0.010802339154299305,
-          "imitation_fraction": 0.73797607421875,
-          "loss": 0.8968511935672723
-        }
-      ],
-      "contiguous_versions": true,
-      "log_sha256": "7d2807df77370ecf70b4a8c705eb02644b4a59f95e6b05134c0854e75abd1ca9",
-      "traceback": false,
-      "fault_files": [],
-      "checkpoints": [
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-0.pt",
-          "size": 3759749,
-          "sha256": "e4724d4e53c18e57ee300927f33dbf9b9e0013c45b1abe4b476148118a3e2606"
-        },
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-1.pt",
-          "size": 3759749,
-          "sha256": "431ec6b98d79ea9de9c8ebaf03e8ff99e7895b05305c60d9e381a8c6778100f7"
-        },
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-2.pt",
-          "size": 3759749,
-          "sha256": "ef6330c117523861f70bd0885386a4a369a80d04c983e784d6405caf9dc5fa09"
-        },
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-3.pt",
-          "size": 3759749,
-          "sha256": "d20e6d84fe0be943414d674d41d5bfd3c272ad03e7eb03dfaa0709628de43298"
-        },
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-4.pt",
-          "size": 3759749,
-          "sha256": "a79f93cce4e8f15700c72657bd1a1423e67fc63dd8b4de1188871358bbc7ee81"
-        },
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-5.pt",
-          "size": 3759749,
-          "sha256": "dedc4b026ebe842f1fe7322c228c1d2f7e02ea06d03aa009a390d60c2eb60272"
-        },
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-6.pt",
-          "size": 3759749,
-          "sha256": "d4fdc4834229d07e0c775636d2e1b837821903783aa65ddce80b230f295b0514"
-        },
-        {
-          "path": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-7.pt",
-          "size": 3759749,
-          "sha256": "698525626e27b2c3d926244dac58ff10fc2e61c2acaf0883e5322f412aa6a654"
-        }
-      ]
-    },
-    "bundle_sha256": "61782a51ab938fc43b3aaad8babda452d301f40489543d4fcff893e24907ecb1",
-    "script_sha256": "74fcc3aba5baf60116b00580c0249356350e9460cbfec6fb6358ff796105bfe2",
-    "source_checkpoint": null,
-    "native_engine": "unchanged; no rebuild or new tests",
-    "provisional_allocation_seconds": 57
+        "trials": 32,
+        "peak_torch_allocated_bytes": 193339392,
+        "peak_torch_reserved_bytes": 232783872,
+        "estimated_peak_device_bytes": 2364145664,
+        "memory_scope": "max_across_ranks; device estimate adds static non-PyTorch allocation",
+        "completed_episodes": 170,
+        "completed_average_floor": 5.635294117647059,
+        "stalled_episodes": 0,
+        "active_max_floor_steps": 46,
+        "stall_classes": {},
+        "policy_loss": 0.8500267102244834,
+        "value_loss": 0.048300885267065344,
+        "imitation_fraction": 0.7398681640625,
+        "loss": 0.8719907682389021
+      }
+    ]
   },
-  "health_window": {
-    "window_updates": 20,
-    "window_completed": 2858,
-    "window_stalled": 472,
-    "total_completed": 7245,
-    "total_stalled": 472,
-    "ending_version": 41,
-    "window_stall_classes": {
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 210,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 215,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 2,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 35,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"choose\"],[\"shop\",\"choose\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
-      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"potion_discard\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
-    },
-    "stop_triggered": true,
-    "observed_at": "2026-10-21T04:15:21.104087+08:00"
+  "comparison": {
+    "new_actual_steps_per_second": 423.6088629314568,
+    "old_actual_steps_per_second": 587.5040689241221,
+    "relative_change": -0.27896863130293115,
+    "note": "Descriptive first2update comparison; changed trajectories and SLworkload, not isolatedoverhead benchmark. repeat_check_seconds is maxrank perupdate; counts are sumacrossranks."
   },
-  "claude32_stall_observation": {
-    "fixed_commit": "20341d53766fdc5c87ee35155efb27e36c395183",
-    "snapshot_log_sha256": "058ebafec2aa01754418a22ca651dadda077a9eab508d7453081f42f7dfff666",
-    "contiguous_updates": true,
-    "fault_files": [],
-    "traceback": false,
-    "health": {
-      "job": 3641,
-      "window_updates": 20,
-      "window_completed": 3862,
-      "window_stalled": 134,
-      "total_completed": 6178,
-      "total_stalled": 134,
-      "ending_version": 32,
-      "window_stall_classes": {
-        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 61,
-        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 68,
-        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1,
-        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"],[\"combat_reward\",\"choose\"]]}": 3,
-        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"proceed\"],[\"map\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
-      },
-      "first_stalled_update": 26,
-      "stop_triggered": false,
-      "observed_at": "2026-10-21T04:03:43.924878+08:00"
-    },
-    "decision": "Keep fixed job running underClaude32: after40 rolling20 stalled>5percent triggers save/stop; no extra tests or enginechanges",
-    "saved_checkpoint_version": 0
-  },
-  "claude33": {
-    "messages": [
-      33
-    ],
-    "main": "52b7dbc3b6aef5873ec82b18a1d9801ce3a7e9e0",
-    "status": "read_integrated_implementation_pending",
-    "decision": "Read-only64bit observation+RNG key; one-step noncombat repeatmask; sharedSL/train/eval/PPO; all_candidates_repeat fallback; CPU threecycle replays and CPU/GPUhash parity before fresh1729"
+  "log_sha256": "135fc4280bb79cd55662d122b72b7f2e0703947797c74e3dcbe9cb934fa5e574",
+  "module_hashes": {
+    "spire_gpu.cpython-312-x86_64-linux-gnu.so": "4fb703351c1345f75788eab5ce822a584320ce41a341807e3f3134f825624812",
+    "spire.cpython-312-x86_64-linux-gnu.so": "34df1783135ae1aff723d658b4c1473670bed7a7c0b55f91f214fd6802cbc3b9"
   }
 }
