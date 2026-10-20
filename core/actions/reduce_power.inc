@@ -23,20 +23,25 @@ struct ReducePower : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, const Effect& e) {
-        if (e.extra == 0) { reduce_power(g, e.target, e.power, e.amount, e.source); return; }
-        Power& power = power_instance(g, e.extra);
-        if (e.amount < power.amount) {
-            power_reducePower(g, power, e.target, e.amount);
-            refresh_powers(g);
+        if (e.extra == 0) {
+            reduce_power(g, e.target, e.power, e.amount, e.source);
         } else {
-            Effect remove{};
-            remove.kind = EffectKind::RemovePower;
-            remove.source = e.source;
-            remove.target = e.target;
-            remove.power = power.id;
-            remove.extra = power.instance;
-            add_top(g, remove);
+            Power& power = power_instance(g, e.extra);
+            if (e.amount < power.amount) {
+                power_reducePower(g, power, e.target, e.amount);
+                refresh_powers(g);
+            } else {
+                Effect remove{};
+                remove.kind = EffectKind::RemovePower;
+                remove.source = e.source;
+                remove.target = e.target;
+                remove.power = power.id;
+                remove.extra = power.instance;
+                add_top(g, remove);
+            }
         }
+        // ReducePowerAction.update waits ACTION_DUR_FAST before the queued removal can refresh powers.
+        settle_deaths_after_wait(g, 16);
     }
 };
 }
