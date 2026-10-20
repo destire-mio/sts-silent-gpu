@@ -1,6 +1,7 @@
 #if !defined(__CUDA_ARCH__)
 #include "training_batch.hpp"
 #include "batch.cuh"
+#include <algorithm>
 
 namespace spire::cuda {
 static int current_device() { int device; check(cudaGetDevice(&device)); return device; }
@@ -127,6 +128,31 @@ void TrainingBatch::clone(int source, int target) {
     SPIRE_ASSERT(source >= 0 && source < size && target >= 0 && target < size && source != target);
     spire_training_clone<<<1, 1>>>(state(), source, target);
     check(cudaGetLastError()); check(cudaDeviceSynchronize());
+}
+void TrainingBatch::clone_many(const std::vector<int>& sources, const std::vector<int>& targets) {
+    SPIRE_ASSERT(sources.size() == targets.size());
+    if (sources.empty()) return;
+    for (std::size_t i = 0; i < sources.size(); ++i) {
+        SPIRE_ASSERT(sources[i] >= 0 && sources[i] < size && targets[i] >= 0 && targets[i] < size);
+        SPIRE_ASSERT(std::find(sources.begin(), sources.end(), targets[i]) == sources.end());
+        SPIRE_ASSERT(std::find(targets.begin(), targets.begin() + i, targets[i]) == targets.begin() + i);
+    }
+    Buffer<int> src(sources.size()), dst(targets.size());
+    src.upload(sources.data()); dst.upload(targets.data());
+    spire_training_clone_many<<<(sources.size() + 31) / 32, 32>>>(state(), src.data, dst.data, sources.size());
+    check(cudaGetLastError()); check(cudaDeviceSynchronize());
+}
+void TrainingBatch::progress_tensors(int64_t* output, cudaStream_t stream) {
+    spire_training_progress<<<(size + 31) / 32, 32, 0, stream>>>(state(), output);
+    check(cudaGetLastError());
+}
+std::string TrainingBatch::state_bytes(int slot) {
+    SPIRE_ASSERT(slot >= 0 && slot < size);
+    std::string bytes(sizeof(Game) + sizeof(obs::History), '\0');
+    check(cudaDeviceSynchronize());
+    check(cudaMemcpy(bytes.data(), games.data + slot, sizeof(Game), cudaMemcpyDeviceToHost));
+    check(cudaMemcpy(bytes.data() + sizeof(Game), histories.data + slot, sizeof(obs::History), cudaMemcpyDeviceToHost));
+    return bytes;
 }
 void TrainingBatch::extend_seeds(const std::vector<int64_t>& seeds) {
     seeds_.insert(seeds_.end(), seeds.begin(), seeds.end());

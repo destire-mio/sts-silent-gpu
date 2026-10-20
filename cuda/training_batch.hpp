@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <string>
 
 namespace spire::cuda {
 inline void check(cudaError_t error) {
@@ -63,6 +64,9 @@ struct TrainingBatch {
     void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
                        const std::vector<std::vector<int32_t>>& candidates);
     void clone(int source, int target);
+    void clone_many(const std::vector<int>& sources, const std::vector<int>& targets);
+    void progress_tensors(int64_t* output, cudaStream_t stream);
+    std::string state_bytes(int slot);
     void extend_seeds(const std::vector<int64_t>& seeds);
 private:
     std::vector<int64_t> seeds_;

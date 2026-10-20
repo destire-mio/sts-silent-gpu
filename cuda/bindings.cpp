@@ -26,6 +26,15 @@ PYBIND11_MODULE(spire_gpu, module) {
                             "data"_a=py::make_tuple(a.pointer, false), "version"_a=3);
         });
     auto cls = py::class_<TrainingBatch>(module, "TrainingBatch");
+    cls.def("clone_many", &TrainingBatch::clone_many, py::call_guard<py::gil_scoped_release>());
+    cls.def("state_bytes", [](TrainingBatch& b, int slot) { return py::bytes(b.state_bytes(slot)); });
+    cls.def("progress_tensors", [](TrainingBatch& b, py::object output) {
+        SPIRE_ASSERT(output.attr("numel")().cast<int>() == b.size * 9);
+        auto* out = spire::host::tensor_pointer<int64_t>(output, "int64", b.device);
+        auto stream = py::module_::import("torch").attr("cuda").attr("current_stream")(b.device).attr("cuda_stream").cast<uintptr_t>();
+        py::gil_scoped_release release;
+        b.progress_tensors(out, reinterpret_cast<cudaStream_t>(stream));
+    });
     using spire::host::tensor_pointer;
     using spire::cuda::RootCache;
     spire::host::root_cache_methods<RootCache>(module, cls,

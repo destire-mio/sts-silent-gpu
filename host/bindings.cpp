@@ -8,6 +8,7 @@
 #include <type_traits>
 
 #include "tensor_binding.hpp"
+#include "training_progress.hpp"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -309,6 +310,25 @@ PYBIND11_MODULE(spire, module) {
         .def("__len__", [](const EnvironmentBatch& batch) { return batch.games.size(); });
     module.attr("encounters") = py::cast(std::vector<std::string>(std::begin(encounter_names), std::end(encounter_names)));
     auto training = py::class_<TrainingBatch>(module, "TrainingBatch");
+    training.def("progress_tensors", [](TrainingBatch& b, py::object output) {
+        SPIRE_ASSERT(output.attr("numel")().cast<int>() == b.size * progress_columns);
+        auto* out = tensor_pointer<int64_t>(output, "int64", -1);
+        for (int i = 0; i < b.size; ++i) training_progress(b.games[i], out + i * progress_columns);
+    });
+    training.def("clone_many", [](TrainingBatch& b, const std::vector<int>& sources, const std::vector<int>& targets) {
+        SPIRE_ASSERT(sources.size() == targets.size());
+        for (std::size_t i = 0; i < targets.size(); ++i) {
+            SPIRE_ASSERT(std::find(sources.begin(), sources.end(), targets[i]) == sources.end());
+            SPIRE_ASSERT(std::find(targets.begin(), targets.begin() + i, targets[i]) == targets.begin() + i);
+        }
+        for (std::size_t i = 0; i < sources.size(); ++i) b.clone(sources[i], targets[i]);
+    });
+    training.def("state_bytes", [](TrainingBatch& b, int slot) {
+        SPIRE_ASSERT(slot >= 0 && slot < b.size);
+        std::string bytes(reinterpret_cast<const char*>(&b.games[slot]), sizeof(Game));
+        bytes.append(reinterpret_cast<const char*>(&b.reveals[slot]), sizeof(obs::History));
+        return py::bytes(bytes);
+    });
     root_cache_methods<spire::host::RootCache>(module, training,
         [](TrainingBatch& b, spire::host::RootCache& cache, py::object slots, py::object roots) {
             const int count = slots.attr("numel")().cast<int>();

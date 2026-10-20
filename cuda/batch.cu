@@ -129,7 +129,7 @@ extern "C" __global__ void spire_training_roots(spire::cuda::TrainingState b, co
     replay_root(b, i, seeds[j], offsets[j], offsets[j + 1], candidates);
 }
 
-extern "C" __global__ void spire_training_clone(spire::cuda::TrainingState b, int source, int target) {
+static __device__ void clone_slot(spire::cuda::TrainingState b, int source, int target) {
     b.games[target] = b.games[source]; b.histories[target] = b.histories[source];
     b.finished[target] = b.finished[source]; b.done[target] = b.done[source];
     b.truncated[target] = b.truncated[source]; b.faults[target] = b.faults[source];
@@ -137,6 +137,22 @@ extern "C" __global__ void spire_training_clone(spire::cuda::TrainingState b, in
     b.rewards[target] = 0; b.reset_mask[target] = b.advanced[target] = 0;
     if (b.faults[target]) b.fail(target, b.faults[target]);
     else b.publish(target);
+}
+
+extern "C" __global__ void spire_training_clone(spire::cuda::TrainingState b, int source, int target) {
+    clone_slot(b, source, target);
+}
+
+extern "C" __global__ void spire_training_clone_many(spire::cuda::TrainingState b,
+    const int* sources, const int* targets, int count) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j < count) clone_slot(b, sources[j], targets[j]);
+}
+
+#include "host/training_progress.hpp"
+extern "C" __global__ void spire_training_progress(spire::cuda::TrainingState b, int64_t* output) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < b.size) spire::host::training_progress(b.games[i], output + i * spire::host::progress_columns);
 }
 
 extern "C" __global__ void spire_training_select(spire::cuda::TrainingState b, const uint8_t* active) {
