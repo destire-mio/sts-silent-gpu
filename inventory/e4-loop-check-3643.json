@@ -1,0 +1,148 @@
+{
+  "witness_sha256": "cd19721d340295877a763c0ff4408ecc57dd4f5455384008ff5b166dd6e4db8d",
+  "checks": [
+    {
+      "kind": "neow",
+      "seed": 2000000000,
+      "decision": 10,
+      "candidate": 4,
+      "screen": "map",
+      "floor": 0,
+      "resulting_key": 3777607795574167088,
+      "cpu_gpu_equal_states": 12,
+      "repeat_mask_blocks": true,
+      "cpu_gpu_masks_equal": true,
+      "source_unchanged_by_probes": true,
+      "source": "/home/zhuyouwei/spire-downloads/e4-training-3637/A-1729/rank-0.pt",
+      "source_sha256": "c90a3deabf4354f6ddc33933e66db6dc9506a729c4d64aadca86cca5f7754286",
+      "prefix": [
+        0,
+        3,
+        11,
+        3,
+        11,
+        10,
+        10,
+        0,
+        1,
+        0,
+        4
+      ],
+      "loop_metrics": {
+        "repeat_check_seconds": 0.0011755250161513686,
+        "repeat_check_decisions": 1,
+        "repeat_check_candidates": 5,
+        "all_candidates_repeat": 0
+      },
+      "replay_seconds": 0.19667836604639888
+    },
+    {
+      "kind": "shop",
+      "seed": 1080624454,
+      "decision": 28,
+      "candidate": 1,
+      "screen": "shop",
+      "floor": 2,
+      "resulting_key": 6707182424106787190,
+      "cpu_gpu_equal_states": 30,
+      "repeat_mask_blocks": true,
+      "cpu_gpu_masks_equal": true,
+      "source_unchanged_by_probes": true,
+      "source": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-0.pt",
+      "source_sha256": "17d280f572eb0f789872f6d6c1cfad14e655ac6225bda88a867fe7a5b267d22d",
+      "prefix": [
+        0,
+        2,
+        11,
+        11,
+        6,
+        7,
+        0,
+        0,
+        0,
+        9,
+        5,
+        7,
+        6,
+        6,
+        2,
+        0,
+        0,
+        0,
+        2,
+        5,
+        4,
+        2,
+        2,
+        0,
+        0,
+        1,
+        2,
+        1,
+        1
+      ],
+      "loop_metrics": {
+        "repeat_check_seconds": 0.0006577499443665147,
+        "repeat_check_decisions": 1,
+        "repeat_check_candidates": 2,
+        "all_candidates_repeat": 0
+      },
+      "replay_seconds": 0.03815487597603351
+    },
+    {
+      "kind": "combat_reward",
+      "seed": 1264538638,
+      "decision": 4,
+      "candidate": 2,
+      "screen": "combat_reward",
+      "floor": 0,
+      "resulting_key": -1325256803195225748,
+      "cpu_gpu_equal_states": 6,
+      "repeat_mask_blocks": true,
+      "cpu_gpu_masks_equal": true,
+      "source_unchanged_by_probes": true,
+      "source": "/home/zhuyouwei/spire-downloads/e4-training-3641/A-1729/rank-0.pt",
+      "source_sha256": "17d280f572eb0f789872f6d6c1cfad14e655ac6225bda88a867fe7a5b267d22d",
+      "prefix": [
+        0,
+        1,
+        1,
+        2,
+        2
+      ],
+      "loop_metrics": {
+        "repeat_check_seconds": 0.0005902680568397045,
+        "repeat_check_decisions": 1,
+        "repeat_check_candidates": 4,
+        "all_candidates_repeat": 0
+      },
+      "replay_seconds": 0.008193221990950406
+    }
+  ],
+  "scope": "CPU legacy-path replay; repeat-only mask with map-return flag false; CPU/GPU key parity at every replayed state",
+  "source_commit": "7c918ddab4039750b3104b96f131155f17ddfce0",
+  "job": 3643,
+  "elapsed_seconds": 4,
+  "result_sha256": "216f39ab2e3dc0ed9bacbe5d3ff2a610887294c39169843c122661449cfe8e7d",
+  "prior_attempt": {
+    "job": 3642,
+    "elapsed_seconds": 4,
+    "exit_code": "1:0",
+    "cause": "CPU size attribute mismatch corrected before replay"
+  },
+  "budget": {
+    "charged_node_seconds": 13778,
+    "limit_node_seconds": 43200,
+    "reserved_node_seconds": 0,
+    "limit_authorization": "Claude28 at627e417; priorcharges retained"
+  },
+  "build": {
+    "native_commit": "fe79d41cc027602da72a79d5139b38bc11cd9998",
+    "cpu_sha256": "34df1783135ae1aff723d658b4c1473670bed7a7c0b55f91f214fd6802cbc3b9",
+    "gpu_sha256": "4fb703351c1345f75788eab5ce822a584320ce41a341807e3f3134f825624812",
+    "wall_seconds": 242.99,
+    "max_rss_kib": 1908852,
+    "gpu_allocated": false,
+    "exit_code": 0
+  }
+}
