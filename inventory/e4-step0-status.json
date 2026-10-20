@@ -1,0 +1,58 @@
+{
+  "recorded_at": "2026-10-20T22:16:59.3480773+08:00",
+  "phase": "step_0",
+  "status": "gpu_submission_stopped_on_server_preflight_failure",
+  "branch": "codex/e4",
+  "implementation_commit": "c6ccefe852e8ee4d0d92d48d5c3785675df02915",
+  "main": "74637fde5bff81ffba7df94d96ed3da74d8018de",
+  "native_build_commit": "eb9a93fa2c0f23e379902e101b99755006982be9",
+  "native_sources_unchanged_in_runner_commits": true,
+  "build": {
+    "max_rss_kib": 1908752,
+    "gpu_allocated": false,
+    "system_cpu_seconds": 20.21,
+    "parallel_jobs": 2,
+    "wall_seconds": 756.55,
+    "location": "/home/zhuyouwei/spire-downloads/e4-step0-build",
+    "exit_code": 0,
+    "user_cpu_seconds": 726.34,
+    "warning": "GNU make reports existing filesystem clock skew; compiled targets exited 0; runtime parity remains pending."
+  },
+  "preflight": {
+    "driver": "580.105.08",
+    "slurm_node": "gpu01",
+    "slurm_state": "IDLE",
+    "configured_gpus": "V100:8",
+    "nvidia_smi_error": "Failed to initialize NVML: Unknown Error",
+    "project_jobs_submitted": [],
+    "diagnosis": "Unresolved. Empty Slurm queue and IDLE do not establish GPU health or exclude processes outside Slurm.",
+    "system_changes": false,
+    "squeue": "empty",
+    "home_disk_gib": 18
+  },
+  "budget": {
+    "step0_charged_node_seconds": 0,
+    "step1_charged_node_seconds": 0,
+    "step0_reserved_node_seconds": 0,
+    "step0_limit_node_seconds": 3600,
+    "step1_limit_node_seconds": 28800,
+    "compile_cpu_seconds": 746.55
+  },
+  "validation": {
+    "native_compilation": "passed",
+    "existing_cpu_gpu_gates": "not run",
+    "python_syntax": "parsed four new sources before final progress-only edit",
+    "sealed_10_percent": "registered; not opened",
+    "calibration_N8_N16_N32": "not run",
+    "sl_replay_check": "not run",
+    "training": "not started"
+  },
+  "implementation": {
+    "gae_lambda": 0.99,
+    "fragment_length": 64,
+    "model": "existing ModelConfig",
+    "normalization_max_reward": 156,
+    "event_search": "Score complete current-room continuations for each event option; execute selected option and repeat search at the next actual event decision. Out-of-combat potion choices remain single policy samples."
+  },
+  "next_action": "Retry only read-only server preflight; after NVML works and GPUs are unused, run prepared step0 Slurm script within unchanged cumulative budget."
+}
