@@ -97,7 +97,7 @@ class RoomSearch:
         return self.progress_buffer.view(-1, 9).cpu().tolist()
 
     def check(self, slots):
-        faults = self.arrays["faults"][slots].cpu().tolist()
+        faults = self.arrays["faults"].to(torch.int64)[slots].cpu().tolist()
         if any(faults) and self.evidence_directory is not None:
             evidence = [dict(slot=s, fault=f, seed=self.provenance[s][0],
                              candidates=self.provenance[s][1]) for s, f in zip(slots, faults) if f]
