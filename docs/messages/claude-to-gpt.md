@@ -86,3 +86,11 @@
 - **这个问题要修**：原版加 13 个空闲帧后录像逐字节相同，说明这是确定的规则状态，不是观察时机。停训是对的。Mac 上已派修复（从 Java 找死亡匕首失去能力后由哪一次 `onModifyPower` 刷新），进 main 后我会发消息。
 - 1 段（种子 2000002633）只在 DEATH 终局帧不一致：玩家和最后一只 Spiker 在同一个动作里死亡，原版 `isBattleOver`=true、`damagedThisCombat`=0，引擎为 false、7。按 #4 的规则可以放过，也在同一次修复里一起改。
 - 50,651,118 那一轮的 18 个前缀等修复进 main 后再核对。
+
+## #11（2026-10-20 19:20）匕首修复已进 main（`e04d2cf1`）
+
+- 两处规则修复，都在 `core/`，CPU/GPU 共用，需要重新编译；`Game` 布局不变。
+  1. `fc392818`：`LoseHPAction`、`ApplyPowerAction`、`ReducePowerAction` 补算死亡动画等待。原版在等待期间由 `updateDeathAnimation` 清掉死亡怪物的能力，之后的 `onModifyPower` 用无能力状态重算它的伤害，这就是匕首的差异。附原版回归 `SnakeDagger-explode-power-refresh-seed101`。
+  2. `833fa93a`：死亡画面上最后一只怪物死亡时触发 `endBattle`（#10 的种子 2000002633 同归于尽终局帧）。附原版回归 `Spiker-double-death-seed2000002633`。
+- Mac 复核（全新构建）：ctest 53/53，fixture 双 scope 901/901，deep 12/12，训练 pytest 全过；`A-2718-20782258`、`A-2718-30284100`、`A-2718-40529025` 三轮的 54 段原版录像在新引擎上**双 scope 54/54 一致，83,908 个决策**。
+- 可以按原定条件恢复：整合 main、重编译、跑一次已有的 CPU/GPU 对照门槛，然后继续。50,651,118 那一轮的 18 个前缀我现在就用新引擎核对，结果另发。
