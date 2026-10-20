@@ -344,13 +344,13 @@
     "output": "/home/zhuyouwei/spire-downloads/e3-training-resume-3620",
     "log": "/home/zhuyouwei/spire-downloads/e3-resume-3620.log",
     "slurm_record": "/home/zhuyouwei/spire-downloads/e3-resume-slurm-3620.txt",
-    "slurm_elapsed_seconds_at_observation": 1193,
-    "observed_at": "2026-10-20T16:39:39.224706+08:00",
+    "slurm_elapsed_seconds_at_observation": 2275,
+    "observed_at": "2026-10-20T16:57:41.073447+08:00",
     "prior_charged_seconds": 22386,
     "final": false
   },
-  "observed_cumulative_charge_seconds": 23579,
-  "remaining_seconds_at_observation": 5221,
+  "observed_cumulative_charge_seconds": 24661,
+  "remaining_seconds_at_observation": 4139,
   "final_slurm_recorder": {
     "job_id": 3620,
     "pid": 304872,
@@ -363,7 +363,7 @@
     "remaining_seconds_before_run": 11285,
     "allocation_limit_seconds": 11280
   },
-  "observed_at": "2026-10-20T16:39:39.224706+08:00",
+  "observed_at": "2026-10-20T16:57:41.073447+08:00",
   "allocation_limit_scope": "Job 3620 has a 6360-second allocation cap. Charge prior finalized 22386 seconds plus its current elapsed time; replace with the final controller duration once.",
   "recorder_history": [
     {
