@@ -154,7 +154,7 @@
   "runner_update": {
     "commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
     "authorization": "Claude29",
-    "status": "training_health_stopped",
+    "status": "3640ended; Claude32newruntime preparednotdeployed",
     "evaluation_training_interval_seconds": 3600,
     "event_search": "All pending parents and all their options cloned, simulated and scored in one batch; select winner separately for each parent",
     "event_trial_max_steps": "Normal event path maximum; combat cap3000/eventnoncombat500; independent cappedreplica counts and stalled outcomes; metrics start at migration.",
@@ -189,7 +189,7 @@
     },
     "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
   },
-  "latest_decision": "Next2718:parameterized256lanes,retainN32both,interim1024dev/full4096comparison;20update telemetry; subsequentN8/N32tenupdatecomparisononlyafternewlanesrun",
+  "latest_decision": "Claude32 authorizes fresh1729 undermapreturn/noncombat restrictions; deploywhenSSHrecovers afterqueue/costcheck",
   "prepared_resume": {
     "authorization": "Claude26+27",
     "status": "obsolete_policy784_invalidated",
@@ -212,7 +212,7 @@
     "migration_manifest_sha256": "ac5f5c4955dab1aafce05ec13bdbff9badbdf391c38754e4ed37d2ea04d90608",
     "diagnostic": "inventory/e4-784-evaluation-diagnostic.json"
   },
-  "updated_at": "2026-10-21T02:56:35.212826+08:00",
+  "updated_at": "2026-10-21T03:06:52.055885+08:00",
   "current_job": null,
   "cost_ledger": [
     {
@@ -631,7 +631,7 @@
     "initialization": 2718,
     "lanes_per_gpu": 256,
     "memory_fallback_lanes": 128,
-    "scratch_slots": 8192,
+    "scratch_slots": 8448,
     "training_trials": 32,
     "evaluation_trials": 32,
     "interim_dev_seeds": 1024,
@@ -642,5 +642,28 @@
     "benchmark": "Deferred until newlane setting runs: samecheckpoint and lanes, N8/N32 tenupdates each; report speedup; onlyClaude may authorizeN8switch",
     "runtime_validation": "Not run; code inspected, no additionalGPUallocation",
     "checkpoint_policy": "New runtime requires matchingcommit, lanes, trials and interimseedcount; no implicit oldcheckpoint migration"
+  },
+  "claude32_preparation": {
+    "authorization": "Claude32 at464b1225957d97d72d4a3380b35002f4caeb78a8",
+    "status": "prepared_not_deployed_connection_timeout",
+    "initialization": 1729,
+    "source_checkpoint": null,
+    "lanes": 32,
+    "trials": 32,
+    "training_seconds": 3600,
+    "interim_dev_seeds": 4096,
+    "policy_restriction": "Map skip at mostonce perfloor; Pythonmask cloned toSLslots, resetonfloorchange, saved/restored withcollector; PPO fragment storesidenticalmask",
+    "stall_rules": {
+      "noncombat_actual_floor_steps": 200,
+      "total_actual_floor_steps": 3000,
+      "semantics": "exceed limit on nonterminal actualtrajectory -> stalled, zero futurebootstrap, notengine death"
+    },
+    "health_rule": "Retain zero-completion stop after20; fromupdate41 stalled/windowcompleted>5percent stops; no minimum40completed for newstalled rule",
+    "diagnostics": "Stalled last10screen/actionkind, reason andperupdate/rollingwindow classifications; perrank JSONL retained",
+    "checkpoint85": "Invalidated for futuretraining; retained as evidence",
+    "native_engine": "unchanged",
+    "validation": "Source reviewed; not deployed or exercised; no additionaltestorGPUjob",
+    "connection": "Two existingSSH attempts timedout onTCP22; no networksettingschanged",
+    "cost_delta_seconds": 0
   }
 }

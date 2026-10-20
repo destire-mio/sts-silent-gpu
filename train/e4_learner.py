@@ -29,6 +29,8 @@ def update(model, optimizer, fragment, rng):
         for i, chunk in enumerate(chunks):
             with model.no_sync() if i + 1 < len(chunks) else nullcontext():
                 inputs = packed_inputs(fragment["data"], fragment["offsets"], chunk, device)
+                inputs["candidate_mask"] &= ~(fragment["map_return_blocked"][chunk, None]
+                                               & (inputs["candidate_kinds"] == 7))
                 logits, value = model(inputs)
                 policy, entropy = distribution(logits, inputs["candidate_mask"])
                 log_prob = policy.log_prob(fragment["actions"][chunk])

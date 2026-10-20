@@ -1,4 +1,4 @@
-from collections import deque
+from collections import Counter, deque
 from dataclasses import dataclass, field
 import json
 import time
@@ -90,6 +90,7 @@ class RoomSearch:
         self.last_heartbeat = time.monotonic()
         self.actual_lanes = []
         self.combat_tails = {}
+        self.map_returned = torch.zeros(self.batch.size, dtype=torch.bool, device=device)
 
     def clock(self):
         now = time.monotonic()
@@ -153,6 +154,9 @@ class RoomSearch:
         choices, values, logs = [], [], []
         for group in torch.tensor(slots, device=self.device).split(self.inference_chunk):
             inputs = network_inputs({k: self.arrays[k] for k in views_fields}, self.device, group)
+            blocked = self.map_return_blocked(group)
+            inputs["candidate_mask"] &= ~(blocked[:, None] & (inputs["candidate_kinds"] == 7))
+            assert bool(inputs["candidate_mask"].any(-1).all()), "Map-return restriction removed every action"
             logits, value = model(inputs)
             policy, _ = distribution(logits, inputs["candidate_mask"])
             action = torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
@@ -160,6 +164,10 @@ class RoomSearch:
             values.extend(value.cpu().tolist())
             logs.extend(policy.log_prob(action).cpu().tolist())
         return choices, values, logs
+
+    def map_return_blocked(self, slots):
+        self.batch.progress_tensors(self.progress_buffer)
+        return self.map_returned[slots] & (self.progress_buffer.view(-1, 9)[slots, SCREEN] == MAP)
 
     @torch.no_grad()
     def scores(self, model, slots, progress):
@@ -175,17 +183,25 @@ class RoomSearch:
 
     def step(self, slots, choices):
         indices = torch.tensor(slots, device=self.device, dtype=torch.int64)
+        self.batch.progress_tensors(self.progress_buffer)
+        before = self.progress_buffer.view(-1, 9)[indices].clone()
+        returning = (before[:, SCREEN] == MAP) & (self.arrays["candidate_kinds"][indices, choices] == 7)
+        assert not bool((returning & self.map_returned[indices]).any()), "Second map return on the same floor"
+        self.map_returned[indices] |= returning
         selected = torch.zeros(self.batch.size, dtype=torch.int32, device=self.device)
         active = torch.zeros(self.batch.size, dtype=torch.uint8, device=self.device)
         selected[indices] = torch.tensor(choices, device=self.device, dtype=torch.int32)
         active[indices] = 1
         self.batch.step_tensors(selected, active)
+        self.batch.progress_tensors(self.progress_buffer)
+        self.map_returned[indices] &= before[:, FLOOR] == self.progress_buffer.view(-1, 9)[indices, FLOOR]
         for s, a in zip(slots, choices):
             self.provenance[s][1].append(a)
         self.check(slots)
 
     def clone(self, sources, targets):
         self.batch.clone_many(sources, targets)
+        self.map_returned[targets] = self.map_returned[sources]
         for s, t in zip(sources, targets):
             seed, path = self.provenance[s]
             self.provenance[t] = (seed, path.copy())
@@ -339,6 +355,9 @@ class SegmentCollector:
         self.seeds = [None] * search.lanes
         self.paths = [[] for _ in self.seeds]
         self.floor_steps = [0] * search.lanes
+        self.noncombat_floor_steps = [0] * search.lanes
+        self.tails = [deque(maxlen=10) for _ in self.seeds]
+        self.last_stall_classes = {}
         self.pending = [deque() for _ in self.seeds]
         self.rewards = [RewardLedger() for _ in self.seeds]
         self.completed = []
@@ -351,11 +370,14 @@ class SegmentCollector:
         for s, seed in zip(slots, seeds):
             self.search.provenance[s] = (seed, [])
         self.search.batch.reset_to_many(slots, seeds, [[] for _ in slots])
+        self.search.map_returned[slots] = False
         self.search.check(slots)
         for slot, seed in zip(slots, seeds):
             self.seeds[slot] = seed
             self.paths[slot] = []
             self.floor_steps[slot] = 0
+            self.noncombat_floor_steps[slot] = 0
+            self.tails[slot].clear()
             self.pending[slot].clear()
             self.rewards[slot] = RewardLedger()
 
@@ -366,14 +388,20 @@ class SegmentCollector:
 
     def state(self):
         return dict(seeds=self.seeds, paths=self.paths, floor_steps=self.floor_steps,
+                    noncombat_floor_steps=self.noncombat_floor_steps, tails=[list(t) for t in self.tails],
+                    map_returned=self.search.map_returned[:self.search.lanes].cpu().tolist(),
+                    last_stall_classes=self.last_stall_classes,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
                     seed_rng=self.seed_rng.get_state(), search_rng=self.search.rng.get_state(),
                     decisions=self.decisions, completed=self.completed, partial=self.partial,
                     evaluation_waiting=self.evaluation_waiting)
 
     def restore(self, state):
-        for name in ("seeds", "paths", "floor_steps", "rewards", "decisions", "completed", "partial", "evaluation_waiting"):
+        for name in ("seeds", "paths", "floor_steps", "noncombat_floor_steps", "last_stall_classes",
+                     "rewards", "decisions", "completed", "partial", "evaluation_waiting"):
             setattr(self, name, state[name])
+        self.tails = [deque(t, maxlen=10) for t in state["tails"]]
+        self.search.map_returned[:self.search.lanes] = torch.tensor(state["map_returned"], device=self.search.device)
         if self.partial:
             for name, value in self.partial["result"].items():
                 self.partial["result"][name] = value.to(self.search.device)
@@ -420,26 +448,49 @@ class SegmentCollector:
     def advance(self, slots, actions, progress):
         active = [(s, a) for s, a in zip(slots, actions) if s not in self.stalled]
         if active:
+            kinds = self.search.arrays["candidate_kinds"][[s for s, _ in active],
+                                                        [a for _, a in active]].cpu().tolist()
+            for (s, _), kind in zip(active, kinds):
+                self.tails[s].append((SCREENS[progress[s][SCREEN]], ACTION_KINDS[kind]))
             self.search.step([s for s, _ in active], [a for _, a in active])
         after = self.search.progress()
         reward, terminal = [], []
         for slot, action in zip(slots, actions):
             stalled = slot in self.stalled
+            stall_reason = "all_sl_trials_capped" if stalled else None
             if not stalled:
                 self.paths[slot].append(action)
                 self.decisions += 1
                 self.floor_steps[slot] = (self.floor_steps[slot] + 1
                     if progress[slot][FLOOR] == after[slot][FLOOR] else 0)
-                if self.floor_steps[slot] > 3000 and after[slot][SCREEN] not in (DEATH, VICTORY):
+                self.noncombat_floor_steps[slot] = (self.noncombat_floor_steps[slot]
+                    + int(progress[slot][PHASE] != COMBAT_PHASE)
+                    if progress[slot][FLOOR] == after[slot][FLOOR] else 0)
+                if after[slot][SCREEN] not in (DEATH, VICTORY) and (
+                        self.floor_steps[slot] > 3000 or self.noncombat_floor_steps[slot] > 200):
                     stalled = True
+                    stall_reason = ("noncombat_floor_limit" if self.noncombat_floor_steps[slot] > 200
+                                    else "total_floor_limit")
                     self.pending[slot].clear()
             reward.append(0. if stalled else self.rewards[slot].advance(progress[slot], after[slot]))
             end = stalled or after[slot][SCREEN] in (DEATH, VICTORY)
             terminal.append(end)
             if end:
                 assert not self.pending[slot]
+                stall_class = None
+                if stalled:
+                    tail = list(self.tails[slot])
+                    stall_class = json.dumps(dict(reason=stall_reason, last10=tail), separators=(",", ":"))
+                    record = dict(event="stalled_episode", rank=self.rank, seed=self.seeds[slot],
+                        floor=after[slot][FLOOR], reason=stall_reason, last10=tail,
+                        floor_steps=self.floor_steps[slot], noncombat_floor_steps=self.noncombat_floor_steps[slot])
+                    print(json.dumps(record), flush=True)
+                    if self.search.evidence_directory is not None:
+                        with (self.search.evidence_directory / f"stalled-{self.rank}.jsonl").open("a") as out:
+                            out.write(json.dumps(record) + "\n")
                 self.completed.append(dict(seed=self.seeds[slot], candidates=self.paths[slot],
                     reach=self.rewards[slot].reach.copy(), floor=after[slot][FLOOR],
+                    stall_class=stall_class,
                     outcome="stalled" if stalled else "victory" if after[slot][SCREEN] == VICTORY else "death",
                     reward=self.rewards[slot].total / MAX_REWARD))
                 self.seeds[slot] = None
@@ -453,8 +504,8 @@ class SegmentCollector:
         if self.partial is None:
             result = dict(data=torch.empty(length * lanes * 32768, dtype=torch.uint8, device=device),
                           offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device))
-            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid"):
-                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid") else torch.float32
+            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "map_return_blocked"):
+                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid", "map_return_blocked") else torch.float32
                 result[name] = torch.zeros((length, lanes), device=device, dtype=dtype)
             self.partial = dict(result=result, next_step=0, length=length,
                                 completed_before=len(self.completed))
@@ -467,6 +518,7 @@ class SegmentCollector:
                 self.fresh(fresh)
             progress = self.search.progress()
             actions, values, logs, imitation = self.choose(model, slots, progress)
+            result["map_return_blocked"][t] = self.search.map_return_blocked(index)
             row = t * lanes
             store_inputs(self.search.batch, self.search.arrays, index, result["data"],
                          result["offsets"][row:row + lanes + 1])
@@ -490,9 +542,10 @@ class SegmentCollector:
             result["advantages"][t] = advantage
             bootstrap = result["values"][t]
         result["returns"] = result["values"] + result["advantages"]
-        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "advantages", "returns"):
+        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "map_return_blocked", "advantages", "returns"):
             result[name] = result[name].flatten()
         completed = self.completed[self.partial["completed_before"]:]
+        self.last_stall_classes = dict(Counter(e["stall_class"] for e in completed if e["outcome"] == "stalled"))
         result["health"] = torch.tensor([len(completed), sum(e["floor"] for e in completed),
             sum(e["outcome"] == "stalled" for e in completed),
             max((self.floor_steps[s] for s in live), default=0)], dtype=torch.int64, device=device)

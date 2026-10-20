@@ -1,5 +1,5 @@
 import argparse
-from collections import deque
+from collections import Counter, deque
 from datetime import timedelta
 import json
 import os
@@ -50,7 +50,9 @@ def summaries(episodes):
     return dict(episodes=len(episodes), average_floor=sum(e["floor"] for e in episodes) / len(episodes),
                 reach={key: sum(e["reach"][key] for e in episodes) / len(episodes) for key in REACH},
                 victories=sum(e["outcome"] == "victory" for e in episodes),
-                stalled=sum(e["outcome"] == "stalled" for e in episodes), faults=0, truncated=0)
+                stalled=sum(e["outcome"] == "stalled" for e in episodes),
+                stall_classes=dict(Counter(e["stall_class"] for e in episodes if e["outcome"] == "stalled")),
+                faults=0, truncated=0)
 
 
 def audit(episodes, round_name, version, commit):
@@ -91,7 +93,7 @@ def main():
     ppo_rng = torch.Generator(device=device).manual_seed(args.initialization + rank)
     search_rng = torch.Generator(device=device).manual_seed(args.initialization + 1000 + rank)
     seeds_rng = torch.Generator().manual_seed(args.initialization + 2000 + rank)
-    scratch_slots = max(4096, args.lanes * max(args.trials, 32))
+    scratch_slots = max(4096, args.lanes * (max(args.trials, 32) + 1))
     search = RoomSearch(args.lanes, args.trials, device, search_rng, scratch_slots=scratch_slots)
     search.evidence_directory = args.output
     free_bytes, total_bytes = torch.cuda.mem_get_info(device)
@@ -189,12 +191,21 @@ def main():
                 dist.all_reduce(health[:3], op=dist.ReduceOp.SUM)
                 dist.all_reduce(health[3:], op=dist.ReduceOp.MAX)
                 completed, floor_sum, stalled, max_floor_steps = health.cpu().tolist()
+                rank_classes = [None] * world
+                dist.all_gather_object(rank_classes, collector.last_stall_classes)
+                stall_classes = Counter()
+                for counts in rank_classes:
+                    stall_classes.update(counts)
                 health_report = dict(completed_episodes=completed,
                     completed_average_floor=floor_sum / completed if completed else None,
-                    stalled_episodes=stalled, active_max_floor_steps=max_floor_steps)
-                health_history.append((completed, stalled))
-                window_completed = sum(count for count, _ in health_history)
-                window_stalled = sum(count for _, count in health_history)
+                    stalled_episodes=stalled, active_max_floor_steps=max_floor_steps,
+                    stall_classes=dict(stall_classes))
+                health_history.append((completed, stalled, dict(stall_classes)))
+                window_completed = sum(count for count, _, _ in health_history)
+                window_stalled = sum(count for _, count, _ in health_history)
+                window_classes = Counter()
+                for _, _, counts in health_history:
+                    window_classes.update(counts)
                 ready = None
                 version += 1
                 elapsed = torch.tensor(time.monotonic() - start, device=device)
@@ -223,14 +234,15 @@ def main():
                                           initialization=args.initialization, lanes=args.lanes,
                                           trials=search.trials, **memory_report,
                                           **health_report, **metrics)), flush=True)
-                if version > 20 and (window_completed == 0
-                        or window_completed >= 40 and window_stalled * 20 > window_completed):
+                if (version > 20 and window_completed == 0
+                        or version > 40 and window_stalled * 20 > window_completed):
                     if rank == 0:
                         atomic_json(args.output / "training-health-stop.json",
                                     dict(version=version, **health_report,
                                          window_updates=len(health_history),
                                          window_completed_episodes=window_completed,
-                                         window_stalled_episodes=window_stalled))
+                                         window_stalled_episodes=window_stalled,
+                                         window_stall_classes=dict(window_classes)))
                     checkpoint("training_health_stop")
                     break
                 if trained_seconds < next_evaluation:
