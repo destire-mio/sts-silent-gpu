@@ -1,54 +1,40 @@
 {
-  "recorded_at": "2026-10-21T00:06:18.749269+08:00",
+  "recorded_at": "2026-10-21T00:17:21.590044+08:00",
   "step": 1,
-  "status": "initialization1729_evaluation_delayed_cause_unconfirmed",
-  "fixed_commit": "05199891233d6c8b79cf84cace5ebf895e2ad883",
-  "main_reviewed": "0e040e47d170d956ba9268dbc400a86a4165f4fb",
+  "status": "initialization1729_restarted_after_batched_events",
+  "fixed_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
+  "main_reviewed": "6520fec25fb942277dca6c6be5b5ea9cd9412a6c",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 28800,
-    "settled_node_seconds": 0,
+    "settled_node_seconds": 3477,
     "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 3145
+    "active_elapsed_at_snapshot": 72
   },
   "job": {
-    "id": 3632,
+    "id": 3637,
     "gpus": 8,
     "state": "RUNNING",
-    "start": "2026-10-20T23:13:53+08:00",
+    "start": "2026-10-21T00:16:09+08:00",
     "time_limit_seconds": 7200,
-    "output": "/home/zhuyouwei/spire-downloads/e4-training-3632/A-1729",
-    "log": "/home/zhuyouwei/spire-downloads/e4-training-3632.slurm.log"
+    "output": "/home/zhuyouwei/spire-downloads/e4-training-3637/A-1729",
+    "log": "/home/zhuyouwei/spire-downloads/e4-training-3637.slurm.log"
   },
   "initialization": 1729,
   "training_seconds_target": 3600,
   "latest_update": {
-    "version": 103,
-    "trained_seconds": 1205.80011844635,
-    "actual_steps": 1687552,
-    "actual_steps_per_training_second": 1399.52880596361,
-    "source": "103 completed updates x64 steps x32 lanes x8 ranks / sum training update wall times",
-    "sl_trial_steps_per_second": null,
-    "search_rate_note": "Running fixed version does not log search counters; do not infer a value"
+    "version": 1,
+    "trained_seconds": 24.930091857910156,
+    "update_seconds": 24.930091857910156,
+    "actual_steps": 16384,
+    "sl_trial_steps": 413542,
+    "actual_steps_per_second": 657.19775390625,
+    "sl_trial_steps_per_second": 16588.06640625,
+    "source": "First completed distributed update, global8rank step sums / maxrank updatewall"
   },
   "saved_checkpoint_version": 0,
-  "next": "Inspect incomplete evaluation when saved; preserve all seeds and pending trajectories. Keep fixed runtime; latest authorized future evaluation interval3600training seconds. Check queue and cumulative budget before any resume.",
+  "next": "Monitor3637; evaluate all4096dev each3600training seconds after pre-evaluation checkpoint and queuecheck; report longest event trial path inclselected nestedcombat actions. No step cap. Then2718 after latestmain/cost check.",
   "evaluation_complete": false,
-  "pending_runner_update": {
-    "commit": "ce0975822992e044d271febd713c24a7de212fae",
-    "authorization": "Claude #21 at099443eced2eb74f522fa05c4c7cf5dee81a8336",
-    "evaluation_training_interval_seconds": 3600,
-    "metrics": [
-      "actual_steps",
-      "sl_trial_steps",
-      "update_seconds",
-      "actual_steps_per_second",
-      "sl_trial_steps_per_second"
-    ],
-    "status": "prepared, not deployed into running job3632",
-    "application": "At next checkpoint handoff or next initialization; preserve current fixed job and explicitly migrate checkpoint provenance if resuming across code commits",
-    "current_job_interval_seconds": 1200
-  },
   "evaluation_delay": {
     "observed_at": "2026-10-21T00:06:18.749269+08:00",
     "update103_first_observed_at": "2026-10-20T23:34:34.635333+08:00",
@@ -75,5 +61,56 @@
       "3632|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-1729"
     ],
     "checkpoint_policy": "Keep current runtime fixed and preserve partial evaluation at its allocation boundary; no new job submitted."
+  },
+  "prior_attempts": [
+    {
+      "job": {
+        "id": 3632,
+        "gpus": 8,
+        "state": "RUNNING",
+        "start": "2026-10-20T23:13:53+08:00",
+        "time_limit_seconds": 7200,
+        "output": "/home/zhuyouwei/spire-downloads/e4-training-3632/A-1729",
+        "log": "/home/zhuyouwei/spire-downloads/e4-training-3632.slurm.log"
+      },
+      "latest_update": {
+        "version": 103,
+        "trained_seconds": 1205.80011844635,
+        "actual_steps": 1687552,
+        "actual_steps_per_training_second": 1399.52880596361,
+        "source": "103 completed updates x64 steps x32 lanes x8 ranks / sum training update wall times",
+        "sl_trial_steps_per_second": null,
+        "search_rate_note": "Running fixed version does not log search counters; do not infer a value"
+      },
+      "last_durable_checkpoint_version": 0,
+      "state": "CANCELLED",
+      "exit_code": "0:15",
+      "charged_node_seconds": 3477,
+      "gpu_seconds": 27816,
+      "cancelled_at": "2026-10-21T00:11:50+08:00",
+      "authorization": "Claude23 at6520fec25fb942277dca6c6be5b5ea9cd9412a6c",
+      "decision": "Accept loss of unsaved20minutes and restart1729 from scratch after batching events and existingSLreplay",
+      "accounting": "/home/zhuyouwei/spire-downloads/e4-training-3632/accounting-final.txt",
+      "accounting_sha256": "3d51712593eb58fa9d47c62baf5248fa599f2eba05126ebbdeaf6b609c9d4ff2"
+    }
+  ],
+  "runner_update": {
+    "commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
+    "authorization": "Claude21+23",
+    "status": "deployed",
+    "evaluation_training_interval_seconds": 3600,
+    "event_search": "All pending parents and all their options cloned, simulated and scored in one batch; select winner separately for each parent",
+    "event_trial_max_steps": "Globalmax perassessment of actual candidate event path lengths, including selected nestedcombat trajectory; no cap, checkpointed across partial evaluation resume",
+    "checkpoint": "Before every evaluation; preserve optimizer,RNG,collector,trainingclock; queue checked before and after assessment",
+    "existing_replay": {
+      "seed": 1000000000,
+      "event_selected_steps": 5,
+      "combat_selected_steps": 21,
+      "total_prefix_steps": 27,
+      "full_game_and_history_equal": true,
+      "executions": 1,
+      "log": "/home/zhuyouwei/spire-downloads/e4-training-3637/e4-replay.log",
+      "sha256": "92c6b57a912faa5861c31f76dfed84207f4c5d6d4c1a56edca4ba04e7cb87866"
+    }
   }
 }
