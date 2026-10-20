@@ -1,25 +1,25 @@
 {
-  "recorded_at": "2026-10-21T01:51:40+08:00",
+  "recorded_at": "2026-10-21T02:20:45+08:00",
   "step": 1,
-  "status": "initialization1729_first_evaluation_delayed",
-  "fixed_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
-  "main_reviewed": "30b17eecdedaffeafa3341502e30acc50d9cb356",
+  "status": "policy784_resumed_evaluation_actual_ui_loop_observed",
+  "fixed_commit": "5cf2432d96c4dd47066f5b02aa33c352b30cb8c4",
+  "main_reviewed": "e02e3cd413a8b56da4a81a0c779ef8d17c85da39",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 28800,
-    "settled_node_seconds": 3477,
-    "reserved_node_seconds": 7200,
-    "active_elapsed_at_snapshot": 5731,
-    "used_including_active_snapshot": 9208
+    "settled_node_seconds": 10590,
+    "reserved_node_seconds": 3600,
+    "active_elapsed_at_snapshot": 237,
+    "used_including_active_snapshot": 10827
   },
   "job": {
-    "id": 3637,
+    "id": 3638,
     "gpus": 8,
     "state": "RUNNING",
-    "start": "2026-10-21T00:16:09+08:00",
-    "time_limit_seconds": 7200,
-    "output": "/home/zhuyouwei/spire-downloads/e4-training-3637/A-1729",
-    "log": "/home/zhuyouwei/spire-downloads/e4-training-3637.slurm.log"
+    "start": "2026-10-21T02:16:48+08:00",
+    "time_limit_seconds": 3600,
+    "output": "/home/zhuyouwei/spire-downloads/e4-training-3638/A-1729",
+    "log": "/home/zhuyouwei/spire-downloads/e4-training-3638.slurm.log"
   },
   "initialization": 1729,
   "training_seconds_target": 3600,
@@ -32,7 +32,7 @@
     "throughput_scope": "Last completed update global8rank sums / maximum rank wall time"
   },
   "saved_checkpoint_version": 784,
-  "next": "Monitor3637; evaluate all4096dev each3600training seconds after pre-evaluation checkpoint and queuecheck; report longest event trial path inclselected nestedcombat actions. No step cap. Then2718 after latestmain/cost check.",
+  "next": "Monitor3638 fixedversion; Claude decision pending on actual map/event loop; no fabricated deaths. Finishassessment then2718 only aftercost/main/queuecheck.",
   "evaluation_complete": false,
   "prior_attempts": [
     {
@@ -91,15 +91,31 @@
         ],
         "checkpoint_policy": "Keep current runtime fixed and preserve partial evaluation at its allocation boundary; no new job submitted."
       }
+    },
+    {
+      "job": {
+        "id": 3637,
+        "gpus": 8,
+        "state": "RUNNING",
+        "start": "2026-10-21T00:16:09+08:00",
+        "time_limit_seconds": 7200,
+        "output": "/home/zhuyouwei/spire-downloads/e4-training-3637/A-1729",
+        "log": "/home/zhuyouwei/spire-downloads/e4-training-3637.slurm.log"
+      },
+      "state": "COMPLETED",
+      "elapsed_seconds": 7113,
+      "exit_code": "0:0",
+      "checkpoint_reason": "allocation_limit_during_evaluation",
+      "version": 784
     }
   ],
   "runner_update": {
-    "commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
-    "authorization": "Claude21+23",
-    "status": "deployed",
+    "commit": "5cf2432d96c4dd47066f5b02aa33c352b30cb8c4",
+    "authorization": "Claude26+27",
+    "status": "deployed_running",
     "evaluation_training_interval_seconds": 3600,
     "event_search": "All pending parents and all their options cloned, simulated and scored in one batch; select winner separately for each parent",
-    "event_trial_max_steps": "Globalmax perassessment of actual candidate event path lengths, including selected nestedcombat trajectory; no cap, checkpointed across partial evaluation resume",
+    "event_trial_max_steps": "Normal event path maximum; combat cap3000/eventnoncombat500; independent cappedreplica counts and stalled outcomes; metrics start at migration.",
     "checkpoint": "Before every evaluation; preserve optimizer,RNG,collector,trainingclock; queue checked before and after assessment",
     "existing_replay": {
       "seed": 1000000000,
@@ -120,7 +136,7 @@
     "fault_files": [],
     "checkpoint_reason": "before_evaluation",
     "checkpoint_version": 784,
-    "cause": "unconfirmed",
+    "cause": "Saved rank0 lane0 actual trajectory alternates event choose0 and map skip4 at floor0; all256 first-heartbeat lanes floor0, no longSL replica evidence. This identifies a cross-decision loop in sampled lane, not an engine fault.",
     "remote_evidence_directory": "/home/zhuyouwei/spire-downloads/e4-3637-evaluation-delay",
     "sha256": {
       "log-snapshot.txt": "d39844e35389524e3d4a5dedc1ac8a90379730be5f87c53e2f386b141ee05f93",
@@ -129,10 +145,10 @@
     },
     "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
   },
-  "latest_decision": "Claude25: only step1 now; later human-likeSL and MCTS fallback await separate task after step1.",
+  "latest_decision": "Claude26+27 deployed; e02e3cd reward policy reviewed; real actual-path UI loop reported pending project decision",
   "prepared_resume": {
     "authorization": "Claude26+27",
-    "status": "prepared_not_deployed",
+    "status": "deployed_running",
     "source_job": 3637,
     "source_policy_version": 784,
     "source_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
@@ -146,6 +162,79 @@
     ],
     "migration": "Explicit offline migration to new checkpoint directory with source and destination SHA256; preserve model, optimizer, RNGs, queues, partial assessment and historical earned rewards; cap counters begin at migration",
     "next": "Resume version784 evaluation first; do not train again before completing this assessment",
-    "runtime_validation": "Not run; current job remains fixed and no extra test job submitted"
+    "runtime_validation": "Resumed784 evaluation observed; all8 rank heartbeats emitted; full evaluation not complete",
+    "job": 3638,
+    "fixed_commit": "5cf2432d96c4dd47066f5b02aa33c352b30cb8c4",
+    "migration_manifest_sha256": "ac5f5c4955dab1aafce05ec13bdbff9badbdf391c38754e4ed37d2ea04d90608",
+    "diagnostic": "inventory/e4-784-evaluation-diagnostic.json"
+  },
+  "updated_at": "2026-10-21T02:20:59.267065+08:00",
+  "current_job": 3638,
+  "cost_ledger": [
+    {
+      "job_id": 3628,
+      "step": 0,
+      "charged_node_seconds": 1,
+      "gpu_seconds": 1,
+      "source": "scontrol RunTime=00:00:01; sacct disabled",
+      "policy": "conservative full-node elapsed charge"
+    },
+    {
+      "job_id": 3629,
+      "step": 0,
+      "charged_node_seconds": 85,
+      "gpu_seconds": 680,
+      "source": "scontrol RunTime=00:01:25",
+      "exit_code": "1:0",
+      "failure": "PyTorch CUDA UInt32 indexing in E4 orchestration"
+    },
+    {
+      "job_id": 3630,
+      "step": 0,
+      "charged_node_seconds": 116,
+      "gpu_seconds": 928,
+      "source": "scontrol RunTime=00:01:56",
+      "exit_code": "1:0",
+      "failure": "Collector choose actions variable shadowed by selected path"
+    },
+    {
+      "job_id": 3631,
+      "step": 0,
+      "charged_node_seconds": 1925,
+      "gpu_seconds": 15400,
+      "source": "scontrol RunTime=00:32:05",
+      "exit_code": "0:0"
+    },
+    {
+      "job_id": 3632,
+      "step": 1,
+      "charged_node_seconds": 3477,
+      "gpu_seconds": 27816,
+      "source": "scontrol final RunTime00:57:57, accounting-final.txt",
+      "exit_code": "0:15",
+      "reason": "Cancelled perClaude23; accept loss of20minutes unsaved training; preserve evidence"
+    },
+    {
+      "job_id": 3637,
+      "step": 1,
+      "charged_node_seconds": 7113,
+      "gpu_seconds": 56904,
+      "source": "scontrol final RunTime01:58:33, accounting-final.txt",
+      "exit_code": "0:0",
+      "accounting_sha256": "5a5dd4595552917a0364794a8405209fa5e07e8187534b6f8d2d5f28fb26810f"
+    }
+  ],
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
+    },
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 10590,
+      "limit_node_seconds": 28800,
+      "reserved_node_seconds": 3600
+    }
   }
 }
