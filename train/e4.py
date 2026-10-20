@@ -451,7 +451,7 @@ class SegmentCollector:
         slots = list(range(lanes))
         index = torch.arange(lanes, device=device)
         if self.partial is None:
-            result = dict(data=torch.empty(64 * 1024 * 1024, dtype=torch.uint8, device=device),
+            result = dict(data=torch.empty(length * lanes * 32768, dtype=torch.uint8, device=device),
                           offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device))
             for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid"):
                 dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid") else torch.float32

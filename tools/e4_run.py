@@ -70,7 +70,9 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seconds", type=int, required=True)
     parser.add_argument("--initialization", type=int, default=1729)
-    parser.add_argument("--trials", type=int, default=8)
+    parser.add_argument("--trials", type=int, default=32)
+    parser.add_argument("--lanes", type=int, default=32)
+    parser.add_argument("--interim-dev-seeds", type=int, choices=(1024, 4096), default=4096)
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--training-seconds", type=int, required=True)
     args = parser.parse_args()
@@ -89,8 +91,11 @@ def main():
     ppo_rng = torch.Generator(device=device).manual_seed(args.initialization + rank)
     search_rng = torch.Generator(device=device).manual_seed(args.initialization + 1000 + rank)
     seeds_rng = torch.Generator().manual_seed(args.initialization + 2000 + rank)
-    search = RoomSearch(32, args.trials, device, search_rng)
+    scratch_slots = max(4096, args.lanes * max(args.trials, 32))
+    search = RoomSearch(args.lanes, args.trials, device, search_rng, scratch_slots=scratch_slots)
     search.evidence_directory = args.output
+    free_bytes, total_bytes = torch.cuda.mem_get_info(device)
+    non_torch_bytes = total_bytes - free_bytes - torch.cuda.memory_reserved(device)
     collector = SegmentCollector(search, seeds_rng, rank=rank)
     version, trained_seconds, next_evaluation = 0, 0., 3600.
     best, stagnant, assessments = dict.fromkeys(REACH, 0.), 0, []
@@ -100,10 +105,13 @@ def main():
     evaluation_state = None
     train_state = None
     evaluation_seconds = 0.
+    evaluation_seed_count = 4096
     health_history = deque(maxlen=20)
     if args.resume:
         saved = torch.load(args.resume / f"rank-{rank}.pt", map_location="cpu", weights_only=False)
         assert saved["commit"] == commit and saved["initialization"] == args.initialization
+        assert saved["lanes"] == args.lanes and saved["trials"] == args.trials
+        assert saved["interim_dev_seeds"] == args.interim_dev_seeds
         policy.load_state_dict(saved["model"])
         optimizer.load_state_dict(saved["optimizer"])
         ppo_rng.set_state(saved["ppo_rng"])
@@ -118,12 +126,12 @@ def main():
         phase, calibration_index = saved["phase"], saved["calibration_index"]
         evaluation_state, train_state = saved["evaluation_state"], saved["train_state"]
         evaluation_seconds = saved["evaluation_seconds"]
+        evaluation_seed_count = saved["evaluation_seed_count"]
         search.event_trial_max_steps = saved["event_trial_max_steps"]
         search.metrics = saved["search_metrics"]
         health_history.extend(saved["health_history"])
     allocation_start = time.monotonic()
     search.deadline = allocation_start + args.seconds - 60
-    dev_seeds = list(range(2000000000 + rank, 2000004096, world))
 
     def checkpoint(reason):
         atomic_checkpoint(args.output / f"rank-{rank}.pt", dict(commit=commit,
@@ -134,11 +142,14 @@ def main():
             ready=ready, phase=phase, calibration_index=calibration_index,
             evaluation_state=evaluation_state, train_state=train_state, evaluation_seconds=evaluation_seconds,
             event_trial_max_steps=search.event_trial_max_steps, search_metrics=search.metrics,
-            health_history=list(health_history)))
+            health_history=list(health_history), lanes=args.lanes, trials=args.trials,
+            interim_dev_seeds=args.interim_dev_seeds, evaluation_seed_count=evaluation_seed_count))
         dist.barrier()
         if rank == 0:
             atomic_json(args.output / "status.json", dict(reason=reason, task=args.task, phase=phase, version=version,
-                initialization=args.initialization, trials=search.trials, trained_seconds=trained_seconds,
+                initialization=args.initialization, trials=search.trials, lanes=args.lanes,
+                scratch_slots=scratch_slots, evaluation_seed_count=evaluation_seed_count,
+                trained_seconds=trained_seconds,
                 allocation_process_seconds=time.monotonic() - allocation_start,
                 job=os.environ["SLURM_JOB_ID"], commit=commit, stagnant=stagnant, assessments=assessments,
                 calibration_index=calibration_index, checkpoint_files=[f"rank-{r}.pt" for r in range(world)]))
@@ -157,6 +168,8 @@ def main():
                 search.trials = (8, 16, 32)[calibration_index]
                 phase = "evaluation"
             if phase == "training":
+                if version < 20:
+                    torch.cuda.reset_peak_memory_stats(device)
                 start = time.monotonic()
                 actual_before = collector.decisions
                 searched_before = search.searched_decisions
@@ -191,13 +204,25 @@ def main():
                                      dtype=torch.int64, device=device)
                 dist.all_reduce(steps, op=dist.ReduceOp.SUM)
                 trained_seconds += float(elapsed)
+                memory_report = {}
+                if version <= 20:
+                    peak = torch.tensor([torch.cuda.max_memory_allocated(device),
+                        torch.cuda.max_memory_reserved(device),
+                        non_torch_bytes + torch.cuda.max_memory_reserved(device)], device=device)
+                    dist.all_reduce(peak, op=dist.ReduceOp.MAX)
+                    memory_report = dict(peak_torch_allocated_bytes=int(peak[0]),
+                        peak_torch_reserved_bytes=int(peak[1]),
+                        estimated_peak_device_bytes=int(peak[2]),
+                        memory_scope="max_across_ranks; device estimate adds static non-PyTorch allocation")
                 if rank == 0:
                     print(json.dumps(dict(event="update", version=version, trained_seconds=trained_seconds,
                                           update_seconds=float(elapsed),
                                           actual_steps=int(steps[0]), sl_trial_steps=int(steps[1]),
                                           actual_steps_per_second=float(steps[0] / elapsed),
                                           sl_trial_steps_per_second=float(steps[1] / elapsed),
-                                          initialization=args.initialization, **health_report, **metrics)), flush=True)
+                                          initialization=args.initialization, lanes=args.lanes,
+                                          trials=search.trials, **memory_report,
+                                          **health_report, **metrics)), flush=True)
                 if version > 20 and (window_completed == 0
                         or window_completed >= 40 and window_stalled * 20 > window_completed):
                     if rank == 0:
@@ -211,8 +236,11 @@ def main():
                 if trained_seconds < next_evaluation:
                     continue
                 train_state = collector.state()
+                evaluation_seed_count = (4096 if trained_seconds >= args.training_seconds
+                                         else args.interim_dev_seeds)
                 phase = "evaluation"
             if phase == "evaluation":
+                dev_seeds = list(range(2000000000 + rank, 2000000000 + evaluation_seed_count, world))
                 if evaluation_state is None:
                     search.event_trial_max_steps = 0
                     search.metrics = dict.fromkeys(SEARCH_METRICS, 0)
@@ -253,15 +281,17 @@ def main():
                 dist.all_reduce(search_counts, op=dist.ReduceOp.SUM)
                 dist.all_reduce(search_maxima, op=dist.ReduceOp.MAX)
                 search_summary = dict(zip(SEARCH_METRICS, search_counts.cpu().tolist() + search_maxima.cpu().tolist()))
-                round_name = f"E4-{args.initialization}-{version}-N{search.trials}"
+                round_name = f"E4-{args.initialization}-{version}-N{search.trials}-D{evaluation_seed_count}"
                 atomic_json(args.output / f"{round_name}-rank-{rank}.json", episodes)
                 dist.barrier()
                 if rank == 0:
                     all_episodes = sum([json.loads((args.output / f"{round_name}-rank-{r}.json").read_text())
                                         for r in range(world)], [])
-                    assert len(all_episodes) == 4096 and len({e["seed"] for e in all_episodes}) == 4096
+                    assert len(all_episodes) == evaluation_seed_count
+                    assert len({e["seed"] for e in all_episodes}) == evaluation_seed_count
                     summary = dict(summaries(all_episodes), round=round_name, version=version,
-                                   trials=search.trials, evaluation_seconds=evaluation_seconds,
+                                   trials=search.trials, lanes=args.lanes, dev_seed_count=evaluation_seed_count,
+                                   evaluation_seconds=evaluation_seconds,
                                    event_trial_max_steps=search.event_trial_max_steps, **search_summary)
                     atomic_json(args.output / f"{round_name}-summary.json", summary)
                     atomic_json(args.output / f"{round_name}-audit.json", audit(all_episodes, round_name, version, commit))
@@ -276,7 +306,12 @@ def main():
                     phase = "calibration"
                 else:
                     improved = any(summary["reach"][key] - best[key] >= .02 for key in REACH)
-                    stagnant = 0 if improved else stagnant + 1
+                    next_stagnant = 0 if improved else stagnant + 1
+                    if next_stagnant >= 3 and evaluation_seed_count < 4096:
+                        evaluation_seed_count = 4096
+                        checkpoint("before_full_stopping_assessment")
+                        continue
+                    stagnant = next_stagnant
                     best = {key: max(best[key], summary["reach"][key]) for key in REACH}
                     collector = SegmentCollector(search, seeds_rng, rank=rank)
                     collector.restore(train_state)

@@ -624,5 +624,23 @@
     ],
     "action": "Preserved85 checkpoints; no restart or extraGPUjob; full1729assessment not reached",
     "observed_at": "2026-10-21T02:53:44.017662+08:00"
+  },
+  "next_initialization_preparation": {
+    "authorization": "Claude30+31 at4ac47b6",
+    "status": "prepared_not_deployed_not_run",
+    "initialization": 2718,
+    "lanes_per_gpu": 256,
+    "memory_fallback_lanes": 128,
+    "scratch_slots": 8192,
+    "training_trials": 32,
+    "evaluation_trials": 32,
+    "interim_dev_seeds": 1024,
+    "comparison_dev_seeds": 4096,
+    "stagnation_confirmation_dev_seeds": 4096,
+    "telemetry": "first20updates actualsteps/sec, SLsteps/sec, max rank PyTorch allocated/reserved peaks; totaldevice peak estimate adds static nonTorch allocation and is labeled estimate",
+    "health_stop": "Existing immediate save/exit remains; no automatic evaluation or resume of unhealthy policy",
+    "benchmark": "Deferred until newlane setting runs: samecheckpoint and lanes, N8/N32 tenupdates each; report speedup; onlyClaude may authorizeN8switch",
+    "runtime_validation": "Not run; code inspected, no additionalGPUallocation",
+    "checkpoint_policy": "New runtime requires matchingcommit, lanes, trials and interimseedcount; no implicit oldcheckpoint migration"
   }
 }
