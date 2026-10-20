@@ -85,6 +85,7 @@ class RoomSearch:
         self.inference_chunk = inference_chunk
         self.deadline = float("inf")
         self.searched_decisions = 0
+        self.event_trial_max_steps = 0
         self.provenance = {}
         self.evidence_directory = None
 
@@ -190,43 +191,47 @@ class RoomSearch:
                 or (p[SCREEN] == ROOM_SCREEN and p[PHASE] == COMPLETE_PHASE))
 
     def event(self, model, sources):
-        selected_paths = {}
+        options = []
+        parents = []
+        groups = []
         for parent in sources:
             kinds = self.arrays["candidate_kinds"][parent].cpu().tolist()
-            options = [i for i, kind in enumerate(kinds) if kind == 3]
-            count = len(options)
-            assert count
-            slots = self.take(count)
-            try:
-                self.clone([parent] * count, slots)
-                paths = {s: [a] for a, s in zip(options, slots)}
-                self.step(slots, options)
-                self.searched_decisions += count
-                live = slots[:]
-                while live:
-                    self.clock()
-                    progress = self.progress()
-                    live = [s for s in live if not self.event_exit(progress[s])]
-                    fighting = [s for s in live if progress[s][PHASE] == COMBAT_PHASE]
-                    if fighting:
-                        branches = self.combat(model, fighting)
-                        for s, actions in branches.items():
-                            paths[s].extend(actions)
-                        continue
-                    if live:
-                        choices, _, _ = self.predict(model, live)
-                        self.step(live, choices)
-                        self.searched_decisions += len(live)
-                        for s, a in zip(live, choices):
-                            paths[s].append(a)
+            choices = [i for i, kind in enumerate(kinds) if kind == 3]
+            assert choices
+            groups.append((len(options), len(options) + len(choices)))
+            options.extend(choices)
+            parents.extend([parent] * len(choices))
+        slots = self.take(len(options))
+        paths = {s: [a] for a, s in zip(options, slots)}
+        try:
+            self.clone(parents, slots)
+            self.step(slots, options)
+            self.searched_decisions += len(slots)
+            live = slots[:]
+            while live:
+                self.clock()
                 progress = self.progress()
-                scores = self.scores(model, slots, progress)
-                winner = max(slots, key=scores.get)
-                self.clone([winner], [parent])
-                selected_paths[parent] = paths[winner]
-            finally:
-                self.available.extend(slots)
-        return selected_paths
+                live = [s for s in live if not self.event_exit(progress[s])]
+                fighting = [s for s in live if progress[s][PHASE] == COMBAT_PHASE]
+                if fighting:
+                    branches = self.combat(model, fighting)
+                    for s, actions in branches.items():
+                        paths[s].extend(actions)
+                    continue
+                if live:
+                    choices, _, _ = self.predict(model, live)
+                    self.step(live, choices)
+                    self.searched_decisions += len(live)
+                    for s, a in zip(live, choices):
+                        paths[s].append(a)
+            progress = self.progress()
+            scores = self.scores(model, slots, progress)
+            winners = [max(slots[begin:end], key=scores.get) for begin, end in groups]
+            self.clone(winners, sources)
+            return {parent: paths[winner] for parent, winner in zip(sources, winners)}
+        finally:
+            self.event_trial_max_steps = max(self.event_trial_max_steps, max(map(len, paths.values())))
+            self.available.extend(slots)
 
     def plan(self, model, sources, kind):
         backups = self.take(len(sources))

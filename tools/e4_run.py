@@ -115,6 +115,7 @@ def main():
         phase, calibration_index = saved["phase"], saved["calibration_index"]
         evaluation_state, train_state = saved["evaluation_state"], saved["train_state"]
         evaluation_seconds = saved["evaluation_seconds"]
+        search.event_trial_max_steps = saved["event_trial_max_steps"]
     allocation_start = time.monotonic()
     search.deadline = allocation_start + args.seconds - 60
     dev_seeds = list(range(2000000000 + rank, 2000004096, world))
@@ -126,7 +127,8 @@ def main():
             collector=collector.state(), version=version, trained_seconds=trained_seconds,
             next_evaluation=next_evaluation, best=best, stagnant=stagnant, assessments=assessments,
             ready=ready, phase=phase, calibration_index=calibration_index,
-            evaluation_state=evaluation_state, train_state=train_state, evaluation_seconds=evaluation_seconds))
+            evaluation_state=evaluation_state, train_state=train_state, evaluation_seconds=evaluation_seconds,
+            event_trial_max_steps=search.event_trial_max_steps))
         dist.barrier()
         if rank == 0:
             atomic_json(args.output / "status.json", dict(reason=reason, task=args.task, phase=phase, version=version,
@@ -186,6 +188,14 @@ def main():
                 phase = "evaluation"
             if phase == "evaluation":
                 if evaluation_state is None:
+                    search.event_trial_max_steps = 0
+                checkpoint("before_evaluation")
+                waiting = [queue_waiting() if rank == 0 else None]
+                dist.broadcast_object_list(waiting, src=0)
+                if waiting[0]:
+                    checkpoint("yield_to_waiting_user")
+                    break
+                if evaluation_state is None:
                     collector = SegmentCollector(search, seeds_rng, rank=rank)
                     search_rng.manual_seed(args.initialization + 1000 + rank)
                 else:
@@ -203,6 +213,9 @@ def main():
                 elapsed = torch.tensor(time.monotonic() - start, device=device)
                 dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
                 evaluation_seconds += float(elapsed)
+                event_steps = torch.tensor(search.event_trial_max_steps, dtype=torch.int64, device=device)
+                dist.all_reduce(event_steps, op=dist.ReduceOp.MAX)
+                search.event_trial_max_steps = int(event_steps)
                 if collective_stop(expired, device):
                     evaluation_state = collector.state()
                     atomic_json(args.output / f"partial-evaluation-{rank}.json", episodes)
@@ -216,7 +229,8 @@ def main():
                                         for r in range(world)], [])
                     assert len(all_episodes) == 4096 and len({e["seed"] for e in all_episodes}) == 4096
                     summary = dict(summaries(all_episodes), round=round_name, version=version,
-                                   trials=search.trials, evaluation_seconds=evaluation_seconds)
+                                   trials=search.trials, evaluation_seconds=evaluation_seconds,
+                                   event_trial_max_steps=search.event_trial_max_steps)
                     atomic_json(args.output / f"{round_name}-summary.json", summary)
                     atomic_json(args.output / f"{round_name}-audit.json", audit(all_episodes, round_name, version, commit))
                     print(json.dumps(dict(event="evaluation", **summary)), flush=True)
