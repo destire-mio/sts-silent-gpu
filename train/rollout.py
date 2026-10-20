@@ -27,6 +27,7 @@ def make_batch(size, cap, device):
 def make_root_cache(size, device):
     if device.type == "cuda":
         import spire_gpu
+        torch.cuda.empty_cache()
         return spire_gpu.RootCache(size)
     import spire
     assert device.type == "cpu"
