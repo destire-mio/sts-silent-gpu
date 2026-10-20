@@ -5,7 +5,7 @@ import time
 
 import torch
 
-from .model import FIELDS as views_fields, distribution, network_inputs, store_inputs, views
+from .model import FIELDS as views_fields, SCREENS, distribution, network_inputs, store_inputs, views
 from .rollout import make_batch
 
 
@@ -13,7 +13,9 @@ FLOOR, ACT, PHASE, ROOM, SCREEN, KEYS, BATTLE_OVER, SMOKED, HP = range(9)
 COMBAT, EVENT, MAP, ROOM_SCREEN, DEATH, VICTORY = 0, 8, 9, 10, 4, 3
 COMBAT_PHASE, COMPLETE_PHASE = 1, 2
 BOSS_ROOM, ELITE_ROOM, EVENT_ROOM, NEOW_ROOM = 2, 1, 6, 8
-MAX_REWARD = 57 + 4 * 5 + 3 * 3 + 10 + 10 + 50
+MAX_REWARD = 156
+ACTION_KINDS = ("padding", "play", "end_turn", "choose", "potion_use", "potion_discard", "proceed", "skip")
+SEARCH_METRICS = ("combat_over_limit", "event_over_limit", "combat_normal_max_steps", "event_normal_max_steps")
 REACH = ("act1_boss", "act2_boss", "act3_first_boss", "act3_second_boss",
          "act3_three_keys", "act4", "shield_spear", "heart")
 
@@ -25,7 +27,6 @@ class AllocationEnded(Exception):
 @dataclass
 class RewardLedger:
     floors: set = field(default_factory=set)
-    keys: set = field(default_factory=set)
     bosses: set = field(default_factory=set)
     reach: dict = field(default_factory=lambda: dict.fromkeys(REACH, False))
     total: int = 0
@@ -37,10 +38,6 @@ class RewardLedger:
                 assert floor not in self.floors, "Duplicate floor reward"
                 self.floors.add(floor)
                 reward += 1
-        for key in range(3):
-            if after[KEYS] & (1 << key) and key not in self.keys:
-                self.keys.add(key)
-                reward += 3
         if after[ACT] == 4 and not self.reach["act4"]:
             self.reach["act4"] = True
             reward += 10
@@ -88,10 +85,55 @@ class RoomSearch:
         self.event_trial_max_steps = 0
         self.provenance = {}
         self.evidence_directory = None
+        self.metrics = dict.fromkeys(SEARCH_METRICS, 0)
+        self.contexts = []
+        self.last_heartbeat = time.monotonic()
+        self.actual_lanes = []
+        self.combat_tails = {}
 
     def clock(self):
-        if time.monotonic() >= self.deadline:
+        now = time.monotonic()
+        if now - self.last_heartbeat >= 60:
+            print(json.dumps(dict(event="sl_heartbeat", device=self.device.index,
+                lanes=self.actual_lanes, searches=[self.search_snapshot(c) for c in self.contexts])), flush=True)
+            self.last_heartbeat = now
+        if now >= self.deadline:
             raise AllocationEnded()
+
+    def search_snapshot(self, context):
+        slots = context["live"]
+        longest = max(slots, key=lambda s: context["total_steps"][s]) if slots else None
+        return dict(kind=context["kind"], unfinished=len(slots), slot=longest,
+            steps=context["total_steps"][longest] if longest is not None else 0,
+            noncombat_steps=context["steps"][longest] if longest is not None and context["kind"] == "event" else None,
+            last30=list(context["tail"][longest]) if longest is not None else [])
+
+    def begin_search(self, kind, slots):
+        context = dict(kind=kind, live=slots[:], steps=dict.fromkeys(slots, 0), total_steps=dict.fromkeys(slots, 0),
+                       tail={s: deque(maxlen=30) for s in slots})
+        self.contexts.append(context)
+        return context
+
+    def trace_step(self, context, slots, choices):
+        self.batch.progress_tensors(self.progress_buffer)
+        screens = self.progress_buffer.view(-1, 9)[slots, SCREEN].cpu().tolist()
+        kinds = self.arrays["candidate_kinds"][slots, choices].cpu().tolist()
+        for s, action, screen, kind in zip(slots, choices, screens, kinds):
+            context["steps"][s] += 1
+            context["total_steps"][s] += 1
+            context["tail"][s].append(dict(screen=SCREENS[screen], candidate=action, action_kind=ACTION_KINDS[kind]))
+
+    def exceeded(self, context, slots):
+        for s in slots:
+            self.metrics[context["kind"] + "_over_limit"] += 1
+            record = dict(event="sl_over_limit", device=self.device.index, kind=context["kind"],
+                slot=s, seed=self.provenance[s][0], steps=context["total_steps"][s],
+                limit_steps=context["steps"][s],
+                last30=list(context["tail"][s]))
+            print(json.dumps(record), flush=True)
+            if self.evidence_directory is not None:
+                with (self.evidence_directory / f"sl-over-limit-{self.device.index}.jsonl").open("a") as out:
+                    out.write(json.dumps(record) + "\n")
 
     def progress(self):
         self.batch.progress_tensors(self.progress_buffer)
@@ -161,26 +203,44 @@ class RoomSearch:
         for begin in range(0, len(sources), capacity):
             parents = sources[begin:begin + capacity]
             slots = self.take(len(parents) * self.trials)
+            context = self.begin_search("combat", slots)
             try:
                 self.clone([s for s in parents for _ in range(self.trials)], slots)
                 paths = {s: [] for s in slots}
+                capped = set()
                 live = slots[:]
                 while live:
+                    context["live"] = live
                     self.clock()
                     choices, _, _ = self.predict(model, live)
+                    self.trace_step(context, live, choices)
                     self.step(live, choices)
                     self.searched_decisions += len(live)
                     for s, a in zip(live, choices):
                         paths[s].append(a)
                     progress = self.progress()
-                    live = [s for s in live if progress[s][PHASE] == COMBAT_PHASE
-                            and progress[s][SCREEN] not in (DEATH, VICTORY)]
-                scores = self.scores(model, slots, progress)
-                winners = [max(slots[j * self.trials:(j + 1) * self.trials], key=scores.get)
-                           for j in range(len(parents))]
-                self.clone(winners, parents)
-                selected_paths.update((parent, paths[winner]) for parent, winner in zip(parents, winners))
+                    continuing = [s for s in live if progress[s][PHASE] == COMBAT_PHASE
+                                  and progress[s][SCREEN] not in (DEATH, VICTORY)]
+                    finished = set(live) - set(continuing)
+                    for s in finished:
+                        self.metrics["combat_normal_max_steps"] = max(self.metrics["combat_normal_max_steps"], len(paths[s]))
+                    expired = [s for s in continuing if len(paths[s]) > 3000]
+                    self.exceeded(context, expired)
+                    capped.update(expired)
+                    live = [s for s in continuing if s not in capped]
+                eligible = [s for s in slots if s not in capped]
+                scores = self.scores(model, eligible, progress)
+                for j, parent in enumerate(parents):
+                    group = [s for s in slots[j * self.trials:(j + 1) * self.trials] if s not in capped]
+                    if group:
+                        winner = max(group, key=scores.get)
+                        self.clone([winner], [parent])
+                        selected_paths[parent] = paths[winner]
+                        self.combat_tails[parent] = list(context["tail"][winner])
+                    else:
+                        selected_paths[parent] = None
             finally:
+                self.contexts.pop()
                 self.available.extend(slots)
         return selected_paths
 
@@ -203,34 +263,60 @@ class RoomSearch:
             parents.extend([parent] * len(choices))
         slots = self.take(len(options))
         paths = {s: [a] for a, s in zip(options, slots)}
+        context = self.begin_search("event", slots)
+        capped = set()
         try:
             self.clone(parents, slots)
+            self.trace_step(context, slots, options)
             self.step(slots, options)
             self.searched_decisions += len(slots)
             live = slots[:]
             while live:
+                context["live"] = live
                 self.clock()
                 progress = self.progress()
-                live = [s for s in live if not self.event_exit(progress[s])]
+                finished = [s for s in live if self.event_exit(progress[s])]
+                for s in finished:
+                    self.metrics["event_normal_max_steps"] = max(self.metrics["event_normal_max_steps"], len(paths[s]))
+                live = [s for s in live if s not in finished]
+                expired = [s for s in live if context["steps"][s] > 500]
+                self.exceeded(context, expired)
+                capped.update(expired)
+                live = [s for s in live if s not in capped]
                 fighting = [s for s in live if progress[s][PHASE] == COMBAT_PHASE]
                 if fighting:
                     branches = self.combat(model, fighting)
                     for s, actions in branches.items():
-                        paths[s].extend(actions)
+                        if actions is None:
+                            capped.add(s)
+                        else:
+                            paths[s].extend(actions)
+                            context["total_steps"][s] += len(actions)
+                            context["tail"][s].extend(self.combat_tails[s])
+                    live = [s for s in live if s not in capped]
                     continue
                 if live:
                     choices, _, _ = self.predict(model, live)
+                    self.trace_step(context, live, choices)
                     self.step(live, choices)
                     self.searched_decisions += len(live)
                     for s, a in zip(live, choices):
                         paths[s].append(a)
             progress = self.progress()
-            scores = self.scores(model, slots, progress)
-            winners = [max(slots[begin:end], key=scores.get) for begin, end in groups]
-            self.clone(winners, sources)
-            return {parent: paths[winner] for parent, winner in zip(sources, winners)}
+            scores = self.scores(model, [s for s in slots if s not in capped], progress)
+            selected = {}
+            for parent, (begin, end) in zip(sources, groups):
+                eligible = [s for s in slots[begin:end] if s not in capped]
+                if eligible:
+                    winner = max(eligible, key=scores.get)
+                    self.clone([winner], [parent])
+                    selected[parent] = paths[winner]
+                else:
+                    selected[parent] = None
+            return selected
         finally:
             self.event_trial_max_steps = max(self.event_trial_max_steps, max(map(len, paths.values())))
+            self.contexts.pop()
             self.available.extend(slots)
 
     def plan(self, model, sources, kind):
@@ -258,6 +344,7 @@ class SegmentCollector:
         self.decisions = 0
         self.partial = None
         self.evaluation_waiting = None
+        self.stalled = set()
 
     def reset(self, slots, seeds):
         for s, seed in zip(slots, seeds):
@@ -300,6 +387,9 @@ class SegmentCollector:
             self.search.check(slots)
 
     def choose(self, model, slots, progress):
+        self.stalled = set()
+        self.search.actual_lanes = [dict(lane=s, seed=self.seeds[s], steps=len(self.paths[s]),
+            floor=progress[s][FLOOR], screen=SCREENS[progress[s][SCREEN]]) for s in slots]
         actions, values, logs = self.search.predict(model, slots)
         chosen = dict(zip(slots, actions))
         idle = [s for s in slots if not self.pending[s]]
@@ -308,10 +398,16 @@ class SegmentCollector:
                   and int(self.search.arrays["candidate_kinds"][s, chosen[s]]) == 3]
         if combat:
             for s, path in self.search.plan(model, combat, "combat").items():
-                self.pending[s].extend(path)
+                if path is None:
+                    self.stalled.add(s)
+                else:
+                    self.pending[s].extend(path)
         if events:
             for s, path in self.search.plan(model, events, "event").items():
-                self.pending[s].append(path[0])
+                if path is None:
+                    self.stalled.add(s)
+                else:
+                    self.pending[s].append(path[0])
         imitation = []
         for j, s in enumerate(slots):
             imitation.append(bool(self.pending[s]))
@@ -320,20 +416,24 @@ class SegmentCollector:
         return actions, values, logs, imitation
 
     def advance(self, slots, actions, progress):
-        self.search.step(slots, actions)
+        active = [(s, a) for s, a in zip(slots, actions) if s not in self.stalled]
+        if active:
+            self.search.step([s for s, _ in active], [a for _, a in active])
         after = self.search.progress()
         reward, terminal = [], []
         for slot, action in zip(slots, actions):
-            self.paths[slot].append(action)
-            self.decisions += 1
-            reward.append(self.rewards[slot].advance(progress[slot], after[slot]))
-            end = after[slot][SCREEN] in (DEATH, VICTORY)
+            stalled = slot in self.stalled
+            if not stalled:
+                self.paths[slot].append(action)
+                self.decisions += 1
+            reward.append(0. if stalled else self.rewards[slot].advance(progress[slot], after[slot]))
+            end = stalled or after[slot][SCREEN] in (DEATH, VICTORY)
             terminal.append(end)
             if end:
                 assert not self.pending[slot]
                 self.completed.append(dict(seed=self.seeds[slot], candidates=self.paths[slot],
                     reach=self.rewards[slot].reach.copy(), floor=after[slot][FLOOR],
-                    outcome="victory" if after[slot][SCREEN] == VICTORY else "death",
+                    outcome="stalled" if stalled else "victory" if after[slot][SCREEN] == VICTORY else "death",
                     reward=self.rewards[slot].total / MAX_REWARD))
                 self.seeds[slot] = None
         return reward, terminal
@@ -346,8 +446,8 @@ class SegmentCollector:
         if self.partial is None:
             result = dict(data=torch.empty(64 * 1024 * 1024, dtype=torch.uint8, device=device),
                           offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device))
-            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation"):
-                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation") else torch.float32
+            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid"):
+                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid") else torch.float32
                 result[name] = torch.zeros((length, lanes), device=device, dtype=dtype)
             self.partial = dict(result=result, next_step=0, length=length)
         assert self.partial["length"] == length
@@ -364,7 +464,8 @@ class SegmentCollector:
                          result["offsets"][row:row + lanes + 1])
             reward, terminal = self.advance(slots, actions, progress)
             for name, data in (("actions", actions), ("values", values), ("logs", logs),
-                               ("rewards", reward), ("terminal", terminal), ("imitation", imitation)):
+                               ("rewards", reward), ("terminal", terminal), ("imitation", imitation),
+                               ("action_valid", [s not in self.stalled for s in slots])):
                 result[name][t] = torch.tensor(data, device=device)
             self.partial["next_step"] = t + 1
         live = [s for s in slots if self.seeds[s] is not None]
@@ -381,7 +482,7 @@ class SegmentCollector:
             result["advantages"][t] = advantage
             bootstrap = result["values"][t]
         result["returns"] = result["values"] + result["advantages"]
-        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "advantages", "returns"):
+        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "advantages", "returns"):
             result[name] = result[name].flatten()
         self.partial = None
         return result

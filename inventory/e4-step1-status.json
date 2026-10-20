@@ -3,7 +3,7 @@
   "step": 1,
   "status": "initialization1729_first_evaluation_delayed",
   "fixed_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
-  "main_reviewed": "2ff6414ded60d1f9b45ab17fe17c3e94fe7fb2e9",
+  "main_reviewed": "30b17eecdedaffeafa3341502e30acc50d9cb356",
   "trials": 32,
   "budget": {
     "limit_node_seconds": 28800,
@@ -129,5 +129,23 @@
     },
     "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
   },
-  "latest_decision": "Claude25: only step1 now; later human-likeSL and MCTS fallback await separate task after step1."
+  "latest_decision": "Claude25: only step1 now; later human-likeSL and MCTS fallback await separate task after step1.",
+  "prepared_resume": {
+    "authorization": "Claude26+27",
+    "status": "prepared_not_deployed",
+    "source_job": 3637,
+    "source_policy_version": 784,
+    "source_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
+    "wait": "Let3637 reach its existing allocation boundary and save partial evaluation; no concurrent job",
+    "changes": [
+      "60second SL heartbeat with lane progress and active trial last30 screen/action kinds",
+      "Combat trial still live after3000 actions scores0 and is excluded from adoption; event noncombat cap500",
+      "All trial failures terminate collector episode as stalled, separate from game death; no fake actual action and no actor loss on synthetic terminal value sample",
+      "Per-assessment over-limit counts and normal maxima",
+      "Remove future key+3 rewards; fixed denominator156 and three-key reach retained"
+    ],
+    "migration": "Explicit offline migration to new checkpoint directory with source and destination SHA256; preserve model, optimizer, RNGs, queues, partial assessment and historical earned rewards; cap counters begin at migration",
+    "next": "Resume version784 evaluation first; do not train again before completing this assessment",
+    "runtime_validation": "Not run; current job remains fixed and no extra test job submitted"
+  }
 }

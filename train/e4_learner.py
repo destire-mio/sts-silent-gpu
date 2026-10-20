@@ -12,7 +12,7 @@ def update(model, optimizer, fragment, rng):
     world = dist.get_world_size()
     count = len(fragment["actions"])
     device = fragment["actions"].device
-    ppo = ~fragment["imitation"]
+    ppo = ~fragment["imitation"] & fragment["action_valid"]
     advantages = fragment["advantages"]
     moments = torch.stack((advantages[ppo].double().sum(), advantages[ppo].double().square().sum(),
                            ppo.sum().double()))
@@ -35,10 +35,10 @@ def update(model, optimizer, fragment, rng):
                 ratio = (log_prob - fragment["logs"][chunk]).exp()
                 clipped = torch.minimum(ratio * normalized[chunk],
                     ratio.clamp(1 - config.clip, 1 + config.clip) * normalized[chunk])
-                policy_loss = torch.where(fragment["imitation"][chunk], -log_prob, -clipped)
+                policy_loss = torch.where(fragment["imitation"][chunk], -log_prob, -clipped) * fragment["action_valid"][chunk]
                 value_loss = (value - fragment["returns"][chunk]).square()
                 loss = (policy_loss + config.value_coefficient * value_loss
-                        - config.entropy_coefficient * entropy * (~fragment["imitation"][chunk])).mean()
+                        - config.entropy_coefficient * entropy * ppo[chunk]).mean()
                 assert torch.isfinite(loss), "Non-finite E4 loss"
                 (loss * len(chunk) / len(selected)).backward()
                 total += torch.stack((policy_loss.detach().double().sum(), value_loss.detach().double().sum(),

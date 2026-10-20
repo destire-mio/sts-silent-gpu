@@ -13,7 +13,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
 from train.checkpoint import engine_commit
-from train.e4 import AllocationEnded, REACH, RoomSearch, SegmentCollector
+from train.e4 import AllocationEnded, REACH, SEARCH_METRICS, RoomSearch, SegmentCollector
 from train.e4_learner import update
 from train.model import ModelConfig, Policy
 
@@ -48,7 +48,8 @@ def collective_stop(local, device):
 def summaries(episodes):
     return dict(episodes=len(episodes), average_floor=sum(e["floor"] for e in episodes) / len(episodes),
                 reach={key: sum(e["reach"][key] for e in episodes) / len(episodes) for key in REACH},
-                victories=sum(e["outcome"] == "victory" for e in episodes), faults=0, truncated=0)
+                victories=sum(e["outcome"] == "victory" for e in episodes),
+                stalled=sum(e["outcome"] == "stalled" for e in episodes), faults=0, truncated=0)
 
 
 def audit(episodes, round_name, version, commit):
@@ -116,6 +117,7 @@ def main():
         evaluation_state, train_state = saved["evaluation_state"], saved["train_state"]
         evaluation_seconds = saved["evaluation_seconds"]
         search.event_trial_max_steps = saved["event_trial_max_steps"]
+        search.metrics = saved["search_metrics"]
     allocation_start = time.monotonic()
     search.deadline = allocation_start + args.seconds - 60
     dev_seeds = list(range(2000000000 + rank, 2000004096, world))
@@ -128,7 +130,7 @@ def main():
             next_evaluation=next_evaluation, best=best, stagnant=stagnant, assessments=assessments,
             ready=ready, phase=phase, calibration_index=calibration_index,
             evaluation_state=evaluation_state, train_state=train_state, evaluation_seconds=evaluation_seconds,
-            event_trial_max_steps=search.event_trial_max_steps))
+            event_trial_max_steps=search.event_trial_max_steps, search_metrics=search.metrics))
         dist.barrier()
         if rank == 0:
             atomic_json(args.output / "status.json", dict(reason=reason, task=args.task, phase=phase, version=version,
@@ -189,6 +191,7 @@ def main():
             if phase == "evaluation":
                 if evaluation_state is None:
                     search.event_trial_max_steps = 0
+                    search.metrics = dict.fromkeys(SEARCH_METRICS, 0)
                 checkpoint("before_evaluation")
                 waiting = [queue_waiting() if rank == 0 else None]
                 dist.broadcast_object_list(waiting, src=0)
@@ -221,6 +224,11 @@ def main():
                     atomic_json(args.output / f"partial-evaluation-{rank}.json", episodes)
                     checkpoint("allocation_limit_during_evaluation")
                     break
+                search_counts = torch.tensor([search.metrics[k] for k in SEARCH_METRICS[:2]], device=device, dtype=torch.int64)
+                search_maxima = torch.tensor([search.metrics[k] for k in SEARCH_METRICS[2:]], device=device, dtype=torch.int64)
+                dist.all_reduce(search_counts, op=dist.ReduceOp.SUM)
+                dist.all_reduce(search_maxima, op=dist.ReduceOp.MAX)
+                search_summary = dict(zip(SEARCH_METRICS, search_counts.cpu().tolist() + search_maxima.cpu().tolist()))
                 round_name = f"E4-{args.initialization}-{version}-N{search.trials}"
                 atomic_json(args.output / f"{round_name}-rank-{rank}.json", episodes)
                 dist.barrier()
@@ -230,7 +238,7 @@ def main():
                     assert len(all_episodes) == 4096 and len({e["seed"] for e in all_episodes}) == 4096
                     summary = dict(summaries(all_episodes), round=round_name, version=version,
                                    trials=search.trials, evaluation_seconds=evaluation_seconds,
-                                   event_trial_max_steps=search.event_trial_max_steps)
+                                   event_trial_max_steps=search.event_trial_max_steps, **search_summary)
                     atomic_json(args.output / f"{round_name}-summary.json", summary)
                     atomic_json(args.output / f"{round_name}-audit.json", audit(all_episodes, round_name, version, commit))
                     print(json.dumps(dict(event="evaluation", **summary)), flush=True)
