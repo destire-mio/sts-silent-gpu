@@ -1,25 +1,28 @@
 {
-  "recorded_at": "2026-10-21T02:20:45+08:00",
+  "recorded_at": "2026-10-21T02:25:35.856173+08:00",
   "step": 1,
-  "status": "policy784_resumed_evaluation_actual_ui_loop_observed",
+  "status": "Claude28_fresh1729_prepared",
   "fixed_commit": "5cf2432d96c4dd47066f5b02aa33c352b30cb8c4",
-  "main_reviewed": "e02e3cd413a8b56da4a81a0c779ef8d17c85da39",
+  "main_reviewed": "627e417cb0112ba386886d20d1c8590ae56aacdf",
   "trials": 32,
   "budget": {
-    "limit_node_seconds": 28800,
-    "settled_node_seconds": 10590,
-    "reserved_node_seconds": 3600,
-    "active_elapsed_at_snapshot": 237,
-    "used_including_active_snapshot": 10827
+    "limit_node_seconds": 43200,
+    "settled_node_seconds": 10999,
+    "reserved_node_seconds": 0,
+    "active_elapsed_at_snapshot": 0,
+    "used_including_active_snapshot": 10999
   },
   "job": {
     "id": 3638,
     "gpus": 8,
-    "state": "RUNNING",
+    "state": "CANCELLED",
     "start": "2026-10-21T02:16:48+08:00",
     "time_limit_seconds": 3600,
     "output": "/home/zhuyouwei/spire-downloads/e4-training-3638/A-1729",
-    "log": "/home/zhuyouwei/spire-downloads/e4-training-3638.slurm.log"
+    "log": "/home/zhuyouwei/spire-downloads/e4-training-3638.slurm.log",
+    "elapsed_seconds": 409,
+    "exit_code": "0:15",
+    "end": "2026-10-21T02:23:37+08:00"
   },
   "initialization": 1729,
   "training_seconds_target": 3600,
@@ -32,7 +35,7 @@
     "throughput_scope": "Last completed update global8rank sums / maximum rank wall time"
   },
   "saved_checkpoint_version": 784,
-  "next": "Monitor3638 fixedversion; Claude decision pending on actual map/event loop; no fabricated deaths. Finishassessment then2718 only aftercost/main/queuecheck.",
+  "next": "Deploysame-floor3000actual-decision stall terminal and perupdatehealth metrics/stop; fresh1729 only",
   "evaluation_complete": false,
   "prior_attempts": [
     {
@@ -145,10 +148,10 @@
     },
     "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
   },
-  "latest_decision": "Claude26+27 deployed; e02e3cd reward policy reviewed; real actual-path UI loop reported pending project decision",
+  "latest_decision": "Claude28 discard784, fresh1729, samefloor3000actualsteps terminalstalled, perupdatehealthstop; step1limit43200",
   "prepared_resume": {
     "authorization": "Claude26+27",
-    "status": "deployed_running",
+    "status": "obsolete_policy784_invalidated",
     "source_job": 3637,
     "source_policy_version": 784,
     "source_commit": "36d5a68bb0652e942eab1b37a57392266c39a57f",
@@ -222,6 +225,15 @@
       "source": "scontrol final RunTime01:58:33, accounting-final.txt",
       "exit_code": "0:0",
       "accounting_sha256": "5a5dd4595552917a0364794a8405209fa5e07e8187534b6f8d2d5f28fb26810f"
+    },
+    {
+      "job_id": 3638,
+      "step": 1,
+      "charged_node_seconds": 409,
+      "gpu_seconds": 3272,
+      "source": "scontrol final00:06:49",
+      "exit_code": "0:15",
+      "accounting_sha256": "9bae84bd53e8dc0df62010217e6aa5caedf705a470332a39148f65b8991953d5"
     }
   ],
   "budgets": {
@@ -232,9 +244,33 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 10590,
-      "limit_node_seconds": 28800,
-      "reserved_node_seconds": 3600
+      "charged_node_seconds": 10999,
+      "limit_node_seconds": 43200,
+      "reserved_node_seconds": 0,
+      "limit_authorization": "Claude28 at627e417; priorcharges retained"
     }
+  },
+  "floor_stall_update": {
+    "authorization": "Claude28",
+    "status": "prepared",
+    "actual_floor_steps_limit": 3000,
+    "condition": "Morethan3000actualdecisions withoutfloorchange; nofuturebootstrap; stalled notengine death; validactualaction remains PPO/IL sample",
+    "health_rule": "Stopafterupdate andcheckpoint ifglobalcompleted0 orstalled/completed>0.05",
+    "old_log_fields": [
+      "actual_steps",
+      "actual_steps_per_second",
+      "event",
+      "imitation_fraction",
+      "initialization",
+      "loss",
+      "policy_loss",
+      "sl_trial_steps",
+      "sl_trial_steps_per_second",
+      "trained_seconds",
+      "update_seconds",
+      "value_loss",
+      "version"
+    ],
+    "onset": "Old784updates contain no episodecounts/floors; onsetcannotbedetermined; noextra run"
   }
 }

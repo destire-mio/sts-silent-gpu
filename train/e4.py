@@ -338,6 +338,7 @@ class SegmentCollector:
         self.search, self.seed_rng, self.rank = search, seed_rng, rank
         self.seeds = [None] * search.lanes
         self.paths = [[] for _ in self.seeds]
+        self.floor_steps = [0] * search.lanes
         self.pending = [deque() for _ in self.seeds]
         self.rewards = [RewardLedger() for _ in self.seeds]
         self.completed = []
@@ -354,6 +355,7 @@ class SegmentCollector:
         for slot, seed in zip(slots, seeds):
             self.seeds[slot] = seed
             self.paths[slot] = []
+            self.floor_steps[slot] = 0
             self.pending[slot].clear()
             self.rewards[slot] = RewardLedger()
 
@@ -363,14 +365,14 @@ class SegmentCollector:
         self.reset(slots, seeds)
 
     def state(self):
-        return dict(seeds=self.seeds, paths=self.paths,
+        return dict(seeds=self.seeds, paths=self.paths, floor_steps=self.floor_steps,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
                     seed_rng=self.seed_rng.get_state(), search_rng=self.search.rng.get_state(),
                     decisions=self.decisions, completed=self.completed, partial=self.partial,
                     evaluation_waiting=self.evaluation_waiting)
 
     def restore(self, state):
-        for name in ("seeds", "paths", "rewards", "decisions", "completed", "partial", "evaluation_waiting"):
+        for name in ("seeds", "paths", "floor_steps", "rewards", "decisions", "completed", "partial", "evaluation_waiting"):
             setattr(self, name, state[name])
         if self.partial:
             for name, value in self.partial["result"].items():
@@ -426,6 +428,11 @@ class SegmentCollector:
             if not stalled:
                 self.paths[slot].append(action)
                 self.decisions += 1
+                self.floor_steps[slot] = (self.floor_steps[slot] + 1
+                    if progress[slot][FLOOR] == after[slot][FLOOR] else 0)
+                if self.floor_steps[slot] > 3000 and after[slot][SCREEN] not in (DEATH, VICTORY):
+                    stalled = True
+                    self.pending[slot].clear()
             reward.append(0. if stalled else self.rewards[slot].advance(progress[slot], after[slot]))
             end = stalled or after[slot][SCREEN] in (DEATH, VICTORY)
             terminal.append(end)
@@ -449,7 +456,8 @@ class SegmentCollector:
             for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid"):
                 dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid") else torch.float32
                 result[name] = torch.zeros((length, lanes), device=device, dtype=dtype)
-            self.partial = dict(result=result, next_step=0, length=length)
+            self.partial = dict(result=result, next_step=0, length=length,
+                                completed_before=len(self.completed))
         assert self.partial["length"] == length
         result = self.partial["result"]
         for t in range(self.partial["next_step"], length):
@@ -484,6 +492,10 @@ class SegmentCollector:
         result["returns"] = result["values"] + result["advantages"]
         for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "advantages", "returns"):
             result[name] = result[name].flatten()
+        completed = self.completed[self.partial["completed_before"]:]
+        result["health"] = torch.tensor([len(completed), sum(e["floor"] for e in completed),
+            sum(e["outcome"] == "stalled" for e in completed),
+            max((self.floor_steps[s] for s in live), default=0)], dtype=torch.int64, device=device)
         self.partial = None
         return result
 

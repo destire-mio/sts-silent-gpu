@@ -168,6 +168,13 @@ def main():
                     break
                 ddp.train()
                 metrics = update(ddp, optimizer, ready, ppo_rng)
+                health = ready["health"].clone()
+                dist.all_reduce(health[:3], op=dist.ReduceOp.SUM)
+                dist.all_reduce(health[3:], op=dist.ReduceOp.MAX)
+                completed, floor_sum, stalled, max_floor_steps = health.cpu().tolist()
+                health_report = dict(completed_episodes=completed,
+                    completed_average_floor=floor_sum / completed if completed else None,
+                    stalled_episodes=stalled, active_max_floor_steps=max_floor_steps)
                 ready = None
                 version += 1
                 elapsed = torch.tensor(time.monotonic() - start, device=device)
@@ -183,7 +190,13 @@ def main():
                                           actual_steps=int(steps[0]), sl_trial_steps=int(steps[1]),
                                           actual_steps_per_second=float(steps[0] / elapsed),
                                           sl_trial_steps_per_second=float(steps[1] / elapsed),
-                                          initialization=args.initialization, **metrics)), flush=True)
+                                          initialization=args.initialization, **health_report, **metrics)), flush=True)
+                if completed == 0 or stalled * 20 > completed:
+                    if rank == 0:
+                        atomic_json(args.output / "training-health-stop.json",
+                                    dict(version=version, **health_report))
+                    checkpoint("training_health_stop")
+                    break
                 if trained_seconds < next_evaluation:
                     continue
                 train_state = collector.state()
