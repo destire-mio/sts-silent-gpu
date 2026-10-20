@@ -1,9 +1,9 @@
 {
-  "recorded_at": "2026-10-20T22:33:13.219858+08:00",
+  "recorded_at": "2026-10-20T22:38:38.807469+08:00",
   "phase": "step_0",
-  "status": "step0_gates_passed_calibration_starting",
+  "status": "step0_restarted_after_collector_action_shadowing_fix",
   "branch": "codex/e4",
-  "implementation_commit": "806b747af2211c7e625484f1ac9b85a948f628bc",
+  "implementation_commit": "05199891233d6c8b79cf84cace5ebf895e2ad883",
   "main": "b25f9cec7f77a9cf80ae4a3bc3b024f5ddbf8f3a",
   "native_build_commit": "eb9a93fa2c0f23e379902e101b99755006982be9",
   "native_sources_unchanged_in_runner_commits": true,
@@ -40,9 +40,9 @@
     }
   },
   "budget": {
-    "step0_charged_node_seconds": 86,
+    "step0_charged_node_seconds": 202,
     "step1_charged_node_seconds": 0,
-    "step0_reserved_node_seconds": 3480,
+    "step0_reserved_node_seconds": 3360,
     "step0_limit_node_seconds": 3600,
     "step1_limit_node_seconds": 28800,
     "compile_cpu_seconds": 746.55
@@ -76,7 +76,7 @@
     "normalization_max_reward": 156,
     "event_search": "Score complete current-room continuations for each event option; execute selected option and repeat search at the next actual event decision. Out-of-combat potion choices remain single policy samples."
   },
-  "next_action": "Monitor job3630; retain fixed version; settle elapsed costs then continue authorized steps.",
+  "next_action": "Monitor job3631; preserve failed checkpoints; identical initial policy/dev seeds, no completed N evaluations repeated.",
   "evidence_files": {
     "modules.sha256": {
       "sha256": "d230e56a748775133ce34b4537d2ce94cb638798cd76a360c94214e651464f02",
@@ -97,6 +97,11 @@
       "sha256": "8d505d1f3fb211e59ecd51635b90135b7a8145b6b6843570feee09f43998d4dc",
       "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\slurm-gpu-check.txt",
       "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-build/slurm-gpu-check.txt"
+    },
+    "e4-gates-3628-3630.tar.gz": {
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-gates-3628-3630.tar.gz",
+      "sha256": "57d47c9fc1461c36d0c219339a1912592fadd3baf818a1e189d998976fb6eaa5",
+      "contains": "GPU health, Slurm accounting, parity and replay logs, failed calibration traceback"
     }
   },
   "compiled_modules": [
@@ -124,9 +129,18 @@
       "id": 3630,
       "gpus": 8,
       "reserved_seconds": 3480,
-      "state": "RUNNING",
+      "state": "FAILED",
       "output": "/home/zhuyouwei/spire-downloads/e4-step0-3630",
-      "last_observed_elapsed_seconds": 95
+      "last_observed_elapsed_seconds": 95,
+      "elapsed_seconds": 116,
+      "reason": "Collector choose() loop shadowed batch actions with selected path, IndexError; fixed in 0519989. Full calibration not completed."
+    },
+    {
+      "id": 3631,
+      "gpus": 8,
+      "reserved_seconds": 3360,
+      "state": "SUBMITTED",
+      "output": "/home/zhuyouwei/spire-downloads/e4-step0-3631"
     }
   ]
 }
