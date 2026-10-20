@@ -142,6 +142,10 @@ void TrainingBatch::clone_many(const std::vector<int>& sources, const std::vecto
     spire_training_clone_many<<<(sources.size() + 31) / 32, 32>>>(state(), src.data, dst.data, sources.size());
     check(cudaGetLastError()); check(cudaDeviceSynchronize());
 }
+void TrainingBatch::loop_keys_tensors(const int64_t* slots, int64_t* output, int count, cudaStream_t stream) {
+    spire_training_loop_keys<<<(count + 31) / 32, 32, 0, stream>>>(state(), slots, output, count);
+    check(cudaGetLastError());
+}
 void TrainingBatch::progress_tensors(int64_t* output, cudaStream_t stream) {
     spire_training_progress<<<(size + 31) / 32, 32, 0, stream>>>(state(), output);
     check(cudaGetLastError());

@@ -18,6 +18,7 @@ extern "C" __global__ void spire_training_roots(spire::cuda::TrainingState, cons
                                                 const int32_t*, const int32_t*, int);
 extern "C" __global__ void spire_training_clone(spire::cuda::TrainingState, int, int);
 extern "C" __global__ void spire_training_clone_many(spire::cuda::TrainingState, const int*, const int*, int);
+extern "C" __global__ void spire_training_loop_keys(spire::cuda::TrainingState, const int64_t*, int64_t*, int);
 extern "C" __global__ void spire_training_progress(spire::cuda::TrainingState, int64_t*);
 
 extern "C" __global__ void spire_training_select(spire::cuda::TrainingState, const uint8_t*);

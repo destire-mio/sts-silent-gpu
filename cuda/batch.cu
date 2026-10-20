@@ -149,6 +149,11 @@ extern "C" __global__ void spire_training_clone_many(spire::cuda::TrainingState 
     if (j < count) clone_slot(b, sources[j], targets[j]);
 }
 
+#include "host/loop_key.hpp"
+extern "C" __global__ void spire_training_loop_keys(spire::cuda::TrainingState b, const int64_t* slots, int64_t* out, int count) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j < count) out[j] = spire::host::loop_key(b.games[slots[j]], b.observations.view(slots[j]));
+}
 #include "host/training_progress.hpp"
 extern "C" __global__ void spire_training_progress(spire::cuda::TrainingState b, int64_t* output) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;

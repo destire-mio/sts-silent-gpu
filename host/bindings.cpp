@@ -9,6 +9,7 @@
 
 #include "tensor_binding.hpp"
 #include "training_progress.hpp"
+#include "loop_key.hpp"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -310,6 +311,13 @@ PYBIND11_MODULE(spire, module) {
         .def("__len__", [](const EnvironmentBatch& batch) { return batch.games.size(); });
     module.attr("encounters") = py::cast(std::vector<std::string>(std::begin(encounter_names), std::end(encounter_names)));
     auto training = py::class_<TrainingBatch>(module, "TrainingBatch");
+    training.def("loop_keys_tensors", [](TrainingBatch& b, py::object slots, py::object output) {
+        const int count = slots.attr("numel")().cast<int>();
+        SPIRE_ASSERT(output.attr("numel")().cast<int>() == count);
+        auto* indices = tensor_pointer<int64_t>(slots, "int64", -1);
+        auto* out = tensor_pointer<int64_t>(output, "int64", -1);
+        for (int i = 0; i < count; ++i) out[i] = spire::host::loop_key(b.games[indices[i]], b.view(indices[i]));
+    });
     training.def("progress_tensors", [](TrainingBatch& b, py::object output) {
         SPIRE_ASSERT(output.attr("numel")().cast<int>() == b.size * progress_columns);
         auto* out = tensor_pointer<int64_t>(output, "int64", -1);
