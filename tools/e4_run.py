@@ -1,5 +1,4 @@
 import argparse
-from dataclasses import asdict
 from datetime import timedelta
 import json
 import os
@@ -137,6 +136,7 @@ def main():
                 calibration_index=calibration_index, checkpoint_files=[f"rank-{r}.pt" for r in range(world)]))
 
     try:
+        checkpoint("started")
         while True:
             if args.task == "calibrate":
                 if calibration_index == 3:

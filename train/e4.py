@@ -398,6 +398,10 @@ class SegmentCollector:
             slots = [s for s, seed in enumerate(self.seeds) if seed is not None]
             progress = self.search.progress()
             choices, _, _, _ = self.choose(model, slots, progress)
+            completed_before = len(self.completed)
             self.advance(slots, choices, progress)
+            if len(self.completed) // 64 != completed_before // 64:
+                print(json.dumps(dict(event="evaluation_progress", rank=self.rank,
+                    completed=len(self.completed), waiting=len(waiting), trials=self.search.trials)), flush=True)
         self.evaluation_waiting = None
         return self.completed
