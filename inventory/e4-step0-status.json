@@ -1,10 +1,10 @@
 {
-  "recorded_at": "2026-10-20T22:16:59.3480773+08:00",
+  "recorded_at": "2026-10-20T22:33:13.219858+08:00",
   "phase": "step_0",
-  "status": "gpu_submission_stopped_on_server_preflight_failure",
+  "status": "step0_gates_passed_calibration_starting",
   "branch": "codex/e4",
-  "implementation_commit": "c6ccefe852e8ee4d0d92d48d5c3785675df02915",
-  "main": "74637fde5bff81ffba7df94d96ed3da74d8018de",
+  "implementation_commit": "806b747af2211c7e625484f1ac9b85a948f628bc",
+  "main": "b25f9cec7f77a9cf80ae4a3bc3b024f5ddbf8f3a",
   "native_build_commit": "eb9a93fa2c0f23e379902e101b99755006982be9",
   "native_sources_unchanged_in_runner_commits": true,
   "build": {
@@ -28,23 +28,45 @@
     "diagnosis": "Unresolved. Empty Slurm queue and IDLE do not establish GPU health or exclude processes outside Slurm.",
     "system_changes": false,
     "squeue": "empty",
-    "home_disk_gib": 18
+    "home_disk_gib": 18,
+    "resolution": {
+      "authorization": "Claude #18",
+      "job": 3628,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 1,
+      "result": "Slurm allocated Tesla V100, 0MiB used, no running processes; login-node NVML failure alone did not establish GPU failure",
+      "system_changes": false
+    }
   },
   "budget": {
-    "step0_charged_node_seconds": 0,
+    "step0_charged_node_seconds": 86,
     "step1_charged_node_seconds": 0,
-    "step0_reserved_node_seconds": 0,
+    "step0_reserved_node_seconds": 3480,
     "step0_limit_node_seconds": 3600,
     "step1_limit_node_seconds": 28800,
     "compile_cpu_seconds": 746.55
   },
   "validation": {
     "native_compilation": "passed",
-    "existing_cpu_gpu_gates": "not run",
+    "existing_cpu_gpu_gates": "passed again on job3630: native parity, root cache, Python API",
     "python_syntax": "parsed four new sources before final progress-only edit",
     "sealed_10_percent": "registered; not opened",
-    "calibration_N8_N16_N32": "not run",
-    "sl_replay_check": "not run",
+    "calibration_N8_N16_N32": "not started",
+    "sl_replay_check": {
+      "job": 3630,
+      "seed": 1000000000,
+      "event": {
+        "prefix_decisions": 5,
+        "selected_decisions": 5,
+        "full_game_and_history_equal": true
+      },
+      "combat": {
+        "prefix_decisions": 27,
+        "selected_decisions": 21,
+        "full_game_and_history_equal": true
+      }
+    },
     "training": "not started"
   },
   "implementation": {
@@ -54,7 +76,7 @@
     "normalization_max_reward": 156,
     "event_search": "Score complete current-room continuations for each event option; execute selected option and repeat search at the next actual event decision. Out-of-combat potion choices remain single policy samples."
   },
-  "next_action": "Retry only read-only server preflight; after NVML works and GPUs are unused, run prepared step0 Slurm script within unchanged cumulative budget.",
+  "next_action": "Monitor job3630; retain fixed version; settle elapsed costs then continue authorized steps.",
   "evidence_files": {
     "modules.sha256": {
       "sha256": "d230e56a748775133ce34b4537d2ce94cb638798cd76a360c94214e651464f02",
@@ -70,6 +92,11 @@
       "sha256": "e3799444564000c453e678fc0d7a9758e69cf53430bda2c8e82f14b155d5f224",
       "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\build.log",
       "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-build/build.log"
+    },
+    "slurm-gpu-check.txt": {
+      "sha256": "8d505d1f3fb211e59ecd51635b90135b7a8145b6b6843570feee09f43998d4dc",
+      "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\slurm-gpu-check.txt",
+      "remote_path": "/home/zhuyouwei/spire-downloads/e4-step0-build/slurm-gpu-check.txt"
     }
   },
   "compiled_modules": [
@@ -77,5 +104,29 @@
     "89edae588b55b5b6f36a281d236cd514fdeb206cff507c50b8be2af333836604  /home/zhuyouwei/spire-build-e3-v13-5adc725/spire_gpu.cpython-312-x86_64-linux-gnu.so",
     "70237e08d2f6754d8530363dbcf6dee2e749d7e12ad578031249746ef6917fa1  /home/zhuyouwei/spire-build-e3-v13-5adc725/test_cuda_parity",
     "0f76fc2d422a9d62dde97ea881676b00f67c5e310b59b04df196ad4b2d0ed2dd  /home/zhuyouwei/spire-build-e3-v13-5adc725/test_cuda_root_cache"
+  ],
+  "jobs": [
+    {
+      "id": 3628,
+      "elapsed_seconds": 1,
+      "gpus": 1,
+      "state": "COMPLETED"
+    },
+    {
+      "id": 3629,
+      "elapsed_seconds": 85,
+      "gpus": 8,
+      "state": "FAILED",
+      "reason": "NotImplementedError: index_cuda not implemented for UInt32 in train/e4.py check(); orchestration fix converts fault codes to int64 before indexing",
+      "output": "/home/zhuyouwei/spire-downloads/e4-step0-3629"
+    },
+    {
+      "id": 3630,
+      "gpus": 8,
+      "reserved_seconds": 3480,
+      "state": "RUNNING",
+      "output": "/home/zhuyouwei/spire-downloads/e4-step0-3630",
+      "last_observed_elapsed_seconds": 95
+    }
   ]
 }
