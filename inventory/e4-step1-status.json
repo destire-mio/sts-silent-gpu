@@ -13,13 +13,26 @@
     "used_including_active_snapshot": 11480
   },
   "job": {
-    "id": 3640,
+    "job_id": 3640,
+    "purpose": "Claude29 fresh1729 withrolling20healthstop",
+    "state": "COMPLETED",
+    "step": 1,
     "gpus": 8,
-    "state": "RUNNING",
-    "start": "2026-10-21T02:35:30+08:00",
-    "time_limit_seconds": 7200,
+    "reserved_seconds": 7200,
+    "fixed_head": "1d0ab7bb734c9b133468773b1916eecb74588f41",
     "output": "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729",
-    "log": "/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log"
+    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log",
+    "trials": 32,
+    "training_seconds_target": 3600,
+    "source_checkpoint": null,
+    "start_time": "2026-10-21T02:35:30+08:00",
+    "last_observed_elapsed_seconds": 788,
+    "latest_completed_update": 85,
+    "last_durable_checkpoint_version": 85,
+    "elapsed_seconds": 788,
+    "checkpoint_reason": "training_health_stop",
+    "exit_code": "0:0",
+    "end_time": "2026-10-21T02:48:38+08:00"
   },
   "initialization": 1729,
   "training_seconds_target": 3600,
@@ -141,7 +154,7 @@
   "runner_update": {
     "commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
     "authorization": "Claude29",
-    "status": "deployed_running",
+    "status": "training_health_stopped",
     "evaluation_training_interval_seconds": 3600,
     "event_search": "All pending parents and all their options cloned, simulated and scored in one batch; select winner separately for each parent",
     "event_trial_max_steps": "Normal event path maximum; combat cap3000/eventnoncombat500; independent cappedreplica counts and stalled outcomes; metrics start at migration.",
@@ -176,7 +189,7 @@
     },
     "action": "Preserve fixed runtime and checkpoint; continue within existing allocation. No incomplete episode classified as death; no extra experiment."
   },
-  "latest_decision": "Rolling20updatehealth; first20recordonly; then completed0 orcompleted>=40 andstalled>5percent stops. Fresh1729directrestart.",
+  "latest_decision": "Next2718:parameterized256lanes,retainN32both,interim1024dev/full4096comparison;20update telemetry; subsequentN8/N32tenupdatecomparisononlyafternewlanesrun",
   "prepared_resume": {
     "authorization": "Claude26+27",
     "status": "obsolete_policy784_invalidated",
@@ -199,8 +212,8 @@
     "migration_manifest_sha256": "ac5f5c4955dab1aafce05ec13bdbff9badbdf391c38754e4ed37d2ea04d90608",
     "diagnostic": "inventory/e4-784-evaluation-diagnostic.json"
   },
-  "updated_at": "2026-10-21T02:20:59.267065+08:00",
-  "current_job": 3640,
+  "updated_at": "2026-10-21T02:56:35.212826+08:00",
+  "current_job": null,
   "cost_ledger": [
     {
       "job_id": 3628,
@@ -271,6 +284,16 @@
       "source": "scontrol final00:07:15",
       "exit_code": "0:15",
       "accounting_sha256": "74ae414b18225e23468c7f07d0abb45128e4199686d16f568996451a5dad16a9"
+    },
+    {
+      "job_id": 3640,
+      "step": 1,
+      "charged_node_seconds": 788,
+      "gpu_seconds": 6304,
+      "source": "scontrol final RunTime00:13:08; accounting-final.txt",
+      "exit_code": "0:0",
+      "accounting_sha256": "dc4e3ccec8092253eb964755e0c95754b0cd1dfa6be5503a3c0e9eec30b436e6",
+      "reason": "Saved and exited at rolling20 health threshold; 55of60 completed episodes stalled"
     }
   ],
   "budgets": {
@@ -281,15 +304,15 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 11434,
+      "charged_node_seconds": 12222,
       "limit_node_seconds": 43200,
-      "reserved_node_seconds": 7200,
+      "reserved_node_seconds": 0,
       "limit_authorization": "Claude28 at627e417; priorcharges retained"
     }
   },
   "floor_stall_update": {
     "authorization": "Claude28",
-    "status": "rolling20_deployed_running",
+    "status": "triggered_saved85",
     "actual_floor_steps_limit": 3000,
     "condition": "Morethan3000actualdecisions withoutfloorchange; nofuturebootstrap; stalled notengine death; validactualaction remains PPO/IL sample",
     "health_rule": "Recent20updates summed; first20recordonly. Afterwards completed0 orcompleted>=40 andstalled>5percent =>saveandstop. Window checkpointed.",
@@ -404,5 +427,202 @@
       "log_sha256": "bf55333a5dbdec849df02bda5b9dcd8f090852f7698de01a6ad8c645546cc080"
     },
     "validation": "Freshrequestedtraining started, checkpoint0 confirmed; noextra tests; windowstop notyettriggered."
+  },
+  "health_stop": {
+    "job": 3640,
+    "fixed_commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
+    "status": {
+      "reason": "training_health_stop",
+      "task": "train",
+      "phase": "training",
+      "version": 85,
+      "initialization": 1729,
+      "trials": 32,
+      "trained_seconds": 755.484356880188,
+      "allocation_process_seconds": 756.8971341330325,
+      "job": "3640",
+      "commit": "1d0ab7bb734c9b133468773b1916eecb74588f41",
+      "stagnant": 0,
+      "assessments": [],
+      "calibration_index": 0,
+      "checkpoint_files": [
+        "rank-0.pt",
+        "rank-1.pt",
+        "rank-2.pt",
+        "rank-3.pt",
+        "rank-4.pt",
+        "rank-5.pt",
+        "rank-6.pt",
+        "rank-7.pt"
+      ]
+    },
+    "latest_update": {
+      "event": "update",
+      "version": 85,
+      "trained_seconds": 755.484356880188,
+      "update_seconds": 5.370429992675781,
+      "actual_steps": 16384,
+      "sl_trial_steps": 4408,
+      "actual_steps_per_second": 3050.780029296875,
+      "sl_trial_steps_per_second": 820.7908935546875,
+      "initialization": 1729,
+      "completed_episodes": 24,
+      "completed_average_floor": 3.375,
+      "stalled_episodes": 24,
+      "active_max_floor_steps": 2997,
+      "policy_loss": 0.0020733235313858955,
+      "value_loss": 0.00021378409488298584,
+      "imitation_fraction": 0.222900390625,
+      "loss": 0.0018957297652377747
+    },
+    "health_window": {
+      "window_updates": 20,
+      "window_completed": 60,
+      "window_stalled": 55,
+      "total_completed": 2815,
+      "total_stalled": 55,
+      "ending_version": 85,
+      "observed_at": "2026-10-21T02:53:44.017662+08:00",
+      "stop_triggered": true
+    },
+    "cumulative_actual_steps": 1392640,
+    "log_sha256": "1743035a9f3516256a0cb1f89e3c2f7ad68f29c419ed4ef56f4d153ede59748b",
+    "files": {
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/accounting-final.txt": {
+        "bytes": 1343,
+        "sha256": "dc4e3ccec8092253eb964755e0c95754b0cd1dfa6be5503a3c0e9eec30b436e6"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/status.json": {
+        "bytes": 465,
+        "sha256": "40a90a8074e4ad893cb1ec5de3fcfcefc76b72c9882a0c76340b753113143c82"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/training-health-stop.json": {
+        "bytes": 218,
+        "sha256": "8d18d737383fbcbc76976b50f11d8d97ce6eea4f936cb87b3c417107187cc2bc"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-0.pt": {
+        "bytes": 11642701,
+        "sha256": "f411faa1e7bf72a7557ff276f51d7d564b3eb1c1384cd9358578a5d6d74d4d5b"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-1.pt": {
+        "bytes": 11642317,
+        "sha256": "1f3ecbb1246cf9834fd0aeccc5d0c7e5e4ee00995ba98d9c25e9d769ad13d607"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-2.pt": {
+        "bytes": 11643021,
+        "sha256": "54bad34771ab06881a3f141f88f80f3dc74194b66f09fa4cc89a4f887041f819"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-3.pt": {
+        "bytes": 11644877,
+        "sha256": "777134a54b6f80f8762418f9e7d75c3becd28a21a1f4e5cbdd854169a0b66108"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-4.pt": {
+        "bytes": 11643533,
+        "sha256": "dc9ae71d1128ef81aa69af3d444f8b88d8fb84e2ffd159cb5682903aaef122b3"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-5.pt": {
+        "bytes": 11643725,
+        "sha256": "3189f9934250035d58798370f0698a2bc2c993c61fe59374e00425dfb51e2b7e"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-6.pt": {
+        "bytes": 11642637,
+        "sha256": "e407594984908625de992a686c16ecdfd4b52056640a73ded6e4d6657ebbaf7e"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-training-3640/A-1729/rank-7.pt": {
+        "bytes": 11643149,
+        "sha256": "acde287436568859cb97418f08aba052fc52d0334ca569cff2e576d798877d61"
+      }
+    },
+    "accounting": "JobId=3640 JobName=spire-e4-window1729\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899979 Nice=0 Account=(null) QOS=(null)\n   JobState=COMPLETED Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:13:08 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-10-21T02:35:30 EligibleTime=2026-10-21T02:35:30\n   AccrueTime=2026-10-21T02:35:30\n   StartTime=2026-10-21T02:35:30 EndTime=2026-10-21T02:48:38 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T02:35:30 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1272884\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-claude29-fresh1729.sh\n   WorkDir=/home/zhuyouwei/sts-silent-gpu-split\n   StdErr=/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-training-3640.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n\n",
+    "budget": {
+      "charged_node_seconds": 12222,
+      "limit_node_seconds": 43200,
+      "reserved_node_seconds": 0,
+      "limit_authorization": "Claude28 at627e417; priorcharges retained"
+    },
+    "cost_ledger": [
+      {
+        "job_id": 3628,
+        "step": 0,
+        "charged_node_seconds": 1,
+        "gpu_seconds": 1,
+        "source": "scontrol RunTime=00:00:01; sacct disabled",
+        "policy": "conservative full-node elapsed charge"
+      },
+      {
+        "job_id": 3629,
+        "step": 0,
+        "charged_node_seconds": 85,
+        "gpu_seconds": 680,
+        "source": "scontrol RunTime=00:01:25",
+        "exit_code": "1:0",
+        "failure": "PyTorch CUDA UInt32 indexing in E4 orchestration"
+      },
+      {
+        "job_id": 3630,
+        "step": 0,
+        "charged_node_seconds": 116,
+        "gpu_seconds": 928,
+        "source": "scontrol RunTime=00:01:56",
+        "exit_code": "1:0",
+        "failure": "Collector choose actions variable shadowed by selected path"
+      },
+      {
+        "job_id": 3631,
+        "step": 0,
+        "charged_node_seconds": 1925,
+        "gpu_seconds": 15400,
+        "source": "scontrol RunTime=00:32:05",
+        "exit_code": "0:0"
+      },
+      {
+        "job_id": 3632,
+        "step": 1,
+        "charged_node_seconds": 3477,
+        "gpu_seconds": 27816,
+        "source": "scontrol final RunTime00:57:57, accounting-final.txt",
+        "exit_code": "0:15",
+        "reason": "Cancelled perClaude23; accept loss of20minutes unsaved training; preserve evidence"
+      },
+      {
+        "job_id": 3637,
+        "step": 1,
+        "charged_node_seconds": 7113,
+        "gpu_seconds": 56904,
+        "source": "scontrol final RunTime01:58:33, accounting-final.txt",
+        "exit_code": "0:0",
+        "accounting_sha256": "5a5dd4595552917a0364794a8405209fa5e07e8187534b6f8d2d5f28fb26810f"
+      },
+      {
+        "job_id": 3638,
+        "step": 1,
+        "charged_node_seconds": 409,
+        "gpu_seconds": 3272,
+        "source": "scontrol final00:06:49",
+        "exit_code": "0:15",
+        "accounting_sha256": "9bae84bd53e8dc0df62010217e6aa5caedf705a470332a39148f65b8991953d5"
+      },
+      {
+        "job_id": 3639,
+        "step": 1,
+        "charged_node_seconds": 435,
+        "gpu_seconds": 3480,
+        "source": "scontrol final00:07:15",
+        "exit_code": "0:15",
+        "accounting_sha256": "74ae414b18225e23468c7f07d0abb45128e4199686d16f568996451a5dad16a9"
+      },
+      {
+        "job_id": 3640,
+        "step": 1,
+        "charged_node_seconds": 788,
+        "gpu_seconds": 6304,
+        "source": "scontrol final RunTime00:13:08; accounting-final.txt",
+        "exit_code": "0:0",
+        "accounting_sha256": "dc4e3ccec8092253eb964755e0c95754b0cd1dfa6be5503a3c0e9eec30b436e6",
+        "reason": "Saved and exited at rolling20 health threshold; 55of60 completed episodes stalled"
+      }
+    ],
+    "action": "Preserved85 checkpoints; no restart or extraGPUjob; full1729assessment not reached",
+    "observed_at": "2026-10-21T02:53:44.017662+08:00"
   }
 }
