@@ -1,0 +1,243 @@
+{
+  "summary": {
+    "episodes": 4096,
+    "average_floor": 11.45361328125,
+    "reach": {
+      "act1_boss": 0.040771484375,
+      "act2_boss": 0.0,
+      "act3_first_boss": 0.0,
+      "act3_second_boss": 0.0,
+      "act3_three_keys": 0.0,
+      "act4": 0.0,
+      "shield_spear": 0.0,
+      "heart": 0.0
+    },
+    "victories": 0,
+    "stalled": 7,
+    "stall_classes": {
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 6,
+      "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+    },
+    "faults": 0,
+    "truncated": 0,
+    "round": "E4-2718-26-N32-D4096",
+    "version": 26,
+    "trials": 32,
+    "lanes": 256,
+    "dev_seed_count": 4096,
+    "evaluation_seconds": 1068.9849853515625,
+    "event_trial_max_steps": 75,
+    "combat_over_limit": 0,
+    "event_over_limit": 0,
+    "combat_normal_max_steps": 400,
+    "event_normal_max_steps": 75
+  },
+  "files": {
+    "job.txt": {
+      "size": 5,
+      "sha256": "dc00dbc33715cce24bae0c7d9a609a673e0d37a969f844ad57270bf4ad8a030e"
+    },
+    "source.txt": {
+      "size": 41,
+      "sha256": "468b00d491773b710a05376962dbca38f7bfb7f270da3cd7c42dbc68e7b6f1b8"
+    },
+    "rank-0.pt": {
+      "size": 12826381,
+      "sha256": "495531af2f1c4484f63fab52a31dd50397008645610667c2d460cd1dd1596ce2"
+    },
+    "rank-7.pt": {
+      "size": 12826829,
+      "sha256": "556c574c49fe26e679225793d3a1c4f43dab5d52520574fc452df4b494c772dd"
+    },
+    "rank-1.pt": {
+      "size": 12827597,
+      "sha256": "ad4e8edd4ef012f87182e48c3168cf6be76a09fe18b3190a1c2a93399344eeca"
+    },
+    "rank-6.pt": {
+      "size": 12822861,
+      "sha256": "e2d58b277e7d128bc8d7a47a5a22006abf9e3f86af50b2a2407bc7dd468f4512"
+    },
+    "rank-4.pt": {
+      "size": 12824589,
+      "sha256": "c1c5860d136526ef2d84b752e116e8f0ed7ddde9b2bb7507171aa1b0d71a011f"
+    },
+    "rank-3.pt": {
+      "size": 12824973,
+      "sha256": "0fb3adf2b341196f6003605f308c63a4d181dc512f57fc2366bf8471629c6758"
+    },
+    "rank-2.pt": {
+      "size": 12824653,
+      "sha256": "45f12e98b05d3727db46c029fdd865d7a7b265df828f09b8593183d3c02676e2"
+    },
+    "rank-5.pt": {
+      "size": 12823373,
+      "sha256": "ba2140e8e7888fa86684c72e90cd53c38b80fe460076dd7f63a097f9ff57ed2e"
+    },
+    "status.json": {
+      "size": 1669,
+      "sha256": "019dfd3321ad5ff0a5f70b1151721052d65e48dcf86cc4f93d3e9bc44279962d"
+    },
+    "stalled-7.jsonl": {
+      "size": 3593,
+      "sha256": "793c616786039e713b2eb1f91d0bb3100802e85a7f931922687db1aae768c291"
+    },
+    "stalled-2.jsonl": {
+      "size": 1436,
+      "sha256": "183caabeb47a4ed674c4f578da9e9cfbb51add6dedbf6ba43949aea9bb475db3"
+    },
+    "stalled-5.jsonl": {
+      "size": 359,
+      "sha256": "986ae56310f27129fb4d5728b1da89f00acdbc8c43a954a23ab0155ddacf86b3"
+    },
+    "stalled-3.jsonl": {
+      "size": 2513,
+      "sha256": "2ec984a88fd95ddc5abad2ff3bff67f860dacf3c90d602780d3dee36f2643621"
+    },
+    "stalled-1.jsonl": {
+      "size": 2155,
+      "sha256": "a52b07b108a7cdcd0a6d20627976bb978639318e8056e873e0918a122f294c9a"
+    },
+    "stalled-6.jsonl": {
+      "size": 1436,
+      "sha256": "c8e804e76ac121246572eccc73f7b1dba2b72897c0c1062895b893876b5bd01c"
+    },
+    "stalled-0.jsonl": {
+      "size": 1795,
+      "sha256": "3d3fb4ab702b42b541be61cc3a8d2a601487c500a3ce5cd81e38c73d427849f7"
+    },
+    "stalled-4.jsonl": {
+      "size": 1077,
+      "sha256": "68a7be0edc158d9a607f51994561297533935ce0733297a8f0ea857b9ef487c1"
+    },
+    "E4-2718-26-N32-D4096-rank-3.json": {
+      "size": 476548,
+      "sha256": "98d8a6f09d3e3e7621767e81f0a6d7b427d278d5142deddfbd0b1711bf67552c"
+    },
+    "E4-2718-26-N32-D4096-rank-7.json": {
+      "size": 473603,
+      "sha256": "9a226aee2362232a396fef0e38163cb5ec2452b9844102212f074e4701eb015c"
+    },
+    "E4-2718-26-N32-D4096-rank-1.json": {
+      "size": 471060,
+      "sha256": "0020e1e1260496dcf12cdf553764ff7895d0e88f8a0fa4f6ba1a235e87a1c0c1"
+    },
+    "E4-2718-26-N32-D4096-rank-2.json": {
+      "size": 468764,
+      "sha256": "7eeb56b66583940be6256c49a1e77ee4fd1b1b6ae4e32d58b2b1df5d1a7ffc77"
+    },
+    "E4-2718-26-N32-D4096-rank-6.json": {
+      "size": 477758,
+      "sha256": "c6bdb54986c083ad8dee3b2743472f3692bfa4d75ea6619616e8768de2f0d21d"
+    },
+    "E4-2718-26-N32-D4096-rank-4.json": {
+      "size": 478779,
+      "sha256": "0ff8e3ef53179767ceaf8182c8e37f3533371b9c74033f8eef7bcdce067cff5a"
+    },
+    "E4-2718-26-N32-D4096-rank-0.json": {
+      "size": 480809,
+      "sha256": "f6681753f136374e376b532fea289d8e55889fb038e290a923d86997ad7b2779"
+    },
+    "E4-2718-26-N32-D4096-rank-5.json": {
+      "size": 471552,
+      "sha256": "baf44b06cc32939fb74be984a0e85d489e6503f24d4c58da56f2971f24067f53"
+    },
+    "E4-2718-26-N32-D4096-summary.json": {
+      "size": 1125,
+      "sha256": "79e7c2004cc6e49911ed28451e5061774cd75f131ac4f4ddc40cfd16a0d35a97"
+    },
+    "E4-2718-26-N32-D4096-audit.json": {
+      "size": 15143,
+      "sha256": "30b7d61a23569eddf95340e252aef306b5e445d2628949d603aadd5c23e980ce"
+    }
+  },
+  "batch_exit": "STEP1_EXIT=0 END=2026-10-21T07:42:47+08:00",
+  "accounting": "scontrol final record purged; sacct disabled",
+  "final_status": {
+    "reason": "initialization_training_target",
+    "task": "train",
+    "phase": "training",
+    "version": 26,
+    "initialization": 2718,
+    "trials": 32,
+    "lanes": 256,
+    "scratch_slots": 8448,
+    "evaluation_seed_count": 4096,
+    "trained_seconds": 3680.4113693237305,
+    "allocation_process_seconds": 4754.923968641087,
+    "job": "3645",
+    "commit": "7c918ddab4039750b3104b96f131155f17ddfce0",
+    "stagnant": 0,
+    "assessments": [
+      {
+        "episodes": 4096,
+        "average_floor": 11.45361328125,
+        "reach": {
+          "act1_boss": 0.040771484375,
+          "act2_boss": 0.0,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 7,
+        "stall_classes": {
+          "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 6,
+          "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+        },
+        "faults": 0,
+        "truncated": 0,
+        "round": "E4-2718-26-N32-D4096",
+        "version": 26,
+        "trials": 32,
+        "lanes": 256,
+        "dev_seed_count": 4096,
+        "evaluation_seconds": 1068.9849853515625,
+        "event_trial_max_steps": 75,
+        "combat_over_limit": 0,
+        "event_over_limit": 0,
+        "combat_normal_max_steps": 400,
+        "event_normal_max_steps": 75
+      }
+    ],
+    "calibration_index": 0,
+    "checkpoint_files": [
+      "rank-0.pt",
+      "rank-1.pt",
+      "rank-2.pt",
+      "rank-3.pt",
+      "rank-4.pt",
+      "rank-5.pt",
+      "rank-6.pt",
+      "rank-7.pt"
+    ]
+  },
+  "cost_ledger_entry": {
+    "job_id": 3645,
+    "step": 1,
+    "charged_node_seconds": 5166,
+    "gpu_seconds": 41328,
+    "source": "Conservative upper bound: start to first confirmed empty queue after exit; scontrol final purged, sacct disabled",
+    "batch_elapsed_seconds": 4781,
+    "batch_exit": "STEP1_EXIT=0 END=2026-10-21T07:42:47+08:00",
+    "evidence": "job3645-final.json;job3645-poll-0749.json"
+  },
+  "step1_budget": {
+    "charged_node_seconds": 25286,
+    "limit_node_seconds": 43200,
+    "reserved_node_seconds": 0,
+    "limit_authorization": "Claude28 at627e417; priorcharges retained",
+    "active_observed_node_seconds": 0
+  },
+  "selected_initialization": {
+    "initialization": 1729,
+    "average_floor": 12.993896484375,
+    "other_initialization": 2718,
+    "other_average_floor": 11.45361328125,
+    "source_checkpoint_directory": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729",
+    "version": 88,
+    "criterion": "Full4096dev averagefloor;1729 lanes32 and2718 lanes256 differ"
+  }
+}
