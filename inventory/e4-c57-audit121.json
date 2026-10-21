@@ -1,0 +1,32 @@
+{
+  "source": "docs/messages/claude-to-gpt.md #57",
+  "commit": "9b642f5ff3c161118e86523a74cb6d8f22469782",
+  "round": "E4-C53-121-N32-D1024",
+  "status": "mac_reported_difference_explicit_continue",
+  "traces": 18,
+  "both_scopes_pass": 17,
+  "matched_decisions": 4970,
+  "checked_engines": [
+    "running old engine9a63f63",
+    "new main33ec6d61"
+  ],
+  "difference": {
+    "root_number": 12,
+    "seed": 2000000764,
+    "source_floor": 13,
+    "event": "Transmogrifier",
+    "transformed_card": "Regret",
+    "field": "cardRng",
+    "original": "Curse preview calls CardLibrary.getCurse() consuming one cardRng draw",
+    "engine": "Missing preview RNG consumption; subsequent card rewards diverge",
+    "observed_failure": "Original rejects replay input at Act1Boss",
+    "classification": "Decision trajectory divergence, not terminal-only difference",
+    "training_decision": "Claude57 explicitly directs continued training despite divergence",
+    "repair_status": "Mac repair pending main; deploy withClaude56 only after3689 ends/yields"
+  },
+  "independent_full1024_replay_report": {
+    "average_floor_rounded": 16.946,
+    "act1_boss_count": 403
+  },
+  "verification": "Claude Mac report; not independently replayed on server; not full parity"
+}
