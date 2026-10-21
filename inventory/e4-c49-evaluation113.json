@@ -1,0 +1,310 @@
+{
+  "observed_at": "2026-10-21T21:51:15.988528+08:00",
+  "summary": {
+    "episodes": 1024,
+    "average_floor": 13.015625,
+    "reach": {
+      "act1_boss": 0.1533203125,
+      "act2_boss": 0.0029296875,
+      "act3_first_boss": 0.0,
+      "act3_second_boss": 0.0,
+      "act3_three_keys": 0.0,
+      "act4": 0.0,
+      "shield_spear": 0.0,
+      "heart": 0.0
+    },
+    "victories": 0,
+    "stalled": 0,
+    "stall_classes": {},
+    "faults": 0,
+    "truncated": 0,
+    "round": "E4-C49-113-N32-D1024",
+    "version": 113,
+    "trials": 32,
+    "training_lanes": 256,
+    "evaluation_lanes": 256,
+    "dev_seed_count": 1024,
+    "evaluation_seconds": 570.86669921875,
+    "trained_seconds": 3689.774948120117,
+    "update_count": 16,
+    "actual_steps": 2097152,
+    "next_epochs": 4,
+    "combat": {
+      "all": {
+        "combats": 7062,
+        "decisions": 7076690,
+        "complete_trial_groups": 7062,
+        "capped_trials": 0,
+        "nested_event_combats": 174,
+        "pooled_policy_entropy": 0.6710423184396843,
+        "means": {
+          "policy_entropy": 0.6889159074977842,
+          "win_fraction": 0.7599033559898046,
+          "score_std": 0.006519314340523723,
+          "distinct_end_states": 15.531152647975079,
+          "selected_score_gain": 0.008629642077474384
+        }
+      },
+      "act1": {
+        "combats": 6432,
+        "decisions": 6434232,
+        "complete_trial_groups": 6432,
+        "capped_trials": 0,
+        "nested_event_combats": 150,
+        "pooled_policy_entropy": 0.673118764069852,
+        "means": {
+          "policy_entropy": 0.6909713367707927,
+          "win_fraction": 0.7812937266791045,
+          "score_std": 0.0060397140611275135,
+          "distinct_end_states": 15.359452736318408,
+          "selected_score_gain": 0.00803929491039028
+        }
+      },
+      "act2": {
+        "combats": 618,
+        "decisions": 633394,
+        "complete_trial_groups": 618,
+        "capped_trials": 0,
+        "nested_event_combats": 24,
+        "pooled_policy_entropy": 0.6484576571443015,
+        "means": {
+          "policy_entropy": 0.665507583632727,
+          "win_fraction": 0.5452568770226537,
+          "score_std": 0.011309209730523094,
+          "distinct_end_states": 17.22168284789644,
+          "selected_score_gain": 0.014427683580648696
+        }
+      },
+      "act3": {
+        "combats": 12,
+        "decisions": 9064,
+        "complete_trial_groups": 12,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": 0.7752629756155542,
+        "means": {
+          "policy_entropy": 0.7927344962157213,
+          "win_fraction": 0.3489583333333333,
+          "score_std": 0.01690545151192473,
+          "distinct_end_states": 20.5,
+          "selected_score_gain": 0.02645658622107779
+        }
+      },
+      "act4": {
+        "combats": 0,
+        "decisions": 0,
+        "complete_trial_groups": 0,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": null,
+        "means": {
+          "policy_entropy": null,
+          "win_fraction": null,
+          "score_std": null,
+          "distinct_end_states": null,
+          "selected_score_gain": null
+        }
+      }
+    },
+    "imitation_beta": 0.038308289545074516,
+    "imitation_entropy_target": 0.6716025225602738,
+    "best_average_floor_before": 15.2451171875,
+    "combat_over_limit": 0,
+    "event_over_limit": 0,
+    "combat_normal_max_steps": 375,
+    "event_normal_max_steps": 91,
+    "combat_played_cards_limit": 0,
+    "combat_trials": 225984,
+    "combat_played_cards_limit_fraction": 0.0
+  },
+  "verification": {
+    "exact_dev_seeds": true,
+    "summary_recomputed": true,
+    "combat_rows": 7062,
+    "combat_aggregates_recomputed": true,
+    "audit_actual_trajectories_match": true,
+    "audit_decisions": 6491,
+    "mac_status": "pending_mac_original_replay",
+    "evaluated_checkpoint_hashes_unchanged": true
+  },
+  "checkpoint_files": {
+    "rank-5.pt": {
+      "size": 13094341,
+      "sha256": "aae2487d7e459012796004b51be4489210d9eb1a3bb16352c96896e780bb2514"
+    },
+    "rank-6.pt": {
+      "size": 13076421,
+      "sha256": "1bd3ec1b3bb98b6faf30ee2ef7a30e46917c27f8cbb1462d2fbef67cac812658"
+    },
+    "rank-3.pt": {
+      "size": 13085573,
+      "sha256": "1de55abe5ff3793a7f785827947eb920b4b0988da37c02d56d44f5b8c9b54a6a"
+    },
+    "rank-1.pt": {
+      "size": 13092741,
+      "sha256": "45d014a217d9d436ab4ba3028133d7b84946ce1100730e776522096f0524af19"
+    },
+    "rank-2.pt": {
+      "size": 13082757,
+      "sha256": "c92019e129ab8a5f0fd74cddd600b2b223d5392c9ad68576e2500c01d94bfb3f"
+    },
+    "rank-7.pt": {
+      "size": 13087877,
+      "sha256": "08dca3f7ca42295e284c111cd639f72ffc7fe6fcb82e818fb99bd28abf3efeae"
+    },
+    "rank-4.pt": {
+      "size": 13082821,
+      "sha256": "908d661a0e3a5f5085cc608366559ad4ae15fd58579f0cf14907d92af605e7fe"
+    },
+    "rank-0.pt": {
+      "size": 13083461,
+      "sha256": "979a3a85dbd18b963c426f50e261233d35d51a7dab9184a85d6fc3e02f8dc0cf"
+    }
+  },
+  "evidence_files": {
+    "E4-C49-113-N32-D1024-combat-4.json": {
+      "size": 284363,
+      "sha256": "4ac82ddcccb16ba01fdec4f8ad0f87fe7f79c195329fcd55fc55fd866610f931"
+    },
+    "E4-C49-113-N32-D1024-audit.json": {
+      "size": 23094,
+      "sha256": "c032e404a56098109f3ec09ccb0d2e2b08a0e3dbacec5214ad4f50d1cbc5006b"
+    },
+    "E4-C49-113-N32-D1024-rank-0.json": {
+      "size": 142354,
+      "sha256": "ac29b43f8ff6721b09818a0beffd76d5ab58edc2f35930edecf8ad4f70cf639d"
+    },
+    "E4-C49-113-N32-D1024-combat-5.json": {
+      "size": 273110,
+      "sha256": "45951652aa4b013d06dd5311399a9f4161ab68e24ce643cb89e6817bda492855"
+    },
+    "E4-C49-113-N32-D1024-combat-7.json": {
+      "size": 285596,
+      "sha256": "8ed29439c7f57736adfe3321699c037904061f8c143b64cedf5931bcd77ba010"
+    },
+    "E4-C49-113-N32-D1024-summary.json": {
+      "size": 2716,
+      "sha256": "d93a3d1f5ac9bc5dec9e698b1e3ad990b86d7758e659f2e6356aaaab7ca3a94d"
+    },
+    "E4-C49-113-N32-D1024-combat-2.json": {
+      "size": 278255,
+      "sha256": "df4390dfdb90bb6e2308b26ca12cb961c25e5038b6dc87ef68560b200b99df68"
+    },
+    "E4-C49-113-N32-D1024-combat-6.json": {
+      "size": 291909,
+      "sha256": "4722bb1d008f327983c443b54ef796ce2908447eaea551822e4d61031d1ed4d8"
+    },
+    "E4-C49-113-N32-D1024-combat-1.json": {
+      "size": 282761,
+      "sha256": "47938226aba3e7f30c199c97d2ae30c4d7b64cabb846ecc084bbeb4beaf868b0"
+    },
+    "E4-C49-113-N32-D1024-combat-0.json": {
+      "size": 285912,
+      "sha256": "30b809aa390a5a8311108b81fec27f6da26009082889807f9ac6247406eb2d2d"
+    },
+    "E4-C49-113-N32-D1024-rank-5.json": {
+      "size": 136020,
+      "sha256": "3779d432a598f73a46a42a883b5406df6505d982f032b8da8a4519f278a797e9"
+    },
+    "E4-C49-113-N32-D1024-rank-4.json": {
+      "size": 140059,
+      "sha256": "8dd18f18bd45f89ecc1509219a0a61c795b86d7a01a1030a6a16441d3e1e4c29"
+    },
+    "E4-C49-113-N32-D1024-rank-1.json": {
+      "size": 140025,
+      "sha256": "5cb36e23d5c994cf68ed468a62fa87a85dd89dc00efcf16ec0293c767ef3ea53"
+    },
+    "E4-C49-113-N32-D1024-rank-7.json": {
+      "size": 140403,
+      "sha256": "f9b1f4c6468e0ccc4c90ee58f0ec191606946c1db2cfdf0ab733a90cb5e3d9fa"
+    },
+    "E4-C49-113-N32-D1024-rank-2.json": {
+      "size": 139652,
+      "sha256": "1c52d8c59e83638c8a3e285956118a8612f4d806b87b0eb7103570f6b893e153"
+    },
+    "E4-C49-113-N32-D1024-rank-6.json": {
+      "size": 143122,
+      "sha256": "ceab3d80fb73f3b08b50efd85c17ddebd40e09b251cf6fdbb79981b2e1b4c0a8"
+    },
+    "E4-C49-113-N32-D1024-rank-3.json": {
+      "size": 140282,
+      "sha256": "9cc5091e002554131439184a35dc134461c5e887a02b87453f0abc7a64e6abb4"
+    },
+    "E4-C49-113-N32-D1024-combat-3.json": {
+      "size": 284473,
+      "sha256": "47bc7910ae2a9218a031dc731d0cf84c8a93f339694fdba56b64b7dce6ed7d27"
+    }
+  },
+  "job": 3674,
+  "fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
+  "audit_file": "inventory/e4-audit-roots.json",
+  "queue": "3656|shaoy|PENDING|N/A|(DependencyNeverSatisfied)\n3663|shaoy|PENDING|gres:gpu:V100:1|(DependencyNeverSatisfied)\n3664|shaoy|PENDING|N/A|(Dependency)\n3665|shaoy|PENDING|N/A|(Dependency)\n3650|shaoy|RUNNING|N/A|gpu01\n",
+  "fault_files": [],
+  "queue_errors": [],
+  "accounting": "JobId=3674 JobName=spire-e4-c49-entropy UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899945 Nice=0 Account=(null) QOS=(null) JobState=COMPLETED Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=01:23:24 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-21T20:24:14 EligibleTime=2026-10-21T20:24:14 AccrueTime=2026-10-21T20:24:14 StartTime=2026-10-21T20:24:15 EndTime=2026-10-21T21:47:39 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T20:24:15 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c49.sh WorkDir=/home/zhuyouwei/sts-silent-gpu-split StdErr=/home/zhuyouwei/spire-downloads/e4-c49-3674.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c49-3674.log Power= TresPerNode=gres:gpu:V100:8 \n",
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
+    },
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 43786,
+      "limit_node_seconds": 64800,
+      "reserved_node_seconds": 0,
+      "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
+      "active_observed_node_seconds": 0
+    }
+  },
+  "final_preservation": {
+    "observed_at": "2026-10-21T21:51:45.003692+08:00",
+    "best105_archive_unchanged": true,
+    "queue": "3656|shaoy|PENDING|N/A|(DependencyNeverSatisfied)\n3663|shaoy|PENDING|gres:gpu:V100:1|(DependencyNeverSatisfied)\n3664|shaoy|PENDING|N/A|(Dependency)\n3665|shaoy|PENDING|N/A|(Dependency)\n3650|shaoy|RUNNING|N/A|gpu01\n",
+    "home_usage_mib": "20246\t/home/zhuyouwei\n",
+    "final_checkpoint_files": {
+      "rank-6.pt": {
+        "size": 13273861,
+        "sha256": "f825633ac346d79c20ae8cb5bb375375ba9ee32114112b5a393a6088ba136d8c"
+      },
+      "rank-0.pt": {
+        "size": 13276805,
+        "sha256": "d22eb9c6b1ae15ecd52c527609478e3eebeef365ce489fb874d7b9039a7e9df4"
+      },
+      "rank-5.pt": {
+        "size": 13279109,
+        "sha256": "cb2365a576f9d5fb920186f11875fa8e64269a74bb3497fadfc0e81976e3efab"
+      },
+      "rank-3.pt": {
+        "size": 13277765,
+        "sha256": "40b434d787167e9713e6ec26d2888777aceffc1ff4cb7e95cfe3f5b0f393dc9a"
+      },
+      "rank-1.pt": {
+        "size": 13284165,
+        "sha256": "f08a1da53c8845b59bfe216fa762d4126abc3e51ed0717f31abb6980962eae85"
+      },
+      "rank-7.pt": {
+        "size": 13280773,
+        "sha256": "eb71650535f9769346ac97c21c820f7720522295a84e8e955e73e82f187a29b4"
+      },
+      "rank-4.pt": {
+        "size": 13275013,
+        "sha256": "3b57e43937276b551a5444cdfc589a5934e1058d87256f0354f3d5e30a5aa49b"
+      },
+      "rank-2.pt": {
+        "size": 13272197,
+        "sha256": "c4a59cb2ca02c0f0f2bff138acf060ec740e91f2c8c25a4ca1a8e71c9a733b1a"
+      }
+    }
+  },
+  "stop": {
+    "job_id": 3674,
+    "reason": "average_floor_more_than_one_below_best",
+    "best_version": 105,
+    "best_floor": 15.2451171875,
+    "current_floor": 13.015625,
+    "drop": 2.2294921875,
+    "charged_node_seconds": 5004,
+    "preservation": "final-preservation3674.json"
+  }
+}
