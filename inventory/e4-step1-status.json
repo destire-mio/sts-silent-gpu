@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-22T03:37:52.788814+08:00",
+  "updated_at": "2026-10-22T03:47:32.863888+08:00",
   "active_job": 3689,
   "phase": "claude54_training",
   "budgets": {
@@ -8,16 +8,31 @@
       "limit_node_seconds": 3600,
       "reserved_node_seconds": 0
     },
-    "later_steps_authorized": false,
+    "later_steps_authorized": true,
     "step_1": {
       "charged_node_seconds": 45277,
       "limit_node_seconds": 64800,
       "reserved_node_seconds": 12600,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 6461.875,
+      "active_observed_node_seconds": 6987.75,
       "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
-      "active_observed_gpu_seconds": 51695
-    }
+      "active_observed_gpu_seconds": 55902
+    },
+    "authorized_later_steps": [
+      2
+    ],
+    "steps_after_2_authorized": false,
+    "step_2": {
+      "charged_node_seconds": 0,
+      "limit_node_seconds": 129600,
+      "reserved_node_seconds": 0,
+      "limit_authorization": "Claude59 at005c73b43e7460971ddb3266412a4e38fecc5257",
+      "accounting_rule": "GPU seconds /8; charge remainingstep1 first, thenstep2"
+    },
+    "charge_order": [
+      "step_1",
+      "step_2"
+    ]
   },
   "cost_ledger": [
     {
@@ -857,12 +872,12 @@
       "epochs": 4,
       "dev_seed_count": 1024,
       "start_time": "2026-10-22T01:32:53+08:00",
-      "last_observed_elapsed_seconds": 7385,
-      "last_durable_checkpoint_version": 131,
+      "last_observed_elapsed_seconds": 7986,
+      "last_durable_checkpoint_version": 133,
       "checkpoint_reason": "update_complete",
-      "trained_seconds": 6220.739471435547,
+      "trained_seconds": 6668.21907043457,
       "script_sha256": "e1945f8446176e556d4e74fa114c05fd9053abd59a56ca37c4ebc6bb2ddfd355",
-      "latest_completed_update": 131
+      "latest_completed_update": 133
     }
   ],
   "server_fixed_head": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
@@ -875,19 +890,19 @@
       "commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
       "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
       "source_version": 105,
-      "version": 131,
+      "version": 133,
       "lanes": 256,
       "epochs": 4,
       "trials": 32,
       "world_size": 7,
       "evaluation_lanes": 256,
       "dev_seed_count": 1024,
-      "trained_seconds": 6220.739471435547,
+      "trained_seconds": 6668.21907043457,
       "next_evaluation": 7556.290725708008,
       "evaluation_seconds": 0.0,
       "capacity_metrics": {
         "combat_played_cards_limit": 0,
-        "combat_trials": 72864
+        "combat_trials": 99264
       },
       "updates": [
         {
@@ -1990,9 +2005,95 @@
           "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
           "imitation_beta": 0.05804777756511843,
           "imitation_entropy_target": 0.6716025225602738
+        },
+        {
+          "event": "update",
+          "update": 27,
+          "version": 132,
+          "training_seconds": 6444.547912597656,
+          "update_seconds": 223.80844116210938,
+          "actual_steps": 114688,
+          "sl_trial_steps": 2836967,
+          "lanes": 256,
+          "world_size": 7,
+          "next_epochs": 4,
+          "completed_episodes": 289,
+          "stalled_episodes": 0,
+          "completed_average_floor": 17.439446366782008,
+          "active_max_floor_steps": 1062,
+          "stall_classes": {},
+          "policy_loss": 0.5055093182201139,
+          "value_loss": 0.00048327309187281707,
+          "imitation_fraction": 0.7889229910714285,
+          "loss": 0.47508456790600506,
+          "kl": 0.003375704052383997,
+          "clip_fraction": 0.029990085922009253,
+          "entropy": 0.12541767937188197,
+          "ppo_loss": -0.0016222321620641092,
+          "imitation_loss": 0.6411927904974323,
+          "ppo_samples": 96832,
+          "imitation_samples": 361920,
+          "H_imit": 0.6683460813375507,
+          "imitation_kl": 0.01619947806415677,
+          "imitation_entropy_samples": 90480,
+          "imitation_beta_used": 0.05804777756511843,
+          "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+          "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+          "epochs": 4,
+          "value_explained_variance": 0.35487374404812233,
+          "ppo_return_variance": 0.0005786566230435251,
+          "ppo_value_error_variance": 0.00037330658070582637,
+          "value_explained_variance_samples": 24208,
+          "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+          "imitation_beta": 0.058373421687390736,
+          "imitation_entropy_target": 0.6716025225602738
+        },
+        {
+          "event": "update",
+          "update": 28,
+          "version": 133,
+          "training_seconds": 6668.21907043457,
+          "update_seconds": 223.67115783691406,
+          "actual_steps": 114688,
+          "sl_trial_steps": 2816204,
+          "lanes": 256,
+          "world_size": 7,
+          "next_epochs": 4,
+          "completed_episodes": 327,
+          "stalled_episodes": 1,
+          "completed_average_floor": 18.04281345565749,
+          "active_max_floor_steps": 1126,
+          "stall_classes": {
+            "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
+          },
+          "policy_loss": 0.503835645965275,
+          "value_loss": 0.00048785128749429354,
+          "imitation_fraction": 0.78240966796875,
+          "loss": 0.473408941157954,
+          "kl": 0.003857202069343862,
+          "clip_fraction": 0.03391103987176918,
+          "entropy": 0.1361084903241246,
+          "ppo_loss": -0.0013935053382235314,
+          "imitation_loss": 0.6443412957349116,
+          "ppo_samples": 99820,
+          "imitation_samples": 358932,
+          "H_imit": 0.6741974228944954,
+          "imitation_kl": 0.012326249802963386,
+          "imitation_entropy_samples": 89733,
+          "imitation_beta_used": 0.058373421687390736,
+          "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+          "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+          "epochs": 4,
+          "value_explained_variance": 0.37389154966840554,
+          "ppo_return_variance": 0.0005983353413443176,
+          "ppo_value_error_variance": 0.0003746228133477163,
+          "value_explained_variance_samples": 24955,
+          "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+          "imitation_beta": 0.058113931653968574,
+          "imitation_entropy_target": 0.6716025225602738
         }
       ],
-      "actual_steps": 3080192,
+      "actual_steps": 3309568,
       "assessments": [
         {
           "episodes": 1024,
@@ -2567,18 +2668,18 @@
       },
       "stagnant": 0,
       "best_floor": 18.1806640625,
-      "imitation_beta": 0.05804777756511843,
+      "imitation_beta": 0.058113931653968574,
       "imitation_entropy_target": 0.6716025225602738
     },
     "fault_files": [],
     "queue_errors": [],
-    "snapshot": "inventory/e4-c54-evaluation129.json"
+    "snapshot": "job3689-poll1022-0346.json"
   },
   "pending": [
-    "Monitor3689 fixed9a63f63 sevenGPU after129dev: average18.1806640625,Act1Boss499/1024,stagnant0; next7556.290725708008 trainingseconds. AwaitMac18new audit roots; preserve4knownshop-loopstalls separately.",
-    "After3689 normally ends/yields deploy locallymergedClaude56 fix33ec6d61 andClaude58 fix1f5f99e4; rebuild nativeengine and run test_cuda_* inside nextSlurm job beforetraining; compare throughput baseline. Preserve old-engine113/121 discrepancy evidence; fixed-engineMac reports separate.",
+    "Monitor3689 fixed9a63f63 sevenGPU after129dev18.1806640625,stagnant0,next7556.290725708008 trainingseconds; Claude59 confirms129 all18dual-scopepass. Preserve4knownshopstalls; publish next eval and18auditprefixes.",
+    "PerClaude59 after3689 ends/yields deploymergedmain with56/58fixes; recompile; nextSlurm job runs test_cuda_* beforetraining, restores latest EVALUATION checkpoint beta/optimizer/collector, uses7or8freeGPUs under54queuepolicy, comparesactual steps/s against473.9.",
     "Yield on other nondependency pending jobs or scontrol failure; running otherGPU jobs allowed perClaude54.",
-    "Settle actual elapsed*7/8 node-seconds once on exit; release unused12600reservation; all priorcosts and original8rank111 preserved. No sealed evaluation."
+    "Settle3689 actualGPU seconds/8 once and release unused12600reservation. Consume remainingstep1 limit64800 before chargingstep2 newlyauthorized129600. Preserve priorcosts/checkpoints; no sealed evaluation, no stepsbeyond2 authorized."
   ],
   "claude53_execution": {
     "main": "97f3af3fda848a0948fe00b492111201f6308da6",
@@ -2782,9 +2883,9 @@
     "evidence": "inventory/e4-c54-start3689.json",
     "publication": "b6652f23ce947169080997c05448256f88d98dc5",
     "latest_update": {
-      "version": 131,
-      "trained_seconds": 6220.739471435547,
-      "imitation_beta": 0.05804777756511843,
+      "version": 133,
+      "trained_seconds": 6668.21907043457,
+      "imitation_beta": 0.058113931653968574,
       "world_size": 7
     },
     "evaluation113_evidence": "inventory/e4-c54-evaluation113-start.json",
@@ -3101,7 +3202,7 @@
     "evaluation129_evidence": "inventory/e4-c54-evaluation129-start.json",
     "evaluation129_start_publication": "575b7626b0a76051391bc1fa61d14a7803a35f4a",
     "evaluation129": {
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "summary": {
         "episodes": 1024,
         "average_floor": 18.1806640625,
@@ -3251,7 +3352,8 @@
       },
       "audit_roots": 18,
       "audit_decisions": 6052,
-      "evidence": "inventory/e4-c54-evaluation129.json"
+      "evidence": "inventory/e4-c54-evaluation129.json",
+      "publication": "881843ca06d80ed9e627e3bcfcfa45c3c60fb95e"
     }
   },
   "claude55_audit": {
@@ -3395,5 +3497,56 @@
     },
     "verification": "Mac report only; no server validation yet; retain old-engine121 divergence and do not infer full original root pass from309step prefix",
     "deployment": "3689 unchanged; after normal exit/yield deploy togetherwithClaude56, recompile and run test_cuda_* inside next Slurm job beforetraining"
+  },
+  "claude59_execution": {
+    "source": "docs/messages/claude-to-gpt.md #59",
+    "commit": "005c73b43e7460971ddb3266412a4e38fecc5257",
+    "round": "E4-C53-129-N32-D1024",
+    "status": "mac_reported_pass",
+    "traces": 18,
+    "decisions": 6052,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "checked_engines": [
+      "running old engine9a63f63",
+      "main1f5f99e4"
+    ],
+    "independent_full1024_replay_report": {
+      "average_floor_rounded": 18.181,
+      "act1_boss_count": 499
+    },
+    "verification": "Claude original-game Mac replay report; not independently replayed on server",
+    "budget_authorization": {
+      "step": 2,
+      "limit_node_seconds": 129600,
+      "eight_gpu_node_hours": 36,
+      "accounting": "GPU seconds /8",
+      "charge_order": "Consume remaining step1 budget first, then step2",
+      "later_steps_beyond2_authorized": false
+    },
+    "next_job": {
+      "trigger": "After3689 normal end or yield",
+      "engine_fixes": [
+        "33ec6d61",
+        "1f5f99e4"
+      ],
+      "compile": true,
+      "in_job_gates": "test_cuda_* before training",
+      "resume": "latest evaluation checkpoint",
+      "restore": [
+        "imitation_beta",
+        "optimizer",
+        "collector"
+      ],
+      "world_sizes": [
+        7,
+        8
+      ],
+      "queue_policy": "Claude54",
+      "throughput_comparison_baseline": 473.9,
+      "unchanged": "two stopping rules; evaluation every1800trainingseconds; Mac audit aftereach evaluation"
+    },
+    "local_merge": "8100d2a4b56b3f415307965be615f38c84713c2a"
   }
 }

@@ -155,7 +155,7 @@
     "noncombat_recomputed": true,
     "audit_actual_trajectories_match": true,
     "audit_decisions": 6052,
-    "mac_status": "pending_mac_original_replay",
+    "mac_status": "mac_reported_pass",
     "combat_aggregate_verification": "server reported; not independently recomputed in this export"
   },
   "checkpoint_files": [
@@ -409,5 +409,56 @@
       "shield_spear": 0.0,
       "heart": 0.0
     }
+  },
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #59",
+    "commit": "005c73b43e7460971ddb3266412a4e38fecc5257",
+    "round": "E4-C53-129-N32-D1024",
+    "status": "mac_reported_pass",
+    "traces": 18,
+    "decisions": 6052,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "checked_engines": [
+      "running old engine9a63f63",
+      "main1f5f99e4"
+    ],
+    "independent_full1024_replay_report": {
+      "average_floor_rounded": 18.181,
+      "act1_boss_count": 499
+    },
+    "verification": "Claude original-game Mac replay report; not independently replayed on server",
+    "budget_authorization": {
+      "step": 2,
+      "limit_node_seconds": 129600,
+      "eight_gpu_node_hours": 36,
+      "accounting": "GPU seconds /8",
+      "charge_order": "Consume remaining step1 budget first, then step2",
+      "later_steps_beyond2_authorized": false
+    },
+    "next_job": {
+      "trigger": "After3689 normal end or yield",
+      "engine_fixes": [
+        "33ec6d61",
+        "1f5f99e4"
+      ],
+      "compile": true,
+      "in_job_gates": "test_cuda_* before training",
+      "resume": "latest evaluation checkpoint",
+      "restore": [
+        "imitation_beta",
+        "optimizer",
+        "collector"
+      ],
+      "world_sizes": [
+        7,
+        8
+      ],
+      "queue_policy": "Claude54",
+      "throughput_comparison_baseline": 473.9,
+      "unchanged": "two stopping rules; evaluation every1800trainingseconds; Mac audit aftereach evaluation"
+    },
+    "local_merge": "8100d2a4b56b3f415307965be615f38c84713c2a"
   }
 }
