@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T08:09:08.797994+08:00",
-  "active_job": 3647,
-  "phase": "step1_learning_efficiency_ab",
+  "updated_at": "2026-10-21T09:46:06.474339+08:00",
+  "active_job": null,
+  "phase": "step1_awaiting_claude_ab_selection",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -10,11 +10,11 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 25836,
+      "charged_node_seconds": 31395,
       "limit_node_seconds": 43200,
-      "reserved_node_seconds": 9000,
+      "reserved_node_seconds": 0,
       "limit_authorization": "Claude28 at627e417; priorcharges retained",
-      "active_observed_node_seconds": 32
+      "active_observed_node_seconds": 0
     }
   },
   "cost_ledger": [
@@ -154,12 +154,21 @@
       "source": "scontrol final RunTime00:09:10; accounting-final.txt",
       "exit_code": "0:15",
       "reason": "Cancelled perClaude35; throughput comparison withdrawn; preserve partial diagnostic checkpoints"
+    },
+    {
+      "job_id": 3647,
+      "step": 1,
+      "charged_node_seconds": 5559,
+      "gpu_seconds": 44472,
+      "source": "scontrol final RunTime=01:32:39; accounting-final.txt",
+      "exit_code": "0:0",
+      "accounting_sha256": "667c9e6b3e45e75303c4c79214172af65ff05c865f3a1b97e81f68bb362acbee"
     }
   ],
   "current_job": {
     "job_id": 3647,
     "purpose": "Claude35 sharedcheckpoint88 learningefficiency: baseline1024, A32epochs1 and B256epochs4 sequential",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "step": 1,
     "gpus": 8,
     "reserved_seconds": 9000,
@@ -175,14 +184,20 @@
     "dev_seed_count": 1024,
     "script_sha256": "6b4d28754deadaa3d131516bbe12c0a6abb93b61eb3996a23a8506fa7b7784e2",
     "start_time": "2026-10-21T08:07:37+08:00",
-    "last_observed_elapsed_seconds": 32,
-    "active_case": "baseline",
-    "checkpoint_reason": "before_evaluation"
+    "last_observed_elapsed_seconds": 5559,
+    "active_case": "B",
+    "checkpoint_reason": "complete",
+    "latest_completed_case_updates": 9,
+    "last_durable_checkpoint_version": 97,
+    "trained_seconds": 1909.7843170166016,
+    "elapsed_seconds": 5559,
+    "charged_node_seconds": 5559,
+    "exit_code": "0:0",
+    "end_time": "2026-10-21T09:40:16+08:00"
   },
   "pending_actions": [
-    "Monitor3647 baseline1024 then A32epochs1 and B256epochs4; B nextupdate epochs2 ifkl>.05; checkfaults/checkpoints/queue",
-    "Publish baseline and both1024 comparisons with18auditroots each; waitClaude selection then continue chosen groupcheckpoint",
-    "Settle3647 actualnodecost once, release9000reservation; neverreset budget",
-    "2718 new18auditroots pendingMac review"
+    "Await Claude35 selection after complete shared-baseline A/B results; resume selected group checkpoint (A128 or B97), never original88.",
+    "B audit18 pending Mac original replay; preserve all previous audit evidence.",
+    "Before any approved continuation check queue, fixed version, selected checkpoint hashes and remaining11805 node seconds; no automatic extra experiment."
   ]
 }
