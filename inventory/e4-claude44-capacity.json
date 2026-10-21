@@ -23,5 +23,24 @@
     "native compilation",
     "Slurm existing CPU/GPU parity + cuda_faults + clone reuse check",
     "explicit checkpoint111 migration and full1024evaluation resume"
-  ]
+  ],
+  "build_repair": {
+    "initial_full_build_exit": 2,
+    "error": "cuda/batch.cu:132 unknown type name __device__ when included by host test_cuda_dispatch.cpp",
+    "fix_commit": "3e408345f5942ba05ddc733dfd9cda09223b488f",
+    "fix": "Define and undefine __device__ beside existing __global__ host-test shim; game code and assertions unchanged",
+    "status": "required target rebuild running",
+    "targets": [
+      "spire",
+      "spire_gpu",
+      "test_cuda_dispatch",
+      "test_cuda_parity",
+      "test_cuda_faults"
+    ],
+    "initial_log": "/home/zhuyouwei/spire-downloads/e4-c44-native-build.log",
+    "rebuild_log": "/home/zhuyouwei/spire-downloads/e4-c44-target-build.log",
+    "checkpoint111_hashes_unchanged": true,
+    "step1_charged_node_seconds": 35657,
+    "reserved_node_seconds": 0
+  }
 }
