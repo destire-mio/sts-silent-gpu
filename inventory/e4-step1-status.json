@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T17:34:33.233688+08:00",
-  "active_job": null,
-  "phase": "step1_blocked_engine_fault",
+  "updated_at": "2026-10-21T19:05:20.024737+08:00",
+  "active_job": 3671,
+  "phase": "step1_training",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -10,11 +10,11 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 35657,
+      "charged_node_seconds": 35691,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 0,
+      "reserved_node_seconds": 14400,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 0
+      "active_observed_node_seconds": 991
     }
   },
   "cost_ledger": [
@@ -183,121 +183,17 @@
       "exit_code": "0:15",
       "reason": "Cancelled on unknown engine fault 2878649142 during dev111",
       "accounting_sha256": "b18ce7fbf1737261b0160781036b1433f0b4ea9df9f2423ac8e8339dffe211b2"
-    }
-  ],
-  "current_job": {
-    "job_id": 3669,
-    "purpose": "Claude42+43 resume109 with per-update dependency-aware safe queue checks",
-    "state": "RUNNING",
-    "step": 1,
-    "gpus": 8,
-    "reserved_seconds": 14400,
-    "fixed_head": "4fe2af0836959dd592d333ec267cdbdfce66d313",
-    "output": "/home/zhuyouwei/spire-downloads/e4-c43-resume-3669",
-    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c43-resume-3669.log",
-    "submitted_at": "2026-10-21T17:15:53+08:00",
-    "start_time": "2026-10-21T17:15:53+08:00",
-    "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
-    "source_version": 97,
-    "resume_directory": "/home/zhuyouwei/spire-downloads/e4-c43-migrated-109",
-    "resume_version": 109,
-    "lanes": 256,
-    "trials": 32,
-    "initial_epochs": 8,
-    "epoch_range": [
-      2,
-      8
-    ],
-    "dev_seed_count": 1024,
-    "script_sha256": "8d984474f0df9ac0d82ee599015b030d41043019371d68795be5b14f4c9eb477",
-    "last_observed_elapsed_seconds": 39,
-    "last_durable_checkpoint_version": 109,
-    "checkpoint_reason": "started",
-    "trained_seconds": 3255.404754638672
-  },
-  "resume_checkpoint": {
-    "directory": "/home/zhuyouwei/spire-downloads/e4-c43-migrated-109",
-    "version": 109,
-    "commit": "4fe2af0836959dd592d333ec267cdbdfce66d313",
-    "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
-    "trained_seconds": 3255.404754638672,
-    "next_evaluation": 3600.0,
-    "epochs": 8,
-    "files": {
-      "rank-0.pt": {
-        "size": 12794280,
-        "sha256": "e02f0a25254c6059c298cf1ad06e2fa0524c2de9b6aac417852c2800a0b775f3"
-      },
-      "rank-1.pt": {
-        "size": 12804648,
-        "sha256": "8f7485cd91a16908599e939f14c02a5ad85e815f5672fc770d5e51dbb1675949"
-      },
-      "rank-2.pt": {
-        "size": 12793256,
-        "sha256": "8e40dcf16ba6784e2eb7054a2f54c447ce11f1a337fedbdc14c229077141ad2a"
-      },
-      "rank-3.pt": {
-        "size": 12803560,
-        "sha256": "a7038442399d4780febd80463a8ea64db120abc353013890957840d04cefb529"
-      },
-      "rank-4.pt": {
-        "size": 12804648,
-        "sha256": "af1beab60a6b4efe638ad42cd9293f738d6aaa180d6c4eb4ae482a331615ab2b"
-      },
-      "rank-5.pt": {
-        "size": 12808296,
-        "sha256": "3e4d06e7bed7ce0ac35c9495511e079416a5cd1f8619bbf7ecd46b7d1c4227d8"
-      },
-      "rank-6.pt": {
-        "size": 12797992,
-        "sha256": "ec90a80576066e9f85bbcb8e050f3409d1652cbe119bdbe46918cfe87c2928ee"
-      },
-      "rank-7.pt": {
-        "size": 12800616,
-        "sha256": "7429f67a42948b574a50beebf36358fcc8ee2cf1ede2c6f285b5d7ad37f784d3"
-      }
     },
-    "original_directory": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
-    "original_files": {
-      "rank-6.pt": {
-        "size": 12805961,
-        "sha256": "739403a7c6405a306dd232c8a12429ded1efebbb5fb16acbff61bd6d5a7cd661"
-      },
-      "rank-3.pt": {
-        "size": 12811529,
-        "sha256": "80ee3c6d07bea50d66cf953e8e0104d8cb6178c90d75c609de49de09f1260e4b"
-      },
-      "rank-5.pt": {
-        "size": 12816265,
-        "sha256": "a874bc33eae447e01bcc59dc626ce17ebae6c9c3dcce0cfa93b7eaf6b5935ffb"
-      },
-      "rank-7.pt": {
-        "size": 12808585,
-        "sha256": "ac7f98bcbbf262450ca55a81a15ea831ecc54c6317ee5abbf4e48beee05f0705"
-      },
-      "rank-0.pt": {
-        "size": 12802313,
-        "sha256": "e95176d30ad0bdaedee49fc75338d81b2070e62e7b2fc336fcf83a071af02331"
-      },
-      "rank-1.pt": {
-        "size": 12812617,
-        "sha256": "d12933489f2fda60a82f5aad3bd0eb5d055c05a717a3d879fe7e0ad5d5c390ff"
-      },
-      "rank-2.pt": {
-        "size": 12801225,
-        "sha256": "c8f8d8ee60db852f2bfa74c81de49b800f1897b521bbf58b8569d2432ebe61e5"
-      },
-      "rank-4.pt": {
-        "size": 12812617,
-        "sha256": "1a4cece3b5b8bfbd2d50a59c5e1cc96603df22d44df2dabf0a5a33640f9844f4"
-      }
+    {
+      "job_id": 3670,
+      "step": 1,
+      "charged_node_seconds": 34,
+      "gpu_seconds": 34,
+      "source": "scontrol final RunTime; oneGPU short gate charged fullnode time conservatively",
+      "exit_code": "0:0",
+      "reason": "Claude44 existing parity/faults and clone gates passed",
+      "accounting_sha256": "b589efb444e1b15a7818fdc9ad13cab168103431ec56ca7e2fe1b55f1720a109"
     }
-  },
-  "pending_actions": [
-    "Investigate dev seed2000000544 SL trial fault2878649142 at PlayedCards::record size<1024 using preserved1654candidate path and Mac original evidence; engine fix/regression must enter main before resume.",
-    "Preserve all8checkpoint111 and fault-rank0 plus original109/B97; evaluation111 incomplete, no audit18 or reach result yet; do not drop seed or count fault as death.",
-    "After authorized main fix and necessary compile/parity, explicitly migrate/resume preserved111 evaluation with optimizer/collector/RNG/train clock; append18Macpending roots only after complete evaluation.",
-    "Maintain dependency-aware per-update/assessment queue checks and detailed change snapshots; step1 remaining29143 node seconds; retain3-stagnant-assessment stop rule."
   ],
   "jobs": [
     {
@@ -581,7 +477,7 @@
       "fixed_head": "7c918ddab4039750b3104b96f131155f17ddfce0",
       "output": "/home/zhuyouwei/spire-downloads/e4-throughput-3646",
       "slurm_log": "/home/zhuyouwei/spire-downloads/e4-throughput-3646.slurm.log",
-      "submitted_at": "2026-10-21T07:53:55.488100+08:00",
+      "submitted_at": "2026-10-21T07:53:55.4881+08:00",
       "source_directory": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729",
       "source_version": 88,
       "cases": [
@@ -655,7 +551,7 @@
       "fixed_head": "f2db1e248e9c0e076646edfe130eadb5158eedd3",
       "output": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
       "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c39-3648.slurm.log",
-      "submitted_at": "2026-10-21T09:57:25.527960+08:00",
+      "submitted_at": "2026-10-21T09:57:25.52796+08:00",
       "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
       "source_version": 97,
       "lanes": 256,
@@ -713,51 +609,104 @@
       "exit_code": "0:15",
       "end_time": "2026-10-21T17:31:53+08:00",
       "stop_authorization": "Heartbeat unknown fault stop rule"
+    },
+    {
+      "job_id": 3670,
+      "purpose": "Claude44 parity faults clone gates",
+      "state": "COMPLETED",
+      "step": 1,
+      "gpus": 1,
+      "reserved_seconds": 300,
+      "fixed_head": "3e408345f5942ba05ddc733dfd9cda09223b488f",
+      "output": "/home/zhuyouwei/spire-downloads/e4-c44-check-3670",
+      "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c44-check-3670.log",
+      "submitted_at": "2026-10-21T18:44:11.948934+08:00",
+      "script_sha256": "acf204c1c7a2e2d820e5d476f5706e9368cc254a53e1e458406fc8180de022ac",
+      "elapsed_seconds": 34,
+      "charged_node_seconds": 34,
+      "exit_code": "0:0",
+      "start_time": "2026-10-21T18:43:30",
+      "end_time": "2026-10-21T18:44:04"
+    },
+    {
+      "job_id": 3671,
+      "purpose": "Claude44 resume111 aftercapacityguard gates; full1024 evaluation",
+      "state": "RUNNING",
+      "step": 1,
+      "gpus": 8,
+      "reserved_seconds": 14400,
+      "fixed_head": "3e408345f5942ba05ddc733dfd9cda09223b488f",
+      "output": "/home/zhuyouwei/spire-downloads/e4-c44-resume-3671",
+      "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c44-resume-3671.log",
+      "submitted_at": "2026-10-21T18:46:35.916947+08:00",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+      "source_version": 97,
+      "resume_directory": "/home/zhuyouwei/spire-downloads/e4-c44-migrated-111",
+      "resume_version": 111,
+      "lanes": 256,
+      "trials": 32,
+      "initial_epochs": 8,
+      "dev_seed_count": 1024,
+      "script_sha256": "f6e0dcf63b917e80a91c8c4b965e5be934dbe63ce750ee2ca097c8b600ce2411",
+      "start_time": "2026-10-21T18:45:50",
+      "last_durable_checkpoint_version": 112,
+      "checkpoint_reason": "update_complete",
+      "trained_seconds": 4046.2284240722656,
+      "last_observed_elapsed_seconds": 991,
+      "latest_completed_update": 112
     }
   ],
-  "blocker": "dev111 seed2000000544 fault2878649142 PlayedCards::record size<1024; pending Mac evidence/main regression",
-  "preserved_checkpoint111": {
-    "directory": "/home/zhuyouwei/spire-downloads/e4-c43-resume-3669",
+  "server_fixed_head": "3e408345f5942ba05ddc733dfd9cda09223b488f",
+  "evaluation_watch": {
+    "job_id": 3671,
     "version": 111,
-    "phase": "evaluation",
-    "reason": "before_evaluation",
-    "files": {
-      "rank-0.pt": {
-        "size": 13007621,
-        "sha256": "f377c69064273bd488cfe8633c655354255855bfc98b3eea5d5e6540d083155e"
+    "status": "complete",
+    "assessment": {
+      "episodes": 1024,
+      "average_floor": 11.3203125,
+      "reach": {
+        "act1_boss": 0.087890625,
+        "act2_boss": 0.0,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "shield_spear": 0.0,
+        "heart": 0.0
       },
-      "rank-1.pt": {
-        "size": 13000261,
-        "sha256": "c3878d3c740f42b2af9299fe2d7924e6d9a78b8b101473b5165319b8373cbd43"
-      },
-      "rank-2.pt": {
-        "size": 12996165,
-        "sha256": "de62811845c2717178096ee34d4a5d39549aaf72a1f2757d2290b087989f4b6d"
-      },
-      "rank-3.pt": {
-        "size": 13009797,
-        "sha256": "6d3f85b50d575fc387ed627c7ea80761e4fdec068be14b179f814ade2b21daf3"
-      },
-      "rank-4.pt": {
-        "size": 13010117,
-        "sha256": "4729c36276f64871a028664a13d6b2540801ed94c654e2e97e0398a00c2731b6"
-      },
-      "rank-5.pt": {
-        "size": 12995077,
-        "sha256": "0f52bda4e5fb9b2c5dfdd31d3826af9d1d7ba935c23e2ae54bf70eff13a4ae4e"
-      },
-      "rank-6.pt": {
-        "size": 12996869,
-        "sha256": "582d884ad21c02cea539e185412a247717133f9b4a1bfbba97eb033569764b0d"
-      },
-      "rank-7.pt": {
-        "size": 12997061,
-        "sha256": "171c747b900f48496bae935bac75174835ded69509006b60dcb9d46488cb9732"
-      }
+      "victories": 0,
+      "stalled": 0,
+      "stall_classes": {},
+      "faults": 0,
+      "truncated": 0,
+      "round": "E4-C39-111-N32-D1024",
+      "version": 111,
+      "trials": 32,
+      "training_lanes": 256,
+      "evaluation_lanes": 256,
+      "dev_seed_count": 1024,
+      "evaluation_seconds": 486.37396240234375,
+      "trained_seconds": 3789.3605346679688,
+      "update_count": 14,
+      "actual_steps": 1835008,
+      "next_epochs": 8,
+      "combat_over_limit": 0,
+      "event_over_limit": 0,
+      "combat_normal_max_steps": 1566,
+      "event_normal_max_steps": 67,
+      "combat_played_cards_limit": 11,
+      "combat_trials": 199296,
+      "combat_played_cards_limit_fraction": 5.5194283879254976e-05
     },
-    "trained_seconds": 3789.3605346679688,
-    "next_evaluation": 3600.0,
-    "resume_authorized": false
+    "audit_roots": 18,
+    "audit_status": "pending_mac_original_replay",
+    "stagnant": 1,
+    "next_evaluation_training_seconds": 7389.360534667969
   },
-  "latest_fault_evidence": "inventory/e4-c43-3669-fault.json"
+  "pending": [
+    "Monitor3671 continuedtraining; next1024dev attrained7389.360534667969; preservefixed3e40834.",
+    "111assessment and18pendingMac audits recorded; retrypublication ifnetworkblocked; checkmain/codex/e4 newcommits afterconnectionrecovery.",
+    "Stopafter3stagnant assessments orcapacityfraction>0.1percent/unknownfault; queueyield eachupdate/preeval.",
+    "Settle3671actualcostonceafterexit; retain14400reservation untilthen."
+  ]
 }
