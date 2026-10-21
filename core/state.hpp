@@ -528,7 +528,7 @@ struct Game {
     bool mugged = false;
     bool smoked = false;
     int bomb_id_offset = 0;
-    uint32_t padding = 0;
+    float grid_transform_timer = 0.0f;
     SPIRE_FN SPIRE_INLINE constexpr Game()
         : grid_can_cancel(true), selection_confirmation(false), selected_cards_retrieved(false), end_turn_enabled(true), selection_up_to(false),
           reward_skippable(false), combat_reward_skippable(false), reward_proceed_visible(false), reward_has_taken_all(false), reward_relic_warning_seen(false),
