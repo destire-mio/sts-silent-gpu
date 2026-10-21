@@ -23,26 +23,54 @@ from tools.e4_run import atomic_checkpoint, atomic_json, audit, collective_stop,
 
 def queue_snapshot():
     jobs = []
-    for line in subprocess.check_output(['scontrol', 'show', 'jobs', '-o'], text=True).splitlines():
+    for line in subprocess.check_output(['scontrol', 'show', 'jobs', '-o'], text=True, timeout=60).splitlines():
         fields = dict(token.split('=', 1) for token in line.split() if '=' in token)
+        if any(fields.get(key) is None for key in (
+                'JobId', 'JobName', 'UserId', 'JobState', 'Reason', 'Dependency',
+                'TimeLimit', 'StartTime', 'RunTime', 'NodeList', 'TRES')):
+            raise ValueError(f'Incomplete scontrol job fields: {line}')
         jobs.append({key: fields.get(key) for key in (
             'JobId', 'JobName', 'UserId', 'JobState', 'Reason', 'Dependency',
             'TimeLimit', 'StartTime', 'RunTime', 'NodeList', 'TresPerNode', 'TRES')})
-    raw_node = subprocess.check_output(['scontrol', 'show', 'node', 'gpu01', '-o', '-d'], text=True)
+    raw_node = subprocess.check_output(['scontrol', 'show', 'node', 'gpu01', '-o', '-d'], text=True, timeout=60)
     fields = dict(token.split('=', 1) for token in raw_node.split() if '=' in token)
-    node = {key: fields[key] for key in ('NodeName', 'State', 'Gres', 'GresUsed', 'CfgTRES', 'AllocTRES')}
+    node = {key: fields.get(key) for key in ('NodeName', 'State', 'Gres', 'GresUsed', 'CfgTRES', 'AllocTRES')}
+    if any(value is None for value in node.values()):
+        raise ValueError(f'Incomplete scontrol node fields: {raw_node}')
     blockers = []
     for job in jobs:
-        if job['UserId'].split('(')[0] == os.environ['USER']:
+        if job.get('UserId').split('(')[0] == os.environ['USER']:
             continue
-        dependency_wait = job['Reason'] in ('Dependency', 'DependencyNeverSatisfied')
-        gpu = 'gpu' in (job['TresPerNode'] or '') or 'gpu' in (job['TRES'] or '')
-        if ((job['JobState'] == 'PENDING' and not dependency_wait)
-                or (gpu and job['JobState'] in ('RUNNING', 'CONFIGURING', 'COMPLETING'))):
-            blockers.append(job['JobId'])
+        dependency_wait = job.get('Reason') in ('Dependency', 'DependencyNeverSatisfied')
+        gpu = 'gpu' in (job.get('TresPerNode') or '') or 'gpu' in (job.get('TRES') or '')
+        if ((job.get('JobState') == 'PENDING' and not dependency_wait)
+                or (gpu and job.get('JobState') in ('RUNNING', 'CONFIGURING', 'COMPLETING'))):
+            blockers.append(job.get('JobId'))
     return dict(checked_at=datetime.now().astimezone().isoformat(), jobs=jobs, node=node,
                 blocking_job_ids=blockers,
                 source='scontrol show jobs -o; scontrol show node gpu01 -o -d')
+
+
+def waiting(rank, output, version):
+    result = [None]
+    if rank == 0:
+        try:
+            snapshot = queue_snapshot()
+            atomic_json(output / 'queue-last.json', snapshot)
+            result[0] = bool(snapshot.get('blocking_job_ids'))
+            if result[0]:
+                atomic_json(output / f'queue-yield-{version}.json', snapshot)
+        except Exception as error:
+            result[0] = True
+            evidence = dict(checked_at=datetime.now().astimezone().isoformat(),
+                            version=version, error_type=type(error).__name__, error=str(error))
+            try:
+                atomic_json(output / f'queue-error-{version}.json', evidence)
+            except OSError as write_error:
+                print(json.dumps(dict(evidence, evidence_write_error=str(write_error))),
+                      file=sys.stderr, flush=True)
+    dist.broadcast_object_list(result, src=0)
+    return result[0]
 
 
 def main():
@@ -147,23 +175,12 @@ def main():
                 updates=updates, actual_steps=actual_steps, assessments=assessments,
                 best=best, stagnant=stagnant))
 
-    def waiting():
-        result = [None]
-        if rank == 0:
-            snapshot = queue_snapshot()
-            atomic_json(args.output / 'queue-last.json', snapshot)
-            result[0] = bool(snapshot['blocking_job_ids'])
-            if result[0]:
-                atomic_json(args.output / f'queue-yield-{97+len(updates)}.json', snapshot)
-        dist.broadcast_object_list(result, src=0)
-        return result[0]
-
     try:
         if phase == 'complete':
             return
         checkpoint('started')
         while True:
-            if waiting():
+            if waiting(rank, args.output, 97+len(updates)):
                 checkpoint('yield_to_waiting_user')
                 return
             if collective_stop(time.monotonic() >= deadline, device):
@@ -227,7 +244,7 @@ def main():
                 search.metrics = dict.fromkeys(SEARCH_METRICS, 0)
                 search.event_trial_max_steps = 0
                 phase = 'evaluation'
-            if waiting():
+            if waiting(rank, args.output, 97+len(updates)):
                 checkpoint('yield_to_waiting_user')
                 return
             checkpoint('before_evaluation')

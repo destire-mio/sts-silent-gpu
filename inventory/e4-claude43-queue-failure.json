@@ -1,0 +1,16 @@
+{
+  "main_decision": "36cdf9915be3bd3cc237736d35eb0a05c141e07d",
+  "message": 43,
+  "checked_at": "2026-10-21T16:04:14.958506+08:00",
+  "test": {
+    "command": "D:\\anaconda\\python.exe -X utf8 -m pytest tests/test_e4_queue_failure.py -q -p no:cacheprovider",
+    "result": "1 passed in 8.22s",
+    "exit_code": 0,
+    "scope": "Only requested scontrol-exception regression; no other tests"
+  },
+  "deployment": "not_deployed_ssh_timeout",
+  "runtime_version_last_verified": "f2db1e248e9c0e076646edfe130eadb5158eedd3",
+  "resume_version": 109,
+  "charged_step1_node_seconds": 34697,
+  "reserved_node_seconds": 0
+}
