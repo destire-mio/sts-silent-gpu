@@ -23,6 +23,23 @@ REACH = ("act1_boss", "act2_boss", "act3_first_boss", "act3_second_boss",
          "act3_three_keys", "act4", "shield_spear", "heart")
 
 
+COMBAT_DIAGNOSTIC_METRICS = ('policy_entropy', 'win_fraction', 'score_std', 'distinct_end_states', 'selected_score_gain')
+
+
+def combat_diagnostics_summary(rows):
+    result = {}
+    for label, group in [('all', rows)] + [(f'act{act}', [r for r in rows if r['act'] == act]) for act in range(1, 5)]:
+        decisions = sum(r['decision_count'] for r in group)
+        result[label] = dict(combats=len(group), decisions=decisions,
+            complete_trial_groups=sum(r['capped_trials'] == 0 for r in group),
+            capped_trials=sum(r['capped_trials'] for r in group),
+            nested_event_combats=sum(r['nested_event'] for r in group),
+            pooled_policy_entropy=sum(r['entropy_sum'] for r in group)/decisions if decisions else None,
+            means={key: (sum(r[key] for r in group if r[key] is not None)/sum(r[key] is not None for r in group)
+                         if any(r[key] is not None for r in group) else None) for key in COMBAT_DIAGNOSTIC_METRICS})
+    return result
+
+
 class AllocationEnded(Exception):
     pass
 
@@ -183,6 +200,8 @@ class RoomSearch:
     @torch.no_grad()
     def predict(self, model, slots):
         choices, values, logs = [], [], []
+        if not self.contexts:
+            self.actual_policy_logs = []
         masks = self.policy_masks(slots)
         offset = 0
         for group in torch.tensor(slots, device=self.device).split(self.inference_chunk):
@@ -201,6 +220,8 @@ class RoomSearch:
             choices.extend(action.cpu().tolist())
             values.extend(value.cpu().tolist())
             logs.extend(policy.log_prob(action).cpu().tolist())
+            if not self.contexts:
+                self.actual_policy_logs.extend(policy.logits.cpu().tolist())
         return choices, values, logs
 
     def loop_keys(self, slots):
@@ -576,6 +597,7 @@ class SegmentCollector:
         self.search.actual_lanes = [dict(lane=s, seed=self.seeds[s], steps=len(self.paths[s]),
             floor=progress[s][FLOOR], screen=SCREENS[progress[s][SCREEN]]) for s in slots]
         actions, values, logs = self.search.predict(model, slots)
+        action_logs = self.search.actual_policy_logs
         chosen = dict(zip(slots, actions))
         idle = [s for s in slots if not self.pending[s]]
         combat = [s for s in idle if progress[s][PHASE] == COMBAT_PHASE]
@@ -598,6 +620,7 @@ class SegmentCollector:
             imitation.append(bool(self.pending[s]))
             if self.pending[s]:
                 actions[j] = self.pending[s].popleft()
+                logs[j] = action_logs[j][actions[j]]
         return actions, values, logs, imitation
 
     def advance(self, slots, actions, progress):

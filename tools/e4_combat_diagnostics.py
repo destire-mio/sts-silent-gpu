@@ -11,27 +11,10 @@ import torch
 import torch.distributed as dist
 
 from train.checkpoint import engine_commit
-from train.e4 import AllocationEnded, RoomSearch, SegmentCollector
+from train.e4 import AllocationEnded, RoomSearch, SegmentCollector, combat_diagnostics_summary
 from train.model import ModelConfig, Policy
 from tools.e4_continue import waiting
 from tools.e4_run import atomic_checkpoint, atomic_json, collective_stop, summaries
-
-
-METRICS = ('policy_entropy', 'win_fraction', 'score_std', 'distinct_end_states', 'selected_score_gain')
-
-
-def aggregate(rows):
-    result = {}
-    for label, group in [('all', rows)] + [(f'act{act}', [r for r in rows if r['act'] == act]) for act in range(1, 5)]:
-        decisions = sum(r['decision_count'] for r in group)
-        result[label] = dict(combats=len(group), decisions=decisions,
-            complete_trial_groups=sum(r['capped_trials'] == 0 for r in group),
-            capped_trials=sum(r['capped_trials'] for r in group),
-            nested_event_combats=sum(r['nested_event'] for r in group),
-            pooled_policy_entropy=sum(r['entropy_sum'] for r in group)/decisions if decisions else None,
-            means={key: (sum(r[key] for r in group if r[key] is not None)/sum(r[key] is not None for r in group)
-                         if any(r[key] is not None for r in group) else None) for key in METRICS})
-    return result
 
 
 def main():
@@ -124,7 +107,7 @@ def main():
             fraction = capped/trials if trials else 0.
             limit_exceeded[0] = fraction > .001
             report = dict(version=args.version, commit=commit, source_directory=str(args.source),
-                evaluation_seconds=elapsed, evaluation=summaries(all_episodes), combat=aggregate(rows),
+                evaluation_seconds=elapsed, evaluation=summaries(all_episodes), combat=combat_diagnostics_summary(rows),
                 combat_played_cards_limit=capped, combat_trials=trials, capacity_fraction=fraction,
                 combat_over_limit=sum(x['combat_over_limit'] for x in limits),
                 event_over_limit=sum(x['event_over_limit'] for x in limits),

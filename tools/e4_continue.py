@@ -16,8 +16,8 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
 from train.checkpoint import engine_commit
-from train.e4 import AllocationEnded, CAPACITY_METRICS, REACH, SEARCH_METRICS, RoomSearch, SegmentCollector
-from train.e4_learner import update
+from train.e4 import AllocationEnded, CAPACITY_METRICS, REACH, SEARCH_METRICS, RoomSearch, SegmentCollector, combat_diagnostics_summary
+from train.e4_learner import update, update_beta
 from train.model import ModelConfig, Policy
 from tools.e4_run import atomic_checkpoint, atomic_json, audit, collective_stop, summaries
 
@@ -106,7 +106,7 @@ def main():
     seed_rng = torch.Generator()
     deadline = time.monotonic() + args.seconds - 120
     phase, epochs = 'training', 4
-    trained_seconds, evaluation_seconds, next_evaluation = 0., 0., 3600.
+    trained_seconds, evaluation_seconds, next_evaluation = 0., 0., 1800.
     updates, actual_steps = [], 0
     health_history = deque(source['health_history'], maxlen=20)
     train_state = deepcopy(source['train_state'])
@@ -114,12 +114,18 @@ def main():
     evaluation_state, ready = None, None
     assessments = [source['assessment']]
     best, stagnant = source['assessment']['reach'].copy(), 0
+    best_floor = source['assessment']['average_floor']
+    imitation_beta, imitation_entropy_target = 0., None
     saved = torch.load(args.resume / f'rank-{rank}.pt', map_location='cpu', weights_only=False) if args.resume else None
     if args.evaluate_only:
         assert saved is not None and saved['ready'] is None
     if saved:
         assert saved['commit'] == commit and saved['source_sha256'] == source_hash
         phase, epochs = saved['phase'], saved['epochs']
+        assert epochs == 4
+        best_floor = saved['best_floor']
+        imitation_beta = saved['imitation_beta']
+        imitation_entropy_target = saved['imitation_entropy_target']
         trained_seconds, evaluation_seconds = saved['trained_seconds'], saved['evaluation_seconds']
         next_evaluation = saved['next_evaluation']
         updates, actual_steps = saved['updates'], saved['actual_steps']
@@ -151,6 +157,7 @@ def main():
         search.capacity_metrics = saved['capacity_metrics']
         search.event_trial_max_steps = saved['event_trial_max_steps']
         search.loop_metrics = saved['loop_metrics']
+        search.combat_diagnostics = saved['combat_diagnostics']
 
     def checkpoint(reason):
         nonlocal train_state, evaluation_state
@@ -169,7 +176,9 @@ def main():
             training_rng=training_rng, train_state=train_state, evaluation_state=evaluation_state,
             ready=ready, health_history=list(health_history), assessments=assessments,
             best=best, stagnant=stagnant, search_metrics=search.metrics,
-            capacity_metrics=search.capacity_metrics,
+            capacity_metrics=search.capacity_metrics, combat_diagnostics=search.combat_diagnostics,
+            best_floor=best_floor, imitation_beta=imitation_beta,
+            imitation_entropy_target=imitation_entropy_target,
             event_trial_max_steps=search.event_trial_max_steps, loop_metrics=search.loop_metrics))
         dist.barrier()
         if rank == 0:
@@ -180,7 +189,8 @@ def main():
                 next_evaluation=next_evaluation, evaluation_seconds=evaluation_seconds,
                 capacity_metrics=search.capacity_metrics,
                 updates=updates, actual_steps=actual_steps, assessments=assessments,
-                best=best, stagnant=stagnant))
+                best=best, stagnant=stagnant, best_floor=best_floor,
+                imitation_beta=imitation_beta, imitation_entropy_target=imitation_entropy_target))
 
     try:
         if phase == 'complete':
@@ -210,7 +220,11 @@ def main():
                         checkpoint('allocation_limit')
                         return
                     ddp.train()
-                    metrics = update(ddp, optimizer, ready, ppo_rng, epochs)
+                    metrics = update(ddp, optimizer, ready, ppo_rng, epochs, imitation_beta)
+                    if imitation_entropy_target is None:
+                        imitation_entropy_target = metrics['H_imit']
+                    imitation_beta = update_beta(imitation_beta, imitation_entropy_target, metrics['H_imit'])
+                    metrics.update(imitation_beta=imitation_beta, imitation_entropy_target=imitation_entropy_target)
                     health = ready['health'].clone()
                     dist.all_reduce(health[:3], op=dist.ReduceOp.SUM)
                     dist.all_reduce(health[3:], op=dist.ReduceOp.MAX)
@@ -227,15 +241,14 @@ def main():
                     dist.all_reduce(steps, op=dist.ReduceOp.SUM)
                     trained_seconds += float(elapsed)
                     actual_steps += int(steps[0])
-                    next_epochs = min(8, epochs+2) if metrics['kl'] < .005 else max(2, epochs//2) if metrics['kl'] > .02 else epochs
                     row = dict(event='update', update=len(updates)+1, version=98+len(updates),
                         training_seconds=trained_seconds, update_seconds=float(elapsed),
                         actual_steps=int(steps[0]), sl_trial_steps=int(steps[1]), lanes=256,
-                        next_epochs=next_epochs, completed_episodes=completed, stalled_episodes=stalled,
+                        next_epochs=epochs, completed_episodes=completed, stalled_episodes=stalled,
                         completed_average_floor=floor_sum/completed if completed else None,
                         active_max_floor_steps=max_steps, stall_classes=dict(stall_classes), **metrics)
                     updates.append(row)
-                    epochs, ready = next_epochs, None
+                    ready = None
                     if rank == 0:
                         print(json.dumps(row), flush=True)
                     total_completed = sum(x[0] for x in health_history)
@@ -253,6 +266,7 @@ def main():
                 search.metrics = dict.fromkeys(SEARCH_METRICS, 0)
                 search.capacity_metrics = dict.fromkeys(CAPACITY_METRICS, 0)
                 search.event_trial_max_steps = 0
+                search.combat_diagnostics = []
                 phase = 'evaluation'
             if waiting(rank, args.output, 97+len(updates)):
                 checkpoint('yield_to_waiting_user')
@@ -293,8 +307,9 @@ def main():
                 search_summary['combat_played_cards_limit'] / search_summary['combat_trials']
                 if search_summary['combat_trials'] else 0.)
             version = 97+len(updates)
-            round_name = f'E4-C39-{version}-N32-D1024'
+            round_name = f'E4-C49-{version}-N32-D1024'
             atomic_json(args.output / f'{round_name}-rank-{rank}.json', episodes)
+            atomic_json(args.output / f'{round_name}-combat-{rank}.json', search.combat_diagnostics)
             dist.barrier()
             assessment = None
             if rank == 0:
@@ -302,10 +317,15 @@ def main():
                                     for r in range(world)], [])
                 assert len(all_episodes) == 1024
                 assert {e['seed'] for e in all_episodes} == set(range(2000000000, 2000001024))
+                combat_rows = sum([json.loads((args.output / f'{round_name}-combat-{r}.json').read_text())
+                                   for r in range(world)], [])
                 assessment = dict(summaries(all_episodes), round=round_name, version=version,
                     trials=32, training_lanes=256, evaluation_lanes=256, dev_seed_count=1024,
                     evaluation_seconds=evaluation_seconds, trained_seconds=trained_seconds,
-                    update_count=len(updates), actual_steps=actual_steps, next_epochs=epochs, **search_summary)
+                    update_count=len(updates), actual_steps=actual_steps, next_epochs=epochs,
+                    combat=combat_diagnostics_summary(combat_rows), imitation_beta=imitation_beta,
+                    imitation_entropy_target=imitation_entropy_target, best_average_floor_before=best_floor,
+                    **search_summary)
                 atomic_json(args.output / f'{round_name}-summary.json', assessment)
                 atomic_json(args.output / f'{round_name}-audit.json', audit(all_episodes, round_name, version, commit))
                 print(json.dumps(dict(event='evaluation', **assessment)), flush=True)
@@ -321,6 +341,11 @@ def main():
                 phase = 'complete'
                 checkpoint('evaluation_only_complete')
                 return
+            if best_floor - assessment['average_floor'] > 1.:
+                phase = 'complete'
+                checkpoint('average_floor_more_than_one_below_best')
+                return
+            best_floor = max(best_floor, assessment['average_floor'])
             improved = any(assessment['reach'][key]-best[key] >= .02 for key in REACH)
             stagnant = 0 if improved else stagnant+1
             best = {key: max(best[key], assessment['reach'][key]) for key in REACH}
@@ -329,7 +354,8 @@ def main():
             torch.set_rng_state(training_rng['torch_rng'])
             torch.cuda.set_rng_state(training_rng['cuda_rng'], device)
             evaluation_state, evaluation_seconds = None, 0.
-            next_evaluation = trained_seconds+3600
+            next_evaluation = trained_seconds+1800
+            search.combat_diagnostics = None
             phase = 'training'
             if stagnant >= 3:
                 phase = 'complete'
@@ -340,6 +366,8 @@ def main():
         if sys.exc_info()[0] is not None:
             atomic_checkpoint(args.output / f'fault-rank-{rank}.pt', dict(commit=commit,
                 phase=phase, collector=collector.state(), train_state=train_state, ready=ready,
+                combat_diagnostics=search.combat_diagnostics, imitation_beta=imitation_beta,
+                imitation_entropy_target=imitation_entropy_target,
                 model=policy.state_dict(), optimizer=optimizer.state_dict(), ppo_rng=ppo_rng.get_state(),
                 torch_rng=torch.get_rng_state(), cuda_rng=torch.cuda.get_rng_state(device)))
         dist.destroy_process_group()

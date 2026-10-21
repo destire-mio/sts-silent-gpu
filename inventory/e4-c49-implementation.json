@@ -1,0 +1,19 @@
+{
+  "authorization": "Claude49",
+  "main": "0c6bce58cadc156e4f31ffdd1b33cd74049a5b0e",
+  "regression": "test_imitation_beta_update_and_clamp:1passed5.13s",
+  "syntax_compile": "passed",
+  "epochs": 4,
+  "imitation_entropy": "raw nats; first epoch valid imitation sample mean; no additional forward pass; includes within-epoch optimizer evolution",
+  "beta": "clamp(beta+0.1*(target-H_imit),0,0.5); starts0; target fixed from first update",
+  "imitation_kl": "k3 across valid imitation rows/all epochs vs selected action rollout log-probability; same estimator as PPO",
+  "collector_log_change": "Previously imitation action replaced sampled action but logs remained for sampled action. Cache original forward categorical log-probs and select adopted action log; no action/RNG/engine change. Imitation logs were previously unused by imitation loss.",
+  "checkpoint": "controller target/beta, bestfloor and evaluationdiagnostics preserved; archive every evaluated8rank checkpoint",
+  "evaluation": "every1800trainingseconds,1024dev,N32,18actualaudit plus5combat metrics",
+  "stops": "existing three stagnant assessments/capacity/health/queue plus meanfloor >1 belowbest; initial best=B97 full1024dev13.2958984375",
+  "step1_budget": {
+    "charged": 38782,
+    "limit": 64800,
+    "reserved": 0
+  }
+}

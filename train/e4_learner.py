@@ -7,12 +7,17 @@ from .model import distribution, packed_inputs
 from .ppo import PPOConfig
 
 
-def update(model, optimizer, fragment, rng, epochs):
+def update_beta(beta, target, entropy):
+    return min(.5, max(0., beta + .1 * (target - entropy)))
+
+
+def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
     config = PPOConfig(epochs=epochs, minibatch_size=8192, microbatch_size=32, gae_lambda=.99)
     world = dist.get_world_size()
     count = len(fragment["actions"])
     device = fragment["actions"].device
     ppo = ~fragment["imitation"] & fragment["action_valid"]
+    imitation = fragment["imitation"] & fragment["action_valid"]
     returns = fragment["returns"][ppo].double()
     errors = returns - fragment["values"][ppo].double()
     value_moments = torch.stack((returns.sum(), returns.square().sum(),
@@ -35,8 +40,8 @@ def update(model, optimizer, fragment, rng, epochs):
     std = (moments[1] / moments[2].clamp_min(1) - mean.square()).clamp_min(0).sqrt()
     normalized = ((advantages - mean) / (std + 1e-8)).float()
     per_rank = config.minibatch_size // world
-    total = torch.zeros(11, device=device, dtype=torch.float64)
-    for _ in range(config.epochs):
+    total = torch.zeros(14, device=device, dtype=torch.float64)
+    for epoch in range(config.epochs):
         indices = torch.randperm(count, generator=rng, device=device)
         for selected in indices.split(per_rank):
             chunks = list(selected.split(config.microbatch_size))
@@ -47,6 +52,7 @@ def update(model, optimizer, fragment, rng, epochs):
                     inputs["candidate_mask"] &= fragment["policy_mask"][chunk, :inputs["candidate_mask"].shape[1]]
                     logits, value = model(inputs)
                     policy, entropy = distribution(logits, inputs["candidate_mask"])
+                    imitation_entropy = policy.entropy()
                     log_prob = policy.log_prob(fragment["actions"][chunk])
                     log_ratio = log_prob - fragment["logs"][chunk]
                     ratio = log_ratio.exp()
@@ -55,7 +61,8 @@ def update(model, optimizer, fragment, rng, epochs):
                     policy_loss = torch.where(fragment["imitation"][chunk], -log_prob, -clipped) * fragment["action_valid"][chunk]
                     value_loss = (value - fragment["returns"][chunk]).square()
                     loss = (policy_loss + config.value_coefficient * value_loss
-                            - config.entropy_coefficient * entropy * ppo[chunk]).mean()
+                            - config.entropy_coefficient * entropy * ppo[chunk]
+                            - imitation_beta * imitation_entropy * imitation[chunk]).mean()
                     assert torch.isfinite(loss), "Non-finite E4 loss"
                     (loss * len(chunk) / len(selected)).backward()
                     total += torch.stack((policy_loss.detach().double().sum(), value_loss.detach().double().sum(),
@@ -66,7 +73,10 @@ def update(model, optimizer, fragment, rng, epochs):
                                           (-log_prob.detach() * fragment["imitation"][chunk] * fragment["action_valid"][chunk]).double().sum(),
                                           (-clipped.detach() * ppo[chunk]).double().sum(),
                                           ppo[chunk].double().sum(),
-                                          (fragment["imitation"][chunk] & fragment["action_valid"][chunk]).double().sum()))
+                                          imitation[chunk].double().sum(),
+                                          (imitation_entropy.detach() * imitation[chunk] * (epoch == 0)).double().sum(),
+                                          (imitation[chunk] * (epoch == 0)).double().sum(),
+                                          ((ratio - 1 - log_ratio).detach() * imitation[chunk]).double().sum()))
             torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm, error_if_nonfinite=True)
             optimizer.step()
     dist.all_reduce(total)
@@ -77,6 +87,13 @@ def update(model, optimizer, fragment, rng, epochs):
     result["imitation_loss"] = float(total[7] / total[10].clamp_min(1))
     result["ppo_samples"] = int(total[9])
     result["imitation_samples"] = int(total[10])
+    assert int(total[12]) > 0, "No valid imitation samples for entropy target"
+    result["H_imit"] = float(total[11] / total[12])
+    result["imitation_kl"] = float(total[13] / total[10])
+    result["imitation_entropy_samples"] = int(total[12])
+    result["imitation_beta_used"] = imitation_beta
+    result["imitation_entropy_scope"] = "raw_nats_valid_imitation_first_epoch_forward"
+    result["imitation_kl_scope"] = "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action"
     result["epochs"] = epochs
     result.update(value_explained_variance=explained_variance,
                   ppo_return_variance=return_variance, ppo_value_error_variance=error_variance,
