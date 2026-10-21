@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_nonblocking_difference",
   "engine_commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
   "current_round": "E4-C53-113-N32-D1024",
   "rounds": [
@@ -185,8 +185,45 @@
     {
       "name": "E4-C53-113-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
-      "observation_version": 2
+      "status": "mac_reported_nonblocking_difference",
+      "observation_version": 2,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #55",
+        "commit": "95412cf9c78f248619d6de4f22bad2c7b0d0aa37",
+        "commits_read": [
+          "6adc71aa21e94ee0d9ec16e3a734c5f0be495202",
+          "95412cf9c78f248619d6de4f22bad2c7b0d0aa37"
+        ],
+        "round": "E4-C53-113-N32-D1024",
+        "traces": 18,
+        "decisions": 7711,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "both_scopes_pass": 17,
+        "status": "mac_reported_nonblocking_difference",
+        "difference": {
+          "root_number": 12,
+          "seed": 2000000340,
+          "lines": [
+            520,
+            521,
+            522
+          ],
+          "field": "dead Byrd DamageInfo/isModified",
+          "context": "Third Byrd dies to thorns during monster turn; original death animation refreshes damage to base, engine retains Strength-adjusted value",
+          "classification": "Claude reports hidden dead-monster animation-timing difference; no later damage use and dead intents/powers excluded from observation",
+          "training_decision": "Continue explicitly authorized by Claude55",
+          "repair_status": "Mac fix pending main; no server rule change"
+        },
+        "independent_full1024_replay_report": {
+          "average_floor_rounded": 16.205,
+          "act1_boss_count": 352,
+          "gold_and_card_taken_or_opened_rate": 1.0,
+          "potion_taken_rate_rounded": 0.79,
+          "final_deck_size_rounded": 20.5
+        },
+        "verification": "Reported by Claude on Mac; not independently replayed on server; not claimed full parity"
+      }
     }
   ],
   "roots": [
