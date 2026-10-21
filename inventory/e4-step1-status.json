@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T19:38:55.608420+08:00",
-  "active_job": null,
-  "phase": "claude45_109_evaluation_complete_awaiting_decision",
+  "updated_at": "2026-10-21T19:54:58.075131+08:00",
+  "active_job": 3673,
+  "phase": "claude47_diagnostics_running",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -12,9 +12,9 @@
     "step_1": {
       "charged_node_seconds": 38111,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 0,
+      "reserved_node_seconds": 3600,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 0
+      "active_observed_node_seconds": 29
     }
   },
   "cost_ledger": [
@@ -712,9 +712,35 @@
       "exit_code": "0:0",
       "end_time": "2026-10-21T19:30:38+08:00",
       "evaluation_seconds": 471.4357604980469
+    },
+    {
+      "job_id": 3673,
+      "purpose": "Claude47 combat diagnostics only B97/109/111 sequential first256dev each",
+      "state": "RUNNING",
+      "step": 1,
+      "gpus": 8,
+      "reserved_seconds": 3600,
+      "fixed_head": "efc8808731334f598239edf71ca5daef8c1e7922",
+      "output": "/home/zhuyouwei/spire-downloads/e4-c47-3673",
+      "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c47-3673.log",
+      "script_sha256": "121247bc30ab1f1df6ceb9e11a5dff637086ca944165487426f25b0daa3a535d",
+      "start_time": "2026-10-21T19:52:57+08:00",
+      "submitted_at": "2026-10-21T19:52:57+08:00",
+      "versions": [
+        97,
+        109,
+        111
+      ],
+      "dev_seed_count": 256,
+      "lanes": 256,
+      "trials": 32,
+      "training": false,
+      "audit_requested": false,
+      "last_observed_elapsed_seconds": 29,
+      "active_case": 97
     }
   ],
-  "server_fixed_head": "13417cf05bd261ae862dfb2305de920df742072f",
+  "server_fixed_head": "efc8808731334f598239edf71ca5daef8c1e7922",
   "evaluation_watch": {
     "job_id": 3672,
     "version": 109,
@@ -757,14 +783,16 @@
       "combat_played_cards_limit_fraction": 9.729140722291407e-06
     },
     "audit_roots": 18,
-    "audit_status": "pending_mac_original_replay",
+    "audit_status": "mac_reported_pass_Claude48",
     "evaluation_only": true,
     "training_unchanged": true,
     "archive_ranks": 8
   },
   "pending": [
-    "Publish109 full1024dev result,18actualauditroots andsettled506secondcost; waitClaude nextdecision withoutfurthertraining.",
-    "10918auditroots pendingMac originalreplay; preserveoriginal109, evaluated1098rankarchive, stop1168ranks, all prior costs/evidence.",
-    "Checkmain/codex/e4 allnewcommits andapplylatestClaude decisions; no activeprojectjob."
+    "Monitor3673 diagnostics-only sequentialB97/109/111; first256dev each,N32, no training; preserve fixedefc8808.",
+    "Collectper-combat andoverall/act1/act2 five metrics; verify256seedsets,reportcaps/faults andsourcehashes; no newauditrequested.",
+    "Checkqueue at eachevaluation; onyield/deadline preserve diagnostic checkpoints andresumeunfinished evaluation withoutrepeatingcompletedcases.",
+    "Settle3673actualnodecostonceonexit; keep3600reservation untilthen; allpriorcosts andcheckpointsretained.",
+    "Checkallnewmain/codex/e4commits;109Mac18/18passedClaude48; nexttrainingdecisionawaitsdiagnosticresults."
   ]
 }
