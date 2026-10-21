@@ -17,6 +17,10 @@ struct RemovePower : ActionHooks {
         e.extra = power.instance;
         return e;
     }
-    SPIRE_FN static void execute(Game& g, const Effect& e) { remove_power(g, e.target, e.power, e.extra); }
+    SPIRE_FN static void execute(Game& g, const Effect& e) {
+        // RemoveSpecificPowerAction.update refreshes before its 0.1s wait; a missing power ends immediately.
+        const bool removed = remove_power(g, e.target, e.power, e.extra);
+        settle_deaths_after_wait(g, removed ? 7 : 1);
+    }
 };
 }
