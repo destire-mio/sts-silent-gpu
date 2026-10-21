@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 from pathlib import Path
 import sys
@@ -79,6 +80,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--resume', type=Path)
     parser.add_argument('--seconds', type=int, required=True)
+    parser.add_argument('--evaluate-only', action='store_true')
     args = parser.parse_args()
     rank, world = int(os.environ['RANK']), int(os.environ['WORLD_SIZE'])
     assert world == 8
@@ -113,6 +115,8 @@ def main():
     assessments = [source['assessment']]
     best, stagnant = source['assessment']['reach'].copy(), 0
     saved = torch.load(args.resume / f'rank-{rank}.pt', map_location='cpu', weights_only=False) if args.resume else None
+    if args.evaluate_only:
+        assert saved is not None and saved['ready'] is None
     if saved:
         assert saved['commit'] == commit and saved['source_sha256'] == source_hash
         phase, epochs = saved['phase'], saved['epochs']
@@ -190,6 +194,8 @@ def main():
                 checkpoint('allocation_limit')
                 return
             if phase == 'training':
+                if args.evaluate_only:
+                    next_evaluation = trained_seconds
                 if trained_seconds < next_evaluation:
                     before, sl_before = collector.decisions, search.searched_decisions
                     start = time.monotonic()
@@ -252,6 +258,12 @@ def main():
                 checkpoint('yield_to_waiting_user')
                 return
             checkpoint('before_evaluation')
+            evaluation_checkpoint = args.output / f'evaluation-{97+len(updates)}'
+            evaluation_checkpoint.mkdir(exist_ok=True)
+            archived_rank = evaluation_checkpoint / f'rank-{rank}.pt'
+            if not archived_rank.exists():
+                shutil.copyfile(args.output / f'rank-{rank}.pt', archived_rank)
+            dist.barrier()
             policy.eval()
             start = time.monotonic()
             expired = False
@@ -304,6 +316,10 @@ def main():
             if assessment['combat_played_cards_limit_fraction'] > .001:
                 phase = 'complete'
                 checkpoint('combat_played_cards_limit_above_one_per_thousand')
+                return
+            if args.evaluate_only:
+                phase = 'complete'
+                checkpoint('evaluation_only_complete')
                 return
             improved = any(assessment['reach'][key]-best[key] >= .02 for key in REACH)
             stagnant = 0 if improved else stagnant+1
