@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T09:46:06.474339+08:00",
-  "active_job": null,
-  "phase": "step1_awaiting_claude_ab_selection",
+  "updated_at": "2026-10-21T09:59:30.497195+08:00",
+  "active_job": 3648,
+  "phase": "step1_B97_adaptive_continuation",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -11,10 +11,10 @@
     "later_steps_authorized": false,
     "step_1": {
       "charged_node_seconds": 31395,
-      "limit_node_seconds": 43200,
-      "reserved_node_seconds": 0,
-      "limit_authorization": "Claude28 at627e417; priorcharges retained",
-      "active_observed_node_seconds": 0
+      "limit_node_seconds": 64800,
+      "reserved_node_seconds": 14400,
+      "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
+      "active_observed_node_seconds": 44
     }
   },
   "cost_ledger": [
@@ -166,38 +166,35 @@
     }
   ],
   "current_job": {
-    "job_id": 3647,
-    "purpose": "Claude35 sharedcheckpoint88 learningefficiency: baseline1024, A32epochs1 and B256epochs4 sequential",
-    "state": "COMPLETED",
+    "job_id": 3648,
+    "purpose": "Claude39 resumeB97 adaptiveepochs2-8 andPPO valueEV,1024dev every3600trainingseconds",
+    "state": "RUNNING",
     "step": 1,
     "gpus": 8,
-    "reserved_seconds": 9000,
-    "fixed_head": "d9539cc5805efe77e76031eb1a83a1fd69b4784b",
-    "output": "/home/zhuyouwei/spire-downloads/e4-ab35-3647",
-    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-ab35-3647.slurm.log",
-    "submitted_at": "2026-10-21T08:08:21.035057+08:00",
-    "source_directory": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729",
-    "source_version": 88,
+    "reserved_seconds": 14400,
+    "fixed_head": "f2db1e248e9c0e076646edfe130eadb5158eedd3",
+    "output": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
+    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c39-3648.slurm.log",
+    "submitted_at": "2026-10-21T09:57:25.527960+08:00",
+    "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+    "source_version": 97,
+    "lanes": 256,
     "trials": 32,
-    "training_seconds_per_case": 1800,
-    "evaluation_lanes": 256,
+    "initial_epochs": 4,
+    "epoch_range": [
+      2,
+      8
+    ],
     "dev_seed_count": 1024,
-    "script_sha256": "6b4d28754deadaa3d131516bbe12c0a6abb93b61eb3996a23a8506fa7b7784e2",
-    "start_time": "2026-10-21T08:07:37+08:00",
-    "last_observed_elapsed_seconds": 5559,
-    "active_case": "B",
-    "checkpoint_reason": "complete",
-    "latest_completed_case_updates": 9,
+    "script_sha256": "5e2111b9c6517464730709bdffa2dbb221eb2012a419a1f95cf82e28c9c91a629",
+    "start_time": "2026-10-21T09:57:26+08:00",
+    "last_observed_elapsed_seconds": 44,
     "last_durable_checkpoint_version": 97,
-    "trained_seconds": 1909.7843170166016,
-    "elapsed_seconds": 5559,
-    "charged_node_seconds": 5559,
-    "exit_code": "0:0",
-    "end_time": "2026-10-21T09:40:16+08:00"
+    "latest_completed_update": 97,
+    "checkpoint_reason": "started"
   },
   "pending_actions": [
-    "Await Claude35 selection after complete shared-baseline A/B results; resume selected group checkpoint (A128 or B97), never original88.",
-    "B audit18 pending Mac original replay; preserve all previous audit evidence.",
-    "Before any approved continuation check queue, fixed version, selected checkpoint hashes and remaining11805 node seconds; no automatic extra experiment."
+    "Monitor3648 perupdate KL/epochs/PPO valueEV and checkpoint; queue everyupdate andeachassessment; publish1024dev/audit18 every3600trainingseconds",
+    "Retain sourceB97 and allhistoricalcost/evidence; settle3648 runtime once onexit; stopafter3 stagnant assessments"
   ]
 }
