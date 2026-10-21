@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T20:09:53.170596+08:00",
-  "active_job": null,
-  "phase": "claude47_diagnostics_complete_awaiting_decision",
+  "updated_at": "2026-10-21T20:27:10.044645+08:00",
+  "active_job": 3674,
+  "phase": "claude49_training_running",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -12,9 +12,9 @@
     "step_1": {
       "charged_node_seconds": 38782,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 0,
+      "reserved_node_seconds": 14400,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 0
+      "active_observed_node_seconds": 54
     }
   },
   "cost_ledger": [
@@ -757,95 +757,43 @@
         109,
         111
       ]
+    },
+    {
+      "job_id": 3674,
+      "purpose": "Claude49 restartB97 fixed4epochs imitation entropy controller",
+      "state": "RUNNING",
+      "step": 1,
+      "gpus": 8,
+      "reserved_seconds": 14400,
+      "fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
+      "output": "/home/zhuyouwei/spire-downloads/e4-c49-3674",
+      "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c49-3674.log",
+      "script_sha256": "e8aeed507f76ebbd62b6cd7471c078039469d2aa526abe3d4ac79de98b939cd0",
+      "start_time": "2026-10-21T20:24:15+08:00",
+      "submitted_at": "2026-10-21T20:24:14+08:00",
+      "last_observed_elapsed_seconds": 54,
+      "source_version": 97,
+      "lanes": 256,
+      "trials": 32,
+      "epochs": 4,
+      "evaluation_training_seconds": 1800,
+      "dev_seed_count": 1024
     }
   ],
-  "server_fixed_head": "efc8808731334f598239edf71ca5daef8c1e7922",
+  "server_fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
   "evaluation_watch": {
-    "job_id": 3672,
-    "version": 109,
-    "status": "complete",
-    "assessment": {
-      "episodes": 1024,
-      "average_floor": 11.74609375,
-      "reach": {
-        "act1_boss": 0.0927734375,
-        "act2_boss": 0.0,
-        "act3_first_boss": 0.0,
-        "act3_second_boss": 0.0,
-        "act3_three_keys": 0.0,
-        "act4": 0.0,
-        "shield_spear": 0.0,
-        "heart": 0.0
-      },
-      "victories": 0,
-      "stalled": 0,
-      "stall_classes": {},
-      "faults": 0,
-      "truncated": 0,
-      "round": "E4-C39-109-N32-D1024",
-      "version": 109,
-      "trials": 32,
-      "training_lanes": 256,
-      "evaluation_lanes": 256,
-      "dev_seed_count": 1024,
-      "evaluation_seconds": 471.4357604980469,
-      "trained_seconds": 3255.404754638672,
-      "update_count": 12,
-      "actual_steps": 1572864,
-      "next_epochs": 8,
-      "combat_over_limit": 0,
-      "event_over_limit": 0,
-      "combat_normal_max_steps": 1391,
-      "event_normal_max_steps": 63,
-      "combat_played_cards_limit": 2,
-      "combat_trials": 205568,
-      "combat_played_cards_limit_fraction": 9.729140722291407e-06
-    },
-    "audit_roots": 18,
-    "audit_status": "mac_reported_pass_Claude48",
-    "evaluation_only": true,
-    "training_unchanged": true,
-    "archive_ranks": 8
-  },
-  "diagnostics_watch": {
-    "job_id": 3673,
-    "status": {
-      "97": {
-        "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
-        "version": 97,
-        "job": "3673",
-        "complete": true,
-        "reason": "complete",
-        "evaluation_seconds": 233.18804931640625
-      },
-      "109": {
-        "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
-        "version": 109,
-        "job": "3673",
-        "complete": true,
-        "reason": "complete",
-        "evaluation_seconds": 183.71311950683594
-      },
-      "111": {
-        "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
-        "version": 111,
-        "job": "3673",
-        "complete": true,
-        "reason": "complete",
-        "evaluation_seconds": 183.76588439941406
-      }
-    },
-    "completed_cases": [
-      97,
-      109,
-      111
-    ],
-    "fault_files": [],
-    "queue_errors": [],
-    "verification": "verification3673-final.json"
+    "job_id": 3674,
+    "status": "training_before_first_1800s_evaluation",
+    "current_version": 97,
+    "next_evaluation_training_seconds": 1800,
+    "dev_seed_count": 1024,
+    "epochs": 4
   },
   "pending": [
-    "Await Claude next training decision; no new training or experiments authorized by47.",
-    "Check all new main/codex/e4 commits; preserve B97/original109/original111/stop116 and all evaluation evidence/cumulative costs."
+    "Monitor3674 fixed3b54843; firstupdate sets H_imit target, beta starts0; report beta/H_imit/imitationk3 and fixedepochs4.",
+    "Each1800trainingseconds full1024dev plus five combat diagnostics and18actual audit roots; preserve all8 evaluatedcheckpoint files; Mac audits pending untilconfirmed.",
+    "Apply existingqueue/capacity/three-stagnant stops plus meanfloor morethan1belowbest (initial13.2958984375); checkpoint/yield asrequired.",
+    "Settle3674actualnodecost onceafterexit; keep14400reservation; cumulative38782/64800 neverreset.",
+    "Check all new main/codex/e4 commits; preserve B97/original109/111/116 and allprior evidence; no sealed evaluation."
   ]
 }

@@ -1,0 +1,373 @@
+{
+  "authorization": "Claude49",
+  "implementation_commit": "3b54843df8c36d856f9c9425bb1279833f956fab",
+  "preflight": {
+    "observed_at": "2026-10-21T20:22:42.383419+08:00",
+    "queue": {
+      "checked_at": "2026-10-21T20:22:41.515888+08:00",
+      "jobs": [
+        {
+          "JobId": "3650",
+          "JobName": "optimize_loop",
+          "UserId": "shaoy(1013)",
+          "JobState": "RUNNING",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "3-00:00:00",
+          "StartTime": "2026-10-21T10:48:13",
+          "RunTime": "09:34:28",
+          "NodeList": "gpu01",
+          "TresPerNode": null,
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3656",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3655(failed)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3663",
+          "JobName": "compute",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3662(failed)",
+          "TimeLimit": "06:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3664",
+          "JobName": "analysis",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3663(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3665",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3664(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        }
+      ],
+      "node": {
+        "NodeName": "gpu01",
+        "State": "MIXED",
+        "Gres": "gpu:V100:8",
+        "GresUsed": "gpu:V100:0(IDX:N/A)",
+        "CfgTRES": "cpu=56,mem=128027M,billing=56",
+        "AllocTRES": "cpu=1,mem=2G"
+      },
+      "blocking_job_ids": [],
+      "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+    },
+    "manifest": {
+      "fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
+      "sources": {
+        "97": {
+          "path": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+          "hashes": {
+            "rank-5.pt": "b833560dd9fbf02bb835f01ddd0e8b3225d63758316152e9a4ed52a7998d930f",
+            "rank-3.pt": "dc94cf64472ce67f73a15f2232702e84cb0e057002656b0b18215d8f69c2bef5",
+            "rank-7.pt": "be05c044e89047ebcdcf429eca7a774bbed787acaaefe49ceab96d6a79cb8f9b",
+            "rank-6.pt": "eadd74b4a8e5af6b688781c0c72199585a902fdea415a5efec67b67c3d62ddb4",
+            "rank-4.pt": "652d5f253637dbf6a6a36f86690da4e0efa77e42daddd30a39a6b509aa3205ce",
+            "rank-1.pt": "a6f2f90dca5cb5bc7026d35f5417aa470849e0d5acd15fbc9269387029b31758",
+            "rank-0.pt": "fad20f3ee6e94e8ec9ffa815b62bbca9702cf83c2f5db17e51661b0bce6b5391",
+            "rank-2.pt": "67d6a494656484ba0463d534edaff171c2742bea464d58a01e9bf639b69fed5a"
+          }
+        },
+        "109": {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
+          "hashes": {
+            "rank-0.pt": "e95176d30ad0bdaedee49fc75338d81b2070e62e7b2fc336fcf83a071af02331",
+            "rank-1.pt": "d12933489f2fda60a82f5aad3bd0eb5d055c05a717a3d879fe7e0ad5d5c390ff",
+            "rank-2.pt": "c8f8d8ee60db852f2bfa74c81de49b800f1897b521bbf58b8569d2432ebe61e5",
+            "rank-3.pt": "80ee3c6d07bea50d66cf953e8e0104d8cb6178c90d75c609de49de09f1260e4b",
+            "rank-4.pt": "1a4cece3b5b8bfbd2d50a59c5e1cc96603df22d44df2dabf0a5a33640f9844f4",
+            "rank-5.pt": "a874bc33eae447e01bcc59dc626ce17ebae6c9c3dcce0cfa93b7eaf6b5935ffb",
+            "rank-6.pt": "739403a7c6405a306dd232c8a12429ded1efebbb5fb16acbff61bd6d5a7cd661",
+            "rank-7.pt": "ac7f98bcbbf262450ca55a81a15ea831ecc54c6317ee5abbf4e48beee05f0705"
+          }
+        },
+        "111": {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c43-resume-3669",
+          "hashes": {
+            "rank-0.pt": "f377c69064273bd488cfe8633c655354255855bfc98b3eea5d5e6540d083155e",
+            "rank-1.pt": "c3878d3c740f42b2af9299fe2d7924e6d9a78b8b101473b5165319b8373cbd43",
+            "rank-2.pt": "de62811845c2717178096ee34d4a5d39549aaf72a1f2757d2290b087989f4b6d",
+            "rank-3.pt": "6d3f85b50d575fc387ed627c7ea80761e4fdec068be14b179f814ade2b21daf3",
+            "rank-4.pt": "4729c36276f64871a028664a13d6b2540801ed94c654e2e97e0398a00c2731b6",
+            "rank-5.pt": "0f52bda4e5fb9b2c5dfdd31d3826af9d1d7ba935c23e2ae54bf70eff13a4ae4e",
+            "rank-6.pt": "582d884ad21c02cea539e185412a247717133f9b4a1bfbba97eb033569764b0d",
+            "rank-7.pt": "171c747b900f48496bae935bac75174835ded69509006b60dcb9d46488cb9732"
+          }
+        }
+      }
+    },
+    "all24_source_hashes_verified": true,
+    "script_sha256": "e8aeed507f76ebbd62b6cd7471c078039469d2aa526abe3d4ac79de98b939cd0",
+    "home_usage_mib": "19931\t/home/zhuyouwei\n",
+    "memory": "MemTotal:       131100092 kB\nMemFree:         4106120 kB\nMemAvailable:   105715588 kB\nBuffers:              64 kB\nCached:         96533960 kB\nSwapCached:        48824 kB\nActive:         16658668 kB\nInactive:       95892052 kB\nActive(anon):   13390692 kB\nInactive(anon):  2895628 kB\nActive(file):    3267976 kB\nInactive(file): 92996424 kB\nUnevictable:        8100 kB\nMlocked:               0 kB\nSwapTotal:       4209656 kB\nSwapFree:          36116 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:             86296 kB\nWriteback:             0 kB\nAnonPages:      15860360 kB\nMapped:          1374944 kB\nShmem:            269560 kB\nKReclaimable:    6405108 kB\nSlab:            7905448 kB\nSReclaimable:    6405108 kB\nSUnreclaim:      1500340 kB\nKernelStack:       35936 kB\nPageTables:       195600 kB\nSecPageTables:      8224 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    69759700 kB\nCommitted_AS:   30635508 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      348984 kB\nVmallocChunk:          0 kB\nPercpu:           181888 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:   3921920 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:         0 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:               0 kB\nUnaccepted:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:    39959908 kB\nDirectMap2M:    92858368 kB\nDirectMap1G:     3145728 kB\n"
+  },
+  "startup": {
+    "observed_at": "2026-10-21T20:25:09.136785+08:00",
+    "accounting": "JobId=3674 JobName=spire-e4-c49-entropy UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899945 Nice=0 Account=(null) QOS=(null) JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:54 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-21T20:24:14 EligibleTime=2026-10-21T20:24:14 AccrueTime=2026-10-21T20:24:14 StartTime=2026-10-21T20:24:15 EndTime=2026-10-22T00:24:15 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T20:24:15 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c49.sh WorkDir=/home/zhuyouwei/sts-silent-gpu-split StdErr=/home/zhuyouwei/spire-downloads/e4-c49-3674.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c49-3674.log Power= TresPerNode=gres:gpu:V100:8 \n",
+    "submission": {
+      "job": "3674",
+      "queue": {
+        "checked_at": "2026-10-21T20:24:14.001447+08:00",
+        "jobs": [
+          {
+            "JobId": "3650",
+            "JobName": "optimize_loop",
+            "UserId": "shaoy(1013)",
+            "JobState": "RUNNING",
+            "Reason": "None",
+            "Dependency": "(null)",
+            "TimeLimit": "3-00:00:00",
+            "StartTime": "2026-10-21T10:48:13",
+            "RunTime": "09:36:00",
+            "NodeList": "gpu01",
+            "TresPerNode": null,
+            "TRES": "cpu=1,mem=2G,node=1,billing=1"
+          },
+          {
+            "JobId": "3656",
+            "JobName": "plot",
+            "UserId": "shaoy(1013)",
+            "JobState": "PENDING",
+            "Reason": "DependencyNeverSatisfied",
+            "Dependency": "afterok:3655(failed)",
+            "TimeLimit": "02:00:00",
+            "StartTime": "Unknown",
+            "RunTime": "00:00:00",
+            "NodeList": "",
+            "TresPerNode": null,
+            "TRES": "cpu=2,mem=4G,node=1,billing=2"
+          },
+          {
+            "JobId": "3663",
+            "JobName": "compute",
+            "UserId": "shaoy(1013)",
+            "JobState": "PENDING",
+            "Reason": "DependencyNeverSatisfied",
+            "Dependency": "afterok:3662(failed)",
+            "TimeLimit": "06:00:00",
+            "StartTime": "Unknown",
+            "RunTime": "00:00:00",
+            "NodeList": "",
+            "TresPerNode": "gres:gpu:V100:1",
+            "TRES": "cpu=2,mem=4G,node=1,billing=2"
+          },
+          {
+            "JobId": "3664",
+            "JobName": "analysis",
+            "UserId": "shaoy(1013)",
+            "JobState": "PENDING",
+            "Reason": "Dependency",
+            "Dependency": "afterok:3663(unfulfilled)",
+            "TimeLimit": "02:00:00",
+            "StartTime": "Unknown",
+            "RunTime": "00:00:00",
+            "NodeList": "",
+            "TresPerNode": null,
+            "TRES": "cpu=2,mem=4G,node=1,billing=2"
+          },
+          {
+            "JobId": "3665",
+            "JobName": "plot",
+            "UserId": "shaoy(1013)",
+            "JobState": "PENDING",
+            "Reason": "Dependency",
+            "Dependency": "afterok:3664(unfulfilled)",
+            "TimeLimit": "02:00:00",
+            "StartTime": "Unknown",
+            "RunTime": "00:00:00",
+            "NodeList": "",
+            "TresPerNode": null,
+            "TRES": "cpu=2,mem=4G,node=1,billing=2"
+          }
+        ],
+        "node": {
+          "NodeName": "gpu01",
+          "State": "MIXED",
+          "Gres": "gpu:V100:8",
+          "GresUsed": "gpu:V100:0(IDX:N/A)",
+          "CfgTRES": "cpu=56,mem=128027M,billing=56",
+          "AllocTRES": "cpu=1,mem=2G"
+        },
+        "blocking_job_ids": [],
+        "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+      },
+      "fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
+      "reserved_seconds": 14400,
+      "script_sha256": "e8aeed507f76ebbd62b6cd7471c078039469d2aa526abe3d4ac79de98b939cd0"
+    },
+    "head": "3b54843df8c36d856f9c9425bb1279833f956fab",
+    "status": {
+      "reason": "started",
+      "phase": "training",
+      "job": "3674",
+      "commit": "3b54843df8c36d856f9c9425bb1279833f956fab",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+      "source_version": 97,
+      "version": 97,
+      "lanes": 256,
+      "epochs": 4,
+      "trials": 32,
+      "evaluation_lanes": 256,
+      "dev_seed_count": 1024,
+      "trained_seconds": 0.0,
+      "next_evaluation": 1800.0,
+      "evaluation_seconds": 0.0,
+      "capacity_metrics": {
+        "combat_played_cards_limit": 0,
+        "combat_trials": 0
+      },
+      "updates": [],
+      "actual_steps": 0,
+      "assessments": [
+        {
+          "episodes": 1024,
+          "average_floor": 13.2958984375,
+          "reach": {
+            "act1_boss": 0.1884765625,
+            "act2_boss": 0.0,
+            "act3_first_boss": 0.0,
+            "act3_second_boss": 0.0,
+            "act3_three_keys": 0.0,
+            "act4": 0.0,
+            "shield_spear": 0.0,
+            "heart": 0.0
+          },
+          "victories": 0,
+          "stalled": 4,
+          "stall_classes": {
+            "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 3,
+            "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+          },
+          "faults": 0,
+          "truncated": 0,
+          "round": "E4-AB35-B-97-N32-D1024",
+          "version": 97,
+          "case": "B",
+          "trials": 32,
+          "training_lanes": 256,
+          "evaluation_lanes": 256,
+          "dev_seed_count": 1024,
+          "evaluation_seconds": 574.7911987304688,
+          "trained_seconds": 1909.7843170166016,
+          "update_count": 9,
+          "actual_steps": 1179648,
+          "epochs": 4,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 407,
+          "event_normal_max_steps": 121
+        }
+      ],
+      "best": {
+        "act1_boss": 0.1884765625,
+        "act2_boss": 0.0,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "shield_spear": 0.0,
+        "heart": 0.0
+      },
+      "stagnant": 0,
+      "best_floor": 13.2958984375,
+      "imitation_beta": 0.0,
+      "imitation_entropy_target": null
+    },
+    "fault_files": [],
+    "queue_errors": [],
+    "checkpoint_files": {
+      "rank-6.pt": {
+        "size": 12323593,
+        "sha256": "bea78bb8e23fd563b8ccf7facdb83a01ae6dc426b699bbcaf7d7e069acdef4b0"
+      },
+      "rank-0.pt": {
+        "size": 12321161,
+        "sha256": "51205c38c43d6509596c8641e847e2787b6ccc200a435b2035639e8b23c9e90e"
+      },
+      "rank-5.pt": {
+        "size": 12322953,
+        "sha256": "04ef7c67ec9d17bffef448209b3676d4005c395d9b5bdb2b405433f50e52bdc2"
+      },
+      "rank-3.pt": {
+        "size": 12329737,
+        "sha256": "acabfc3df82fa4ecfa071a0026bc9c20ecf9d456ce98548a9b2f9bb19581035c"
+      },
+      "rank-1.pt": {
+        "size": 12328009,
+        "sha256": "c3fb0909c5488e3394d8ada34482a43a421c5d7938ca79e58829270916259c18"
+      },
+      "rank-7.pt": {
+        "size": 12331145,
+        "sha256": "fccc5bbc37b9dc20d55c3707602b4d7160c34ad44ba7610d378c946cd8f1b2e2"
+      },
+      "rank-4.pt": {
+        "size": 12329801,
+        "sha256": "e10f79f5c469ae3e507cb5c073225b3621c96c5335f294f018a1d7442d96567c"
+      },
+      "rank-2.pt": {
+        "size": 12325321,
+        "sha256": "9af4ff6e049b90c9096d815e0bdb910fc0f33386bf34fc3d186947bd33ad5cd2"
+      }
+    },
+    "log_tail": " init. If you rely on buffers NOT being synced at init (e.g. rank-local buffers), keep using `broadcast_buffers=False` until `init_sync_buffers` is available.\n  ddp = DistributedDataParallel(policy, device_ids=[device.index], broadcast_buffers=False)\n/home/zhuyouwei/sts-silent-gpu-split/tools/e4_continue.py:102: FutureWarning: `broadcast_buffers` is deprecated. Use `forward_sync_buffers` instead. IMPORTANT: unlike `broadcast_buffers=False`, `forward_sync_buffers=False` still syncs buffers at init. If you rely on buffers NOT being synced at init (e.g. rank-local buffers), keep using `broadcast_buffers=False` until `init_sync_buffers` is available.\n  ddp = DistributedDataParallel(policy, device_ids=[device.index], broadcast_buffers=False)\n/home/zhuyouwei/sts-silent-gpu-split/tools/e4_continue.py:102: FutureWarning: `broadcast_buffers` is deprecated. Use `forward_sync_buffers` instead. IMPORTANT: unlike `broadcast_buffers=False`, `forward_sync_buffers=False` still syncs buffers at init. If you rely on buffers NOT being synced at init (e.g. rank-local buffers), keep using `broadcast_buffers=False` until `init_sync_buffers` is available.\n  ddp = DistributedDataParallel(policy, device_ids=[device.index], broadcast_buffers=False)\n/home/zhuyouwei/sts-silent-gpu-split/tools/e4_continue.py:102: FutureWarning: `broadcast_buffers` is deprecated. Use `forward_sync_buffers` instead. IMPORTANT: unlike `broadcast_buffers=False`, `forward_sync_buffers=False` still syncs buffers at init. If you rely on buffers NOT being synced at init (e.g. rank-local buffers), keep using `broadcast_buffers=False` until `init_sync_buffers` is available.\n  ddp = DistributedDataParallel(policy, device_ids=[device.index], broadcast_buffers=False)\n/home/zhuyouwei/spire-env/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.\n  return func(*args, **kwargs)\n"
+  },
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
+    },
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 38782,
+      "limit_node_seconds": 64800,
+      "reserved_node_seconds": 14400,
+      "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
+      "active_observed_node_seconds": 54
+    }
+  },
+  "regression": "1passed5.13s; only requested beta update/clamp regression",
+  "pending": [
+    "Monitor3674 fixed3b54843; firstupdate sets H_imit target, beta starts0; report beta/H_imit/imitationk3 and fixedepochs4.",
+    "Each1800trainingseconds full1024dev plus five combat diagnostics and18actual audit roots; preserve all8 evaluatedcheckpoint files; Mac audits pending untilconfirmed.",
+    "Apply existingqueue/capacity/three-stagnant stops plus meanfloor morethan1belowbest (initial13.2958984375); checkpoint/yield asrequired.",
+    "Settle3674actualnodecost onceafterexit; keep14400reservation; cumulative38782/64800 neverreset.",
+    "Check all new main/codex/e4 commits; preserve B97/original109/111/116 and allprior evidence; no sealed evaluation."
+  ]
+}
