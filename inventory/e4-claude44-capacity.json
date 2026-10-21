@@ -1,7 +1,7 @@
 {
   "main": "74fa7320117d676390f422946632d396d53a3015",
   "native_fix": "acc5654bec9ece7a6c060febf3e2db47854ab3d7",
-  "status": "implemented_local_regression_passed_native_compile_running",
+  "status": "deployed_migrated111_final_native_target_pending",
   "original_evidence": {
     "source": "Claude44",
     "seed": 2000000544,
@@ -20,9 +20,9 @@
   },
   "local_regression": "tests/test_e4_capacity.py: 1 passed in3.21s",
   "pending": [
-    "native compilation",
-    "Slurm existing CPU/GPU parity + cuda_faults + clone reuse check",
-    "explicit checkpoint111 migration and full1024evaluation resume"
+    "test_cuda_faults compile completion",
+    "short Slurm parity faults clone gates",
+    "full1024dev111 resume"
   ],
   "build_repair": {
     "initial_full_build_exit": 2,
@@ -42,5 +42,6 @@
     "checkpoint111_hashes_unchanged": true,
     "step1_charged_node_seconds": 35657,
     "reserved_node_seconds": 0
-  }
+  },
+  "migration_evidence": "inventory/e4-c44-migration111.json"
 }
