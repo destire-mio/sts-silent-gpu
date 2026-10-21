@@ -1,0 +1,751 @@
+{
+  "startup": {
+    "observed_at": "2026-10-21T22:40:57.079583+08:00",
+    "job_id": 3675,
+    "job": "JobId=3675 JobName=spire-e4-c53-rewards UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899944 Nice=0 Account=(null) QOS=(null) JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:01:25 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-21T22:39:32 EligibleTime=2026-10-21T22:39:32 AccrueTime=2026-10-21T22:39:32 StartTime=2026-10-21T22:39:32 EndTime=2026-10-22T02:39:32 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T22:39:32 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c53.sh WorkDir=/home/zhuyouwei/sts-silent-gpu-split StdErr=/home/zhuyouwei/spire-downloads/e4-c53-3675.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c53-3675.log Power= TresPerNode=gres:gpu:V100:8 \n",
+    "status": {
+      "reason": "started",
+      "phase": "training",
+      "job": "3675",
+      "commit": "831272fbb089c3ad54589a22562c3d6dcad9d39d",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
+      "source_version": 105,
+      "version": 105,
+      "lanes": 256,
+      "epochs": 4,
+      "trials": 32,
+      "evaluation_lanes": 256,
+      "dev_seed_count": 1024,
+      "trained_seconds": 0.0,
+      "next_evaluation": 1800.0,
+      "evaluation_seconds": 0.0,
+      "capacity_metrics": {
+        "combat_played_cards_limit": 0,
+        "combat_trials": 0
+      },
+      "updates": [],
+      "actual_steps": 0,
+      "assessments": [
+        {
+          "episodes": 1024,
+          "average_floor": 15.2451171875,
+          "reach": {
+            "act1_boss": 0.3037109375,
+            "act2_boss": 0.001953125,
+            "act3_first_boss": 0.0,
+            "act3_second_boss": 0.0,
+            "act3_three_keys": 0.0,
+            "act4": 0.0,
+            "shield_spear": 0.0,
+            "heart": 0.0
+          },
+          "victories": 0,
+          "stalled": 3,
+          "stall_classes": {
+            "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 2,
+            "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1
+          },
+          "faults": 0,
+          "truncated": 0,
+          "round": "E4-C49-105-N32-D1024",
+          "version": 105,
+          "trials": 32,
+          "training_lanes": 256,
+          "evaluation_lanes": 256,
+          "dev_seed_count": 1024,
+          "evaluation_seconds": 680.90966796875,
+          "trained_seconds": 1837.6553192138672,
+          "update_count": 8,
+          "actual_steps": 1048576,
+          "next_epochs": 4,
+          "combat": {
+            "all": {
+              "combats": 8183,
+              "decisions": 8334307,
+              "complete_trial_groups": 8183,
+              "capped_trials": 0,
+              "nested_event_combats": 170,
+              "pooled_policy_entropy": 0.6608668183083916,
+              "means": {
+                "policy_entropy": 0.6784459934209968,
+                "win_fraction": 0.7599214835634853,
+                "score_std": 0.0062923057971573495,
+                "distinct_end_states": 15.812293779787364,
+                "selected_score_gain": 0.008088642887231205
+              }
+            },
+            "act1": {
+              "combats": 6925,
+              "decisions": 7081182,
+              "complete_trial_groups": 6925,
+              "capped_trials": 0,
+              "nested_event_combats": 123,
+              "pooled_policy_entropy": 0.6589772038428389,
+              "means": {
+                "policy_entropy": 0.6769719561399097,
+                "win_fraction": 0.8009205776173285,
+                "score_std": 0.005769648441048179,
+                "distinct_end_states": 15.593646209386282,
+                "selected_score_gain": 0.007469933296886646
+              }
+            },
+            "act2": {
+              "combats": 1251,
+              "decisions": 1246425,
+              "complete_trial_groups": 1251,
+              "capped_trials": 0,
+              "nested_event_combats": 47,
+              "pooled_policy_entropy": 0.6709656424073949,
+              "means": {
+                "policy_entropy": 0.6858843854330735,
+                "win_fraction": 0.5350969224620303,
+                "score_std": 0.009183361251964978,
+                "distinct_end_states": 17.010391686650678,
+                "selected_score_gain": 0.011523090596355461
+              }
+            },
+            "act3": {
+              "combats": 7,
+              "decisions": 6700,
+              "complete_trial_groups": 7,
+              "capped_trials": 0,
+              "nested_event_combats": 0,
+              "pooled_policy_entropy": 0.7792663873845829,
+              "means": {
+                "policy_entropy": 0.8073431026237541,
+                "win_fraction": 0.3794642857142857,
+                "score_std": 0.006676851095965086,
+                "distinct_end_states": 18.0,
+                "selected_score_gain": 0.006384332747464734
+              }
+            },
+            "act4": {
+              "combats": 0,
+              "decisions": 0,
+              "complete_trial_groups": 0,
+              "capped_trials": 0,
+              "nested_event_combats": 0,
+              "pooled_policy_entropy": null,
+              "means": {
+                "policy_entropy": null,
+                "win_fraction": null,
+                "score_std": null,
+                "distinct_end_states": null,
+                "selected_score_gain": null
+              }
+            }
+          },
+          "imitation_beta": 0.0141199854206439,
+          "imitation_entropy_target": 0.6716025225602738,
+          "best_average_floor_before": 13.2958984375,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 249,
+          "event_normal_max_steps": 73,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 261856,
+          "combat_played_cards_limit_fraction": 0.0
+        }
+      ],
+      "best": {
+        "act1_boss": 0.3037109375,
+        "act2_boss": 0.001953125,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "shield_spear": 0.0,
+        "heart": 0.0
+      },
+      "stagnant": 0,
+      "best_floor": 15.2451171875,
+      "imitation_beta": 0.0141199854206439,
+      "imitation_entropy_target": 0.6716025225602738
+    },
+    "migrations": [
+      {
+        "source_sha256": "df163f8e8d2f18f55658f156227b483ed10efffeb0638766d083969c10cead98",
+        "source_version": 105,
+        "lanes": 254,
+        "decisions": 49913,
+        "seconds": 6.421340973931365,
+        "method": "replay saved actual prefixes using visible observations"
+      },
+      {
+        "source_sha256": "d09066b7d0a15c9a985a9ad0b74a8edf680466babd55cb69b9d35735dd5352a9",
+        "source_version": 105,
+        "lanes": 255,
+        "decisions": 47403,
+        "seconds": 6.426895634038374,
+        "method": "replay saved actual prefixes using visible observations"
+      },
+      {
+        "source_sha256": "dca288658dfffc3736068f2d4c5e455630d088a0d19a35916e9945db93bee5ba",
+        "source_version": 105,
+        "lanes": 256,
+        "decisions": 45683,
+        "seconds": 6.025601869914681,
+        "method": "replay saved actual prefixes using visible observations"
+      },
+      {
+        "source_sha256": "e40db9c619d0aaaa4d6e8a81e833909c4cc9bf357d32571fab917d41c33454b1",
+        "source_version": 105,
+        "lanes": 255,
+        "decisions": 50118,
+        "seconds": 6.67869499407243,
+        "method": "replay saved actual prefixes using visible observations"
+      },
+      {
+        "source_sha256": "81f6c796d5941fd90901248dc912afbe4e33d2b383ade6796af1d95e36345f10",
+        "source_version": 105,
+        "lanes": 255,
+        "decisions": 44347,
+        "seconds": 5.721585835912265,
+        "method": "replay saved actual prefixes using visible observations"
+      },
+      {
+        "source_sha256": "b2731bb37f7a2abc4a06e228888adaff17a07a39a448c6c5ee447f2bb43383c3",
+        "source_version": 105,
+        "lanes": 255,
+        "decisions": 43751,
+        "seconds": 5.7849538419395685,
+        "method": "replay saved actual prefixes using visible observations"
+      },
+      {
+        "source_sha256": "b4babd403c39eecf7c61b2c34e74a381d359c26f227f4375e78902cf257705cc",
+        "source_version": 105,
+        "lanes": 256,
+        "decisions": 46025,
+        "seconds": 6.193080937024206,
+        "method": "replay saved actual prefixes using visible observations"
+      },
+      {
+        "source_sha256": "0fbc2c194e05eed278bc4db86aa858577d7209674fe1eef3aac97d9afcacb60e",
+        "source_version": 105,
+        "lanes": 255,
+        "decisions": 46815,
+        "seconds": 6.006000580033287,
+        "method": "replay saved actual prefixes using visible observations"
+      }
+    ],
+    "ranks": [
+      {
+        "rank": 0,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      },
+      {
+        "rank": 1,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      },
+      {
+        "rank": 2,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      },
+      {
+        "rank": 3,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      },
+      {
+        "rank": 4,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      },
+      {
+        "rank": 5,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      },
+      {
+        "rank": 6,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      },
+      {
+        "rank": 7,
+        "version": 105,
+        "reason": "started",
+        "beta": 0.0141199854206439,
+        "target": 0.6716025225602738,
+        "new_reward_history_lanes": 256,
+        "restoration_checks": {
+          "model": true,
+          "optimizer": true,
+          "ppo_rng": true,
+          "training_rng": true,
+          "imitation_beta": true,
+          "imitation_entropy_target": true,
+          "collector_existing_fields": true,
+          "torch_rng": true,
+          "cuda_rng": true
+        }
+      }
+    ],
+    "faults": [],
+    "queue": {
+      "checked_at": "2026-10-21T22:40:02.815005+08:00",
+      "jobs": [
+        {
+          "JobId": "3650",
+          "JobName": "optimize_loop",
+          "UserId": "shaoy(1013)",
+          "JobState": "RUNNING",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "3-00:00:00",
+          "StartTime": "2026-10-21T10:48:13",
+          "RunTime": "11:51:49",
+          "NodeList": "gpu01",
+          "TresPerNode": null,
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3656",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3655(failed)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3663",
+          "JobName": "compute",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3662(failed)",
+          "TimeLimit": "06:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3664",
+          "JobName": "analysis",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3663(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3665",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3664(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3675",
+          "JobName": "spire-e4-c53-rewards",
+          "UserId": "zhuyouwei(1017)",
+          "JobState": "RUNNING",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "04:00:00",
+          "StartTime": "2026-10-21T22:39:32",
+          "RunTime": "00:00:30",
+          "NodeList": "gpu01",
+          "TresPerNode": "gres:gpu:V100:8",
+          "TRES": "cpu=8,mem=96G,node=1,billing=8"
+        }
+      ],
+      "node": {
+        "NodeName": "gpu01",
+        "State": "MIXED",
+        "Gres": "gpu:V100:8",
+        "GresUsed": "gpu:V100:8(IDX:0-7)",
+        "CfgTRES": "cpu=56,mem=128027M,billing=56",
+        "AllocTRES": "cpu=9,mem=98G"
+      },
+      "blocking_job_ids": [],
+      "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+    }
+  },
+  "preflight": {
+    "queue": {
+      "checked_at": "2026-10-21T22:38:27.197557+08:00",
+      "jobs": [
+        {
+          "JobId": "3650",
+          "JobName": "optimize_loop",
+          "UserId": "shaoy(1013)",
+          "JobState": "RUNNING",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "3-00:00:00",
+          "StartTime": "2026-10-21T10:48:13",
+          "RunTime": "11:50:14",
+          "NodeList": "gpu01",
+          "TresPerNode": null,
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3656",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3655(failed)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3663",
+          "JobName": "compute",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3662(failed)",
+          "TimeLimit": "06:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3664",
+          "JobName": "analysis",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3663(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3665",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3664(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        }
+      ],
+      "node": {
+        "NodeName": "gpu01",
+        "State": "MIXED",
+        "Gres": "gpu:V100:8",
+        "GresUsed": "gpu:V100:0(IDX:N/A)",
+        "CfgTRES": "cpu=56,mem=128027M,billing=56",
+        "AllocTRES": "cpu=1,mem=2G"
+      },
+      "blocking_job_ids": [],
+      "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+    },
+    "checkpoints": [
+      {
+        "rank": 0,
+        "sha256": "df163f8e8d2f18f55658f156227b483ed10efffeb0638766d083969c10cead98",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 254,
+        "max_prefix": 694
+      },
+      {
+        "rank": 1,
+        "sha256": "d09066b7d0a15c9a985a9ad0b74a8edf680466babd55cb69b9d35735dd5352a9",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 255,
+        "max_prefix": 855
+      },
+      {
+        "rank": 2,
+        "sha256": "dca288658dfffc3736068f2d4c5e455630d088a0d19a35916e9945db93bee5ba",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 256,
+        "max_prefix": 675
+      },
+      {
+        "rank": 3,
+        "sha256": "e40db9c619d0aaaa4d6e8a81e833909c4cc9bf357d32571fab917d41c33454b1",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 255,
+        "max_prefix": 744
+      },
+      {
+        "rank": 4,
+        "sha256": "81f6c796d5941fd90901248dc912afbe4e33d2b383ade6796af1d95e36345f10",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 255,
+        "max_prefix": 581
+      },
+      {
+        "rank": 5,
+        "sha256": "b2731bb37f7a2abc4a06e228888adaff17a07a39a448c6c5ee447f2bb43383c3",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 255,
+        "max_prefix": 630
+      },
+      {
+        "rank": 6,
+        "sha256": "b4babd403c39eecf7c61b2c34e74a381d359c26f227f4375e78902cf257705cc",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 256,
+        "max_prefix": 726
+      },
+      {
+        "rank": 7,
+        "sha256": "0fbc2c194e05eed278bc4db86aa858577d7209674fe1eef3aac97d9afcacb60e",
+        "version": 105,
+        "beta": 0.0141199854206439,
+        "entropy_target": 0.6716025225602738,
+        "trained_seconds": 1837.6553192138672,
+        "live_lanes": 255,
+        "max_prefix": 622
+      }
+    ],
+    "home_mib": 20249,
+    "mem_available": "105043924 kB",
+    "fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
+    "deployed_head": "831272fbb089c3ad54589a22562c3d6dcad9d39d",
+    "step1_charged": 43786,
+    "step1_limit": 64800,
+    "proposed_reservation": 14400
+  },
+  "submission": {
+    "job_id": 3675,
+    "queue": {
+      "checked_at": "2026-10-21T22:39:32.092690+08:00",
+      "jobs": [
+        {
+          "JobId": "3650",
+          "JobName": "optimize_loop",
+          "UserId": "shaoy(1013)",
+          "JobState": "RUNNING",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "3-00:00:00",
+          "StartTime": "2026-10-21T10:48:13",
+          "RunTime": "11:51:19",
+          "NodeList": "gpu01",
+          "TresPerNode": null,
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3656",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3655(failed)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3663",
+          "JobName": "compute",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "DependencyNeverSatisfied",
+          "Dependency": "afterok:3662(failed)",
+          "TimeLimit": "06:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3664",
+          "JobName": "analysis",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3663(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3665",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3664(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        }
+      ],
+      "node": {
+        "NodeName": "gpu01",
+        "State": "MIXED",
+        "Gres": "gpu:V100:8",
+        "GresUsed": "gpu:V100:0(IDX:N/A)",
+        "CfgTRES": "cpu=56,mem=128027M,billing=56",
+        "AllocTRES": "cpu=1,mem=2G"
+      },
+      "blocking_job_ids": [],
+      "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+    },
+    "script_sha256": "6358aaca931462ec3c8fb0dd204f4bf2c3951541bfb23305293cd010573d5d14"
+  }
+}

@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T21:54:08.404614+08:00",
-  "active_job": null,
-  "phase": "claude49_stopped_floor_regression_awaiting_decision",
+  "updated_at": "2026-10-21T22:44:00.504703+08:00",
+  "active_job": 3675,
+  "phase": "claude53_running",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -12,9 +12,9 @@
     "step_1": {
       "charged_node_seconds": 43786,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 0,
+      "reserved_node_seconds": 14400,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 0
+      "active_observed_node_seconds": 183
     }
   },
   "cost_ledger": [
@@ -792,6 +792,29 @@
       "charged_node_seconds": 5004,
       "end_time": "2026-10-21T21:47:39+08:00",
       "stop_reason": "average_floor_more_than_one_below_best"
+    },
+    {
+      "job_id": 3675,
+      "purpose": "Claude53 restart105 with free reward masks and noncombat diagnostics",
+      "state": "RUNNING",
+      "step": 1,
+      "gpus": 8,
+      "reserved_seconds": 14400,
+      "fixed_head": "831272fbb089c3ad54589a22562c3d6dcad9d39d",
+      "output": "/home/zhuyouwei/spire-downloads/e4-c53-3675",
+      "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c53-3675.log",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
+      "source_version": 105,
+      "submitted_at": "2026-10-21T22:40:33.830376+08:00",
+      "lanes": 256,
+      "trials": 32,
+      "epochs": 4,
+      "dev_seed_count": 1024,
+      "script_sha256": "6358aaca931462ec3c8fb0dd204f4bf2c3951541bfb23305293cd010573d5d14",
+      "start_time": "2026-10-21T22:39:32+08:00",
+      "last_observed_elapsed_seconds": 183,
+      "last_durable_checkpoint_version": 105,
+      "checkpoint_reason": "started"
     }
   ],
   "server_fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
@@ -929,9 +952,24 @@
     "latest_verification": "verification113.json"
   },
   "pending": [
-    "Publish113assessment, 18actualauditroots and3674finalcost/stop evidence; preservebest105 and113 all8rankfiles.",
-    "Await Claude nextdecision after mandatedfloorregression stop; no training/evaluation resubmission under49.",
-    "Mac113 original18traces6491decisions pending; do not selfmark pass.",
-    "Check allnew main/codex/e4 commits and retain all prior E3/E4 evidence/costs; no sealed evaluation."
-  ]
+    "Monitor3675 firstupdate, fault/checkpoint/queue status and next1024dev evaluation after1800trainingseconds; do not alter itsfixed831272f.",
+    "Append18actualauditprefixes eachassessment forMac; reportreward/rest/shop/deck metrics andallreachrates; applybestfloor15.2451171875 andstagnationstops.",
+    "Checkallnewmain/codex/e4commits, preserveallcosts/evidence, reserve14400 until3675settles."
+  ],
+  "claude53_execution": {
+    "main": "97f3af3fda848a0948fe00b492111201f6308da6",
+    "status": "running_startup_verified",
+    "source_version": 105,
+    "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
+    "initial_best_floor": 15.2451171875,
+    "implementation_commit": "831272fbb089c3ad54589a22562c3d6dcad9d39d",
+    "publication": "831272fbb089c3ad54589a22562c3d6dcad9d39d",
+    "regression": "one reward mask regression passed in0.50s",
+    "job_id": 3675,
+    "initial_beta": 0.0141199854206439,
+    "entropy_target": 0.6716025225602738,
+    "preflight": "e4-c53-preflight.json",
+    "startup": "e4-c53-start3675.json",
+    "restoration_checked_ranks": 8
+  }
 }
