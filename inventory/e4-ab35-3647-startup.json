@@ -1,0 +1,63 @@
+{
+  "observed_at": "2026-10-21T08:08:09.332368+08:00",
+  "job_id": 3647,
+  "accounting": "JobId=3647 JobName=spire-e4-ab35\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899972 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:32 TimeLimit=02:30:00 TimeMin=N/A\n   SubmitTime=2026-10-21T08:07:36 EligibleTime=2026-10-21T08:07:36\n   AccrueTime=2026-10-21T08:07:36\n   StartTime=2026-10-21T08:07:37 EndTime=2026-10-21T10:37:37 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T08:07:37 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1342019\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-ab35.sh\n   WorkDir=/home/zhuyouwei/sts-silent-gpu-split\n   StdErr=/home/zhuyouwei/spire-downloads/e4-ab35-3647.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-ab35-3647.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n",
+  "queue": "3647|zhuyouwei|RUNNING|gres:gpu:V100:8|spire-e4-ab35",
+  "cases": {
+    "baseline": {
+      "reason": "before_evaluation",
+      "phase": "evaluation",
+      "case": "baseline",
+      "job": "3647",
+      "commit": "d9539cc5805efe77e76031eb1a83a1fd69b4784b",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729",
+      "source_version": 88,
+      "version": 88,
+      "lanes": 256,
+      "epochs": 1,
+      "trials": 32,
+      "evaluation_lanes": 256,
+      "dev_seed_count": 1024,
+      "trained_seconds": 0.0,
+      "evaluation_seconds": 0.0,
+      "updates": [],
+      "actual_steps": 0,
+      "assessment": null
+    }
+  },
+  "fault_files": [],
+  "error_markers": {
+    "Traceback": 0,
+    "OutOfMemoryError": 0,
+    "AssertionError": 0,
+    "CUDA error": 0
+  },
+  "source_hashes": "0269357b3c810572b80b6d302aa42e6a07d54faa7085b767ca996185ac3c2720  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-0.pt\naaf573bc597536099629638814dc98a7c8e03319980259f274e0af297e78a849  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-1.pt\n5db7e9107dd0afc1227fb1fefbf83514ce85b33a47f3ecb6554ef12afad5c987  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-2.pt\n03136c6e2288003d2506831be28b6031a4e949bf93654efd7766d0a24aa68f91  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-3.pt\nae9f2e5730a832c52bf4eb1d0bfdae806af058637f6611a1bc5da290be9fd8a3  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-4.pt\ndc006511dd0614a8e1dc62d040bfdd6aae22b0ae92b2e7e49365245868fedc8e  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-5.pt\n7cd5081d843e327301289453a5fcddf0b0294476ecdbc18058d63578fd5e0905  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-6.pt\n8f2a913334be723b9fb76bd1892c39b92cf47de361289ade73d9bdbd0484f571  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-7.pt\n",
+  "batch_exit": [],
+  "checkpoint_files": {
+    "baseline/rank-0.pt": 11289997,
+    "baseline/rank-4.pt": 11289997,
+    "baseline/rank-1.pt": 11289997,
+    "baseline/rank-5.pt": 11289997,
+    "baseline/rank-7.pt": 11289997,
+    "baseline/rank-6.pt": 11289997,
+    "baseline/rank-2.pt": 11289997,
+    "baseline/rank-3.pt": 11289997
+  },
+  "log_sha256": "98f895cd0c734fdb04add645a833d2db523aea7b1cecfed30a6db3d5b382f4d8",
+  "budget": {
+    "charged_node_seconds": 25836,
+    "limit_node_seconds": 43200,
+    "reserved_node_seconds": 9000,
+    "limit_authorization": "Claude28 at627e417; priorcharges retained",
+    "active_observed_node_seconds": 32
+  },
+  "preflight": {
+    "queue_empty": true,
+    "node": "IDLE",
+    "home_directory_megabytes": 18717,
+    "source8hashes_verified": true,
+    "fixed_head": "d9539cc5805efe77e76031eb1a83a1fd69b4784b",
+    "script_sha256": "6b4d28754deadaa3d131516bbe12c0a6abb93b61eb3996a23a8506fa7b7784e2"
+  }
+}
