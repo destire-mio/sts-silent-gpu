@@ -1,0 +1,178 @@
+{
+  "requested_by": "Claude51",
+  "request_commit": "f5b0c290e40ad7931e735e0f3bcd6bf0b65c5cd0",
+  "created_at": "2026-10-21T22:04:47.369745+08:00",
+  "operation": "Concatenate original eight JSON array interiors in rank0..7 order, wrap as one JSON array, gzip mtime0. No record filtering, sorting, field removal, action changes, or replay. Original extra reward/stall_class fields retained. Login node only copied/compressed; local validation checks counts/fields/seed set and hashes.",
+  "files": [
+    {
+      "path": "inventory/E4-AB35-B-97-N32-D1024-episodes.json.gz",
+      "round": "E4-AB35-B-97-N32-D1024",
+      "episodes": 1024,
+      "compressed_bytes": 133995,
+      "uncompressed_bytes": 1194982,
+      "sha256": "2f4cdbd4bb42ab65b30efc4577cdab8dec6e49d1a5c3faf48727ac7de198d036",
+      "uncompressed_sha256": "aa70544f84dc17ec8fc3aa24754d5005f70222962b66cf8eae31f37f1551b0ca",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+      "source_files": [
+        "E4-AB35-B-97-N32-D1024-rank-0.json",
+        "E4-AB35-B-97-N32-D1024-rank-1.json",
+        "E4-AB35-B-97-N32-D1024-rank-2.json",
+        "E4-AB35-B-97-N32-D1024-rank-3.json",
+        "E4-AB35-B-97-N32-D1024-rank-4.json",
+        "E4-AB35-B-97-N32-D1024-rank-5.json",
+        "E4-AB35-B-97-N32-D1024-rank-6.json",
+        "E4-AB35-B-97-N32-D1024-rank-7.json"
+      ],
+      "fields_preserved": [
+        "candidates",
+        "floor",
+        "outcome",
+        "reach",
+        "reward",
+        "seed",
+        "stall_class"
+      ],
+      "all_required_fields_present": true,
+      "seed_range": [
+        2000000000,
+        2000001023
+      ]
+    },
+    {
+      "path": "inventory/E4-C39-109-N32-D1024-episodes.json.gz",
+      "round": "E4-C39-109-N32-D1024",
+      "episodes": 1024,
+      "compressed_bytes": 109134,
+      "uncompressed_bytes": 1044371,
+      "sha256": "692fb20006693529d690b3cd816c624be938a08523993ae313a3d87358b29d65",
+      "uncompressed_sha256": "db8ef2a53eebf0fa39575e69204eeed1eee83c6688957b8737d97d18e93f47d0",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c45-eval109-3672",
+      "source_files": [
+        "E4-C39-109-N32-D1024-rank-0.json",
+        "E4-C39-109-N32-D1024-rank-1.json",
+        "E4-C39-109-N32-D1024-rank-2.json",
+        "E4-C39-109-N32-D1024-rank-3.json",
+        "E4-C39-109-N32-D1024-rank-4.json",
+        "E4-C39-109-N32-D1024-rank-5.json",
+        "E4-C39-109-N32-D1024-rank-6.json",
+        "E4-C39-109-N32-D1024-rank-7.json"
+      ],
+      "fields_preserved": [
+        "candidates",
+        "floor",
+        "outcome",
+        "reach",
+        "reward",
+        "seed",
+        "stall_class"
+      ],
+      "all_required_fields_present": true,
+      "seed_range": [
+        2000000000,
+        2000001023
+      ]
+    },
+    {
+      "path": "inventory/E4-C39-111-N32-D1024-episodes.json.gz",
+      "round": "E4-C39-111-N32-D1024",
+      "episodes": 1024,
+      "compressed_bytes": 107774,
+      "uncompressed_bytes": 1038458,
+      "sha256": "7efd3e9ce61b12d618691daad9cce9f3cf83a4a6949e004c5a0f4d63890fb729",
+      "uncompressed_sha256": "7a0a3edef139191326abe6332424133c84e07cbb37f1b0020a5e61a6547b806e",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c44-resume-3671",
+      "source_files": [
+        "E4-C39-111-N32-D1024-rank-0.json",
+        "E4-C39-111-N32-D1024-rank-1.json",
+        "E4-C39-111-N32-D1024-rank-2.json",
+        "E4-C39-111-N32-D1024-rank-3.json",
+        "E4-C39-111-N32-D1024-rank-4.json",
+        "E4-C39-111-N32-D1024-rank-5.json",
+        "E4-C39-111-N32-D1024-rank-6.json",
+        "E4-C39-111-N32-D1024-rank-7.json"
+      ],
+      "fields_preserved": [
+        "candidates",
+        "floor",
+        "outcome",
+        "reach",
+        "reward",
+        "seed",
+        "stall_class"
+      ],
+      "all_required_fields_present": true,
+      "seed_range": [
+        2000000000,
+        2000001023
+      ]
+    },
+    {
+      "path": "inventory/E4-C49-105-N32-D1024-episodes.json.gz",
+      "round": "E4-C49-105-N32-D1024",
+      "episodes": 1024,
+      "compressed_bytes": 150751,
+      "uncompressed_bytes": 1312563,
+      "sha256": "161150723879802a60c0e71a13f5dbc58bfb76dae3bcac718d4d6d339171858c",
+      "uncompressed_sha256": "7ca1b829c6d3bf5073196b39b02f091cf91558d10c7636117ceb58c313b90a73",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674",
+      "source_files": [
+        "E4-C49-105-N32-D1024-rank-0.json",
+        "E4-C49-105-N32-D1024-rank-1.json",
+        "E4-C49-105-N32-D1024-rank-2.json",
+        "E4-C49-105-N32-D1024-rank-3.json",
+        "E4-C49-105-N32-D1024-rank-4.json",
+        "E4-C49-105-N32-D1024-rank-5.json",
+        "E4-C49-105-N32-D1024-rank-6.json",
+        "E4-C49-105-N32-D1024-rank-7.json"
+      ],
+      "fields_preserved": [
+        "candidates",
+        "floor",
+        "outcome",
+        "reach",
+        "reward",
+        "seed",
+        "stall_class"
+      ],
+      "all_required_fields_present": true,
+      "seed_range": [
+        2000000000,
+        2000001023
+      ]
+    },
+    {
+      "path": "inventory/E4-C49-113-N32-D1024-episodes.json.gz",
+      "round": "E4-C49-113-N32-D1024",
+      "episodes": 1024,
+      "compressed_bytes": 123877,
+      "uncompressed_bytes": 1121903,
+      "sha256": "b2522dc499f054c524b2f7c46a1f61e05ec89bb4f378d44e58c33ba46fc79fef",
+      "uncompressed_sha256": "5311866e97fbb74735e56b2618406df1d9347ea2f1aacecaafdde53a68afade9",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674",
+      "source_files": [
+        "E4-C49-113-N32-D1024-rank-0.json",
+        "E4-C49-113-N32-D1024-rank-1.json",
+        "E4-C49-113-N32-D1024-rank-2.json",
+        "E4-C49-113-N32-D1024-rank-3.json",
+        "E4-C49-113-N32-D1024-rank-4.json",
+        "E4-C49-113-N32-D1024-rank-5.json",
+        "E4-C49-113-N32-D1024-rank-6.json",
+        "E4-C49-113-N32-D1024-rank-7.json"
+      ],
+      "fields_preserved": [
+        "candidates",
+        "floor",
+        "outcome",
+        "reach",
+        "reward",
+        "seed",
+        "stall_class"
+      ],
+      "all_required_fields_present": true,
+      "seed_range": [
+        2000000000,
+        2000001023
+      ]
+    }
+  ]
+}

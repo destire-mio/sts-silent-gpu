@@ -124,7 +124,7 @@
     "combat_aggregates_recomputed": true,
     "audit_actual_trajectories_match": true,
     "audit_decisions": 6491,
-    "mac_status": "pending_mac_original_replay",
+    "mac_status": "mac_reported_pass",
     "evaluated_checkpoint_hashes_unchanged": true
   },
   "checkpoint_files": {
@@ -306,5 +306,14 @@
     "drop": 2.2294921875,
     "charged_node_seconds": 5004,
     "preservation": "final-preservation3674.json"
+  },
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #52",
+    "commit": "0edae25f4aa639f12466194719f26073475d289f",
+    "traces": 18,
+    "decisions": 6491,
+    "both_scopes_pass": 18,
+    "engine": "acc5654b",
+    "verification": "Reported by Claude on Mac; not independently replayed on server"
   }
 }

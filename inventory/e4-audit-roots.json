@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "3b54843df8c36d856f9c9425bb1279833f956fab",
   "current_round": "E4-C49-113-N32-D1024",
   "rounds": [
@@ -170,8 +170,17 @@
     {
       "name": "E4-C49-113-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
-      "observation_version": 2
+      "status": "mac_reported_pass",
+      "observation_version": 2,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #52",
+        "commit": "0edae25f4aa639f12466194719f26073475d289f",
+        "traces": 18,
+        "decisions": 6491,
+        "both_scopes_pass": 18,
+        "engine": "acc5654b",
+        "verification": "Reported by Claude on Mac; not independently replayed on server"
+      }
     }
   ],
   "roots": [
