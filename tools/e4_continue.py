@@ -1,10 +1,11 @@
 import argparse
 from collections import Counter, deque
 from copy import deepcopy
-from datetime import timedelta
+from datetime import datetime, timedelta
 import hashlib
 import json
 import os
+import subprocess
 from pathlib import Path
 import sys
 import time
@@ -17,7 +18,31 @@ from train.checkpoint import engine_commit
 from train.e4 import AllocationEnded, REACH, SEARCH_METRICS, RoomSearch, SegmentCollector
 from train.e4_learner import update
 from train.model import ModelConfig, Policy
-from tools.e4_run import atomic_checkpoint, atomic_json, audit, collective_stop, queue_waiting, summaries
+from tools.e4_run import atomic_checkpoint, atomic_json, audit, collective_stop, summaries
+
+
+def queue_snapshot():
+    jobs = []
+    for line in subprocess.check_output(['scontrol', 'show', 'jobs', '-o'], text=True).splitlines():
+        fields = dict(token.split('=', 1) for token in line.split() if '=' in token)
+        jobs.append({key: fields.get(key) for key in (
+            'JobId', 'JobName', 'UserId', 'JobState', 'Reason', 'Dependency',
+            'TimeLimit', 'StartTime', 'RunTime', 'NodeList', 'TresPerNode', 'TRES')})
+    raw_node = subprocess.check_output(['scontrol', 'show', 'node', 'gpu01', '-o', '-d'], text=True)
+    fields = dict(token.split('=', 1) for token in raw_node.split() if '=' in token)
+    node = {key: fields[key] for key in ('NodeName', 'State', 'Gres', 'GresUsed', 'CfgTRES', 'AllocTRES')}
+    blockers = []
+    for job in jobs:
+        if job['UserId'].split('(')[0] == os.environ['USER']:
+            continue
+        dependency_wait = job['Reason'] in ('Dependency', 'DependencyNeverSatisfied')
+        gpu = 'gpu' in (job['TresPerNode'] or '') or 'gpu' in (job['TRES'] or '')
+        if ((job['JobState'] == 'PENDING' and not dependency_wait)
+                or (gpu and job['JobState'] in ('RUNNING', 'CONFIGURING', 'COMPLETING'))):
+            blockers.append(job['JobId'])
+    return dict(checked_at=datetime.now().astimezone().isoformat(), jobs=jobs, node=node,
+                blocking_job_ids=blockers,
+                source='scontrol show jobs -o; scontrol show node gpu01 -o -d')
 
 
 def main():
@@ -123,9 +148,15 @@ def main():
                 best=best, stagnant=stagnant))
 
     def waiting():
-        rows = [queue_waiting() if rank == 0 else None]
-        dist.broadcast_object_list(rows, src=0)
-        return bool(rows[0])
+        result = [None]
+        if rank == 0:
+            snapshot = queue_snapshot()
+            atomic_json(args.output / 'queue-last.json', snapshot)
+            result[0] = bool(snapshot['blocking_job_ids'])
+            if result[0]:
+                atomic_json(args.output / f'queue-yield-{97+len(updates)}.json', snapshot)
+        dist.broadcast_object_list(result, src=0)
+        return result[0]
 
     try:
         if phase == 'complete':
