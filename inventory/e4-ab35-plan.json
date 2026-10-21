@@ -1,0 +1,37 @@
+{
+  "authorization": "Claude35 at9b773ac",
+  "source_commit": "7c918ddab4039750b3104b96f131155f17ddfce0",
+  "source_directory": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729",
+  "source_version": 88,
+  "initialization": 1729,
+  "trials": 32,
+  "baseline_evaluations": 1,
+  "dev_seeds": [
+    2000000000,
+    2000001023
+  ],
+  "evaluation_lanes": 256,
+  "cases": [
+    {
+      "name": "A",
+      "lanes": 32,
+      "epochs": 1
+    },
+    {
+      "name": "B",
+      "lanes": 256,
+      "epochs": 4
+    }
+  ],
+  "training_seconds_per_case": 1800,
+  "epoch_rule": "B average kl>0.05 sets epochs2 from nextupdate, stays2",
+  "metrics": "KL k3=ratio-1-logratio, clipfraction and entropy averaged over valid PPO decisions across all ranks and epoch visits; imitation NLL and clipped PPO loss each averaged over their own valid samples; original total policy loss averages all rows",
+  "migration": "Both groups independently load original model/optimizer/PPO and Torch RNG. A retains32 collector lanes; B retains32 includingpaths,pendingselectedactions,rewards and RNG then appends224empty lanes. Evaluation uses independent256lane collector with same perrank search seed2729+rank; training collector and Torch RNG preserved separately.",
+  "selection": "Claude selects by averagefloor gain over sharedbaseline; retain both finalcheckpoints for continuation",
+  "budget": {
+    "step1_limit": 43200,
+    "charged_before": 25836,
+    "remaining_before": 17364
+  },
+  "validation": "No extra experiment or testjob; native game sources unchanged, existing compiled backend retained"
+}

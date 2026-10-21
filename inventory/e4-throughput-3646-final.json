@@ -1,0 +1,120 @@
+{
+  "observed_at": "2026-10-21T08:02:52.147573+08:00",
+  "job_id": 3646,
+  "accounting": "JobId=3646 JobName=spire-e4-throughput\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899973 Nice=0 Account=(null) QOS=(null)\n   JobState=CANCELLED Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:15\n   RunTime=00:09:10 TimeLimit=02:30:00 TimeMin=N/A\n   SubmitTime=2026-10-21T07:53:07 EligibleTime=2026-10-21T07:53:07\n   AccrueTime=2026-10-21T07:53:07\n   StartTime=2026-10-21T07:53:08 EndTime=2026-10-21T08:02:18 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T07:53:08 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1342019\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-throughput.sh\n   WorkDir=/home/zhuyouwei\n   StdErr=/home/zhuyouwei/spire-downloads/e4-throughput-3646.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-throughput-3646.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n",
+  "queue": "",
+  "cases": {
+    "L512-N32": {
+      "reason": "update_complete",
+      "updates": 1,
+      "lanes": 512,
+      "trials": 32,
+      "job": "3646",
+      "results": [
+        {
+          "event": "benchmark_update",
+          "update": 1,
+          "lanes": 512,
+          "trials": 32,
+          "update_seconds": 266.3907775878906,
+          "actual_steps": 262144,
+          "sl_trial_steps": 7824913,
+          "actual_steps_per_second": 984.05810546875,
+          "sl_trial_steps_per_second": 29373.8125,
+          "peak_torch_allocated_bytes": 1244041728,
+          "peak_torch_reserved_bytes": 1700790272,
+          "estimated_peak_device_bytes": 4490657792,
+          "completed_episodes": 56,
+          "stalled_episodes": 0,
+          "active_max_floor_steps": 135,
+          "policy_loss": 0.5537265192865471,
+          "value_loss": 0.00025550592429730357,
+          "imitation_fraction": 0.8009109497070312,
+          "loss": 0.55316710185798
+        }
+      ],
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729",
+      "source_version": 88,
+      "collector_resize": "Preserve all32 source lanes, paths, pending selected actions, rewards and RNG; append empty lanes drawing next train seeds",
+      "scope": "Diagnostic branches only; original production checkpoint is unchanged"
+    }
+  },
+  "fault_files": [],
+  "error_markers": {
+    "Traceback": 0,
+    "OutOfMemoryError": 0,
+    "AssertionError": 0,
+    "CUDA error": 0
+  },
+  "source_hashes": "0269357b3c810572b80b6d302aa42e6a07d54faa7085b767ca996185ac3c2720  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-0.pt\naaf573bc597536099629638814dc98a7c8e03319980259f274e0af297e78a849  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-1.pt\n5db7e9107dd0afc1227fb1fefbf83514ce85b33a47f3ecb6554ef12afad5c987  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-2.pt\n03136c6e2288003d2506831be28b6031a4e949bf93654efd7766d0a24aa68f91  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-3.pt\nae9f2e5730a832c52bf4eb1d0bfdae806af058637f6611a1bc5da290be9fd8a3  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-4.pt\ndc006511dd0614a8e1dc62d040bfdd6aae22b0ae92b2e7e49365245868fedc8e  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-5.pt\n7cd5081d843e327301289453a5fcddf0b0294476ecdbc18058d63578fd5e0905  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-6.pt\n8f2a913334be723b9fb76bd1892c39b92cf47de361289ade73d9bdbd0484f571  /home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-7.pt\n",
+  "scripts": {
+    "e4-throughput.py": "34f346ca2a913c766fe04c787a4657f946a25208f4155f05ff7f2d4a060cbebf",
+    "e4-throughput.sh": "0497b269813e9a07a5da03dd448e2f141fade68cd6bb406055c622aebfa1d181"
+  },
+  "batch_exit": [
+    "BENCH_EXIT=0 END=2026-10-21T08:02:18+08:00"
+  ],
+  "accounting_final": "JobId=3646 JobName=spire-e4-throughput\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899973 Nice=0 Account=(null) QOS=(null)\n   JobState=CANCELLED Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:15\n   RunTime=00:09:10 TimeLimit=02:30:00 TimeMin=N/A\n   SubmitTime=2026-10-21T07:53:07 EligibleTime=2026-10-21T07:53:07\n   AccrueTime=2026-10-21T07:53:07\n   StartTime=2026-10-21T07:53:08 EndTime=2026-10-21T08:02:18 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T07:53:08 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1342019\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=96G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-throughput.sh\n   WorkDir=/home/zhuyouwei\n   StdErr=/home/zhuyouwei/spire-downloads/e4-throughput-3646.slurm.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-throughput-3646.slurm.log\n   Power=\n   TresPerNode=gres:gpu:V100:8\n   \n\n",
+  "files": {
+    "source.txt": {
+      "size": 41,
+      "sha256": "468b00d491773b710a05376962dbca38f7bfb7f270da3cd7c42dbc68e7b6f1b8"
+    },
+    "accounting-cancel.txt": {
+      "size": 1319,
+      "sha256": "33c320aee379e298c1353827fd8f5ee7999b550a10e5b41117b78c06f5976432"
+    },
+    "accounting-at-exit.txt": {
+      "size": 1319,
+      "sha256": "33c320aee379e298c1353827fd8f5ee7999b550a10e5b41117b78c06f5976432"
+    },
+    "accounting-final.txt": {
+      "size": 1319,
+      "sha256": "17c0b0caaa2033c7fb8a0ab69a2909cae48e11a214ba90dc17e3c8ed088bf431"
+    },
+    "L512-N32/rank-5.pt": {
+      "size": 12152205,
+      "sha256": "4d52480c7a0c92d65bd1869e536524e6f8f5d29f6b74165c7996163de4415356"
+    },
+    "L512-N32/rank-3.pt": {
+      "size": 12149965,
+      "sha256": "37091548524540ea13044a206593a98c2772322638dfe71a0b4b1b39cefeb0cd"
+    },
+    "L512-N32/rank-7.pt": {
+      "size": 12148685,
+      "sha256": "da6a8f7fb995f41a1ab6cdf486b2961978939150cc62d5065d768dbc35533975"
+    },
+    "L512-N32/rank-6.pt": {
+      "size": 12146765,
+      "sha256": "e3ed958c61fa139c66f738d691747418cc123e70c78ccd98875d9aa13d70e912"
+    },
+    "L512-N32/rank-4.pt": {
+      "size": 12151437,
+      "sha256": "f58b1258e156c99a82af16614a67656d3d1b160caf3d3c3519cc66522c71245c"
+    },
+    "L512-N32/rank-1.pt": {
+      "size": 12155853,
+      "sha256": "3da7ac6b72e0bb390c1a12a5f72ecafd302a17e09db3bd36e0ca9954753ec531"
+    },
+    "L512-N32/rank-0.pt": {
+      "size": 12152077,
+      "sha256": "d4a71a3717c2adc093aeb453a1a081db69a1a74a3ed410d65b642e812dcf2865"
+    },
+    "L512-N32/rank-2.pt": {
+      "size": 12146957,
+      "sha256": "e96ec399b4676813fb247a395bd6159ffb405c0040beae0d13afa2e68c0cae45"
+    }
+  },
+  "source_verified": "/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-0.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-1.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-2.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-3.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-4.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-5.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-6.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-training-3644/A-1729/rank-7.pt: 成功",
+  "cost_ledger_entry": {
+    "job_id": 3646,
+    "step": 1,
+    "charged_node_seconds": 550,
+    "gpu_seconds": 4400,
+    "source": "scontrol final RunTime00:09:10; accounting-final.txt",
+    "exit_code": "0:15",
+    "reason": "Cancelled perClaude35; throughput comparison withdrawn; preserve partial diagnostic checkpoints"
+  },
+  "authorization": "Claude35",
+  "disposition": "Throughput comparison withdrawn, partial diagnostic outputs retained; no production resume from these checkpoints"
+}

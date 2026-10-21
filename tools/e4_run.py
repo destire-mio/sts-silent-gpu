@@ -189,7 +189,7 @@ def main():
                     checkpoint("allocation_limit")
                     break
                 ddp.train()
-                metrics = update(ddp, optimizer, ready, ppo_rng)
+                metrics = update(ddp, optimizer, ready, ppo_rng, epochs=1)
                 health = ready["health"].clone()
                 dist.all_reduce(health[:3], op=dist.ReduceOp.SUM)
                 dist.all_reduce(health[3:], op=dist.ReduceOp.MAX)
