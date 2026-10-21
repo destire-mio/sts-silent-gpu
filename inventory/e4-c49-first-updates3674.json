@@ -1,0 +1,195 @@
+{
+  "observed_at": "2026-10-21T20:33:21.744999+08:00",
+  "job": 3674,
+  "fixed_head": "3b54843df8c36d856f9c9425bb1279833f956fab",
+  "status": {
+    "reason": "update_complete",
+    "phase": "training",
+    "version": 99,
+    "trained_seconds": 464.2173614501953,
+    "next_evaluation": 1800.0,
+    "capacity_metrics": {
+      "combat_played_cards_limit": 0,
+      "combat_trials": 25856
+    },
+    "updates": [
+      {
+        "event": "update",
+        "update": 1,
+        "version": 98,
+        "training_seconds": 231.4932098388672,
+        "update_seconds": 231.4932098388672,
+        "actual_steps": 131072,
+        "sl_trial_steps": 3403671,
+        "lanes": 256,
+        "next_epochs": 4,
+        "completed_episodes": 406,
+        "stalled_episodes": 0,
+        "completed_average_floor": 11.679802955665025,
+        "active_max_floor_steps": 173,
+        "stall_classes": {},
+        "policy_loss": 0.5368349289553572,
+        "value_loss": 0.0004529304037845894,
+        "imitation_fraction": 0.805450439453125,
+        "loss": 0.5365550474648444,
+        "kl": 0.003575053285671553,
+        "clip_fraction": 0.03655882352941176,
+        "entropy": 0.260266281215823,
+        "ppo_loss": -0.002023379223835678,
+        "imitation_loss": 0.6669914748062402,
+        "ppo_samples": 102000,
+        "imitation_samples": 422288,
+        "H_imit": 0.6716025225602738,
+        "imitation_kl": 0.00679733981836809,
+        "imitation_entropy_samples": 105572,
+        "imitation_beta_used": 0.0,
+        "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+        "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+        "epochs": 4,
+        "value_explained_variance": 0.1399651199069516,
+        "ppo_return_variance": 0.0004314655396651119,
+        "ppo_value_error_variance": 0.0003710754136701669,
+        "value_explained_variance_samples": 25500,
+        "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+        "imitation_beta": 0.0,
+        "imitation_entropy_target": 0.6716025225602738
+      },
+      {
+        "event": "update",
+        "update": 2,
+        "version": 99,
+        "training_seconds": 464.2173614501953,
+        "update_seconds": 232.72415161132812,
+        "actual_steps": 131072,
+        "sl_trial_steps": 3322169,
+        "lanes": 256,
+        "next_epochs": 4,
+        "completed_episodes": 471,
+        "stalled_episodes": 2,
+        "completed_average_floor": 12.664543524416136,
+        "active_max_floor_steps": 205,
+        "stall_classes": {
+          "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"]]}": 1,
+          "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
+        },
+        "policy_loss": 0.5362591831901331,
+        "value_loss": 0.0004798780750865322,
+        "imitation_fraction": 0.8084030151367188,
+        "loss": 0.5359920202236026,
+        "kl": 0.0033902622261120035,
+        "clip_fraction": 0.03971050850157289,
+        "entropy": 0.2646710921683801,
+        "ppo_loss": -0.0017248197202662681,
+        "imitation_loss": 0.6637650322929829,
+        "ppo_samples": 100452,
+        "imitation_samples": 423836,
+        "H_imit": 0.6662686595407324,
+        "imitation_kl": 0.006670885037153863,
+        "imitation_entropy_samples": 105959,
+        "imitation_beta_used": 0.0,
+        "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+        "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+        "epochs": 4,
+        "value_explained_variance": 0.1929836059694845,
+        "ppo_return_variance": 0.0005054499410579727,
+        "ppo_value_error_variance": 0.00040790638879554175,
+        "value_explained_variance_samples": 25113,
+        "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+        "imitation_beta": 0.0005333863019541307,
+        "imitation_entropy_target": 0.6716025225602738
+      }
+    ],
+    "actual_steps": 262144,
+    "imitation_beta": 0.0005333863019541307,
+    "imitation_entropy_target": 0.6716025225602738
+  },
+  "checkpoint_files": {
+    "rank-6.pt": {
+      "size": 12405193,
+      "sha256": "e4034b297206bea7a035551b7c3909f28adea71d2df9d03bea19a5e06cbae955"
+    },
+    "rank-0.pt": {
+      "size": 12407177,
+      "sha256": "ab63e429ff8544c9646e0c2d989ce297cf78ccab587ff18c5a9bc14f74cf2c12"
+    },
+    "rank-5.pt": {
+      "size": 12409929,
+      "sha256": "04481d24da5a99c9094cb583baf71707eb432b94f98ea608022da7e719c8b554"
+    },
+    "rank-3.pt": {
+      "size": 12412041,
+      "sha256": "e531d03ffb009db18fa160b74c9e36ef3e86ae7d556d5428de55f2a8d3ac72f2"
+    },
+    "rank-1.pt": {
+      "size": 12407241,
+      "sha256": "644132cc72cb87ef40ffdab71a1f3dbc7bd5aaf8976c7610187a7afadc1e6318"
+    },
+    "rank-7.pt": {
+      "size": 12408457,
+      "sha256": "41c7853db4b996f04393d7925472a48ab1fdb0efed287270858188e37d344702"
+    },
+    "rank-4.pt": {
+      "size": 12416969,
+      "sha256": "32173b2d12978a4d9bca25b11a7e6e000becba257ac56dd0c77ca3eeb03bbdd3"
+    },
+    "rank-2.pt": {
+      "size": 12409033,
+      "sha256": "673b6a0f6b6358b9ae1ceb4d69f46dab84f1f9dd5af74f6b0c357e19506524d4"
+    }
+  },
+  "checkpoint_hash_scope": "Live rolling checkpoint file hashes observed at poll; not an immutable evaluated checkpoint archive",
+  "fault_files": [],
+  "queue_errors": [],
+  "queue": {
+    "running": [
+      {
+        "job": 3650,
+        "user": "shaoy",
+        "gres": "N/A"
+      },
+      {
+        "job": 3674,
+        "user": "zhuyouwei",
+        "gres": "gpu:V100:8"
+      }
+    ],
+    "pending": [
+      {
+        "job": 3656,
+        "reason": "DependencyNeverSatisfied"
+      },
+      {
+        "job": 3663,
+        "reason": "DependencyNeverSatisfied",
+        "gres": "gpu:V100:1"
+      },
+      {
+        "job": 3664,
+        "reason": "Dependency"
+      },
+      {
+        "job": 3665,
+        "reason": "Dependency"
+      }
+    ],
+    "eligible_other_gpu_blocker": false,
+    "interpretation": "Claude42/43 ignore CPU-only running and dependency-blocked pending jobs"
+  },
+  "accounting": "JobId=3674 JobName=spire-e4-c49-entropy UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899945 Nice=0 Account=(null) QOS=(null) JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:09:06 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-21T20:24:14 EligibleTime=2026-10-21T20:24:14 AccrueTime=2026-10-21T20:24:14 StartTime=2026-10-21T20:24:15 EndTime=2026-10-22T00:24:15 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T20:24:15 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c49.sh WorkDir=/home/zhuyouwei/sts-silent-gpu-split StdErr=/home/zhuyouwei/spire-downloads/e4-c49-3674.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c49-3674.log Power= TresPerNode=gres:gpu:V100:8 \n",
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
+    },
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 38782,
+      "limit_node_seconds": 64800,
+      "reserved_node_seconds": 14400,
+      "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
+      "active_observed_node_seconds": 546
+    }
+  },
+  "checks": "Existing first two metrics satisfy fixed4, target fixed, beta recurrence. No new experiment or test execution. First dev evaluation pending. Two known shop-loop noncombat stalls separately counted; not deaths."
+}

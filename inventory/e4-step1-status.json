@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-21T20:27:10.044645+08:00",
+  "updated_at": "2026-10-21T20:36:02.722164+08:00",
   "active_job": 3674,
   "phase": "claude49_training_running",
   "budgets": {
@@ -14,7 +14,7 @@
       "limit_node_seconds": 64800,
       "reserved_node_seconds": 14400,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 54
+      "active_observed_node_seconds": 546
     }
   },
   "cost_ledger": [
@@ -771,7 +771,7 @@
       "script_sha256": "e8aeed507f76ebbd62b6cd7471c078039469d2aa526abe3d4ac79de98b939cd0",
       "start_time": "2026-10-21T20:24:15+08:00",
       "submitted_at": "2026-10-21T20:24:14+08:00",
-      "last_observed_elapsed_seconds": 54,
+      "last_observed_elapsed_seconds": 546,
       "source_version": 97,
       "lanes": 256,
       "trials": 32,
@@ -784,13 +784,14 @@
   "evaluation_watch": {
     "job_id": 3674,
     "status": "training_before_first_1800s_evaluation",
-    "current_version": 97,
+    "current_version": 99,
     "next_evaluation_training_seconds": 1800,
     "dev_seed_count": 1024,
-    "epochs": 4
+    "epochs": 4,
+    "trained_seconds": 464.2173614501953
   },
   "pending": [
-    "Monitor3674 fixed3b54843; firstupdate sets H_imit target, beta starts0; report beta/H_imit/imitationk3 and fixedepochs4.",
+    "Monitor3674 fixed3b54843; first two updates controller checked, now wait first1800trainingseconds dev evaluation; preserve checkpoint/fault evidence.",
     "Each1800trainingseconds full1024dev plus five combat diagnostics and18actual audit roots; preserve all8 evaluatedcheckpoint files; Mac audits pending untilconfirmed.",
     "Apply existingqueue/capacity/three-stagnant stops plus meanfloor morethan1belowbest (initial13.2958984375); checkpoint/yield asrequired.",
     "Settle3674actualnodecost onceafterexit; keep14400reservation; cumulative38782/64800 neverreset.",
