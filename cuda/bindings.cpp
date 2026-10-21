@@ -20,6 +20,7 @@ template<class T> static DeviceArray array(TrainingBatch& batch, spire::cuda::Bu
 }
 
 PYBIND11_MODULE(spire_gpu, module) {
+    module.attr("PLAYED_CARDS_CAPACITY_FAULT") = spire::played_cards_capacity_fault;
     py::class_<DeviceArray>(module, "DeviceArray")
         .def_property_readonly("__cuda_array_interface__", [](const DeviceArray& a) {
             return py::dict("shape"_a=py::tuple(py::cast(a.shape)), "typestr"_a=a.typestr,

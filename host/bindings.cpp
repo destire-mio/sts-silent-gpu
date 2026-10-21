@@ -257,6 +257,7 @@ void observation_arrays(py::class_<Batch>& cls) {
 PYBIND11_MODULE(spire, module) {
     using namespace spire;
     using namespace spire::host;
+    module.attr("PLAYED_CARDS_CAPACITY_FAULT") = played_cards_capacity_fault;
     py::class_<Environment>(module, "Game")
         .def(py::init<>())
         .def("reset", &Environment::reset, "seed"_a, "playtime_at_least_800"_a=false)

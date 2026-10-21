@@ -307,7 +307,7 @@ struct PlayedCards {
     uint16_t size = 0;
     uint16_t turn_start = 0;
     SPIRE_FN SPIRE_INLINE void record(int card) {
-        SPIRE_ASSERT(size < 1024);
+        SPIRE_CAPACITY(size < 1024, played_cards_capacity_fault);
         values[size++] = static_cast<uint8_t>(card);
     }
     SPIRE_FN SPIRE_INLINE void begin_turn() {

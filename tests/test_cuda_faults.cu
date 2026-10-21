@@ -19,6 +19,11 @@ __global__ void overflow(spire::Game* games, int* reached) {
     } else spire::step(game, {spire::ActionKind::EndTurn});
     reached[index] = 1;
 }
+__global__ void played_cards_overflow(spire::Game* games) {
+    spire::bind_fault(games[0]);
+    games[0].manager.played_cards.size = 1024;
+    games[0].manager.played_cards.record(0);
+}
 __global__ void second_fault(spire::Game* games) {
     spire::bind_fault(games[0]);
     SPIRE_ASSERT(false);
@@ -80,6 +85,11 @@ int main() {
     cuda_check(cudaMemcpy(host, games, sizeof(host), cudaMemcpyDeviceToHost));
     require(host[0].fault == 0 && host[0].run.seed == seed && std::memcmp(saved, &host[1], sizeof(saved)) == 0,
             "indexed device reset preserves the other environment");
+    played_cards_overflow<<<1, 1>>>(games);
+    cuda_check(cudaDeviceSynchronize());
+    cuda_check(cudaMemcpy(host, games, sizeof(host), cudaMemcpyDeviceToHost));
+    require(host[0].fault == spire::played_cards_capacity_fault && host[0].manager.played_cards.size == 1024,
+            "a full played-card history reports the named capacity fault");
     cuda_check(cudaFree(games));
     cuda_check(cudaFree(reached));
     cuda_check(cudaFree(faults));
