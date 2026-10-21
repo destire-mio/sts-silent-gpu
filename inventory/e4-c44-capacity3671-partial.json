@@ -1,0 +1,1910 @@
+{
+  "observed_at": "2026-10-21T18:53:21.786758+08:00",
+  "capacity_files": {
+    "combat-played-cards-limit-0.jsonl": {
+      "sha256": "29468e69141f6cde0d2fa6404a10a9a84b6d5bc7fd15b9fd47c64e42d3ebad36",
+      "records": [
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8603,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1557,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 3,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 5,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8615,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1559,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 5,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 3,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 7,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8628,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1565,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 7,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8610,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1567,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8626,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1569,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8617,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1572,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 5,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 7,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8616,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1574,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 3,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 7,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 5,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 5,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8604,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1575,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 3,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 7,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 5,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8605,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1575,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 8,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8625,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1581,
+          "last30": [
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 8,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 4,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            }
+          ]
+        },
+        {
+          "event": "combat_played_cards_limit",
+          "device": 0,
+          "slot": 8607,
+          "seed": 2000000544,
+          "fault": 1128353841,
+          "steps": 1587,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 3,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 6,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 5,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 2,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 5,
+              "action_kind": "play"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "heartbeats": {
+    "6": [
+      {
+        "kind": "combat",
+        "unfinished": 32,
+        "slot": 8671,
+        "steps": 47,
+        "noncombat_steps": null
+      }
+    ],
+    "3": [
+      {
+        "kind": "combat",
+        "unfinished": 31,
+        "slot": 8671,
+        "steps": 38,
+        "noncombat_steps": null
+      }
+    ],
+    "4": [
+      {
+        "kind": "combat",
+        "unfinished": 24,
+        "slot": 8639,
+        "steps": 60,
+        "noncombat_steps": null
+      }
+    ],
+    "1": [
+      {
+        "kind": "combat",
+        "unfinished": 29,
+        "slot": 8671,
+        "steps": 29,
+        "noncombat_steps": null
+      }
+    ],
+    "2": [
+      {
+        "kind": "combat",
+        "unfinished": 64,
+        "slot": 8638,
+        "steps": 12,
+        "noncombat_steps": null
+      }
+    ],
+    "7": [
+      {
+        "kind": "combat",
+        "unfinished": 32,
+        "slot": 8671,
+        "steps": 46,
+        "noncombat_steps": null
+      }
+    ],
+    "5": [
+      {
+        "kind": "combat",
+        "unfinished": 32,
+        "slot": 8671,
+        "steps": 25,
+        "noncombat_steps": null
+      }
+    ],
+    "0": [
+      {
+        "kind": "combat",
+        "unfinished": 8,
+        "slot": 8638,
+        "steps": 25,
+        "noncombat_steps": null
+      }
+    ]
+  },
+  "progress": {
+    "2": {
+      "event": "evaluation_progress",
+      "rank": 2,
+      "completed": 128,
+      "waiting": 0,
+      "trials": 32
+    },
+    "1": {
+      "event": "evaluation_progress",
+      "rank": 1,
+      "completed": 64,
+      "waiting": 0,
+      "trials": 32
+    },
+    "7": {
+      "event": "evaluation_progress",
+      "rank": 7,
+      "completed": 128,
+      "waiting": 0,
+      "trials": 32
+    },
+    "5": {
+      "event": "evaluation_progress",
+      "rank": 5,
+      "completed": 128,
+      "waiting": 0,
+      "trials": 32
+    },
+    "3": {
+      "event": "evaluation_progress",
+      "rank": 3,
+      "completed": 128,
+      "waiting": 0,
+      "trials": 32
+    },
+    "6": {
+      "event": "evaluation_progress",
+      "rank": 6,
+      "completed": 64,
+      "waiting": 0,
+      "trials": 32
+    },
+    "4": {
+      "event": "evaluation_progress",
+      "rank": 4,
+      "completed": 64,
+      "waiting": 0,
+      "trials": 32
+    },
+    "0": {
+      "event": "evaluation_progress",
+      "rank": 0,
+      "completed": 65,
+      "waiting": 0,
+      "trials": 32
+    }
+  },
+  "summaries": {},
+  "job_id": 3671,
+  "fixed_head": "3e408345f5942ba05ddc733dfd9cda09223b488f",
+  "complete_evaluation": false,
+  "capacity_fraction": null,
+  "fraction_note": "Denominator pending full1024 evaluation; do not infer pass from partial counts",
+  "settled_step1_node_seconds": 35691,
+  "reserved_node_seconds": 14400
+}
