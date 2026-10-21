@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T10:12:50.208772+08:00",
-  "active_job": 3648,
-  "phase": "step1_B97_adaptive_continuation",
+  "updated_at": "2026-10-21T10:55:42.476744+08:00",
+  "active_job": null,
+  "phase": "step1_yielded_waiting_for_gpu",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -10,11 +10,11 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 31395,
+      "charged_node_seconds": 34697,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 14400,
+      "reserved_node_seconds": 0,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 855
+      "active_observed_node_seconds": 0
     }
   },
   "cost_ledger": [
@@ -163,12 +163,22 @@
       "source": "scontrol final RunTime=01:32:39; accounting-final.txt",
       "exit_code": "0:0",
       "accounting_sha256": "667c9e6b3e45e75303c4c79214172af65ff05c865f3a1b97e81f68bb362acbee"
+    },
+    {
+      "job_id": 3648,
+      "step": 1,
+      "charged_node_seconds": 3302,
+      "gpu_seconds": 26416,
+      "source": "scontrol final RunTime00:55:02;accounting-final.txt",
+      "exit_code": "0:0",
+      "reason": "checkpoint109 yield_to_waiting_user",
+      "accounting_sha256": "0f4519a45111b3bd876069b5824a1cebf6f4a7dfad517a4447029c81d478ac56"
     }
   ],
   "current_job": {
     "job_id": 3648,
     "purpose": "Claude39 resumeB97 adaptiveepochs2-8 andPPO valueEV,1024dev every3600trainingseconds",
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "step": 1,
     "gpus": 8,
     "reserved_seconds": 14400,
@@ -188,14 +198,63 @@
     "dev_seed_count": 1024,
     "script_sha256": "5e2111b9c6517464730709bdffa2dbb221eb2012a419a1f95cf82e28c9c91a629",
     "start_time": "2026-10-21T09:57:26+08:00",
-    "last_observed_elapsed_seconds": 855,
-    "last_durable_checkpoint_version": 100,
-    "latest_completed_update": 100,
-    "checkpoint_reason": "update_complete",
-    "trained_seconds": 778.6351623535156
+    "last_observed_elapsed_seconds": 3302,
+    "last_durable_checkpoint_version": 109,
+    "latest_completed_update": 109,
+    "checkpoint_reason": "yield_to_waiting_user",
+    "trained_seconds": 3255.404754638672,
+    "elapsed_seconds": 3302,
+    "charged_node_seconds": 3302,
+    "exit_code": "0:0",
+    "end_time": "2026-10-21T10:52:28+08:00"
+  },
+  "resume_checkpoint": {
+    "directory": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
+    "version": 109,
+    "commit": "f2db1e248e9c0e076646edfe130eadb5158eedd3",
+    "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+    "trained_seconds": 3255.404754638672,
+    "next_evaluation": 3600.0,
+    "epochs": 8,
+    "files": {
+      "rank-6.pt": {
+        "size": 12805961,
+        "sha256": "739403a7c6405a306dd232c8a12429ded1efebbb5fb16acbff61bd6d5a7cd661"
+      },
+      "rank-3.pt": {
+        "size": 12811529,
+        "sha256": "80ee3c6d07bea50d66cf953e8e0104d8cb6178c90d75c609de49de09f1260e4b"
+      },
+      "rank-5.pt": {
+        "size": 12816265,
+        "sha256": "a874bc33eae447e01bcc59dc626ce17ebae6c9c3dcce0cfa93b7eaf6b5935ffb"
+      },
+      "rank-7.pt": {
+        "size": 12808585,
+        "sha256": "ac7f98bcbbf262450ca55a81a15ea831ecc54c6317ee5abbf4e48beee05f0705"
+      },
+      "rank-0.pt": {
+        "size": 12802313,
+        "sha256": "e95176d30ad0bdaedee49fc75338d81b2070e62e7b2fc336fcf83a071af02331"
+      },
+      "rank-1.pt": {
+        "size": 12812617,
+        "sha256": "d12933489f2fda60a82f5aad3bd0eb5d055c05a717a3d879fe7e0ad5d5c390ff"
+      },
+      "rank-2.pt": {
+        "size": 12801225,
+        "sha256": "c8f8d8ee60db852f2bfa74c81de49b800f1897b521bbf58b8569d2432ebe61e5"
+      },
+      "rank-4.pt": {
+        "size": 12812617,
+        "sha256": "1a4cece3b5b8bfbd2d50a59c5e1cc96603df22d44df2dabf0a5a33640f9844f4"
+      }
+    }
   },
   "pending_actions": [
-    "Monitor3648 perupdate KL/epochs/PPO valueEV and checkpoint; queue everyupdate andeachassessment; publish1024dev/audit18 every3600trainingseconds",
-    "Retain sourceB97 and allhistoricalcost/evidence; settle3648 runtime once onexit; stopafter3 stagnant assessments"
+    "Wait until otherusers GPUuse andqueue clear;do not submit while busy",
+    "Resume C39 checkpoint109 from /home/zhuyouwei/spire-downloads/e4-c39-3648 using --resume and originalB97 --source, fixedf2db1e2; preserve3255.404754638672trainedseconds,3600next_evaluation,epochs8,collector/optimizer/allRNG",
+    "Before submission verify source/resume8hashes,repo clean/fixedversion,queue,disk,budget and noactiveprojectjob; reserve within remaining30103",
+    "At complete1024dev assessment publish summary andappend18Macpendingauditroots;stopafter3stagnant;settleactualjobcost once"
   ]
 }
