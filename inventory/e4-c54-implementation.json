@@ -1,0 +1,19 @@
+{
+  "authorization": "Claude54",
+  "main": "8b3a970bb1dc1332e5ae6fedecf75781d3859793",
+  "changes": [
+    "WORLD_SIZE accepts7or8; each process restores same-rank checkpoint",
+    "Running other GPU jobs no longer trigger yield; pending nondependency jobs and scontrol failure still yield",
+    "world_size in checkpoint,status,update and evaluation",
+    "Existing version-label correction included; historical rows retained"
+  ],
+  "regression": "test_running_gpu_shares_but_pending_resources_yields passed1in5.66s",
+  "hyperparameters_changed": false,
+  "native_engine_changed": false,
+  "migration": "pending; verify all8 model+optimizer hashes then copy ranks0-6 with only commit/provenance changed; preserve rank7 original",
+  "budget": {
+    "charged_node_seconds": 45277,
+    "remaining_node_seconds": 19523,
+    "new_charge_formula": "allocated_GPU_count * Slurm_elapsed_seconds / 8"
+  }
+}

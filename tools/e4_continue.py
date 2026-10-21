@@ -44,9 +44,7 @@ def queue_snapshot():
         if job.get('UserId').split('(')[0] == os.environ['USER']:
             continue
         dependency_wait = job.get('Reason') in ('Dependency', 'DependencyNeverSatisfied')
-        gpu = 'gpu' in (job.get('TresPerNode') or '') or 'gpu' in (job.get('TRES') or '')
-        if ((job.get('JobState') == 'PENDING' and not dependency_wait)
-                or (gpu and job.get('JobState') in ('RUNNING', 'CONFIGURING', 'COMPLETING'))):
+        if job.get('JobState') == 'PENDING' and not dependency_wait:
             blockers.append(job.get('JobId'))
     return dict(checked_at=datetime.now().astimezone().isoformat(), jobs=jobs, node=node,
                 blocking_job_ids=blockers,
@@ -84,7 +82,7 @@ def main():
     parser.add_argument('--evaluate-only', action='store_true')
     args = parser.parse_args()
     rank, world = int(os.environ['RANK']), int(os.environ['WORLD_SIZE'])
-    assert world == 8
+    assert world in (7, 8)
     torch.set_num_threads(1)
     device = torch.device('cuda', int(os.environ['LOCAL_RANK']))
     torch.cuda.set_device(device)
@@ -190,7 +188,7 @@ def main():
             evaluation_state = collector.state()
         atomic_checkpoint(args.output / f'rank-{rank}.pt', dict(commit=commit,
             source_sha256=source_hash, source_commit=source['commit'], source_version=105,
-            initialization=1729, phase=phase, reason=reason, lanes=256, trials=32,
+            initialization=1729, phase=phase, reason=reason, lanes=256, trials=32, world_size=world,
             version=105+len(updates), epochs=epochs, trained_seconds=trained_seconds,
             source_trained_seconds=source['trained_seconds'], next_evaluation=next_evaluation,
             evaluation_seconds=evaluation_seconds, updates=updates, actual_steps=actual_steps,
@@ -207,7 +205,7 @@ def main():
         if rank == 0:
             atomic_json(args.output / 'status.json', dict(reason=reason, phase=phase,
                 job=os.environ['SLURM_JOB_ID'], commit=commit, source_directory=str(args.source),
-                source_version=105, version=105+len(updates), lanes=256, epochs=epochs, trials=32,
+                source_version=105, version=105+len(updates), lanes=256, epochs=epochs, trials=32, world_size=world,
                 evaluation_lanes=256, dev_seed_count=1024, trained_seconds=trained_seconds,
                 next_evaluation=next_evaluation, evaluation_seconds=evaluation_seconds,
                 capacity_metrics=search.capacity_metrics,
@@ -266,7 +264,7 @@ def main():
                     actual_steps += int(steps[0])
                     row = dict(event='update', update=len(updates)+1, version=source['version']+len(updates)+1,
                         training_seconds=trained_seconds, update_seconds=float(elapsed),
-                        actual_steps=int(steps[0]), sl_trial_steps=int(steps[1]), lanes=256,
+                        actual_steps=int(steps[0]), sl_trial_steps=int(steps[1]), lanes=256, world_size=world,
                         next_epochs=epochs, completed_episodes=completed, stalled_episodes=stalled,
                         completed_average_floor=floor_sum/completed if completed else None,
                         active_max_floor_steps=max_steps, stall_classes=dict(stall_classes), **metrics)
@@ -343,7 +341,7 @@ def main():
                 combat_rows = sum([json.loads((args.output / f'{round_name}-combat-{r}.json').read_text())
                                    for r in range(world)], [])
                 assessment = dict(summaries(all_episodes), round=round_name, version=version,
-                    trials=32, training_lanes=256, evaluation_lanes=256, dev_seed_count=1024,
+                    trials=32, training_lanes=256, evaluation_lanes=256, dev_seed_count=1024, world_size=world,
                     evaluation_seconds=evaluation_seconds, trained_seconds=trained_seconds,
                     update_count=len(updates), actual_steps=actual_steps, next_epochs=epochs,
                     combat=combat_diagnostics_summary(combat_rows), noncombat=noncombat_summary(all_episodes),
