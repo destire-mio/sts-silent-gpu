@@ -15,7 +15,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
 from train.checkpoint import engine_commit
-from train.e4 import AllocationEnded, REACH, SEARCH_METRICS, RoomSearch, SegmentCollector
+from train.e4 import AllocationEnded, CAPACITY_METRICS, REACH, SEARCH_METRICS, RoomSearch, SegmentCollector
 from train.e4_learner import update
 from train.model import ModelConfig, Policy
 from tools.e4_run import atomic_checkpoint, atomic_json, audit, collective_stop, summaries
@@ -144,6 +144,7 @@ def main():
     torch.cuda.set_rng_state(rng['cuda_rng'], device)
     if saved:
         search.metrics = saved['search_metrics']
+        search.capacity_metrics = saved['capacity_metrics']
         search.event_trial_max_steps = saved['event_trial_max_steps']
         search.loop_metrics = saved['loop_metrics']
 
@@ -164,6 +165,7 @@ def main():
             training_rng=training_rng, train_state=train_state, evaluation_state=evaluation_state,
             ready=ready, health_history=list(health_history), assessments=assessments,
             best=best, stagnant=stagnant, search_metrics=search.metrics,
+            capacity_metrics=search.capacity_metrics,
             event_trial_max_steps=search.event_trial_max_steps, loop_metrics=search.loop_metrics))
         dist.barrier()
         if rank == 0:
@@ -172,6 +174,7 @@ def main():
                 source_version=97, version=97+len(updates), lanes=256, epochs=epochs, trials=32,
                 evaluation_lanes=256, dev_seed_count=1024, trained_seconds=trained_seconds,
                 next_evaluation=next_evaluation, evaluation_seconds=evaluation_seconds,
+                capacity_metrics=search.capacity_metrics,
                 updates=updates, actual_steps=actual_steps, assessments=assessments,
                 best=best, stagnant=stagnant))
 
@@ -242,6 +245,7 @@ def main():
                 collector = SegmentCollector(search, seed_rng, rank=rank)
                 search_rng.manual_seed(2729+rank)
                 search.metrics = dict.fromkeys(SEARCH_METRICS, 0)
+                search.capacity_metrics = dict.fromkeys(CAPACITY_METRICS, 0)
                 search.event_trial_max_steps = 0
                 phase = 'evaluation'
             if waiting(rank, args.output, 97+len(updates)):
@@ -270,6 +274,12 @@ def main():
             dist.all_reduce(counts, op=dist.ReduceOp.SUM)
             dist.all_reduce(maxima, op=dist.ReduceOp.MAX)
             search_summary = dict(zip(SEARCH_METRICS, counts.cpu().tolist()+maxima.cpu().tolist()))
+            capacity_counts = torch.tensor([search.capacity_metrics[k] for k in CAPACITY_METRICS], device=device)
+            dist.all_reduce(capacity_counts, op=dist.ReduceOp.SUM)
+            search_summary.update(zip(CAPACITY_METRICS, capacity_counts.cpu().tolist()))
+            search_summary['combat_played_cards_limit_fraction'] = (
+                search_summary['combat_played_cards_limit'] / search_summary['combat_trials']
+                if search_summary['combat_trials'] else 0.)
             version = 97+len(updates)
             round_name = f'E4-C39-{version}-N32-D1024'
             atomic_json(args.output / f'{round_name}-rank-{rank}.json', episodes)
@@ -291,6 +301,10 @@ def main():
             dist.broadcast_object_list(shared, src=0)
             assessment = shared[0]
             assessments.append(assessment)
+            if assessment['combat_played_cards_limit_fraction'] > .001:
+                phase = 'complete'
+                checkpoint('combat_played_cards_limit_above_one_per_thousand')
+                return
             improved = any(assessment['reach'][key]-best[key] >= .02 for key in REACH)
             stagnant = 0 if improved else stagnant+1
             best = {key: max(best[key], assessment['reach'][key]) for key in REACH}

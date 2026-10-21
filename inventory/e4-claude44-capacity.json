@@ -1,0 +1,27 @@
+{
+  "main": "74fa7320117d676390f422946632d396d53a3015",
+  "native_fix": "acc5654bec9ece7a6c060febf3e2db47854ab3d7",
+  "status": "implemented_local_regression_passed_native_compile_running",
+  "original_evidence": {
+    "source": "Claude44",
+    "seed": 2000000544,
+    "states_matched_dual_scope": 1654,
+    "original_continues_after_play1025": true,
+    "original_death_decision": 1677
+  },
+  "implementation": {
+    "only_combat_trials": true,
+    "excluded_from_selection": true,
+    "metric": "combat_played_cards_limit",
+    "denominator": "combat_trials",
+    "stop_fraction": 0.001,
+    "reuse_checked_after_clone": true,
+    "unknown_faults_stop": true
+  },
+  "local_regression": "tests/test_e4_capacity.py: 1 passed in3.21s",
+  "pending": [
+    "native compilation",
+    "Slurm existing CPU/GPU parity + cuda_faults + clone reuse check",
+    "explicit checkpoint111 migration and full1024evaluation resume"
+  ]
+}

@@ -16,6 +16,7 @@ BOSS_ROOM, ELITE_ROOM, EVENT_ROOM, NEOW_ROOM = 2, 1, 6, 8
 MAX_REWARD = 156
 ACTION_KINDS = ("padding", "play", "end_turn", "choose", "potion_use", "potion_discard", "proceed", "skip")
 SEARCH_METRICS = ("combat_over_limit", "event_over_limit", "combat_normal_max_steps", "event_normal_max_steps")
+CAPACITY_METRICS = ("combat_played_cards_limit", "combat_trials")
 LOOP_METRICS = ("repeat_check_seconds", "repeat_check_decisions", "repeat_check_candidates", "all_candidates_repeat")
 REACH = ("act1_boss", "act2_boss", "act3_first_boss", "act3_second_boss",
          "act3_three_keys", "act4", "shield_spear", "heart")
@@ -92,6 +93,12 @@ class RoomSearch:
         self.provenance = {}
         self.evidence_directory = None
         self.metrics = dict.fromkeys(SEARCH_METRICS, 0)
+        self.capacity_metrics = dict.fromkeys(CAPACITY_METRICS, 0)
+        if device.type == "cuda":
+            from spire_gpu import PLAYED_CARDS_CAPACITY_FAULT
+        else:
+            from spire import PLAYED_CARDS_CAPACITY_FAULT
+        self.played_cards_capacity_fault = PLAYED_CARDS_CAPACITY_FAULT
         self.contexts = []
         self.last_heartbeat = time.monotonic()
         self.actual_lanes = []
@@ -146,14 +153,30 @@ class RoomSearch:
         self.batch.progress_tensors(self.progress_buffer)
         return self.progress_buffer.view(-1, 9).cpu().tolist()
 
-    def check(self, slots):
+    def check(self, slots, combat_context=None):
         faults = self.arrays["faults"].to(torch.int64)[slots].cpu().tolist()
-        if any(faults) and self.evidence_directory is not None:
+        capped = set()
+        if combat_context is not None:
+            assert combat_context["kind"] == "combat"
+            assert all(s in combat_context["live"] and s >= self.lanes for s in slots)
+            capped = {s for s, f in zip(slots, faults) if f == self.played_cards_capacity_fault}
+        unexpected = [(s, f) for s, f in zip(slots, faults) if f and s not in capped]
+        if unexpected and self.evidence_directory is not None:
             evidence = [dict(slot=s, fault=f, seed=self.provenance[s][0],
-                             candidates=self.provenance[s][1]) for s, f in zip(slots, faults) if f]
+                             candidates=self.provenance[s][1]) for s, f in unexpected]
             (self.evidence_directory / f"fault-device-{self.device.index}.json").write_text(json.dumps(evidence))
-        assert not any(faults), f"E4 engine fault: {list(zip(slots, faults))}"
+        assert not unexpected, f"E4 engine fault: {unexpected}"
         assert not bool(self.arrays["truncated"][slots].any()), "Unresolved search truncation"
+        for s in sorted(capped):
+            self.capacity_metrics["combat_played_cards_limit"] += 1
+            record = dict(event="combat_played_cards_limit", device=self.device.index,
+                slot=s, seed=self.provenance[s][0], fault=self.played_cards_capacity_fault,
+                steps=combat_context["total_steps"][s], last30=list(combat_context["tail"][s]))
+            print(json.dumps(record), flush=True)
+            if self.evidence_directory is not None:
+                with (self.evidence_directory / f"combat-played-cards-limit-{self.device.index}.jsonl").open("a") as out:
+                    out.write(json.dumps(record) + "\n")
+        return capped
 
     @torch.no_grad()
     def predict(self, model, slots):
@@ -252,7 +275,7 @@ class RoomSearch:
             result.update(zip(group.cpu().tolist(), values.cpu().tolist()))
         return result
 
-    def step(self, slots, choices):
+    def step(self, slots, choices, combat_context=None):
         indices = torch.tensor(slots, device=self.device, dtype=torch.int64)
         self.batch.progress_tensors(self.progress_buffer)
         before = self.progress_buffer.view(-1, 9)[indices].clone()
@@ -268,14 +291,19 @@ class RoomSearch:
         self.map_returned[indices] &= before[:, FLOOR] == self.progress_buffer.view(-1, 9)[indices, FLOOR]
         for s, a in zip(slots, choices):
             self.provenance[s][1].append(a)
-        self.check(slots)
+        capped = self.check(slots, combat_context)
         floors_before = before[:, FLOOR].cpu().tolist()
         floors_after = self.progress_buffer.view(-1, 9)[indices, FLOOR].cpu().tolist()
-        for s, key, old, new in zip(slots, self.loop_keys(slots), floors_before, floors_after):
+        valid = [s for s in slots if s not in capped]
+        keys = dict(zip(valid, self.loop_keys(valid))) if valid else {}
+        for s, old, new in zip(slots, floors_before, floors_after):
+            if s in capped:
+                continue
             if old != new:
                 self.seen[s] = set()
-            self.seen[s].add(key)
+            self.seen[s].add(keys[s])
             self.mask_cache.pop(s, None)
+        return capped
 
     def clone(self, sources, targets):
         self.batch.clone_many(sources, targets)
@@ -288,6 +316,7 @@ class RoomSearch:
                 self.mask_cache[t] = self.mask_cache[s].copy()
             else:
                 self.mask_cache.pop(t, None)
+        self.check(targets)
 
     def take(self, count):
         assert count <= len(self.available)
@@ -305,6 +334,7 @@ class RoomSearch:
             context = self.begin_search("combat", slots)
             try:
                 self.clone([s for s in parents for _ in range(self.trials)], slots)
+                self.capacity_metrics["combat_trials"] += len(slots)
                 paths = {s: [] for s in slots}
                 capped = set()
                 live = slots[:]
@@ -313,14 +343,14 @@ class RoomSearch:
                     self.clock()
                     choices, _, _ = self.predict(model, live)
                     self.trace_step(context, live, choices)
-                    self.step(live, choices)
+                    capped.update(self.step(live, choices, context))
                     self.searched_decisions += len(live)
                     for s, a in zip(live, choices):
                         paths[s].append(a)
                     progress = self.progress()
-                    continuing = [s for s in live if progress[s][PHASE] == COMBAT_PHASE
+                    continuing = [s for s in live if s not in capped and progress[s][PHASE] == COMBAT_PHASE
                                   and progress[s][SCREEN] not in (DEATH, VICTORY)]
-                    finished = set(live) - set(continuing)
+                    finished = set(live) - set(continuing) - capped
                     for s in finished:
                         self.metrics["combat_normal_max_steps"] = max(self.metrics["combat_normal_max_steps"], len(paths[s]))
                     expired = [s for s in continuing if len(paths[s]) > 3000]
