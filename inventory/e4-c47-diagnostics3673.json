@@ -1,0 +1,996 @@
+{
+  "authorization": "Claude47",
+  "observed_main": "0bc5f037d6d48222702df3b1d95f60d1cf91c92c",
+  "fixed_head": "efc8808731334f598239edf71ca5daef8c1e7922",
+  "job_id": 3673,
+  "output_directory": "/home/zhuyouwei/spire-downloads/e4-c47-3673",
+  "seed_range": [
+    2000000000,
+    2000000255
+  ],
+  "trials": 32,
+  "lanes": 256,
+  "training": false,
+  "new_audit": false,
+  "accounting": "JobId=3673 JobName=spire-e4-c47-diagnostics UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899946 Nice=0 Account=(null) QOS=(null) JobState=COMPLETED Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:11:11 TimeLimit=01:00:00 TimeMin=N/A SubmitTime=2026-10-21T19:52:57 EligibleTime=2026-10-21T19:52:57 AccrueTime=2026-10-21T19:52:57 StartTime=2026-10-21T19:52:57 EndTime=2026-10-21T20:04:08 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T19:52:57 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c47.sh WorkDir=/home/zhuyouwei/sts-silent-gpu-split StdErr=/home/zhuyouwei/spire-downloads/e4-c47-3673.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c47-3673.log Power= TresPerNode=gres:gpu:V100:8 \n",
+  "cost": {
+    "job_id": 3673,
+    "step": 1,
+    "charged_node_seconds": 671,
+    "gpu_seconds": 5368,
+    "source": "scontrol final RunTime00:11:11; job3673-poll2006.json",
+    "exit_code": "0:0",
+    "accounting_sha256": "1aa8e605b6ad94b4e0838d8b83097b9b1a6be6e739dbacfc4f25f3e3b81da591",
+    "reason": "Claude47 frozen B97/109/111 diagnostics only; three complete256dev assessments"
+  },
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
+    },
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 38782,
+      "limit_node_seconds": 64800,
+      "reserved_node_seconds": 0,
+      "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
+      "active_observed_node_seconds": 0
+    }
+  },
+  "summaries": {
+    "97": {
+      "version": 97,
+      "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+      "evaluation_seconds": 233.18804931640625,
+      "evaluation": {
+        "episodes": 256,
+        "average_floor": 13.48046875,
+        "reach": {
+          "act1_boss": 0.1875,
+          "act2_boss": 0.0,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 1,
+        "stall_classes": {
+          "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
+        },
+        "faults": 0,
+        "truncated": 0
+      },
+      "combat": {
+        "all": {
+          "combats": 1819,
+          "decisions": 1951798,
+          "complete_trial_groups": 1819,
+          "capped_trials": 0,
+          "nested_event_combats": 38,
+          "pooled_policy_entropy": 0.6968107844327978,
+          "means": {
+            "policy_entropy": 0.7212750629287991,
+            "win_fraction": 0.7545354590434304,
+            "score_std": 0.0070237758263431305,
+            "distinct_end_states": 17.4238592633315,
+            "selected_score_gain": 0.009318704305791643
+          }
+        },
+        "act1": {
+          "combats": 1673,
+          "decisions": 1791084,
+          "complete_trial_groups": 1673,
+          "capped_trials": 0,
+          "nested_event_combats": 35,
+          "pooled_policy_entropy": 0.6986108755730476,
+          "means": {
+            "policy_entropy": 0.7229201008313683,
+            "win_fraction": 0.780409444112373,
+            "score_std": 0.006733178330630753,
+            "distinct_end_states": 17.492528392109982,
+            "selected_score_gain": 0.008924901270078249
+          }
+        },
+        "act2": {
+          "combats": 146,
+          "decisions": 160714,
+          "complete_trial_groups": 146,
+          "capped_trials": 0,
+          "nested_event_combats": 3,
+          "pooled_policy_entropy": 0.6767495922538752,
+          "means": {
+            "policy_entropy": 0.702424731346619,
+            "win_fraction": 0.4580479452054795,
+            "score_std": 0.010353704664197987,
+            "distinct_end_states": 16.636986301369863,
+            "selected_score_gain": 0.013831255530096488
+          }
+        },
+        "act3": {
+          "combats": 0,
+          "decisions": 0,
+          "complete_trial_groups": 0,
+          "capped_trials": 0,
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": null,
+          "means": {
+            "policy_entropy": null,
+            "win_fraction": null,
+            "score_std": null,
+            "distinct_end_states": null,
+            "selected_score_gain": null
+          }
+        },
+        "act4": {
+          "combats": 0,
+          "decisions": 0,
+          "complete_trial_groups": 0,
+          "capped_trials": 0,
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": null,
+          "means": {
+            "policy_entropy": null,
+            "win_fraction": null,
+            "score_std": null,
+            "distinct_end_states": null,
+            "selected_score_gain": null
+          }
+        }
+      },
+      "combat_played_cards_limit": 0,
+      "combat_trials": 58208,
+      "capacity_fraction": 0.0,
+      "combat_over_limit": 0,
+      "event_over_limit": 0,
+      "definitions": {
+        "entropy": "Natural-log policy entropy, raw nats; mean per combat and pooled over all trial decisions",
+        "win": "battle_over and hp>0 and not smoked",
+        "score_std": "Population standard deviation; death score zero",
+        "distinct_end_states": "loop_key of all 32 ended trials including death",
+        "coverage": "All combat SL calls, including nested battles in unselected event trials",
+        "capped": "Incomplete 32-trial groups retain entropy and counts; four end-state metrics are null, never treated as death"
+      }
+    },
+    "109": {
+      "version": 109,
+      "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
+      "evaluation_seconds": 183.71311950683594,
+      "evaluation": {
+        "episodes": 256,
+        "average_floor": 12.38671875,
+        "reach": {
+          "act1_boss": 0.10546875,
+          "act2_boss": 0.0,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 0,
+        "stall_classes": {},
+        "faults": 0,
+        "truncated": 0
+      },
+      "combat": {
+        "all": {
+          "combats": 1685,
+          "decisions": 1702923,
+          "complete_trial_groups": 1685,
+          "capped_trials": 0,
+          "nested_event_combats": 39,
+          "pooled_policy_entropy": 0.4484446735754925,
+          "means": {
+            "policy_entropy": 0.4577483643328487,
+            "win_fraction": 0.7778746290801187,
+            "score_std": 0.004551549674736984,
+            "distinct_end_states": 10.47893175074184,
+            "selected_score_gain": 0.00623824688908575
+          }
+        },
+        "act1": {
+          "combats": 1599,
+          "decisions": 1617099,
+          "complete_trial_groups": 1599,
+          "capped_trials": 0,
+          "nested_event_combats": 37,
+          "pooled_policy_entropy": 0.4541101198511039,
+          "means": {
+            "policy_entropy": 0.4640771558254037,
+            "win_fraction": 0.7914321450906817,
+            "score_std": 0.004370149978679055,
+            "distinct_end_states": 10.449030644152595,
+            "selected_score_gain": 0.005959163157804039
+          }
+        },
+        "act2": {
+          "combats": 86,
+          "decisions": 85824,
+          "complete_trial_groups": 86,
+          "capped_trials": 0,
+          "nested_event_combats": 2,
+          "pooled_policy_entropy": 0.34169612413891437,
+          "means": {
+            "policy_entropy": 0.34007699693057725,
+            "win_fraction": 0.5257994186046512,
+            "score_std": 0.007924318442139661,
+            "distinct_end_states": 11.034883720930232,
+            "selected_score_gain": 0.011427257195125919
+          }
+        },
+        "act3": {
+          "combats": 0,
+          "decisions": 0,
+          "complete_trial_groups": 0,
+          "capped_trials": 0,
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": null,
+          "means": {
+            "policy_entropy": null,
+            "win_fraction": null,
+            "score_std": null,
+            "distinct_end_states": null,
+            "selected_score_gain": null
+          }
+        },
+        "act4": {
+          "combats": 0,
+          "decisions": 0,
+          "complete_trial_groups": 0,
+          "capped_trials": 0,
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": null,
+          "means": {
+            "policy_entropy": null,
+            "win_fraction": null,
+            "score_std": null,
+            "distinct_end_states": null,
+            "selected_score_gain": null
+          }
+        }
+      },
+      "combat_played_cards_limit": 0,
+      "combat_trials": 53920,
+      "capacity_fraction": 0.0,
+      "combat_over_limit": 0,
+      "event_over_limit": 0,
+      "definitions": {
+        "entropy": "Natural-log policy entropy, raw nats; mean per combat and pooled over all trial decisions",
+        "win": "battle_over and hp>0 and not smoked",
+        "score_std": "Population standard deviation; death score zero",
+        "distinct_end_states": "loop_key of all 32 ended trials including death",
+        "coverage": "All combat SL calls, including nested battles in unselected event trials",
+        "capped": "Incomplete 32-trial groups retain entropy and counts; four end-state metrics are null, never treated as death"
+      }
+    },
+    "111": {
+      "version": 111,
+      "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c43-resume-3669",
+      "evaluation_seconds": 183.76588439941406,
+      "evaluation": {
+        "episodes": 256,
+        "average_floor": 11.87890625,
+        "reach": {
+          "act1_boss": 0.1015625,
+          "act2_boss": 0.0,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 0,
+        "stall_classes": {},
+        "faults": 0,
+        "truncated": 0
+      },
+      "combat": {
+        "all": {
+          "combats": 1607,
+          "decisions": 1686669,
+          "complete_trial_groups": 1607,
+          "capped_trials": 0,
+          "nested_event_combats": 33,
+          "pooled_policy_entropy": 0.4032876230245791,
+          "means": {
+            "policy_entropy": 0.40979489445892375,
+            "win_fraction": 0.7765245799626633,
+            "score_std": 0.004046071685259394,
+            "distinct_end_states": 9.903546981953951,
+            "selected_score_gain": 0.005535224835329249
+          }
+        },
+        "act1": {
+          "combats": 1528,
+          "decisions": 1612722,
+          "complete_trial_groups": 1528,
+          "capped_trials": 0,
+          "nested_event_combats": 31,
+          "pooled_policy_entropy": 0.4100035846824415,
+          "means": {
+            "policy_entropy": 0.4176153065087065,
+            "win_fraction": 0.7889397905759162,
+            "score_std": 0.0038094174814393713,
+            "distinct_end_states": 9.975785340314136,
+            "selected_score_gain": 0.005279351244250883
+          }
+        },
+        "act2": {
+          "combats": 79,
+          "decisions": 73947,
+          "complete_trial_groups": 79,
+          "capped_trials": 0,
+          "nested_event_combats": 2,
+          "pooled_policy_entropy": 0.25681813654383984,
+          "means": {
+            "policy_entropy": 0.2585342664580615,
+            "win_fraction": 0.5363924050632911,
+            "score_std": 0.00862338337433528,
+            "distinct_end_states": 8.50632911392405,
+            "selected_score_gain": 0.010484273533655119
+          }
+        },
+        "act3": {
+          "combats": 0,
+          "decisions": 0,
+          "complete_trial_groups": 0,
+          "capped_trials": 0,
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": null,
+          "means": {
+            "policy_entropy": null,
+            "win_fraction": null,
+            "score_std": null,
+            "distinct_end_states": null,
+            "selected_score_gain": null
+          }
+        },
+        "act4": {
+          "combats": 0,
+          "decisions": 0,
+          "complete_trial_groups": 0,
+          "capped_trials": 0,
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": null,
+          "means": {
+            "policy_entropy": null,
+            "win_fraction": null,
+            "score_std": null,
+            "distinct_end_states": null,
+            "selected_score_gain": null
+          }
+        }
+      },
+      "combat_played_cards_limit": 0,
+      "combat_trials": 51424,
+      "capacity_fraction": 0.0,
+      "combat_over_limit": 0,
+      "event_over_limit": 0,
+      "definitions": {
+        "entropy": "Natural-log policy entropy, raw nats; mean per combat and pooled over all trial decisions",
+        "win": "battle_over and hp>0 and not smoked",
+        "score_std": "Population standard deviation; death score zero",
+        "distinct_end_states": "loop_key of all 32 ended trials including death",
+        "coverage": "All combat SL calls, including nested battles in unselected event trials",
+        "capped": "Incomplete 32-trial groups retain entropy and counts; four end-state metrics are null, never treated as death"
+      }
+    }
+  },
+  "verification": {
+    "observed_at": "2026-10-21T20:07:44.912133+08:00",
+    "versions": {
+      "97": {
+        "episodes": 256,
+        "exact_first256_seeds": true,
+        "rows": 1819,
+        "metrics_reaggregated_equal": true,
+        "episode_summary_equal": true,
+        "finite_and_ranges": true,
+        "files": {
+          "rank-4.pt": {
+            "size": 122789,
+            "sha256": "207d53abb09979df82775cf3ba165242688617c691c68d36ebe3c4364793394a"
+          },
+          "rank-0.pt": {
+            "size": 122725,
+            "sha256": "f58ca09b479cd5f0699efc236e2223396864f707dd12d19eaa58f2f0985b5480"
+          },
+          "rank-1.pt": {
+            "size": 124069,
+            "sha256": "c61f1de1adb890d7a199aac56f9dbd9ab3330fda42c82c85abf8939d306e300f"
+          },
+          "rank-6.pt": {
+            "size": 127077,
+            "sha256": "fde25f1515ac8884f9c684e21a182737d93ad79e352977569037a5869009f2db"
+          },
+          "rank-2.pt": {
+            "size": 124133,
+            "sha256": "3dd2c78d09a3e523724490c8c35f7ab9cfe042013f5e27767733878a75a159aa"
+          },
+          "rank-3.pt": {
+            "size": 124901,
+            "sha256": "60c5e7b16eb366419fe175e31ecb3885356a5a838213e72ec8dc02a4dc64061b"
+          },
+          "rank-7.pt": {
+            "size": 122853,
+            "sha256": "189d8741c629762abc049b4610085e94d76f29fef0eacbf06c5956e5679c1ac0"
+          },
+          "rank-5.pt": {
+            "size": 128101,
+            "sha256": "a46561e0ec8e70cfb3c0dc9a1a046d52b540d72bb361806fa41dc4350ada402f"
+          },
+          "status.json": {
+            "size": 167,
+            "sha256": "fc804afb539c0e737233fbb595235b8828813867448cf8c9a5a6109649a7fd2e"
+          },
+          "queue-last.json": {
+            "size": 2221,
+            "sha256": "0f53acb1c511435f33211e3394e43361e2adf1d347300980ea12bc2c1286cf5d"
+          },
+          "stalled-3.jsonl": {
+            "size": 359,
+            "sha256": "1fc5c0c142777e538218d5e4b0ab2bff3f2c0b070e85180b40e81f9ac011ee2d"
+          },
+          "episodes-3.json": {
+            "size": 38606,
+            "sha256": "05ccf941bf671ade84e601eac75cf6419c59f1cca2082a9ced479e82c010c436"
+          },
+          "episodes-0.json": {
+            "size": 36089,
+            "sha256": "411408293b62f8f121129b12a337f0d6f7506542383bff0edcb3ef13dc530813"
+          },
+          "episodes-7.json": {
+            "size": 36872,
+            "sha256": "970451d167da255cf8963f5b923dc449bd84c5752e20061d3e116fd329eef33c"
+          },
+          "episodes-4.json": {
+            "size": 37370,
+            "sha256": "f58092cf43bf45e6b1966b71c076e79af7c4201783cbe8d1f70638d1ff266136"
+          },
+          "episodes-1.json": {
+            "size": 37892,
+            "sha256": "33615fe3e9db982b29756cf417c06e3b4cc78c2c14d5a8652b41dc31088c90a5"
+          },
+          "episodes-2.json": {
+            "size": 39276,
+            "sha256": "1fbb3cf7f5db91f8134b02e05c207155959ab882672793bd89c488795f033f5f"
+          },
+          "episodes-5.json": {
+            "size": 40380,
+            "sha256": "daec5713a80256f812ec7acb943a84cc052638c515a41a4f774c74dbb17bba39"
+          },
+          "episodes-6.json": {
+            "size": 39783,
+            "sha256": "b34a87fa314570fe9afb2d03842da783a0f04a54401a77bb860605bdda70c00a"
+          },
+          "diagnostics-0.json": {
+            "size": 67114,
+            "sha256": "d9dfb9f8fc0f6f4edfe61f908227651c760d8c59e3d4201f1995e960b5d443fe"
+          },
+          "diagnostics-3.json": {
+            "size": 73715,
+            "sha256": "0f9382696bc61517eb095da33adf29cf69786aeaa7b5fb75de7893a2ad52c549"
+          },
+          "diagnostics-2.json": {
+            "size": 74642,
+            "sha256": "5b407a5f01b91d7cea66518fc31729e92222c4461fb3598d385f2bbc759ec171"
+          },
+          "diagnostics-7.json": {
+            "size": 68399,
+            "sha256": "3bdbfe847b7da07053c784b3a6a4bfebd3ec92d93364379ba9399d4a141802f3"
+          },
+          "diagnostics-5.json": {
+            "size": 75697,
+            "sha256": "89ba121ca48aadd4d3675ea38a94fbe76cd60a204a57953d249a58961c3a4cb7"
+          },
+          "diagnostics-4.json": {
+            "size": 72972,
+            "sha256": "927a0049e665ee132ee3957f44de3c1a393d6d5a149169732eea01c78386e2c3"
+          },
+          "diagnostics-1.json": {
+            "size": 74947,
+            "sha256": "7f3dceefea49472d877e35f5434b8945c17870cd31a230b0de0f26734809401d"
+          },
+          "diagnostics-6.json": {
+            "size": 77609,
+            "sha256": "c6849c2cf6d64876d62c930bd5c4f3ab75e192e0ebc6a9b05281a05f6a4e1c05"
+          },
+          "limits-0.json": {
+            "size": 165,
+            "sha256": "0f80f1ebed193ab66706e110a344a058923bbfde734d4d897e3142163743a60c"
+          },
+          "limits-3.json": {
+            "size": 165,
+            "sha256": "8bf5045b4d5742ee5f49ad127603c801dbe7f875c0844a9d5030f9206396563c"
+          },
+          "limits-2.json": {
+            "size": 165,
+            "sha256": "db6772ae5db1733c08f8f98b409f4279b053b0b408ff011ab7412433eb99dce3"
+          },
+          "limits-7.json": {
+            "size": 165,
+            "sha256": "ec1aaefafff0906fd951efdf067d6b6bfc083fed1ab4871f90cd5bc2a683a4ac"
+          },
+          "limits-5.json": {
+            "size": 165,
+            "sha256": "eddbecf0c0522afae7f02d96bfb35f018a4823a3e0a79b96d3a0264c7e2d72b9"
+          },
+          "limits-4.json": {
+            "size": 165,
+            "sha256": "1328f7a1c6488582f73d70ba6a9053de3737b42d604fdcdf06b555580dbe033b"
+          },
+          "limits-1.json": {
+            "size": 165,
+            "sha256": "caa71c436781f19116c8b34176034d772ec8b9d304e77c504be5d0380d33199d"
+          },
+          "limits-6.json": {
+            "size": 165,
+            "sha256": "f09097f4524f608442271ea7982550c5eb820ce995b6273b610651deaeb82974"
+          },
+          "summary.json": {
+            "size": 3114,
+            "sha256": "975dcb90617a866581d15d53ebb87e973793ed2f422cf7f92247c503879c87e7"
+          }
+        }
+      },
+      "109": {
+        "episodes": 256,
+        "exact_first256_seeds": true,
+        "rows": 1685,
+        "metrics_reaggregated_equal": true,
+        "episode_summary_equal": true,
+        "finite_and_ranges": true,
+        "files": {
+          "rank-3.pt": {
+            "size": 125349,
+            "sha256": "7abba8e960de8ec93218b87a9d92b6df2e485e15d0b70316157dc4ace8d0674c"
+          },
+          "rank-2.pt": {
+            "size": 117669,
+            "sha256": "e846c8c2e4ce6759028d5481798c1bb935b29287f4ffd663c706f96e9a6223ec"
+          },
+          "rank-0.pt": {
+            "size": 117861,
+            "sha256": "0ad9d6d2b4546e7435e3b7c88b9a58e7e31929925c9be72697a6b8f9a0dda14b"
+          },
+          "rank-6.pt": {
+            "size": 121893,
+            "sha256": "f1bf1a7fa846d164d877472d8ba8b94b5a5e075d0c17a2929dc7919106d6bbc8"
+          },
+          "rank-4.pt": {
+            "size": 124261,
+            "sha256": "721cf29aed29f4d19c502baec6e353fa30b4d1dcdc5f088874d83803a0dbdda0"
+          },
+          "rank-7.pt": {
+            "size": 115621,
+            "sha256": "64cb65302da0782ed7b3a86f8ee61cead03bd07e0137631202bfb268a60c548a"
+          },
+          "rank-5.pt": {
+            "size": 114661,
+            "sha256": "bb3843ac5ed7682862022bea80cd9a3814312d4b2c7568cd13038cb5aeb81b34"
+          },
+          "rank-1.pt": {
+            "size": 118053,
+            "sha256": "96114e0ddd087c23be95dc49af51411074038e9c1b5fe17a88e695d9df21fe77"
+          },
+          "status.json": {
+            "size": 168,
+            "sha256": "1b31d88f0eb0eca173dd71e3c1905514ced2a6e6aeebb984e8e9b997a4961ff2"
+          },
+          "queue-last.json": {
+            "size": 2221,
+            "sha256": "650f1e2a07fe819e614a667d2fcd8d18d7670378c9017b4bbf90fd71ed863003"
+          },
+          "episodes-0.json": {
+            "size": 32835,
+            "sha256": "525bb3204125ac69edfa100231bdfe31a75b6a202fc3cf5aeb3d975850f5289e"
+          },
+          "episodes-4.json": {
+            "size": 36498,
+            "sha256": "c418cfb8e047d3247d1941931fdcdc6bd32034704c0c3d959eb2e7e05ea2f37f"
+          },
+          "episodes-6.json": {
+            "size": 34184,
+            "sha256": "46f1b6cf7e523e3b04717cd3fa53fdebcf4ebde86b0702b7187e6bce327923a5"
+          },
+          "episodes-3.json": {
+            "size": 36986,
+            "sha256": "43192ca1ebe64a1101789e283b63b53a85032df42c8d0a05a11997851bf0dd7a"
+          },
+          "episodes-7.json": {
+            "size": 32955,
+            "sha256": "335228c1d55500f6e939657d40004485f51e192c947d6cd98bdc70d1dc7ebb41"
+          },
+          "episodes-1.json": {
+            "size": 32953,
+            "sha256": "8f9b275d76b3625a750f4d713d47963e428b42b9b34f7378b7284034d2472e6a"
+          },
+          "episodes-5.json": {
+            "size": 30919,
+            "sha256": "a2187bb413aea41f09d074e2250df5f564dccf942c8b749db9bf16e75d6efb20"
+          },
+          "episodes-2.json": {
+            "size": 32844,
+            "sha256": "6c3d6367ec129a5fbf040355366f1f7906f1ea9f0d45ca50454ba58c5ad36b75"
+          },
+          "diagnostics-0.json": {
+            "size": 61645,
+            "sha256": "b44f96c2c2bf211f1317b407235366fe0a3855865cfbfb27e5b72d9b1588c6e1"
+          },
+          "diagnostics-4.json": {
+            "size": 76751,
+            "sha256": "d7dae2d4c19edab2c7b18213a618f4a8db0d9dab96e436f70919779f0582b885"
+          },
+          "diagnostics-6.json": {
+            "size": 69594,
+            "sha256": "2d7e0280a6800d387ad279b1879fd65ee24b17367a20a92ce3ff40627c6b332c"
+          },
+          "diagnostics-7.json": {
+            "size": 59404,
+            "sha256": "1de423ae804f9bd039762b996c9af03ee923c4701169b299b45ebf5a8b53b147"
+          },
+          "diagnostics-3.json": {
+            "size": 77168,
+            "sha256": "84098fb3562af34d69286ddcf6eb0cd2a49529c5531de60ce9870e5e01c8d7a8"
+          },
+          "diagnostics-1.json": {
+            "size": 67468,
+            "sha256": "3bf951adaeabc4ccd9de1b3e1e6552c3b38c2777615041c474b2ed553054704d"
+          },
+          "diagnostics-5.json": {
+            "size": 58816,
+            "sha256": "b39b2fbf5041b0e2272efb04d9c1c2f14fff7b6ca92559f1de10aa29e8dcf21e"
+          },
+          "diagnostics-2.json": {
+            "size": 65983,
+            "sha256": "60180bd944249e5fa60eb9449b593e37a439fd4144690f1e135f0085f560745a"
+          },
+          "limits-7.json": {
+            "size": 165,
+            "sha256": "d2777831827a79dd484dd966a5814f1d2d6d2ceca26219bf5caf62cc195798d7"
+          },
+          "limits-0.json": {
+            "size": 165,
+            "sha256": "58edee7f3909e67ccc3e4d22f06b3951c8e11512418b75aedee972bd462d3e43"
+          },
+          "limits-4.json": {
+            "size": 165,
+            "sha256": "eaea799171d33631b16bef9fbc2a97ec0967e266bad67b118027493cf5dc474d"
+          },
+          "limits-6.json": {
+            "size": 165,
+            "sha256": "3708d08ebef22ff60f864632e01ed169a21708e48bfba87dd777156cf10882b8"
+          },
+          "limits-3.json": {
+            "size": 165,
+            "sha256": "79822a506d358e318dbb7d6b92b24b42e5745c916b6a7bb512b87513f0eaca2e"
+          },
+          "limits-1.json": {
+            "size": 165,
+            "sha256": "28bdf058f653b84bf5672e53c79445b80536a14dcea8f37b7c84941ce798384e"
+          },
+          "limits-5.json": {
+            "size": 164,
+            "sha256": "bd18704b84c9790393f515c20499c7f43343515886d4f418b371c200ddb0426c"
+          },
+          "limits-2.json": {
+            "size": 165,
+            "sha256": "7eb24a1fc9fbb80086179c98ebfce7c7c92a5678662ac1b8916f210ebe22aab0"
+          },
+          "summary.json": {
+            "size": 2850,
+            "sha256": "324e20649e1fc45bd1cd78b362a96cd65f1f9bdedd10733dd21fc1454b7e0f7e"
+          }
+        }
+      },
+      "111": {
+        "episodes": 256,
+        "exact_first256_seeds": true,
+        "rows": 1607,
+        "metrics_reaggregated_equal": true,
+        "episode_summary_equal": true,
+        "finite_and_ranges": true,
+        "files": {
+          "rank-7.pt": {
+            "size": 113573,
+            "sha256": "6dc645f0e3080e8896727c51a599b851a4b9665b4ca05101951659e99d08f6ed"
+          },
+          "rank-5.pt": {
+            "size": 117029,
+            "sha256": "cf9354df6e0b3016d82972a999347096451982776c6cd8b91dbf3b3850d580da"
+          },
+          "rank-0.pt": {
+            "size": 119973,
+            "sha256": "0036277ebc5bce70854c8bf0a77bd0a5ac506cac13b751a83e3182414c512ac3"
+          },
+          "rank-4.pt": {
+            "size": 119333,
+            "sha256": "04d1c3ab6139ed92f49233327e73ddfae816a15f97e28acfe2002300cdf7755b"
+          },
+          "rank-6.pt": {
+            "size": 123877,
+            "sha256": "0515cb391aef439369bdd08a27193c477f8f0c160b1cc2eb9e833ba9d3ee6cd0"
+          },
+          "rank-3.pt": {
+            "size": 119077,
+            "sha256": "4abdac22f88de4bba0fd2c358e3a9500b5b06096a8d8d82af4df9fdefdc3be0d"
+          },
+          "rank-2.pt": {
+            "size": 122533,
+            "sha256": "8f4cd06bf069a7794cfb1a34b013eeda8b13111970cb824b29d3cfbcff4cd730"
+          },
+          "rank-1.pt": {
+            "size": 113765,
+            "sha256": "8b73a8cf7e5aa79f6ad57c2bc9c7cd5df5d42dd2f4a6fb4b0a2f45ff2d994e65"
+          },
+          "status.json": {
+            "size": 168,
+            "sha256": "f63045f2b89b2d6aafdbfc9aa4f2165e243bc184f68145669797bba5e5840506"
+          },
+          "queue-last.json": {
+            "size": 2221,
+            "sha256": "2b373cc336d66e7777c59d7cd74e14c635560c8ce633f18f2b778c9fe24eefba"
+          },
+          "episodes-5.json": {
+            "size": 32349,
+            "sha256": "a4d740961b0cb92fdcb13f70ca205381e985d19dc6865c7fb6a0d12540754d82"
+          },
+          "episodes-1.json": {
+            "size": 29995,
+            "sha256": "6291cdf50d229579837f8fde85b3f92a59650138262db69f018569f87f96d4a4"
+          },
+          "episodes-7.json": {
+            "size": 32827,
+            "sha256": "43cb01aa522468849951530a819a88af1c764cf64395ab0c9a610105bf1f90ea"
+          },
+          "episodes-3.json": {
+            "size": 34475,
+            "sha256": "50b79af37582a7c8dc3d7f362642bd9698794211ce9a66276130d79a74ff4788"
+          },
+          "episodes-0.json": {
+            "size": 33391,
+            "sha256": "f2cebf73352f1b4c7f2cfbe3c7d67ab0d2e35cacabd2b765884e2030cf74462b"
+          },
+          "episodes-2.json": {
+            "size": 35277,
+            "sha256": "c0e4dc3e0716a5a1fc9c5ff5e3276f224ea671e0adbb5eba2ed2682b2076a8b6"
+          },
+          "episodes-6.json": {
+            "size": 35861,
+            "sha256": "567a2ec9b99a1401e5babc4030e4375aafd354c7a7a42d0135355a12afe87d89"
+          },
+          "episodes-4.json": {
+            "size": 32876,
+            "sha256": "571e7956593d2482d9359149c43953fa1381808449ace57f406240a98a05c2e4"
+          },
+          "diagnostics-5.json": {
+            "size": 63946,
+            "sha256": "8a8ac5e4a400c9ffccb6c35a28d2ebac1fc2bd10d39d365a2ef74e089e5d30ce"
+          },
+          "diagnostics-3.json": {
+            "size": 68567,
+            "sha256": "d05008452b1588e5e5a02126f516dced4aa4bc59d50387981793d54c871895f3"
+          },
+          "diagnostics-1.json": {
+            "size": 57334,
+            "sha256": "1f8982ef5db739cbb27a47011433e3614e668218ec9a5782e819a5ba32f71257"
+          },
+          "diagnostics-7.json": {
+            "size": 60596,
+            "sha256": "a62368d889538d1c01b2e871c8e79ac163eb9afefa9ba467f87f3ebab09e13d1"
+          },
+          "diagnostics-0.json": {
+            "size": 60380,
+            "sha256": "47692b4df8a557cc3c2296e199470844a43ce663561ada2ece50aa284a983de3"
+          },
+          "diagnostics-2.json": {
+            "size": 67015,
+            "sha256": "5deb9eaa2fe28be121b96891f1cb976e5d3397d27d0fca49a85313f7d0cfbc4f"
+          },
+          "diagnostics-6.json": {
+            "size": 72278,
+            "sha256": "c77ec5d9c01c674031f7f2fc02f0929cea654401f7f456774907238d84caee4a"
+          },
+          "diagnostics-4.json": {
+            "size": 61783,
+            "sha256": "e85f2592a5bdd3e9bf0d02132b5cb235a87883e765bc80ac996f65115493faef"
+          },
+          "limits-5.json": {
+            "size": 165,
+            "sha256": "3f9c2ffb83f344530f39e9b68e4f6ad192c0c33341470c2fb047595bab7b17f4"
+          },
+          "limits-3.json": {
+            "size": 165,
+            "sha256": "a42d6d2bd81f42b3e2a982eb0944e5b6f490f3bbc411bf2b689516c70fc86adc"
+          },
+          "limits-1.json": {
+            "size": 165,
+            "sha256": "054c93a235a89441e7c832a116faab5d1bbc6874726b076f8f659e8965d6ed48"
+          },
+          "limits-7.json": {
+            "size": 165,
+            "sha256": "aca83dfd8d1308d19f06baaecc97c359f21437c1aeb375eb986d3229e886f8d8"
+          },
+          "limits-0.json": {
+            "size": 165,
+            "sha256": "9e65f895fffc09d35c82db4c01411af99f97e08875d11df67a3528725a27eaff"
+          },
+          "limits-2.json": {
+            "size": 165,
+            "sha256": "fe484462d86005f31d64c3395047351a97c8259355c519aa3b4460bde1242213"
+          },
+          "limits-6.json": {
+            "size": 165,
+            "sha256": "d90d118a5c34929286d52396dab0ca223521ea84814ea6bc6a48fd8190804968"
+          },
+          "limits-4.json": {
+            "size": 165,
+            "sha256": "3382ffeadeee3cc99a3414652f8016d47fd86704096e5afe206dfa1a9597e095"
+          },
+          "summary.json": {
+            "size": 2854,
+            "sha256": "a10dd146925a1fc3ed5b8e15d3f2e3b8e63487b784acbb110ca2fa6deccc699e"
+          }
+        }
+      }
+    },
+    "queue": "3656|shaoy|PENDING|(DependencyNeverSatisfied)|N/A\n3663|shaoy|PENDING|(DependencyNeverSatisfied)|gres:gpu:V100:1\n3664|shaoy|PENDING|(Dependency)|N/A\n3665|shaoy|PENDING|(Dependency)|N/A\n3650|shaoy|RUNNING|gpu01|N/A\n",
+    "source_hashes": {
+      "97": {
+        "unchanged": true,
+        "hashes": {
+          "rank-5.pt": "b833560dd9fbf02bb835f01ddd0e8b3225d63758316152e9a4ed52a7998d930f",
+          "rank-3.pt": "dc94cf64472ce67f73a15f2232702e84cb0e057002656b0b18215d8f69c2bef5",
+          "rank-7.pt": "be05c044e89047ebcdcf429eca7a774bbed787acaaefe49ceab96d6a79cb8f9b",
+          "rank-6.pt": "eadd74b4a8e5af6b688781c0c72199585a902fdea415a5efec67b67c3d62ddb4",
+          "rank-4.pt": "652d5f253637dbf6a6a36f86690da4e0efa77e42daddd30a39a6b509aa3205ce",
+          "rank-1.pt": "a6f2f90dca5cb5bc7026d35f5417aa470849e0d5acd15fbc9269387029b31758",
+          "rank-0.pt": "fad20f3ee6e94e8ec9ffa815b62bbca9702cf83c2f5db17e51661b0bce6b5391",
+          "rank-2.pt": "67d6a494656484ba0463d534edaff171c2742bea464d58a01e9bf639b69fed5a"
+        }
+      },
+      "109": {
+        "unchanged": true,
+        "hashes": {
+          "rank-0.pt": "e95176d30ad0bdaedee49fc75338d81b2070e62e7b2fc336fcf83a071af02331",
+          "rank-1.pt": "d12933489f2fda60a82f5aad3bd0eb5d055c05a717a3d879fe7e0ad5d5c390ff",
+          "rank-2.pt": "c8f8d8ee60db852f2bfa74c81de49b800f1897b521bbf58b8569d2432ebe61e5",
+          "rank-3.pt": "80ee3c6d07bea50d66cf953e8e0104d8cb6178c90d75c609de49de09f1260e4b",
+          "rank-4.pt": "1a4cece3b5b8bfbd2d50a59c5e1cc96603df22d44df2dabf0a5a33640f9844f4",
+          "rank-5.pt": "a874bc33eae447e01bcc59dc626ce17ebae6c9c3dcce0cfa93b7eaf6b5935ffb",
+          "rank-6.pt": "739403a7c6405a306dd232c8a12429ded1efebbb5fb16acbff61bd6d5a7cd661",
+          "rank-7.pt": "ac7f98bcbbf262450ca55a81a15ea831ecc54c6317ee5abbf4e48beee05f0705"
+        }
+      },
+      "111": {
+        "unchanged": true,
+        "hashes": {
+          "rank-0.pt": "f377c69064273bd488cfe8633c655354255855bfc98b3eea5d5e6540d083155e",
+          "rank-1.pt": "c3878d3c740f42b2af9299fe2d7924e6d9a78b8b101473b5165319b8373cbd43",
+          "rank-2.pt": "de62811845c2717178096ee34d4a5d39549aaf72a1f2757d2290b087989f4b6d",
+          "rank-3.pt": "6d3f85b50d575fc387ed627c7ea80761e4fdec068be14b179f814ade2b21daf3",
+          "rank-4.pt": "4729c36276f64871a028664a13d6b2540801ed94c654e2e97e0398a00c2731b6",
+          "rank-5.pt": "0f52bda4e5fb9b2c5dfdd31d3826af9d1d7ba935c23e2ae54bf70eff13a4ae4e",
+          "rank-6.pt": "582d884ad21c02cea539e185412a247717133f9b4a1bfbba97eb033569764b0d",
+          "rank-7.pt": "171c747b900f48496bae935bac75174835ded69509006b60dcb9d46488cb9732"
+        }
+      }
+    }
+  },
+  "checkpoint_files": {
+    "97/rank-4.pt": {
+      "size": 122789,
+      "sha256": "207d53abb09979df82775cf3ba165242688617c691c68d36ebe3c4364793394a"
+    },
+    "97/rank-0.pt": {
+      "size": 122725,
+      "sha256": "f58ca09b479cd5f0699efc236e2223396864f707dd12d19eaa58f2f0985b5480"
+    },
+    "97/rank-1.pt": {
+      "size": 124069,
+      "sha256": "c61f1de1adb890d7a199aac56f9dbd9ab3330fda42c82c85abf8939d306e300f"
+    },
+    "97/rank-6.pt": {
+      "size": 127077,
+      "sha256": "fde25f1515ac8884f9c684e21a182737d93ad79e352977569037a5869009f2db"
+    },
+    "97/rank-2.pt": {
+      "size": 124133,
+      "sha256": "3dd2c78d09a3e523724490c8c35f7ab9cfe042013f5e27767733878a75a159aa"
+    },
+    "97/rank-3.pt": {
+      "size": 124901,
+      "sha256": "60c5e7b16eb366419fe175e31ecb3885356a5a838213e72ec8dc02a4dc64061b"
+    },
+    "97/rank-7.pt": {
+      "size": 122853,
+      "sha256": "189d8741c629762abc049b4610085e94d76f29fef0eacbf06c5956e5679c1ac0"
+    },
+    "97/rank-5.pt": {
+      "size": 128101,
+      "sha256": "a46561e0ec8e70cfb3c0dc9a1a046d52b540d72bb361806fa41dc4350ada402f"
+    },
+    "109/rank-3.pt": {
+      "size": 125349,
+      "sha256": "7abba8e960de8ec93218b87a9d92b6df2e485e15d0b70316157dc4ace8d0674c"
+    },
+    "109/rank-2.pt": {
+      "size": 117669,
+      "sha256": "e846c8c2e4ce6759028d5481798c1bb935b29287f4ffd663c706f96e9a6223ec"
+    },
+    "109/rank-0.pt": {
+      "size": 117861,
+      "sha256": "0ad9d6d2b4546e7435e3b7c88b9a58e7e31929925c9be72697a6b8f9a0dda14b"
+    },
+    "109/rank-6.pt": {
+      "size": 121893,
+      "sha256": "f1bf1a7fa846d164d877472d8ba8b94b5a5e075d0c17a2929dc7919106d6bbc8"
+    },
+    "109/rank-4.pt": {
+      "size": 124261,
+      "sha256": "721cf29aed29f4d19c502baec6e353fa30b4d1dcdc5f088874d83803a0dbdda0"
+    },
+    "109/rank-7.pt": {
+      "size": 115621,
+      "sha256": "64cb65302da0782ed7b3a86f8ee61cead03bd07e0137631202bfb268a60c548a"
+    },
+    "109/rank-5.pt": {
+      "size": 114661,
+      "sha256": "bb3843ac5ed7682862022bea80cd9a3814312d4b2c7568cd13038cb5aeb81b34"
+    },
+    "109/rank-1.pt": {
+      "size": 118053,
+      "sha256": "96114e0ddd087c23be95dc49af51411074038e9c1b5fe17a88e695d9df21fe77"
+    },
+    "111/rank-7.pt": {
+      "size": 113573,
+      "sha256": "6dc645f0e3080e8896727c51a599b851a4b9665b4ca05101951659e99d08f6ed"
+    },
+    "111/rank-5.pt": {
+      "size": 117029,
+      "sha256": "cf9354df6e0b3016d82972a999347096451982776c6cd8b91dbf3b3850d580da"
+    },
+    "111/rank-0.pt": {
+      "size": 119973,
+      "sha256": "0036277ebc5bce70854c8bf0a77bd0a5ac506cac13b751a83e3182414c512ac3"
+    },
+    "111/rank-4.pt": {
+      "size": 119333,
+      "sha256": "04d1c3ab6139ed92f49233327e73ddfae816a15f97e28acfe2002300cdf7755b"
+    },
+    "111/rank-6.pt": {
+      "size": 123877,
+      "sha256": "0515cb391aef439369bdd08a27193c477f8f0c160b1cc2eb9e833ba9d3ee6cd0"
+    },
+    "111/rank-3.pt": {
+      "size": 119077,
+      "sha256": "4abdac22f88de4bba0fd2c358e3a9500b5b06096a8d8d82af4df9fdefdc3be0d"
+    },
+    "111/rank-2.pt": {
+      "size": 122533,
+      "sha256": "8f4cd06bf069a7794cfb1a34b013eeda8b13111970cb824b29d3cfbcff4cd730"
+    },
+    "111/rank-1.pt": {
+      "size": 113765,
+      "sha256": "8b73a8cf7e5aa79f6ad57c2bc9c7cd5df5d42dd2f4a6fb4b0a2f45ff2d994e65"
+    }
+  },
+  "fault_files": [],
+  "queue_errors": [],
+  "interpretation": {
+    "finding": "Across the encountered combat distributions, entropy, distinct end states, score spread and selected-score gain decrease overall from B97 to109 to111.",
+    "limits": "This supports narrowing of combat policy, but does not establish epochs8 as the cause. Combat/act2 state distributions differ across policies; end-state score scale is checkpoint-specific. B97 has one noncombat_floor_limit stall, explicitly retained, not relabeled death.",
+    "next": "Await Claude decision; no training changes made."
+  }
+}

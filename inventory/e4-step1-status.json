@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T19:54:58.075131+08:00",
-  "active_job": 3673,
-  "phase": "claude47_diagnostics_running",
+  "updated_at": "2026-10-21T20:09:53.170596+08:00",
+  "active_job": null,
+  "phase": "claude47_diagnostics_complete_awaiting_decision",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -10,11 +10,11 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 38111,
+      "charged_node_seconds": 38782,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 3600,
+      "reserved_node_seconds": 0,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 29
+      "active_observed_node_seconds": 0
     }
   },
   "cost_ledger": [
@@ -213,6 +213,16 @@
       "exit_code": "0:0",
       "accounting_sha256": "ffc06820e4fef6685ec3fc3544455add3d3b2e66ccd261335a0bdd1c7b20b408",
       "reason": "Claude45 original109 evaluation only completed"
+    },
+    {
+      "job_id": 3673,
+      "step": 1,
+      "charged_node_seconds": 671,
+      "gpu_seconds": 5368,
+      "source": "scontrol final RunTime00:11:11; job3673-poll2006.json",
+      "exit_code": "0:0",
+      "accounting_sha256": "1aa8e605b6ad94b4e0838d8b83097b9b1a6be6e739dbacfc4f25f3e3b81da591",
+      "reason": "Claude47 frozen B97/109/111 diagnostics only; three complete256dev assessments"
     }
   ],
   "jobs": [
@@ -716,10 +726,10 @@
     {
       "job_id": 3673,
       "purpose": "Claude47 combat diagnostics only B97/109/111 sequential first256dev each",
-      "state": "RUNNING",
+      "state": "COMPLETED",
       "step": 1,
       "gpus": 8,
-      "reserved_seconds": 3600,
+      "reserved_seconds": 0,
       "fixed_head": "efc8808731334f598239edf71ca5daef8c1e7922",
       "output": "/home/zhuyouwei/spire-downloads/e4-c47-3673",
       "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c47-3673.log",
@@ -736,8 +746,17 @@
       "trials": 32,
       "training": false,
       "audit_requested": false,
-      "last_observed_elapsed_seconds": 29,
-      "active_case": 97
+      "last_observed_elapsed_seconds": 671,
+      "active_case": null,
+      "last_observed_at": "2026-10-21T20:06:06.153580+08:00",
+      "exit_code": "0:0",
+      "charged_node_seconds": 671,
+      "end_time": "2026-10-21T20:04:08+08:00",
+      "completed_cases": [
+        97,
+        109,
+        111
+      ]
     }
   ],
   "server_fixed_head": "efc8808731334f598239edf71ca5daef8c1e7922",
@@ -788,11 +807,45 @@
     "training_unchanged": true,
     "archive_ranks": 8
   },
+  "diagnostics_watch": {
+    "job_id": 3673,
+    "status": {
+      "97": {
+        "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
+        "version": 97,
+        "job": "3673",
+        "complete": true,
+        "reason": "complete",
+        "evaluation_seconds": 233.18804931640625
+      },
+      "109": {
+        "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
+        "version": 109,
+        "job": "3673",
+        "complete": true,
+        "reason": "complete",
+        "evaluation_seconds": 183.71311950683594
+      },
+      "111": {
+        "commit": "efc8808731334f598239edf71ca5daef8c1e7922",
+        "version": 111,
+        "job": "3673",
+        "complete": true,
+        "reason": "complete",
+        "evaluation_seconds": 183.76588439941406
+      }
+    },
+    "completed_cases": [
+      97,
+      109,
+      111
+    ],
+    "fault_files": [],
+    "queue_errors": [],
+    "verification": "verification3673-final.json"
+  },
   "pending": [
-    "Monitor3673 diagnostics-only sequentialB97/109/111; first256dev each,N32, no training; preserve fixedefc8808.",
-    "Collectper-combat andoverall/act1/act2 five metrics; verify256seedsets,reportcaps/faults andsourcehashes; no newauditrequested.",
-    "Checkqueue at eachevaluation; onyield/deadline preserve diagnostic checkpoints andresumeunfinished evaluation withoutrepeatingcompletedcases.",
-    "Settle3673actualnodecostonceonexit; keep3600reservation untilthen; allpriorcosts andcheckpointsretained.",
-    "Checkallnewmain/codex/e4commits;109Mac18/18passedClaude48; nexttrainingdecisionawaitsdiagnosticresults."
+    "Await Claude next training decision; no new training or experiments authorized by47.",
+    "Check all new main/codex/e4 commits; preserve B97/original109/original111/stop116 and all evaluation evidence/cumulative costs."
   ]
 }
