@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-21T09:59:30.497195+08:00",
+  "updated_at": "2026-10-21T10:03:34.185212+08:00",
   "active_job": 3648,
   "phase": "step1_B97_adaptive_continuation",
   "budgets": {
@@ -14,7 +14,7 @@
       "limit_node_seconds": 64800,
       "reserved_node_seconds": 14400,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 44
+      "active_observed_node_seconds": 298
     }
   },
   "cost_ledger": [
@@ -188,10 +188,11 @@
     "dev_seed_count": 1024,
     "script_sha256": "5e2111b9c6517464730709bdffa2dbb221eb2012a419a1f95cf82e28c9c91a629",
     "start_time": "2026-10-21T09:57:26+08:00",
-    "last_observed_elapsed_seconds": 44,
-    "last_durable_checkpoint_version": 97,
-    "latest_completed_update": 97,
-    "checkpoint_reason": "started"
+    "last_observed_elapsed_seconds": 298,
+    "last_durable_checkpoint_version": 98,
+    "latest_completed_update": 98,
+    "checkpoint_reason": "update_complete",
+    "trained_seconds": 230.75509643554688
   },
   "pending_actions": [
     "Monitor3648 perupdate KL/epochs/PPO valueEV and checkpoint; queue everyupdate andeachassessment; publish1024dev/audit18 every3600trainingseconds",
