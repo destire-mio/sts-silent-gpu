@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-22T01:35:12.787374+08:00",
+  "updated_at": "2026-10-22T01:47:42.078648+08:00",
   "active_job": 3689,
-  "phase": "claude54_training",
+  "phase": "claude54_evaluation113",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -14,9 +14,9 @@
       "limit_node_seconds": 64800,
       "reserved_node_seconds": 12600,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 28,
+      "active_observed_node_seconds": 683.375,
       "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
-      "active_observed_gpu_seconds": 224
+      "active_observed_gpu_seconds": 5467
     }
   },
   "cost_ledger": [
@@ -857,36 +857,37 @@
       "epochs": 4,
       "dev_seed_count": 1024,
       "start_time": "2026-10-22T01:32:53+08:00",
-      "last_observed_elapsed_seconds": 32,
-      "last_durable_checkpoint_version": 111,
-      "checkpoint_reason": "started",
-      "trained_seconds": 1445.2329406738281,
-      "script_sha256": "e1945f8446176e556d4e74fa114c05fd9053abd59a56ca37c4ebc6bb2ddfd355"
+      "last_observed_elapsed_seconds": 781,
+      "last_durable_checkpoint_version": 113,
+      "checkpoint_reason": "before_evaluation",
+      "trained_seconds": 1916.2747039794922,
+      "script_sha256": "e1945f8446176e556d4e74fa114c05fd9053abd59a56ca37c4ebc6bb2ddfd355",
+      "latest_completed_update": 113
     }
   ],
   "server_fixed_head": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
   "evaluation_watch": {
     "job_id": 3689,
     "status": {
-      "reason": "started",
-      "phase": "training",
+      "reason": "before_evaluation",
+      "phase": "evaluation",
       "job": "3689",
       "commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
       "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
       "source_version": 105,
-      "version": 111,
+      "version": 113,
       "lanes": 256,
       "epochs": 4,
       "trials": 32,
       "world_size": 7,
       "evaluation_lanes": 256,
       "dev_seed_count": 1024,
-      "trained_seconds": 1445.2329406738281,
+      "trained_seconds": 1916.2747039794922,
       "next_evaluation": 1800.0,
       "evaluation_seconds": 0.0,
       "capacity_metrics": {
         "combat_played_cards_limit": 0,
-        "combat_trials": 81024
+        "combat_trials": 0
       },
       "updates": [
         {
@@ -1144,9 +1145,93 @@
           "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
           "imitation_beta": 0.03559470585714788,
           "imitation_entropy_target": 0.6716025225602738
+        },
+        {
+          "event": "update",
+          "update": 7,
+          "version": 112,
+          "training_seconds": 1689.0509185791016,
+          "update_seconds": 243.81797790527344,
+          "actual_steps": 114688,
+          "sl_trial_steps": 2879512,
+          "lanes": 256,
+          "world_size": 7,
+          "next_epochs": 4,
+          "completed_episodes": 356,
+          "stalled_episodes": 0,
+          "completed_average_floor": 15.75,
+          "active_max_floor_steps": 176,
+          "stall_classes": {},
+          "policy_loss": 0.48897009229946964,
+          "value_loss": 0.000498805627445752,
+          "imitation_fraction": 0.7892020089285714,
+          "loss": 0.47118008415388396,
+          "kl": 0.0035934958573376305,
+          "clip_fraction": 0.035344970218398414,
+          "entropy": 0.14468294220302166,
+          "ppo_loss": -0.0006745774380461772,
+          "imitation_loss": 0.6197555078860679,
+          "ppo_samples": 96704,
+          "imitation_samples": 362048,
+          "H_imit": 0.6296911059996143,
+          "imitation_kl": 0.012137860854678008,
+          "imitation_entropy_samples": 90512,
+          "imitation_beta_used": 0.03559470585714788,
+          "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+          "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+          "epochs": 4,
+          "value_explained_variance": 0.2583523113285443,
+          "ppo_return_variance": 0.0005476749757574338,
+          "ppo_value_error_variance": 0.0004061818799136963,
+          "value_explained_variance_samples": 24176,
+          "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+          "imitation_beta": 0.039785847513213825,
+          "imitation_entropy_target": 0.6716025225602738
+        },
+        {
+          "event": "update",
+          "update": 8,
+          "version": 113,
+          "training_seconds": 1916.2747039794922,
+          "update_seconds": 227.22378540039062,
+          "actual_steps": 114688,
+          "sl_trial_steps": 2901721,
+          "lanes": 256,
+          "world_size": 7,
+          "next_epochs": 4,
+          "completed_episodes": 359,
+          "stalled_episodes": 0,
+          "completed_average_floor": 15.835654596100278,
+          "active_max_floor_steps": 160,
+          "stall_classes": {},
+          "policy_loss": 0.4924385929046826,
+          "value_loss": 0.0004639061940275649,
+          "imitation_fraction": 0.7948695591517857,
+          "loss": 0.47236623277744016,
+          "kl": 0.005009168034359166,
+          "clip_fraction": 0.04296310465017428,
+          "entropy": 0.13262939157581796,
+          "ppo_loss": -0.0001311537774755287,
+          "imitation_loss": 0.6195551092211792,
+          "ppo_samples": 94104,
+          "imitation_samples": 364648,
+          "H_imit": 0.6291890536523389,
+          "imitation_kl": 0.013677262305839218,
+          "imitation_entropy_samples": 91162,
+          "imitation_beta_used": 0.039785847513213825,
+          "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+          "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+          "epochs": 4,
+          "value_explained_variance": 0.2748592504050852,
+          "ppo_return_variance": 0.0005069290992024012,
+          "ppo_value_error_variance": 0.00036759494698710414,
+          "value_explained_variance_samples": 23526,
+          "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+          "imitation_beta": 0.04402719440400731,
+          "imitation_entropy_target": 0.6716025225602738
         }
       ],
-      "actual_steps": 786432,
+      "actual_steps": 1015808,
       "assessments": [
         {
           "episodes": 1024,
@@ -1281,12 +1366,12 @@
       },
       "stagnant": 0,
       "best_floor": 15.2451171875,
-      "imitation_beta": 0.03559470585714788,
+      "imitation_beta": 0.04402719440400731,
       "imitation_entropy_target": 0.6716025225602738
     },
     "fault_files": [],
     "queue_errors": [],
-    "evidence": "inventory/e4-c54-start3689.json"
+    "evidence": "inventory/e4-c54-evaluation113-start.json"
   },
   "pending": [
     "Monitor3689 fixed9a63f63 sevenGPU resume111. Check startup and per-update queue, checkpoint, faults and costs each heartbeat.",
@@ -1483,7 +1568,7 @@
   ],
   "claude54_execution": {
     "main": "8b3a970bb1dc1332e5ae6fedecf75781d3859793",
-    "status": "running_restoration_verified",
+    "status": "evaluation113_in_progress",
     "resume_version": 111,
     "world_size": 7,
     "implementation_commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
@@ -1493,6 +1578,14 @@
     "all_eight_model_optimizer_hashes_equal": true,
     "original_eight_files_preserved": true,
     "excluded_rank7_active_games": 256,
-    "evidence": "inventory/e4-c54-start3689.json"
+    "evidence": "inventory/e4-c54-start3689.json",
+    "publication": "b6652f23ce947169080997c05448256f88d98dc5",
+    "latest_update": {
+      "version": 113,
+      "trained_seconds": 1916.2747039794922,
+      "imitation_beta": 0.04402719440400731,
+      "world_size": 7
+    },
+    "evaluation113_evidence": "inventory/e4-c54-evaluation113-start.json"
   }
 }
