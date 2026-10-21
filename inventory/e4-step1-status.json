@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T19:05:20.024737+08:00",
-  "active_job": 3671,
-  "phase": "step1_training",
+  "updated_at": "2026-10-21T19:24:11.162812+08:00",
+  "active_job": 3672,
+  "phase": "claude45_original109_evaluation_running",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -10,11 +10,11 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 35691,
+      "charged_node_seconds": 37605,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 14400,
+      "reserved_node_seconds": 3600,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 991
+      "active_observed_node_seconds": 27
     }
   },
   "cost_ledger": [
@@ -193,6 +193,16 @@
       "exit_code": "0:0",
       "reason": "Claude44 existing parity/faults and clone gates passed",
       "accounting_sha256": "b589efb444e1b15a7818fdc9ad13cab168103431ec56ca7e2fe1b55f1720a109"
+    },
+    {
+      "job_id": 3671,
+      "step": 1,
+      "charged_node_seconds": 1914,
+      "gpu_seconds": 15312,
+      "source": "scontrol final RunTime00:31:54; e4-c45-stop-116/accounting-final.txt",
+      "exit_code": "0:15",
+      "reason": "Claude45 stop after update116 checkpoint archived",
+      "accounting_sha256": "0b8224f9e1309ad493eb464b372b9b61239e7c828192f92144ce52f00c5143f7"
     }
   ],
   "jobs": [
@@ -631,7 +641,7 @@
     {
       "job_id": 3671,
       "purpose": "Claude44 resume111 aftercapacityguard gates; full1024 evaluation",
-      "state": "RUNNING",
+      "state": "CANCELLED",
       "step": 1,
       "gpus": 8,
       "reserved_seconds": 14400,
@@ -649,64 +659,60 @@
       "dev_seed_count": 1024,
       "script_sha256": "f6e0dcf63b917e80a91c8c4b965e5be934dbe63ce750ee2ca097c8b600ce2411",
       "start_time": "2026-10-21T18:45:50",
-      "last_durable_checkpoint_version": 112,
+      "last_durable_checkpoint_version": 116,
       "checkpoint_reason": "update_complete",
-      "trained_seconds": 4046.2284240722656,
-      "last_observed_elapsed_seconds": 991,
-      "latest_completed_update": 112
+      "trained_seconds": 5176.298126220703,
+      "last_observed_elapsed_seconds": 1914,
+      "latest_completed_update": 116,
+      "elapsed_seconds": 1914,
+      "charged_node_seconds": 1914,
+      "exit_code": "0:15",
+      "end_time": "2026-10-21T19:17:44+08:00",
+      "stop_authorization": "Claude45"
+    },
+    {
+      "job_id": 3672,
+      "purpose": "Claude45 original109 evaluation only;1024dev256lanesN32",
+      "state": "RUNNING",
+      "step": 1,
+      "gpus": 8,
+      "reserved_seconds": 3600,
+      "fixed_head": "13417cf05bd261ae862dfb2305de920df742072f",
+      "output": "/home/zhuyouwei/spire-downloads/e4-c45-eval109-3672",
+      "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c45-eval109-3672.log",
+      "start_time": "2026-10-21T19:22:12+08:00",
+      "submitted_at": "2026-10-21T19:22:12+08:00",
+      "resume_directory": "/home/zhuyouwei/spire-downloads/e4-c45-migrated-109",
+      "resume_version": 109,
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+      "source_version": 97,
+      "lanes": 256,
+      "trials": 32,
+      "dev_seed_count": 1024,
+      "script_sha256": "492889b58f861d30458a7500b8ee84dea22026286cb71a60e7995684226a7713",
+      "last_durable_checkpoint_version": 109,
+      "checkpoint_reason": "before_evaluation",
+      "trained_seconds": 3255.404754638672,
+      "actual_steps": 1572864,
+      "last_observed_elapsed_seconds": 27,
+      "evaluation_only": true,
+      "evaluated_archive": "/home/zhuyouwei/spire-downloads/e4-c45-eval109-3672/evaluation-109"
     }
   ],
-  "server_fixed_head": "3e408345f5942ba05ddc733dfd9cda09223b488f",
+  "server_fixed_head": "13417cf05bd261ae862dfb2305de920df742072f",
   "evaluation_watch": {
-    "job_id": 3671,
-    "version": 111,
-    "status": "complete",
-    "assessment": {
-      "episodes": 1024,
-      "average_floor": 11.3203125,
-      "reach": {
-        "act1_boss": 0.087890625,
-        "act2_boss": 0.0,
-        "act3_first_boss": 0.0,
-        "act3_second_boss": 0.0,
-        "act3_three_keys": 0.0,
-        "act4": 0.0,
-        "shield_spear": 0.0,
-        "heart": 0.0
-      },
-      "victories": 0,
-      "stalled": 0,
-      "stall_classes": {},
-      "faults": 0,
-      "truncated": 0,
-      "round": "E4-C39-111-N32-D1024",
-      "version": 111,
-      "trials": 32,
-      "training_lanes": 256,
-      "evaluation_lanes": 256,
-      "dev_seed_count": 1024,
-      "evaluation_seconds": 486.37396240234375,
-      "trained_seconds": 3789.3605346679688,
-      "update_count": 14,
-      "actual_steps": 1835008,
-      "next_epochs": 8,
-      "combat_over_limit": 0,
-      "event_over_limit": 0,
-      "combat_normal_max_steps": 1566,
-      "event_normal_max_steps": 67,
-      "combat_played_cards_limit": 11,
-      "combat_trials": 199296,
-      "combat_played_cards_limit_fraction": 5.5194283879254976e-05
-    },
-    "audit_roots": 18,
-    "audit_status": "pending_mac_original_replay",
-    "stagnant": 1,
-    "next_evaluation_training_seconds": 7389.360534667969
+    "job_id": 3672,
+    "version": 109,
+    "status": "running",
+    "dev_seed_count": 1024,
+    "evaluation_only": true,
+    "archive_ranks": 8,
+    "training_unchanged": true
   },
   "pending": [
-    "Monitor3671 continuedtraining; next1024dev attrained7389.360534667969; preservefixed3e40834.",
-    "111assessment and18pendingMac audits recorded; retrypublication ifnetworkblocked; checkmain/codex/e4 newcommits afterconnectionrecovery.",
-    "Stopafter3stagnant assessments orcapacityfraction>0.1percent/unknownfault; queueyield eachupdate/preeval.",
-    "Settle3671actualcostonceafterexit; retain14400reservation untilthen."
+    "Monitor3672 full1024dev109 evaluation only; unknownfault/capacityfraction>0.1percent stop; queueyield perClaude42+43.",
+    "Oncompletion verify1024exactseeds, collectsummary and18actualauditroots pendingMac, report<=10lines andpublishinventory evidence; awaitClaude decision, no furthertraining.",
+    "Settle3672 actualcost onceafterexit; preserve3600reservation untilthen, original109, archived116 and evaluated1098ranks.",
+    "Checkallnewmain/codex/e4commits;111audit Macreportedpassed18/18 4490decisions."
   ]
 }
