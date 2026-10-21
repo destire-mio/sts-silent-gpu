@@ -1,6 +1,7 @@
 from collections import Counter, deque
 from dataclasses import dataclass, field
 import json
+import math
 import time
 
 import torch
@@ -103,6 +104,7 @@ class RoomSearch:
         self.last_heartbeat = time.monotonic()
         self.actual_lanes = []
         self.combat_tails = {}
+        self.combat_diagnostics = None
         self.map_returned = torch.zeros(self.size, dtype=torch.bool, device=device)
 
     def clock(self):
@@ -190,6 +192,12 @@ class RoomSearch:
             logits, value = model(inputs)
             policy, _ = distribution(logits, inputs["candidate_mask"])
             action = torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
+            if (self.combat_diagnostics is not None and self.contexts
+                    and self.contexts[-1]["kind"] == "combat"):
+                context = self.contexts[-1]
+                for slot, entropy in zip(group.cpu().tolist(), policy.entropy().cpu().tolist()):
+                    context["entropy_sum"][slot] += entropy
+                    context["entropy_count"][slot] += 1
             choices.extend(action.cpu().tolist())
             values.extend(value.cpu().tolist())
             logs.extend(policy.log_prob(action).cpu().tolist())
@@ -332,6 +340,11 @@ class RoomSearch:
             parents = sources[begin:begin + capacity]
             slots = self.take(len(parents) * self.trials)
             context = self.begin_search("combat", slots)
+            if self.combat_diagnostics is not None:
+                starts = self.progress()
+                context["starts"] = {p: (starts[p][ACT], starts[p][FLOOR], self.provenance[p][0]) for p in parents}
+                context["entropy_sum"] = dict.fromkeys(slots, 0.)
+                context["entropy_count"] = dict.fromkeys(slots, 0)
             try:
                 self.clone([s for s in parents for _ in range(self.trials)], slots)
                 self.capacity_metrics["combat_trials"] += len(slots)
@@ -359,6 +372,27 @@ class RoomSearch:
                     live = [s for s in continuing if s not in capped]
                 eligible = [s for s in slots if s not in capped]
                 scores = self.scores(model, eligible, progress)
+                if self.combat_diagnostics is not None:
+                    keys = dict(zip(eligible, self.loop_keys(eligible))) if eligible else {}
+                    for j, parent in enumerate(parents):
+                        trials = slots[j * self.trials:(j + 1) * self.trials]
+                        group = [s for s in trials if s not in capped]
+                        act, floor, seed = context["starts"][parent]
+                        count = sum(context["entropy_count"][s] for s in trials)
+                        entropy_sum = sum(context["entropy_sum"][s] for s in trials)
+                        row = dict(act=act, floor=floor, seed=seed, trials=len(trials),
+                            capped_trials=len(trials)-len(group), decision_count=count,
+                            entropy_sum=entropy_sum, policy_entropy=entropy_sum/count,
+                            nested_event=any(c["kind"] == "event" for c in self.contexts),
+                            win_fraction=None, score_std=None, distinct_end_states=None, selected_score_gain=None)
+                        if len(group) == len(trials):
+                            mean = sum(scores[s] for s in group)/len(group)
+                            row.update(win_fraction=sum(progress[s][BATTLE_OVER] and not progress[s][SMOKED]
+                                and progress[s][HP] > 0 for s in group)/len(group),
+                                score_std=math.sqrt(sum((scores[s]-mean)**2 for s in group)/len(group)),
+                                distinct_end_states=len({keys[s] for s in group}),
+                                selected_score_gain=max(scores[s] for s in group)-mean)
+                        self.combat_diagnostics.append(row)
                 for j, parent in enumerate(parents):
                     group = [s for s in slots[j * self.trials:(j + 1) * self.trials] if s not in capped]
                     if group:
@@ -453,10 +487,13 @@ class RoomSearch:
         backups = self.take(len(sources))
         self.clone(sources, backups)
         rng_before = self.rng.get_state()
+        diagnostics_before = len(self.combat_diagnostics) if self.combat_diagnostics is not None else 0
         try:
             return self.combat(model, sources) if kind == "combat" else self.event(model, sources)
         except AllocationEnded:
             self.rng.set_state(rng_before)
+            if self.combat_diagnostics is not None:
+                del self.combat_diagnostics[diagnostics_before:]
             raise
         finally:
             self.clone(backups, sources)
