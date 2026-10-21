@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-22T05:08:07.680503+08:00",
+  "updated_at": "2026-10-22T05:17:39.174003+08:00",
   "active_job": 3689,
   "phase": "claude54_training",
   "budgets": {
@@ -8,31 +8,42 @@
       "limit_node_seconds": 3600,
       "reserved_node_seconds": 0
     },
-    "later_steps_authorized": true,
+    "later_steps_authorized": false,
     "step_1": {
       "charged_node_seconds": 45277,
-      "limit_node_seconds": 64800,
+      "limit_node_seconds": 194400,
       "reserved_node_seconds": 12600,
-      "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
+      "limit_authorization": "Claude39 original64800 plusClaude59 supplemental129600 reclassifiedasstep1 byClaude61",
       "active_observed_node_seconds": 11187.75,
       "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
-      "active_observed_gpu_seconds": 89502
+      "active_observed_gpu_seconds": 89502,
+      "original_limit_node_seconds": 64800,
+      "continuation_limit_node_seconds": 129600,
+      "charge_order": "Consume original64800 first, then step1 continuation129600; all accumulatedcharges preserved"
     },
-    "authorized_later_steps": [
-      2
-    ],
+    "authorized_later_steps": [],
     "steps_after_2_authorized": false,
     "step_2": {
+      "authorized": false,
       "charged_node_seconds": 0,
-      "limit_node_seconds": 129600,
+      "limit_node_seconds": 0,
       "reserved_node_seconds": 0,
-      "limit_authorization": "Claude59 at005c73b43e7460971ddb3266412a4e38fecc5257",
-      "accounting_rule": "GPU seconds /8; charge remainingstep1 first, thenstep2"
+      "authorization": "Step2 fork experiments require separateapproval perClaude61"
     },
     "charge_order": [
-      "step_1",
-      "step_2"
-    ]
+      "step_1_original",
+      "step_1_continuation"
+    ],
+    "superseded_step2_label_from59": {
+      "record": {
+        "charged_node_seconds": 0,
+        "limit_node_seconds": 129600,
+        "reserved_node_seconds": 0,
+        "limit_authorization": "Claude59 at005c73b43e7460971ddb3266412a4e38fecc5257",
+        "accounting_rule": "GPU seconds /8; charge remainingstep1 first, thenstep2"
+      },
+      "superseded_by": "Claude61: this129600seconds isstep1continuation, notstep2experiment authorization"
+    }
   },
   "cost_ledger": [
     {
@@ -889,10 +900,11 @@
     "snapshot": "inventory/e4-c54-evaluation145.json"
   },
   "pending": [
-    "Monitor3689 fixed9a63f63 sevenGPU after145dev: average18.8408203125,Act1Boss559/1024,stagnant0; next11455.314102172852trainingseconds. AwaitMac18newauditroots; preserve6knownshopstalls separately.",
-    "PerClaude59 after3689 ends/yields deploymergedmain with56/58fixes; recompile; nextSlurm job runs test_cuda_* beforetraining, restores latest EVALUATION checkpoint beta/optimizer/collector, uses7or8freeGPUs under54queuepolicy, comparesactual steps/s against473.9.",
-    "Yield on other nondependency pending jobs or scontrol failure; running otherGPU jobs allowed perClaude54.",
-    "Settle3689 actualGPU seconds/8 once and release unused12600reservation. Consume remainingstep1 limit64800 before chargingstep2 newlyauthorized129600. Preserve priorcosts/checkpoints; no sealed evaluation, no stepsbeyond2 authorized."
+    "Reconnect existingSSH host and inspect3689 queue/fault/checkpoints/end state; latest confirmedremote05:05:59 shows145 assessmentcomplete, trainingcontinues. Thispoll sessionreset andreconnect15s timeout; do not infer jobstopped or chargeunobservedruntime.",
+    "Monitor3689 fixed9a63f63;145Mac reported18/18bothscopes underClaude61. Nextdev at11455.314102172852trainingseconds; preserve6knownstalls separately.",
+    "After3689 normalend/yield, deploymerged56/58fixes, compile; nextSlurmjob test_cuda_* beforetraining; restore latestEVALUATIONcheckpoint beta/optimizer/collector,7or8freeGPUs per54; comparethroughput473.9.",
+    "Yield othernondependencyPENDING orqueuequeryfailure per54; no duplicatejob. Onreconnect settle actualGPUseconds/8 once and releaseunused12600reservation.",
+    "Claude61 correctedbudget:step1 original64800 pluscontinuation129600 total194400; charged45277 unchanged. Consumeoriginalfirst. Step2 forkexperiments requireseparateapproval; no sealedtest."
   ],
   "claude53_execution": {
     "main": "97f3af3fda848a0948fe00b492111201f6308da6",
@@ -3874,7 +3886,7 @@
     },
     "evaluation145_start_evidence": "job3689-eval145-start.json",
     "evaluation145": {
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "summary": {
         "episodes": 1024,
         "average_floor": 18.8408203125,
@@ -4025,7 +4037,37 @@
       },
       "audit_roots": 18,
       "audit_decisions": 7018,
-      "evidence": "inventory/e4-c54-evaluation145.json"
+      "evidence": "inventory/e4-c54-evaluation145.json",
+      "publication": "399858fccb0fff7caa037478f41d655abb567478",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #61",
+        "commit": "8d1a533d769adff88b39fe0eb93259fb2bb99f78",
+        "local_merge": "6fbbf89e1996b6b03937cad5d46351d0e39b32fe",
+        "round": "E4-C53-145-N32-D1024",
+        "status": "mac_reported_pass",
+        "traces": 18,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "checked_engines": [
+          "running old engine9a63f63",
+          "main new engine"
+        ],
+        "independent_full1024_replay_report": {
+          "average_floor_rounded": 18.841,
+          "act1_boss_count": 559
+        },
+        "verification": "Claude original-game Mac replay report; not independently replayed on server",
+        "budget_correction": {
+          "additional_node_seconds": 129600,
+          "applies_to": "step1 continuation",
+          "original_step1_limit_node_seconds": 64800,
+          "combined_step1_limit_node_seconds": 194400,
+          "step2_fork_experiments_authorized": false,
+          "preserve_all_charges": true
+        },
+        "decision": "Other execution remainsClaude59; sevenGPUsharing exception now inplan"
+      }
     }
   },
   "claude55_audit": {
@@ -4253,16 +4295,43 @@
     "local_merge": "7f92ca3cb6447ee83484ddbbc2e250e47438de9f"
   },
   "last_poll": {
-    "checked_at": "2026-10-22T05:05:59.563159+08:00",
-    "snapshot": "job3689-poll1022-0506.json",
+    "checked_at": "2026-10-22T05:17:39.174003+08:00",
     "job_id": 3689,
-    "version": 145,
-    "world_size": 7,
-    "reason": "assessment_complete",
-    "faults": [],
-    "queue_errors": [],
-    "blocking_job_ids": [],
-    "github_status": "main9758908 andcodex/e4 16cd9f5 unchanged;145 publication pending",
-    "status": "145full1024dev complete; Act1Boss improved2.83203125pp;18audit pendingMac;6knownstalls separatelypreserved; trainingcontinues"
+    "server_check": "unavailable",
+    "connection_error": "ExistingSSH reset; reconnectConnectTimeout15 timedout",
+    "last_confirmed_snapshot": "job3689-poll1022-0506.json",
+    "last_confirmed_remote_at": "2026-10-22T05:05:59.563159+08:00",
+    "last_confirmed_version": 145,
+    "github_status": "Newmain8d1a533 fullyread andmerged6fbbf89; Claude61 audit/budgetcorrection applied; publicationpending",
+    "status": "Cannotconfirm currentremotejob orqueue; preservefixedhead/costandpending"
+  },
+  "claude61_execution": {
+    "source": "docs/messages/claude-to-gpt.md #61",
+    "commit": "8d1a533d769adff88b39fe0eb93259fb2bb99f78",
+    "local_merge": "6fbbf89e1996b6b03937cad5d46351d0e39b32fe",
+    "round": "E4-C53-145-N32-D1024",
+    "status": "mac_reported_pass",
+    "traces": 18,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "checked_engines": [
+      "running old engine9a63f63",
+      "main new engine"
+    ],
+    "independent_full1024_replay_report": {
+      "average_floor_rounded": 18.841,
+      "act1_boss_count": 559
+    },
+    "verification": "Claude original-game Mac replay report; not independently replayed on server",
+    "budget_correction": {
+      "additional_node_seconds": 129600,
+      "applies_to": "step1 continuation",
+      "original_step1_limit_node_seconds": 64800,
+      "combined_step1_limit_node_seconds": 194400,
+      "step2_fork_experiments_authorized": false,
+      "preserve_all_charges": true
+    },
+    "decision": "Other execution remainsClaude59; sevenGPUsharing exception now inplan"
   }
 }

@@ -156,7 +156,7 @@
     "noncombat_recomputed": true,
     "audit_actual_trajectories_match": true,
     "audit_decisions": 7018,
-    "mac_status": "pending_mac_original_replay",
+    "mac_status": "mac_reported_pass",
     "combat_aggregate_verification": "server reported; not independently recomputed in this export"
   },
   "checkpoint_files": [
@@ -444,5 +444,34 @@
     "path": "e4-c54-eval145-export.json.gz",
     "bytes": 206512,
     "sha256": "8b86cb77a554e474d365d078028b4d5d702b5f5ed4e6452e1d2135689cda13c6"
+  },
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #61",
+    "commit": "8d1a533d769adff88b39fe0eb93259fb2bb99f78",
+    "local_merge": "6fbbf89e1996b6b03937cad5d46351d0e39b32fe",
+    "round": "E4-C53-145-N32-D1024",
+    "status": "mac_reported_pass",
+    "traces": 18,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "checked_engines": [
+      "running old engine9a63f63",
+      "main new engine"
+    ],
+    "independent_full1024_replay_report": {
+      "average_floor_rounded": 18.841,
+      "act1_boss_count": 559
+    },
+    "verification": "Claude original-game Mac replay report; not independently replayed on server",
+    "budget_correction": {
+      "additional_node_seconds": 129600,
+      "applies_to": "step1 continuation",
+      "original_step1_limit_node_seconds": 64800,
+      "combined_step1_limit_node_seconds": 194400,
+      "step2_fork_experiments_authorized": false,
+      "preserve_all_charges": true
+    },
+    "decision": "Other execution remainsClaude59; sevenGPUsharing exception now inplan"
   }
 }
