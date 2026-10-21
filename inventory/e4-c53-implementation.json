@@ -1,0 +1,83 @@
+{
+  "authorization": "Claude53",
+  "main": "97f3af3fda848a0948fe00b492111201f6308da6",
+  "source_checkpoint": 105,
+  "source_commit": "3b54843df8c36d856f9c9425bb1279833f956fab",
+  "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
+  "best_average_floor": 15.2451171875,
+  "source_archives": {
+    "rank-2.pt": {
+      "size": 12758149,
+      "sha256": "dca288658dfffc3736068f2d4c5e455630d088a0d19a35916e9945db93bee5ba"
+    },
+    "rank-4.pt": {
+      "size": 12765893,
+      "sha256": "81f6c796d5941fd90901248dc912afbe4e33d2b383ade6796af1d95e36345f10"
+    },
+    "rank-6.pt": {
+      "size": 12753733,
+      "sha256": "b4babd403c39eecf7c61b2c34e74a381d359c26f227f4375e78902cf257705cc"
+    },
+    "rank-1.pt": {
+      "size": 12772677,
+      "sha256": "d09066b7d0a15c9a985a9ad0b74a8edf680466babd55cb69b9d35735dd5352a9"
+    },
+    "rank-3.pt": {
+      "size": 12762757,
+      "sha256": "e40db9c619d0aaaa4d6e8a81e833909c4cc9bf357d32571fab917d41c33454b1"
+    },
+    "rank-7.pt": {
+      "size": 12752069,
+      "sha256": "0fbc2c194e05eed278bc4db86aa858577d7209674fe1eef3aac97d9afcacb60e"
+    },
+    "rank-5.pt": {
+      "size": 12760197,
+      "sha256": "b2731bb37f7a2abc4a06e228888adaff17a07a39a448c6c5ee447f2bb43383c3"
+    },
+    "rank-0.pt": {
+      "size": 12753797,
+      "sha256": "df163f8e8d2f18f55658f156227b483ed10efffeb0638766d083969c10cead98"
+    }
+  },
+  "regression": {
+    "test": "tests/test_e4_reward_mask.py::test_free_reward_mask_and_opened_card_memory",
+    "passed": 1,
+    "seconds": 0.5
+  },
+  "mask": {
+    "screen": "CombatReward (shared combat/treasure reward UI)",
+    "priority": [
+      "first legal gold/stolen gold",
+      "first legal potion with visible empty slot",
+      "block proceed until every currently displayed card reward opened"
+    ],
+    "relic_sapphire_choice": "unchanged",
+    "memory": "ordered visible reward rows; explicit selected-row removal; opened markers copied with SL branches and serialized in collector; reset on floor change",
+    "migration": "GPU prefix replay within the Slurm allocation, only to reconstruct new observation memory; original collector paths, seed/search RNG, optimizer/model/PPO RNG and training RNG restored from105"
+  },
+  "training": {
+    "epochs": 4,
+    "beta": "restored from105",
+    "entropy_target": "restored from105",
+    "evaluation_interval_training_seconds": 1800,
+    "dev_seed_count": 1024,
+    "trials": 32,
+    "lanes_per_gpu": 256,
+    "stop_rules": [
+      "average floor >1 below best",
+      "three evaluations without any reach improving >=.02",
+      "existing health/fault/capacity/queue/deadline gates"
+    ]
+  },
+  "reporting": {
+    "noncombat_scope": "actual trajectories; reward UI appeared/taken counts; card opened/taken/bowl; rest options; shop purchases; final deck size per episode and average",
+    "audit": "18 actual action prefixes per evaluation; pending Mac"
+  },
+  "budgets_before_submission": {
+    "step0_charged": 2127,
+    "step1_charged": 43786,
+    "step1_limit": 64800,
+    "step1_remaining": 21014
+  },
+  "created_at": "2026-10-21T22:37:02.215583+08:00"
+}

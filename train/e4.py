@@ -1,4 +1,5 @@
 from collections import Counter, deque
+from copy import deepcopy
 from dataclasses import dataclass, field
 import json
 import math
@@ -8,6 +9,7 @@ import torch
 
 from .model import FIELDS as views_fields, SCREENS, distribution, network_inputs, store_inputs, views
 from .rollout import make_batch
+from .e4_rewards import RewardHistory
 
 
 FLOOR, ACT, PHASE, ROOM, SCREEN, KEYS, BATTLE_OVER, SMOKED, HP = range(9)
@@ -103,6 +105,8 @@ class RoomSearch:
         self.probe_slots = list(range(lanes + scratch_slots, self.size))
         self.seen = {}
         self.mask_cache = {}
+        self.frame_cache = {}
+        self.reward_history = [RewardHistory() for _ in range(self.size)]
         self.loop_metrics = dict.fromkeys(LOOP_METRICS, 0)
         self.inference_chunk = inference_chunk
         self.deadline = float("inf")
@@ -235,6 +239,30 @@ class RoomSearch:
             self.seen[s] = {key}
             self.mask_cache.pop(s, None)
 
+    def frames(self, slots, progress):
+        missing = [s for s in slots if s not in self.frame_cache]
+        if missing:
+            data = {name: self.arrays[name][missing].cpu().tolist() for name in
+                    ('tags', 'ids', 'values', 'candidate_kinds', 'candidate_refs', 'entity_counts', 'candidate_counts')}
+            for j, s in enumerate(missing):
+                tags, ids, values = data['tags'][j], data['ids'][j], data['values'][j]
+                entities = range(data['entity_counts'][j])
+                rewards = [i for i in entities if tags[0][i] == 12]
+                reward_indices = {i + 1: r for r, i in enumerate(rewards)}
+                refs = data['candidate_refs'][j][2]
+                nc = data['candidate_counts'][j]
+                self.frame_cache[s] = dict(screen=progress[s][SCREEN], floor=progress[s][FLOOR],
+                    rewards=[(ids[0][i], ids[3][i], values[0][i]) for i in rewards],
+                    actions=[(data['candidate_kinds'][j][a], reward_indices.get(refs[a])) for a in range(nc)],
+                    rest_options=[ids[3][refs[a]-1] if refs[a] and tags[0][refs[a]-1] == 11
+                                  and ids[0][refs[a]-1] == 5 else None for a in range(nc)],
+                    empty_potion_slot=any(tags[0][i] == 7 and tags[1][i] == 0 and ids[0][i] == 1 for i in entities),
+                    potion_count=sum(tags[0][i] == 7 and tags[1][i] == 0 and ids[0][i] != 1 for i in entities),
+                    relic_count=sum(tags[0][i] == 6 and tags[1][i] == 0 for i in entities),
+                    gold=next(values[2][i] for i in entities if tags[0][i] == 2),
+                    deck_size=sum(tags[0][i] == 3 and tags[1][i] == 1 for i in entities))
+        return {s: self.frame_cache[s] for s in slots}
+
     @torch.no_grad()
     def policy_masks(self, slots):
         missing = [s for s in slots if s not in self.mask_cache]
@@ -247,9 +275,15 @@ class RoomSearch:
                                                 & (inputs["candidate_kinds"] == 7))
             assert bool(legal.any(-1).all()), "Map-return restriction removed every action"
             legal = legal.cpu().tolist()
+            frames = self.frames([s for s in missing if progress[s][PHASE] != COMBAT_PHASE], progress)
             pairs = []
             allowed = {}
             for s, row in zip(missing, legal):
+                if s in frames:
+                    nc = len(frames[s]['actions'])
+                    masked, _ = self.reward_history[s].mask(frames[s], row[:nc])
+                    row = masked + [False] * (len(row) - nc)
+                    assert any(row), 'Reward restriction removed every action'
                 allowed[s] = row + [False] * (128 - len(row))
                 if progress[s][PHASE] != COMBAT_PHASE:
                     pairs.extend((s, a) for a, valid in enumerate(row) if valid)
@@ -308,6 +342,13 @@ class RoomSearch:
         indices = torch.tensor(slots, device=self.device, dtype=torch.int64)
         self.batch.progress_tensors(self.progress_buffer)
         before = self.progress_buffer.view(-1, 9)[indices].clone()
+        before_progress = dict(zip(slots, before.cpu().tolist()))
+        tracked = [s for s in slots if before_progress[s][PHASE] != COMBAT_PHASE]
+        frames_before = self.frames(tracked, before_progress)
+        action_by_slot = dict(zip(slots, choices))
+        for s in tracked:
+            frame = frames_before[s]
+            self.reward_history[s].before_step(frame, action_by_slot[s], [True] * len(frame['actions']))
         returning = (before[:, SCREEN] == MAP) & (self.arrays["candidate_kinds"][indices, choices] == 7)
         assert not bool((returning & self.map_returned[indices]).any()), "Second map return on the same floor"
         self.map_returned[indices] |= returning
@@ -323,6 +364,17 @@ class RoomSearch:
         capped = self.check(slots, combat_context)
         floors_before = before[:, FLOOR].cpu().tolist()
         floors_after = self.progress_buffer.view(-1, 9)[indices, FLOOR].cpu().tolist()
+        after_progress = dict(zip(slots, self.progress_buffer.view(-1, 9)[indices].cpu().tolist()))
+        for s in slots:
+            self.frame_cache.pop(s, None)
+        observed = [s for s in slots if s not in capped and
+                    (s in frames_before or after_progress[s][PHASE] != COMBAT_PHASE)]
+        frames_after = self.frames(observed, after_progress)
+        for s in observed:
+            if s in frames_before:
+                self.reward_history[s].after_step(frames_before[s], frames_after[s], action_by_slot[s])
+            else:
+                self.reward_history[s].observe(frames_after[s])
         valid = [s for s in slots if s not in capped]
         keys = dict(zip(valid, self.loop_keys(valid))) if valid else {}
         for s, old, new in zip(slots, floors_before, floors_after):
@@ -341,6 +393,8 @@ class RoomSearch:
             seed, path = self.provenance[s]
             self.provenance[t] = (seed, path.copy())
             self.seen[t] = self.seen[s].copy()
+            self.reward_history[t] = deepcopy(self.reward_history[s])
+            self.frame_cache.pop(t, None)
             if s in self.mask_cache:
                 self.mask_cache[t] = self.mask_cache[s].copy()
             else:
@@ -543,6 +597,9 @@ class SegmentCollector:
             self.search.provenance[s] = (seed, [])
         self.search.batch.reset_to_many(slots, seeds, [[] for _ in slots])
         self.search.map_returned[slots] = False
+        for s in slots:
+            self.search.reward_history[s] = RewardHistory()
+            self.search.frame_cache.pop(s, None)
         self.search.check(slots)
         self.search.reset_seen(slots)
         for slot, seed in zip(slots, seeds):
@@ -561,6 +618,7 @@ class SegmentCollector:
 
     def state(self):
         return dict(seeds=self.seeds, paths=self.paths, floor_steps=self.floor_steps,
+                    reward_history=deepcopy(self.search.reward_history[:self.search.lanes]),
                     noncombat_floor_steps=self.noncombat_floor_steps, tails=[list(t) for t in self.tails],
                     map_returned=self.search.map_returned[:self.search.lanes].cpu().tolist(),
                     seen={s: self.search.seen[s] for s in range(self.search.lanes) if s in self.search.seen},
@@ -578,6 +636,8 @@ class SegmentCollector:
         self.search.map_returned[:self.search.lanes] = torch.tensor(state["map_returned"], device=self.search.device)
         self.search.seen = {s: keys.copy() for s, keys in state["seen"].items()}
         self.search.mask_cache.clear()
+        self.search.frame_cache.clear()
+        self.search.reward_history[:self.search.lanes] = deepcopy(state["reward_history"])
         if self.partial:
             for name, value in self.partial["result"].items():
                 self.partial["result"][name] = value.to(self.search.device)
@@ -669,6 +729,8 @@ class SegmentCollector:
                 self.completed.append(dict(seed=self.seeds[slot], candidates=self.paths[slot],
                     reach=self.rewards[slot].reach.copy(), floor=after[slot][FLOOR],
                     stall_class=stall_class,
+                    noncombat=dict(counts=dict(self.search.reward_history[slot].counts)),
+                    final_deck_size=self.search.frames([slot], after)[slot]["deck_size"],
                     outcome="stalled" if stalled else "victory" if after[slot][SCREEN] == VICTORY else "death",
                     reward=self.rewards[slot].total / MAX_REWARD))
                 self.seeds[slot] = None
