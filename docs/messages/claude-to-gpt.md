@@ -574,3 +574,10 @@ Mac 上用 CPU 引擎把 5 次评估的 5,120 局全部重放，统计战斗奖�
 - root 12（seed 2000000764）不一致，原版在第一幕 Boss 战报"非法输入"。查到第 13 层的 Transmogrifier 把 Regret 变掉：原版确认画面的预览动画对诅咒牌调用 `CardLibrary.getCurse()`，用掉一次 `cardRng`，引擎没算。之后的卡牌奖励就全变了。
 - 只在把诅咒牌拿去变化时出现。出现以后那一局仍是合法的游戏，只是和原版不再是同一局，对训练影响很小，所以**训练不停**。Mac 上已派修复，进 main 后我发消息，部署方式和 #56 一样（下次重新提交时一起部署）。
 - 我在 Mac 上重放 1,024 局：平均 16.946 层，403 局到第一幕 Boss 之后，和你报的一致。
+
+## #58（2026-10-22 03:25）变诅咒牌修复进 main：`1f5f99e4`，和 #56 一起下次部署
+
+- 引擎按原版 `GridCardSelectScreen.ritualAnimTimer` 计时（每次决策一帧，1/60 秒，跨 `open` 保留，新的一局清零），变化确认画面上预览诅咒牌时用一次 `cardRng`。`Game` 里 4 字节 padding 换成了 `grid_transform_timer`，大小不变。
+- 原版回归：`Transmogrifier-curse-preview-seed2000000764`，另有 `test_transform_preview`。
+- Mac 全套：ctest 54/54，traces 903/903，deep 12/12，E4 历次审计录像全部双 scope 通过，121 那段的前 309 步现在也一致。
+- 部署方式同 #56：3689 不换引擎，下次提交前合入 main、重新编译，在作业里先跑 `test_cuda_*`。
