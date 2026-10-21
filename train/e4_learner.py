@@ -13,6 +13,20 @@ def update(model, optimizer, fragment, rng, epochs):
     count = len(fragment["actions"])
     device = fragment["actions"].device
     ppo = ~fragment["imitation"] & fragment["action_valid"]
+    returns = fragment["returns"][ppo].double()
+    errors = returns - fragment["values"][ppo].double()
+    value_moments = torch.stack((returns.sum(), returns.square().sum(),
+                                 errors.sum(), errors.square().sum(), ppo.sum().double()))
+    dist.all_reduce(value_moments)
+    value_count = int(value_moments[4])
+    return_variance = error_variance = explained_variance = None
+    if value_count:
+        return_variance = float((value_moments[1] / value_count
+                                - (value_moments[0] / value_count).square()).clamp_min(0))
+        error_variance = float((value_moments[3] / value_count
+                               - (value_moments[2] / value_count).square()).clamp_min(0))
+        if return_variance > 0:
+            explained_variance = 1 - error_variance / return_variance
     advantages = fragment["advantages"]
     moments = torch.stack((advantages[ppo].double().sum(), advantages[ppo].double().square().sum(),
                            ppo.sum().double()))
@@ -64,4 +78,8 @@ def update(model, optimizer, fragment, rng, epochs):
     result["ppo_samples"] = int(total[9])
     result["imitation_samples"] = int(total[10])
     result["epochs"] = epochs
+    result.update(value_explained_variance=explained_variance,
+                  ppo_return_variance=return_variance, ppo_value_error_variance=error_variance,
+                  value_explained_variance_samples=value_count,
+                  value_explained_variance_scope="pre_update_rollout_values_valid_PPO_rows_once")
     return result
