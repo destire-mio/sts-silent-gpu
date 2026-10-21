@@ -159,12 +159,13 @@ SPIRE_FN inline void queue_monster_damage(Game& g, int source, int target, int s
     e.extra = steal;
     add_bottom(g, e);
 }
-SPIRE_FN inline void queue_block(Game& g, int target, int amount) {
+SPIRE_FN inline void queue_block(Game& g, int target, int amount, bool super_fast) {
     Effect e{};
     e.kind = EffectKind::Block;
     e.source = target;
     e.target = target;
     e.amount = amount;
+    e.flag = super_fast;
     add_bottom(g, e);
 }
 SPIRE_FN inline void queue_power(Game& g, int source, int target, PowerId id, int amount, bool monster_source, int extra, int card) {
@@ -214,9 +215,9 @@ SPIRE_FN inline const Power& power_instance(const Game& g, uint32_t instance) {
     SPIRE_ASSERT(false);
     __builtin_unreachable();
 }
-SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t instance) {
+SPIRE_FN inline bool remove_power(Game& g, int target, PowerId id, uint32_t instance) {
     Creature& c = get_creature(g, target);
-    if (c.dying || c.half_dead || (target != player_target && c.escaped)) return;
+    if (c.dying || c.half_dead || (target != player_target && c.escaped)) return false;
     int index = find_power(g, c, id);
     if (instance != 0) {
         index = -1;
@@ -228,7 +229,9 @@ SPIRE_FN inline void remove_power(Game& g, int target, PowerId id, uint32_t inst
         refresh_powers(g);
         for (int i = 0; i < g.orbs.slots.size; ++i)
             if (g.orbs.slots[i] >= 0) apply_orb_focus(g, g.orbs.slots[i]);
+        return true;
     }
+    return false;
 }
 SPIRE_FN inline bool keeps_block(const Game& g, int owner) {
     const Powers& powers = get_creature(g, owner).powers;

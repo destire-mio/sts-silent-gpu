@@ -14,7 +14,7 @@ struct Frost {
     }
     static SPIRE_FN void onEndOfTurn(Game& g, int orb) {
         Effect e{}; e.amount = e.info_base = g.orbs.objects[orb].passive; e.damage_type = DamageType::Thorns;
-        e.kind = EffectKind::Block; add_bottom(g, e);
+        e.kind = EffectKind::Block; e.flag = true; add_bottom(g, e);
     }
 };
 }

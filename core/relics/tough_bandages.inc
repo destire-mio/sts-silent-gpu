@@ -9,7 +9,7 @@ struct ToughBandages : RelicHooks {
         show.kind = EffectKind::RelicAboveCreature;
         show.extra = relic;
         add_bottom(g, show);
-        queue_block(g, player_target, 3);
+        queue_block(g, player_target, 3, true);
     }
 };
 }

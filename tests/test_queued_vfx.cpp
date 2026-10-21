@@ -27,8 +27,9 @@ int main() {
     Game plant = combat(1000000067, CardId::Defend_G, EncounterId::SnakePlant);
     step(plant, {ActionKind::EndTurn, -1, -1});
     SPIRE_ASSERT(plant.screen == Screen::Death);
-    SPIRE_ASSERT(plant.manager.actions.size == 6);
-    constexpr EffectKind plant_queue[]{EffectKind::VFX, EffectKind::Damage, EffectKind::VFX, EffectKind::Damage, EffectKind::RollMove, EffectKind::Wait};
-    for (int i = 0; i < 6; ++i)
+    // DamageAction.update queues its WaitAction on top after the killing hit.
+    SPIRE_ASSERT(plant.manager.actions.size == 7);
+    constexpr EffectKind plant_queue[]{EffectKind::Wait, EffectKind::VFX, EffectKind::Damage, EffectKind::VFX, EffectKind::Damage, EffectKind::RollMove, EffectKind::Wait};
+    for (int i = 0; i < 7; ++i)
         SPIRE_ASSERT(plant.action_objects[plant.manager.actions[i]].kind == plant_queue[i]);
 }

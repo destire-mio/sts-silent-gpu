@@ -1,5 +1,6 @@
 #pragma once
 #include "core/hooks.hpp"
+#include "core/actions/wait.hpp"
 
 namespace spire::units::actions {
 struct Damage : ActionHooks {
@@ -38,13 +39,16 @@ struct Damage : ActionHooks {
         return e;
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
-        if (e.target == no_target) return;
+        if (e.target == no_target) { settle_deaths_after_wait(g, 1); return; }
         if (e.damage_type != DamageType::Thorns) {
             const Creature& target = get_creature(g, e.target);
-            if (target.dying || target.half_dead || (e.target != player_target && target.escaped)) return;
+            if (target.dying || target.half_dead || (e.target != player_target && target.escaped)) {
+                settle_deaths_after_wait(g, 1);
+                return;
+            }
             if (e.source != no_target) {
                 const Creature& source = get_creature(g, e.source);
-                if (source.dying || source.half_dead) return;
+                if (source.dying || source.half_dead) { settle_deaths_after_wait(g, 1); return; }
             }
         }
         Creature& target = get_creature(g, e.target);
@@ -55,10 +59,14 @@ struct Damage : ActionHooks {
             if (e.source == player_target) gain_gold(g, e.extra);
             else get_creature(g, e.source).gold += e.extra;
         }
+        // DamageAction.update ticks 0.1s before damage; cancelled hits take only one update.
+        settle_deaths_after_wait(g, 7);
         DamageInfo info = resolve_info(g, e, e.payload.state.Damage.info_instance);
         info.target = e.target;
         damage(g, info);
         if (monsters_basically_dead(g)) clear_post_combat_actions(g);
+        // DamageAction.update inserts its wait above retaliation queued by target.damage.
+        if (!e.flag) add_top(g, Wait::make(7));
     }
 };
 }
