@@ -223,6 +223,13 @@
           "final_deck_size_rounded": 20.5
         },
         "verification": "Reported by Claude on Mac; not independently replayed on server; not claimed full parity"
+      },
+      "fixed_engine_mac_replay_report": {
+        "source": "Claude56",
+        "fix_commit": "33ec6d6156397ebdadd3604ef5674a9f19878c11",
+        "message_commit": "517483317301b5a783fd102a4b1e39de930119c0",
+        "status": "Mac reports historical audits passed both scopes on fixed engine",
+        "server_deployed": false
       }
     }
   ],
