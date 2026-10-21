@@ -5,8 +5,10 @@
 #include <fstream>
 
 #define __global__
+#define __device__
 struct TestDim { unsigned x = 0; } blockIdx, threadIdx, blockDim{1};
 #include "cuda/batch.cu"
+#undef __device__
 #undef __global__
 
 using namespace spire;
