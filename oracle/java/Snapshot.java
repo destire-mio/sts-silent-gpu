@@ -85,7 +85,7 @@ final class Snapshot {
         exclude("rooms.AbstractRoom", "endBattleTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
         exclude("rooms.TreasureRoom", "shinyTimer", "Schedules chest shine particles.");
         exclude("rooms.TreasureRoomBoss", "shinyTimer", "Schedules chest shine particles.");
-        exclude("screens.select.GridCardSelectScreen", "ritualAnimTimer", "Schedules a disposable transform preview using presentation RNG; confirmation ignores the preview.");
+        exclude("screens.select.GridCardSelectScreen", "ritualAnimTimer", "Transform preview timer; its only rule effect, cardRng for curse previews, is checked through cardRng.");
         exclude("screens.select.GridCardSelectScreen", "prevDeckSize", "Scroll-bound cache: only updateScrolling reads it to call calculateScrollBounds, which derives layout from targetGroup.size. No card-selection or game rule reads it.");
         exclude("screens.select.HandCardSelectScreen", "waitToCloseTimer", "Update pacing; decisions wait for its callback or an input-blocked selection, not a remaining frame count.");
         exclude("actions.AbstractGameAction", "attackEffect", "Attack artwork and sound selection, not damage calculation.");

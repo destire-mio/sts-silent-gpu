@@ -1468,9 +1468,22 @@ SPIRE_FN inline void legal_actions(const Game& g, ActionSet& actions) {
         if (g.combat_reward_skippable) actions.push_back({ActionKind::Skip, -1, -1});
     }
 }
+SPIRE_FN inline void update_transform_preview(Game& g) {
+    // GridCardSelectScreen.update keeps ritualAnimTimer across open calls.
+    g.grid_transform_timer -= 1.0f / 60.0f;
+    if (g.grid_transform_timer < 0.0f) {
+        // AbstractDungeon.returnTrulyRandomCardFromAvailable uses CardLibrary.getCurse
+        // for CURSE previews; other colours consume only presentation randomness.
+        if (card_data(g.run.master_deck[g.grid_hovered_card].id).type == CardType::Curse) random_curse(g);
+        g.grid_transform_timer = 0.1f;
+    }
+}
 SPIRE_FN inline void apply_decision(Game& g, Action action) {
     if (g.fault != 0) return;
     bind_fault(g);
+    // GridCardSelectScreen.update advances the preview before confirm or CancelButton.update.
+    if (g.screen == Screen::Grid && g.grid_confirm_screen && g.grid_for_transform)
+        update_transform_preview(g);
     if (action.kind == ActionKind::PotionUse || action.kind == ActionKind::PotionDiscard) {
         SPIRE_ASSERT(potion_data(g.run.potions[action.index]).usable);
         SPIRE_ASSERT(action.kind != ActionKind::PotionDiscard || potion_canDiscard(g, action.index));
@@ -1711,7 +1724,10 @@ SPIRE_FN inline void apply_decision(Game& g, Action action) {
         if (action.kind == ActionKind::Choose) {
             const int card = get_pile(g, g.grid_source)[action.index];
             if (g.grid_for_upgrade || g.grid_for_transform || (g.grid_for_purge && g.grid_num_cards == 1)) {
-                g.grid_hovered_card = card; g.grid_confirm_screen = true; return;
+                g.grid_hovered_card = card; g.grid_confirm_screen = true;
+                // GridCardSelectScreen.update returns on selection; Recorder.settle then runs one frame.
+                if (g.grid_for_transform) update_transform_preview(g);
+                return;
             }
             if (!remove_from_pile(g.selected_cards, card) && g.selected_cards.size < g.grid_num_cards)
                 g.selected_cards.push_back(card);
