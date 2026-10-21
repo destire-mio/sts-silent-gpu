@@ -1,0 +1,86 @@
+{
+  "checked_at": "2026-10-21T15:45:00.529437+08:00",
+  "jobs": [
+    {
+      "JobId": "3650",
+      "JobName": "optimize_loop",
+      "UserId": "shaoy(1013)",
+      "JobState": "RUNNING",
+      "Reason": "None",
+      "Dependency": "(null)",
+      "TimeLimit": "3-00:00:00",
+      "StartTime": "2026-10-21T10:48:13",
+      "RunTime": "04:56:47",
+      "NodeList": "gpu01",
+      "TresPerNode": null,
+      "TRES": "cpu=1,mem=2G,node=1,billing=1"
+    },
+    {
+      "JobId": "3656",
+      "JobName": "plot",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "DependencyNeverSatisfied",
+      "Dependency": "afterok:3655(failed)",
+      "TimeLimit": "02:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": null,
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    },
+    {
+      "JobId": "3663",
+      "JobName": "compute",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "DependencyNeverSatisfied",
+      "Dependency": "afterok:3662(failed)",
+      "TimeLimit": "06:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": "gres:gpu:V100:1",
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    },
+    {
+      "JobId": "3664",
+      "JobName": "analysis",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency",
+      "Dependency": "afterok:3663(unfulfilled)",
+      "TimeLimit": "02:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": null,
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    },
+    {
+      "JobId": "3665",
+      "JobName": "plot",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency",
+      "Dependency": "afterok:3664(unfulfilled)",
+      "TimeLimit": "02:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": null,
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    }
+  ],
+  "node": {
+    "NodeName": "gpu01",
+    "State": "MIXED",
+    "Gres": "gpu:V100:8",
+    "GresUsed": "gpu:V100:0(IDX:N/A)",
+    "CfgTRES": "cpu=56,mem=128027M,billing=56",
+    "AllocTRES": "cpu=1,mem=2G"
+  },
+  "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d",
+  "gpu01_slurm_unallocated_gpus": 8,
+  "gpu_count_basis": "Slurm Gres gpu:V100:8 minus GresUsed gpu:V100:0; not a physical utilization probe"
+}
