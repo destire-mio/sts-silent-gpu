@@ -1,0 +1,24 @@
+{
+  "source": "docs/messages/claude-to-gpt.md #58",
+  "message_commit": "49a8410df8134e3d4545c78520c4d1185a6c031c",
+  "fix_commit": "1f5f99e42f739da2ee95fc90efe361e63b7908b4",
+  "local_merge": "67fa9768f0290928aaf9eae207d652aa3bfecc68",
+  "status": "locally_merged_server_deferred",
+  "engine_change": "Track ritualAnimTimer across grid opens; each decision1/60s; reset each game; consume cardRng for curse preview; replaces4-byte padding withfloat timer, unchanged Game size perClaude",
+  "regression": {
+    "path": "tests/traces/Transmogrifier-curse-preview-seed2000000764.jsonl.gz",
+    "bytes": 2439963,
+    "sha256": "ec8a5551306f36c6f70a67874b4ff1d37ba191f716d445ed2f60504416a3e2b8",
+    "lines": 329,
+    "unit_test": "test_transform_preview"
+  },
+  "mac_report": {
+    "ctest": "54/54",
+    "traces": "903/903",
+    "deep": "12/12",
+    "historical_audits": "Claude reports all historical E4 audit recordings pass both scopes",
+    "evaluation121_root12": "First309steps now match on fixedengine"
+  },
+  "verification": "Mac report only; no server validation yet; retain old-engine121 divergence and do not infer full original root pass from309step prefix",
+  "deployment": "3689 unchanged; after normal exit/yield deploy togetherwithClaude56, recompile and run test_cuda_* inside next Slurm job beforetraining"
+}

@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-22T03:08:03.086884+08:00",
+  "updated_at": "2026-10-22T03:18:02.246868+08:00",
   "active_job": 3689,
-  "phase": "claude54_training",
+  "phase": "claude54_evaluation129",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -14,9 +14,9 @@
       "limit_node_seconds": 64800,
       "reserved_node_seconds": 12600,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 4887.75,
+      "active_observed_node_seconds": 5415.375,
       "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
-      "active_observed_gpu_seconds": 39102
+      "active_observed_gpu_seconds": 43323
     }
   },
   "cost_ledger": [
@@ -857,37 +857,37 @@
       "epochs": 4,
       "dev_seed_count": 1024,
       "start_time": "2026-10-22T01:32:53+08:00",
-      "last_observed_elapsed_seconds": 5586,
-      "last_durable_checkpoint_version": 127,
-      "checkpoint_reason": "update_complete",
-      "trained_seconds": 5297.364776611328,
+      "last_observed_elapsed_seconds": 6189,
+      "last_durable_checkpoint_version": 129,
+      "checkpoint_reason": "before_evaluation",
+      "trained_seconds": 5756.290725708008,
       "script_sha256": "e1945f8446176e556d4e74fa114c05fd9053abd59a56ca37c4ebc6bb2ddfd355",
-      "latest_completed_update": 127
+      "latest_completed_update": 129
     }
   ],
   "server_fixed_head": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
   "evaluation_watch": {
     "job_id": 3689,
     "status": {
-      "reason": "update_complete",
-      "phase": "training",
+      "reason": "before_evaluation",
+      "phase": "evaluation",
       "job": "3689",
       "commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
       "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
       "source_version": 105,
-      "version": 127,
+      "version": 129,
       "lanes": 256,
       "epochs": 4,
       "trials": 32,
       "world_size": 7,
       "evaluation_lanes": 256,
       "dev_seed_count": 1024,
-      "trained_seconds": 5297.364776611328,
+      "trained_seconds": 5756.290725708008,
       "next_evaluation": 5665.081146240234,
       "evaluation_seconds": 0.0,
       "capacity_metrics": {
         "combat_played_cards_limit": 0,
-        "combat_trials": 122688
+        "combat_trials": 0
       },
       "updates": [
         {
@@ -1822,9 +1822,93 @@
           "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
           "imitation_beta": 0.048883344121167537,
           "imitation_entropy_target": 0.6716025225602738
+        },
+        {
+          "event": "update",
+          "update": 23,
+          "version": 128,
+          "training_seconds": 5526.98991394043,
+          "update_seconds": 229.62513732910156,
+          "actual_steps": 114688,
+          "sl_trial_steps": 2854394,
+          "lanes": 256,
+          "world_size": 7,
+          "next_epochs": 4,
+          "completed_episodes": 337,
+          "stalled_episodes": 0,
+          "completed_average_floor": 17.620178041543028,
+          "active_max_floor_steps": 806,
+          "stall_classes": {},
+          "policy_loss": 0.4954972062351715,
+          "value_loss": 0.0005693192221560986,
+          "imitation_fraction": 0.79156494140625,
+          "loss": 0.47061967800563814,
+          "kl": 0.020564691307914558,
+          "clip_fraction": 0.04582723279648609,
+          "entropy": 0.12069223359468469,
+          "ppo_loss": 0.0027291643392112165,
+          "imitation_loss": 0.625252997975067,
+          "ppo_samples": 95620,
+          "imitation_samples": 363132,
+          "H_imit": 0.6465838904984899,
+          "imitation_kl": 0.011137389765405962,
+          "imitation_entropy_samples": 90783,
+          "imitation_beta_used": 0.048883344121167537,
+          "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+          "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+          "epochs": 4,
+          "value_explained_variance": 0.3731433842385212,
+          "ppo_return_variance": 0.0007687451623253766,
+          "ppo_value_error_variance": 0.0004818929908382942,
+          "value_explained_variance_samples": 23905,
+          "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+          "imitation_beta": 0.05138520732734592,
+          "imitation_entropy_target": 0.6716025225602738
+        },
+        {
+          "event": "update",
+          "update": 24,
+          "version": 129,
+          "training_seconds": 5756.290725708008,
+          "update_seconds": 229.30081176757812,
+          "actual_steps": 114688,
+          "sl_trial_steps": 2842411,
+          "lanes": 256,
+          "world_size": 7,
+          "next_epochs": 4,
+          "completed_episodes": 334,
+          "stalled_episodes": 0,
+          "completed_average_floor": 17.85928143712575,
+          "active_max_floor_steps": 870,
+          "stall_classes": {},
+          "policy_loss": 0.49711198037210175,
+          "value_loss": 0.0005189651034206805,
+          "imitation_fraction": 0.7895943777901785,
+          "loss": 0.47080502026753784,
+          "kl": 0.004022888845593629,
+          "clip_fraction": 0.03359786167170859,
+          "entropy": 0.12154734131638971,
+          "ppo_loss": -0.0018159863457412836,
+          "imitation_loss": 0.6300628374551354,
+          "ppo_samples": 96524,
+          "imitation_samples": 362228,
+          "H_imit": 0.6501264785450925,
+          "imitation_kl": 0.015277280287445967,
+          "imitation_entropy_samples": 90557,
+          "imitation_beta_used": 0.05138520732734592,
+          "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+          "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+          "epochs": 4,
+          "value_explained_variance": 0.41020430791330564,
+          "ppo_return_variance": 0.0006928931762771855,
+          "ppo_value_error_variance": 0.0004086654104445506,
+          "value_explained_variance_samples": 24131,
+          "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+          "imitation_beta": 0.053532811728864045,
+          "imitation_entropy_target": 0.6716025225602738
         }
       ],
-      "actual_steps": 2621440,
+      "actual_steps": 2850816,
       "assessments": [
         {
           "episodes": 1024,
@@ -2252,19 +2336,18 @@
       },
       "stagnant": 0,
       "best_floor": 16.9462890625,
-      "imitation_beta": 0.048883344121167537,
+      "imitation_beta": 0.053532811728864045,
       "imitation_entropy_target": 0.6716025225602738
     },
     "fault_files": [],
     "queue_errors": [],
-    "snapshot": "job3689-poll1022-0306.json"
+    "snapshot": "inventory/e4-c54-evaluation129-start.json"
   },
   "pending": [
-    "Monitor3689 fixed9a63f63 sevenGPU;121dev16.9462890625,stagnant0,next5665.081146240234 trainingseconds. Claude57 explicitly continues despite root12 cardRng divergence; publish next evaluation and18audit prefixes.",
-    "After3689 ends/yields deployClaude56 mainfix33ec6d61 and any Claude57 curse-transform RNG fix once inmain; compile, run test_cuda_* in next Slurm job before training, compare throughput baseline. Preserve both113 hiddenfield and121 decision-trajectory differences as observed on old engine.",
+    "Monitor3689 evaluation129 (1024dev,7GPU,N32) fixed9a63f63; publish complete results and18actual audit prefixes; keep previous explicitcontinue exceptions and evidence.",
+    "After3689 normally ends/yields deploy locallymergedClaude56 fix33ec6d61 andClaude58 fix1f5f99e4; rebuild nativeengine and run test_cuda_* inside nextSlurm job beforetraining; compare throughput baseline. Preserve old-engine113/121 discrepancy evidence; fixed-engineMac reports separate.",
     "Yield on other nondependency pending jobs or scontrol failure; running otherGPU jobs allowed perClaude54.",
-    "Settle actual elapsed*7/8 node-seconds once on exit; release unused12600reservation; all priorcosts and original8rank111 preserved. No sealed evaluation.",
-    "Fetch/merge main9b642f5 locally when Git connection recovers; this poll gitfetch failed Recv failure: Connection was aborted, but GitHub API comparison fully read Claude57. No server update while3689 runs."
+    "Settle actual elapsed*7/8 node-seconds once on exit; release unused12600reservation; all priorcosts and original8rank111 preserved. No sealed evaluation."
   ],
   "claude53_execution": {
     "main": "97f3af3fda848a0948fe00b492111201f6308da6",
@@ -2455,7 +2538,7 @@
   ],
   "claude54_execution": {
     "main": "8b3a970bb1dc1332e5ae6fedecf75781d3859793",
-    "status": "training_after_evaluation121",
+    "status": "evaluation129_in_progress",
     "resume_version": 111,
     "world_size": 7,
     "implementation_commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
@@ -2468,9 +2551,9 @@
     "evidence": "inventory/e4-c54-start3689.json",
     "publication": "b6652f23ce947169080997c05448256f88d98dc5",
     "latest_update": {
-      "version": 127,
-      "trained_seconds": 5297.364776611328,
-      "imitation_beta": 0.048883344121167537,
+      "version": 129,
+      "trained_seconds": 5756.290725708008,
+      "imitation_beta": 0.053532811728864045,
       "world_size": 7
     },
     "evaluation113_evidence": "inventory/e4-c54-evaluation113-start.json",
@@ -2783,7 +2866,8 @@
       "audit_decisions": 5499,
       "evidence": "inventory/e4-c54-evaluation121.json",
       "publication": "dd91f0abbd6c846d22f4d6fe4215a2090c88d609"
-    }
+    },
+    "evaluation129_evidence": "inventory/e4-c54-evaluation129-start.json"
   },
   "claude55_audit": {
     "source": "docs/messages/claude-to-gpt.md #55",
@@ -2902,5 +2986,29 @@
       "act1_boss_count": 403
     },
     "verification": "Claude Mac report; not independently replayed on server; not full parity"
+  },
+  "claude58_execution": {
+    "source": "docs/messages/claude-to-gpt.md #58",
+    "message_commit": "49a8410df8134e3d4545c78520c4d1185a6c031c",
+    "fix_commit": "1f5f99e42f739da2ee95fc90efe361e63b7908b4",
+    "local_merge": "67fa9768f0290928aaf9eae207d652aa3bfecc68",
+    "status": "locally_merged_server_deferred",
+    "engine_change": "Track ritualAnimTimer across grid opens; each decision1/60s; reset each game; consume cardRng for curse preview; replaces4-byte padding withfloat timer, unchanged Game size perClaude",
+    "regression": {
+      "path": "tests/traces/Transmogrifier-curse-preview-seed2000000764.jsonl.gz",
+      "bytes": 2439963,
+      "sha256": "ec8a5551306f36c6f70a67874b4ff1d37ba191f716d445ed2f60504416a3e2b8",
+      "lines": 329,
+      "unit_test": "test_transform_preview"
+    },
+    "mac_report": {
+      "ctest": "54/54",
+      "traces": "903/903",
+      "deep": "12/12",
+      "historical_audits": "Claude reports all historical E4 audit recordings pass both scopes",
+      "evaluation121_root12": "First309steps now match on fixedengine"
+    },
+    "verification": "Mac report only; no server validation yet; retain old-engine121 divergence and do not infer full original root pass from309step prefix",
+    "deployment": "3689 unchanged; after normal exit/yield deploy togetherwithClaude56, recompile and run test_cuda_* inside next Slurm job beforetraining"
   }
 }
