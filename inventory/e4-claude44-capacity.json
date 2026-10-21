@@ -1,7 +1,7 @@
 {
   "main": "74fa7320117d676390f422946632d396d53a3015",
   "native_fix": "acc5654bec9ece7a6c060febf3e2db47854ab3d7",
-  "status": "deployed_migrated111_final_native_target_pending",
+  "status": "gatespassed_migrated_resumed3671",
   "original_evidence": {
     "source": "Claude44",
     "seed": 2000000544,
@@ -20,16 +20,14 @@
   },
   "local_regression": "tests/test_e4_capacity.py: 1 passed in3.21s",
   "pending": [
-    "test_cuda_faults compile completion",
-    "short Slurm parity faults clone gates",
-    "full1024dev111 resume"
+    "complete1024dev111 assessment and18actualaudits"
   ],
   "build_repair": {
     "initial_full_build_exit": 2,
     "error": "cuda/batch.cu:132 unknown type name __device__ when included by host test_cuda_dispatch.cpp",
     "fix_commit": "3e408345f5942ba05ddc733dfd9cda09223b488f",
     "fix": "Define and undefine __device__ beside existing __global__ host-test shim; game code and assertions unchanged",
-    "status": "required target rebuild running",
+    "status": "required5targetscompiled_exit0",
     "targets": [
       "spire",
       "spire_gpu",
@@ -43,5 +41,7 @@
     "step1_charged_node_seconds": 35657,
     "reserved_node_seconds": 0
   },
-  "migration_evidence": "inventory/e4-c44-migration111.json"
+  "migration_evidence": "inventory/e4-c44-migration111.json",
+  "gpu_gates": "inventory/e4-c44-gates3670.json",
+  "resumed_job": "inventory/e4-c44-resume3671.json"
 }

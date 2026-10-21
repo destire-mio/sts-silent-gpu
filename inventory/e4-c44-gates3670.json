@@ -1,0 +1,25 @@
+{
+  "observed_at": "2026-10-21T18:44:26.079475+08:00",
+  "accounting": "JobId=3670 JobName=spire-e4-c44-check UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899949 Nice=0 Account=(null) QOS=(null) JobState=COMPLETED Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:34 TimeLimit=00:05:00 TimeMin=N/A SubmitTime=2026-10-21T18:43:30 EligibleTime=2026-10-21T18:43:30 AccrueTime=2026-10-21T18:43:30 StartTime=2026-10-21T18:43:30 EndTime=2026-10-21T18:44:04 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:43:30 Scheduler=Backfill Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* TRES=cpu=2,mem=12G,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=12G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c44-check.sh WorkDir=/home/zhuyouwei/sts-silent-gpu-split StdErr=/home/zhuyouwei/spire-downloads/e4-c44-check-3670.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c44-check-3670.log Power= TresPerNode=gres:gpu:V100:1 \n",
+  "log": "Internal ctest changing into directory: /home/zhuyouwei/spire-build-e3-v13-5adc725\nTest project /home/zhuyouwei/spire-build-e3-v13-5adc725\n    Start 4: test_cuda_faults\n1/3 Test #4: test_cuda_faults .................   Passed    1.43 sec\n    Start 5: test_cuda_parity\n2/3 Test #5: test_cuda_parity .................   Passed   23.79 sec\n    Start 7: cuda_python\n3/3 Test #7: cuda_python ......................   Passed    5.27 sec\n\n100% tests passed, 0 tests failed out of 3\n\nTotal Test time (real) =  30.51 sec\n{\"clone_copies_fault\": true, \"healthy_source_clears_reused_slot\": true, \"full_state_equal\": true}\nCHECK_EXIT=0 END=2026-10-21T18:44:04+08:00\n",
+  "files": {
+    "source.txt": {
+      "sha256": "65caa108af0652bfa9b35520e9ee432aaeaa6fb0eb58ccccb71bae5cf5928afd",
+      "text": "3e408345f5942ba05ddc733dfd9cda09223b488f\n"
+    },
+    "accounting-at-exit.txt": {
+      "sha256": "51e3dba7c51fb4e83a0b38e2c9ebe507cd91aaea37a802e1715662a67bb29799",
+      "text": "JobId=3670 JobName=spire-e4-c44-check\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899949 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:34 TimeLimit=00:05:00 TimeMin=N/A\n   SubmitTime=2026-10-21T18:43:30 EligibleTime=2026-10-21T18:43:30\n   AccrueTime=2026-10-21T18:43:30\n   StartTime=2026-10-21T18:43:30 EndTime=2026-10-21T18:48:30 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-21T18:43:30 Scheduler=Backfill\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=2,mem=12G,node=1,billing=2\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=2 MinMemoryNode=12G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/e4-c44-check.sh\n   WorkDir=/home/zhuyouwei/sts-silent-gpu-split\n   StdErr=/home/zhuyouwei/spire-downloads/e4-c44-check-3670.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-c44-check-3670.log\n   Power=\n   TresPerNode=gres:gpu:V100:1\n   \n\n"
+    }
+  },
+  "final_accounting_sha256": "b589efb444e1b15a7818fdc9ad13cab168103431ec56ca7e2fe1b55f1720a109",
+  "native_artifact_sha256": {
+    "spire_gpu.cpython-312-x86_64-linux-gnu.so": "e7d44de2edd87817dfc9d0dd4d76ebf57d3a8e6567b6e437891cd95bb41211f6",
+    "test_cuda_dispatch": "1cf57343fee1e26150c013fc83448865583bdb8e1ba165e48f0bc4b7fe336954",
+    "test_cuda_parity": "c93f5465786a48db93b75ff5169cd036eb619338aa270f2a38dbb70ae5d8cd40",
+    "spire.cpython-312-x86_64-linux-gnu.so": "16c874fb336cb51177e2d1ad92123159a0236678a531e2a25485ba379d7414c2",
+    "test_cuda_faults": "919a222254bb785e3fa9296e13ddd045da49a0095da7c26b1a9d6cccf01bb863"
+  },
+  "step1_charged_node_seconds": 35691,
+  "job_charge_node_seconds": 34
+}
