@@ -264,7 +264,7 @@ def main():
                     dist.all_reduce(steps, op=dist.ReduceOp.SUM)
                     trained_seconds += float(elapsed)
                     actual_steps += int(steps[0])
-                    row = dict(event='update', update=len(updates)+1, version=98+len(updates),
+                    row = dict(event='update', update=len(updates)+1, version=source['version']+len(updates)+1,
                         training_seconds=trained_seconds, update_seconds=float(elapsed),
                         actual_steps=int(steps[0]), sl_trial_steps=int(steps[1]), lanes=256,
                         next_epochs=epochs, completed_episodes=completed, stalled_episodes=stalled,
