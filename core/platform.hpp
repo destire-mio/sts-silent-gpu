@@ -27,8 +27,10 @@
 
 #if defined(__CUDA_ARCH__)
 #define SPIRE_ASSERT(condition) do { if (!(condition)) { ::spire::device_fault(::spire::assertion_id(__FILE__, __LINE__)); } } while (false)
+#define SPIRE_CAPACITY(condition, site) do { if (!(condition)) { ::spire::device_fault(site); } } while (false)
 #else
 #define SPIRE_ASSERT(condition) do { if (!(condition)) { __builtin_trap(); } } while (false)
+#define SPIRE_CAPACITY(condition, site) SPIRE_ASSERT(condition)
 #endif
 
 namespace spire {
@@ -42,6 +44,9 @@ SPIRE_FN SPIRE_INLINE constexpr uint32_t assertion_id(const char* file, uint32_t
     hash = (hash ^ line) * 16777619u;
     return hash == 0 ? 1 : hash;
 }
+// Fixed fault codes for engine capacity limits that the original game does not have.
+// Callers may treat them as counted guards instead of rule errors.
+inline constexpr uint32_t played_cards_capacity_fault = 0x43415031u;
 SPIRE_FN SPIRE_INLINE inline void record_fault(uint32_t& fault, uint32_t site) {
     if (fault == 0) fault = site;
 }
