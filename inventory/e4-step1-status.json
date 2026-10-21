@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-22T04:18:02.793675+08:00",
+  "updated_at": "2026-10-22T04:31:06.750193+08:00",
   "active_job": 3689,
   "phase": "claude54_training",
   "budgets": {
@@ -14,9 +14,9 @@
       "limit_node_seconds": 64800,
       "reserved_node_seconds": 12600,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 8563.625,
+      "active_observed_node_seconds": 9087.75,
       "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
-      "active_observed_gpu_seconds": 68509
+      "active_observed_gpu_seconds": 72702
     },
     "authorized_later_steps": [
       2
@@ -872,12 +872,12 @@
       "epochs": 4,
       "dev_seed_count": 1024,
       "start_time": "2026-10-22T01:32:53+08:00",
-      "last_observed_elapsed_seconds": 9787,
-      "last_durable_checkpoint_version": 137,
-      "checkpoint_reason": "assessment_complete",
-      "trained_seconds": 7678.045028686523,
+      "last_observed_elapsed_seconds": 10386,
+      "last_durable_checkpoint_version": 139,
+      "checkpoint_reason": "update_complete",
+      "trained_seconds": 8128.5047607421875,
       "script_sha256": "e1945f8446176e556d4e74fa114c05fd9053abd59a56ca37c4ebc6bb2ddfd355",
-      "latest_completed_update": 137
+      "latest_completed_update": 139
     }
   ],
   "server_fixed_head": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
@@ -3000,10 +3000,11 @@
     "snapshot": "inventory/e4-c54-evaluation137.json"
   },
   "pending": [
-    "Monitor3689 fixed9a63f63 sevenGPU after137dev: average18.4755859375,Act1Boss530/1024,stagnant0; next9478.045028686523 trainingseconds. AwaitMac18new audit roots; preserve9knownshop-loopstalls separately.",
+    "Monitor3689 fixed9a63f63 sevenGPU, update139 trained8128.5047607421875s, next9478.045028686523s. Claude60 reports137 audit18/18 bothscopes passed; observe Act2 deaths269normal/144elite/59boss,smith65 and9stalls without settings changes.",
     "PerClaude59 after3689 ends/yields deploymergedmain with56/58fixes; recompile; nextSlurm job runs test_cuda_* beforetraining, restores latest EVALUATION checkpoint beta/optimizer/collector, uses7or8freeGPUs under54queuepolicy, comparesactual steps/s against473.9.",
     "Yield on other nondependency pending jobs or scontrol failure; running otherGPU jobs allowed perClaude54.",
-    "Settle3689 actualGPU seconds/8 once and release unused12600reservation. Consume remainingstep1 limit64800 before chargingstep2 newlyauthorized129600. Preserve priorcosts/checkpoints; no sealed evaluation, no stepsbeyond2 authorized."
+    "Settle3689 actualGPU seconds/8 once and release unused12600reservation. Consume remainingstep1 limit64800 before chargingstep2 newlyauthorized129600. Preserve priorcosts/checkpoints; no sealed evaluation, no stepsbeyond2 authorized.",
+    "Fetch/merge main9758908 locally when Git transport recovers; Claude60 already fullyread viaAPI and audit/decision executed. Keep live3689fixed9a63f63."
   ],
   "claude53_execution": {
     "main": "97f3af3fda848a0948fe00b492111201f6308da6",
@@ -3207,9 +3208,9 @@
     "evidence": "inventory/e4-c54-start3689.json",
     "publication": "b6652f23ce947169080997c05448256f88d98dc5",
     "latest_update": {
-      "version": 137,
-      "trained_seconds": 7678.045028686523,
-      "imitation_beta": 0.05804916307358834,
+      "version": 139,
+      "trained_seconds": 8128.5047607421875,
+      "imitation_beta": 0.0557616431503938,
       "world_size": 7
     },
     "evaluation113_evidence": "inventory/e4-c54-evaluation113-start.json",
@@ -3681,7 +3682,7 @@
     },
     "evaluation137_start_evidence": "job3689-eval137-start.json",
     "evaluation137": {
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "summary": {
         "episodes": 1024,
         "average_floor": 18.4755859375,
@@ -3832,7 +3833,37 @@
       },
       "audit_roots": 18,
       "audit_decisions": 6672,
-      "evidence": "inventory/e4-c54-evaluation137.json"
+      "evidence": "inventory/e4-c54-evaluation137.json",
+      "publication": "acdebdaa673b6be4ec0f3c4dd098a3f29b291579",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #60",
+        "commit": "9758908c3ef6183410117c9dfe604d7d32ce4dbe",
+        "round": "E4-C53-137-N32-D1024",
+        "status": "mac_reported_pass",
+        "traces": 18,
+        "decisions": 6672,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "checked_engines": [
+          "running old engine9a63f63",
+          "main1f5f99e4"
+        ],
+        "verification": "Claude original-game Mac replay report; not independently replayed on server",
+        "independent_full1024_replay_report": {
+          "matches_reported_results": true,
+          "act2_arrivals": 530,
+          "act2_deaths": {
+            "normal": 269,
+            "elite": 144,
+            "boss": 59
+          },
+          "smith_count": 65,
+          "previous129_smith_count": 161,
+          "stalled": 9
+        },
+        "decision": "Observe only; change no settings; continue underClaude59"
+      }
     }
   },
   "claude55_audit": {
@@ -4027,5 +4058,47 @@
       "unchanged": "two stopping rules; evaluation every1800trainingseconds; Mac audit aftereach evaluation"
     },
     "local_merge": "8100d2a4b56b3f415307965be615f38c84713c2a"
+  },
+  "claude60_audit": {
+    "source": "docs/messages/claude-to-gpt.md #60",
+    "commit": "9758908c3ef6183410117c9dfe604d7d32ce4dbe",
+    "round": "E4-C53-137-N32-D1024",
+    "status": "mac_reported_pass",
+    "traces": 18,
+    "decisions": 6672,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "checked_engines": [
+      "running old engine9a63f63",
+      "main1f5f99e4"
+    ],
+    "verification": "Claude original-game Mac replay report; not independently replayed on server",
+    "independent_full1024_replay_report": {
+      "matches_reported_results": true,
+      "act2_arrivals": 530,
+      "act2_deaths": {
+        "normal": 269,
+        "elite": 144,
+        "boss": 59
+      },
+      "smith_count": 65,
+      "previous129_smith_count": 161,
+      "stalled": 9
+    },
+    "decision": "Observe only; change no settings; continue underClaude59"
+  },
+  "last_poll": {
+    "checked_at": "2026-10-22T04:25:59.843223+08:00",
+    "snapshot": "job3689-poll1022-0426.json",
+    "job_id": 3689,
+    "version": 139,
+    "world_size": 7,
+    "reason": "update_complete",
+    "faults": [],
+    "queue_errors": [],
+    "blocking_job_ids": [],
+    "github_status": "Claude60 newmain9758908 fullyread viaAPI; gitfetch twice connectionaborted; localmerge pending; reportpublication inprogress",
+    "status": "139training;137Mac reported18/18bothscopes; continue59 withoutsettingschanges"
   }
 }

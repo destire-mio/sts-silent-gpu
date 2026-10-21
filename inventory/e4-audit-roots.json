@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
   "current_round": "E4-C53-137-N32-D1024",
   "rounds": [
@@ -354,8 +354,37 @@
     {
       "name": "E4-C53-137-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
-      "observation_version": 2
+      "status": "mac_reported_pass",
+      "observation_version": 2,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #60",
+        "commit": "9758908c3ef6183410117c9dfe604d7d32ce4dbe",
+        "round": "E4-C53-137-N32-D1024",
+        "status": "mac_reported_pass",
+        "traces": 18,
+        "decisions": 6672,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "checked_engines": [
+          "running old engine9a63f63",
+          "main1f5f99e4"
+        ],
+        "verification": "Claude original-game Mac replay report; not independently replayed on server",
+        "independent_full1024_replay_report": {
+          "matches_reported_results": true,
+          "act2_arrivals": 530,
+          "act2_deaths": {
+            "normal": 269,
+            "elite": 144,
+            "boss": 59
+          },
+          "smith_count": 65,
+          "previous129_smith_count": 161,
+          "stalled": 9
+        },
+        "decision": "Observe only; change no settings; continue underClaude59"
+      }
     }
   ],
   "roots": [
