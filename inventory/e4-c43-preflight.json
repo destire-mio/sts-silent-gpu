@@ -1,0 +1,170 @@
+{
+  "checked_at": "2026-10-21T17:14:59.722798+08:00",
+  "jobs": [
+    {
+      "JobId": "3650",
+      "JobName": "optimize_loop",
+      "UserId": "shaoy(1013)",
+      "JobState": "RUNNING",
+      "Reason": "None",
+      "Dependency": "(null)",
+      "TimeLimit": "3-00:00:00",
+      "StartTime": "2026-10-21T10:48:13",
+      "RunTime": "06:26:46",
+      "NodeList": "gpu01",
+      "TresPerNode": null,
+      "TRES": "cpu=1,mem=2G,node=1,billing=1"
+    },
+    {
+      "JobId": "3656",
+      "JobName": "plot",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "DependencyNeverSatisfied",
+      "Dependency": "afterok:3655(failed)",
+      "TimeLimit": "02:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": null,
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    },
+    {
+      "JobId": "3663",
+      "JobName": "compute",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "DependencyNeverSatisfied",
+      "Dependency": "afterok:3662(failed)",
+      "TimeLimit": "06:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": "gres:gpu:V100:1",
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    },
+    {
+      "JobId": "3664",
+      "JobName": "analysis",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency",
+      "Dependency": "afterok:3663(unfulfilled)",
+      "TimeLimit": "02:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": null,
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    },
+    {
+      "JobId": "3665",
+      "JobName": "plot",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency",
+      "Dependency": "afterok:3664(unfulfilled)",
+      "TimeLimit": "02:00:00",
+      "StartTime": "Unknown",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": null,
+      "TRES": "cpu=2,mem=4G,node=1,billing=2"
+    }
+  ],
+  "node": {
+    "NodeName": "gpu01",
+    "State": "MIXED",
+    "Gres": "gpu:V100:8",
+    "GresUsed": "gpu:V100:0(IDX:N/A)",
+    "CfgTRES": "cpu=56,mem=128027M,billing=56",
+    "AllocTRES": "cpu=1,mem=2G"
+  },
+  "blocking_job_ids": [],
+  "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d",
+  "migration": {
+    "original_directory": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
+    "migrated_directory": "/home/zhuyouwei/spire-downloads/e4-c43-migrated-109",
+    "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
+    "old_commit": "f2db1e248e9c0e076646edfe130eadb5158eedd3",
+    "new_commit": "4fe2af0836959dd592d333ec267cdbdfce66d313",
+    "version": 109,
+    "trained_seconds": 3255.404754638672,
+    "next_evaluation": 3600.0,
+    "epochs": 8,
+    "files": [
+      {
+        "rank": 0,
+        "original_sha256": "e95176d30ad0bdaedee49fc75338d81b2070e62e7b2fc336fcf83a071af02331",
+        "migrated_sha256": "e02f0a25254c6059c298cf1ad06e2fa0524c2de9b6aac417852c2800a0b775f3",
+        "size": 12794280,
+        "payload_equal_except_commit_and_provenance": true
+      },
+      {
+        "rank": 1,
+        "original_sha256": "d12933489f2fda60a82f5aad3bd0eb5d055c05a717a3d879fe7e0ad5d5c390ff",
+        "migrated_sha256": "8f7485cd91a16908599e939f14c02a5ad85e815f5672fc770d5e51dbb1675949",
+        "size": 12804648,
+        "payload_equal_except_commit_and_provenance": true
+      },
+      {
+        "rank": 2,
+        "original_sha256": "c8f8d8ee60db852f2bfa74c81de49b800f1897b521bbf58b8569d2432ebe61e5",
+        "migrated_sha256": "8e40dcf16ba6784e2eb7054a2f54c447ce11f1a337fedbdc14c229077141ad2a",
+        "size": 12793256,
+        "payload_equal_except_commit_and_provenance": true
+      },
+      {
+        "rank": 3,
+        "original_sha256": "80ee3c6d07bea50d66cf953e8e0104d8cb6178c90d75c609de49de09f1260e4b",
+        "migrated_sha256": "a7038442399d4780febd80463a8ea64db120abc353013890957840d04cefb529",
+        "size": 12803560,
+        "payload_equal_except_commit_and_provenance": true
+      },
+      {
+        "rank": 4,
+        "original_sha256": "1a4cece3b5b8bfbd2d50a59c5e1cc96603df22d44df2dabf0a5a33640f9844f4",
+        "migrated_sha256": "af1beab60a6b4efe638ad42cd9293f738d6aaa180d6c4eb4ae482a331615ab2b",
+        "size": 12804648,
+        "payload_equal_except_commit_and_provenance": true
+      },
+      {
+        "rank": 5,
+        "original_sha256": "a874bc33eae447e01bcc59dc626ce17ebae6c9c3dcce0cfa93b7eaf6b5935ffb",
+        "migrated_sha256": "3e4d06e7bed7ce0ac35c9495511e079416a5cd1f8619bbf7ecd46b7d1c4227d8",
+        "size": 12808296,
+        "payload_equal_except_commit_and_provenance": true
+      },
+      {
+        "rank": 6,
+        "original_sha256": "739403a7c6405a306dd232c8a12429ded1efebbb5fb16acbff61bd6d5a7cd661",
+        "migrated_sha256": "ec90a80576066e9f85bbcb8e050f3409d1652cbe119bdbe46918cfe87c2928ee",
+        "size": 12797992,
+        "payload_equal_except_commit_and_provenance": true
+      },
+      {
+        "rank": 7,
+        "original_sha256": "ac7f98bcbbf262450ca55a81a15ea831ecc54c6317ee5abbf4e48beee05f0705",
+        "migrated_sha256": "7429f67a42948b574a50beebf36358fcc8ee2cf1ede2c6f285b5d7ad37f784d3",
+        "size": 12800616,
+        "payload_equal_except_commit_and_provenance": true
+      }
+    ]
+  },
+  "source_verified": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-0.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-1.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-2.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-3.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-4.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-5.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-6.pt: 成功\n/home/zhuyouwei/spire-downloads/e4-ab35-3647/B/rank-7.pt: 成功\n",
+  "head": "4fe2af0836959dd592d333ec267cdbdfce66d313",
+  "git_status": "",
+  "home_MiB": 19109,
+  "helper_sha256": {
+    "e4-c43-resume.sh": "8d984474f0df9ac0d82ee599015b030d41043019371d68795be5b14f4c9eb477",
+    "migrate-c43-109.py": "a421c80c63a5a63a96fb57f3c10eb8cb2f88aad6ead23e21fc7086020ba5e64b"
+  },
+  "migration_attempts": [
+    {
+      "result": "ModuleNotFoundError train before first checkpoint write; original files untouched; removed empty destination with rmdir"
+    },
+    {
+      "result": "Set existing repo PYTHONPATH; completed8files and readbackpayload equality"
+    }
+  ]
+}

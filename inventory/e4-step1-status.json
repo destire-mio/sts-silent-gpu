@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-21T10:55:42.476744+08:00",
-  "active_job": null,
-  "phase": "step1_yielded_waiting_for_gpu",
+  "updated_at": "2026-10-21T17:18:23.349156+08:00",
+  "active_job": 3669,
+  "phase": "step1_training",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -12,9 +12,9 @@
     "step_1": {
       "charged_node_seconds": 34697,
       "limit_node_seconds": 64800,
-      "reserved_node_seconds": 0,
+      "reserved_node_seconds": 14400,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 0
+      "active_observed_node_seconds": 39
     }
   },
   "cost_ledger": [
@@ -176,47 +176,79 @@
     }
   ],
   "current_job": {
-    "job_id": 3648,
-    "purpose": "Claude39 resumeB97 adaptiveepochs2-8 andPPO valueEV,1024dev every3600trainingseconds",
-    "state": "COMPLETED",
+    "job_id": 3669,
+    "purpose": "Claude42+43 resume109 with per-update dependency-aware safe queue checks",
+    "state": "RUNNING",
     "step": 1,
     "gpus": 8,
     "reserved_seconds": 14400,
-    "fixed_head": "f2db1e248e9c0e076646edfe130eadb5158eedd3",
-    "output": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
-    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c39-3648.slurm.log",
-    "submitted_at": "2026-10-21T09:57:25.527960+08:00",
+    "fixed_head": "4fe2af0836959dd592d333ec267cdbdfce66d313",
+    "output": "/home/zhuyouwei/spire-downloads/e4-c43-resume-3669",
+    "slurm_log": "/home/zhuyouwei/spire-downloads/e4-c43-resume-3669.log",
+    "submitted_at": "2026-10-21T17:15:53+08:00",
+    "start_time": "2026-10-21T17:15:53+08:00",
     "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
     "source_version": 97,
+    "resume_directory": "/home/zhuyouwei/spire-downloads/e4-c43-migrated-109",
+    "resume_version": 109,
     "lanes": 256,
     "trials": 32,
-    "initial_epochs": 4,
+    "initial_epochs": 8,
     "epoch_range": [
       2,
       8
     ],
     "dev_seed_count": 1024,
-    "script_sha256": "5e2111b9c6517464730709bdffa2dbb221eb2012a419a1f95cf82e28c9c91a629",
-    "start_time": "2026-10-21T09:57:26+08:00",
-    "last_observed_elapsed_seconds": 3302,
+    "script_sha256": "8d984474f0df9ac0d82ee599015b030d41043019371d68795be5b14f4c9eb477",
+    "last_observed_elapsed_seconds": 39,
     "last_durable_checkpoint_version": 109,
-    "latest_completed_update": 109,
-    "checkpoint_reason": "yield_to_waiting_user",
-    "trained_seconds": 3255.404754638672,
-    "elapsed_seconds": 3302,
-    "charged_node_seconds": 3302,
-    "exit_code": "0:0",
-    "end_time": "2026-10-21T10:52:28+08:00"
+    "checkpoint_reason": "started",
+    "trained_seconds": 3255.404754638672
   },
   "resume_checkpoint": {
-    "directory": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
+    "directory": "/home/zhuyouwei/spire-downloads/e4-c43-migrated-109",
     "version": 109,
-    "commit": "f2db1e248e9c0e076646edfe130eadb5158eedd3",
+    "commit": "4fe2af0836959dd592d333ec267cdbdfce66d313",
     "source_directory": "/home/zhuyouwei/spire-downloads/e4-ab35-3647/B",
     "trained_seconds": 3255.404754638672,
     "next_evaluation": 3600.0,
     "epochs": 8,
     "files": {
+      "rank-0.pt": {
+        "size": 12794280,
+        "sha256": "e02f0a25254c6059c298cf1ad06e2fa0524c2de9b6aac417852c2800a0b775f3"
+      },
+      "rank-1.pt": {
+        "size": 12804648,
+        "sha256": "8f7485cd91a16908599e939f14c02a5ad85e815f5672fc770d5e51dbb1675949"
+      },
+      "rank-2.pt": {
+        "size": 12793256,
+        "sha256": "8e40dcf16ba6784e2eb7054a2f54c447ce11f1a337fedbdc14c229077141ad2a"
+      },
+      "rank-3.pt": {
+        "size": 12803560,
+        "sha256": "a7038442399d4780febd80463a8ea64db120abc353013890957840d04cefb529"
+      },
+      "rank-4.pt": {
+        "size": 12804648,
+        "sha256": "af1beab60a6b4efe638ad42cd9293f738d6aaa180d6c4eb4ae482a331615ab2b"
+      },
+      "rank-5.pt": {
+        "size": 12808296,
+        "sha256": "3e4d06e7bed7ce0ac35c9495511e079416a5cd1f8619bbf7ecd46b7d1c4227d8"
+      },
+      "rank-6.pt": {
+        "size": 12797992,
+        "sha256": "ec90a80576066e9f85bbcb8e050f3409d1652cbe119bdbe46918cfe87c2928ee"
+      },
+      "rank-7.pt": {
+        "size": 12800616,
+        "sha256": "7429f67a42948b574a50beebf36358fcc8ee2cf1ede2c6f285b5d7ad37f784d3"
+      }
+    },
+    "original_directory": "/home/zhuyouwei/spire-downloads/e4-c39-3648",
+    "original_files": {
       "rank-6.pt": {
         "size": 12805961,
         "sha256": "739403a7c6405a306dd232c8a12429ded1efebbb5fb16acbff61bd6d5a7cd661"
@@ -252,9 +284,9 @@
     }
   },
   "pending_actions": [
-    "Wait until otherusers GPUuse andqueue clear;do not submit while busy",
-    "Resume C39 checkpoint109 from /home/zhuyouwei/spire-downloads/e4-c39-3648 using --resume and originalB97 --source, fixedf2db1e2; preserve3255.404754638672trainedseconds,3600next_evaluation,epochs8,collector/optimizer/allRNG",
-    "Before submission verify source/resume8hashes,repo clean/fixedversion,queue,disk,budget and noactiveprojectjob; reserve within remaining30103",
-    "At complete1024dev assessment publish summary andappend18Macpendingauditroots;stopafter3stagnant;settleactualjobcost once"
+    "Monitor3669 fixed4fe2af0; next dev at3600 cumulative trainingseconds,1024seeds; append18Macpendingauditroots on completion.",
+    "Every update and before eval check queue; yield on other schedulable pending or active GPU jobs; queue failure yields. Preserve and publish queue-yield/error evidence.",
+    "Append detailed queue snapshots to docs/e4.md and inventory when membership/state/resources change; do not change scheduling.",
+    "Settle3669 actual Slurm runtime once after exit; retain34697previouscharged and14400reservation until settlement; stop after3stagnant assessments."
   ]
 }
