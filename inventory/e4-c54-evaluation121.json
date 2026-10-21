@@ -1,0 +1,410 @@
+{
+  "observed_at": "2026-10-22T02:45:57.003278+08:00",
+  "job_id": 3689,
+  "summary": {
+    "episodes": 1024,
+    "average_floor": 16.9462890625,
+    "reach": {
+      "act1_boss": 0.3935546875,
+      "act2_boss": 0.001953125,
+      "act3_first_boss": 0.0,
+      "act3_second_boss": 0.0,
+      "act3_three_keys": 0.0,
+      "act4": 0.0,
+      "shield_spear": 0.0,
+      "heart": 0.0
+    },
+    "victories": 0,
+    "stalled": 0,
+    "stall_classes": {},
+    "faults": 0,
+    "truncated": 0,
+    "round": "E4-C53-121-N32-D1024",
+    "version": 121,
+    "trials": 32,
+    "training_lanes": 256,
+    "evaluation_lanes": 256,
+    "dev_seed_count": 1024,
+    "world_size": 7,
+    "evaluation_seconds": 820.3829345703125,
+    "trained_seconds": 3865.0811462402344,
+    "update_count": 16,
+    "actual_steps": 1933312,
+    "next_epochs": 4,
+    "combat": {
+      "all": {
+        "combats": 9051,
+        "decisions": 8472013,
+        "complete_trial_groups": 9051,
+        "capped_trials": 0,
+        "nested_event_combats": 208,
+        "pooled_policy_entropy": 0.6963499932871765,
+        "means": {
+          "policy_entropy": 0.7375707442883306,
+          "win_fraction": 0.7706641531322506,
+          "score_std": 0.0071025968697401055,
+          "distinct_end_states": 16.137664346481053,
+          "selected_score_gain": 0.009665260748718452
+        }
+      },
+      "act1": {
+        "combats": 7354,
+        "decisions": 6816044,
+        "complete_trial_groups": 7354,
+        "capped_trials": 0,
+        "nested_event_combats": 167,
+        "pooled_policy_entropy": 0.688886475035275,
+        "means": {
+          "policy_entropy": 0.7349461938454084,
+          "win_fraction": 0.8193245172695132,
+          "score_std": 0.006260821637132291,
+          "distinct_end_states": 15.63598041881969,
+          "selected_score_gain": 0.008524327427288758
+        }
+      },
+      "act2": {
+        "combats": 1689,
+        "decisions": 1648152,
+        "complete_trial_groups": 1689,
+        "capped_trials": 0,
+        "nested_event_combats": 40,
+        "pooled_policy_entropy": 0.7260283017830723,
+        "means": {
+          "policy_entropy": 0.7478865441040242,
+          "win_fraction": 0.5597431912374186,
+          "score_std": 0.010744580418084777,
+          "distinct_end_states": 18.28300769686205,
+          "selected_score_gain": 0.014615912858866565
+        }
+      },
+      "act3": {
+        "combats": 8,
+        "decisions": 7817,
+        "complete_trial_groups": 8,
+        "capped_trials": 0,
+        "nested_event_combats": 1,
+        "pooled_policy_entropy": 0.9467408459974305,
+        "means": {
+          "policy_entropy": 0.9722655028562358,
+          "win_fraction": 0.5703125,
+          "score_std": 0.011990702800203997,
+          "distinct_end_states": 24.375,
+          "selected_score_gain": 0.013261789717944339
+        }
+      },
+      "act4": {
+        "combats": 0,
+        "decisions": 0,
+        "complete_trial_groups": 0,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": null,
+        "means": {
+          "policy_entropy": null,
+          "win_fraction": null,
+          "score_std": null,
+          "distinct_end_states": null,
+          "selected_score_gain": null
+        }
+      }
+    },
+    "noncombat": {
+      "counts": {
+        "gold_appeared": 8540,
+        "gold_taken": 8437,
+        "potion_appeared": 3763,
+        "potion_taken": 2988,
+        "card_appeared": 7870,
+        "card_taken": 7820,
+        "relic_appeared": 2145,
+        "relic_taken": 2129,
+        "card_opened": 7870,
+        "card_bowl": 50,
+        "shop_purchases": 1506,
+        "mask_gold": 8540,
+        "mask_potion": 3009,
+        "mask_card": 8655,
+        "rest_rest": 2480,
+        "rest_smith": 173,
+        "rest_lift": 0,
+        "rest_toke": 1,
+        "rest_dig": 0,
+        "rest_recall": 0
+      },
+      "final_deck_size_mean": 20.5986328125,
+      "episodes": 1024,
+      "scope": "actual trajectories; displayed combat/treasure reward rows"
+    },
+    "imitation_beta": 0.047668518880574,
+    "imitation_entropy_target": 0.6716025225602738,
+    "best_average_floor_before": 16.205078125,
+    "combat_over_limit": 0,
+    "event_over_limit": 0,
+    "combat_normal_max_steps": 211,
+    "event_normal_max_steps": 78,
+    "combat_played_cards_limit": 0,
+    "combat_trials": 289632,
+    "combat_played_cards_limit_fraction": 0.0
+  },
+  "verification": {
+    "exact_dev_seeds": true,
+    "summary_recomputed": true,
+    "noncombat_recomputed": true,
+    "audit_actual_trajectories_match": true,
+    "audit_decisions": 5499,
+    "mac_status": "pending_mac_original_replay",
+    "combat_aggregate_verification": "server reported; not independently recomputed in this export"
+  },
+  "checkpoint_files": [
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-121/rank-0.pt",
+      "bytes": 13685253,
+      "sha256": "69485540856e090744ee8067b03f889c0b7abc589e8ba1e710b5b1291ac35633"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-121/rank-1.pt",
+      "bytes": 13690245,
+      "sha256": "92a1b79746667c77964f408444e97d47105bde3d60ed7a03baec8e525d3f11e2"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-121/rank-2.pt",
+      "bytes": 13684741,
+      "sha256": "dc45b5ec3dc175ba6494c305e42e9ae38e2687ee9cf257beb26f8ecee656a5aa"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-121/rank-3.pt",
+      "bytes": 13705285,
+      "sha256": "5f3dba5f2bf8875b0a3b920ee3ab3ff3f6fab6c265708fc749c7e187cd9d0ba1"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-121/rank-4.pt",
+      "bytes": 13691141,
+      "sha256": "b90f60f65934f577d82b5c956079e01eace2b6a60c737fd96aa353466726ce30"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-121/rank-5.pt",
+      "bytes": 13696133,
+      "sha256": "387da252433a9eae73113a154576d9e673abccb65cbedfde88adb4764c907283"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-121/rank-6.pt",
+      "bytes": 13712389,
+      "sha256": "453cd5875ede45c87638800cbae8caadb778e9ff3cff522cb20a6a2d185854a1"
+    }
+  ],
+  "source_files": [
+    {
+      "name": "E4-C53-121-N32-D1024-summary.json",
+      "sha256": "905cc5a582d2a72f62cf7e55a2d976725d547a830bf70cc33c9d268a4dd36437",
+      "size": 3289
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-audit.json",
+      "sha256": "36d1fff0f2fd884bf86d421b84f5ec3fe56e3325dcf160976339277ba682f75e",
+      "size": 20104
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-rank-0.json",
+      "sha256": "d08e425ea8374781854a9d143c92880e2a4b50b728a909b7bca95165661e4061",
+      "size": 233176
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-rank-1.json",
+      "sha256": "ebac7059fac8209df2d40d59c4d42b19eae0bf863d16ddddbec50437ff787914",
+      "size": 237976
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-rank-2.json",
+      "sha256": "f863e2bf44a7c935cc04b8f69d1f19cb4ad6ed194eba5a1c1b3f6f4fb156986c",
+      "size": 245858
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-rank-3.json",
+      "sha256": "5735984d712031d7f1fa3c57ad1b2eb22a3bff026779f34523ce5285889fada3",
+      "size": 231196
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-rank-4.json",
+      "sha256": "4c233f0334952d4b79e56a905aa6abdde06314762646e23a24de784f271ade60",
+      "size": 232963
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-rank-5.json",
+      "sha256": "8c65ff0688d519649f3cbddaeba3f9e248c06515c61e2d5f1f34d1be6db8ed1f",
+      "size": 241933
+    },
+    {
+      "name": "E4-C53-121-N32-D1024-rank-6.json",
+      "sha256": "c2a1a093f9d66f390a25e80b5c3cb852945bc4893c11f8f7ac6f31c624d942da",
+      "size": 231715
+    }
+  ],
+  "episode_archive": {
+    "path": "inventory/E4-C53-121-N32-D1024-episodes.json.gz",
+    "sha256": "3a6534c67973b39cc30555728dfa7d097ab2306ff36c3a9446310a6a5eb83753",
+    "bytes": 170961,
+    "episodes": 1024,
+    "encoding": "gzip JSON array; all original episode fields and actions preserved"
+  },
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
+    },
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 45277,
+      "limit_node_seconds": 64800,
+      "reserved_node_seconds": 12600,
+      "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
+      "active_observed_node_seconds": 3836.0,
+      "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
+      "active_observed_gpu_seconds": 30688
+    }
+  },
+  "queue": {
+    "checked_at": "2026-10-22T02:45:57.046012+08:00",
+    "jobs": [
+      {
+        "JobId": "3676",
+        "JobName": "srcsize_loop",
+        "UserId": "shaoy(1013)",
+        "JobState": "RUNNING",
+        "Reason": "None",
+        "Dependency": "(null)",
+        "TimeLimit": "3-00:00:00",
+        "StartTime": "2026-10-21T23:02:03",
+        "RunTime": "03:43:54",
+        "NodeList": "gpu01",
+        "TresPerNode": null,
+        "TRES": "cpu=1,mem=2G,node=1,billing=1"
+      },
+      {
+        "JobId": "3682",
+        "JobName": "plot",
+        "UserId": "shaoy(1013)",
+        "JobState": "PENDING",
+        "Reason": "DependencyNeverSatisfied",
+        "Dependency": "afterok:3681(failed)",
+        "TimeLimit": "02:00:00",
+        "StartTime": "Unknown",
+        "RunTime": "00:00:00",
+        "NodeList": "",
+        "TresPerNode": null,
+        "TRES": "cpu=2,mem=4G,node=1,billing=2"
+      },
+      {
+        "JobId": "3684",
+        "JobName": "warpx",
+        "UserId": "shaoy(1013)",
+        "JobState": "RUNNING",
+        "Reason": "None",
+        "Dependency": "(null)",
+        "TimeLimit": "1-00:00:00",
+        "StartTime": "2026-10-22T01:22:24",
+        "RunTime": "01:23:33",
+        "NodeList": "gpu01",
+        "TresPerNode": "gres:gpu:V100:1",
+        "TRES": "cpu=1,mem=2G,node=1,billing=1"
+      },
+      {
+        "JobId": "3685",
+        "JobName": "extract",
+        "UserId": "shaoy(1013)",
+        "JobState": "PENDING",
+        "Reason": "Dependency",
+        "Dependency": "afterok:3684(unfulfilled)",
+        "TimeLimit": "02:00:00",
+        "StartTime": "Unknown",
+        "RunTime": "00:00:00",
+        "NodeList": "",
+        "TresPerNode": null,
+        "TRES": "cpu=2,mem=4G,node=1,billing=2"
+      },
+      {
+        "JobId": "3686",
+        "JobName": "compute",
+        "UserId": "shaoy(1013)",
+        "JobState": "PENDING",
+        "Reason": "Dependency",
+        "Dependency": "afterok:3685(unfulfilled)",
+        "TimeLimit": "06:00:00",
+        "StartTime": "Unknown",
+        "RunTime": "00:00:00",
+        "NodeList": "",
+        "TresPerNode": "gres:gpu:V100:1",
+        "TRES": "cpu=2,mem=4G,node=1,billing=2"
+      },
+      {
+        "JobId": "3687",
+        "JobName": "analysis",
+        "UserId": "shaoy(1013)",
+        "JobState": "PENDING",
+        "Reason": "Dependency",
+        "Dependency": "afterok:3686(unfulfilled)",
+        "TimeLimit": "02:00:00",
+        "StartTime": "Unknown",
+        "RunTime": "00:00:00",
+        "NodeList": "",
+        "TresPerNode": null,
+        "TRES": "cpu=2,mem=4G,node=1,billing=2"
+      },
+      {
+        "JobId": "3688",
+        "JobName": "plot",
+        "UserId": "shaoy(1013)",
+        "JobState": "PENDING",
+        "Reason": "Dependency",
+        "Dependency": "afterok:3687(unfulfilled)",
+        "TimeLimit": "02:00:00",
+        "StartTime": "Unknown",
+        "RunTime": "00:00:00",
+        "NodeList": "",
+        "TresPerNode": null,
+        "TRES": "cpu=2,mem=4G,node=1,billing=2"
+      },
+      {
+        "JobId": "3689",
+        "JobName": "spire-e4-c54-seven",
+        "UserId": "zhuyouwei(1017)",
+        "JobState": "RUNNING",
+        "Reason": "None",
+        "Dependency": "(null)",
+        "TimeLimit": "04:00:00",
+        "StartTime": "2026-10-22T01:32:53",
+        "RunTime": "01:13:04",
+        "NodeList": "gpu01",
+        "TresPerNode": "gres:gpu:V100:7",
+        "TRES": "cpu=8,mem=96G,node=1,billing=8"
+      }
+    ],
+    "node": {
+      "NodeName": "gpu01",
+      "State": "MIXED",
+      "Gres": "gpu:V100:8",
+      "GresUsed": "gpu:V100:8(IDX:0-7)",
+      "CfgTRES": "cpu=56,mem=128027M,billing=56",
+      "AllocTRES": "cpu=10,mem=100G"
+    },
+    "blocking_job_ids": [],
+    "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+  },
+  "job": "JobId=3689 JobName=spire-e4-c54-seven UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899930 Nice=0 Account=(null) QOS=(null) JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=01:13:04 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-22T01:32:53 EligibleTime=2026-10-22T01:32:53 AccrueTime=2026-10-22T01:32:53 StartTime=2026-10-22T01:32:53 EndTime=2026-10-22T05:32:53 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T01:32:53 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:1885768 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c54.sh WorkDir=/home/zhuyouwei/sts-silent-gpu-split StdErr=/home/zhuyouwei/spire-downloads/e4-c54-3689.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c54-3689.log Power= TresPerNode=gres:gpu:V100:7 \n",
+  "continuation": {
+    "version": 122,
+    "next_evaluation": 5665.081146240234,
+    "stagnant": 0,
+    "best_floor": 16.9462890625,
+    "reach_change_percentage_points": {
+      "act1_boss": 4.98046875,
+      "act2_boss": -0.48828125,
+      "act3_first_boss": -0.09765625,
+      "act3_second_boss": 0.0,
+      "act3_three_keys": 0.0,
+      "act4": 0.0,
+      "shield_spear": 0.0,
+      "heart": 0.0
+    }
+  }
+}

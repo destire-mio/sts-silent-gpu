@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-22T02:38:25.952781+08:00",
+  "updated_at": "2026-10-22T02:48:26.940044+08:00",
   "active_job": 3689,
-  "phase": "claude54_evaluation121",
+  "phase": "claude54_training",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -14,9 +14,9 @@
       "limit_node_seconds": 64800,
       "reserved_node_seconds": 12600,
       "limit_authorization": "Claude39 at a9d2221fba5e15f198cea83c10d4503147095bc4; all priorcharges retained",
-      "active_observed_node_seconds": 3311.0,
+      "active_observed_node_seconds": 3836.0,
       "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
-      "active_observed_gpu_seconds": 26488
+      "active_observed_gpu_seconds": 30688
     }
   },
   "cost_ledger": [
@@ -857,37 +857,37 @@
       "epochs": 4,
       "dev_seed_count": 1024,
       "start_time": "2026-10-22T01:32:53+08:00",
-      "last_observed_elapsed_seconds": 3784,
-      "last_durable_checkpoint_version": 121,
-      "checkpoint_reason": "before_evaluation",
-      "trained_seconds": 3865.0811462402344,
+      "last_observed_elapsed_seconds": 4384,
+      "last_durable_checkpoint_version": 122,
+      "checkpoint_reason": "update_complete",
+      "trained_seconds": 4099.01335144043,
       "script_sha256": "e1945f8446176e556d4e74fa114c05fd9053abd59a56ca37c4ebc6bb2ddfd355",
-      "latest_completed_update": 121
+      "latest_completed_update": 122
     }
   ],
   "server_fixed_head": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
   "evaluation_watch": {
     "job_id": 3689,
     "status": {
-      "reason": "before_evaluation",
-      "phase": "evaluation",
+      "reason": "update_complete",
+      "phase": "training",
       "job": "3689",
       "commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
       "source_directory": "/home/zhuyouwei/spire-downloads/e4-c49-3674/evaluation-105",
       "source_version": 105,
-      "version": 121,
+      "version": 122,
       "lanes": 256,
       "epochs": 4,
       "trials": 32,
       "world_size": 7,
       "evaluation_lanes": 256,
       "dev_seed_count": 1024,
-      "trained_seconds": 3865.0811462402344,
-      "next_evaluation": 3716.274703979492,
+      "trained_seconds": 4099.01335144043,
+      "next_evaluation": 5665.081146240234,
       "evaluation_seconds": 0.0,
       "capacity_metrics": {
         "combat_played_cards_limit": 0,
-        "combat_trials": 0
+        "combat_trials": 54720
       },
       "updates": [
         {
@@ -1570,9 +1570,51 @@
           "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
           "imitation_beta": 0.047668518880574,
           "imitation_entropy_target": 0.6716025225602738
+        },
+        {
+          "event": "update",
+          "update": 17,
+          "version": 122,
+          "training_seconds": 4099.01335144043,
+          "update_seconds": 233.9322052001953,
+          "actual_steps": 114688,
+          "sl_trial_steps": 2841896,
+          "lanes": 256,
+          "world_size": 7,
+          "next_epochs": 4,
+          "completed_episodes": 332,
+          "stalled_episodes": 0,
+          "completed_average_floor": 16.46385542168675,
+          "active_max_floor_steps": 486,
+          "stall_classes": {},
+          "policy_loss": 0.527053468640953,
+          "value_loss": 0.0005106111521850279,
+          "imitation_fraction": 0.7923845563616071,
+          "loss": 0.5013770611904776,
+          "kl": 0.003557495045735412,
+          "clip_fraction": 0.03281046575112343,
+          "entropy": 0.14283122836842957,
+          "ppo_loss": -0.0009430876640982454,
+          "imitation_loss": 0.6653956894688806,
+          "ppo_samples": 95244,
+          "imitation_samples": 363508,
+          "H_imit": 0.681439408944335,
+          "imitation_kl": 0.010192019542732479,
+          "imitation_entropy_samples": 90877,
+          "imitation_beta_used": 0.047668518880574,
+          "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+          "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+          "epochs": 4,
+          "value_explained_variance": 0.3528479890339826,
+          "ppo_return_variance": 0.000613111068394746,
+          "ppo_value_error_variance": 0.0003967760608571833,
+          "value_explained_variance_samples": 23811,
+          "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+          "imitation_beta": 0.04668483024216788,
+          "imitation_entropy_target": 0.6716025225602738
         }
       ],
-      "actual_steps": 1933312,
+      "actual_steps": 2048000,
       "assessments": [
         {
           "episodes": 1024,
@@ -1841,10 +1883,155 @@
           "combat_played_cards_limit": 0,
           "combat_trials": 280032,
           "combat_played_cards_limit_fraction": 0.0
+        },
+        {
+          "episodes": 1024,
+          "average_floor": 16.9462890625,
+          "reach": {
+            "act1_boss": 0.3935546875,
+            "act2_boss": 0.001953125,
+            "act3_first_boss": 0.0,
+            "act3_second_boss": 0.0,
+            "act3_three_keys": 0.0,
+            "act4": 0.0,
+            "shield_spear": 0.0,
+            "heart": 0.0
+          },
+          "victories": 0,
+          "stalled": 0,
+          "stall_classes": {},
+          "faults": 0,
+          "truncated": 0,
+          "round": "E4-C53-121-N32-D1024",
+          "version": 121,
+          "trials": 32,
+          "training_lanes": 256,
+          "evaluation_lanes": 256,
+          "dev_seed_count": 1024,
+          "world_size": 7,
+          "evaluation_seconds": 820.3829345703125,
+          "trained_seconds": 3865.0811462402344,
+          "update_count": 16,
+          "actual_steps": 1933312,
+          "next_epochs": 4,
+          "combat": {
+            "all": {
+              "combats": 9051,
+              "decisions": 8472013,
+              "complete_trial_groups": 9051,
+              "capped_trials": 0,
+              "nested_event_combats": 208,
+              "pooled_policy_entropy": 0.6963499932871765,
+              "means": {
+                "policy_entropy": 0.7375707442883306,
+                "win_fraction": 0.7706641531322506,
+                "score_std": 0.0071025968697401055,
+                "distinct_end_states": 16.137664346481053,
+                "selected_score_gain": 0.009665260748718452
+              }
+            },
+            "act1": {
+              "combats": 7354,
+              "decisions": 6816044,
+              "complete_trial_groups": 7354,
+              "capped_trials": 0,
+              "nested_event_combats": 167,
+              "pooled_policy_entropy": 0.688886475035275,
+              "means": {
+                "policy_entropy": 0.7349461938454084,
+                "win_fraction": 0.8193245172695132,
+                "score_std": 0.006260821637132291,
+                "distinct_end_states": 15.63598041881969,
+                "selected_score_gain": 0.008524327427288758
+              }
+            },
+            "act2": {
+              "combats": 1689,
+              "decisions": 1648152,
+              "complete_trial_groups": 1689,
+              "capped_trials": 0,
+              "nested_event_combats": 40,
+              "pooled_policy_entropy": 0.7260283017830723,
+              "means": {
+                "policy_entropy": 0.7478865441040242,
+                "win_fraction": 0.5597431912374186,
+                "score_std": 0.010744580418084777,
+                "distinct_end_states": 18.28300769686205,
+                "selected_score_gain": 0.014615912858866565
+              }
+            },
+            "act3": {
+              "combats": 8,
+              "decisions": 7817,
+              "complete_trial_groups": 8,
+              "capped_trials": 0,
+              "nested_event_combats": 1,
+              "pooled_policy_entropy": 0.9467408459974305,
+              "means": {
+                "policy_entropy": 0.9722655028562358,
+                "win_fraction": 0.5703125,
+                "score_std": 0.011990702800203997,
+                "distinct_end_states": 24.375,
+                "selected_score_gain": 0.013261789717944339
+              }
+            },
+            "act4": {
+              "combats": 0,
+              "decisions": 0,
+              "complete_trial_groups": 0,
+              "capped_trials": 0,
+              "nested_event_combats": 0,
+              "pooled_policy_entropy": null,
+              "means": {
+                "policy_entropy": null,
+                "win_fraction": null,
+                "score_std": null,
+                "distinct_end_states": null,
+                "selected_score_gain": null
+              }
+            }
+          },
+          "noncombat": {
+            "counts": {
+              "gold_appeared": 8540,
+              "gold_taken": 8437,
+              "potion_appeared": 3763,
+              "potion_taken": 2988,
+              "card_appeared": 7870,
+              "card_taken": 7820,
+              "relic_appeared": 2145,
+              "relic_taken": 2129,
+              "card_opened": 7870,
+              "card_bowl": 50,
+              "shop_purchases": 1506,
+              "mask_gold": 8540,
+              "mask_potion": 3009,
+              "mask_card": 8655,
+              "rest_rest": 2480,
+              "rest_smith": 173,
+              "rest_lift": 0,
+              "rest_toke": 1,
+              "rest_dig": 0,
+              "rest_recall": 0
+            },
+            "final_deck_size_mean": 20.5986328125,
+            "episodes": 1024,
+            "scope": "actual trajectories; displayed combat/treasure reward rows"
+          },
+          "imitation_beta": 0.047668518880574,
+          "imitation_entropy_target": 0.6716025225602738,
+          "best_average_floor_before": 16.205078125,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 211,
+          "event_normal_max_steps": 78,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 289632,
+          "combat_played_cards_limit_fraction": 0.0
         }
       ],
       "best": {
-        "act1_boss": 0.34375,
+        "act1_boss": 0.3935546875,
         "act2_boss": 0.0068359375,
         "act3_first_boss": 0.0009765625,
         "act3_second_boss": 0.0,
@@ -1854,16 +2041,16 @@
         "heart": 0.0
       },
       "stagnant": 0,
-      "best_floor": 16.205078125,
-      "imitation_beta": 0.047668518880574,
+      "best_floor": 16.9462890625,
+      "imitation_beta": 0.04668483024216788,
       "imitation_entropy_target": 0.6716025225602738
     },
     "fault_files": [],
     "queue_errors": [],
-    "snapshot": "inventory/e4-c54-evaluation121-start.json"
+    "snapshot": "inventory/e4-c54-evaluation121.json"
   },
   "pending": [
-    "Monitor3689 evaluation121 (1024dev,7GPU,N32), publish complete results and18actual audit prefixes when available; fixed9a63f63.",
+    "Monitor3689 fixed9a63f63 sevenGPU after121dev: average16.9462890625, Act1Boss403/1024, stagnant0; next evaluation5665.081146240234 trainingseconds. Await Mac replay18 new audit roots.",
     "Claude56 fix33ec6d61 merged locally. After3689 ends/yields deploy main integration, recompile, run test_cuda_* inside next Slurm job before training; compare throughput to inventory/e4-c56-integration-pending.json. Preserve old-engine audit discrepancy; Mac fixed-engine pass is separately reported.",
     "Yield on other nondependency pending jobs or scontrol failure; running otherGPU jobs allowed perClaude54.",
     "Settle actual elapsed*7/8 node-seconds once on exit; release unused12600reservation; all priorcosts and original8rank111 preserved. No sealed evaluation."
@@ -2057,7 +2244,7 @@
   ],
   "claude54_execution": {
     "main": "8b3a970bb1dc1332e5ae6fedecf75781d3859793",
-    "status": "evaluation121_in_progress",
+    "status": "training_after_evaluation121",
     "resume_version": 111,
     "world_size": 7,
     "implementation_commit": "9a63f63704cd4e0d4f78e5b0deb0a263b7dc6ead",
@@ -2070,9 +2257,9 @@
     "evidence": "inventory/e4-c54-start3689.json",
     "publication": "b6652f23ce947169080997c05448256f88d98dc5",
     "latest_update": {
-      "version": 121,
-      "trained_seconds": 3865.0811462402344,
-      "imitation_beta": 0.047668518880574,
+      "version": 122,
+      "trained_seconds": 4099.01335144043,
+      "imitation_beta": 0.04668483024216788,
       "world_size": 7
     },
     "evaluation113_evidence": "inventory/e4-c54-evaluation113-start.json",
@@ -2232,7 +2419,159 @@
       "evidence": "inventory/e4-c54-evaluation113.json",
       "publication": "5638ad2d167a740e88a76f91fc3ec26db08e2322"
     },
-    "evaluation121_evidence": "inventory/e4-c54-evaluation121-start.json"
+    "evaluation121_evidence": "inventory/e4-c54-evaluation121-start.json",
+    "evaluation121_start_publication": "8ac81de92bd489a2acba3f53dad8b5a2846c4ccf",
+    "evaluation121": {
+      "status": "pending_mac_original_replay",
+      "summary": {
+        "episodes": 1024,
+        "average_floor": 16.9462890625,
+        "reach": {
+          "act1_boss": 0.3935546875,
+          "act2_boss": 0.001953125,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 0,
+        "stall_classes": {},
+        "faults": 0,
+        "truncated": 0,
+        "round": "E4-C53-121-N32-D1024",
+        "version": 121,
+        "trials": 32,
+        "training_lanes": 256,
+        "evaluation_lanes": 256,
+        "dev_seed_count": 1024,
+        "world_size": 7,
+        "evaluation_seconds": 820.3829345703125,
+        "trained_seconds": 3865.0811462402344,
+        "update_count": 16,
+        "actual_steps": 1933312,
+        "next_epochs": 4,
+        "combat": {
+          "all": {
+            "combats": 9051,
+            "decisions": 8472013,
+            "complete_trial_groups": 9051,
+            "capped_trials": 0,
+            "nested_event_combats": 208,
+            "pooled_policy_entropy": 0.6963499932871765,
+            "means": {
+              "policy_entropy": 0.7375707442883306,
+              "win_fraction": 0.7706641531322506,
+              "score_std": 0.0071025968697401055,
+              "distinct_end_states": 16.137664346481053,
+              "selected_score_gain": 0.009665260748718452
+            }
+          },
+          "act1": {
+            "combats": 7354,
+            "decisions": 6816044,
+            "complete_trial_groups": 7354,
+            "capped_trials": 0,
+            "nested_event_combats": 167,
+            "pooled_policy_entropy": 0.688886475035275,
+            "means": {
+              "policy_entropy": 0.7349461938454084,
+              "win_fraction": 0.8193245172695132,
+              "score_std": 0.006260821637132291,
+              "distinct_end_states": 15.63598041881969,
+              "selected_score_gain": 0.008524327427288758
+            }
+          },
+          "act2": {
+            "combats": 1689,
+            "decisions": 1648152,
+            "complete_trial_groups": 1689,
+            "capped_trials": 0,
+            "nested_event_combats": 40,
+            "pooled_policy_entropy": 0.7260283017830723,
+            "means": {
+              "policy_entropy": 0.7478865441040242,
+              "win_fraction": 0.5597431912374186,
+              "score_std": 0.010744580418084777,
+              "distinct_end_states": 18.28300769686205,
+              "selected_score_gain": 0.014615912858866565
+            }
+          },
+          "act3": {
+            "combats": 8,
+            "decisions": 7817,
+            "complete_trial_groups": 8,
+            "capped_trials": 0,
+            "nested_event_combats": 1,
+            "pooled_policy_entropy": 0.9467408459974305,
+            "means": {
+              "policy_entropy": 0.9722655028562358,
+              "win_fraction": 0.5703125,
+              "score_std": 0.011990702800203997,
+              "distinct_end_states": 24.375,
+              "selected_score_gain": 0.013261789717944339
+            }
+          },
+          "act4": {
+            "combats": 0,
+            "decisions": 0,
+            "complete_trial_groups": 0,
+            "capped_trials": 0,
+            "nested_event_combats": 0,
+            "pooled_policy_entropy": null,
+            "means": {
+              "policy_entropy": null,
+              "win_fraction": null,
+              "score_std": null,
+              "distinct_end_states": null,
+              "selected_score_gain": null
+            }
+          }
+        },
+        "noncombat": {
+          "counts": {
+            "gold_appeared": 8540,
+            "gold_taken": 8437,
+            "potion_appeared": 3763,
+            "potion_taken": 2988,
+            "card_appeared": 7870,
+            "card_taken": 7820,
+            "relic_appeared": 2145,
+            "relic_taken": 2129,
+            "card_opened": 7870,
+            "card_bowl": 50,
+            "shop_purchases": 1506,
+            "mask_gold": 8540,
+            "mask_potion": 3009,
+            "mask_card": 8655,
+            "rest_rest": 2480,
+            "rest_smith": 173,
+            "rest_lift": 0,
+            "rest_toke": 1,
+            "rest_dig": 0,
+            "rest_recall": 0
+          },
+          "final_deck_size_mean": 20.5986328125,
+          "episodes": 1024,
+          "scope": "actual trajectories; displayed combat/treasure reward rows"
+        },
+        "imitation_beta": 0.047668518880574,
+        "imitation_entropy_target": 0.6716025225602738,
+        "best_average_floor_before": 16.205078125,
+        "combat_over_limit": 0,
+        "event_over_limit": 0,
+        "combat_normal_max_steps": 211,
+        "event_normal_max_steps": 78,
+        "combat_played_cards_limit": 0,
+        "combat_trials": 289632,
+        "combat_played_cards_limit_fraction": 0.0
+      },
+      "audit_roots": 18,
+      "audit_decisions": 5499,
+      "evidence": "inventory/e4-c54-evaluation121.json"
+    }
   },
   "claude55_audit": {
     "source": "docs/messages/claude-to-gpt.md #55",
