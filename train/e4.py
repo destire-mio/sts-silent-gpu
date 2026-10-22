@@ -18,7 +18,7 @@ COMBAT_PHASE, COMPLETE_PHASE = 1, 2
 BOSS_ROOM, ELITE_ROOM, EVENT_ROOM, NEOW_ROOM = 2, 1, 6, 8
 MAX_REWARD = 156
 ACTION_KINDS = ("padding", "play", "end_turn", "choose", "potion_use", "potion_discard", "proceed", "skip")
-FORK_METRICS = ("forks", "branches", "completed_branches", "capped_branches", "score_gap_count",
+FORK_METRICS = ("forks", "branches", "completed_branches", "capped_branches", "fork_all_capped", "score_gap_count",
                 "score_gap_sum", "score_gap_max", "seconds", "searched_decisions")
 SEARCH_METRICS = ("combat_over_limit", "event_over_limit", "combat_normal_max_steps", "event_normal_max_steps")
 CAPACITY_METRICS = ("combat_played_cards_limit", "combat_trials")
@@ -685,6 +685,7 @@ class RoomSearch:
                     self.fork_metrics["score_gap_max"] = max(self.fork_metrics["score_gap_max"], gap)
                 else:
                     selected[parent] = None
+                    self.fork_metrics["fork_all_capped"] += 1
             return selected
         finally:
             self.contexts.pop()
@@ -846,9 +847,7 @@ class SegmentCollector:
             if selected:
                 for s, action in self.search.fork(model, selected, self.rewards,
                                                  self.floor_steps, self.noncombat_floor_steps).items():
-                    if action is None:
-                        self.stalled.add(s)
-                    else:
+                    if action is not None:
                         self.pending[s].append(action)
         imitation = []
         for j, s in enumerate(slots):

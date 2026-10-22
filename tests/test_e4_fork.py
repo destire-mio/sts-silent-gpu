@@ -178,11 +178,13 @@ def test_scripted_fork_inherits_floor_limits_and_counts_capacity():
     assert search.fork(None, {0: [0, 1, 2]}, [RewardLedger()] * 2, [200, 0], [200, 0]) == {0: None}
     assert search.fork_metrics['event_over_limit'] == search.fork_metrics['capped_branches'] == 3
     assert search.fork_metrics['combat_trials'] == 0
+    assert search.fork_metrics['fork_all_capped'] == 1
     search = scripted_search('capacity')
     assert search.fork(None, {0: [0, 1, 2]}, [RewardLedger()] * 2, [0, 0], [0, 0]) == {0: 1}
     assert search.fork_metrics['combat_played_cards_limit'] == 8
     assert search.fork_metrics['capped_branches'] == 1
     assert search.fork_metrics['completed_branches'] == 2
+    assert search.fork_metrics['fork_all_capped'] == 0
     assert search.capacity_metrics['combat_played_cards_limit'] == 0
     search = scripted_search('unknown')
     with pytest.raises(AssertionError, match='E4 engine fault'):
@@ -281,6 +283,60 @@ def test_collector_imitation_executes_only_selected_one_step():
     assert search.batch.state_bytes(0) == source and collector.paths[0] == []
     collector.advance([0], actions, search.progress())
     assert collector.paths[0] == [1] and search.batch.states[0]['stage'] == 1
+
+
+@pytest.mark.parametrize('capped_slots', [(0,), (0, 1)])
+def test_all_capped_forks_keep_policy_actions_without_stalling(capped_slots):
+    search = scripted_search()
+    collector = collector_with_lottery(search)
+    collector.floor_steps = [199 if s in capped_slots else 0 for s in range(2)]
+    collector.noncombat_floor_steps = collector.floor_steps.copy()
+    for slot in range(2):
+        search.batch.states[slot]['walk'] = slot in capped_slots
+    original_advance = search.batch.advance
+
+    def advance(slot, action):
+        state = search.batch.states[slot]
+        if state['walk'] and state['stage'] > 0:
+            state['stage'] += 1
+            state['rng'][0] += 1
+        else:
+            original_advance(slot, action)
+
+    search.batch.advance = advance
+    before = search.progress()
+    expected_policy_rng = torch.Generator().set_state(search.rng.get_state())
+    expected_fork_rng = torch.Generator().set_state(collector.fork_rng.get_state())
+    torch.rand(2, generator=expected_policy_rng)
+    torch.rand(2, generator=expected_fork_rng)
+    actions, values, logs, imitation = collector.choose(None, [0, 1], before, training=True)
+    assert torch.equal(search.rng.get_state(), expected_policy_rng.get_state())
+    assert torch.equal(collector.fork_rng.get_state(), expected_fork_rng.get_state())
+    assert actions == [0 if s in capped_slots else 1 for s in range(2)]
+    assert values == [.1, .1] and logs == [-1., -1.]
+    assert imitation == [s not in capped_slots for s in range(2)]
+    assert collector.stalled == set() and all(not p for p in collector.pending)
+    assert search.fork_metrics['fork_all_capped'] == len(capped_slots)
+    assert search.fork_metrics['capped_branches'] == 3 * len(capped_slots)
+    assert search.fork_metrics['completed_branches'] == 3 * (2 - len(capped_slots))
+    _, terminal = collector.advance([0, 1], actions, before)
+    assert terminal == [False, False] and not collector.completed
+    assert collector.paths == [[a] for a in actions]
+    assert [s['stage'] for s in search.batch.states[:2]] == [1, 1]
+
+
+
+@pytest.mark.parametrize('kind', ['combat', 'event'])
+def test_capped_room_sl_still_stalls_without_counting_a_fork(kind):
+    search = scripted_search()
+    collector = collector_with_lottery(search)
+    search.batch.states[0]['progress'][PHASE] = COMBAT_PHASE if kind == 'combat' else COMPLETE_PHASE
+    search.batch.states[0]['progress'][SCREEN] = 0 if kind == 'combat' else 8
+    search.plan = Mock(return_value={0: None})
+    search.fork = Mock(side_effect=AssertionError('Capped room SL triggered a fork'))
+    assert collector.choose(None, [0], search.progress(), training=True)[3] == [False]
+    search.plan.assert_called_once_with(None, [0], kind)
+    assert collector.stalled == {0} and search.fork_metrics['fork_all_capped'] == 0
 
 
 def test_evaluate_never_calls_fork_or_draws_lottery():
@@ -406,6 +462,7 @@ def test_b_runner_restores_c163_state_and_evaluation_resume(tmp_path, monkeypatc
     optimizer.load_state_dict.assert_called_with(source['optimizer'])
     resume_dir = tmp_path / 'resume'
     resume_dir.mkdir()
+    saved['fork_metrics']['fork_all_capped'] = 7
     saved['phase'] = 'evaluation'
     saved['evaluation_state'] = deepcopy(saved['train_state'])
     saved['evaluation_state']['evaluation_waiting'] = deque([2000000000])
@@ -413,7 +470,41 @@ def test_b_runner_restores_c163_state_and_evaluation_resume(tmp_path, monkeypatc
     monkeypatch.setattr('sys.argv', argv + ['--resume', str(resume_dir)])
     runner.main('B')
     assert checkpoints[-1]['phase'] == 'evaluation'
+    assert checkpoints[-1]['fork_metrics']['fork_all_capped'] == 7
     assert torch.equal(checkpoints[-1]['evaluation_state']['fork_rng'], saved['evaluation_state']['fork_rng'])
+
+    resumed = checkpoints[-1]
+    resumed['evaluation_state']['evaluation_waiting'] = None
+    resumed['combat_diagnostics'] = []
+    torch.save(resumed, resume_dir / 'rank-0.pt')
+    round_name = 'E4-C68-B-163-N32-D1024'
+    episode = dict(floor=18, reach=dict.fromkeys(REACH, False), outcome='death',
+                   candidates=[], noncombat=dict(counts={}), final_deck_size=12)
+    for rank in range(1, 7):
+        rows = [dict(episode, seed=seed) for seed in range(2000000000 + rank, 2000001024, 7)]
+        (output_dir / f'{round_name}-rank-{rank}.json').write_text(json.dumps(rows))
+        (output_dir / f'{round_name}-combat-{rank}.json').write_text('[]')
+        metrics = dict.fromkeys(resumed['fork_metrics'], 0)
+        metrics['fork_all_capped'] = rank
+        (output_dir / f'{round_name}-fork-{rank}.json').write_text(json.dumps(metrics))
+    rows = [dict(episode, seed=seed) for seed in range(2000000000, 2000001024, 7)]
+    monkeypatch.setattr(SegmentCollector, 'evaluate', Mock(return_value=rows))
+    monkeypatch.setattr(runner, 'waiting', Mock(return_value=False))
+    monkeypatch.setattr(runner.dist, 'all_reduce', Mock())
+    monkeypatch.setattr(runner.dist, 'broadcast_object_list', Mock())
+    monkeypatch.setattr(runner.shutil, 'copyfile', Mock())
+    original_tensor = torch.tensor
+    monkeypatch.setattr(torch, 'tensor', lambda *args, **kwargs:
+                        original_tensor(*args, **dict(kwargs, device='cpu')))
+    monkeypatch.setattr(runner, 'atomic_json', lambda path, value: path.write_text(json.dumps(value)))
+    monkeypatch.setattr('sys.argv', argv + ['--resume', str(resume_dir), '--evaluate-only'])
+    runner.main('B')
+    report = json.loads((output_dir / f'{round_name}-summary.json').read_text())
+    assert report['fork']['fork_all_capped'] == 7 + sum(range(1, 7))
+    assert json.loads((output_dir / f'{round_name}-fork-0.json').read_text())['fork_all_capped'] == 7
+    assert checkpoints[-1]['reason'] == 'evaluation_only_complete'
+    assert checkpoints[-1]['fork_metrics']['fork_all_capped'] == 7
+    assert checkpoints[-1]['assessments'][-1]['fork']['fork_all_capped'] == 28
 
 
 def test_native_cpu_game_bytes_rng_and_selected_step(monkeypatch):
@@ -433,7 +524,7 @@ def test_native_cpu_game_bytes_rng_and_selected_step(monkeypatch):
     class Policy:
         def __call__(self, inputs):
             kinds = inputs['candidate_kinds']
-            return (kinds == 1).float() * 5, torch.zeros(len(kinds))
+            return ((kinds == 1).float() * 5).masked_fill(~inputs['candidate_mask'], -torch.inf), torch.zeros(len(kinds))
 
     torch.set_num_threads(1)
     search = RoomSearch(1, 32, torch.device('cpu'), torch.Generator().manual_seed(68), scratch_slots=64)

@@ -1,0 +1,57 @@
+{
+  "authorization": "Claude70 e24bf737c9612e7d7f287539de11a77ab5605a25 read full through GitHub connector; raw object not obtained due Git transport error",
+  "base": "b811dc81b87d87eb228fce356812f7f31be192dd",
+  "recorded_at": "2026-10-22T20:31:16.302318+08:00",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "changes": [
+    "Mask fake native test Policy logits with candidate_mask per Mac correction",
+    "When all fork branches capped, retain original policy action/value/log and do not stall or imitate",
+    "Count fork_all_capped per parent; existing generic fork metric pipeline saves/restores and aggregates every assessment"
+  ],
+  "files": {
+    "train/e4.py": "2f0a00e6cac27f6b10770d8f038fc028d24048c3a7c797384cd3030dff4c7126",
+    "tests/test_e4_fork.py": "1539446d475a65d60796cc5af8b7e08a27835550671f66bed6dfa3d2af11e244",
+    "tools/e4_continue.py": "99c5bf4947fed5d4cb97998607993b6dfc093b831c5c088ddf32f5591c5c7df7"
+  },
+  "parent_independent_regression": {
+    "passed": 27,
+    "skipped": 1,
+    "seconds": 5.26,
+    "files": [
+      "tests/test_e4_fork.py",
+      "tests/test_e4_capacity.py",
+      "tests/test_e4_reward_mask.py",
+      "tests/test_e4_entropy.py",
+      "tests/test_e4_queue_failure.py"
+    ],
+    "native_skip": "Local Windows spire native binding unavailable; not a native pass",
+    "first_attempt": "Invalid result due restricted temporary directory permissions; rerun via approved escalation passed"
+  },
+  "Mac_report": {
+    "source": "Claude70",
+    "commit": "e24bf737c9612e7d7f287539de11a77ab5605a25",
+    "scope": "b811dc81 with test Policy mask corrected by Mac",
+    "test_e4_fork": "19/19 actual native CPU passed",
+    "game_state_and_rng": "Main root bytes unchanged; branch roots identical; RNG restored; only selected one step matches replay",
+    "true_model_collector": "8 lane x 6 segments on CPU without fault",
+    "new_all_capped_repair": "Locally regression-tested, not claimed rerun on Mac"
+  },
+  "counter_regression": {
+    "actual_torch_save_load": true,
+    "saved_rank_count": 7,
+    "seven_rank_aggregate": 28,
+    "assessment_and_checkpoint_preserved": true,
+    "scope": "CPU mock runner full evaluation path, not real GPU or distributed execution"
+  },
+  "event_rollout": "Fork branches use ordinary policy for event decisions, not event SL; uniform across options, explicitly accepted in Claude70",
+  "C": 163,
+  "training_target_seconds": 2002.1460876464844,
+  "B_submitted": false,
+  "notes": [
+    "No game rules/reward/hyperparameter change",
+    "Existing event/combat None failure behavior unchanged",
+    "No repeated policy sampling in all-capped fallback",
+    "B still requires published fix and fresh resource/checkpoint/budget + exact five CUDA gates"
+  ]
+}
