@@ -1,0 +1,33 @@
+{
+  "source_claude": 69,
+  "source_commit": "6d306ae1ed59de444ce039835f0154bba47e0c21",
+  "record_model": "gpt-6-luna/medium",
+  "audit163": "Macreportedpass18traces6591decisionsbothscopes18/18,1024replaymean19.202/act1Boss590/act2Boss6/stall0",
+  "parent_checks": "Rootactions/history/source/checkpoint/episode/summary/throughput/transport unchanged;uniformMacreport and auditSHA/status chain; corrected two pendingstatusleftovers",
+  "replacements_sha256": {
+    "e4-audit-roots.json": "c00d6d1015c7ecba690b3cfdbcea9ed470476c3c862bf0155594b032b1a3a2d9",
+    "E4-C66-job3738-163-N32-D1024-audit.json": "85ab557643bc109ff06fe31f5d764f6fe40220ca6f42c264308219d82b76dd56",
+    "e4-c66-job3738-evaluation163.json": "c30794d4f30ea31a90c276ee41b9a582b94aebdade66517e3ffc5afa1fcac3a9"
+  },
+  "fork_branch": "codex/e4-fork",
+  "fork_commit": "b811dc81b87d87eb228fce356812f7f31be192dd",
+  "fork_push_verified": "gitpush + independentls-remote exactSHA",
+  "fork_proof": "codex/e4-fork:inventory/e4-c68-fork-local-validation.json",
+  "fork_models": "gpt-6.1-sol/xhigh implementation andindependentreview",
+  "parent_CPU_regression": {
+    "passed": 23,
+    "native_skipped": 1,
+    "seconds": 4.62
+  },
+  "native_gate": "AssignedtoClaudeMacin69;notpassed yet;mocknotacceptance",
+  "native_test": "tests/test_e4_fork.py::test_native_cpu_game_bytes_rng_and_selected_step",
+  "B_submitted": false,
+  "step2_budget": {
+    "limit_node_seconds": 36000,
+    "charged": 0,
+    "reserved": 0
+  },
+  "runtime3738": "Stillfixed d28c060,no serverchanges;latest172evaluation nofault",
+  "sampling_contract": "Game-rootstate/RNGsame;existingSearch.event-stylebatched externalpolicy sampling;mainpolicy RNGrestored;notperbranchidenticalexternalstreams",
+  "training_time_contract": "BtargetactualApostC163trainingseconds;completeupdategranularity/actual/overshootexplicit,notexactsecondsclaim"
+}

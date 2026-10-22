@@ -1,17 +1,38 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
   "current_round": "E4-C66-job3738-163-N32-D1024",
   "rounds": [
     {
       "name": "E4-C66-job3738-163-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "job_id": 3738,
       "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
-      "source_round": "E4-C53-163-N32-D1024"
+      "source_round": "E4-C53-163-N32-D1024",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #69",
+        "commit": "6d306ae1ed59de444ce039835f0154bba47e0c21",
+        "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+        "model": "gpt-6-luna",
+        "reasoning_effort": "medium",
+        "round": "E4-C66-job3738-163-N32-D1024",
+        "traces": 18,
+        "decisions": 6591,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "independent_full1024_replay_report": {
+          "average_floor_rounded": "19.202",
+          "act1_boss_count": 590,
+          "act2_boss_count": 6,
+          "stalled_episodes": 0,
+          "episodes": 1024
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host"
+      }
     }
   ],
   "roots": [

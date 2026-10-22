@@ -5,7 +5,7 @@
   "round": "E4-C66-job3738-163-N32-D1024",
   "source_round": "E4-C53-163-N32-D1024",
   "source_directory": "/home/zhuyouwei/spire-downloads/e4-c66-3738",
-  "captured_at": "2026-10-22T19:35:20.866330+08:00",
+  "captured_at": "2026-10-22T19:35:20.86633+08:00",
   "summary": {
     "episodes": 1024,
     "average_floor": 19.2021484375,
@@ -175,7 +175,7 @@
     "noncombat_recomputed": true,
     "audit_actual_trajectories_match": true,
     "audit_decisions": 6591,
-    "mac_status": "pending_mac_original_replay",
+    "mac_status": "mac_reported_pass",
     "local_agent_checks": {
       "bundle_expected_sha256": true,
       "job3738_provenance": true,
@@ -233,10 +233,10 @@
   },
   "audit_archive": {
     "path": "inventory/E4-C66-job3738-163-N32-D1024-audit.json",
-    "sha256": "b11668daa19329f6203483d6ae8eb729c4072d8bb2a436ef9653e3eb02bd4a1b",
+    "sha256": "85ab557643bc109ff06fe31f5d764f6fe40220ca6f42c264308219d82b76dd56",
     "roots": 18,
     "decisions": 6591,
-    "status": "pending_mac_original_replay"
+    "status": "mac_reported_pass"
   },
   "source_files": [
     {
@@ -897,5 +897,26 @@
     "step2_limit": 36000,
     "step2_reserved": 0,
     "settlement": "Active3738cost not settled; step2 no job submitted"
+  },
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #69",
+    "commit": "6d306ae1ed59de444ce039835f0154bba47e0c21",
+    "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "model": "gpt-6-luna",
+    "reasoning_effort": "medium",
+    "round": "E4-C66-job3738-163-N32-D1024",
+    "traces": 18,
+    "decisions": 6591,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "independent_full1024_replay_report": {
+      "average_floor_rounded": "19.202",
+      "act1_boss_count": 590,
+      "act2_boss_count": 6,
+      "stalled_episodes": 0,
+      "episodes": 1024
+    },
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host"
   }
 }
