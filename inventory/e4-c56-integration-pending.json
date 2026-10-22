@@ -45,5 +45,12 @@
     "actual_steps": 1146880,
     "update_seconds": 2419.8482055664062,
     "actual_steps_per_second": 473.9470836897199
+  },
+  "current_deployment": {
+    "fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "source_synced": true,
+    "compile": "interrupted_timestamp_anomaly",
+    "cuda_gates": "not_run",
+    "evidence": "inventory/e4-c61-recovery-deployment.json"
   }
 }

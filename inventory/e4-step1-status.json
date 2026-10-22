@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-22T05:17:39.174003+08:00",
-  "active_job": 3689,
-  "phase": "claude54_training",
+  "updated_at": "2026-10-22T14:38:00.289435+08:00",
+  "active_job": null,
+  "phase": "blocked_server_timestamp_anomaly",
   "budgets": {
     "step_0": {
       "charged_node_seconds": 2127,
@@ -10,13 +10,13 @@
     },
     "later_steps_authorized": false,
     "step_1": {
-      "charged_node_seconds": 45277,
+      "charged_node_seconds": 57721.25,
       "limit_node_seconds": 194400,
-      "reserved_node_seconds": 12600,
+      "reserved_node_seconds": 0,
       "limit_authorization": "Claude39 original64800 plusClaude59 supplemental129600 reclassifiedasstep1 byClaude61",
-      "active_observed_node_seconds": 11187.75,
+      "active_observed_node_seconds": 0,
       "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
-      "active_observed_gpu_seconds": 89502,
+      "active_observed_gpu_seconds": 0,
       "original_limit_node_seconds": 64800,
       "continuation_limit_node_seconds": 129600,
       "charge_order": "Consume original64800 first, then step1 continuation129600; all accumulatedcharges preserved"
@@ -4333,5 +4333,12 @@
       "preserve_all_charges": true
     },
     "decision": "Other execution remainsClaude59; sevenGPUsharing exception now inplan"
+  },
+  "recovery_deployment": "inventory/e4-c61-recovery-deployment.json",
+  "blocker": {
+    "kind": "server_build_timestamp_anomaly",
+    "observed_at": "2026-10-22T14:38:00.289435+08:00",
+    "description": "Fresh build dependency files repeatedly126seconds in future relative to server clock; build interrupted per user server-anomaly stop rule; no GPU job submitted",
+    "evidence": "inventory/e4-c61-recovery-deployment.json"
   }
 }

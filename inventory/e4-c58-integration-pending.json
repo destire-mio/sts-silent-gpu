@@ -20,5 +20,12 @@
     "evaluation121_root12": "First309steps now match on fixedengine"
   },
   "verification": "Mac report only; no server validation yet; retain old-engine121 divergence and do not infer full original root pass from309step prefix",
-  "deployment": "3689 unchanged; after normal exit/yield deploy togetherwithClaude56, recompile and run test_cuda_* inside next Slurm job beforetraining"
+  "deployment": "3689 unchanged; after normal exit/yield deploy togetherwithClaude56, recompile and run test_cuda_* inside next Slurm job beforetraining",
+  "current_deployment": {
+    "fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "source_synced": true,
+    "compile": "interrupted_timestamp_anomaly",
+    "cuda_gates": "not_run",
+    "evidence": "inventory/e4-c61-recovery-deployment.json"
+  }
 }
