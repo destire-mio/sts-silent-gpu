@@ -1,0 +1,270 @@
+{
+  "checked_at": "2026-10-22T16:41:59.128607+08:00",
+  "job_id": 3730,
+  "scontrol": "JobId=3730 JobName=spire-e4-c62 UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899889 Nice=0 Account=(null) QOS=(null) JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:02:39 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-22T16:39:19 EligibleTime=2026-10-22T16:39:19 AccrueTime=2026-10-22T16:39:19 StartTime=2026-10-22T16:39:20 EndTime=2026-10-22T20:39:20 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:39:20 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:3100948 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=80G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=80G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c62.sh WorkDir=/home/zhuyouwei StdErr=/home/zhuyouwei/spire-downloads/e4-c62-3730.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c62-3730.log Power= TresPerNode=gres:gpu:V100:7 \n",
+  "queue": "3726 shaoy PENDING (Dependency) N/A\n3727 shaoy PENDING (Dependency) gres:gpu:V100:1\n3728 shaoy PENDING (Dependency) N/A\n3729 shaoy PENDING (Dependency) N/A\n3723 shaoy RUNNING gpu01 N/A\n3725 shaoy RUNNING gpu01 gres:gpu:V100:1\n3730 zhuyouwei RUNNING gpu01 gres:gpu:V100:7\n",
+  "submission": {
+    "job_id": 3730,
+    "submitted_at": "2026-10-22T16:39:19.502497+08:00",
+    "script_sha256": "f3ef270bab9d7922bd4e7cef6b9923e37a0c58f1530a0a412ed91dc32e5ce057",
+    "fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "gpus": 7,
+    "reserved_node_seconds": 12600,
+    "step1_charged_node_seconds": 57723
+  },
+  "preflight": {
+    "checked_at": "2026-10-22T16:39:19.483196+08:00",
+    "queue": {
+      "checked_at": "2026-10-22T16:39:17.340499+08:00",
+      "jobs": [
+        {
+          "JobId": "3723",
+          "JobName": "srcsize_loop",
+          "UserId": "shaoy(1013)",
+          "JobState": "RUNNING",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "3-00:00:00",
+          "StartTime": "2026-10-22T16:36:48",
+          "RunTime": "00:02:29",
+          "NodeList": "gpu01",
+          "TresPerNode": null,
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3724",
+          "JobName": "pipeline",
+          "UserId": "shaoy(1013)",
+          "JobState": "COMPLETED",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "01:00:00",
+          "StartTime": "2026-10-22T16:37:00",
+          "RunTime": "00:00:02",
+          "NodeList": "gpu01",
+          "TresPerNode": null,
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3725",
+          "JobName": "warpx",
+          "UserId": "shaoy(1013)",
+          "JobState": "RUNNING",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "1-00:00:00",
+          "StartTime": "2026-10-22T16:37:03",
+          "RunTime": "00:02:14",
+          "NodeList": "gpu01",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3726",
+          "JobName": "extract",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3725(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3727",
+          "JobName": "compute",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3726(unfulfilled)",
+          "TimeLimit": "06:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3728",
+          "JobName": "analysis",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3727(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3729",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "PENDING",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3728(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "Unknown",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        }
+      ],
+      "node": {
+        "NodeName": "gpu01",
+        "State": "MIXED",
+        "Gres": "gpu:V100:8",
+        "GresUsed": "gpu:V100:1(IDX:0)",
+        "CfgTRES": "cpu=56,mem=128027M,billing=56",
+        "AllocTRES": "cpu=2,mem=4G"
+      },
+      "blocking_job_ids": [],
+      "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+    },
+    "world_size": 7,
+    "free_gpu_count": 7,
+    "requested_memory_mib": 81920,
+    "memory_left_mib": 42011.0,
+    "memavailable_mib": 100964.03515625,
+    "home_mib": 25090,
+    "migration": {
+      "original_directory": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-145",
+      "migrated_directory": "/home/zhuyouwei/spire-downloads/e4-c61-migrated-145",
+      "new_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+      "version": 145,
+      "world_size": 7,
+      "all_model_optimizer_hashes_equal": true,
+      "original_files_unchanged": true,
+      "files": [
+        {
+          "rank": 0,
+          "original_sha256": "33c54f87b7649a1f56fe4944334dfc7f7497e3ede061d7322738887ab278b2cc",
+          "migrated_sha256": "da26adb6d393695053e6fc2e4ccf29beb8b20a630492ee8d28aa0a30bd249e31",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 1,
+          "original_sha256": "05d0089bd804164b000e24238f00600c01acd6e09f15103eb0319d47afbcb7c3",
+          "migrated_sha256": "24ce686629de04284416ffe3fe8bc130740299ac99c717d99af8fc5e3b2a137a",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 2,
+          "original_sha256": "263257ea3c5887d9d9b56bd7edb081241c550ea4d44367793a3a508d7a19c5dc",
+          "migrated_sha256": "150b4aec30c5f2be789dc149421ecc176309f9a91e8d1e25bc82154ea31c1cf3",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 3,
+          "original_sha256": "d3e5b60576a1ff9dc3629d41896bbf93505a1b1d7e678fc00244bfa39d240e49",
+          "migrated_sha256": "51729bd7769ecda7aee916af65090ff0a086f152f0cf1fdfdc0bf25535b80d42",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 4,
+          "original_sha256": "797ae144d0ffdfd636041aaa073fdee0de0144f18adb57d3567fa379e0abc588",
+          "migrated_sha256": "b9625d62c0be623fd6ab46a60524494c21415a6b1987a13d0c622324df7a113f",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 5,
+          "original_sha256": "97501f15dea753d45232887da128f43bc0aab94ae0df765f0552139dbb3aeaef",
+          "migrated_sha256": "9ed190580493c190015669e172ed928e8f230222bb4f9f96225dc0d4518fd0ea",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 6,
+          "original_sha256": "468ef4eecb248ddb0155f9b7eb1f16a8ae6d05744324c1ecc8c5b4d9fb74d6d8",
+          "migrated_sha256": "db159e9fae6c217db9b98db39c30b242709071dfa45335426ba5057074a6da4d",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        }
+      ],
+      "imitation_beta": 0.06062839503875166,
+      "trained_seconds": 9655.314102172852,
+      "phase": "evaluation",
+      "reason": "before_evaluation",
+      "next_evaluation": 9478.045028686523,
+      "authorization": "Claude59 latest evaluation checkpoint; 151 retained but not resumed",
+      "same_payload": true
+    },
+    "script_path": "/home/zhuyouwei/spire-downloads/e4-c62.sh",
+    "script_sha256": "f3ef270bab9d7922bd4e7cef6b9923e37a0c58f1530a0a412ed91dc32e5ce057",
+    "step1_charged_node_seconds": 57723,
+    "reserved_gpu_seconds": 100800,
+    "reserved_node_seconds": 12600,
+    "step1_total_limit": 194400,
+    "original_remaining": 7077,
+    "continuation_reservation": 5523,
+    "walltime_seconds": 14400
+  },
+  "gates": {
+    "status": "all_expected_cuda_tests_passed",
+    "tests": [
+      "test_cuda_effect_fields",
+      "test_cuda_faults",
+      "test_cuda_parity",
+      "test_cuda_root_cache"
+    ],
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0
+  },
+  "gate_log": "Internal ctest changing into directory: /home/zhuyouwei/spire-build-e4-5eb2832\nTest project /home/zhuyouwei/spire-build-e4-5eb2832\n    Start 3: test_cuda_effect_fields\n1/4 Test #3: test_cuda_effect_fields ..........   Passed   12.85 sec\n    Start 4: test_cuda_faults\n2/4 Test #4: test_cuda_faults .................   Passed   12.60 sec\n    Start 5: test_cuda_parity\n3/4 Test #5: test_cuda_parity .................   Passed   36.00 sec\n    Start 6: test_cuda_root_cache\n4/4 Test #6: test_cuda_root_cache .............   Passed   12.59 sec\n\n100% tests passed, 0 tests failed out of 4\n\nTotal Test time (real) =  74.05 sec\n",
+  "gate_junit": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<testsuite name=\"Linux-clang++\"\n\ttests=\"4\"\n\tfailures=\"0\"\n\tdisabled=\"0\"\n\tskipped=\"0\"\n\thostname=\"gpu01\"\n\ttime=\"74\"\n\ttimestamp=\"2026-10-22T16:39:21\"\n\t>\n\t<testcase name=\"test_cuda_effect_fields\" classname=\"test_cuda_effect_fields\" time=\"12.8519\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out>CUDA packed Effect fields: 32 lanes PASS\n</system-out>\n\t</testcase>\n\t<testcase name=\"test_cuda_faults\" classname=\"test_cuda_faults\" time=\"12.5999\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out></system-out>\n\t</testcase>\n\t<testcase name=\"test_cuda_parity\" classname=\"test_cuda_parity\" time=\"36.0038\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out>CUDA full Game/observation bytes: seed=202610230000 decisions=1375 PASS\nCUDA full Game/observation bytes: seed=202610230004 decisions=1142 PASS\nCUDA full Game/observation bytes: seed=202610230005 decisions=1902 PASS\nCUDA full Game/observation bytes: seed=202610230006 decisions=823 PASS\nCUDA full Game/observation bytes: seed=202610230007 decisions=1210 PASS\nCUDA full Game/observation bytes: seed=202610230008 decisions=1217 PASS\nCUDA full Game/observation bytes: seed=202610230010 decisions=889 PASS\nCUDA full Game/observation bytes: seed=202610230013 decisions=1024 PASS\nCUDA full Game/observation bytes: seed=202610230014 decisions=914 PASS\nCUDA full Game/observation bytes: seed=202610210030 decisions=1541 PASS\nCUDA full Game/observation bytes: seed=202610211131 decisions=1580 PASS\nCUDA full Game/observation bytes: seed=202610180018 decisions=1421 PASS\nCUDA random/lifecycle: 8448 batch slots, cap/reset/fault isolation/clone/root replay/seed exhaustion PASS\nCUDA parity: full Game bytes and all observation/status b...\n[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]\n</system-out>\n\t</testcase>\n\t<testcase name=\"test_cuda_root_cache\" classname=\"test_cuda_root_cache\" time=\"12.586\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out>CUDA root cache: 4/4 prefixes, Game/history/observations/status PASS\nCUDA root cache: all 4 prefixes match replay bytes; repeated restore leaves cache unchanged\n</system-out>\n\t</testcase>\n</testsuite>\n",
+  "cpu_dispatch_log": "CUDA kernel bodies on CPU: 12 routes, 15038 decisions, full Game/observation/status bytes match\nCUDA kernel bodies on CPU: cap/reset/invalid candidate/seed exhaustion/clone/subset/latched fault PASS\nCUDA kernel bodies on CPU: 8448 random batch slots, full Game/observation/status bytes match\nCUDA tensor dispatch on CPU: shuffled roots, inactive fault isolation and cap bytes match\n",
+  "gate_markers": [
+    "CUDA_GATES_PASS END=2026-10-22T16:40:35+08:00",
+    "CPU_DISPATCH_PASS END=2026-10-22T16:40:36+08:00"
+  ],
+  "fault_files": [],
+  "resume_status": {
+    "reason": "before_evaluation",
+    "phase": "evaluation",
+    "job": "3730",
+    "commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "version": 145,
+    "lanes": 256,
+    "epochs": 4,
+    "trials": 32,
+    "world_size": 7,
+    "dev_seed_count": 1024,
+    "trained_seconds": 9655.314102172852
+  },
+  "raw_evidence": {
+    "path": "e4-c64-job3730-start.json",
+    "sha256": "591ea89b9080cabbf386897bfdb6b64f3d9cac725644ed663cb13a6d37c42a98"
+  },
+  "accounting": {
+    "settled_step1": 57723,
+    "reserved_step1": 12600,
+    "observed_elapsed_seconds": 159,
+    "observed_gpu_seconds": 1113,
+    "observed_node_seconds": 139.125,
+    "active_cost_not_settled": true
+  },
+  "pending": [
+    "Finish rerun145, export1024episodes and18 actual action audit roots with job-qualifiedidentity; Mac statuspending",
+    "Compare new realtraining throughput to473.9470836897199",
+    "Checkqueue at each eval, yield to nondependencywaiting jobs; retain stoprules; settle3730 once at exit"
+  ]
+}
