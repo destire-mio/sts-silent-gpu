@@ -1,0 +1,206 @@
+{
+  "prepared_at": "2026-10-22T17:20:36.709271+08:00",
+  "decision_number": 66,
+  "decision_commit": "bec48f4b7acb6158aa15a3c0af371e8b222b93cd",
+  "decision_source": "GitHub connector exact commit/file; local git object import pending after Git443 failure",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "mac_result": "Old-engine collector action prefixes invalid under corrected engine; Mac original supports corrected d28c060; approved fresh collector and retained learned payload",
+  "runtime_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "files": {
+    "migrate-c66.py": "2083b7c454313fea6f9bb9174ebe8397cd0fcc4edde4ff6136318a7a57235867",
+    "preflight-c66.py": "f69df43a8493a333cdd60dd9808095ce5230f4ad5b5141c767a33258cc6c39ff",
+    "e4-c66.sh": "0541853c2d386d0f0bac320149534f3beab69b22ad8e943a03beb9d79c77e69c",
+    "e4-c66-local-verification.json": "0a3b5eb01ee12122b7d85cdae88374f4e41b4853454ce8df2c438d13f786cf1e"
+  },
+  "local_paths": {
+    "migrate-c66.py": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\migrate-c66.py",
+    "preflight-c66.py": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\preflight-c66.py",
+    "e4-c66.sh": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\e4-c66.sh",
+    "e4-c66-local-verification.json": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\e4-c66-local-verification.json"
+  },
+  "validation": {
+    "scope": "Local synthetic CPU payload migration, roundtrip, actual SegmentCollector.restore/fresh, and 13 mocked five-test CTest/JUnit scenarios only; no real remote checkpoints or CUDA tests run",
+    "expected_cuda_tests_from_CMakeLists": [
+      "test_cuda_dispatch",
+      "test_cuda_effect_fields",
+      "test_cuda_faults",
+      "test_cuda_parity",
+      "test_cuda_root_cache"
+    ],
+    "scenarios": [
+      {
+        "scenario": "all_pass",
+        "accepted": true,
+        "expected": true
+      },
+      {
+        "scenario": "zero_tests",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "missing_test",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "extra_test",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "disabled_test",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "skipped_test",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "failure_exit",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "junit_missing_test",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "junit_duplicate_test",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "junit_error",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "junit_notrun",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "junit_missing_file",
+        "accepted": false,
+        "expected": true
+      },
+      {
+        "scenario": "junit_skipped_count",
+        "accepted": false,
+        "expected": true
+      }
+    ],
+    "decision_commit": "bec48f4b7acb6158aa15a3c0af371e8b222b93cd",
+    "runtime_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "shell_syntax": "D:\\Git\\bin\\bash.exe -n passed independently by coordinator",
+    "python_syntax": "AST parsing passed",
+    "files": {
+      "migrate-c66.py": "2083b7c454313fea6f9bb9174ebe8397cd0fcc4edde4ff6136318a7a57235867",
+      "e4-c66.sh": "0541853c2d386d0f0bac320149534f3beab69b22ad8e943a03beb9d79c77e69c",
+      "preflight-c66.py": "f69df43a8493a333cdd60dd9808095ce5230f4ad5b5141c767a33258cc6c39ff"
+    },
+    "migration": {
+      "changed_fields": [
+        "assessments",
+        "best",
+        "best_floor",
+        "capacity_metrics",
+        "combat_diagnostics",
+        "evaluation_seconds",
+        "evaluation_state",
+        "event_trial_max_steps",
+        "loop_metrics",
+        "next_evaluation",
+        "phase",
+        "reason",
+        "search_metrics",
+        "stagnant",
+        "train_state"
+      ],
+      "preserved_fields": [
+        "actual_steps",
+        "commit",
+        "cuda_rng",
+        "epochs",
+        "health_history",
+        "imitation_beta",
+        "imitation_entropy_target",
+        "lanes",
+        "model",
+        "optimizer",
+        "ppo_rng",
+        "source_commit",
+        "source_sha256",
+        "source_version",
+        "torch_rng",
+        "trained_seconds",
+        "training_rng",
+        "trials",
+        "updates",
+        "version",
+        "world_size"
+      ],
+      "input_unchanged": true,
+      "empty_restore_replays_no_old_paths": true,
+      "fresh_slots": 256,
+      "fresh_seeds_match_restored_seed_rng": true,
+      "real_checkpoint_migration_run": false,
+      "real_3730_summary_used": false,
+      "summary_fixture": "Historical inventory/e4-c54-evaluation145.json used only as synthetic summary fixture",
+      "next_evaluation": 11455.314102172852,
+      "torch_version": "2.7.1+cu118"
+    },
+    "parent_review": {
+      "manifest_completion_marker": "migration_executed=True only after real helper completes",
+      "preflight_python_ast": "passed; remote preflight not executed",
+      "budget_source": "step1 settled58897.25, reserved0; submission reservation12600 only on actual submission",
+      "actual_remote_checkpoint_migration": false
+    }
+  },
+  "recovery_plan": {
+    "input": "/home/zhuyouwei/spire-downloads/e4-c61-migrated-145",
+    "output": "/home/zhuyouwei/spire-downloads/e4-c66-fresh-145",
+    "version": 145,
+    "world_size": 7,
+    "fresh_training_slots": 1792,
+    "preserve": "model/value, optimizer, beta, PPO/torch/cuda/seed/search RNG and historical updates/costs",
+    "clear": "all old partial games, paths, pending actions, rewards, observations, partial PPO rollout, completed collector episodes, caches",
+    "evaluation": "reuse completed3730 rerun145; next after1800new trainingseconds",
+    "manifest": "newoutput/migration.json; changedfields and exact preservedpayload hashes perrank; actual execution flag only after real migration",
+    "preflight": "fresh queue/node/memory/disk/source/binary/checkpoint/summary/helper hashes and cumulativebudget before actual submit",
+    "gpu_acceptance": "exact fiveCTest cases actuallyrun withzero skips/failures and strict JUnit; local mockedchecks do not count"
+  },
+  "actual_remote_status": {
+    "checkpoint_migration_executed": false,
+    "helpers_synchronized": false,
+    "preflight_run": false,
+    "five_actual_tests_run": false,
+    "new_job_submitted": false,
+    "session": 18280,
+    "poll_result": "write_stdin rejected: approval required by policy, but AskForApproval is set to Never",
+    "poll_command_executed": false,
+    "alternate_connection_or_tool_used": false
+  },
+  "accounting": {
+    "step1_charged_node_seconds": 58897.25,
+    "reserved_node_seconds": 0,
+    "limit_node_seconds": 194400,
+    "step0_charged": 2127,
+    "step0_limit": 3600,
+    "step2_authorized": false
+  },
+  "pending": [
+    "Import exact66Gitobject when normalgittransport returns; protect concurrentbranchupdates",
+    "Use existingapprovedSSH18280 when commandauthorization permits; no alternativeconnection to bypassreject",
+    "Run CPU checkpointmigration once into fresh66directory and inspect sevenrank invariants",
+    "Synchronize e4-c66.sh/preflight-c66.py; verify current hashes",
+    "Fresh preflight; reserve12600node_seconds only upon actual singleSlurm submit",
+    "Run actual exact5CTest gate then directtraining; stop on any newunexempted fault",
+    "Report actualthroughput against473.9470836897199; assess after1800trainingseconds and export18job-qualified auditprefixes"
+  ]
+}
