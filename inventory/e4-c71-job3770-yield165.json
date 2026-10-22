@@ -1,0 +1,1418 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-22T22:34:01.586269+08:00",
+  "job_id": 3770,
+  "fixed_source": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+  "job_state": "COMPLETED",
+  "experiment_state": "incomplete_resource_yield",
+  "reason": "yield_to_waiting_user",
+  "resource_yield": {
+    "blocking_job_id": "3772",
+    "reason": "Resources",
+    "captured_at": "2026-10-22T22:23:41.399177+08:00"
+  },
+  "transport": {
+    "bytes": 6519,
+    "sha256": "991dbd2d6142bb412764b6eccace04c307f91fcb8f6f7ea7f4da6ff67c9aa37c",
+    "external_file": "e4-c71-job3770-yield-bundle.json.gz",
+    "remote_path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/coordinator-yield165-bundle.json.gz"
+  },
+  "evidence": {
+    "job_id": 3770,
+    "captured_at": "2026-10-22T22:27:50.062892+08:00",
+    "files": {
+      "status.json": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/status.json",
+        "bytes": 7071,
+        "sha256": "264b0c798201b029583f676de68f475746df0719f0c89b9d14feced7c9907682",
+        "content": "{\"reason\": \"yield_to_waiting_user\", \"phase\": \"training\", \"job\": \"3770\", \"commit\": \"b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6\", \"source_directory\": \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163\", \"source_version\": 163, \"version\": 165, \"case\": \"B\", \"lanes\": 256, \"epochs\": 4, \"trials\": 32, \"world_size\": 7, \"evaluation_lanes\": 256, \"dev_seed_count\": 1024, \"trained_seconds\": 1271.0292358398438, \"next_evaluation\": 2002.1460876464844, \"evaluation_seconds\": 0.0, \"capacity_metrics\": {\"combat_played_cards_limit\": 0, \"combat_trials\": 26336}, \"updates\": [{\"event\": \"update\", \"update\": 1, \"version\": 164, \"training_seconds\": 628.7908935546875, \"update_seconds\": 628.7908935546875, \"actual_steps\": 114688, \"sl_trial_steps\": 2844240, \"lanes\": 256, \"world_size\": 7, \"next_epochs\": 4, \"completed_episodes\": 278, \"stalled_episodes\": 0, \"completed_average_floor\": 19.72661870503597, \"active_max_floor_steps\": 122, \"stall_classes\": {}, \"policy_loss\": 0.48676397122760223, \"value_loss\": 0.000624892037429685, \"imitation_fraction\": 0.8059256417410714, \"loss\": 0.4418424569081927, \"kl\": 0.03901425752915585, \"clip_fraction\": 0.12001302902327253, \"entropy\": 0.1653399090193967, \"ppo_loss\": 0.013241959485806549, \"imitation_loss\": 0.6007924569719373, \"ppo_samples\": 89032, \"imitation_samples\": 369720, \"H_imit\": 0.6386550854511664, \"imitation_kl\": 7272.248360408089, \"imitation_entropy_samples\": 92430, \"imitation_beta_used\": 0.08886731540352022, \"imitation_entropy_scope\": \"raw_nats_valid_imitation_first_epoch_forward\", \"imitation_kl_scope\": \"k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action\", \"epochs\": 4, \"value_explained_variance\": 0.5646929897109929, \"ppo_return_variance\": 0.0013063488548165064, \"ppo_value_error_variance\": 0.0005686628143846415, \"value_explained_variance_samples\": 22258, \"value_explained_variance_scope\": \"pre_update_rollout_values_valid_PPO_rows_once\", \"imitation_beta\": 0.09216205911443096, \"imitation_entropy_target\": 0.6716025225602738}, {\"event\": \"update\", \"update\": 2, \"version\": 165, \"training_seconds\": 1271.0292358398438, \"update_seconds\": 642.2383422851562, \"actual_steps\": 114688, \"sl_trial_steps\": 2938751, \"lanes\": 256, \"world_size\": 7, \"next_epochs\": 4, \"completed_episodes\": 288, \"stalled_episodes\": 0, \"completed_average_floor\": 18.47222222222222, \"active_max_floor_steps\": 118, \"stall_classes\": {}, \"policy_loss\": 0.47533636414737146, \"value_loss\": 0.0006791976103533932, \"imitation_fraction\": 0.8111485072544642, \"loss\": 0.4292968088730536, \"kl\": 0.004174384141442846, \"clip_fraction\": 0.038378964864490515, \"entropy\": 0.1762220918409045, \"ppo_loss\": -0.0007206080615017019, \"imitation_loss\": 0.5861718881352891, \"ppo_samples\": 86636, \"imitation_samples\": 372116, \"H_imit\": 0.6229206666189444, \"imitation_kl\": 0.03515316736552754, \"imitation_entropy_samples\": 93029, \"imitation_beta_used\": 0.09216205911443096, \"imitation_entropy_scope\": \"raw_nats_valid_imitation_first_epoch_forward\", \"imitation_kl_scope\": \"k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action\", \"epochs\": 4, \"value_explained_variance\": 0.5514623474198919, \"ppo_return_variance\": 0.001439931857283236, \"ppo_value_error_variance\": 0.0006458636551411378, \"value_explained_variance_samples\": 21659, \"value_explained_variance_scope\": \"pre_update_rollout_values_valid_PPO_rows_once\", \"imitation_beta\": 0.09703024470856389, \"imitation_entropy_target\": 0.6716025225602738}], \"actual_steps\": 229376, \"assessments\": [{\"episodes\": 1024, \"average_floor\": 19.2021484375, \"reach\": {\"act1_boss\": 0.576171875, \"act2_boss\": 0.005859375, \"act3_first_boss\": 0.0, \"act3_second_boss\": 0.0, \"act3_three_keys\": 0.0, \"act4\": 0.0, \"shield_spear\": 0.0, \"heart\": 0.0}, \"victories\": 0, \"stalled\": 0, \"stall_classes\": {}, \"faults\": 0, \"truncated\": 0, \"round\": \"E4-C53-163-N32-D1024\", \"version\": 163, \"trials\": 32, \"training_lanes\": 256, \"evaluation_lanes\": 256, \"dev_seed_count\": 1024, \"world_size\": 7, \"evaluation_seconds\": 857.0303344726562, \"trained_seconds\": 13474.011901855469, \"update_count\": 58, \"actual_steps\": 6750208, \"next_epochs\": 4, \"combat\": {\"all\": {\"combats\": 10043, \"decisions\": 9395412, \"complete_trial_groups\": 10043, \"capped_trials\": 0, \"nested_event_combats\": 217, \"pooled_policy_entropy\": 0.623274739001522, \"means\": {\"policy_entropy\": 0.6317739063590488, \"win_fraction\": 0.7736234192970228, \"score_std\": 0.009989142579370013, \"distinct_end_states\": 16.772179627601314, \"selected_score_gain\": 0.013583674343830222}}, \"act1\": {\"combats\": 7517, \"decisions\": 7076678, \"complete_trial_groups\": 7517, \"capped_trials\": 0, \"nested_event_combats\": 130, \"pooled_policy_entropy\": 0.6287351330177751, \"means\": {\"policy_entropy\": 0.6375840990478596, \"win_fraction\": 0.8440160635891978, \"score_std\": 0.00937123619323418, \"distinct_end_states\": 16.728349075429026, \"selected_score_gain\": 0.012404941634145673}}, \"act2\": {\"combats\": 2508, \"decisions\": 2305723, \"complete_trial_groups\": 2508, \"capped_trials\": 0, \"nested_event_combats\": 85, \"pooled_policy_entropy\": 0.6065851318754277, \"means\": {\"policy_entropy\": 0.6143872184503482, \"win_fraction\": 0.5659016148325359, \"score_std\": 0.011821717294569946, \"distinct_end_states\": 16.934609250398726, \"selected_score_gain\": 0.01705778954873969}}, \"act3\": {\"combats\": 18, \"decisions\": 13011, \"complete_trial_groups\": 18, \"capped_trials\": 0, \"nested_event_combats\": 2, \"pooled_policy_entropy\": 0.6109898112826078, \"means\": {\"policy_entropy\": 0.6279180637606865, \"win_fraction\": 0.3194444444444444, \"score_std\": 0.012694971405015416, \"distinct_end_states\": 12.444444444444445, \"selected_score_gain\": 0.02177549905415314}}, \"act4\": {\"combats\": 0, \"decisions\": 0, \"complete_trial_groups\": 0, \"capped_trials\": 0, \"nested_event_combats\": 0, \"pooled_policy_entropy\": null, \"means\": {\"policy_entropy\": null, \"win_fraction\": null, \"score_std\": null, \"distinct_end_states\": null, \"selected_score_gain\": null}}}, \"noncombat\": {\"counts\": {\"gold_appeared\": 9783, \"gold_taken\": 9558, \"potion_appeared\": 4514, \"potion_taken\": 3996, \"card_appeared\": 8785, \"card_taken\": 8760, \"relic_appeared\": 2312, \"relic_taken\": 1670, \"card_opened\": 8785, \"card_bowl\": 25, \"shop_purchases\": 521, \"mask_gold\": 9783, \"mask_potion\": 4050, \"mask_card\": 9148, \"rest_rest\": 2938, \"rest_smith\": 51, \"rest_lift\": 1, \"rest_toke\": 0, \"rest_dig\": 0, \"rest_recall\": 12}, \"final_deck_size_mean\": 20.791015625, \"episodes\": 1024, \"scope\": \"actual trajectories; displayed combat/treasure reward rows\"}, \"imitation_beta\": 0.08886731540352022, \"imitation_entropy_target\": 0.6716025225602738, \"best_average_floor_before\": 19.1904296875, \"combat_over_limit\": 0, \"event_over_limit\": 0, \"combat_normal_max_steps\": 221, \"event_normal_max_steps\": 99, \"combat_played_cards_limit\": 0, \"combat_trials\": 321376, \"combat_played_cards_limit_fraction\": 0.0}], \"best\": {\"act1_boss\": 0.576171875, \"act2_boss\": 0.005859375, \"act3_first_boss\": 0.0, \"act3_second_boss\": 0.0, \"act3_three_keys\": 0.0, \"act4\": 0.0, \"shield_spear\": 0.0, \"heart\": 0.0}, \"stagnant\": 0, \"best_floor\": 19.2021484375, \"imitation_beta\": 0.09703024470856389, \"imitation_entropy_target\": 0.6716025225602738}\n"
+      },
+      "queue-last.json": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/queue-last.json",
+        "bytes": 3135,
+        "sha256": "cb51b9d4c7a3ff4ac19e552a4da7f5d27752cd823024be14ed7871dcd84fea65",
+        "content": "{\"checked_at\": \"2026-10-22T22:23:41.399177+08:00\", \"jobs\": [{\"JobId\": \"3754\", \"JobName\": \"srcsize_loop\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"3-00:00:00\", \"StartTime\": \"2026-10-22T19:29:40\", \"RunTime\": \"02:54:01\", \"NodeList\": \"gpu01\", \"TresPerNode\": null, \"TRES\": \"cpu=1,mem=2G,node=1,billing=1\"}, {\"JobId\": \"3756\", \"JobName\": \"warpx\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"COMPLETED\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"1-00:00:00\", \"StartTime\": \"2026-10-22T19:29:57\", \"RunTime\": \"02:50:16\", \"NodeList\": \"gpu01\", \"TresPerNode\": \"gres:gpu:V100:1\", \"TRES\": \"cpu=1,mem=2G,node=1,billing=1\"}, {\"JobId\": \"3757\", \"JobName\": \"extract\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"02:00:00\", \"StartTime\": \"2026-10-22T22:20:13\", \"RunTime\": \"00:03:28\", \"NodeList\": \"gpu01\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3758\", \"JobName\": \"compute\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"PENDING\", \"Reason\": \"Dependency\", \"Dependency\": \"afterok:3757(unfulfilled)\", \"TimeLimit\": \"06:00:00\", \"StartTime\": \"Unknown\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": \"gres:gpu:V100:1\", \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3759\", \"JobName\": \"analysis\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"PENDING\", \"Reason\": \"Dependency\", \"Dependency\": \"afterok:3758(unfulfilled)\", \"TimeLimit\": \"02:00:00\", \"StartTime\": \"Unknown\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3760\", \"JobName\": \"plot\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"PENDING\", \"Reason\": \"Dependency\", \"Dependency\": \"afterok:3759(unfulfilled)\", \"TimeLimit\": \"02:00:00\", \"StartTime\": \"Unknown\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3770\", \"JobName\": \"spire-e4-c70-B\", \"UserId\": \"zhuyouwei(1017)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"04:00:00\", \"StartTime\": \"2026-10-22T22:00:48\", \"RunTime\": \"00:22:53\", \"NodeList\": \"gpu01\", \"TresPerNode\": \"gres:gpu:V100:7\", \"TRES\": \"cpu=8,mem=80G,node=1,billing=8\"}, {\"JobId\": \"3771\", \"JobName\": \"034_Mo_G4_interface\", \"UserId\": \"zwh(1005)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"00:30:00\", \"StartTime\": \"2026-10-22T22:23:24\", \"RunTime\": \"00:00:17\", \"NodeList\": \"login\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=8G,node=1,billing=2\"}, {\"JobId\": \"3772\", \"JobName\": \"Mo034_L15_front\", \"UserId\": \"zwh(1005)\", \"JobState\": \"PENDING\", \"Reason\": \"Resources\", \"Dependency\": \"(null)\", \"TimeLimit\": \"00:30:00\", \"StartTime\": \"2026-10-23T02:00:48\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": \"gres:gpu:V100:6\", \"TRES\": \"cpu=12,mem=96G,node=1,billing=12\"}], \"node\": {\"NodeName\": \"gpu01\", \"State\": \"MIXED\", \"Gres\": \"gpu:V100:8\", \"GresUsed\": \"gpu:V100:7(IDX:0-6)\", \"CfgTRES\": \"cpu=56,mem=128027M,billing=56\", \"AllocTRES\": \"cpu=11,mem=86G\"}, \"blocking_job_ids\": [\"3772\"], \"source\": \"scontrol show jobs -o; scontrol show node gpu01 -o -d\"}\n"
+      },
+      "queue-yield-165.json": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/queue-yield-165.json",
+        "bytes": 3135,
+        "sha256": "cb51b9d4c7a3ff4ac19e552a4da7f5d27752cd823024be14ed7871dcd84fea65",
+        "content": "{\"checked_at\": \"2026-10-22T22:23:41.399177+08:00\", \"jobs\": [{\"JobId\": \"3754\", \"JobName\": \"srcsize_loop\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"3-00:00:00\", \"StartTime\": \"2026-10-22T19:29:40\", \"RunTime\": \"02:54:01\", \"NodeList\": \"gpu01\", \"TresPerNode\": null, \"TRES\": \"cpu=1,mem=2G,node=1,billing=1\"}, {\"JobId\": \"3756\", \"JobName\": \"warpx\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"COMPLETED\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"1-00:00:00\", \"StartTime\": \"2026-10-22T19:29:57\", \"RunTime\": \"02:50:16\", \"NodeList\": \"gpu01\", \"TresPerNode\": \"gres:gpu:V100:1\", \"TRES\": \"cpu=1,mem=2G,node=1,billing=1\"}, {\"JobId\": \"3757\", \"JobName\": \"extract\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"02:00:00\", \"StartTime\": \"2026-10-22T22:20:13\", \"RunTime\": \"00:03:28\", \"NodeList\": \"gpu01\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3758\", \"JobName\": \"compute\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"PENDING\", \"Reason\": \"Dependency\", \"Dependency\": \"afterok:3757(unfulfilled)\", \"TimeLimit\": \"06:00:00\", \"StartTime\": \"Unknown\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": \"gres:gpu:V100:1\", \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3759\", \"JobName\": \"analysis\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"PENDING\", \"Reason\": \"Dependency\", \"Dependency\": \"afterok:3758(unfulfilled)\", \"TimeLimit\": \"02:00:00\", \"StartTime\": \"Unknown\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3760\", \"JobName\": \"plot\", \"UserId\": \"shaoy(1013)\", \"JobState\": \"PENDING\", \"Reason\": \"Dependency\", \"Dependency\": \"afterok:3759(unfulfilled)\", \"TimeLimit\": \"02:00:00\", \"StartTime\": \"Unknown\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=4G,node=1,billing=2\"}, {\"JobId\": \"3770\", \"JobName\": \"spire-e4-c70-B\", \"UserId\": \"zhuyouwei(1017)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"04:00:00\", \"StartTime\": \"2026-10-22T22:00:48\", \"RunTime\": \"00:22:53\", \"NodeList\": \"gpu01\", \"TresPerNode\": \"gres:gpu:V100:7\", \"TRES\": \"cpu=8,mem=80G,node=1,billing=8\"}, {\"JobId\": \"3771\", \"JobName\": \"034_Mo_G4_interface\", \"UserId\": \"zwh(1005)\", \"JobState\": \"RUNNING\", \"Reason\": \"None\", \"Dependency\": \"(null)\", \"TimeLimit\": \"00:30:00\", \"StartTime\": \"2026-10-22T22:23:24\", \"RunTime\": \"00:00:17\", \"NodeList\": \"login\", \"TresPerNode\": null, \"TRES\": \"cpu=2,mem=8G,node=1,billing=2\"}, {\"JobId\": \"3772\", \"JobName\": \"Mo034_L15_front\", \"UserId\": \"zwh(1005)\", \"JobState\": \"PENDING\", \"Reason\": \"Resources\", \"Dependency\": \"(null)\", \"TimeLimit\": \"00:30:00\", \"StartTime\": \"2026-10-23T02:00:48\", \"RunTime\": \"00:00:00\", \"NodeList\": \"\", \"TresPerNode\": \"gres:gpu:V100:6\", \"TRES\": \"cpu=12,mem=96G,node=1,billing=12\"}], \"node\": {\"NodeName\": \"gpu01\", \"State\": \"MIXED\", \"Gres\": \"gpu:V100:8\", \"GresUsed\": \"gpu:V100:7(IDX:0-6)\", \"CfgTRES\": \"cpu=56,mem=128027M,billing=56\", \"AllocTRES\": \"cpu=11,mem=86G\"}, \"blocking_job_ids\": [\"3772\"], \"source\": \"scontrol show jobs -o; scontrol show node gpu01 -o -d\"}\n"
+      },
+      "exit.txt": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/exit.txt",
+        "bytes": 44,
+        "sha256": "cbbdf7ae2cd6549dd4eb195e88252819eec526d0584beee6d2b42e2085884e54",
+        "content": "FORK_B_EXIT=0 END=2026-10-22T22:23:48+08:00\n"
+      },
+      "accounting-at-exit.txt": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/accounting-at-exit.txt",
+        "bytes": 1302,
+        "sha256": "ef2b7e753bae995643da1785201c44af405fb1bf14e8300da7512c68452b6780",
+        "content": "JobId=3770 JobName=spire-e4-c70-B\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899849 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:23:00 TimeLimit=04:00:00 TimeMin=N/A\n   SubmitTime=2026-10-22T22:00:48 EligibleTime=2026-10-22T22:00:48\n   AccrueTime=2026-10-22T22:00:48\n   StartTime=2026-10-22T22:00:48 EndTime=2026-10-23T02:00:48 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T22:00:48 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:3163797\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=80G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=80G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/c70-B-preparation/e4-c70-B.sh\n   WorkDir=/home/zhuyouwei\n   StdErr=/home/zhuyouwei/spire-downloads/e4-c70-B-3770.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-c70-B-3770.log\n   Power=\n   TresPerNode=gres:gpu:V100:7\n   \n\n"
+      },
+      "manifest-at-exit.txt": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/manifest-at-exit.txt",
+        "bytes": 72,
+        "sha256": "2648796207135c0e73d603fc3456d826bff355bf8e0904baa8407d1ad87bbde4",
+        "content": "/home/zhuyouwei/spire-downloads/c70-B-preparation/manifest.json: 成功\n"
+      },
+      "inputs-at-exit.json": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/inputs-at-exit.json",
+        "bytes": 3291,
+        "sha256": "848f3341bfe629f0eda9f802eda09ca549596b36b52149b10818c2906cacd006",
+        "content": "{\n  \"source_commit\": \"b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6\",\n  \"manifest_sha256\": \"c733fef0a86cd1f835af13cf8b9712414b4fadac3e0a3d32423d356da9fb1ea0\",\n  \"inputs\": {\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt\": \"620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a\",\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt\": \"512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e\",\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt\": \"3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55\",\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt\": \"97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747\",\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt\": \"934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac\",\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt\": \"cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51\",\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt\": \"9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa\",\n    \"/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json\": \"ab37dfce4e9b55722ccccc5744ca15721ecc443f568988fbc1d69be3d1aed081\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so\": \"9955e920ed3465c7726f2e97a0f3cc1fbd531279c0d31ad8a73436df6717d9d2\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so\": \"245b417db210212ce3330d73d1fa6706f12e8bf7445518c6f3abad75c0b73985\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch\": \"e735dc5c73acb316bca7759cf39822ec689b498e283ce084138c69d25502c20e\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields\": \"528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults\": \"f1bc04565a4b6fb5387471570865e765bd2f976576027eeab50755b989e9e6a2\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity\": \"d83fa023de12b6f388e781be837aa0ecbd713fe49891030e69e7ceac3e541e50\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache\": \"7ed5efb6c6e3150aef9707dc5d8220844c613ad263a7278f23230aad278b5966\",\n    \"/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so\": \"f9f749c29b34d84a21ee4d459f0f66508268a55c9b22b75a5d93330173b8c5f6\",\n    \"/home/zhuyouwei/sts-silent-gpu-fork-c70/tools/e4_continue.py\": \"90a0363db8f94b97cbf03860ed9e813511a6bfea4d65f400dda0f5904d76b3bb\",\n    \"/home/zhuyouwei/sts-silent-gpu-fork-c70/tools/e4_fork.py\": \"10552d315b6752a89de9f20c41bfb999f3144b73667e6d3da77e56bd692b9fcd\",\n    \"/home/zhuyouwei/sts-silent-gpu-fork-c70/train/e4.py\": \"2f0a00e6cac27f6b10770d8f038fc028d24048c3a7c797384cd3030dff4c7126\",\n    \"/home/zhuyouwei/spire-downloads/c70-B-preparation/verify-inputs.py\": \"39bd16238d2ae02fd3a86e01fa0fc8f3f6bc5713a870f24b8c82959eaca96145\",\n    \"/home/zhuyouwei/spire-downloads/c70-B-preparation/preflight-c70-B.py\": \"faec3bda67bcbfe7308a525153d5108672f6b18c84946d7c399cd7dac70f69c4\",\n    \"/home/zhuyouwei/spire-downloads/c70-B-preparation/cuda-gates.py\": \"59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e\"\n  }\n}\n"
+      },
+      "exit-validation.txt": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/exit-validation.txt",
+        "bytes": 48,
+        "sha256": "7ec920e09389883b6d272d8cf641e065c50ad842004f5e37414cd5ad293c0347",
+        "content": "original_exit=0 manifest_check=0 inputs_check=0\n"
+      }
+    },
+    "scontrol_rc": 0,
+    "scontrol": "JobId=3770 JobName=spire-e4-c70-B\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899849 Nice=0 Account=(null) QOS=(null)\n   JobState=COMPLETED Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:23:01 TimeLimit=04:00:00 TimeMin=N/A\n   SubmitTime=2026-10-22T22:00:48 EligibleTime=2026-10-22T22:00:48\n   AccrueTime=2026-10-22T22:00:48\n   StartTime=2026-10-22T22:00:48 EndTime=2026-10-22T22:23:49 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T22:00:48 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:3163797\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=80G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=80G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/c70-B-preparation/e4-c70-B.sh\n   WorkDir=/home/zhuyouwei\n   StdErr=/home/zhuyouwei/spire-downloads/e4-c70-B-3770.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-c70-B-3770.log\n   Power=\n   TresPerNode=gres:gpu:V100:7\n   \n\n",
+    "scontrol_stderr": "",
+    "queue": "3758|shaoy|PENDING|(Dependency)|gres:gpu:V100:1\n3759|shaoy|PENDING|(Dependency)|N/A\n3760|shaoy|PENDING|(Dependency)|N/A\n3754|shaoy|RUNNING|gpu01|N/A\n3757|shaoy|RUNNING|gpu01|N/A\n3772|zwh|RUNNING|gpu01|gres:gpu:V100:6\n",
+    "final_checkpoints": [
+      {
+        "rank": 0,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt",
+        "bytes": 12441671,
+        "sha256": "e018a03374c2e3ce2806c912a2c1796bd9396d7da6debd38a320004bb988a3ab"
+      },
+      {
+        "rank": 1,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt",
+        "bytes": 12449223,
+        "sha256": "98d90eeba4382024e063bc565f61ee26bc27420a5e69d3a0a7f293e9e102edd1"
+      },
+      {
+        "rank": 2,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt",
+        "bytes": 12444807,
+        "sha256": "ccaa006b278e16ac54551ebba40e259cfc9f0aa0db604e63862caa5b694f7208"
+      },
+      {
+        "rank": 3,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt",
+        "bytes": 12449479,
+        "sha256": "9a7a475760ccf0b49bb235ecd6d9310d069af546098c61bdcd834cdcedc96f08"
+      },
+      {
+        "rank": 4,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt",
+        "bytes": 12445639,
+        "sha256": "35f5ef1a2ec207886a0d037f69768c3578fe72423ed75c53d6e1437cb65904e3"
+      },
+      {
+        "rank": 5,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt",
+        "bytes": 12445191,
+        "sha256": "ff77c2a39fb7de65d062ea9f142be62523d034ebd66ce7efd30dca097f07adcd"
+      },
+      {
+        "rank": 6,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt",
+        "bytes": 12448519,
+        "sha256": "14eced8c80c1bcaace4a049ff5bc82392a3bd8023542f295a11f0e173e12e34e"
+      }
+    ],
+    "update_and_evaluation_rows": [
+      {
+        "event": "update",
+        "update": 1,
+        "version": 164,
+        "training_seconds": 628.7908935546875,
+        "update_seconds": 628.7908935546875,
+        "actual_steps": 114688,
+        "sl_trial_steps": 2844240,
+        "lanes": 256,
+        "world_size": 7,
+        "next_epochs": 4,
+        "completed_episodes": 278,
+        "stalled_episodes": 0,
+        "completed_average_floor": 19.72661870503597,
+        "active_max_floor_steps": 122,
+        "stall_classes": {},
+        "policy_loss": 0.48676397122760223,
+        "value_loss": 0.000624892037429685,
+        "imitation_fraction": 0.8059256417410714,
+        "loss": 0.4418424569081927,
+        "kl": 0.03901425752915585,
+        "clip_fraction": 0.12001302902327253,
+        "entropy": 0.1653399090193967,
+        "ppo_loss": 0.013241959485806549,
+        "imitation_loss": 0.6007924569719373,
+        "ppo_samples": 89032,
+        "imitation_samples": 369720,
+        "H_imit": 0.6386550854511664,
+        "imitation_kl": 7272.248360408089,
+        "imitation_entropy_samples": 92430,
+        "imitation_beta_used": 0.08886731540352022,
+        "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+        "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+        "epochs": 4,
+        "value_explained_variance": 0.5646929897109929,
+        "ppo_return_variance": 0.0013063488548165064,
+        "ppo_value_error_variance": 0.0005686628143846415,
+        "value_explained_variance_samples": 22258,
+        "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+        "imitation_beta": 0.09216205911443096,
+        "imitation_entropy_target": 0.6716025225602738
+      },
+      {
+        "event": "update",
+        "update": 2,
+        "version": 165,
+        "training_seconds": 1271.0292358398438,
+        "update_seconds": 642.2383422851562,
+        "actual_steps": 114688,
+        "sl_trial_steps": 2938751,
+        "lanes": 256,
+        "world_size": 7,
+        "next_epochs": 4,
+        "completed_episodes": 288,
+        "stalled_episodes": 0,
+        "completed_average_floor": 18.47222222222222,
+        "active_max_floor_steps": 118,
+        "stall_classes": {},
+        "policy_loss": 0.47533636414737146,
+        "value_loss": 0.0006791976103533932,
+        "imitation_fraction": 0.8111485072544642,
+        "loss": 0.4292968088730536,
+        "kl": 0.004174384141442846,
+        "clip_fraction": 0.038378964864490515,
+        "entropy": 0.1762220918409045,
+        "ppo_loss": -0.0007206080615017019,
+        "imitation_loss": 0.5861718881352891,
+        "ppo_samples": 86636,
+        "imitation_samples": 372116,
+        "H_imit": 0.6229206666189444,
+        "imitation_kl": 0.03515316736552754,
+        "imitation_entropy_samples": 93029,
+        "imitation_beta_used": 0.09216205911443096,
+        "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+        "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+        "epochs": 4,
+        "value_explained_variance": 0.5514623474198919,
+        "ppo_return_variance": 0.001439931857283236,
+        "ppo_value_error_variance": 0.0006458636551411378,
+        "value_explained_variance_samples": 21659,
+        "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+        "imitation_beta": 0.09703024470856389,
+        "imitation_entropy_target": 0.6716025225602738
+      }
+    ],
+    "summary_files": [],
+    "fault_files": [],
+    "partial_files": [],
+    "log_sha256": "3afa9faf3ef775c73ee40f91dde3208f98b2bb52787f2db29f903ee48dce8c52"
+  },
+  "checkpoint_metadata": {
+    "sha256": "319a23cc37a89aaac42fe85294bebfc745697fe74e9ee27ebfdcd2c6062f7ba6",
+    "evidence": {
+      "checked_at": "2026-10-22T22:30:09.189042+08:00",
+      "job_id": 3770,
+      "ranks": [
+        {
+          "rank": 0,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt",
+          "sha256": "e018a03374c2e3ce2806c912a2c1796bd9396d7da6debd38a320004bb988a3ab",
+          "metadata": {
+            "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+            "case": "B",
+            "source_version": 163,
+            "version": 165,
+            "reason": "yield_to_waiting_user",
+            "phase": "training",
+            "trained_seconds": 1271.0292358398438,
+            "target_training_seconds": 2002.1460876464844,
+            "actual_steps": 229376,
+            "evaluation_seconds": 0.0,
+            "next_evaluation": 2002.1460876464844,
+            "imitation_beta": 0.09703024470856389
+          },
+          "fork_metrics": {
+            "forks": 271,
+            "branches": 817,
+            "completed_branches": 817,
+            "capped_branches": 0,
+            "fork_all_capped": 0,
+            "score_gap_count": 271,
+            "score_gap_sum": 7.667033721143616,
+            "score_gap_max": 0.16401846897907746,
+            "seconds": 821.5134369548177,
+            "searched_decisions": 388801,
+            "combat_over_limit": 0,
+            "event_over_limit": 0,
+            "combat_normal_max_steps": 162,
+            "event_normal_max_steps": 183,
+            "combat_played_cards_limit": 0,
+            "combat_trials": 11320,
+            "repeat_check_seconds": 24.19729404512327,
+            "repeat_check_decisions": 10584,
+            "repeat_check_candidates": 35898,
+            "all_candidates_repeat": 25
+          },
+          "train_state_keys": [
+            "seeds",
+            "paths",
+            "floor_steps",
+            "reward_history",
+            "noncombat_floor_steps",
+            "tails",
+            "map_returned",
+            "seen",
+            "last_stall_classes",
+            "pending",
+            "rewards",
+            "seed_rng",
+            "search_rng",
+            "fork_rng",
+            "decisions",
+            "completed",
+            "partial",
+            "evaluation_waiting"
+          ],
+          "rngs_present": {
+            "ppo_rng": true,
+            "torch_rng": true,
+            "cuda_rng": true,
+            "training_rng": true
+          },
+          "update_count": 2,
+          "assessment_versions": [
+            163
+          ]
+        },
+        {
+          "rank": 1,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt",
+          "sha256": "98d90eeba4382024e063bc565f61ee26bc27420a5e69d3a0a7f293e9e102edd1",
+          "metadata": {
+            "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+            "case": "B",
+            "source_version": 163,
+            "version": 165,
+            "reason": "yield_to_waiting_user",
+            "phase": "training",
+            "trained_seconds": 1271.0292358398438,
+            "target_training_seconds": 2002.1460876464844,
+            "actual_steps": 229376,
+            "evaluation_seconds": 0.0,
+            "next_evaluation": 2002.1460876464844,
+            "imitation_beta": 0.09703024470856389
+          },
+          "fork_metrics": {
+            "forks": 284,
+            "branches": 852,
+            "completed_branches": 852,
+            "capped_branches": 0,
+            "fork_all_capped": 0,
+            "score_gap_count": 284,
+            "score_gap_sum": 9.341525382338428,
+            "score_gap_max": 0.17626448090259844,
+            "seconds": 814.0323218555422,
+            "searched_decisions": 397079,
+            "combat_over_limit": 0,
+            "event_over_limit": 0,
+            "combat_normal_max_steps": 134,
+            "event_normal_max_steps": 228,
+            "combat_played_cards_limit": 0,
+            "combat_trials": 11864,
+            "repeat_check_seconds": 23.649697617976926,
+            "repeat_check_decisions": 10948,
+            "repeat_check_candidates": 37021,
+            "all_candidates_repeat": 15
+          },
+          "train_state_keys": [
+            "seeds",
+            "paths",
+            "floor_steps",
+            "reward_history",
+            "noncombat_floor_steps",
+            "tails",
+            "map_returned",
+            "seen",
+            "last_stall_classes",
+            "pending",
+            "rewards",
+            "seed_rng",
+            "search_rng",
+            "fork_rng",
+            "decisions",
+            "completed",
+            "partial",
+            "evaluation_waiting"
+          ],
+          "rngs_present": {
+            "ppo_rng": true,
+            "torch_rng": true,
+            "cuda_rng": true,
+            "training_rng": true
+          },
+          "update_count": 2,
+          "assessment_versions": [
+            163
+          ]
+        },
+        {
+          "rank": 2,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt",
+          "sha256": "ccaa006b278e16ac54551ebba40e259cfc9f0aa0db604e63862caa5b694f7208",
+          "metadata": {
+            "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+            "case": "B",
+            "source_version": 163,
+            "version": 165,
+            "reason": "yield_to_waiting_user",
+            "phase": "training",
+            "trained_seconds": 1271.0292358398438,
+            "target_training_seconds": 2002.1460876464844,
+            "actual_steps": 229376,
+            "evaluation_seconds": 0.0,
+            "next_evaluation": 2002.1460876464844,
+            "imitation_beta": 0.09703024470856389
+          },
+          "fork_metrics": {
+            "forks": 266,
+            "branches": 800,
+            "completed_branches": 800,
+            "capped_branches": 0,
+            "fork_all_capped": 0,
+            "score_gap_count": 266,
+            "score_gap_sum": 7.875721298922328,
+            "score_gap_max": 0.16637705381099993,
+            "seconds": 809.306054805289,
+            "searched_decisions": 393913,
+            "combat_over_limit": 0,
+            "event_over_limit": 0,
+            "combat_normal_max_steps": 259,
+            "event_normal_max_steps": 214,
+            "combat_played_cards_limit": 0,
+            "combat_trials": 11456,
+            "repeat_check_seconds": 23.3015422988683,
+            "repeat_check_decisions": 11164,
+            "repeat_check_candidates": 37366,
+            "all_candidates_repeat": 17
+          },
+          "train_state_keys": [
+            "seeds",
+            "paths",
+            "floor_steps",
+            "reward_history",
+            "noncombat_floor_steps",
+            "tails",
+            "map_returned",
+            "seen",
+            "last_stall_classes",
+            "pending",
+            "rewards",
+            "seed_rng",
+            "search_rng",
+            "fork_rng",
+            "decisions",
+            "completed",
+            "partial",
+            "evaluation_waiting"
+          ],
+          "rngs_present": {
+            "ppo_rng": true,
+            "torch_rng": true,
+            "cuda_rng": true,
+            "training_rng": true
+          },
+          "update_count": 2,
+          "assessment_versions": [
+            163
+          ]
+        },
+        {
+          "rank": 3,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt",
+          "sha256": "9a7a475760ccf0b49bb235ecd6d9310d069af546098c61bdcd834cdcedc96f08",
+          "metadata": {
+            "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+            "case": "B",
+            "source_version": 163,
+            "version": 165,
+            "reason": "yield_to_waiting_user",
+            "phase": "training",
+            "trained_seconds": 1271.0292358398438,
+            "target_training_seconds": 2002.1460876464844,
+            "actual_steps": 229376,
+            "evaluation_seconds": 0.0,
+            "next_evaluation": 2002.1460876464844,
+            "imitation_beta": 0.09703024470856389
+          },
+          "fork_metrics": {
+            "forks": 262,
+            "branches": 796,
+            "completed_branches": 796,
+            "capped_branches": 0,
+            "fork_all_capped": 0,
+            "score_gap_count": 262,
+            "score_gap_sum": 7.879400491953275,
+            "score_gap_max": 0.17309974401425093,
+            "seconds": 805.214917245321,
+            "searched_decisions": 383184,
+            "combat_over_limit": 0,
+            "event_over_limit": 0,
+            "combat_normal_max_steps": 195,
+            "event_normal_max_steps": 215,
+            "combat_played_cards_limit": 0,
+            "combat_trials": 11584,
+            "repeat_check_seconds": 25.91890885506291,
+            "repeat_check_decisions": 11072,
+            "repeat_check_candidates": 36407,
+            "all_candidates_repeat": 7
+          },
+          "train_state_keys": [
+            "seeds",
+            "paths",
+            "floor_steps",
+            "reward_history",
+            "noncombat_floor_steps",
+            "tails",
+            "map_returned",
+            "seen",
+            "last_stall_classes",
+            "pending",
+            "rewards",
+            "seed_rng",
+            "search_rng",
+            "fork_rng",
+            "decisions",
+            "completed",
+            "partial",
+            "evaluation_waiting"
+          ],
+          "rngs_present": {
+            "ppo_rng": true,
+            "torch_rng": true,
+            "cuda_rng": true,
+            "training_rng": true
+          },
+          "update_count": 2,
+          "assessment_versions": [
+            163
+          ]
+        },
+        {
+          "rank": 4,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt",
+          "sha256": "35f5ef1a2ec207886a0d037f69768c3578fe72423ed75c53d6e1437cb65904e3",
+          "metadata": {
+            "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+            "case": "B",
+            "source_version": 163,
+            "version": 165,
+            "reason": "yield_to_waiting_user",
+            "phase": "training",
+            "trained_seconds": 1271.0292358398438,
+            "target_training_seconds": 2002.1460876464844,
+            "actual_steps": 229376,
+            "evaluation_seconds": 0.0,
+            "next_evaluation": 2002.1460876464844,
+            "imitation_beta": 0.09703024470856389
+          },
+          "fork_metrics": {
+            "forks": 273,
+            "branches": 825,
+            "completed_branches": 825,
+            "capped_branches": 0,
+            "fork_all_capped": 0,
+            "score_gap_count": 273,
+            "score_gap_sum": 9.313249383026212,
+            "score_gap_max": 0.1688137222559024,
+            "seconds": 729.5429983938811,
+            "searched_decisions": 389390,
+            "combat_over_limit": 0,
+            "event_over_limit": 0,
+            "combat_normal_max_steps": 140,
+            "event_normal_max_steps": 197,
+            "combat_played_cards_limit": 0,
+            "combat_trials": 11680,
+            "repeat_check_seconds": 22.345209480263293,
+            "repeat_check_decisions": 10967,
+            "repeat_check_candidates": 35764,
+            "all_candidates_repeat": 8
+          },
+          "train_state_keys": [
+            "seeds",
+            "paths",
+            "floor_steps",
+            "reward_history",
+            "noncombat_floor_steps",
+            "tails",
+            "map_returned",
+            "seen",
+            "last_stall_classes",
+            "pending",
+            "rewards",
+            "seed_rng",
+            "search_rng",
+            "fork_rng",
+            "decisions",
+            "completed",
+            "partial",
+            "evaluation_waiting"
+          ],
+          "rngs_present": {
+            "ppo_rng": true,
+            "torch_rng": true,
+            "cuda_rng": true,
+            "training_rng": true
+          },
+          "update_count": 2,
+          "assessment_versions": [
+            163
+          ]
+        },
+        {
+          "rank": 5,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt",
+          "sha256": "ff77c2a39fb7de65d062ea9f142be62523d034ebd66ce7efd30dca097f07adcd",
+          "metadata": {
+            "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+            "case": "B",
+            "source_version": 163,
+            "version": 165,
+            "reason": "yield_to_waiting_user",
+            "phase": "training",
+            "trained_seconds": 1271.0292358398438,
+            "target_training_seconds": 2002.1460876464844,
+            "actual_steps": 229376,
+            "evaluation_seconds": 0.0,
+            "next_evaluation": 2002.1460876464844,
+            "imitation_beta": 0.09703024470856389
+          },
+          "fork_metrics": {
+            "forks": 265,
+            "branches": 799,
+            "completed_branches": 799,
+            "capped_branches": 0,
+            "fork_all_capped": 0,
+            "score_gap_count": 265,
+            "score_gap_sum": 8.319946578584418,
+            "score_gap_max": 0.17342658531971467,
+            "seconds": 661.4558182877954,
+            "searched_decisions": 372394,
+            "combat_over_limit": 0,
+            "event_over_limit": 0,
+            "combat_normal_max_steps": 149,
+            "event_normal_max_steps": 264,
+            "combat_played_cards_limit": 0,
+            "combat_trials": 11104,
+            "repeat_check_seconds": 21.30170496215578,
+            "repeat_check_decisions": 10068,
+            "repeat_check_candidates": 32233,
+            "all_candidates_repeat": 10
+          },
+          "train_state_keys": [
+            "seeds",
+            "paths",
+            "floor_steps",
+            "reward_history",
+            "noncombat_floor_steps",
+            "tails",
+            "map_returned",
+            "seen",
+            "last_stall_classes",
+            "pending",
+            "rewards",
+            "seed_rng",
+            "search_rng",
+            "fork_rng",
+            "decisions",
+            "completed",
+            "partial",
+            "evaluation_waiting"
+          ],
+          "rngs_present": {
+            "ppo_rng": true,
+            "torch_rng": true,
+            "cuda_rng": true,
+            "training_rng": true
+          },
+          "update_count": 2,
+          "assessment_versions": [
+            163
+          ]
+        },
+        {
+          "rank": 6,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt",
+          "sha256": "14eced8c80c1bcaace4a049ff5bc82392a3bd8023542f295a11f0e173e12e34e",
+          "metadata": {
+            "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+            "case": "B",
+            "source_version": 163,
+            "version": 165,
+            "reason": "yield_to_waiting_user",
+            "phase": "training",
+            "trained_seconds": 1271.0292358398438,
+            "target_training_seconds": 2002.1460876464844,
+            "actual_steps": 229376,
+            "evaluation_seconds": 0.0,
+            "next_evaluation": 2002.1460876464844,
+            "imitation_beta": 0.09703024470856389
+          },
+          "fork_metrics": {
+            "forks": 274,
+            "branches": 828,
+            "completed_branches": 828,
+            "capped_branches": 0,
+            "fork_all_capped": 0,
+            "score_gap_count": 274,
+            "score_gap_sum": 7.500528214642632,
+            "score_gap_max": 0.1677684206993152,
+            "seconds": 770.6561656994745,
+            "searched_decisions": 367326,
+            "combat_over_limit": 0,
+            "event_over_limit": 0,
+            "combat_normal_max_steps": 163,
+            "event_normal_max_steps": 242,
+            "combat_played_cards_limit": 0,
+            "combat_trials": 11648,
+            "repeat_check_seconds": 24.518117623287253,
+            "repeat_check_decisions": 10672,
+            "repeat_check_candidates": 35763,
+            "all_candidates_repeat": 16
+          },
+          "train_state_keys": [
+            "seeds",
+            "paths",
+            "floor_steps",
+            "reward_history",
+            "noncombat_floor_steps",
+            "tails",
+            "map_returned",
+            "seen",
+            "last_stall_classes",
+            "pending",
+            "rewards",
+            "seed_rng",
+            "search_rng",
+            "fork_rng",
+            "decisions",
+            "completed",
+            "partial",
+            "evaluation_waiting"
+          ],
+          "rngs_present": {
+            "ppo_rng": true,
+            "torch_rng": true,
+            "cuda_rng": true,
+            "training_rng": true
+          },
+          "update_count": 2,
+          "assessment_versions": [
+            163
+          ]
+        }
+      ],
+      "scope": "Parent login CPU torch.load metadata; no GPU, no modification of checkpoint bytes"
+    },
+    "parent_acceptance": "Seven actual final pt loaded on remote login CPU, all metadata and hashes crosschecked; no GPU and no checkpoint modification"
+  },
+  "independent_local_review": {
+    "sha256": "9e5facafa3554f8f0a9f2ea87363852a738a93d09c0d55399966a238d1676dbc",
+    "report": {
+      "job_id": 3770,
+      "status": "passed",
+      "check_count": 119,
+      "passed_count": 119,
+      "bundle_sha256": "991dbd2d6142bb412764b6eccace04c307f91fcb8f6f7ea7f4da6ff67c9aa37c",
+      "startup_inventory_sha256": "4569c39be01b69db3f712e94e2fb7e680b4da47545deaa8c4964cb9becc305d5",
+      "captured_at": "2026-10-22T22:27:50.062892+08:00",
+      "result": {
+        "reason": "yield_to_waiting_user",
+        "version": 165,
+        "actual_decisions": 229376,
+        "trained_seconds": 1271.0292358398438,
+        "target_seconds": 2002.1460876464844,
+        "remaining_training_seconds": 731.1168518066406,
+        "B_evaluation_seconds": 0,
+        "final_run_seconds": 1381,
+        "gpu_seconds": 9667,
+        "node_seconds_charge": 1208.375
+      },
+      "budget_recommendation_only": {
+        "step": 2,
+        "job_id": 3770,
+        "settlement_key": "job3770-final",
+        "old_charged": 0,
+        "old_reserved": 12600,
+        "new_charged": 1208.375,
+        "new_reserved": 0,
+        "limit": 36000,
+        "apply_exactly_once": true,
+        "ledger_written": false
+      },
+      "checks": [
+        {
+          "name": "bundle_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "bundle_sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "job_id",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exact_files",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status.json:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status.json:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "queue-last.json:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "queue-last.json:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "queue-yield-165.json:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "queue-yield-165.json:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exit.txt:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exit.txt:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "accounting-at-exit.txt:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "accounting-at-exit.txt:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "manifest-at-exit.txt:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "manifest-at-exit.txt:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "inputs-at-exit.json:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "inputs-at-exit.json:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exit-validation.txt:bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exit-validation.txt:sha256",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "fixed_source",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "inputs_at_exit_equal_startup",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/sts-silent-gpu-fork-c70/tools/e4_continue.py",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/sts-silent-gpu-fork-c70/tools/e4_fork.py",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/sts-silent-gpu-fork-c70/train/e4.py",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/c70-B-preparation/verify-inputs.py",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/c70-B-preparation/preflight-c70-B.py",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "input_unchanged:/home/zhuyouwei/spire-downloads/c70-B-preparation/cuda-gates.py",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "manifest_hash_unchanged",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "queue_yield_matches_last",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exact_blocker",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "blocker:JobState",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "blocker:Reason",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "blocker:Dependency",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "blocker:UserId",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "blocker:TresPerNode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "blocker_other_user",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "queue_before_exit",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:reason",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:phase",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:job",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:version",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:source_version",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:case",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:world_size",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:evaluation_seconds",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:trained_seconds",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:actual_steps",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "status:next_evaluation",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "target_unreached",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exact_two_updates",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "update_rows_match_status",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "no_evaluation_rows",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "decision_total",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "pure_training_total",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "cumulative_update_time",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "assessments_only_inherited",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "assessment_C163_not_B",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "summary_files:empty",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "fault_files:empty",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "partial_files:empty",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exit_validation_three_zero",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "runner_exit_zero",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "manifest_validation_success",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "scontrol_command_success",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:JobId",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:JobState",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:ExitCode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:RunTime",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:TresPerNode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:Restarts",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:StartTime",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final:EndTime",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "trap_is_not_final",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "final_elapsed_from_timestamps",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "gpu_seconds",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "node_seconds_charge",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "no_restarts_double_charge_basis",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "start_budget_basis",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "exact_seven_rank_metadata",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank0:path",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank0:positive_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank0:sha256_format",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank1:path",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank1:positive_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank1:sha256_format",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank2:path",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank2:positive_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank2:sha256_format",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank3:path",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank3:positive_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank3:sha256_format",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank4:path",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank4:positive_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank4:sha256_format",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank5:path",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank5:positive_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank5:sha256_format",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank6:path",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank6:positive_bytes",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "rank6:sha256_format",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "post_exit_queue_released3770",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "name": "post_exit_blocker_running",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "limitations": [
+        "Only local lightweight CPU JSON/text evidence verification. No SSH/network/GPU/native/training execution or repository/ledger writes.",
+        "Final checkpoint metadata/hash strings were checked, but checkpoint bytes were not downloaded or independently hashed locally; runner persistence is supported by yield status and seven-rank metadata.",
+        "Final scontrol 23:01 is authoritative for this evidence; trap 23:00 is an earlier RUNNING snapshot and is not used for settlement.",
+        "Ledger absence/duplicate settlement cannot be established locally because no shared ledger was read; charge is an apply-once recommendation, not an executed settlement.",
+        "Queue evidence is captured state only. Yield is not a fault. No final B evaluation/18-case audit, A/B quality conclusion, or new Mac oracle pass."
+      ]
+    },
+    "parent_acceptance": "Accepted after independent bytes/hash and scheduler/status/checkpoint metadata checks"
+  },
+  "training": {
+    "target": 2002.1460876464844,
+    "actual": 1271.0292358398438,
+    "remaining_to_target": 731.1168518066406,
+    "actual_decisions": 229376,
+    "decisions_per_second": 180.46477101562326,
+    "reference_decisions_per_second": 473.9470836897199,
+    "update_count": 2,
+    "B_evaluation_count": 0,
+    "C163_assessment_inherited": true
+  },
+  "partial_fork_metrics": {
+    "forks": 1895,
+    "branches": 5717,
+    "completed_branches": 5717,
+    "capped_branches": 0,
+    "fork_all_capped": 0,
+    "score_gap_count": 1895,
+    "score_gap_sum": 57.89740507061091,
+    "score_gap_max": 0.17626448090259844,
+    "seconds": 5411.721713242121,
+    "searched_decisions": 2692087,
+    "combat_over_limit": 0,
+    "event_over_limit": 0,
+    "combat_normal_max_steps": 259,
+    "event_normal_max_steps": 264,
+    "combat_played_cards_limit": 0,
+    "combat_trials": 80656,
+    "repeat_check_seconds": 165.23247488273773,
+    "repeat_check_decisions": 75475,
+    "repeat_check_candidates": 250452,
+    "all_candidates_repeat": 98,
+    "time_fraction": 0.6082496610559055,
+    "score_gap_mean": 0.030552720353884386,
+    "combat_played_cards_limit_fraction": 0.0
+  },
+  "partial_fork_metrics_scope": "Two training updates only; not final evaluation metrics or A/B superiority",
+  "accounting": {
+    "elapsed_seconds": 1381,
+    "gpus": 7,
+    "gpu_seconds": 9667,
+    "charged_node_seconds": 1208.375,
+    "old_step2_charged": 0,
+    "new_step2_charged": 1208.375,
+    "old_step2_reserved": 12600,
+    "new_step2_reserved": 0,
+    "step2_limit": 36000,
+    "source": "Final scontrol COMPLETED, not the one-second shorter RUNNING exit-trap snapshot",
+    "settled_once": true
+  },
+  "next_action": "Preserve C163 and 3770 seven rank checkpoints; resource monitoring and local resume165 helper preparation. Any continuation must retain original total target with --source C163 --resume 3770 and fresh resources/budget/hashes/five-test gates, never restart from C or treat inherited assessment as B result.",
+  "limitations": [
+    "No B final evaluation or 18 B audit prefixes exist yet.",
+    "Raw checkpoint bytes were hashed/metadata loaded remotely by parent; local child verified supplied evidence only.",
+    "No new Mac pass or final B quality claim.",
+    "Checkpoint metadata CPU inspection initially lacked train import path and was rerun successfully with the pinned source/build paths; this was not a training failure."
+  ]
+}
