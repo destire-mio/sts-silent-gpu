@@ -173,7 +173,7 @@
     "noncombat_recomputed": true,
     "audit_actual_trajectories_match": true,
     "audit_decisions": 6693,
-    "mac_status": "pending_mac_original_replay",
+    "mac_status": "mac_reported_pass",
     "local_agent_checks": {
       "bundle_expected_sha256": true,
       "job3738_provenance": true,
@@ -229,10 +229,10 @@
   },
   "audit_archive": {
     "path": "inventory/E4-C66-job3738-154-N32-D1024-audit.json",
-    "sha256": "f8efacd6305711887a27c95ef0b6eb6a09473e36d88b28958310a8344f989fb2",
+    "sha256": "992584dd419efd14df9c81f00c16030fdadc3f2268e54c66120a0a987c135862",
     "roots": 18,
     "decisions": 6693,
-    "status": "pending_mac_original_replay"
+    "status": "mac_reported_pass"
   },
   "source_files": [
     {
@@ -811,5 +811,26 @@
     "step1_limit": 194400,
     "job3738_reserved_node_seconds": 12600,
     "settlement": "Running job not settled; observed costs separate"
+  },
+  "mac_original_replay_report": {
+    "round": "E4-C66-job3738-154-N32-D1024",
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this machine",
+    "commit": "3f3fe22303960251e62425df9a4f11588c729a1d",
+    "decisions": 6693,
+    "checked_engine": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "run_scope_pass": 18,
+    "traces": 18,
+    "both_scopes_pass": 18,
+    "model": "gpt-6-luna/medium",
+    "combat_scope_pass": 18,
+    "replay_1024": {
+      "average_floor_reported_rounded": "19.190",
+      "act1_boss_count": 587,
+      "stalled": 0,
+      "act2_boss_count": 1,
+      "episodes": 1024,
+      "matches_reported_results": true
+    },
+    "source": "docs/messages/claude-to-gpt.md #67"
   }
 }
