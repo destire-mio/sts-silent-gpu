@@ -1,0 +1,264 @@
+{
+  "updated_at": "2026-10-22T16:34:55.361651+08:00",
+  "decision_commit": "cf1b222ac72c952200f6d27ce2c45a0f70932d6b",
+  "local_merge": "aff0a5233b5fa100fccbbaf44ce27fd18f0ad06e",
+  "remote_access": "Original SSH81464 command execution succeeded; default approval_policy changed to on-request on explicit user request; causal link not established",
+  "fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "source_status": "",
+  "job_id": 3722,
+  "job_state": "FAILED",
+  "exit_code": "1:0",
+  "elapsed_seconds": 2,
+  "training_started": false,
+  "cuda_tests_executed": false,
+  "failure": "CUDA gate discovery mismatch: expected ['test_cuda_effect_fields', 'test_cuda_faults', 'test_cuda_parity', 'test_cuda_root_cache'], got ['test_cuda_effect_fields', 'test_cuda_faults', 'test_cuda_parity', 'test_cuda_root_cache', 'test_cuda_dispatch']\n",
+  "expected_tests": [
+    "test_cuda_effect_fields",
+    "test_cuda_faults",
+    "test_cuda_parity",
+    "test_cuda_root_cache"
+  ],
+  "discovered_tests": [
+    "test_cuda_effect_fields",
+    "test_cuda_faults",
+    "test_cuda_parity",
+    "test_cuda_root_cache",
+    "test_cuda_dispatch"
+  ],
+  "dispatch_source_exists": false,
+  "binary_sha256": {
+    "spire.cpython-312-x86_64-linux-gnu.so": "9955e920ed3465c7726f2e97a0f3cc1fbd531279c0d31ad8a73436df6717d9d2",
+    "spire_gpu.cpython-312-x86_64-linux-gnu.so": "245b417db210212ce3330d73d1fa6706f12e8bf7445518c6f3abad75c0b73985",
+    "test_cuda_dispatch": "e735dc5c73acb316bca7759cf39822ec689b498e283ce084138c69d25502c20e",
+    "test_cuda_effect_fields": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8",
+    "test_cuda_faults": "f1bc04565a4b6fb5387471570865e765bd2f976576027eeab50755b989e9e6a2",
+    "test_cuda_parity": "d83fa023de12b6f388e781be837aa0ecbd713fe49891030e69e7ceac3e541e50",
+    "test_cuda_root_cache": "7ed5efb6c6e3150aef9707dc5d8220844c613ad263a7278f23230aad278b5966",
+    "training_state.cpython-312-x86_64-linux-gnu.so": "f9f749c29b34d84a21ee4d459f0f66508268a55c9b22b75a5d93330173b8c5f6"
+  },
+  "build_log_sha256": "91d366e6af8cac5a115cadb67898612c230367e27d4094d796bb6162e11fd6ea",
+  "preflight": {
+    "checked_at": "2026-10-22T16:29:01.759014+08:00",
+    "queue": {
+      "checked_at": "2026-10-22T16:28:59.520618+08:00",
+      "jobs": [
+        {
+          "JobId": "3715",
+          "JobName": "srcsize_loop",
+          "UserId": "shaoy(1013)",
+          "JobState": "CANCELLED",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "3-00:00:00",
+          "StartTime": "2026-10-22T15:44:37",
+          "RunTime": "00:43:11",
+          "NodeList": "gpu01",
+          "TresPerNode": null,
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3717",
+          "JobName": "warpx",
+          "UserId": "shaoy(1013)",
+          "JobState": "CANCELLED",
+          "Reason": "None",
+          "Dependency": "(null)",
+          "TimeLimit": "1-00:00:00",
+          "StartTime": "2026-10-22T15:44:54",
+          "RunTime": "00:42:54",
+          "NodeList": "gpu01",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=1,mem=2G,node=1,billing=1"
+        },
+        {
+          "JobId": "3718",
+          "JobName": "extract",
+          "UserId": "shaoy(1013)",
+          "JobState": "CANCELLED",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3717(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "2026-10-22T16:27:48",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3719",
+          "JobName": "compute",
+          "UserId": "shaoy(1013)",
+          "JobState": "CANCELLED",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3718(unfulfilled)",
+          "TimeLimit": "06:00:00",
+          "StartTime": "2026-10-22T16:27:48",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": "gres:gpu:V100:1",
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3720",
+          "JobName": "analysis",
+          "UserId": "shaoy(1013)",
+          "JobState": "CANCELLED",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3719(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "2026-10-22T16:27:48",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        },
+        {
+          "JobId": "3721",
+          "JobName": "plot",
+          "UserId": "shaoy(1013)",
+          "JobState": "CANCELLED",
+          "Reason": "Dependency",
+          "Dependency": "afterok:3720(unfulfilled)",
+          "TimeLimit": "02:00:00",
+          "StartTime": "2026-10-22T16:27:48",
+          "RunTime": "00:00:00",
+          "NodeList": "",
+          "TresPerNode": null,
+          "TRES": "cpu=2,mem=4G,node=1,billing=2"
+        }
+      ],
+      "node": {
+        "NodeName": "gpu01",
+        "State": "IDLE",
+        "Gres": "gpu:V100:8",
+        "GresUsed": "gpu:V100:0(IDX:N/A)",
+        "CfgTRES": "cpu=56,mem=128027M,billing=56",
+        "AllocTRES": ""
+      },
+      "blocking_job_ids": [],
+      "source": "scontrol show jobs -o; scontrol show node gpu01 -o -d"
+    },
+    "world_size": 7,
+    "free_gpu_count": 8,
+    "requested_memory_mib": 81920,
+    "memory_left_mib": 46107.0,
+    "memavailable_mib": 101851.09375,
+    "home_mib": 25089,
+    "migration": {
+      "original_directory": "/home/zhuyouwei/spire-downloads/e4-c54-3689/evaluation-145",
+      "migrated_directory": "/home/zhuyouwei/spire-downloads/e4-c61-migrated-145",
+      "new_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+      "version": 145,
+      "world_size": 7,
+      "all_model_optimizer_hashes_equal": true,
+      "original_files_unchanged": true,
+      "files": [
+        {
+          "rank": 0,
+          "original_sha256": "33c54f87b7649a1f56fe4944334dfc7f7497e3ede061d7322738887ab278b2cc",
+          "migrated_sha256": "da26adb6d393695053e6fc2e4ccf29beb8b20a630492ee8d28aa0a30bd249e31",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 1,
+          "original_sha256": "05d0089bd804164b000e24238f00600c01acd6e09f15103eb0319d47afbcb7c3",
+          "migrated_sha256": "24ce686629de04284416ffe3fe8bc130740299ac99c717d99af8fc5e3b2a137a",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 2,
+          "original_sha256": "263257ea3c5887d9d9b56bd7edb081241c550ea4d44367793a3a508d7a19c5dc",
+          "migrated_sha256": "150b4aec30c5f2be789dc149421ecc176309f9a91e8d1e25bc82154ea31c1cf3",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 3,
+          "original_sha256": "d3e5b60576a1ff9dc3629d41896bbf93505a1b1d7e678fc00244bfa39d240e49",
+          "migrated_sha256": "51729bd7769ecda7aee916af65090ff0a086f152f0cf1fdfdc0bf25535b80d42",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 4,
+          "original_sha256": "797ae144d0ffdfd636041aaa073fdee0de0144f18adb57d3567fa379e0abc588",
+          "migrated_sha256": "b9625d62c0be623fd6ab46a60524494c21415a6b1987a13d0c622324df7a113f",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 5,
+          "original_sha256": "97501f15dea753d45232887da128f43bc0aab94ae0df765f0552139dbb3aeaef",
+          "migrated_sha256": "9ed190580493c190015669e172ed928e8f230222bb4f9f96225dc0d4518fd0ea",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        },
+        {
+          "rank": 6,
+          "original_sha256": "468ef4eecb248ddb0155f9b7eb1f16a8ae6d05744324c1ecc8c5b4d9fb74d6d8",
+          "migrated_sha256": "db159e9fae6c217db9b98db39c30b242709071dfa45335426ba5057074a6da4d",
+          "model_sha256": "60946c5096b08a0f3345e7375897f87cbc9fa28918015f514eee2b2a3a92616b",
+          "optimizer_sha256": "fbfefc711b59ac072f1a5da40d6a86b1f67c42e814a47cbd32cf5a75180b103b",
+          "payload_equal_except_commit_provenance": true
+        }
+      ],
+      "imitation_beta": 0.06062839503875166,
+      "trained_seconds": 9655.314102172852,
+      "phase": "evaluation",
+      "reason": "before_evaluation",
+      "next_evaluation": 9478.045028686523,
+      "authorization": "Claude59 latest evaluation checkpoint; 151 retained but not resumed",
+      "same_payload": true
+    },
+    "script_path": "/home/zhuyouwei/spire-downloads/e4-c62.sh",
+    "script_sha256": "d79af3d018b22faaabc1fac270e1a57d159657a7ab419cf8ea56a8e1051a8a43",
+    "step1_charged_node_seconds": 57721.25,
+    "reserved_gpu_seconds": 100800,
+    "reserved_node_seconds": 12600,
+    "step1_total_limit": 194400,
+    "original_remaining": 7078.75,
+    "continuation_reservation": 5521.25,
+    "walltime_seconds": 14400
+  },
+  "submission": {
+    "job_id": 3722,
+    "submitted_at": "2026-10-22T16:29:01.775515+08:00",
+    "script_sha256": "d79af3d018b22faaabc1fac270e1a57d159657a7ab419cf8ea56a8e1051a8a43",
+    "fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "gpus": 7,
+    "reserved_node_seconds": 12600
+  },
+  "scontrol_final": "JobId=3722 JobName=spire-e4-c62 UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899897 Nice=0 Account=(null) QOS=(null) JobState=FAILED Reason=NonZeroExitCode Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=1:0 RunTime=00:00:02 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-22T16:29:01 EligibleTime=2026-10-22T16:29:01 AccrueTime=2026-10-22T16:29:01 StartTime=2026-10-22T16:29:02 EndTime=2026-10-22T16:29:04 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T16:29:02 Scheduler=Backfill Partition=N56_128G_V100 AllocNode:Sid=gpu01:3100948 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=80G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=80G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c62.sh WorkDir=/home/zhuyouwei StdErr=/home/zhuyouwei/spire-downloads/e4-c62-3722.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c62-3722.log Power= TresPerNode=gres:gpu:V100:7 \n",
+  "queue_after_exit": "",
+  "accounting": {
+    "job_gpu_seconds": 14,
+    "job_node_seconds": 1.75,
+    "step0_charged": 2127,
+    "step1_charged": 57723,
+    "step1_limit": 194400,
+    "step1_reserved": 0,
+    "step2_authorized": false
+  },
+  "evidence": {
+    "e4-c64-deployment.json": "72f250ff3d3c4a41fd05bc1d95a185b1bdcb35f2cfdd27a8a868158c1d0bd1f0",
+    "e4-c64-build-provenance.json": "b4dfeb845f596b1753aa9397f6aa1c3bb5d04eda892f1cc60fccd8ff914b1fde",
+    "e4-c64-job3722-failure.json": "65dfd8f794d9830e30634827472c21f958a83cf46443adcbb18aee92ca2030fe"
+  },
+  "transfer_incident": "First helper transfer hit heredoc delimiter collision and Python syntax error; interrupted, corrected transfer byte hashes matched. An echo CUDA_GATES_PASS from shell was not test evidence. Process list confirmed no trainer launched; actual job3722 then failed discovery before any CUDA test.",
+  "diagnostic_thread": "01a162be-6840-7240-ae02-41a708c45057",
+  "pending": [
+    "Diagnose generated CUDA discovery with extra test_cuda_dispatch versus clean fixed source; diagnostic chat01a162be-6840-7240-ae02-41a708c45057; no resubmission before provenance resolved",
+    "Preserve failed job3722 and build; fix only approved build/deployment infrastructure, retain strict CUDA gate",
+    "After resolution recheck queue/resources/source/checkpoints/updated57723 ledger, submit at most one project job and run real CUDA gates before resume145",
+    "Resume evaluation145 with seven collectors; export all1024 results and18 actual action roots using job-qualified identity, pending Mac audit",
+    "Compare real training throughput to473.9470836897199 and retain stopping/yield rules"
+  ]
+}
