@@ -1,0 +1,100 @@
+{
+  "authorization": "Claude68 main4fa478fc876a9b9da501f09ec238074c61a178b4",
+  "selected_at": "2026-10-22T19:47:47.047661+08:00",
+  "selection_rule": "Latest completed evaluation at Claude68 implementation kickoff while A remains running",
+  "C_job": 3738,
+  "C_version": 163,
+  "C_directory": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163",
+  "fixed_source": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "world_size": 7,
+  "C_trained_seconds": 13474.011901855469,
+  "C_phase": "evaluation; immutable evaluation-start snapshots",
+  "checkpoint_files": [
+    {
+      "name": "rank-0.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt",
+      "bytes": 12507973,
+      "sha256": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+      "mtime": 1792667429.740777
+    },
+    {
+      "name": "rank-1.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt",
+      "bytes": 12525893,
+      "sha256": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+      "mtime": 1792667429.6217768
+    },
+    {
+      "name": "rank-2.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt",
+      "bytes": 12526085,
+      "sha256": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+      "mtime": 1792667429.498777
+    },
+    {
+      "name": "rank-3.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt",
+      "bytes": 12532357,
+      "sha256": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+      "mtime": 1792667429.5157769
+    },
+    {
+      "name": "rank-4.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt",
+      "bytes": 12528197,
+      "sha256": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+      "mtime": 1792667429.356777
+    },
+    {
+      "name": "rank-5.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt",
+      "bytes": 12531461,
+      "sha256": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+      "mtime": 1792667429.586777
+    },
+    {
+      "name": "rank-6.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt",
+      "bytes": 12525957,
+      "sha256": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+      "mtime": 1792667429.630777
+    }
+  ],
+  "A_job": 3738,
+  "A_budget_step": 1,
+  "A_post_C_updates_at_capture": [
+    {
+      "version": 164,
+      "actual_steps": 114688,
+      "update_seconds": 207.86538696289062,
+      "training_seconds": 13681.87728881836
+    },
+    {
+      "version": 165,
+      "actual_steps": 114688,
+      "update_seconds": 213.8841094970703,
+      "training_seconds": 13895.76139831543
+    },
+    {
+      "version": 166,
+      "actual_steps": 114688,
+      "update_seconds": 254.54464721679688,
+      "training_seconds": 14150.306045532227
+    }
+  ],
+  "A_post_C_training_seconds_at_capture": 676.2941436767578,
+  "A_capture_time": "2026-10-22T19:35:20.866330+08:00",
+  "B_budget_step": 2,
+  "B_limit_node_seconds": 36000,
+  "B_reserved_node_seconds": 0,
+  "B_pure_training_target": "Match actual A post-C training seconds; final target not fixed before A finishes or approved cutoff",
+  "B_submission_gates": [
+    "Implementation and meaningful localCPU tests complete",
+    "Real native CPU state/RNG gate unresolved on current Windows host",
+    "Publish diff for Claude look before B",
+    "3738 ends/yields; fresh resource/checkpoint/budget preflight",
+    "Exactly5actual unified CUDA tests inside B allocation"
+  ],
+  "accounting": "A remains existing step1; B GPU seconds/8 charged only step2; no duplicate A charge",
+  "settings": "No game-rule or reward change; fork only B training, p0.25/N8, evaluation/audit neverfork"
+}
