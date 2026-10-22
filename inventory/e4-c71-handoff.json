@@ -1,0 +1,74 @@
+{
+  "authorization": "Claude71 e9d2c969946f02c06996b5fc7f8bf191fbb569a7; full connector diff read; raw object fetch443 failed",
+  "Mac172_report": {
+    "source": "docs/messages/claude-to-gpt.md #71",
+    "commit": "e9d2c969946f02c06996b5fc7f8bf191fbb569a7",
+    "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "round": "E4-C66-job3738-172-N32-D1024",
+    "traces": 18,
+    "decisions": 5991,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "independent_full1024_replay_report": {
+      "episodes": 1024,
+      "matches_reported_results": true,
+      "average_floor_rounded": "18.043",
+      "act1_boss_count": 522
+    },
+    "diagnosis_report": {
+      "attribution": "Claude Mac report #71",
+      "comparison_to_C163": {
+        "act1_boss_deaths": {
+          "C163": 173,
+          "A172": 219
+        },
+        "act1_elite_deaths": {
+          "C163": 181,
+          "A172": 180
+        },
+        "rest_smith": {
+          "C163": 51,
+          "A172": 28
+        }
+      },
+      "interpretation": "Policy regression rather than an environment issue; step 1 stopped and C163 remains the best checkpoint"
+    },
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host"
+  },
+  "metadata_verification": {
+    "agent_checks": {
+      "all_three_round_reports_identical": true,
+      "all_current_reports_identical": true,
+      "all_current_statuses_mac_reported_pass": true,
+      "standalone_audit_sha256_reference_matches": true,
+      "exact_mean_unchanged": true,
+      "all_actual_roots_actions_seeds_unchanged": true,
+      "historical_rounds_unchanged": true,
+      "local_historical_verification_unchanged": true,
+      "no_unreported_mac_fault_stall_act2_counts": true,
+      "source_transport_checkpoint_episode_gzip_hashes_unchanged": true,
+      "18_roots_5991_decisions": true
+    },
+    "parent_independent_allowed_field_comparison": true,
+    "report_sha256": "951d674b03e85ea4c22a4fabff9fb91ce49f03aed3181aab14a01ecac3b0ea14"
+  },
+  "fork_source": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+  "fork_status": "Localsinglefinalevalfixverified;normalpushfailed443thisround",
+  "B_target_training_seconds": 2002.1460876464844,
+  "B_end": "One final1024dev assessment at target after wholeupdate thenstop; reportactualovershoot;compareA172 andC163",
+  "B_helpers_sha256": {
+    "manifest.json": "c733fef0a86cd1f835af13cf8b9712414b4fadac3e0a3d32423d356da9fb1ea0",
+    "e4-c70-B.sh": "cd8eef7d8209094f4176c1eed001f84617b9248b222f9353fe8dea8b5f83519b",
+    "preflight-c70-B.py": "faec3bda67bcbfe7308a525153d5108672f6b18c84946d7c399cd7dac70f69c4",
+    "verify-inputs.py": "39bd16238d2ae02fd3a86e01fa0fc8f3f6bc5713a870f24b8c82959eaca96145",
+    "cuda-gates.py": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e"
+  },
+  "remote_status": "Isolatedsource currently b34ff36 andold70helpers;oldpreflightpassedbutexpiredandsuperseded71;new71helpersNOTdeployed",
+  "B_submitted": false,
+  "step2_charged": 0,
+  "step2_reserved": 0,
+  "next_action": "Publish71forkfix andthisMacrecord afterfreshconcurrencycheck;fetch71rawobject;updateisolatedsourceandhelpers;newactualpreflight;then5realCUDAgates beforeBtraining"
+}

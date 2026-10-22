@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
   "current_round": "E4-C66-job3738-172-N32-D1024",
   "rounds": [
@@ -484,11 +484,49 @@
     {
       "name": "E4-C66-job3738-172-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "job_id": 3738,
       "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
-      "source_round": "E4-C53-172-N32-D1024"
+      "source_round": "E4-C53-172-N32-D1024",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #71",
+        "commit": "e9d2c969946f02c06996b5fc7f8bf191fbb569a7",
+        "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "round": "E4-C66-job3738-172-N32-D1024",
+        "traces": 18,
+        "decisions": 5991,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "18.043",
+          "act1_boss_count": 522
+        },
+        "diagnosis_report": {
+          "attribution": "Claude Mac report #71",
+          "comparison_to_C163": {
+            "act1_boss_deaths": {
+              "C163": 173,
+              "A172": 219
+            },
+            "act1_elite_deaths": {
+              "C163": 181,
+              "A172": 180
+            },
+            "rest_smith": {
+              "C163": 51,
+              "A172": 28
+            }
+          },
+          "interpretation": "Policy regression rather than an environment issue; step 1 stopped and C163 remains the best checkpoint"
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host"
+      }
     }
   ],
   "roots": [
@@ -107574,5 +107612,43 @@
         "outcome": "death"
       }
     }
-  ]
+  ],
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #71",
+    "commit": "e9d2c969946f02c06996b5fc7f8bf191fbb569a7",
+    "engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "round": "E4-C66-job3738-172-N32-D1024",
+    "traces": 18,
+    "decisions": 5991,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "independent_full1024_replay_report": {
+      "episodes": 1024,
+      "matches_reported_results": true,
+      "average_floor_rounded": "18.043",
+      "act1_boss_count": 522
+    },
+    "diagnosis_report": {
+      "attribution": "Claude Mac report #71",
+      "comparison_to_C163": {
+        "act1_boss_deaths": {
+          "C163": 173,
+          "A172": 219
+        },
+        "act1_elite_deaths": {
+          "C163": 181,
+          "A172": 180
+        },
+        "rest_smith": {
+          "C163": 51,
+          "A172": 28
+        }
+      },
+      "interpretation": "Policy regression rather than an environment issue; step 1 stopped and C163 remains the best checkpoint"
+    },
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host"
+  }
 }
