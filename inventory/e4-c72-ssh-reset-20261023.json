@@ -1,0 +1,57 @@
+{
+  "observed_at": "2026-10-23T02:20:15.490417+08:00",
+  "source_decision": {
+    "claude": 72,
+    "main": "2c73d8c59ae03471bfaf05f77eb2a2bc812b965e"
+  },
+  "fixed_B_source": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+  "lost_session": {
+    "id": 65951,
+    "exit_code": 1,
+    "original_error": "Read from remote host 10.157.195.156: Connection reset\nConnection to 10.157.195.156 closed.\nclient_loop: send disconnect: Connection reset",
+    "resource_poll_payload_received": false,
+    "resource_poll_remote_execution_confirmed": false
+  },
+  "single_replacement_attempt": {
+    "session_id": 67670,
+    "endpoint": "zhuyouwei@10.157.195.156:22",
+    "approval": "require_escalated accepted by auto review",
+    "exit_code": 1,
+    "original_error": "ssh: connect to host 10.157.195.156 port 22: Connection timed out",
+    "authenticated": false,
+    "duplicate_authenticated_connection": false,
+    "retries": 0
+  },
+  "last_actual_resource_snapshot": {
+    "checked_at": "2026-10-23T01:57:21.848411+08:00",
+    "file": "resource-watch-20261023-0157.json",
+    "sha256": "6bb7ede329e34db6e117dde58353110452555d1a3cc57a0371d02bd48a86a39c"
+  },
+  "current_queue_or_server_health_confirmed": false,
+  "cause": "Unknown; timeout alone does not prove server is down or identify a network cause",
+  "B_checkpoint": {
+    "directory": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770",
+    "last_verified_version": 165,
+    "last_verified_trained_seconds": 1271.0292358398438,
+    "total_target_seconds": 2002.1460876464844,
+    "new_job_submitted": false,
+    "new_reservation": 0,
+    "checkpoint_modified": false
+  },
+  "budget": {
+    "step0_charged": 2127,
+    "step1_charged": 66433.625,
+    "step2_charged": 1208.375,
+    "reserved": 0
+  },
+  "git": {
+    "normal_fetch": "succeeded allthree refs this round",
+    "main": "2c73d8c59ae03471bfaf05f77eb2a2bc812b965e",
+    "E4_before_this_handoff": "d06e5d02a57e20d75c1d7784f787e19f36654742",
+    "fork": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+    "new_commits": 0
+  },
+  "next_action": "Stop reconnect attempts this round. Later heartbeat may test the same endpoint TCP22 once after the recorded630s lower bound; only if reachable create one replacement authenticated session, never duplicate/loop/change network. Then latest Claude/resource/budget/hash preflight before same B165 resume.",
+  "next_connectivity_check_not_before": "2026-10-23T02:30:45.490417+08:00",
+  "system_network_changes": false
+}
