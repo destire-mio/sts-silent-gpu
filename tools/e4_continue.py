@@ -73,13 +73,15 @@ def waiting(rank, output, version):
     return result[0]
 
 
-def main():
+def main(case):
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--resume', type=Path)
     parser.add_argument('--seconds', type=int, required=True)
     parser.add_argument('--evaluate-only', action='store_true')
+    if case == 'B':
+        parser.add_argument('--training-seconds', type=float, required=True)
     args = parser.parse_args()
     rank, world = int(os.environ['RANK']), int(os.environ['WORLD_SIZE'])
     assert world in (7, 8)
@@ -92,11 +94,19 @@ def main():
     source_path = args.source / f'rank-{rank}.pt'
     source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
     source = torch.load(source_path, map_location='cpu', weights_only=False)
-    assert source['commit'] == '3b54843df8c36d856f9c9425bb1279833f956fab'
-    assert source['initialization'] == 1729 and source['version'] == 105
+    assert case in ('A', 'B')
+    if case == 'A':
+        assert source['commit'] == '3b54843df8c36d856f9c9425bb1279833f956fab'
+        assert source['initialization'] == 1729 and source['version'] == 105
+    else:
+        assert source['commit'] == 'd28c060f92e38385670d70defad5a41fea3421a9'
+        assert source['initialization'] == 1729 and source['version'] == 163
+        assert world == source['world_size'] == 7
     assert source['reason'] == 'before_evaluation'
     assert source['lanes'] == 256 and source['trials'] == 32 and source['phase'] == 'evaluation'
     assert source['ready'] is None and source['train_state']['partial'] is None
+    source_version = source['version']
+    prefix = 'E4-C53' if case == 'A' else 'E4-C68-B'
     torch.manual_seed(1729)
     policy = Policy(ModelConfig()).to(device)
     ddp = DistributedDataParallel(policy, device_ids=[device.index], broadcast_buffers=False)
@@ -104,16 +114,26 @@ def main():
     ppo_rng = torch.Generator(device=device)
     search_rng = torch.Generator(device=device)
     seed_rng = torch.Generator()
+    fork_rng = torch.Generator().manual_seed(681729 + rank) if case == 'B' else None
     deadline = time.monotonic() + args.seconds - 120
     phase, epochs = 'training', 4
     trained_seconds, evaluation_seconds, next_evaluation = 0., 0., 1800.
+    if case == 'B':
+        assert args.training_seconds > 0
+        next_evaluation = min(next_evaluation, args.training_seconds)
     updates, actual_steps = [], 0
     health_history = deque(source['health_history'], maxlen=20)
     train_state = deepcopy(source['train_state'])
     training_rng = source['training_rng']
     evaluation_state, ready = None, None
-    baseline = json.loads((args.source.parent / 'E4-C49-105-N32-D1024-summary.json').read_text())
-    assert baseline['version'] == 105 and baseline['average_floor'] == 15.2451171875
+    baseline_path = (args.source.parent / 'E4-C49-105-N32-D1024-summary.json' if case == 'A'
+                     else args.source.parent / f'E4-C53-{source_version}-N32-D1024-summary.json')
+    baseline = json.loads(baseline_path.read_text())
+    assert baseline['version'] == source_version
+    if case == 'A':
+        assert baseline['average_floor'] == 15.2451171875
+    else:
+        train_state['fork_rng'] = fork_rng.get_state()
     assessments = [baseline]
     best, stagnant = baseline['reach'].copy(), 0
     best_floor = baseline['average_floor']
@@ -124,6 +144,8 @@ def main():
         assert saved is not None and saved['ready'] is None
     if saved:
         assert saved['commit'] == commit and saved['source_sha256'] == source_hash
+        if case == 'B':
+            assert saved['case'] == 'B' and saved['target_training_seconds'] == args.training_seconds
         phase, epochs = saved['phase'], saved['epochs']
         assert epochs == 4
         best_floor = saved['best_floor']
@@ -145,8 +167,8 @@ def main():
     search = RoomSearch(256, 32, device, search_rng, scratch_slots=256*33)
     search.evidence_directory = args.output
     search.deadline = deadline
-    collector = SegmentCollector(search, seed_rng, rank=rank)
-    if saved is None:
+    collector = SegmentCollector(search, seed_rng, rank=rank, fork_rng=fork_rng)
+    if saved is None and case == 'A':
         start = time.monotonic()
         slots = [s for s, seed in enumerate(train_state['seeds']) if seed is not None]
         search.batch.reset_to_many(slots, [train_state['seeds'][s] for s in slots], [[] for _ in slots])
@@ -161,7 +183,7 @@ def main():
         for history in train_state['reward_history']:
             history.counts.clear()
         atomic_json(args.output / f'reward-history-migration-{rank}.json', dict(
-            source_sha256=source_hash, source_version=105, lanes=len(slots),
+            source_sha256=source_hash, source_version=source_version, lanes=len(slots),
             decisions=sum(len(train_state['paths'][s]) for s in slots),
             seconds=time.monotonic()-start, method='replay saved actual prefixes using visible observations'))
     if phase == 'training':
@@ -179,6 +201,8 @@ def main():
         search.event_trial_max_steps = saved['event_trial_max_steps']
         search.loop_metrics = saved['loop_metrics']
         search.combat_diagnostics = saved['combat_diagnostics']
+        if case == 'B':
+            search.fork_metrics = saved['fork_metrics']
 
     def checkpoint(reason):
         nonlocal train_state, evaluation_state
@@ -187,9 +211,11 @@ def main():
         elif phase == 'evaluation':
             evaluation_state = collector.state()
         atomic_checkpoint(args.output / f'rank-{rank}.pt', dict(commit=commit,
-            source_sha256=source_hash, source_commit=source['commit'], source_version=105,
+            source_sha256=source_hash, source_commit=source['commit'], source_version=source_version, case=case,
+            fork_metrics=search.fork_metrics,
+            target_training_seconds=args.training_seconds if case == 'B' else None,
             initialization=1729, phase=phase, reason=reason, lanes=256, trials=32, world_size=world,
-            version=105+len(updates), epochs=epochs, trained_seconds=trained_seconds,
+            version=source_version+len(updates), epochs=epochs, trained_seconds=trained_seconds,
             source_trained_seconds=source['trained_seconds'], next_evaluation=next_evaluation,
             evaluation_seconds=evaluation_seconds, updates=updates, actual_steps=actual_steps,
             model=policy.state_dict(), optimizer=optimizer.state_dict(), ppo_rng=ppo_rng.get_state(),
@@ -205,7 +231,7 @@ def main():
         if rank == 0:
             atomic_json(args.output / 'status.json', dict(reason=reason, phase=phase,
                 job=os.environ['SLURM_JOB_ID'], commit=commit, source_directory=str(args.source),
-                source_version=105, version=105+len(updates), lanes=256, epochs=epochs, trials=32, world_size=world,
+                source_version=source_version, version=source_version+len(updates), case=case, lanes=256, epochs=epochs, trials=32, world_size=world,
                 evaluation_lanes=256, dev_seed_count=1024, trained_seconds=trained_seconds,
                 next_evaluation=next_evaluation, evaluation_seconds=evaluation_seconds,
                 capacity_metrics=search.capacity_metrics,
@@ -218,7 +244,7 @@ def main():
             return
         checkpoint('started')
         while True:
-            if waiting(rank, args.output, 105+len(updates)):
+            if waiting(rank, args.output, source_version+len(updates)):
                 checkpoint('yield_to_waiting_user')
                 return
             if collective_stop(time.monotonic() >= deadline, device):
@@ -282,18 +308,18 @@ def main():
                         continue
                 train_state = deepcopy(collector.state())
                 training_rng = dict(torch_rng=torch.get_rng_state(), cuda_rng=torch.cuda.get_rng_state(device))
-                collector = SegmentCollector(search, seed_rng, rank=rank)
+                collector = SegmentCollector(search, seed_rng, rank=rank, fork_rng=fork_rng)
                 search_rng.manual_seed(2729+rank)
                 search.metrics = dict.fromkeys(SEARCH_METRICS, 0)
                 search.capacity_metrics = dict.fromkeys(CAPACITY_METRICS, 0)
                 search.event_trial_max_steps = 0
                 search.combat_diagnostics = []
                 phase = 'evaluation'
-            if waiting(rank, args.output, 105+len(updates)):
+            if waiting(rank, args.output, source_version+len(updates)):
                 checkpoint('yield_to_waiting_user')
                 return
             checkpoint('before_evaluation')
-            evaluation_checkpoint = args.output / f'evaluation-{105+len(updates)}'
+            evaluation_checkpoint = args.output / f'evaluation-{source_version+len(updates)}'
             evaluation_checkpoint.mkdir(exist_ok=True)
             archived_rank = evaluation_checkpoint / f'rank-{rank}.pt'
             if not archived_rank.exists():
@@ -327,10 +353,11 @@ def main():
             search_summary['combat_played_cards_limit_fraction'] = (
                 search_summary['combat_played_cards_limit'] / search_summary['combat_trials']
                 if search_summary['combat_trials'] else 0.)
-            version = 105+len(updates)
-            round_name = f'E4-C53-{version}-N32-D1024'
+            version = source_version+len(updates)
+            round_name = f'{prefix}-{version}-N32-D1024'
             atomic_json(args.output / f'{round_name}-rank-{rank}.json', episodes)
             atomic_json(args.output / f'{round_name}-combat-{rank}.json', search.combat_diagnostics)
+            atomic_json(args.output / f'{round_name}-fork-{rank}.json', search.fork_metrics)
             dist.barrier()
             assessment = None
             if rank == 0:
@@ -340,7 +367,20 @@ def main():
                 assert {e['seed'] for e in all_episodes} == set(range(2000000000, 2000001024))
                 combat_rows = sum([json.loads((args.output / f'{round_name}-combat-{r}.json').read_text())
                                    for r in range(world)], [])
+                fork_rows = [json.loads((args.output / f'{round_name}-fork-{r}.json').read_text()) for r in range(world)]
+                fork_totals = {key: (max(row[key] for row in fork_rows) if key in ('score_gap_max',)
+                                    or key.endswith('max_steps') else sum(row[key] for row in fork_rows))
+                               for key in search.fork_metrics}
+                fork_totals['time_fraction'] = fork_totals['seconds'] / (world * trained_seconds) if trained_seconds else 0.
+                fork_totals['score_gap_mean'] = (fork_totals['score_gap_sum'] / fork_totals['score_gap_count']
+                                                 if fork_totals['score_gap_count'] else None)
+                fork_totals['combat_played_cards_limit_fraction'] = (fork_totals['combat_played_cards_limit']
+                    / fork_totals['combat_trials'] if fork_totals['combat_trials'] else 0.)
                 assessment = dict(summaries(all_episodes), round=round_name, version=version,
+                    case=case, source_version=source_version, fork=fork_totals,
+                    source_trained_seconds=source['trained_seconds'],
+                    target_training_seconds=args.training_seconds if case == 'B' else None,
+                    training_seconds_overshoot=max(0., trained_seconds-args.training_seconds) if case == 'B' else None,
                     trials=32, training_lanes=256, evaluation_lanes=256, dev_seed_count=1024, world_size=world,
                     evaluation_seconds=evaluation_seconds, trained_seconds=trained_seconds,
                     update_count=len(updates), actual_steps=actual_steps, next_epochs=epochs,
@@ -355,13 +395,18 @@ def main():
             dist.broadcast_object_list(shared, src=0)
             assessment = shared[0]
             assessments.append(assessment)
-            if assessment['combat_played_cards_limit_fraction'] > .001:
+            if (assessment['combat_played_cards_limit_fraction'] > .001
+                    or assessment['fork']['combat_played_cards_limit_fraction'] > .001):
                 phase = 'complete'
                 checkpoint('combat_played_cards_limit_above_one_per_thousand')
                 return
             if args.evaluate_only:
                 phase = 'complete'
                 checkpoint('evaluation_only_complete')
+                return
+            if case == 'B' and trained_seconds >= args.training_seconds:
+                phase = 'complete'
+                checkpoint('matched_training_seconds_complete')
                 return
             if best_floor - assessment['average_floor'] > 1.:
                 phase = 'complete'
@@ -371,12 +416,13 @@ def main():
             improved = any(assessment['reach'][key]-best[key] >= .02 for key in REACH)
             stagnant = 0 if improved else stagnant+1
             best = {key: max(best[key], assessment['reach'][key]) for key in REACH}
-            collector = SegmentCollector(search, seed_rng, rank=rank)
+            collector = SegmentCollector(search, seed_rng, rank=rank, fork_rng=fork_rng)
             collector.restore(train_state)
             torch.set_rng_state(training_rng['torch_rng'])
             torch.cuda.set_rng_state(training_rng['cuda_rng'], device)
             evaluation_state, evaluation_seconds = None, 0.
-            next_evaluation = trained_seconds+1800
+            next_evaluation = (min(trained_seconds+1800, args.training_seconds) if case == 'B'
+                               else trained_seconds+1800)
             search.combat_diagnostics = None
             phase = 'training'
             if stagnant >= 3:
@@ -396,4 +442,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main('A')

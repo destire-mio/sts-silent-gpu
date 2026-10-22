@@ -18,6 +18,8 @@ COMBAT_PHASE, COMPLETE_PHASE = 1, 2
 BOSS_ROOM, ELITE_ROOM, EVENT_ROOM, NEOW_ROOM = 2, 1, 6, 8
 MAX_REWARD = 156
 ACTION_KINDS = ("padding", "play", "end_turn", "choose", "potion_use", "potion_discard", "proceed", "skip")
+FORK_METRICS = ("forks", "branches", "completed_branches", "capped_branches", "score_gap_count",
+                "score_gap_sum", "score_gap_max", "seconds", "searched_decisions")
 SEARCH_METRICS = ("combat_over_limit", "event_over_limit", "combat_normal_max_steps", "event_normal_max_steps")
 CAPACITY_METRICS = ("combat_played_cards_limit", "combat_trials")
 LOOP_METRICS = ("repeat_check_seconds", "repeat_check_decisions", "repeat_check_candidates", "all_candidates_repeat")
@@ -126,6 +128,7 @@ class RoomSearch:
         self.actual_lanes = []
         self.combat_tails = {}
         self.combat_diagnostics = None
+        self.fork_metrics = dict.fromkeys(FORK_METRICS + SEARCH_METRICS + CAPACITY_METRICS + LOOP_METRICS, 0)
         self.map_returned = torch.zeros(self.size, dtype=torch.bool, device=device)
 
     def clock(self):
@@ -371,6 +374,12 @@ class RoomSearch:
                     (s in frames_before or after_progress[s][PHASE] != COMBAT_PHASE)]
         frames_after = self.frames(observed, after_progress)
         for s in observed:
+            if (before_progress[s][PHASE] != COMBAT_PHASE and after_progress[s][PHASE] == COMBAT_PHASE
+                    and after_progress[s][ROOM] == BOSS_ROOM):
+                counts = self.reward_history[s].counts
+                label = f'boss_act{after_progress[s][ACT]}'
+                counts[label + '_arrivals'] += 1
+                counts[label + '_deck_size_sum'] += frames_after[s]['deck_size']
             if s in frames_before:
                 self.reward_history[s].after_step(frames_before[s], frames_after[s], action_by_slot[s])
             else:
@@ -408,12 +417,15 @@ class RoomSearch:
         return slots
 
     def combat(self, model, sources):
+        return self._combat(model, sources, self.trials)
+
+    def _combat(self, model, sources, trials):
         selected_paths = {}
-        capacity = len(self.available) // self.trials
+        capacity = len(self.available) // trials
         assert capacity > 0
         for begin in range(0, len(sources), capacity):
             parents = sources[begin:begin + capacity]
-            slots = self.take(len(parents) * self.trials)
+            slots = self.take(len(parents) * trials)
             context = self.begin_search("combat", slots)
             if self.combat_diagnostics is not None:
                 starts = self.progress()
@@ -421,7 +433,7 @@ class RoomSearch:
                 context["entropy_sum"] = dict.fromkeys(slots, 0.)
                 context["entropy_count"] = dict.fromkeys(slots, 0)
             try:
-                self.clone([s for s in parents for _ in range(self.trials)], slots)
+                self.clone([s for s in parents for _ in range(trials)], slots)
                 self.capacity_metrics["combat_trials"] += len(slots)
                 paths = {s: [] for s in slots}
                 capped = set()
@@ -450,17 +462,17 @@ class RoomSearch:
                 if self.combat_diagnostics is not None:
                     keys = dict(zip(eligible, self.loop_keys(eligible))) if eligible else {}
                     for j, parent in enumerate(parents):
-                        trials = slots[j * self.trials:(j + 1) * self.trials]
-                        group = [s for s in trials if s not in capped]
+                        trial_slots = slots[j * trials:(j + 1) * trials]
+                        group = [s for s in trial_slots if s not in capped]
                         act, floor, seed = context["starts"][parent]
-                        count = sum(context["entropy_count"][s] for s in trials)
-                        entropy_sum = sum(context["entropy_sum"][s] for s in trials)
-                        row = dict(act=act, floor=floor, seed=seed, trials=len(trials),
-                            capped_trials=len(trials)-len(group), decision_count=count,
+                        count = sum(context["entropy_count"][s] for s in trial_slots)
+                        entropy_sum = sum(context["entropy_sum"][s] for s in trial_slots)
+                        row = dict(act=act, floor=floor, seed=seed, trials=len(trial_slots),
+                            capped_trials=len(trial_slots)-len(group), decision_count=count,
                             entropy_sum=entropy_sum, policy_entropy=entropy_sum/count,
                             nested_event=any(c["kind"] == "event" for c in self.contexts),
                             win_fraction=None, score_std=None, distinct_end_states=None, selected_score_gain=None)
-                        if len(group) == len(trials):
+                        if len(group) == len(trial_slots):
                             mean = sum(scores[s] for s in group)/len(group)
                             row.update(win_fraction=sum(progress[s][BATTLE_OVER] and not progress[s][SMOKED]
                                 and progress[s][HP] > 0 for s in group)/len(group),
@@ -469,7 +481,7 @@ class RoomSearch:
                                 selected_score_gain=max(scores[s] for s in group)-mean)
                         self.combat_diagnostics.append(row)
                 for j, parent in enumerate(parents):
-                    group = [s for s in slots[j * self.trials:(j + 1) * self.trials] if s not in capped]
+                    group = [s for s in slots[j * trials:(j + 1) * trials] if s not in capped]
                     if group:
                         winner = max(group, key=scores.get)
                         self.clone([winner], [parent])
@@ -558,6 +570,141 @@ class RoomSearch:
             self.contexts.pop()
             self.available.extend(slots)
 
+    def fork_options(self, sources, progress):
+        if not sources:
+            return {}
+        frames = self.frames(sources, progress)
+        masks = self.policy_masks(sources).cpu().tolist()
+        result = {}
+        for parent, mask in zip(sources, masks):
+            p, frame = progress[parent], frames[parent]
+            if p[PHASE] == COMBAT_PHASE:
+                continue
+            screen = p[SCREEN]
+            choices = [a for a, (kind, _) in enumerate(frame['actions']) if mask[a] and
+                       ((screen in (6, 12) and kind in (3, 7)) or
+                        (screen == ROOM_SCREEN and kind == 3 and frame['rest_options'][a] is not None))]
+            if len(choices) > 1:
+                result[parent] = choices
+        return result
+
+    def fork(self, model, options, rewards, floor_steps, noncombat_floor_steps):
+        started = time.monotonic()
+        rng_before = self.rng.get_state()
+        metrics_before, capacity_before = self.metrics.copy(), self.capacity_metrics.copy()
+        loops_before, searched_before = self.loop_metrics.copy(), self.searched_decisions
+        diagnostics_before = self.combat_diagnostics
+        self.combat_diagnostics = None
+        self.metrics = dict.fromkeys(SEARCH_METRICS, 0)
+        self.capacity_metrics = dict.fromkeys(CAPACITY_METRICS, 0)
+        self.loop_metrics = dict.fromkeys(LOOP_METRICS, 0)
+        self.searched_decisions = 0
+        parents = [p for p, choices in options.items() for _ in choices]
+        choices = [a for choices in options.values() for a in choices]
+        slots = self.take(len(choices))
+        context = self.begin_search("event", slots)
+        capped, scores = set(), {}
+        ledgers = {s: deepcopy(rewards[p]) for s, p in zip(slots, parents)}
+        earned, battles = dict.fromkeys(slots, 0.), dict.fromkeys(slots, 0)
+        steps = {s: floor_steps[p] for s, p in zip(slots, parents)}
+        noncombat = {s: noncombat_floor_steps[p] for s, p in zip(slots, parents)}
+        self.fork_metrics["forks"] += len(options)
+        self.fork_metrics["branches"] += len(slots)
+
+        def advance(active, before, counts):
+            after = self.progress()
+            expired, finished = [], []
+            for slot in active:
+                old, new = before[slot], after[slot]
+                earned[slot] += ledgers[slot].advance(old, new)
+                finished_combat = (old[PHASE] == COMBAT_PHASE and new[PHASE] != COMBAT_PHASE
+                                   and new[BATTLE_OVER] and not new[SMOKED])
+                battles[slot] += int(finished_combat)
+                terminal = new[SCREEN] in (DEATH, VICTORY)
+                if old[FLOOR] != new[FLOOR]:
+                    steps[slot], noncombat[slot] = 0, 0
+                else:
+                    steps[slot] += counts[slot]
+                    noncombat[slot] += counts[slot] if old[PHASE] != COMBAT_PHASE else 0
+                if not terminal and (steps[slot] > 3000 or noncombat[slot] > 200
+                                     or context["steps"][slot] > 500):
+                    expired.append(slot)
+                elif terminal or battles[slot] >= 2 or (finished_combat and old[ROOM] == BOSS_ROOM):
+                    finished.append(slot)
+            self.exceeded(context, expired)
+            capped.update(expired)
+            bootstrap = self.scores(model, [s for s in finished if after[s][SCREEN] not in (DEATH, VICTORY)], after)
+            for slot in finished:
+                scores[slot] = earned[slot] + bootstrap.get(slot, 0.)
+                self.metrics["event_normal_max_steps"] = max(
+                    self.metrics["event_normal_max_steps"], context["total_steps"][slot])
+
+        try:
+            self.clone(parents, slots)
+            before = self.progress()
+            self.trace_step(context, slots, choices)
+            self.step(slots, choices)
+            self.searched_decisions += len(slots)
+            advance(slots, before, dict.fromkeys(slots, 1))
+            live = [s for s in slots if s not in capped and s not in scores]
+            while live:
+                context["live"] = live
+                self.clock()
+                before = self.progress()
+                fighting = [s for s in live if before[s][PHASE] == COMBAT_PHASE]
+                if fighting:
+                    paths = self._combat(model, fighting, 8)
+                    counts = {}
+                    for slot, path in paths.items():
+                        if path is None:
+                            capped.add(slot)
+                        else:
+                            counts[slot] = len(path)
+                            context["total_steps"][slot] += len(path)
+                            context["tail"][slot].extend(self.combat_tails[slot])
+                    advance(list(counts), before, counts)
+                walking = [s for s in live if s not in fighting]
+                if walking:
+                    picked, _, _ = self.predict(model, walking)
+                    self.trace_step(context, walking, picked)
+                    self.step(walking, picked)
+                    self.searched_decisions += len(walking)
+                    advance(walking, before, dict.fromkeys(walking, 1))
+                live = [s for s in live if s not in capped and s not in scores]
+            self.fork_metrics["completed_branches"] += len(scores)
+            self.fork_metrics["capped_branches"] += len(capped)
+            selected = {}
+            for parent, parent_choices in options.items():
+                group = [(s, a) for s, p, a in zip(slots, parents, choices) if p == parent and s in scores]
+                if group:
+                    winner, action = max(group, key=lambda pair: scores[pair[0]])
+                    selected[parent] = action
+                    gap = max(scores[s] for s, _ in group) - min(scores[s] for s, _ in group)
+                    self.fork_metrics["score_gap_count"] += 1
+                    self.fork_metrics["score_gap_sum"] += gap
+                    self.fork_metrics["score_gap_max"] = max(self.fork_metrics["score_gap_max"], gap)
+                else:
+                    selected[parent] = None
+            return selected
+        finally:
+            self.contexts.pop()
+            self.available.extend(slots)
+            self.rng.set_state(rng_before)
+            self.fork_metrics["seconds"] += time.monotonic() - started
+            self.fork_metrics["searched_decisions"] += self.searched_decisions
+            for key in SEARCH_METRICS:
+                if key.endswith("max_steps"):
+                    self.fork_metrics[key] = max(self.fork_metrics[key], self.metrics[key])
+                else:
+                    self.fork_metrics[key] += self.metrics[key]
+            for key in CAPACITY_METRICS:
+                self.fork_metrics[key] += self.capacity_metrics[key]
+            for key in LOOP_METRICS:
+                self.fork_metrics[key] += self.loop_metrics[key]
+            self.metrics, self.capacity_metrics = metrics_before, capacity_before
+            self.loop_metrics, self.searched_decisions = loops_before, searched_before
+            self.combat_diagnostics = diagnostics_before
+
     def plan(self, model, sources, kind):
         backups = self.take(len(sources))
         self.clone(sources, backups)
@@ -576,8 +723,9 @@ class RoomSearch:
 
 
 class SegmentCollector:
-    def __init__(self, search, seed_rng, *, rank=0):
+    def __init__(self, search, seed_rng, *, rank=0, fork_rng=None):
         self.search, self.seed_rng, self.rank = search, seed_rng, rank
+        self.fork_rng = fork_rng
         self.seeds = [None] * search.lanes
         self.paths = [[] for _ in self.seeds]
         self.floor_steps = [0] * search.lanes
@@ -625,6 +773,7 @@ class SegmentCollector:
                     last_stall_classes=self.last_stall_classes,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
                     seed_rng=self.seed_rng.get_state(), search_rng=self.search.rng.get_state(),
+                    fork_rng=self.fork_rng.get_state() if self.fork_rng is not None else None,
                     decisions=self.decisions, completed=self.completed, partial=self.partial,
                     evaluation_waiting=self.evaluation_waiting)
 
@@ -642,6 +791,8 @@ class SegmentCollector:
             for name, value in self.partial["result"].items():
                 self.partial["result"][name] = value.to(self.search.device)
         self.pending = [deque(p) for p in state["pending"]]
+        if self.fork_rng is not None:
+            self.fork_rng.set_state(state["fork_rng"])
         self.seed_rng.set_state(state["seed_rng"])
         self.search.rng.set_state(state["search_rng"])
         slots = [i for i, seed in enumerate(self.seeds) if seed is not None]
@@ -652,7 +803,20 @@ class SegmentCollector:
                                             [self.paths[i] for i in slots])
             self.search.check(slots)
 
-    def choose(self, model, slots, progress):
+    def choose(self, model, slots, progress, *, training=False):
+        rng_before = self.search.rng.get_state()
+        fork_before = self.fork_rng.get_state() if self.fork_rng is not None else None
+        pending_before = deepcopy(self.pending)
+        try:
+            return self._choose(model, slots, progress, training=training)
+        except AllocationEnded:
+            self.search.rng.set_state(rng_before)
+            if self.fork_rng is not None:
+                self.fork_rng.set_state(fork_before)
+            self.pending = pending_before
+            raise
+
+    def _choose(self, model, slots, progress, *, training):
         self.stalled = set()
         self.search.actual_lanes = [dict(lane=s, seed=self.seeds[s], steps=len(self.paths[s]),
             floor=progress[s][FLOOR], screen=SCREENS[progress[s][SCREEN]]) for s in slots]
@@ -675,6 +839,17 @@ class SegmentCollector:
                     self.stalled.add(s)
                 else:
                     self.pending[s].append(path[0])
+        if training and self.fork_rng is not None:
+            options = self.search.fork_options([s for s in idle if s not in combat and s not in events], progress)
+            selected = {s: choices for s, choices in options.items()
+                        if float(torch.rand((), generator=self.fork_rng)) < .25}
+            if selected:
+                for s, action in self.search.fork(model, selected, self.rewards,
+                                                 self.floor_steps, self.noncombat_floor_steps).items():
+                    if action is None:
+                        self.stalled.add(s)
+                    else:
+                        self.pending[s].append(action)
         imitation = []
         for j, s in enumerate(slots):
             imitation.append(bool(self.pending[s]))
@@ -758,7 +933,7 @@ class SegmentCollector:
             if fresh:
                 self.fresh(fresh)
             progress = self.search.progress()
-            actions, values, logs, imitation = self.choose(model, slots, progress)
+            actions, values, logs, imitation = self.choose(model, slots, progress, training=True)
             result["policy_mask"][t] = self.search.policy_masks(slots)
             row = t * lanes
             store_inputs(self.search.batch, self.search.arrays, index, result["data"],
@@ -810,7 +985,7 @@ class SegmentCollector:
                 self.reset(free[:count], [waiting.popleft() for _ in range(count)])
             slots = [s for s, seed in enumerate(self.seeds) if seed is not None]
             progress = self.search.progress()
-            choices, _, _, _ = self.choose(model, slots, progress)
+            choices, _, _, _ = self.choose(model, slots, progress, training=False)
             completed_before = len(self.completed)
             self.advance(slots, choices, progress)
             if len(self.completed) // 64 != completed_before // 64:

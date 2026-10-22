@@ -79,6 +79,9 @@ class RewardHistory:
                                or tuple(row) not in map(tuple, after['rewards'])):
                 del self.rows[reward]
                 del self.opened[reward]
+        if before['screen'] == 6 and kind in (3, 7):
+            self.counts['card_choices'] += 1
+            self.counts['card_skipped'] += int(kind == 7)
         if before['screen'] == 6 and self.active_card is not None:
             if kind == 3:
                 if after['deck_size'] > before['deck_size']:
@@ -97,9 +100,14 @@ class RewardHistory:
 def noncombat_summary(episodes):
     counts = Counter({key: 0 for key in
         [name + suffix for name in ('gold', 'potion', 'card', 'relic') for suffix in ('_appeared', '_taken')]
-        + ['card_opened', 'card_bowl', 'shop_purchases', 'mask_gold', 'mask_potion', 'mask_card']
+        + ['card_opened', 'card_bowl', 'card_choices', 'card_skipped', 'shop_purchases', 'mask_gold', 'mask_potion', 'mask_card']
         + ['rest_' + name for name in REST_OPTIONS]})
     for episode in episodes:
         counts.update(episode['noncombat']['counts'])
-    return dict(counts=dict(counts), final_deck_size_mean=sum(e['final_deck_size'] for e in episodes) / len(episodes),
+    rest_choices = sum(counts['rest_' + name] for name in REST_OPTIONS)
+    return dict(card_skip_rate=counts['card_skipped'] / counts['card_choices'] if counts['card_choices'] else None,
+                rest_upgrade_rate=counts['rest_smith'] / rest_choices if rest_choices else None,
+                boss_deck_size_mean={f'act{act}': counts[f'boss_act{act}_deck_size_sum'] / counts[f'boss_act{act}_arrivals']
+                    if counts[f'boss_act{act}_arrivals'] else None for act in range(1, 5)},
+                counts=dict(counts), final_deck_size_mean=sum(e['final_deck_size'] for e in episodes) / len(episodes),
                 episodes=len(episodes), scope='actual trajectories; displayed combat/treasure reward rows')

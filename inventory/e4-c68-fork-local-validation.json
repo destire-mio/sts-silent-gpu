@@ -1,0 +1,83 @@
+{
+  "source_claude": 68,
+  "design_commit": "4fa478fc876a9b9da501f09ec238074c61a178b4",
+  "publishing_directive": "Claude69 main6d306ae1ed59de444ce039835f0154bba47e0c21: implementation/tests only codex/e4-fork; Mac compiles/tests/reviews before B",
+  "implementation_model": "gpt-6.1-sol/xhigh",
+  "review_model": "gpt-6.1-sol/xhigh",
+  "base_before_message69_merge": "0001ad05a46d8fb7c5e1c25eecbd276547bc9371",
+  "base_after_message69_merge": "1b3122744632e64a89bf24ff63c51370002db9c8",
+  "created_at": "2026-10-22T20:06:42.757334+08:00",
+  "working_file_sha256": {
+    "train/e4.py": "0bcd2aedef894a18854bed61da89519c7fb7c2b20a44c05e06036cd59fb5883e",
+    "train/e4_rewards.py": "0970c0f4ca0069cf02934c4ed3c84459fed4045e1019d12b25ad40a708508a97",
+    "tools/e4_continue.py": "bf070585c9e1adf0707d22b7f3c9d80286fe5926475fd44fa25bd21e94728fba",
+    "tools/e4_fork.py": "10552d315b6752a89de9f20c41bfb999f3144b73667e6d3da77e56bd692b9fcd",
+    "tests/test_e4_fork.py": "991a3e683dc2b03d194118f038677feb796c580a5012d183b5ab0df5c7616319",
+    "tests/test_e4_capacity.py": "b5eaa25febfd34f3a93ca83848ac3ba721d6ad0ec28e67f6874feb229a2d9fd0"
+  },
+  "scope": [
+    "batched training-only roots:cardrewardincluding skip/restchoices/bossrelicincluding skip",
+    "eachGame rootclone same bytes/RNG; main only selectedrootaction,notbranchend",
+    "N8combats;2completedcombats/currentactboss/death/victory horizon",
+    "originalnormalizedRewardLedger rewards+nonterminalvalue,gamma1",
+    "privatecollector p0.25 lotteryRNG saved/restored;eval/auditnofork",
+    "fork time/scoregaps andactualtrajectory skip/smith/bossdeckreports",
+    "BsourcepinnedC163;fullstate restored;requiredC-relativetrainingtarget",
+    "Aentrydefaultandremote3738notdeployed/changed"
+  ],
+  "C": "inventory/e4-c68-selected-C163.json",
+  "RNG_interpretation": "Game roots and allGame RNG cloned; externalpolicy sampling follows existing batchedSearch.event semantics,mainpolicy RNG restored; not separate identical externalGenerator streams perbranch",
+  "tests": {
+    "command": "python -m pytest tests/test_e4_fork.py tests/test_e4_capacity.py tests/test_e4_reward_mask.py tests/test_e4_entropy.py tests/test_e4_queue_failure.py -q -rs -p no:cacheprovider",
+    "implementation_result": {
+      "passed": 23,
+      "skipped": 1,
+      "seconds": 5.82
+    },
+    "parent_independent_result": {
+      "passed": 23,
+      "skipped": 1,
+      "seconds": 4.62
+    },
+    "only_skipped_test": "test_native_cpu_game_bytes_rng_and_selected_step",
+    "skip_reason": "Native CPU binding unavailable: Game bytes/RNG gate NOT VERIFIED",
+    "meaningful_non_native_coverage": [
+      "batchedcalls/counterisolation",
+      "torch.save-load lotterycontinuation",
+      "collector-fork-nestedcombat AllocationEnded rollback",
+      "mixedterminalbootstrapmask",
+      "B C163restore/target/evalresume"
+    ],
+    "native_gate": "pending_actual_Mac_execution_per69;mock andskip notacceptance",
+    "syntax": "6files ASTpassed",
+    "diff_check": "passed",
+    "capacity_fixture_change": "singleline combat_diagnostics=None; noassertion/businesschange"
+  },
+  "review": {
+    "no_remaining_blocking_algorithm_finding": true,
+    "report_sha256": "5258b64e6477151824df2919095d1170c39ffe60b41e0bac546a92edf1f20fa1",
+    "qualification": "Code review only; realnative/GPU/DDP/throughput/A-B superiority unverified"
+  },
+  "local_environment": {
+    "VS_MSVC_and_CMake": "Found installedoutsidePATH byvswhere; no install",
+    "required_Clang_pybind_spire": "Notfound, no buildworkaround/download/systemchange",
+    "next_native_owner": "Claude Mac per69"
+  },
+  "training_time_match": {
+    "target": "ActualA postC163puretrainingseconds determinedafterAfinish/approvedcutoff",
+    "granularity": "Stopaftercompleteoptimizerupdate;target/actual/overshoot reported;not exactsecondsproof"
+  },
+  "B_submitted": false,
+  "B_gates": [
+    "MacnativeCPUtests actuallypass andClaude diffresponse",
+    "3738ends/yields",
+    "freshresources/budget/Ccheckpoint/preflight",
+    "exact5actualCUDAgatesinsideBallocation"
+  ],
+  "step2_budget": {
+    "limit_node_seconds": 36000,
+    "charged": 0,
+    "reserved": 0,
+    "accounting": "GPU seconds/8;A remains step1 notdoublecharged"
+  }
+}
