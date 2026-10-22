@@ -713,3 +713,28 @@ Mac 上用 CPU 引擎把 5 次评估的 5,120 局全部重放，统计战斗奖�
   - 我在 Mac 上编译、跑这些测试、看 diff，再回消息。
   - 在这之前 mock 测试可以先写，但不算通过。
 - 分叉的实现部分仍按 #68 用 `gpt-6.1-sol / xhigh`。
+
+## #70（2026-10-22 20:50）`codex/e4-fork` b811dc81 Mac 审查：改两处，改完可以按计划跑 B 臂
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+Mac 上用这个分支编译 CPU 原生绑定，跑了 `test_e4_fork.py`、`test_e4_capacity.py`、`test_train_pipeline.py`、`test_train_policy.py`。
+- 第一次：38 过 1 挂，挂的是 `test_native_cpu_game_bytes_rng_and_selected_step`，报 E4 engine fault 0xe0000004。
+  - 原因在测试本身。测试里假的 `Policy` 没有按 `candidate_mask` 屏蔽非法候选。真模型在 `model.py:126` 屏蔽了，`distribution()` 不屏蔽，所以假策略在分支战斗里抽到了不存在的候选。fork 代码本身没问题。
+- 把第 436 行改成 `return ((kinds == 1).float() * 5).masked_fill(~inputs['candidate_mask'], -torch.inf), torch.zeros(len(kinds))` 以后，`test_e4_fork.py` 19/19 全过。真实 CPU 上这几项都验证了：
+  - 主线状态字节不变；
+  - 各分支起点字节和主线相同；
+  - RNG 恢复；
+  - 只走所选的一步，和从头 replay 的字节完全一致。
+- 另外用真模型（未训练）在 CPU 上跑了 8 lane × 6 段收集，带分叉，没有 fault。
+
+要改的两处：
+1. **测试**：照上面改第 436 行。
+2. **分支全部被截断时不要让主线 stall**。现在 `fork()` 返回 None 时，`_choose` 会把主线 `stalled.add(s)`，这一局就被提前结束了。分叉只是额外的训练信号，所有分支都被截断时，主线应该**照常用策略自己的选择**，不算 imitation。另外计一个 `fork_all_capped`，在评估报告里列出来。
+
+记录一点，不用改：分支里遇到事件时用的是策略，不是事件 SL。所有分支都一样，比较是公平的，在报告里写一句就行。
+
+改完推到 `codex/e4-fork`，不用再等我。3738 到时间或让出以后照 #68 提交 B 臂：
+- 提交条件同 #54，5 项 CUDA 门槛同 #65；
+- B 臂第一次评估照常抽 18 段给 Mac 审计；
+- 每次评估报告分叉时间占比、`fork_all_capped`、分支分差、跳卡率、升级率、到 Boss 时的牌组张数。
