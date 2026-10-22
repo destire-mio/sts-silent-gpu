@@ -1,0 +1,815 @@
+{
+  "authorization": "Claude66",
+  "job_id": 3738,
+  "fixed_source": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "round": "E4-C66-job3738-154-N32-D1024",
+  "source_round": "E4-C53-154-N32-D1024",
+  "source_directory": "/home/zhuyouwei/spire-downloads/e4-c66-3738",
+  "captured_at": "2026-10-22T18:39:24.352243+08:00",
+  "summary": {
+    "episodes": 1024,
+    "average_floor": 19.1904296875,
+    "reach": {
+      "act1_boss": 0.5732421875,
+      "act2_boss": 0.0009765625,
+      "act3_first_boss": 0.0,
+      "act3_second_boss": 0.0,
+      "act3_three_keys": 0.0,
+      "act4": 0.0,
+      "shield_spear": 0.0,
+      "heart": 0.0
+    },
+    "victories": 0,
+    "stalled": 0,
+    "stall_classes": {},
+    "faults": 0,
+    "truncated": 0,
+    "round": "E4-C66-job3738-154-N32-D1024",
+    "version": 154,
+    "trials": 32,
+    "training_lanes": 256,
+    "evaluation_lanes": 256,
+    "dev_seed_count": 1024,
+    "world_size": 7,
+    "evaluation_seconds": 970.0133666992188,
+    "trained_seconds": 11554.297546386719,
+    "update_count": 49,
+    "actual_steps": 5718016,
+    "next_epochs": 4,
+    "combat": {
+      "all": {
+        "combats": 10008,
+        "decisions": 9377924,
+        "complete_trial_groups": 10006,
+        "capped_trials": 28,
+        "nested_event_combats": 212,
+        "pooled_policy_entropy": 0.6712157304777567,
+        "means": {
+          "policy_entropy": 0.6873847487053357,
+          "win_fraction": 0.7721835648610833,
+          "score_std": 0.010629071272583866,
+          "distinct_end_states": 17.46652008794723,
+          "selected_score_gain": 0.01425216869059859
+        }
+      },
+      "act1": {
+        "combats": 7591,
+        "decisions": 7061381,
+        "complete_trial_groups": 7591,
+        "capped_trials": 0,
+        "nested_event_combats": 135,
+        "pooled_policy_entropy": 0.671894362836512,
+        "means": {
+          "policy_entropy": 0.6842467236028283,
+          "win_fraction": 0.8408682979844553,
+          "score_std": 0.009789309698062295,
+          "distinct_end_states": 17.328415228560136,
+          "selected_score_gain": 0.012948971849921666
+        }
+      },
+      "act2": {
+        "combats": 2414,
+        "decisions": 2314071,
+        "complete_trial_groups": 2412,
+        "capped_trials": 28,
+        "nested_event_combats": 77,
+        "pooled_policy_entropy": 0.6690156302074826,
+        "means": {
+          "policy_entropy": 0.6971099012431559,
+          "win_fraction": 0.556540215588723,
+          "score_std": 0.013276564794712889,
+          "distinct_end_states": 17.899253731343283,
+          "selected_score_gain": 0.01833967199613947
+        }
+      },
+      "act3": {
+        "combats": 3,
+        "decisions": 2472,
+        "complete_trial_groups": 3,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": 0.7922135413328116,
+        "means": {
+          "policy_entropy": 0.8021281909836969,
+          "win_fraction": 0.3541666666666667,
+          "score_std": 0.0069209835452647755,
+          "distinct_end_states": 19.0,
+          "selected_score_gain": 0.02542191689523558
+        }
+      },
+      "act4": {
+        "combats": 0,
+        "decisions": 0,
+        "complete_trial_groups": 0,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": null,
+        "means": {
+          "policy_entropy": null,
+          "win_fraction": null,
+          "score_std": null,
+          "distinct_end_states": null,
+          "selected_score_gain": null
+        }
+      }
+    },
+    "noncombat": {
+      "counts": {
+        "gold_appeared": 9771,
+        "gold_taken": 9576,
+        "potion_appeared": 4311,
+        "potion_taken": 3921,
+        "card_appeared": 8806,
+        "card_taken": 8764,
+        "relic_appeared": 2350,
+        "relic_taken": 2074,
+        "card_opened": 8806,
+        "card_bowl": 42,
+        "shop_purchases": 1336,
+        "mask_gold": 9771,
+        "mask_potion": 3946,
+        "mask_card": 9146,
+        "rest_rest": 2936,
+        "rest_smith": 55,
+        "rest_lift": 0,
+        "rest_toke": 1,
+        "rest_dig": 0,
+        "rest_recall": 9
+      },
+      "final_deck_size_mean": 21.220703125,
+      "episodes": 1024,
+      "scope": "actual trajectories; displayed combat/treasure reward rows"
+    },
+    "imitation_beta": 0.06969376338241678,
+    "imitation_entropy_target": 0.6716025225602738,
+    "best_average_floor_before": 18.8408203125,
+    "combat_over_limit": 28,
+    "event_over_limit": 0,
+    "combat_normal_max_steps": 2676,
+    "event_normal_max_steps": 81,
+    "combat_played_cards_limit": 0,
+    "combat_trials": 320256,
+    "combat_played_cards_limit_fraction": 0.0
+  },
+  "comparison145": {
+    "average_floor": 18.8408203125,
+    "difference": 0.349609375,
+    "act1_boss_count": 559,
+    "new_act1_boss_count": 587,
+    "qualification": "Same fixed dev seedset; descriptive comparison, not independent evidence of generalization"
+  },
+  "verification": {
+    "exact_dev_seeds": true,
+    "rank_counts": [
+      147,
+      147,
+      146,
+      146,
+      146,
+      146,
+      146
+    ],
+    "summary_recomputed": true,
+    "noncombat_recomputed": true,
+    "audit_actual_trajectories_match": true,
+    "audit_decisions": 6693,
+    "mac_status": "pending_mac_original_replay",
+    "local_agent_checks": {
+      "bundle_expected_sha256": true,
+      "job3738_provenance": true,
+      "seven_ranks": true,
+      "rank_0_exact_unique_seeds": true,
+      "rank_1_exact_unique_seeds": true,
+      "rank_2_exact_unique_seeds": true,
+      "rank_3_exact_unique_seeds": true,
+      "rank_4_exact_unique_seeds": true,
+      "rank_5_exact_unique_seeds": true,
+      "rank_6_exact_unique_seeds": true,
+      "1024_exact_unique_seeds": true,
+      "all_episode_fields": true,
+      "valid_outcomes_no_filtered_faults": true,
+      "integer_actual_actions": true,
+      "exact_reach_fields": true,
+      "summary_episodes": true,
+      "summary_average_floor": true,
+      "summary_reach": true,
+      "summary_victories": true,
+      "summary_stalled": true,
+      "summary_stall_classes": true,
+      "summary_eval_metadata": true,
+      "noncombat_recomputed": true,
+      "audit_engine_sha": true,
+      "audit_observation_version": true,
+      "audit_pending_mac": true,
+      "audit_round_matches_summary": true,
+      "audit_round_record": true,
+      "18_unique_audit_seeds": true,
+      "exact_random_sample_actual_trajectories": true,
+      "16_exact_source_files": true,
+      "source_files_job3738_paths": true,
+      "seven_checkpoint_metadata": true,
+      "checkpoint_rank_paths": true,
+      "reported_anomaly_files_empty": true,
+      "reported_log_anomalies_empty": true,
+      "reported_remote_combat_summary_matches": true,
+      "source_sha256_metadata": true,
+      "checkpoint_sha256_metadata": true
+    },
+    "local_agent_report_sha256": "c2d4c8c7166a9ab7ce4a3795ca548074182c52e4db539d9df12e61dd3bb44fdb",
+    "parent_checks": "Bundle hash, exact1024seedset, mean and actual18sampled candidate paths independently checked",
+    "fault_and_truncation": "Summary zero fields hardcoded by producer, not independent proof; exact seed/outcome coverage plus captured fault/partial/log anomaly lists checked",
+    "combat_aggregate_verification": "Fixed-runtime pure CPU function recomputed all10008rows on remote; raw combat rows not independently recomputed locally"
+  },
+  "episode_archive": {
+    "path": "inventory/E4-C66-job3738-154-N32-D1024-episodes.json.gz",
+    "sha256": "0b94636d2c2dc256ac8a5bb0c4a5f0af447c5d6b307d37c183ef5c9d08a1e848",
+    "bytes": 185876,
+    "episodes": 1024,
+    "encoding": "gzip JSON array; all original episode fields and actual actions preserved"
+  },
+  "audit_archive": {
+    "path": "inventory/E4-C66-job3738-154-N32-D1024-audit.json",
+    "sha256": "f8efacd6305711887a27c95ef0b6eb6a09473e36d88b28958310a8344f989fb2",
+    "roots": 18,
+    "decisions": 6693,
+    "status": "pending_mac_original_replay"
+  },
+  "source_files": [
+    {
+      "name": "E4-C53-154-N32-D1024-audit.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-audit.json",
+      "bytes": 23746,
+      "sha256": "74c0ceaf76e6cd889ee5f40359ad29290f3842c750d57b3279d6b1ed301c6a60",
+      "mtime": 1792665495.5408218
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-combat-0.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-combat-0.json",
+      "bytes": 444607,
+      "sha256": "18ba291f8ea75f144a592dc3b2be6abe671caa9fc4ac9698b99f44d33301e558",
+      "mtime": 1792665495.3458216
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-combat-1.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-combat-1.json",
+      "bytes": 480522,
+      "sha256": "4435f36f5f6ca60ab61922fad81a22670fa341c7b76c4cfda56e72f3b96baeb7",
+      "mtime": 1792665495.3418217
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-combat-2.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-combat-2.json",
+      "bytes": 475623,
+      "sha256": "6c567e28015529ad64cfc832e5172d4f6d1129063ae0c34f9c0733f30a3628ff",
+      "mtime": 1792665495.3358216
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-combat-3.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-combat-3.json",
+      "bytes": 455157,
+      "sha256": "3c82c118df5a45bbff3b7ab4c6deda774007d7f786bb031792d429ecc3d098a9",
+      "mtime": 1792665495.3638217
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-combat-4.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-combat-4.json",
+      "bytes": 461498,
+      "sha256": "3d2460f3c29d8a6fca6f2386eef5a59ff6211196dd4ed6c83ec9f96394df030b",
+      "mtime": 1792665495.3588216
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-combat-5.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-combat-5.json",
+      "bytes": 435961,
+      "sha256": "64cd754e2d9d938ac5533aa9f3f4395a5ede371bde7198350ae735ec467c5114",
+      "mtime": 1792665495.3508217
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-combat-6.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-combat-6.json",
+      "bytes": 474894,
+      "sha256": "f01765a6644579c6f8a2e02f1046470907b5ddc7dd4b40a61e09e24b631e0443",
+      "mtime": 1792665495.3548217
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-rank-0.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-rank-0.json",
+      "bytes": 248631,
+      "sha256": "6662aa704006c6c081e52213b435712036f46d140d90d8641766ca977fce9494",
+      "mtime": 1792665495.3178217
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-rank-1.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-rank-1.json",
+      "bytes": 262911,
+      "sha256": "695e1728228fe09b811eb72498f4329e4759990866a6a2af47ce1c65b75bb4da",
+      "mtime": 1792665495.3148217
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-rank-2.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-rank-2.json",
+      "bytes": 257632,
+      "sha256": "040f23de9d2f1006a7b4d8e5d76bd68c3b4a570485cfd740b32030940fc0c6e0",
+      "mtime": 1792665495.3118217
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-rank-3.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-rank-3.json",
+      "bytes": 247166,
+      "sha256": "f9a6c0a173d74d3a2d665553e366d34570956f49eb0eedaa1d1d7a3e1c4df166",
+      "mtime": 1792665495.3298218
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-rank-4.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-rank-4.json",
+      "bytes": 255216,
+      "sha256": "6ddd886a535ec5ce33ea1828fa1424705f37ed30b116e524ccdbfbdb393e7293",
+      "mtime": 1792665495.3258216
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-rank-5.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-rank-5.json",
+      "bytes": 241616,
+      "sha256": "badb834d0975cd5f876475d5d192c5a672280c309208ee231d5d4173c8f2d1b3",
+      "mtime": 1792665495.3198216
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-rank-6.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-rank-6.json",
+      "bytes": 262455,
+      "sha256": "5770e78c4d3566f46a848e676acd82244757bac3c91c5714ed9f918b61c3621f",
+      "mtime": 1792665495.3228216
+    },
+    {
+      "name": "E4-C53-154-N32-D1024-summary.json",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-154-N32-D1024-summary.json",
+      "bytes": 3301,
+      "sha256": "c14677c682f65e5508c18de8f13b9cfb8f96e98469e4f610d863f11a43975eb8",
+      "mtime": 1792665495.5388217
+    }
+  ],
+  "checkpoint_files": [
+    {
+      "name": "rank-0.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-154/rank-0.pt",
+      "bytes": 12066501,
+      "sha256": "8f06cc51026ff7415bcab3871929960f8fa5f8f991437ffd9a6d890eb872c799",
+      "mtime": 1792664525.288844
+    },
+    {
+      "name": "rank-1.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-154/rank-1.pt",
+      "bytes": 12074373,
+      "sha256": "c42268a0ed7a0a198d725ae64d96fc9358852c2b556c074bebf2dfce3c74e70c",
+      "mtime": 1792664524.8058443
+    },
+    {
+      "name": "rank-2.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-154/rank-2.pt",
+      "bytes": 12079557,
+      "sha256": "5f4db64d8019a3ae819ae79050a47f577d9a4b62136059d6596bb4f25f8c7423",
+      "mtime": 1792664524.943844
+    },
+    {
+      "name": "rank-3.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-154/rank-3.pt",
+      "bytes": 12067397,
+      "sha256": "1cd2b4e3f1558585259f54d51b7c2faaf18d788beb9e0aec5e2363fea84b2377",
+      "mtime": 1792664525.193844
+    },
+    {
+      "name": "rank-4.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-154/rank-4.pt",
+      "bytes": 12079813,
+      "sha256": "c1523610d67cd3da1bb667a5e3747c15c64a77a2404c4cc0a29b7c9b0e887813",
+      "mtime": 1792664525.1628442
+    },
+    {
+      "name": "rank-5.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-154/rank-5.pt",
+      "bytes": 12077061,
+      "sha256": "12a6693c706ef300982d732d902675b851d7e403ede5d65f3471b6d46fb5ab26",
+      "mtime": 1792664525.2208443
+    },
+    {
+      "name": "rank-6.pt",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-154/rank-6.pt",
+      "bytes": 12078149,
+      "sha256": "d847d74f50587af725c4564db1d7d389f5d6b2a98215c47f55d390dbc1bc3744",
+      "mtime": 1792664525.1988442
+    }
+  ],
+  "checkpoint_scope": "Frozen evaluation-start snapshots; original145/151 untouched",
+  "source_hash_scope": "Hashes computed from actual remote files and transferred in hash-verified bundle; checkpoint/raw combat bytes not downloaded",
+  "anomaly_files": [],
+  "log_anomalies": [],
+  "log_metadata": {
+    "name": "e4-c66-3738.log",
+    "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738.log",
+    "bytes": 5032384,
+    "sha256": "62708ebd16ce2c37d80e38a9126579c9425052aaa83eb8bf095e8e168ff94f9c",
+    "mtime": 1792665621.1568189
+  },
+  "remote_combat_recomputed": {
+    "matches": true,
+    "rows": 10008,
+    "summary": {
+      "all": {
+        "combats": 10008,
+        "decisions": 9377924,
+        "complete_trial_groups": 10006,
+        "capped_trials": 28,
+        "nested_event_combats": 212,
+        "pooled_policy_entropy": 0.6712157304777567,
+        "means": {
+          "policy_entropy": 0.6873847487053357,
+          "win_fraction": 0.7721835648610833,
+          "score_std": 0.010629071272583866,
+          "distinct_end_states": 17.46652008794723,
+          "selected_score_gain": 0.01425216869059859
+        }
+      },
+      "act1": {
+        "combats": 7591,
+        "decisions": 7061381,
+        "complete_trial_groups": 7591,
+        "capped_trials": 0,
+        "nested_event_combats": 135,
+        "pooled_policy_entropy": 0.671894362836512,
+        "means": {
+          "policy_entropy": 0.6842467236028283,
+          "win_fraction": 0.8408682979844553,
+          "score_std": 0.009789309698062295,
+          "distinct_end_states": 17.328415228560136,
+          "selected_score_gain": 0.012948971849921666
+        }
+      },
+      "act2": {
+        "combats": 2414,
+        "decisions": 2314071,
+        "complete_trial_groups": 2412,
+        "capped_trials": 28,
+        "nested_event_combats": 77,
+        "pooled_policy_entropy": 0.6690156302074826,
+        "means": {
+          "policy_entropy": 0.6971099012431559,
+          "win_fraction": 0.556540215588723,
+          "score_std": 0.013276564794712889,
+          "distinct_end_states": 17.899253731343283,
+          "selected_score_gain": 0.01833967199613947
+        }
+      },
+      "act3": {
+        "combats": 3,
+        "decisions": 2472,
+        "complete_trial_groups": 3,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": 0.7922135413328116,
+        "means": {
+          "policy_entropy": 0.8021281909836969,
+          "win_fraction": 0.3541666666666667,
+          "score_std": 0.0069209835452647755,
+          "distinct_end_states": 19.0,
+          "selected_score_gain": 0.02542191689523558
+        }
+      },
+      "act4": {
+        "combats": 0,
+        "decisions": 0,
+        "complete_trial_groups": 0,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": null,
+        "means": {
+          "policy_entropy": null,
+          "win_fraction": null,
+          "score_std": null,
+          "distinct_end_states": null,
+          "selected_score_gain": null
+        }
+      }
+    },
+    "method": "AST extracted fixed runtime pure CPU summary function, all7rawfiles"
+  },
+  "throughput": {
+    "versions": [
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154
+    ],
+    "actual_decisions": 1032192,
+    "training_seconds": 1898.9834442138672,
+    "decisions_per_second": 543.5497624505633,
+    "baseline": 473.9470836897199,
+    "relative_difference": 0.14685748927703157,
+    "includes_fresh_first_update": true,
+    "qualification": "Nine actual updates, wall max across ranks and global actualdecisions; not SL trial steps, not steady-state or causal speedup proof",
+    "updates": [
+      {
+        "version": 146,
+        "actual_steps": 114688,
+        "update_seconds": 167.0725555419922,
+        "training_seconds": 9822.386657714844,
+        "completed_episodes": 0,
+        "stalled_episodes": 0
+      },
+      {
+        "version": 147,
+        "actual_steps": 114688,
+        "update_seconds": 200.09686279296875,
+        "training_seconds": 10022.483520507812,
+        "completed_episodes": 72,
+        "stalled_episodes": 0
+      },
+      {
+        "version": 148,
+        "actual_steps": 114688,
+        "update_seconds": 207.29522705078125,
+        "training_seconds": 10229.778747558594,
+        "completed_episodes": 202,
+        "stalled_episodes": 0
+      },
+      {
+        "version": 149,
+        "actual_steps": 114688,
+        "update_seconds": 226.31959533691406,
+        "training_seconds": 10456.098342895508,
+        "completed_episodes": 157,
+        "stalled_episodes": 1
+      },
+      {
+        "version": 150,
+        "actual_steps": 114688,
+        "update_seconds": 224.10572814941406,
+        "training_seconds": 10680.204071044922,
+        "completed_episodes": 254,
+        "stalled_episodes": 7
+      },
+      {
+        "version": 151,
+        "actual_steps": 114688,
+        "update_seconds": 214.60414123535156,
+        "training_seconds": 10894.808212280273,
+        "completed_episodes": 284,
+        "stalled_episodes": 1
+      },
+      {
+        "version": 152,
+        "actual_steps": 114688,
+        "update_seconds": 212.86424255371094,
+        "training_seconds": 11107.672454833984,
+        "completed_episodes": 350,
+        "stalled_episodes": 3
+      },
+      {
+        "version": 153,
+        "actual_steps": 114688,
+        "update_seconds": 225.1278533935547,
+        "training_seconds": 11332.800308227539,
+        "completed_episodes": 331,
+        "stalled_episodes": 0
+      },
+      {
+        "version": 154,
+        "actual_steps": 114688,
+        "update_seconds": 221.4972381591797,
+        "training_seconds": 11554.297546386719,
+        "completed_episodes": 321,
+        "stalled_episodes": 0
+      }
+    ]
+  },
+  "transport": {
+    "bytes": 209888,
+    "sha256": "38a570f9353737e048c42a4c6dfd9f21da2becd6c466a5aa4d8eeb0bbc314c7f"
+  },
+  "live_job": {
+    "checked_at": "2026-10-22T18:45:18.233856+08:00",
+    "job_id": 3738,
+    "status": {
+      "reason": "update_complete",
+      "phase": "training",
+      "job": "3738",
+      "version": 156,
+      "trained_seconds": 11982.657043457031,
+      "next_evaluation": 13354.297546386719,
+      "actual_steps": 5947392,
+      "imitation_beta": 0.06982332658394787,
+      "best_floor": 19.1904296875,
+      "stagnant": 0
+    },
+    "latest_update": {
+      "event": "update",
+      "update": 51,
+      "version": 156,
+      "training_seconds": 11982.657043457031,
+      "update_seconds": 219.74510192871094,
+      "actual_steps": 114688,
+      "sl_trial_steps": 2869315,
+      "lanes": 256,
+      "world_size": 7,
+      "next_epochs": 4,
+      "completed_episodes": 283,
+      "stalled_episodes": 0,
+      "completed_average_floor": 19.692579505300355,
+      "active_max_floor_steps": 183,
+      "stall_classes": {},
+      "policy_loss": 0.49856072945483754,
+      "value_loss": 0.0006273477073803126,
+      "imitation_fraction": 0.7881033761160714,
+      "loss": 0.46259283939708745,
+      "kl": 0.0059463630529455426,
+      "clip_fraction": 0.040068718623981564,
+      "entropy": 0.10788142575448231,
+      "ppo_loss": -0.0019280094500846237,
+      "imitation_loss": 0.6331266725529658,
+      "ppo_samples": 97208,
+      "imitation_samples": 361544,
+      "H_imit": 0.668126480338692,
+      "imitation_kl": 0.02287924731288422,
+      "imitation_entropy_samples": 90386,
+      "imitation_beta_used": 0.0694757223617897,
+      "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+      "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+      "epochs": 4,
+      "value_explained_variance": 0.4972081391677212,
+      "ppo_return_variance": 0.0011447769055276929,
+      "ppo_value_error_variance": 0.0005755845105680865,
+      "value_explained_variance_samples": 24302,
+      "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+      "imitation_beta": 0.06982332658394787,
+      "imitation_entropy_target": 0.6716025225602738
+    },
+    "fault_files": [],
+    "scontrol": {
+      "returncode": 0,
+      "stdout": "JobId=3738 JobName=spire-e4-c66 UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899881 Nice=0 Account=(null) QOS=(null) JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:59:08 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-22T17:46:10 EligibleTime=2026-10-22T17:46:10 AccrueTime=2026-10-22T17:46:10 StartTime=2026-10-22T17:46:10 EndTime=2026-10-22T21:46:10 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-22T17:46:10 Scheduler=Backfill Partition=N56_128G_V100 AllocNode:Sid=gpu01:3163797 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=80G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=80G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/e4-c66.sh WorkDir=/home/zhuyouwei StdErr=/home/zhuyouwei/spire-downloads/e4-c66-3738.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c66-3738.log Power= TresPerNode=gres:gpu:V100:7 \n",
+      "stderr": ""
+    },
+    "queue": {
+      "returncode": 0,
+      "stdout": "3734|shaoy|PENDING|(DependencyNeverSatisfied)|N/A\n3735|shaoy|PENDING|(Dependency)|gres:gpu:V100:1\n3736|shaoy|PENDING|(Dependency)|N/A\n3737|shaoy|PENDING|(Dependency)|N/A\n3742|shaoy|PENDING|(DependencyNeverSatisfied)|N/A\n3743|shaoy|PENDING|(Dependency)|gres:gpu:V100:1\n3744|shaoy|PENDING|(Dependency)|N/A\n3745|shaoy|PENDING|(Dependency)|N/A\n3731|shaoy|RUNNING|gpu01|N/A\n3738|zhuyouwei|RUNNING|gpu01|gres:gpu:V100:7\n3739|shaoy|RUNNING|gpu01|N/A\n3746|shaoy|RUNNING|gpu01|N/A\n",
+      "stderr": ""
+    },
+    "new_assessments": [
+      {
+        "episodes": 1024,
+        "average_floor": 19.1904296875,
+        "reach": {
+          "act1_boss": 0.5732421875,
+          "act2_boss": 0.0009765625,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 0,
+        "stall_classes": {},
+        "faults": 0,
+        "truncated": 0,
+        "round": "E4-C53-154-N32-D1024",
+        "version": 154,
+        "trials": 32,
+        "training_lanes": 256,
+        "evaluation_lanes": 256,
+        "dev_seed_count": 1024,
+        "world_size": 7,
+        "evaluation_seconds": 970.0133666992188,
+        "trained_seconds": 11554.297546386719,
+        "update_count": 49,
+        "actual_steps": 5718016,
+        "next_epochs": 4,
+        "combat": {
+          "all": {
+            "combats": 10008,
+            "decisions": 9377924,
+            "complete_trial_groups": 10006,
+            "capped_trials": 28,
+            "nested_event_combats": 212,
+            "pooled_policy_entropy": 0.6712157304777567,
+            "means": {
+              "policy_entropy": 0.6873847487053357,
+              "win_fraction": 0.7721835648610833,
+              "score_std": 0.010629071272583866,
+              "distinct_end_states": 17.46652008794723,
+              "selected_score_gain": 0.01425216869059859
+            }
+          },
+          "act1": {
+            "combats": 7591,
+            "decisions": 7061381,
+            "complete_trial_groups": 7591,
+            "capped_trials": 0,
+            "nested_event_combats": 135,
+            "pooled_policy_entropy": 0.671894362836512,
+            "means": {
+              "policy_entropy": 0.6842467236028283,
+              "win_fraction": 0.8408682979844553,
+              "score_std": 0.009789309698062295,
+              "distinct_end_states": 17.328415228560136,
+              "selected_score_gain": 0.012948971849921666
+            }
+          },
+          "act2": {
+            "combats": 2414,
+            "decisions": 2314071,
+            "complete_trial_groups": 2412,
+            "capped_trials": 28,
+            "nested_event_combats": 77,
+            "pooled_policy_entropy": 0.6690156302074826,
+            "means": {
+              "policy_entropy": 0.6971099012431559,
+              "win_fraction": 0.556540215588723,
+              "score_std": 0.013276564794712889,
+              "distinct_end_states": 17.899253731343283,
+              "selected_score_gain": 0.01833967199613947
+            }
+          },
+          "act3": {
+            "combats": 3,
+            "decisions": 2472,
+            "complete_trial_groups": 3,
+            "capped_trials": 0,
+            "nested_event_combats": 0,
+            "pooled_policy_entropy": 0.7922135413328116,
+            "means": {
+              "policy_entropy": 0.8021281909836969,
+              "win_fraction": 0.3541666666666667,
+              "score_std": 0.0069209835452647755,
+              "distinct_end_states": 19.0,
+              "selected_score_gain": 0.02542191689523558
+            }
+          },
+          "act4": {
+            "combats": 0,
+            "decisions": 0,
+            "complete_trial_groups": 0,
+            "capped_trials": 0,
+            "nested_event_combats": 0,
+            "pooled_policy_entropy": null,
+            "means": {
+              "policy_entropy": null,
+              "win_fraction": null,
+              "score_std": null,
+              "distinct_end_states": null,
+              "selected_score_gain": null
+            }
+          }
+        },
+        "noncombat": {
+          "counts": {
+            "gold_appeared": 9771,
+            "gold_taken": 9576,
+            "potion_appeared": 4311,
+            "potion_taken": 3921,
+            "card_appeared": 8806,
+            "card_taken": 8764,
+            "relic_appeared": 2350,
+            "relic_taken": 2074,
+            "card_opened": 8806,
+            "card_bowl": 42,
+            "shop_purchases": 1336,
+            "mask_gold": 9771,
+            "mask_potion": 3946,
+            "mask_card": 9146,
+            "rest_rest": 2936,
+            "rest_smith": 55,
+            "rest_lift": 0,
+            "rest_toke": 1,
+            "rest_dig": 0,
+            "rest_recall": 9
+          },
+          "final_deck_size_mean": 21.220703125,
+          "episodes": 1024,
+          "scope": "actual trajectories; displayed combat/treasure reward rows"
+        },
+        "imitation_beta": 0.06969376338241678,
+        "imitation_entropy_target": 0.6716025225602738,
+        "best_average_floor_before": 18.8408203125,
+        "combat_over_limit": 28,
+        "event_over_limit": 0,
+        "combat_normal_max_steps": 2676,
+        "event_normal_max_steps": 81,
+        "combat_played_cards_limit": 0,
+        "combat_trials": 320256,
+        "combat_played_cards_limit_fraction": 0.0
+      }
+    ]
+  },
+  "budget": {
+    "step1_settled_node_seconds": 58897.25,
+    "step1_limit": 194400,
+    "job3738_reserved_node_seconds": 12600,
+    "settlement": "Running job not settled; observed costs separate"
+  }
+}
