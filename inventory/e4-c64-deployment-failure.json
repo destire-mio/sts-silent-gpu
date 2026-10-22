@@ -255,10 +255,107 @@
   "transfer_incident": "First helper transfer hit heredoc delimiter collision and Python syntax error; interrupted, corrected transfer byte hashes matched. An echo CUDA_GATES_PASS from shell was not test evidence. Process list confirmed no trainer launched; actual job3722 then failed discovery before any CUDA test.",
   "diagnostic_thread": "01a162be-6840-7240-ae02-41a708c45057",
   "pending": [
-    "Diagnose generated CUDA discovery with extra test_cuda_dispatch versus clean fixed source; diagnostic chat01a162be-6840-7240-ae02-41a708c45057; no resubmission before provenance resolved",
-    "Preserve failed job3722 and build; fix only approved build/deployment infrastructure, retain strict CUDA gate",
-    "After resolution recheck queue/resources/source/checkpoints/updated57723 ledger, submit at most one project job and run real CUDA gates before resume145",
-    "Resume evaluation145 with seven collectors; export all1024 results and18 actual action roots using job-qualified identity, pending Mac audit",
-    "Compare real training throughput to473.9470836897199 and retain stopping/yield rules"
-  ]
+    "Observe3730 realCUDA gates and CPUdispatch; only continue onzero failures",
+    "Recover145 and export job-qualified audits/all1024results",
+    "Compare training throughput473.9470836897199; monitorqueue and stoprules"
+  ],
+  "diagnosis": {
+    "status": "resolved_selector_classification_error",
+    "diagnostic_thread": "01a162be-6840-7240-ae02-41a708c45057",
+    "model": "gpt-6-astra",
+    "dispatch_source": "tests/test_cuda_dispatch.cpp",
+    "fixed_source_blob": "730d3ae44784794f75f65f8fa83e7278fe851fc8",
+    "remote_blob_verified": true,
+    "cmake_registration": "CMakeLists157 glob tests/test_*.cpp;165 genericadd_test",
+    "build_log": "CXX compilation and linking of dispatch.cpp",
+    "correction": "Earlier inference from missing .cu and explicit add_test list was incorrect; current source explains all five tests; no rebuild required",
+    "fix": "Exact anchored selector for four hardware CUDA tests; retain fullprefix discovery and strict JUnit assertions; execute existing CPU dispatch binary separately with required zeroexit",
+    "script_sha256": "f3ef270bab9d7922bd4e7cef6b9923e37a0c58f1530a0a412ed91dc32e5ce057",
+    "preflight_sha256": "d78b839b2e28783dfbc55f585f9e667f9ca67546dbb88f98721fcd52c5b8fe7c",
+    "local_wrapper_checks": {
+      "scope": "Local wrapper verification with synthetic CTest discovery and JUnit only; no real CUDA tests or GPU jobs",
+      "expected_cuda_tests_from_CMakeLists": [
+        "test_cuda_effect_fields",
+        "test_cuda_faults",
+        "test_cuda_parity",
+        "test_cuda_root_cache"
+      ],
+      "scenarios": [
+        {
+          "scenario": "all_pass",
+          "accepted": true,
+          "expected": true
+        },
+        {
+          "scenario": "zero_tests",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "missing_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "extra_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "disabled_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "skipped_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "failure_exit",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_missing_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_duplicate_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_error",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_notrun",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_missing_file",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_skipped_count",
+          "accepted": false,
+          "expected": true
+        }
+      ],
+      "shell_syntax": "bash -n passed separately",
+      "python_syntax": "AST parsing passed",
+      "files": {
+        "e4-c62.sh": "f3ef270bab9d7922bd4e7cef6b9923e37a0c58f1530a0a412ed91dc32e5ce057",
+        "preflight-c62.py": "d78b839b2e28783dfbc55f585f9e667f9ca67546dbb88f98721fcd52c5b8fe7c"
+      }
+    },
+    "binary_hashes_rechecked_unchanged": true,
+    "retry_job": 3730,
+    "updated_at": "2026-10-22T16:41:35.801359+08:00"
+  }
 }
