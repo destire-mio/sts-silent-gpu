@@ -1,0 +1,28 @@
+{
+  "source": "Claude71 e9d2c969946f02c06996b5fc7f8bf191fbb569a7 via connector fullcommitdiff; raw object fetch unavailable this round",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "base": "b34ff36c564451100f5c5a5f5d606470288c4c31",
+  "behavior": "B next_evaluation equals fixed target, final assessment once then matched_training_seconds_complete; A initial1800 and postassessment+1800 unchanged",
+  "target_training_seconds": 2002.1460876464844,
+  "validation": {
+    "agent_passed": 2,
+    "agent_deselected": 22,
+    "agent_seconds": 4.35,
+    "parent_passed": 2,
+    "targets": [
+      321.5,
+      2002.146
+    ],
+    "checkpoint_threshold": true,
+    "evaluate_called_once": true,
+    "final_stop_reason": true,
+    "overshoot_reported": 0.125,
+    "scope": "CPU mock actual runner path; no new GPU run"
+  },
+  "files": {
+    "tools/e4_continue.py": "90a0363db8f94b97cbf03860ed9e813511a6bfea4d65f400dda0f5904d76b3bb",
+    "tests/test_e4_fork.py": "050c932dabb41b9f4d08f1582ab070d7c04a243b43bb4c38155b504f1ee87edf"
+  },
+  "B_submitted": false
+}

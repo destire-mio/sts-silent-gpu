@@ -402,7 +402,8 @@ def test_actual_trajectory_noncombat_report():
     assert search.reward_history[0].counts['boss_act1_deck_size_sum'] == 12
 
 
-def test_b_runner_restores_c163_state_and_evaluation_resume(tmp_path, monkeypatch):
+@pytest.mark.parametrize('training_seconds', [321.5, 2002.146])
+def test_b_runner_restores_c163_state_and_evaluation_resume(tmp_path, monkeypatch, training_seconds):
     import tools.e4_continue as runner
 
     source_dir, output_dir = tmp_path / 'evaluation-163', tmp_path / 'B'
@@ -445,15 +446,17 @@ def test_b_runner_restores_c163_state_and_evaluation_resume(tmp_path, monkeypatc
     checkpoints = []
     monkeypatch.setattr(runner, 'atomic_checkpoint', lambda path, state: checkpoints.append(deepcopy(state)))
     argv = ['e4_fork', '--source', str(source_dir), '--output', str(output_dir),
-            '--seconds', '1800', '--training-seconds', '321.5']
+            '--seconds', '1800', '--training-seconds', str(training_seconds)]
     monkeypatch.setattr('sys.argv', argv)
     runner.main('B')
+    assert checkpoints[0]['reason'] == 'started'
+    assert checkpoints[0]['trained_seconds'] == 0 and checkpoints[0]['next_evaluation'] == training_seconds
     saved = checkpoints[-1]
     assert saved['reason'] == 'yield_to_waiting_user'
     assert saved['version'] == saved['source_version'] == 163
-    assert saved['trained_seconds'] == 0 and saved['next_evaluation'] == 321.5
+    assert saved['trained_seconds'] == 0 and saved['next_evaluation'] == training_seconds
     assert saved['source_trained_seconds'] == source['trained_seconds']
-    assert saved['target_training_seconds'] == 321.5 and saved['case'] == 'B'
+    assert saved['target_training_seconds'] == training_seconds and saved['case'] == 'B'
     assert torch.equal(saved['ppo_rng'], source['ppo_rng'])
     assert saved['imitation_beta'] == .007 and saved['imitation_entropy_target'] == .8
     assert torch.equal(saved['train_state']['search_rng'], source['train_state']['search_rng'])
@@ -505,6 +508,24 @@ def test_b_runner_restores_c163_state_and_evaluation_resume(tmp_path, monkeypatc
     assert checkpoints[-1]['reason'] == 'evaluation_only_complete'
     assert checkpoints[-1]['fork_metrics']['fork_all_capped'] == 7
     assert checkpoints[-1]['assessments'][-1]['fork']['fork_all_capped'] == 28
+
+    resumed['trained_seconds'] = training_seconds + .125
+    torch.save(resumed, resume_dir / 'rank-0.pt')
+    SegmentCollector.evaluate.reset_mock()
+    checkpoint_count = len(checkpoints)
+    monkeypatch.setattr('sys.argv', argv + ['--resume', str(resume_dir)])
+    runner.main('B')
+    SegmentCollector.evaluate.assert_called_once()
+    completed = checkpoints[-1]
+    assert completed['reason'] == 'matched_training_seconds_complete' and completed['phase'] == 'complete'
+    assert completed['next_evaluation'] == completed['target_training_seconds'] == training_seconds
+    assert completed['trained_seconds'] == training_seconds + .125
+    assert len(completed['assessments']) == 2
+    assert [c['reason'] for c in checkpoints[checkpoint_count:]] == [
+        'started', 'before_evaluation', 'matched_training_seconds_complete']
+    report = json.loads((output_dir / f'{round_name}-summary.json').read_text())
+    assert report['trained_seconds'] == training_seconds + .125
+    assert report['training_seconds_overshoot'] == pytest.approx(.125)
 
 
 def test_native_cpu_game_bytes_rng_and_selected_step(monkeypatch):

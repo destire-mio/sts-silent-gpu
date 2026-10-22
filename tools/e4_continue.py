@@ -120,7 +120,7 @@ def main(case):
     trained_seconds, evaluation_seconds, next_evaluation = 0., 0., 1800.
     if case == 'B':
         assert args.training_seconds > 0
-        next_evaluation = min(next_evaluation, args.training_seconds)
+        next_evaluation = args.training_seconds
     updates, actual_steps = [], 0
     health_history = deque(source['health_history'], maxlen=20)
     train_state = deepcopy(source['train_state'])
@@ -421,7 +421,7 @@ def main(case):
             torch.set_rng_state(training_rng['torch_rng'])
             torch.cuda.set_rng_state(training_rng['cuda_rng'], device)
             evaluation_state, evaluation_seconds = None, 0.
-            next_evaluation = (min(trained_seconds+1800, args.training_seconds) if case == 'B'
+            next_evaluation = (args.training_seconds if case == 'B'
                                else trained_seconds+1800)
             search.combat_diagnostics = None
             phase = 'training'
