@@ -5,15 +5,18 @@
   "fresh_build_directory": "/home/zhuyouwei/spire-build-e4-5eb2832",
   "runtime_fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
   "source_note": "Claude62 changes only decision documentation; engine/trainer source remains d28c060 with56/58 fixes; seven-rank145 migration still exact",
-  "status": "fresh_full_build_running",
-  "updated_at": "2026-10-22T14:44:46.819600+08:00",
+  "status": "fresh_full_build_completed_exit0_remote_gates_pending",
+  "updated_at": "2026-10-22T15:49:00.111924+08:00",
   "prior_evidence": "inventory/e4-c61-recovery-deployment.json",
   "compile": {
-    "status": "running_fresh_full_build",
+    "status": "completed_exit0",
     "parallel": 3,
     "directory": "/home/zhuyouwei/spire-build-e4-5eb2832",
     "log": "/home/zhuyouwei/spire-downloads/e4-c62-build.log",
-    "session_id": 81464
+    "session_id": 81464,
+    "exit_code": 0,
+    "completion_observed_at": "2026-10-22T15:40:36.068372+08:00",
+    "evidence": "inventory/e4-c63-local-preparation.json"
   },
   "budgets": {
     "step_0": {
@@ -59,10 +62,12 @@
     }
   },
   "pending": [
-    "Claude62 waives NFS timestamp warnings only; fresh full build running in spire-build-e4-5eb2832 atfixed d28c060. Stop on compilation errors or failed CUDA gates; no system changes.",
-    "After fresh build success record binary hashes, update Slurm build path, fresh queue/resources/hash/budget checks, existing test_cuda_* inside next Slurm job then seven-rank evaluation145 resume.",
-    "Preserve original145/final151; use job-qualified audit identity for repeated145; compare actual training throughput to473.9.",
-    "Step1 charged57721.25/194400 reserved0; consume original64800 first; step2 unapproved."
+    "Obtain approved remote command access; no workaround connection or tool and no repeat build",
+    "Read and retain build log/exit and binary SHA256s; synchronize corrected helpers and verify remote hashes match local evidence",
+    "Recheck no existing project job, nondependency pending jobs, seven free GPUs, 80GiB request leaving at least16GiB, disk<=200GB, fixed source and seven migrated/original checkpoint hashes, budget",
+    "Reserve at most12600 eight-GPU-node seconds only when submitting one Slurm job; run existing CUDA gate and train only on actual success",
+    "Resume evaluation145 with all seven collectors; export audits using job-qualified IDs (current trainer emits E4-C53-145-N32-D1024; do not overwrite/reuse old inventory identity)",
+    "Retain full1024-seed results and18 real action prefixes pending Mac audit; compare new actual training steps/sec with473.9470836897199; retain stopping/yield rules"
   ],
   "git_transport": "Git fetch failed twice; API Git blob/tree/commit objects imported with exact SHA verification; original main commit preserved"
 }

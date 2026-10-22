@@ -1,0 +1,170 @@
+{
+  "updated_at": "2026-10-22T15:49:00.111924+08:00",
+  "authorization": "User-authorized coordinator follow-up: complete local preparation and publish codex/e4 only",
+  "execution_model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "fast": false,
+  "main63": {
+    "sha": "708613b23cae088b61d5e329a6ade3bb5272f3f8",
+    "transport": "Native git fetch origin main succeeded; original Git objects and commit retained",
+    "merge": "bf72d64823f1890b8a5ca263ce51c865c19aeb61",
+    "ancestor_check_passed": true,
+    "changes": "11 decision-document lines only"
+  },
+  "build_completion": {
+    "observed_at": "2026-10-22T15:40:36.068372+08:00",
+    "source": "Coordinator output-only poll of existing authenticated SSH execution session81464",
+    "output": "FRESH_BUILD_EXIT=0\n[zhuyouwei@gpu01 ~]$",
+    "fresh_build_directory": "/home/zhuyouwei/spire-build-e4-5eb2832",
+    "runtime_fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "exit_code": 0,
+    "binary_hashes": "pending approved remote read",
+    "cuda_gates": "not_run",
+    "new_gpu_job_submitted": false
+  },
+  "build_evidence_attribution": "Coordinator read FRESH_BUILD_EXIT=0 from original session81464; execution chat could not access that scoped process",
+  "local_preparation": {
+    "helper_directory": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4",
+    "helpers": {
+      "e4-c62.sh": "d79af3d018b22faaabc1fac270e1a57d159657a7ab419cf8ea56a8e1051a8a43",
+      "preflight-c62.py": "68fcdf884e0267879d406936862e9e7e08fe9a0b739b32751349ad72b09be38e"
+    },
+    "uploaded": false,
+    "preflight": "Records actual e4-c62.sh path and SHA256 rather than c61 script",
+    "gate": "Discover exact four existing CUDA tests; reject disabled/missing/extra; run CTest with no-tests=error; require matching JUnit cases, run status and zero skips/failures/errors before training",
+    "expected_cuda_tests": [
+      "test_cuda_effect_fields",
+      "test_cuda_faults",
+      "test_cuda_parity",
+      "test_cuda_root_cache"
+    ],
+    "evidence_files": [
+      "cuda-gates.log",
+      "cuda-gates-discovery.json",
+      "cuda-gates.junit.xml",
+      "cuda-gates-verified.json"
+    ],
+    "verification": {
+      "scope": "Local wrapper verification with synthetic CTest discovery and JUnit only; no real CUDA tests or GPU jobs",
+      "expected_cuda_tests_from_CMakeLists": [
+        "test_cuda_effect_fields",
+        "test_cuda_faults",
+        "test_cuda_parity",
+        "test_cuda_root_cache"
+      ],
+      "scenarios": [
+        {
+          "scenario": "all_pass",
+          "accepted": true,
+          "expected": true
+        },
+        {
+          "scenario": "zero_tests",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "missing_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "extra_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "disabled_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "skipped_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "failure_exit",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_missing_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_duplicate_test",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_error",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_notrun",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_missing_file",
+          "accepted": false,
+          "expected": true
+        },
+        {
+          "scenario": "junit_skipped_count",
+          "accepted": false,
+          "expected": true
+        }
+      ],
+      "shell_syntax": "bash -n passed separately",
+      "python_syntax": "AST parsing passed",
+      "files": {
+        "e4-c62.sh": "d79af3d018b22faaabc1fac270e1a57d159657a7ab419cf8ea56a8e1051a8a43",
+        "preflight-c62.py": "68fcdf884e0267879d406936862e9e7e08fe9a0b739b32751349ad72b09be38e"
+      }
+    }
+  },
+  "runtime": {
+    "server_fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "fresh_build_directory": "/home/zhuyouwei/spire-build-e4-5eb2832",
+    "binary_hashes": null,
+    "cuda_gates": "not_run",
+    "job_submitted": false,
+    "original145_and151_untouched": true,
+    "remote_command_sent": false,
+    "hyperparameters_unchanged": true
+  },
+  "accounting": {
+    "step0_charged": 2127,
+    "step0_limit": 3600,
+    "step1_charged": 57721.25,
+    "step1_reserved": 0,
+    "step1_limit": 194400,
+    "original_remaining": 7078.75,
+    "continuation_remaining": 129600,
+    "total_remaining": 136678.75,
+    "charge_order": [
+      "step1_original",
+      "step1_continuation"
+    ],
+    "step2_authorized": false
+  },
+  "blocker": {
+    "kind": "remote_command_approval_blocker",
+    "original_action": "Send build-log tail to existing SSH session56160",
+    "original_result": "approval required by policy, but AskForApproval is set to Never",
+    "unresolved": true,
+    "no_alternative_connection_or_tool_used": true
+  },
+  "pending": [
+    "Obtain approved remote command access; no workaround connection or tool and no repeat build",
+    "Read and retain build log/exit and binary SHA256s; synchronize corrected helpers and verify remote hashes match local evidence",
+    "Recheck no existing project job, nondependency pending jobs, seven free GPUs, 80GiB request leaving at least16GiB, disk<=200GB, fixed source and seven migrated/original checkpoint hashes, budget",
+    "Reserve at most12600 eight-GPU-node seconds only when submitting one Slurm job; run existing CUDA gate and train only on actual success",
+    "Resume evaluation145 with all seven collectors; export audits using job-qualified IDs (current trainer emits E4-C53-145-N32-D1024; do not overwrite/reuse old inventory identity)",
+    "Retain full1024-seed results and18 real action prefixes pending Mac audit; compare new actual training steps/sec with473.9470836897199; retain stopping/yield rules"
+  ]
+}
