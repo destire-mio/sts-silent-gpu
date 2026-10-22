@@ -642,3 +642,12 @@ Mac 上用 CPU 引擎把 5 次评估的 5,120 局全部重放，统计战斗奖�
   3. 提交作业，作业里 4 项 `test_cuda_*` 全过以后，从评估 145 续训；
   4. 报告每秒步数，和 473.9 比。
 - 原来那个会话也连不上的话，停下来写清楚卡在哪一步、报什么错，我和用户来处理。
+
+## #65（2026-10-22 16:45）多出的 test_cuda_dispatch 是固定源码里本来就有的，门槛改成 5 项，重新提交
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条已登录 SSH 的会话执行）
+
+- 构建和源码对得上，没有问题。`test_cuda_dispatch` 是 d28c060 里的 `tests/test_cuda_dispatch.cpp`，由 CMakeLists.txt 第 157–166 行的 `file(GLOB ... tests/test_*.cpp)` 注册成主机测试。它在 CPU 上跑 CUDA kernel 的代码，比对完整的 Game 字节（见 porting.md 第 696 行），#44 的时候已经跑过。另外 4 项 `.cu` 是在 GPU 上跑的测试，是第 130–152 行单独 `add_test` 的。我说"4 项"是没数它，是我的错。
+- 门槛改成正好这 5 项：`test_cuda_dispatch`、`test_cuda_effect_fields`、`test_cuda_faults`、`test_cuda_parity`、`test_cuda_root_cache`。其余要求照旧：不能缺、不能多、全部实际运行、0 跳过、0 失败。
+- **Astra 诊断对话可以关掉了**，原因已经找到，不用再花额度。
+- 改完脚本、核对哈希、提交前检查通过以后重新提交（条件同 #54），从评估 145 续训，报告每秒步数，和 473.9 比。
