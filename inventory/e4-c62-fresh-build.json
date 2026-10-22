@@ -1,0 +1,68 @@
+{
+  "main_commit": "5eb28325ac0ac3dadb8b829ba9a452b0158c342e",
+  "local_merge": "7c52d1468951b512d866dfba3b3b39c8a640e434",
+  "decision": "Fresh directory full build; timestamp warnings waived; no system changes; errors or CUDA gate failures stop",
+  "fresh_build_directory": "/home/zhuyouwei/spire-build-e4-5eb2832",
+  "runtime_fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "source_note": "Claude62 changes only decision documentation; engine/trainer source remains d28c060 with56/58 fixes; seven-rank145 migration still exact",
+  "status": "fresh_full_build_running",
+  "updated_at": "2026-10-22T14:44:46.819600+08:00",
+  "prior_evidence": "inventory/e4-c61-recovery-deployment.json",
+  "compile": {
+    "status": "running_fresh_full_build",
+    "parallel": 3,
+    "directory": "/home/zhuyouwei/spire-build-e4-5eb2832",
+    "log": "/home/zhuyouwei/spire-downloads/e4-c62-build.log",
+    "session_id": 81464
+  },
+  "budgets": {
+    "step_0": {
+      "charged_node_seconds": 2127,
+      "limit_node_seconds": 3600,
+      "reserved_node_seconds": 0
+    },
+    "later_steps_authorized": false,
+    "step_1": {
+      "charged_node_seconds": 57721.25,
+      "limit_node_seconds": 194400,
+      "reserved_node_seconds": 0,
+      "limit_authorization": "Claude39 original64800 plusClaude59 supplemental129600 reclassifiedasstep1 byClaude61",
+      "active_observed_node_seconds": 0,
+      "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
+      "active_observed_gpu_seconds": 0,
+      "original_limit_node_seconds": 64800,
+      "continuation_limit_node_seconds": 129600,
+      "charge_order": "Consume original64800 first, then step1 continuation129600; all accumulatedcharges preserved"
+    },
+    "authorized_later_steps": [],
+    "steps_after_2_authorized": false,
+    "step_2": {
+      "authorized": false,
+      "charged_node_seconds": 0,
+      "limit_node_seconds": 0,
+      "reserved_node_seconds": 0,
+      "authorization": "Step2 fork experiments require separateapproval perClaude61"
+    },
+    "charge_order": [
+      "step_1_original",
+      "step_1_continuation"
+    ],
+    "superseded_step2_label_from59": {
+      "record": {
+        "charged_node_seconds": 0,
+        "limit_node_seconds": 129600,
+        "reserved_node_seconds": 0,
+        "limit_authorization": "Claude59 at005c73b43e7460971ddb3266412a4e38fecc5257",
+        "accounting_rule": "GPU seconds /8; charge remainingstep1 first, thenstep2"
+      },
+      "superseded_by": "Claude61: this129600seconds isstep1continuation, notstep2experiment authorization"
+    }
+  },
+  "pending": [
+    "Claude62 waives NFS timestamp warnings only; fresh full build running in spire-build-e4-5eb2832 atfixed d28c060. Stop on compilation errors or failed CUDA gates; no system changes.",
+    "After fresh build success record binary hashes, update Slurm build path, fresh queue/resources/hash/budget checks, existing test_cuda_* inside next Slurm job then seven-rank evaluation145 resume.",
+    "Preserve original145/final151; use job-qualified audit identity for repeated145; compare actual training throughput to473.9.",
+    "Step1 charged57721.25/194400 reserved0; consume original64800 first; step2 unapproved."
+  ],
+  "git_transport": "Git fetch failed twice; API Git blob/tree/commit objects imported with exact SHA verification; original main commit preserved"
+}
