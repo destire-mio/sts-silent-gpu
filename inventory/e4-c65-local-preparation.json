@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-22T16:56:48.1099810+08:00",
+  "decision": "Claude65",
+  "decision_commit": "b916e3d86b3cd5433da1d9d5cb974dadc4a7f954",
+  "coordinator_thread": "01a162af-feea-7841-ab99-df0094beb41d",
+  "user_instruction": "Current chat takes over execution; use subagents; do not create new chats",
+  "status": "local_preparation_complete_remote_access_rejected_before_authentication",
+  "runtime_fixed_head": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "expected_tests": [
+    "test_cuda_dispatch",
+    "test_cuda_effect_fields",
+    "test_cuda_faults",
+    "test_cuda_parity",
+    "test_cuda_root_cache"
+  ],
+  "helper_directory": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4",
+  "helper_sha256": {
+    "e4-c62.sh": "0cc331a21c44f3fc6af864d1b9590d74bcb37a141bafc804ee5daf3f20a9f856",
+    "verify-c62-local-preparation.py": "9a16a0858a03eab2f2f5373db064add4be030dca8bdc86be6131f3762f5609c9",
+    "e4-c65-local-verification.json": "d6d9e59a2f8a09a436669055c038e169c8dde92d5d64ff1d653cc6182d41d85e"
+  },
+  "validation": {
+    "sixth_test_rejected": true,
+    "mock_scenarios": 13,
+    "mock_scenarios_passed": 13,
+    "python_ast": "passed",
+    "real_five_test_ctest_this_round": "not_run",
+    "bash_syntax": "D:\\Git\\bin\\bash.exe -n passed"
+  },
+  "script_change": "Discover and execute full test_cuda_ prefix; require exact five names; retain all existing actual-run/JUnit/skip/failure assertions; CPUdispatch included in sameCTest/JUnit instead of separate executable",
+  "remote_access": {
+    "previous_session81464": "Unknown process id",
+    "initial_direct_attempt": "TCP/SSH reachable; BatchMode had no accepted authentication",
+    "retries_stopped": true,
+    "previous_chat": "archived",
+    "network_or_system_changed": false,
+    "password_result": "not_evaluated_by_server_on_latest_attempt",
+    "latest_attempt": "Connection established; kex_exchange_identification banner: Not allowed at this time; closed before server SSH identification/authentication",
+    "remote_commands_executed": false,
+    "interactive_session81716": "Closed while awaiting authentication"
+  },
+  "job3730": {
+    "original145and151": "unchanged",
+    "current_state": "unverified",
+    "old_gate_evidence": "four GPU CTest/JUnit passed plus standalone CPUdispatch passed",
+    "last_verified_at": "2026-10-22T16:41:59.128607+08:00",
+    "five_unified_ctest_gate": "not_claimed",
+    "last_phase": "evaluation145",
+    "new_job_submitted": false,
+    "gpus": 7,
+    "dev_seed_count": 1024,
+    "last_state": "RUNNING",
+    "cancelled": false
+  },
+  "accounting": {
+    "step1_reserved_node_seconds": 12600,
+    "job3730_observed_node_seconds_at_last_snapshot": 139.125,
+    "cost_changed_this_round": false,
+    "step1_charged_node_seconds": 57723,
+    "observation_settled": false,
+    "step1_limit_node_seconds": 194400
+  },
+  "pending": [
+    "Restore normal same-endpoint authenticated SSH access, without network changes or bypass",
+    "Read live3730 lifecycle/queue/checkpoints before changing its disposition; no duplicate job",
+    "Synchronize approved five-test helper and verify SHA256 before next submission",
+    "Run exactly five actual CTest cases with completeJUnit before next resume",
+    "Export1024episode results and18 job-qualified action audit prefixes; Mac status pending",
+    "Compare real training throughput with473.9470836897199; preserve cost and stop/yield rules"
+  ],
+  "publication": "local commit prepared; this round independent GitHub443 refresh failed; not yet independently published"
+}
