@@ -1,0 +1,1517 @@
+{
+  "message": 74,
+  "experiment_authorization": 73,
+  "decision_commit": "3de833377a127c8982d312d28cc344a0a5087a16",
+  "source_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
+  "source_scope": "deployed training source remains0722 even after later docs/inventory handoff commit",
+  "job_id": 3897,
+  "recorded_at": "2026-10-23T12:57:19.638057+08:00",
+  "status": "RUNNING_training",
+  "deployment": {
+    "source_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
+    "manifest_sha256": "8909fc1337be022832f206a68e53cee6a29a327249a1124a4ea9865007fd5eef",
+    "inputs": {
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json": "ab37dfce4e9b55722ccccc5744ca15721ecc443f568988fbc1d69be3d1aed081",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so": "9955e920ed3465c7726f2e97a0f3cc1fbd531279c0d31ad8a73436df6717d9d2",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so": "245b417db210212ce3330d73d1fa6706f12e8bf7445518c6f3abad75c0b73985",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch": "e735dc5c73acb316bca7759cf39822ec689b498e283ce084138c69d25502c20e",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults": "f1bc04565a4b6fb5387471570865e765bd2f976576027eeab50755b989e9e6a2",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity": "d83fa023de12b6f388e781be837aa0ecbd713fe49891030e69e7ceac3e541e50",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache": "7ed5efb6c6e3150aef9707dc5d8220844c613ad263a7278f23230aad278b5966",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so": "f9f749c29b34d84a21ee4d459f0f66508268a55c9b22b75a5d93330173b8c5f6",
+      "/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_continue.py": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c",
+      "/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_run.py": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+      "/home/zhuyouwei/sts-silent-gpu-c73/train/e4.py": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9",
+      "/home/zhuyouwei/sts-silent-gpu-c73/train/e4_rewards.py": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908",
+      "/home/zhuyouwei/sts-silent-gpu-c73/train/e4_learner.py": "310a83116bfe20e3691451c63e8f484659f552ff39fa4db7aee41823808eb50c",
+      "/home/zhuyouwei/sts-silent-gpu-c73/train/model.py": "4f4b30f670542ac9ccee5ac7eec126f88a0a295d8934da26d02c93d56f12bb42",
+      "/home/zhuyouwei/sts-silent-gpu-c73/train/rollout.py": "7f618d58876b99e54d2cbee44a2361e380ce3a932fafba1344afefb6c1b2f941",
+      "/home/zhuyouwei/sts-silent-gpu-c73/train/checkpoint.py": "2af93f8623a80370378feeb0db03421022ecdc011eb2abd8204f27e24f3488af",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt": "e018a03374c2e3ce2806c912a2c1796bd9396d7da6debd38a320004bb988a3ab",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt": "98d90eeba4382024e063bc565f61ee26bc27420a5e69d3a0a7f293e9e102edd1",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt": "ccaa006b278e16ac54551ebba40e259cfc9f0aa0db604e63862caa5b694f7208",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt": "9a7a475760ccf0b49bb235ecd6d9310d069af546098c61bdcd834cdcedc96f08",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt": "35f5ef1a2ec207886a0d037f69768c3578fe72423ed75c53d6e1437cb65904e3",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt": "ff77c2a39fb7de65d062ea9f142be62523d034ebd66ce7efd30dca097f07adcd",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt": "14eced8c80c1bcaace4a049ff5bc82392a3bd8023542f295a11f0e173e12e34e",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-0.pt": "5c42e943d509060eeb85efabe9f0474a63fc386ee0dedfbb9a088bb616495261",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-1.pt": "119ccb95d3fa3bbe569f4f7b75c36a9cd509b7380375acc163ceb1b64f74c87e",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-2.pt": "105de0a2ff7cd3a86f0ff32ce92c9c662f4e9b7ce45d9931b56f2e434ae2ed46",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-3.pt": "3e0bd39e9621ada631025afb790a20dc216539b334177cf93be558e2cf728709",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-4.pt": "519789559e6e32547098ddc0846cf3efd432593badf35e2ec2385de84fb48221",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-5.pt": "c3428c8e48d81cf3ad8f843ec783cca30c9cf7a9368e8d53e68e2cd4613cb929",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-6.pt": "d09fc6b7f8d12dc0df0059f4fb7453dcd4c6de87b38e6c8eda1464da5c7d2e5b",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/verify-inputs.py": "c97054d75cf3fefc4e00ce886305568f801a3ff75087cc6b09b4c41f1fcb4cb5",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/preflight.py": "ef26f63c2edd3c4ecd585eadfa852c747a68a9489a47cea62e389fce12ec6e9d",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/cuda-gates.py": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/memory-peak.py": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/prepare-bundle.py": "af1f309d241c8b7ba536ea16c58a679bbd6d08c88ffb5ad6e71c9f1e353075c0",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/generate-job.py": "4540de3d2ec0ede45dda91555de9ee28f18229139a4f0e5f5a33fce931c9e421",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/job.sh.in": "ce4ee9f0c2aa876be890cd9e803fe9db04924a92f41cb21a5237ef3ff69198fa",
+      "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/immutable-inputs.json": "98ef8af6ccfe1a5b72531a32800cccf6cb51f500c8482327b9b4ba2949a50327"
+    },
+    "checked_at": "2026-10-23T04:46:52.368957+00:00",
+    "original_heads": {
+      "/home/zhuyouwei/sts-silent-gpu-split": "d28c060f92e38385670d70defad5a41fea3421a9",
+      "/home/zhuyouwei/sts-silent-gpu-fork-c70": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6"
+    }
+  },
+  "submission": {
+    "attempted_at": "2026-10-23T04:48:18.245442+00:00",
+    "received_at": "2026-10-23T04:48:18.254846+00:00",
+    "returncode": 0,
+    "stdout": "Submitted batch job 3897\n",
+    "stderr": "",
+    "source_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
+    "world_size": 7,
+    "reservation_node_seconds_on_success": 12600,
+    "preflight_checked_at": "2026-10-23T04:47:57.524833+00:00",
+    "job_script_sha256": "e2e6a8b3ec844733b2655a4d0c591a0df6754bc150e4880c17951cf6767f2c2b"
+  },
+  "preflight": {
+    "checked_at": "2026-10-23T04:47:57.524833+00:00",
+    "world_size": 7,
+    "free_gpu_count": 7,
+    "request_memory_gib": 15,
+    "request_cpus": 8,
+    "memory_left_mib": 108571.0,
+    "memavailable_mib": 97395.1484375,
+    "home_mib": 26480,
+    "prospective_reservation_node_seconds": 12600.0,
+    "manifest_sha256": "8909fc1337be022832f206a68e53cee6a29a327249a1124a4ea9865007fd5eef",
+    "budget_sha256": "30132b2e454d97ab38a376b22e1de9014232078b4ba51223e14690a230680ee3",
+    "budget": {
+      "recorded_at": "2026-10-23T04:47:32.390031+00:00",
+      "source_ledger_sha256": "fba528fe3ebeda77890709332825782ae54f9df89a8d8e5b77a4e5c24e67045b",
+      "step1": {
+        "limit": 194400,
+        "charged_node_seconds": 66433.625,
+        "reserved_node_seconds": 0
+      },
+      "step2": {
+        "limit": 36000,
+        "charged_node_seconds": 3118.5,
+        "reserved_node_seconds": 0,
+        "closed": true
+      },
+      "experiment": {
+        "charged_to": "step_1",
+        "experiment_limit_node_seconds": 30000,
+        "charged_node_seconds": 0,
+        "reserved_node_seconds": 0,
+        "source": "C163",
+        "lr": 0.0001,
+        "decision": "c153ea257976ac454f7bc6f594eae08d01606de3",
+        "phase_label": "Claude73 step3; ordinary step1 training/reward unchanged",
+        "active_job": null
+      },
+      "active_job": null
+    },
+    "node": {
+      "NodeName": "gpu01",
+      "Arch": "x86_64",
+      "CoresPerSocket": "28",
+      "CPUAlloc": "2",
+      "CPUEfctv": "56",
+      "CPUTot": "56",
+      "CPULoad": "3.38",
+      "AvailableFeatures": "(null)",
+      "ActiveFeatures": "(null)",
+      "Gres": "gpu:V100:8",
+      "GresDrain": "N/A",
+      "GresUsed": "gpu:V100:1(IDX:0)",
+      "NodeAddr": "gpu01",
+      "NodeHostName": "gpu01",
+      "Version": "22.05.9",
+      "OS": "Linux",
+      "RealMemory": "128027",
+      "AllocMem": "4096",
+      "FreeMem": "499",
+      "Sockets": "2",
+      "Boards": "1",
+      "State": "MIXED",
+      "ThreadsPerCore": "1",
+      "TmpDisk": "0",
+      "Weight": "1",
+      "Owner": "N/A",
+      "MCS_label": "N/A",
+      "Partitions": "N56_128G_V100",
+      "BootTime": "2026-10-11T13:12:34",
+      "SlurmdStartTime": "2026-10-11T13:12:51",
+      "LastBusyTime": "2026-10-22T17:01:44",
+      "CfgTRES": "cpu=56,mem=128027M,billing=56",
+      "AllocTRES": "cpu=2,mem=4G",
+      "CapWatts": "n/a",
+      "CurrentWatts": "0",
+      "AveWatts": "0",
+      "ExtSensorsJoules": "n/s",
+      "ExtSensorsWatts": "0",
+      "ExtSensorsTemp": "n/s"
+    }
+  },
+  "queue_at_preflight": [
+    {
+      "JobId": "3754",
+      "UserId": "shaoy(1013)",
+      "JobState": "RUNNING",
+      "Reason": "None"
+    },
+    {
+      "JobId": "3886",
+      "UserId": "shaoy(1013)",
+      "JobState": "RUNNING",
+      "Reason": "None"
+    },
+    {
+      "JobId": "3887",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency"
+    },
+    {
+      "JobId": "3888",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency"
+    },
+    {
+      "JobId": "3889",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency"
+    },
+    {
+      "JobId": "3890",
+      "UserId": "shaoy(1013)",
+      "JobState": "PENDING",
+      "Reason": "Dependency"
+    },
+    {
+      "JobId": "3894",
+      "UserId": "zwh(1005)",
+      "JobState": "PENDING",
+      "Reason": "Dependency"
+    },
+    {
+      "JobId": "3896",
+      "UserId": "zwh(1005)",
+      "JobState": "RUNNING",
+      "Reason": "None"
+    },
+    {
+      "JobId": "3893",
+      "UserId": "zwh(1005)",
+      "JobState": "PENDING",
+      "Reason": "JobArrayTaskLimit"
+    }
+  ],
+  "queue_policy": "Only other-user PENDING Resources/Priority blocks; query failure aborts/yields; JobArrayTaskLimit/Dependency personal limits do not block",
+  "actual_gates": {
+    "verification": {
+      "status": "all_expected_cuda_tests_passed",
+      "tests": [
+        "test_cuda_dispatch",
+        "test_cuda_effect_fields",
+        "test_cuda_faults",
+        "test_cuda_parity",
+        "test_cuda_root_cache"
+      ],
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    "junit_cases": [
+      {
+        "name": "test_cuda_effect_fields",
+        "classname": "test_cuda_effect_fields",
+        "time": "13.2008",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_faults",
+        "classname": "test_cuda_faults",
+        "time": "12.7696",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_parity",
+        "classname": "test_cuda_parity",
+        "time": "35.8946",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_root_cache",
+        "classname": "test_cuda_root_cache",
+        "time": "12.6422",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_dispatch",
+        "classname": "test_cuda_dispatch",
+        "time": "0.451119",
+        "status": "run"
+      }
+    ],
+    "elapsed_total_seconds": 74.958319,
+    "execution": "One unified actual CTest with JUnit; dispatch host CPU, remaining four native CUDA",
+    "junit_sha256": "755c01f7940fe05c381ce17bf9cc61d4d36c437e048285ca7bd2d9bbe08c23e5",
+    "prefix_discovery_sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6",
+    "discovery_sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+  },
+  "startup_preservation": {
+    "captured_at": "2026-10-23T04:51:18.480153+00:00",
+    "scope": "actual CPU torch.load of seven started snapshots; no checkpoint writes; cache clearing inferred from fixed source construction, not checkpoint cache measurement",
+    "rows": [
+      {
+        "rank": 0,
+        "checkpoint_sha256": "ab8d1380ce39c5c3cdaaf7c24e23176e0d45cfad2e1c6f667fa2c74d39429ac5",
+        "source_sha256": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+        "reason": "started",
+        "version": 163,
+        "trained_seconds": 0.0,
+        "next_evaluation": 1800.0,
+        "model_digests": [
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4",
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4"
+        ],
+        "optimizer_except_lr_digests": [
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923",
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923"
+        ],
+        "source_lr": [
+          0.0003
+        ],
+        "new_lr": [
+          0.0001
+        ],
+        "beta": [
+          0.08886731540352022,
+          0.08886731540352022
+        ],
+        "entropy_target": [
+          0.6716025225602738,
+          0.6716025225602738
+        ],
+        "fresh_collector": true,
+        "train_state_digest": "7b3c94955da1bf5a4299450c903384f81ab0ed56157c89f30c31ef97f1b947f3",
+        "ppo_rng_digest": "619d0caa4c866340989715881c607b1cff26e9b1cb52f8452d4c18fa343493cd",
+        "training_rng_digest": "75c10cb22be76362e86b646ff8be8e9d9fc146dde9eae782de47d02965e0c283",
+        "source_train_state_digest": "096ad92cf8c991a5cb072d781c01bb1ed7bce7295c4e88252494485a388e14cd",
+        "torch_rng_digest": "10b94926c2cd339c6e3ee282f5cb567d873432c6ff35b8115ca78cc84ba0af2c",
+        "cuda_rng_digest": "619d0caa4c866340989715881c607b1cff26e9b1cb52f8452d4c18fa343493cd"
+      },
+      {
+        "rank": 1,
+        "checkpoint_sha256": "f3b4a952519b7f3f337cf77fe92b520faa6634aeda80583c3d9189912a1eebb4",
+        "source_sha256": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+        "reason": "started",
+        "version": 163,
+        "trained_seconds": 0.0,
+        "next_evaluation": 1800.0,
+        "model_digests": [
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4",
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4"
+        ],
+        "optimizer_except_lr_digests": [
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923",
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923"
+        ],
+        "source_lr": [
+          0.0003
+        ],
+        "new_lr": [
+          0.0001
+        ],
+        "beta": [
+          0.08886731540352022,
+          0.08886731540352022
+        ],
+        "entropy_target": [
+          0.6716025225602738,
+          0.6716025225602738
+        ],
+        "fresh_collector": true,
+        "train_state_digest": "a3ecc5e4be7e11a3f4681d7a2f66ac1130794dacc1e69d375a422da54ca77596",
+        "ppo_rng_digest": "0cdc7e45802dece6f52efffcd7c4ba12964d2129288d85a89595cce45d3ee15c",
+        "training_rng_digest": "d24e1dcf7e380fdaef6dcfbc85d09dc10a6bb1544d8a34a2529ebe2bbd1a0a00",
+        "source_train_state_digest": "6c1033b9f5d5e2c1d8af181611b2643736eb0be27b9c4a2a4dded559127735f8",
+        "torch_rng_digest": "44cf11986e71953fd88428207c53b2054561508f4c34efbbf4d620095697b940",
+        "cuda_rng_digest": "0cdc7e45802dece6f52efffcd7c4ba12964d2129288d85a89595cce45d3ee15c"
+      },
+      {
+        "rank": 2,
+        "checkpoint_sha256": "45c694367503acfbc12e9ad0944bda74ae156a70dba6bffd08219097c73807f9",
+        "source_sha256": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+        "reason": "started",
+        "version": 163,
+        "trained_seconds": 0.0,
+        "next_evaluation": 1800.0,
+        "model_digests": [
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4",
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4"
+        ],
+        "optimizer_except_lr_digests": [
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923",
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923"
+        ],
+        "source_lr": [
+          0.0003
+        ],
+        "new_lr": [
+          0.0001
+        ],
+        "beta": [
+          0.08886731540352022,
+          0.08886731540352022
+        ],
+        "entropy_target": [
+          0.6716025225602738,
+          0.6716025225602738
+        ],
+        "fresh_collector": true,
+        "train_state_digest": "a510593ab5261a35c00db1d5798ffa377109465cb0242d57dffa9ed9b7f481ad",
+        "ppo_rng_digest": "0fe153b4ea4d3bfb8f264f49b367ea09a622e9a90ef1102feda4deb9be9a92e9",
+        "training_rng_digest": "0da49f4cace8f34bd274163ece6f48ea0084c0941acd4216712b468ef60e6a11",
+        "source_train_state_digest": "2837d4244cc9c9d14b996dfeea035a97255ac4007685b95baddf9bcdf8f4e64d",
+        "torch_rng_digest": "283049f57326fcbcaaab03f493388ec5ffa88b8788cdce24af79f2453646f91e",
+        "cuda_rng_digest": "0fe153b4ea4d3bfb8f264f49b367ea09a622e9a90ef1102feda4deb9be9a92e9"
+      },
+      {
+        "rank": 3,
+        "checkpoint_sha256": "c343f9d00038986dd3c2f2ef00f37df7b748a7023301a7aee41db243ff49b10f",
+        "source_sha256": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+        "reason": "started",
+        "version": 163,
+        "trained_seconds": 0.0,
+        "next_evaluation": 1800.0,
+        "model_digests": [
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4",
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4"
+        ],
+        "optimizer_except_lr_digests": [
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923",
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923"
+        ],
+        "source_lr": [
+          0.0003
+        ],
+        "new_lr": [
+          0.0001
+        ],
+        "beta": [
+          0.08886731540352022,
+          0.08886731540352022
+        ],
+        "entropy_target": [
+          0.6716025225602738,
+          0.6716025225602738
+        ],
+        "fresh_collector": true,
+        "train_state_digest": "84aa9832c7738e8cac3598c35fe6b0f1afdd5dbc19e7b3982a72ba6486cd8cd2",
+        "ppo_rng_digest": "f587b24347590a55fe46cac5cd1efffb841fad96c4023b759274a41519967bbe",
+        "training_rng_digest": "5cee85a924d117c1346207d116b8a33dc015051b0996854c72b438571733fb99",
+        "source_train_state_digest": "21baac53a79ee3c33841cfebc9c28aded136cd69a5ba627a7e36c78d091740c3",
+        "torch_rng_digest": "bcfd7612e27a9d17148692e3953817c089c36ff1c8d3305b70fed3c6be8ccc51",
+        "cuda_rng_digest": "f587b24347590a55fe46cac5cd1efffb841fad96c4023b759274a41519967bbe"
+      },
+      {
+        "rank": 4,
+        "checkpoint_sha256": "515483eee114d30ef243102b87b20796566ef3f56c5a6b726afdbca23844a56b",
+        "source_sha256": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+        "reason": "started",
+        "version": 163,
+        "trained_seconds": 0.0,
+        "next_evaluation": 1800.0,
+        "model_digests": [
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4",
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4"
+        ],
+        "optimizer_except_lr_digests": [
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923",
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923"
+        ],
+        "source_lr": [
+          0.0003
+        ],
+        "new_lr": [
+          0.0001
+        ],
+        "beta": [
+          0.08886731540352022,
+          0.08886731540352022
+        ],
+        "entropy_target": [
+          0.6716025225602738,
+          0.6716025225602738
+        ],
+        "fresh_collector": true,
+        "train_state_digest": "8cedb36921c0cad97b60d53c5eedffef73cd288c19e5e5ae8e83b942d61499a8",
+        "ppo_rng_digest": "1c94a895e8cf41253b28c06c0cf45ad85e2266b1901cdaaea57f7202574519df",
+        "training_rng_digest": "46d44988b40f707169d2cb0ef1283041d54b944d720d318a4e073bd18b426c65",
+        "source_train_state_digest": "2f1afd89e521bcbc4c315faa882e259b9a98429b035698e387ec291a8396bc43",
+        "torch_rng_digest": "fbc74e570eafc1c382bcc0f8118b319d64979ff9e0989d3d216159994960bf39",
+        "cuda_rng_digest": "1c94a895e8cf41253b28c06c0cf45ad85e2266b1901cdaaea57f7202574519df"
+      },
+      {
+        "rank": 5,
+        "checkpoint_sha256": "cb39325a91c17c6e02c93ab57238b224de9283e5127dc0a95c9b7cf56585f5f7",
+        "source_sha256": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+        "reason": "started",
+        "version": 163,
+        "trained_seconds": 0.0,
+        "next_evaluation": 1800.0,
+        "model_digests": [
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4",
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4"
+        ],
+        "optimizer_except_lr_digests": [
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923",
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923"
+        ],
+        "source_lr": [
+          0.0003
+        ],
+        "new_lr": [
+          0.0001
+        ],
+        "beta": [
+          0.08886731540352022,
+          0.08886731540352022
+        ],
+        "entropy_target": [
+          0.6716025225602738,
+          0.6716025225602738
+        ],
+        "fresh_collector": true,
+        "train_state_digest": "854629ab4558edaf4fdc000ac39ffb3de9ea2645590b6043653c4a38746ffd21",
+        "ppo_rng_digest": "0b2f6ab658fd5b8799535d9d251477558523213fcb73886cdb00c226912b33b6",
+        "training_rng_digest": "c775dc334ce8c3dc28847c87cde0372f2affff6386235b94d3ce08386ddc5106",
+        "source_train_state_digest": "07f1e8da0ce7e613fcf8fb2911b5b69888e842f230818c128b53776f6011d6b0",
+        "torch_rng_digest": "8f36bc7d88ca4caa198f09f8fef42085d98b706bb50ddec541c643471d20365d",
+        "cuda_rng_digest": "0b2f6ab658fd5b8799535d9d251477558523213fcb73886cdb00c226912b33b6"
+      },
+      {
+        "rank": 6,
+        "checkpoint_sha256": "6c8bd475cdc1b3601634d22285698ffe17d38dac55d95ea8a8a9ad06bb3d3872",
+        "source_sha256": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+        "reason": "started",
+        "version": 163,
+        "trained_seconds": 0.0,
+        "next_evaluation": 1800.0,
+        "model_digests": [
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4",
+          "426aef9b10bed0fb65f3e3def33ee0e1ace759210726de4a07ec4cde671e40d4"
+        ],
+        "optimizer_except_lr_digests": [
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923",
+          "a4661a699d25a71424c307b99c4c130fcb03522ef87968ed116dfce302e16923"
+        ],
+        "source_lr": [
+          0.0003
+        ],
+        "new_lr": [
+          0.0001
+        ],
+        "beta": [
+          0.08886731540352022,
+          0.08886731540352022
+        ],
+        "entropy_target": [
+          0.6716025225602738,
+          0.6716025225602738
+        ],
+        "fresh_collector": true,
+        "train_state_digest": "a3df4e6f118df7059eaa1a61caf74ff51a2f9b91e238893a028612b6f080d929",
+        "ppo_rng_digest": "9364e8e381439af2a3a4f2013806dfc8f0a01964483d034ce14540c1d72a720a",
+        "training_rng_digest": "6e1e0c2e4f19aaee8f4584bc6ab711a90e952bffb3fd0a7cd216ac1ca49f6211",
+        "source_train_state_digest": "7f059a8d1a1d0504877a93b461a3974367764932d84888cc93487479d3a4d9b7",
+        "torch_rng_digest": "2d43f67f9e89f5e192765942e6120321ae2770af9ab084a962b0e5318e8438dd",
+        "cuda_rng_digest": "9364e8e381439af2a3a4f2013806dfc8f0a01964483d034ce14540c1d72a720a"
+      }
+    ],
+    "source_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2"
+  },
+  "startup_limits": [
+    "Parent actually CPU torch.load seven started snapshots; independent reviewer verifies saved report, not remote tensor reload",
+    "Model/Adam state excluding lr and beta preserved; checkpoint file bytes are not identical",
+    "Root cache not serialized; new cache inferred from fixed source construction, not measured in snapshot",
+    "Inherited C163 assessment is not a new C73 evaluation"
+  ],
+  "latest_observation": {
+    "captured_at": "2026-10-23T04:53:23.016731+00:00",
+    "version": 164,
+    "trained_seconds": 181.6190643310547,
+    "actual_steps": 114688,
+    "updates": [
+      {
+        "event": "update",
+        "update": 1,
+        "version": 164,
+        "training_seconds": 181.6190643310547,
+        "update_seconds": 181.6190643310547,
+        "actual_steps": 114688,
+        "sl_trial_steps": 3299747,
+        "lanes": 256,
+        "world_size": 7,
+        "next_epochs": 4,
+        "completed_episodes": 0,
+        "stalled_episodes": 0,
+        "completed_average_floor": null,
+        "active_max_floor_steps": 58,
+        "stall_classes": {},
+        "policy_loss": 0.499388704864151,
+        "value_loss": 0.00016115087040928185,
+        "imitation_fraction": 0.7924368722098214,
+        "loss": 0.45311855834394965,
+        "kl": 0.0024736402383816716,
+        "clip_fraction": 0.02313589582020584,
+        "entropy": 0.14024787913937997,
+        "ppo_loss": -0.001221092550685494,
+        "imitation_loss": 0.6305135161870628,
+        "ppo_samples": 95220,
+        "imitation_samples": 363532,
+        "H_imit": 0.6515067238833092,
+        "imitation_kl": 0.007795448060319602,
+        "imitation_entropy_samples": 90883,
+        "imitation_beta_used": 0.08886731540352022,
+        "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+        "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+        "epochs": 4,
+        "value_explained_variance": -0.02142492872295465,
+        "ppo_return_variance": 0.00018121067219024553,
+        "ppo_value_error_variance": 0.00018509309792576024,
+        "value_explained_variance_samples": 23805,
+        "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+        "imitation_beta": 0.09087689527121667,
+        "imitation_entropy_target": 0.6716025225602738
+      }
+    ],
+    "next_evaluation": 1800.0,
+    "fault_files": [],
+    "error_markers": {
+      "Traceback": 0,
+      "RuntimeError": 0,
+      "AssertionError": 0
+    }
+  },
+  "acceptance": {
+    "report": {
+      "scope": "CPU evidence review only; actual remote CPU torch.load report consumed, no local pt load or GPU execution; rootcache freshness inferred from fixed source construction; inherited C163 assessment is not new evaluation",
+      "checks": [
+        {
+          "name": "manifest fixed bytes",
+          "pass": true
+        },
+        {
+          "name": "manifest local same",
+          "pass": true
+        },
+        {
+          "name": "source binding",
+          "pass": true
+        },
+        {
+          "name": "46 immutable entries",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/tools/e4_continue.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/tools/e4_run.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/train/e4.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/train/e4_rewards.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/train/e4_learner.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/train/model.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/train/rollout.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/sts-silent-gpu-c73/train/checkpoint.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-0.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-1.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-2.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-3.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-4.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-5.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-6.pt",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/verify-inputs.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/preflight.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/cuda-gates.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/memory-peak.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/prepare-bundle.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/generate-job.py",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/job.sh.in",
+          "pass": true
+        },
+        {
+          "name": "hash chain /home/zhuyouwei/spire-downloads/c74-slurm-preparation/immutable-inputs.json",
+          "pass": true
+        },
+        {
+          "name": "helper bytes verify-inputs.py",
+          "pass": true
+        },
+        {
+          "name": "helper bytes preflight.py",
+          "pass": true
+        },
+        {
+          "name": "helper bytes cuda-gates.py",
+          "pass": true
+        },
+        {
+          "name": "helper bytes memory-peak.py",
+          "pass": true
+        },
+        {
+          "name": "helper bytes prepare-bundle.py",
+          "pass": true
+        },
+        {
+          "name": "helper bytes generate-job.py",
+          "pass": true
+        },
+        {
+          "name": "helper bytes job.sh.in",
+          "pass": true
+        },
+        {
+          "name": "helper bytes immutable-inputs.json",
+          "pass": true
+        },
+        {
+          "name": "preflight manifest",
+          "pass": true
+        },
+        {
+          "name": "budget byte binding",
+          "pass": true
+        },
+        {
+          "name": "step1 budget",
+          "pass": true
+        },
+        {
+          "name": "step2 closed",
+          "pass": true
+        },
+        {
+          "name": "C73 budget",
+          "pass": true
+        },
+        {
+          "name": "preflight passed",
+          "pass": true
+        },
+        {
+          "name": "resource request",
+          "pass": true
+        },
+        {
+          "name": "raw GPU allocation",
+          "pass": true
+        },
+        {
+          "name": "raw Slurm memory",
+          "pass": true
+        },
+        {
+          "name": "actual memory margin",
+          "pass": true
+        },
+        {
+          "name": "CPU and home",
+          "pass": true
+        },
+        {
+          "name": "no Resources Priority pending",
+          "pass": true
+        },
+        {
+          "name": "JobArrayTaskLimit exists allowed",
+          "pass": true
+        },
+        {
+          "name": "raw resources retained",
+          "pass": true
+        },
+        {
+          "name": "receipt job3897",
+          "pass": true
+        },
+        {
+          "name": "fresh preflight",
+          "pass": true
+        },
+        {
+          "name": "reservation on receipt only",
+          "pass": true
+        },
+        {
+          "name": "script bytes receipt",
+          "pass": true
+        },
+        {
+          "name": "script binds --gres=gpu:V100:7",
+          "pass": true
+        },
+        {
+          "name": "script binds --cpus-per-task=8",
+          "pass": true
+        },
+        {
+          "name": "script binds --mem=15G",
+          "pass": true
+        },
+        {
+          "name": "script binds --time=04:00:00",
+          "pass": true
+        },
+        {
+          "name": "script binds --nproc-per-node=7",
+          "pass": true
+        },
+        {
+          "name": "script binds --lr 0.0001",
+          "pass": true
+        },
+        {
+          "name": "script binds --seconds 13800",
+          "pass": true
+        },
+        {
+          "name": "script binds e52dfd67f77f4247e339c61bd209bbc0d0496329adc7e31ec71d8404d9ffa0fe",
+          "pass": true
+        },
+        {
+          "name": "script binds 8909fc1337be022832f206a68e53cee6a29a327249a1124a4ea9865007fd5eef",
+          "pass": true
+        },
+        {
+          "name": "gates precede train",
+          "pass": true
+        },
+        {
+          "name": "cuda-gates-discovery.json exact discovery",
+          "pass": true
+        },
+        {
+          "name": "cuda-prefix-discovery.json exact discovery",
+          "pass": true
+        },
+        {
+          "name": "JUnit exactly five",
+          "pass": true
+        },
+        {
+          "name": "JUnit failures",
+          "pass": true
+        },
+        {
+          "name": "JUnit disabled",
+          "pass": true
+        },
+        {
+          "name": "JUnit skipped",
+          "pass": true
+        },
+        {
+          "name": "JUnit run test_cuda_effect_fields",
+          "pass": true
+        },
+        {
+          "name": "JUnit run test_cuda_faults",
+          "pass": true
+        },
+        {
+          "name": "JUnit run test_cuda_parity",
+          "pass": true
+        },
+        {
+          "name": "JUnit run test_cuda_root_cache",
+          "pass": true
+        },
+        {
+          "name": "JUnit run test_cuda_dispatch",
+          "pass": true
+        },
+        {
+          "name": "dispatch is host CPU",
+          "pass": true
+        },
+        {
+          "name": "seven unique ranks",
+          "pass": true
+        },
+        {
+          "name": "rank0 model_digests",
+          "pass": true
+        },
+        {
+          "name": "rank0 optimizer_except_lr_digests",
+          "pass": true
+        },
+        {
+          "name": "rank0 beta",
+          "pass": true
+        },
+        {
+          "name": "rank0 entropy_target",
+          "pass": true
+        },
+        {
+          "name": "rank0 source hash",
+          "pass": true
+        },
+        {
+          "name": "rank0 lr override",
+          "pass": true
+        },
+        {
+          "name": "rank0 started fresh",
+          "pass": true
+        },
+        {
+          "name": "rank0 train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank0 ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank0 training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank0 torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank0 cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank0 checkpoint_sha256",
+          "pass": true
+        },
+        {
+          "name": "rank1 model_digests",
+          "pass": true
+        },
+        {
+          "name": "rank1 optimizer_except_lr_digests",
+          "pass": true
+        },
+        {
+          "name": "rank1 beta",
+          "pass": true
+        },
+        {
+          "name": "rank1 entropy_target",
+          "pass": true
+        },
+        {
+          "name": "rank1 source hash",
+          "pass": true
+        },
+        {
+          "name": "rank1 lr override",
+          "pass": true
+        },
+        {
+          "name": "rank1 started fresh",
+          "pass": true
+        },
+        {
+          "name": "rank1 train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank1 ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank1 training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank1 torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank1 cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank1 checkpoint_sha256",
+          "pass": true
+        },
+        {
+          "name": "rank2 model_digests",
+          "pass": true
+        },
+        {
+          "name": "rank2 optimizer_except_lr_digests",
+          "pass": true
+        },
+        {
+          "name": "rank2 beta",
+          "pass": true
+        },
+        {
+          "name": "rank2 entropy_target",
+          "pass": true
+        },
+        {
+          "name": "rank2 source hash",
+          "pass": true
+        },
+        {
+          "name": "rank2 lr override",
+          "pass": true
+        },
+        {
+          "name": "rank2 started fresh",
+          "pass": true
+        },
+        {
+          "name": "rank2 train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank2 ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank2 training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank2 torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank2 cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank2 checkpoint_sha256",
+          "pass": true
+        },
+        {
+          "name": "rank3 model_digests",
+          "pass": true
+        },
+        {
+          "name": "rank3 optimizer_except_lr_digests",
+          "pass": true
+        },
+        {
+          "name": "rank3 beta",
+          "pass": true
+        },
+        {
+          "name": "rank3 entropy_target",
+          "pass": true
+        },
+        {
+          "name": "rank3 source hash",
+          "pass": true
+        },
+        {
+          "name": "rank3 lr override",
+          "pass": true
+        },
+        {
+          "name": "rank3 started fresh",
+          "pass": true
+        },
+        {
+          "name": "rank3 train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank3 ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank3 training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank3 torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank3 cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank3 checkpoint_sha256",
+          "pass": true
+        },
+        {
+          "name": "rank4 model_digests",
+          "pass": true
+        },
+        {
+          "name": "rank4 optimizer_except_lr_digests",
+          "pass": true
+        },
+        {
+          "name": "rank4 beta",
+          "pass": true
+        },
+        {
+          "name": "rank4 entropy_target",
+          "pass": true
+        },
+        {
+          "name": "rank4 source hash",
+          "pass": true
+        },
+        {
+          "name": "rank4 lr override",
+          "pass": true
+        },
+        {
+          "name": "rank4 started fresh",
+          "pass": true
+        },
+        {
+          "name": "rank4 train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank4 ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank4 training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank4 torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank4 cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank4 checkpoint_sha256",
+          "pass": true
+        },
+        {
+          "name": "rank5 model_digests",
+          "pass": true
+        },
+        {
+          "name": "rank5 optimizer_except_lr_digests",
+          "pass": true
+        },
+        {
+          "name": "rank5 beta",
+          "pass": true
+        },
+        {
+          "name": "rank5 entropy_target",
+          "pass": true
+        },
+        {
+          "name": "rank5 source hash",
+          "pass": true
+        },
+        {
+          "name": "rank5 lr override",
+          "pass": true
+        },
+        {
+          "name": "rank5 started fresh",
+          "pass": true
+        },
+        {
+          "name": "rank5 train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank5 ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank5 training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank5 torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank5 cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank5 checkpoint_sha256",
+          "pass": true
+        },
+        {
+          "name": "rank6 model_digests",
+          "pass": true
+        },
+        {
+          "name": "rank6 optimizer_except_lr_digests",
+          "pass": true
+        },
+        {
+          "name": "rank6 beta",
+          "pass": true
+        },
+        {
+          "name": "rank6 entropy_target",
+          "pass": true
+        },
+        {
+          "name": "rank6 source hash",
+          "pass": true
+        },
+        {
+          "name": "rank6 lr override",
+          "pass": true
+        },
+        {
+          "name": "rank6 started fresh",
+          "pass": true
+        },
+        {
+          "name": "rank6 train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank6 ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank6 training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank6 torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank6 cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank6 checkpoint_sha256",
+          "pass": true
+        },
+        {
+          "name": "rank independent train_state_digest",
+          "pass": true
+        },
+        {
+          "name": "rank independent ppo_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank independent training_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank independent torch_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "rank independent cuda_rng_digest",
+          "pass": true
+        },
+        {
+          "name": "status startup only",
+          "pass": true
+        },
+        {
+          "name": "inherited baseline only",
+          "pass": true
+        },
+        {
+          "name": "status config",
+          "pass": true
+        },
+        {
+          "name": "fixed git source tools/e4_continue.py",
+          "pass": true
+        },
+        {
+          "name": "fixed git source tools/e4_run.py",
+          "pass": true
+        },
+        {
+          "name": "fixed git source train/e4.py",
+          "pass": true
+        },
+        {
+          "name": "fixed git source train/e4_rewards.py",
+          "pass": true
+        },
+        {
+          "name": "fixed git source train/e4_learner.py",
+          "pass": true
+        },
+        {
+          "name": "fixed git source train/model.py",
+          "pass": true
+        },
+        {
+          "name": "fixed git source train/rollout.py",
+          "pass": true
+        },
+        {
+          "name": "fixed git source train/checkpoint.py",
+          "pass": true
+        },
+        {
+          "name": "source logic optimizer.load_state_dict(weights['optimizer'])",
+          "pass": true
+        },
+        {
+          "name": "source logic group['lr'] = args.lr",
+          "pass": true
+        },
+        {
+          "name": "source logic saved['lr'] == args.lr and saved['world_size'] == world",
+          "pass": true
+        },
+        {
+          "name": "source logic saved['source_sha256'] == source_hash",
+          "pass": true
+        },
+        {
+          "name": "source logic search = RoomSearch(256, 32",
+          "pass": true
+        },
+        {
+          "name": "source logic collector = SegmentCollector(search, seed_rng, rank=rank)",
+          "pass": true
+        },
+        {
+          "name": "source logic collector.restore(train_state)",
+          "pass": true
+        },
+        {
+          "name": "source logic train_state = deepcopy(collector.state())",
+          "pass": true
+        },
+        {
+          "name": "source logic ('Resources', 'Priority')",
+          "pass": true
+        },
+        {
+          "name": "source startup source receipt",
+          "pass": true
+        }
+      ],
+      "check_count": 216,
+      "passed": 216,
+      "failed": [],
+      "conclusion": "PASS",
+      "evidence_sha256": {
+        "c74-slurm-preparation\\remote-budget-20261023-1249.json": "30132b2e454d97ab38a376b22e1de9014232078b4ba51223e14690a230680ee3",
+        "c74-slurm-preparation\\remote-deployed-inputs.json": "a06a0cdd9e6431f1b8ffa60bffd856ec5a23cdfecb33c54b9b09796f9dc6907b",
+        "c74-slurm-preparation\\remote-e4-c73-0722-job.sh": "e2e6a8b3ec844733b2655a4d0c591a0df6754bc150e4880c17951cf6767f2c2b",
+        "c74-slurm-preparation\\remote-manifest.json": "8909fc1337be022832f206a68e53cee6a29a327249a1124a4ea9865007fd5eef",
+        "c74-slurm-preparation\\remote-preflight-20261023-1249.json": "e52dfd67f77f4247e339c61bd209bbc0d0496329adc7e31ec71d8404d9ffa0fe",
+        "c74-slurm-preparation\\remote-preflight-capture-20261023-1249.json": "96b3532b3b0f813f57c6c8cf8375e8233890e2f26acb31e583a658c14f48f58b",
+        "c74-slurm-preparation\\remote-submission-receipt.json": "a772d7a949e7dab6020c9bc5bdb27362a5fcd165075d8a744cf1cd484f3fc859",
+        "job3897-startup\\cuda-gates-discovery.json": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6",
+        "job3897-startup\\cuda-gates-verified.json": "98994a085c95286c84845548bc3c63a1d0e5e07a9d044ba07f288ab6170001d1",
+        "job3897-startup\\cuda-gates.junit.xml": "755c01f7940fe05c381ce17bf9cc61d4d36c437e048285ca7bd2d9bbe08c23e5",
+        "job3897-startup\\cuda-gates.log": "a029005516ea91bfd0f49d4eb403155d7b095b8fe0caf22fa5dce745d452a651",
+        "job3897-startup\\cuda-prefix-discovery.json": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6",
+        "job3897-startup\\inputs-before.json": "f598b8dca8899d4710e6e5e25f489e8874024135765cd2d70e49065b15cd3c44",
+        "job3897-startup\\parent-C163-startup-preservation.json": "f6c192da6ca7e1c7be40b87ebba87ecc47e3835103f959fe4e1fb51cbec31c2f",
+        "job3897-startup\\parent-startup-poll.json": "59a4f8aa34369adc08edccac2a54ea651043bb74c836cfa5602472b35eb22373",
+        "job3897-startup\\poll1249.json": "e4eca0a818e9707088044953919398739271be36d4cf1250677757e1798c617e",
+        "job3897-startup\\queue-last.json": "c914057b987682e42bfc44b870c52ff4184b3f2246959eed3733b1966d4263d7",
+        "job3897-startup\\scheduler.txt": "788ca3fb10032cd7ad23d9957f586408b97e55e7292fe0c32fd0089ffda2e17e",
+        "job3897-startup\\source.txt": "a968c446d99664d511dffa0c7d13caf802ee59bd774774618f125641a6734e5f",
+        "job3897-startup\\status.json": "11a3e3874937f4f137b115aa11954f24680ddbb87760645d14e1d43982a66d1f"
+      }
+    },
+    "report_sha256": "f6b7b6afd3240db9a569e0289928b0116fe07a34c736f9e07e3e40402deb82bb",
+    "script_sha256": "3d6307ab3edad572a19afee80bdf90417eb91126e9585ccb82955a8d15585fbb",
+    "parent_rerun": "passed; exact count retained in report"
+  },
+  "cost": {
+    "step1_charged": 66433.625,
+    "step1_limit": 194400,
+    "step1_reserved": 12600,
+    "C73_cap": 30000,
+    "C73_charged": 0,
+    "C73_reserved_same_allocation": 12600,
+    "step2_closed_charged": 3118.5,
+    "new_settlement": false,
+    "rule": "Actual GPU seconds /8 single settlement only after job exit; reservation and runtime observation are not charges"
+  },
+  "next_action": "Follow actual3897; each1800 puretraining seconds full1024dev and18actualprefixes; C163 stop rules; no duplicate submission; collect aggregate memory peak at EXIT then settle once"
+}
