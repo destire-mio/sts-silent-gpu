@@ -1,0 +1,2716 @@
+{
+  "schema_version": 1,
+  "job_id": 3891,
+  "claude_decisions": [
+    68,
+    70,
+    71,
+    72
+  ],
+  "created_at": "2026-10-23T10:53:58.447797+08:00",
+  "main_read_sha": "2c73d8c59ae03471bfaf05f77eb2a2bc812b965e",
+  "fixed_B_source": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+  "fixed_A_source": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "purpose": "Continue same B from3770 rank165 with complete collector/RNG state; original total target; final evaluation once",
+  "output": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891",
+  "submit_time": "2026-10-23T10:40:14+08:00",
+  "state_at_capture": "RUNNING",
+  "captured_at": "2026-10-23T10:43:17.639305+08:00",
+  "allocation": {
+    "gpus": 7,
+    "world_size": 7,
+    "cpus": 8,
+    "memory_GiB": 80,
+    "time_limit_seconds": 14400
+  },
+  "target_training_seconds": 2002.1460876464844,
+  "resume_trained_seconds": 1271.0292358398438,
+  "remaining_seconds_not_new_target": 731.1168518066406,
+  "manifest_sha256": "8949d486b705cd95e3a6af794f7ff9781ff6ff8a7265a070df3dbd2a47dc7e8d",
+  "job_script_sha256": "a1f093924f378c91c3b869a8de66f47d512d2d99b3e8655476f70d016bec8d15",
+  "preflight": {
+    "checked_at": "2026-10-23T02:39:42.013530+00:00",
+    "sha256": "69ef2f697255e752a10838bc82afee7c779eda1729cab58eba4d695c28163c65",
+    "age_at_submission_seconds": 31.98647,
+    "input_count": 30,
+    "inputs": {
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt": "e018a03374c2e3ce2806c912a2c1796bd9396d7da6debd38a320004bb988a3ab",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt": "98d90eeba4382024e063bc565f61ee26bc27420a5e69d3a0a7f293e9e102edd1",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt": "ccaa006b278e16ac54551ebba40e259cfc9f0aa0db604e63862caa5b694f7208",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt": "9a7a475760ccf0b49bb235ecd6d9310d069af546098c61bdcd834cdcedc96f08",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt": "35f5ef1a2ec207886a0d037f69768c3578fe72423ed75c53d6e1437cb65904e3",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt": "ff77c2a39fb7de65d062ea9f142be62523d034ebd66ce7efd30dca097f07adcd",
+      "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt": "14eced8c80c1bcaace4a049ff5bc82392a3bd8023542f295a11f0e173e12e34e",
+      "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json": "ab37dfce4e9b55722ccccc5744ca15721ecc443f568988fbc1d69be3d1aed081",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so": "9955e920ed3465c7726f2e97a0f3cc1fbd531279c0d31ad8a73436df6717d9d2",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so": "245b417db210212ce3330d73d1fa6706f12e8bf7445518c6f3abad75c0b73985",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch": "e735dc5c73acb316bca7759cf39822ec689b498e283ce084138c69d25502c20e",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults": "f1bc04565a4b6fb5387471570865e765bd2f976576027eeab50755b989e9e6a2",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity": "d83fa023de12b6f388e781be837aa0ecbd713fe49891030e69e7ceac3e541e50",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache": "7ed5efb6c6e3150aef9707dc5d8220844c613ad263a7278f23230aad278b5966",
+      "/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so": "f9f749c29b34d84a21ee4d459f0f66508268a55c9b22b75a5d93330173b8c5f6",
+      "/home/zhuyouwei/sts-silent-gpu-fork-c70/tools/e4_continue.py": "90a0363db8f94b97cbf03860ed9e813511a6bfea4d65f400dda0f5904d76b3bb",
+      "/home/zhuyouwei/sts-silent-gpu-fork-c70/tools/e4_fork.py": "10552d315b6752a89de9f20c41bfb999f3144b73667e6d3da77e56bd692b9fcd",
+      "/home/zhuyouwei/sts-silent-gpu-fork-c70/train/e4.py": "2f0a00e6cac27f6b10770d8f038fc028d24048c3a7c797384cd3030dff4c7126",
+      "/home/zhuyouwei/spire-downloads/c72-B-resume165-preparation/verify-inputs.py": "01458e0508d8674f53d55300108fbaf32be1b908fba37e6fc1c9c33b8e337ecc",
+      "/home/zhuyouwei/spire-downloads/c72-B-resume165-preparation/preflight-c72-B-resume165.py": "6ca6746f06d2f4e9f3a4d8c7975abc93f7364c6711088d7013422f36612f1b4f",
+      "/home/zhuyouwei/spire-downloads/c72-B-resume165-preparation/cuda-gates.py": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e",
+      "/home/zhuyouwei/spire-downloads/c72-B-resume165-preparation/memory-peak.py": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc"
+    },
+    "free_gpus": 7,
+    "slurm_remaining_after80GiB_mib": 42011.0,
+    "memavailable_mib": 103571.484375,
+    "home_mib": 26117,
+    "budget": {
+      "checked_at": "2026-10-23T02:38:37.862199+00:00",
+      "ledger_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\continuation-state.json",
+      "ledger_sha256": "3e3314723b9fea9e99570aa1cb173a89782e37f5c10ff248e2e7b8c528595289",
+      "step1": {
+        "charged_node_seconds": 66433.625,
+        "limit_node_seconds": 194400,
+        "reserved_node_seconds": 0,
+        "limit_authorization": "Claude39 original64800 plusClaude59 supplemental129600 reclassifiedasstep1 byClaude61",
+        "active_observed_node_seconds": 0,
+        "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
+        "active_observed_gpu_seconds": 0,
+        "original_limit_node_seconds": 64800,
+        "continuation_limit_node_seconds": 129600,
+        "charge_order": "Consume original64800 first, then step1 continuation129600; all accumulatedcharges preserved"
+      },
+      "step2": {
+        "limit": 36000,
+        "charged_node_seconds": 1208.375,
+        "reserved_node_seconds": 0
+      }
+    },
+    "budget_sha256": "a5ffefba56cb09dbc1e9987caafd235c0a339d85edef34133b15f5cbae3eb9a0"
+  },
+  "cuda_gate": {
+    "discovery": "exactly five direct executables",
+    "actual_uniform_ctest": true,
+    "junit_sha256": "cc22603ea6e40d70830de8a492e35a78b48669ae34378e8e80dcd73eeea0a2d5",
+    "tests": [
+      {
+        "name": "test_cuda_effect_fields",
+        "classname": "test_cuda_effect_fields",
+        "time": "12.221",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_faults",
+        "classname": "test_cuda_faults",
+        "time": "12.7192",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_parity",
+        "classname": "test_cuda_parity",
+        "time": "36.1983",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_root_cache",
+        "classname": "test_cuda_root_cache",
+        "time": "12.7556",
+        "status": "run"
+      },
+      {
+        "name": "test_cuda_dispatch",
+        "classname": "test_cuda_dispatch",
+        "time": "0.446906",
+        "status": "run"
+      }
+    ],
+    "failures": 0,
+    "disabled": 0,
+    "skipped": 0,
+    "errors": 0,
+    "qualification": "dispatch host CPU; four other actual CUDA executables",
+    "junit": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<testsuite name=\"Linux-clang++\"\n\ttests=\"5\"\n\tfailures=\"0\"\n\tdisabled=\"0\"\n\tskipped=\"0\"\n\thostname=\"gpu01\"\n\ttime=\"74\"\n\ttimestamp=\"2026-10-23T10:40:15\"\n\t>\n\t<testcase name=\"test_cuda_effect_fields\" classname=\"test_cuda_effect_fields\" time=\"12.221\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out>CUDA packed Effect fields: 32 lanes PASS\n</system-out>\n\t</testcase>\n\t<testcase name=\"test_cuda_faults\" classname=\"test_cuda_faults\" time=\"12.7192\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out></system-out>\n\t</testcase>\n\t<testcase name=\"test_cuda_parity\" classname=\"test_cuda_parity\" time=\"36.1983\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out>CUDA full Game/observation bytes: seed=202610230000 decisions=1375 PASS\nCUDA full Game/observation bytes: seed=202610230004 decisions=1142 PASS\nCUDA full Game/observation bytes: seed=202610230005 decisions=1902 PASS\nCUDA full Game/observation bytes: seed=202610230006 decisions=823 PASS\nCUDA full Game/observation bytes: seed=202610230007 decisions=1210 PASS\nCUDA full Game/observation bytes: seed=202610230008 decisions=1217 PASS\nCUDA full Game/observation bytes: seed=202610230010 decisions=889 PASS\nCUDA full Game/observation bytes: seed=202610230013 decisions=1024 PASS\nCUDA full Game/observation bytes: seed=202610230014 decisions=914 PASS\nCUDA full Game/observation bytes: seed=202610210030 decisions=1541 PASS\nCUDA full Game/observation bytes: seed=202610211131 decisions=1580 PASS\nCUDA full Game/observation bytes: seed=202610180018 decisions=1421 PASS\nCUDA random/lifecycle: 8448 batch slots, cap/reset/fault isolation/clone/root replay/seed exhaustion PASS\nCUDA parity: full Game bytes and all observation/status b...\n[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]\n</system-out>\n\t</testcase>\n\t<testcase name=\"test_cuda_root_cache\" classname=\"test_cuda_root_cache\" time=\"12.7556\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out>CUDA root cache: 4/4 prefixes, Game/history/observations/status PASS\nCUDA root cache: all 4 prefixes match replay bytes; repeated restore leaves cache unchanged\n</system-out>\n\t</testcase>\n\t<testcase name=\"test_cuda_dispatch\" classname=\"test_cuda_dispatch\" time=\"0.446906\" status=\"run\">\n\t\t<properties/>\n\t\t<system-out>CUDA kernel bodies on CPU: 12 routes, 15038 decisions, full Game/observation/status bytes match\nCUDA kernel bodies on CPU: cap/reset/invalid candidate/seed exhaustion/clone/subset/latched fault PASS\nCUDA kernel bodies on CPU: 8448 random batch slots, full Game/observation/status bytes match\nCUDA tensor dispatch on CPU: shuffled roots, inactive fault isolation and cap bytes match\n</system-out>\n\t</testcase>\n</testsuite>\n"
+  },
+  "startup": {
+    "reason": "started",
+    "phase": "training",
+    "version": 165,
+    "trained_seconds": 1271.0292358398438,
+    "actual_steps": 229376,
+    "update_count": 2,
+    "imitation_beta": 0.09703024470856389,
+    "next_evaluation": 2002.1460876464844,
+    "evaluation_seconds": 0.0,
+    "assessment_qualification": "Only inherited C163 assessment; no B final result"
+  },
+  "preservation": {
+    "captured_at": "2026-10-23T10:50:25.671023+08:00",
+    "method": "CPU-only actual checkpoint field comparison; canonical set order; no training or CUDA",
+    "ranks": [
+      {
+        "rank": 0,
+        "old_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "new_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "fields": {
+          "stagnant": {
+            "old": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "new": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "equal": true
+          },
+          "combat_diagnostics": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "ppo_rng": {
+            "old": "1b7a8f57623a02e4ac78cccaf506c2e7f25cf8ca37a25758ac978d7563a90a34",
+            "new": "1b7a8f57623a02e4ac78cccaf506c2e7f25cf8ca37a25758ac978d7563a90a34",
+            "equal": true
+          },
+          "train_state": {
+            "old": "f61186d650eb8e1e4efa4aa94a4e067b28fd5834b301529ab6732bfc638f8ce3",
+            "new": "f61186d650eb8e1e4efa4aa94a4e067b28fd5834b301529ab6732bfc638f8ce3",
+            "equal": true
+          },
+          "trials": {
+            "old": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "new": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "equal": true
+          },
+          "torch_rng": {
+            "old": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "new": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "equal": true
+          },
+          "evaluation_state": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "capacity_metrics": {
+            "old": "f4ede9f7ef6b89556ee36a573767bd7f35ad237d7e2d4def7d1ddbc1129b97d3",
+            "new": "f4ede9f7ef6b89556ee36a573767bd7f35ad237d7e2d4def7d1ddbc1129b97d3",
+            "equal": true
+          },
+          "epochs": {
+            "old": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "new": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "equal": true
+          },
+          "imitation_entropy_target": {
+            "old": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "new": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "equal": true
+          },
+          "target_training_seconds": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_trained_seconds": {
+            "old": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "new": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "equal": true
+          },
+          "search_metrics": {
+            "old": "23059f3f84b215c06b55ba77765ed9a5c39e23a361b72d4c9fe2369345b4c62f",
+            "new": "23059f3f84b215c06b55ba77765ed9a5c39e23a361b72d4c9fe2369345b4c62f",
+            "equal": true
+          },
+          "source_commit": {
+            "old": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "new": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "equal": true
+          },
+          "event_trial_max_steps": {
+            "old": "cacd73501109410d0ee071727b900c1d20a344e0b810c4497292c9752cc61883",
+            "new": "cacd73501109410d0ee071727b900c1d20a344e0b810c4497292c9752cc61883",
+            "equal": true
+          },
+          "commit": {
+            "old": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "new": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "equal": true
+          },
+          "updates": {
+            "old": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "new": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "equal": true
+          },
+          "best_floor": {
+            "old": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "new": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "equal": true
+          },
+          "reason": {
+            "old": "550ad98c041dbd26ce9539e25e3fcd2ad9869c4875b6f3f78f89e5de4bf895c3",
+            "new": "443312ecae1cb7aabf421ddc30ce7a24a8cedf03e83019dd55cc2f95d32c2f11",
+            "equal": false
+          },
+          "actual_steps": {
+            "old": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "new": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "equal": true
+          },
+          "loop_metrics": {
+            "old": "46cd454cb29e0f327328c51d02f9ed7d71a5f0ec693656ba1211045f22fb8861",
+            "new": "46cd454cb29e0f327328c51d02f9ed7d71a5f0ec693656ba1211045f22fb8861",
+            "equal": true
+          },
+          "world_size": {
+            "old": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "new": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "equal": true
+          },
+          "imitation_beta": {
+            "old": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "new": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "equal": true
+          },
+          "cuda_rng": {
+            "old": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "new": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "equal": true
+          },
+          "trained_seconds": {
+            "old": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "new": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "equal": true
+          },
+          "model": {
+            "old": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "new": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "equal": true
+          },
+          "health_history": {
+            "old": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "new": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "equal": true
+          },
+          "source_sha256": {
+            "old": "865f35daf8559009547be0c1d4066c787044ffc148da48275a3b86cf6b8b69fa",
+            "new": "865f35daf8559009547be0c1d4066c787044ffc148da48275a3b86cf6b8b69fa",
+            "equal": true
+          },
+          "lanes": {
+            "old": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "new": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "equal": true
+          },
+          "optimizer": {
+            "old": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "new": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "equal": true
+          },
+          "version": {
+            "old": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "new": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "equal": true
+          },
+          "case": {
+            "old": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "new": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "equal": true
+          },
+          "evaluation_seconds": {
+            "old": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "new": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "equal": true
+          },
+          "next_evaluation": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_version": {
+            "old": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "new": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "equal": true
+          },
+          "assessments": {
+            "old": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "new": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "equal": true
+          },
+          "ready": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "initialization": {
+            "old": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "new": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "equal": true
+          },
+          "phase": {
+            "old": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "new": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "equal": true
+          },
+          "best": {
+            "old": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "new": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "equal": true
+          },
+          "fork_metrics": {
+            "old": "ef176407864af6e0296529188b45ec5554af4da77a0973afd8e11b008769b94d",
+            "new": "ef176407864af6e0296529188b45ec5554af4da77a0973afd8e11b008769b94d",
+            "equal": true
+          },
+          "training_rng": {
+            "old": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "new": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "equal": true
+          }
+        },
+        "metadata_old": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "yield_to_waiting_user",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 51
+        },
+        "metadata_new": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "started",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 51
+        }
+      },
+      {
+        "rank": 1,
+        "old_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "new_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "fields": {
+          "stagnant": {
+            "old": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "new": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "equal": true
+          },
+          "combat_diagnostics": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "ppo_rng": {
+            "old": "b34c0670aa32ec12b73cc4f83022d1cf5acd707dac2dc764ea81fe372fd234a4",
+            "new": "b34c0670aa32ec12b73cc4f83022d1cf5acd707dac2dc764ea81fe372fd234a4",
+            "equal": true
+          },
+          "train_state": {
+            "old": "46a369e72e06200fd76e2acecd481eed0488b0aac8ead9225b68ea74c50fffd9",
+            "new": "46a369e72e06200fd76e2acecd481eed0488b0aac8ead9225b68ea74c50fffd9",
+            "equal": true
+          },
+          "trials": {
+            "old": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "new": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "equal": true
+          },
+          "torch_rng": {
+            "old": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "new": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "equal": true
+          },
+          "evaluation_state": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "capacity_metrics": {
+            "old": "6228e482b51d238476bb86a26cc8c66271a069b53f64be2d9859bcf0c9365ef3",
+            "new": "6228e482b51d238476bb86a26cc8c66271a069b53f64be2d9859bcf0c9365ef3",
+            "equal": true
+          },
+          "epochs": {
+            "old": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "new": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "equal": true
+          },
+          "imitation_entropy_target": {
+            "old": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "new": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "equal": true
+          },
+          "target_training_seconds": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_trained_seconds": {
+            "old": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "new": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "equal": true
+          },
+          "search_metrics": {
+            "old": "66273eb17d5592145ff53040f35ad167eb2d27cf95d9eecd16e906b498c9d33b",
+            "new": "66273eb17d5592145ff53040f35ad167eb2d27cf95d9eecd16e906b498c9d33b",
+            "equal": true
+          },
+          "source_commit": {
+            "old": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "new": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "equal": true
+          },
+          "event_trial_max_steps": {
+            "old": "2793464d5a73d6d12ab1826aa444571cef4b4489fc2a5c7a4af704b1077a6687",
+            "new": "2793464d5a73d6d12ab1826aa444571cef4b4489fc2a5c7a4af704b1077a6687",
+            "equal": true
+          },
+          "commit": {
+            "old": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "new": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "equal": true
+          },
+          "updates": {
+            "old": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "new": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "equal": true
+          },
+          "best_floor": {
+            "old": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "new": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "equal": true
+          },
+          "reason": {
+            "old": "550ad98c041dbd26ce9539e25e3fcd2ad9869c4875b6f3f78f89e5de4bf895c3",
+            "new": "443312ecae1cb7aabf421ddc30ce7a24a8cedf03e83019dd55cc2f95d32c2f11",
+            "equal": false
+          },
+          "actual_steps": {
+            "old": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "new": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "equal": true
+          },
+          "loop_metrics": {
+            "old": "ec318f487341b22012eeed3aa637d1e7edd7ce30b8a9c4d1bb147d6bc63f039c",
+            "new": "ec318f487341b22012eeed3aa637d1e7edd7ce30b8a9c4d1bb147d6bc63f039c",
+            "equal": true
+          },
+          "world_size": {
+            "old": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "new": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "equal": true
+          },
+          "imitation_beta": {
+            "old": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "new": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "equal": true
+          },
+          "cuda_rng": {
+            "old": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "new": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "equal": true
+          },
+          "trained_seconds": {
+            "old": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "new": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "equal": true
+          },
+          "model": {
+            "old": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "new": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "equal": true
+          },
+          "health_history": {
+            "old": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "new": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "equal": true
+          },
+          "source_sha256": {
+            "old": "bb713c18b75ff61ad49c645990934047e325da284d6a0ca5637edeec8086e813",
+            "new": "bb713c18b75ff61ad49c645990934047e325da284d6a0ca5637edeec8086e813",
+            "equal": true
+          },
+          "lanes": {
+            "old": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "new": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "equal": true
+          },
+          "optimizer": {
+            "old": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "new": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "equal": true
+          },
+          "version": {
+            "old": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "new": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "equal": true
+          },
+          "case": {
+            "old": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "new": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "equal": true
+          },
+          "evaluation_seconds": {
+            "old": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "new": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "equal": true
+          },
+          "next_evaluation": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_version": {
+            "old": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "new": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "equal": true
+          },
+          "assessments": {
+            "old": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "new": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "equal": true
+          },
+          "ready": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "initialization": {
+            "old": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "new": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "equal": true
+          },
+          "phase": {
+            "old": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "new": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "equal": true
+          },
+          "best": {
+            "old": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "new": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "equal": true
+          },
+          "fork_metrics": {
+            "old": "e57318d33ce3b7466e9e07157383a6247d97106aa91ddd0a9f3cc7aae451a202",
+            "new": "e57318d33ce3b7466e9e07157383a6247d97106aa91ddd0a9f3cc7aae451a202",
+            "equal": true
+          },
+          "training_rng": {
+            "old": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "new": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "equal": true
+          }
+        },
+        "metadata_old": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "yield_to_waiting_user",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 57
+        },
+        "metadata_new": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "started",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 57
+        }
+      },
+      {
+        "rank": 2,
+        "old_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "new_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "fields": {
+          "stagnant": {
+            "old": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "new": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "equal": true
+          },
+          "combat_diagnostics": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "ppo_rng": {
+            "old": "fc030b682d2e07b24bea60c9bc4e6d9aa02d402b6caf0ccaf420e8e709a890d8",
+            "new": "fc030b682d2e07b24bea60c9bc4e6d9aa02d402b6caf0ccaf420e8e709a890d8",
+            "equal": true
+          },
+          "train_state": {
+            "old": "245ab463aa347dc9b4c39a34b45d0a32335fb57efc94319522267eeca26bc280",
+            "new": "245ab463aa347dc9b4c39a34b45d0a32335fb57efc94319522267eeca26bc280",
+            "equal": true
+          },
+          "trials": {
+            "old": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "new": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "equal": true
+          },
+          "torch_rng": {
+            "old": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "new": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "equal": true
+          },
+          "evaluation_state": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "capacity_metrics": {
+            "old": "88d4935b733523e0cb2099dbe8e53c5e8f22adf16658b40929ad96b3ebde4877",
+            "new": "88d4935b733523e0cb2099dbe8e53c5e8f22adf16658b40929ad96b3ebde4877",
+            "equal": true
+          },
+          "epochs": {
+            "old": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "new": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "equal": true
+          },
+          "imitation_entropy_target": {
+            "old": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "new": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "equal": true
+          },
+          "target_training_seconds": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_trained_seconds": {
+            "old": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "new": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "equal": true
+          },
+          "search_metrics": {
+            "old": "c650fa966619a27a68119662f40f093a7d48b5df09effeefa64a4bb6217cc52d",
+            "new": "c650fa966619a27a68119662f40f093a7d48b5df09effeefa64a4bb6217cc52d",
+            "equal": true
+          },
+          "source_commit": {
+            "old": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "new": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "equal": true
+          },
+          "event_trial_max_steps": {
+            "old": "66a2ade3efa75fff122f9a2abff69a19c3ab7aeac9ecbc8eb01218f75edb2916",
+            "new": "66a2ade3efa75fff122f9a2abff69a19c3ab7aeac9ecbc8eb01218f75edb2916",
+            "equal": true
+          },
+          "commit": {
+            "old": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "new": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "equal": true
+          },
+          "updates": {
+            "old": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "new": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "equal": true
+          },
+          "best_floor": {
+            "old": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "new": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "equal": true
+          },
+          "reason": {
+            "old": "550ad98c041dbd26ce9539e25e3fcd2ad9869c4875b6f3f78f89e5de4bf895c3",
+            "new": "443312ecae1cb7aabf421ddc30ce7a24a8cedf03e83019dd55cc2f95d32c2f11",
+            "equal": false
+          },
+          "actual_steps": {
+            "old": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "new": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "equal": true
+          },
+          "loop_metrics": {
+            "old": "badd48eb4424b20cb2cbf4d11b80b3f043c4e4390f58da13a27dee3a2bf75a87",
+            "new": "badd48eb4424b20cb2cbf4d11b80b3f043c4e4390f58da13a27dee3a2bf75a87",
+            "equal": true
+          },
+          "world_size": {
+            "old": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "new": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "equal": true
+          },
+          "imitation_beta": {
+            "old": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "new": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "equal": true
+          },
+          "cuda_rng": {
+            "old": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "new": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "equal": true
+          },
+          "trained_seconds": {
+            "old": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "new": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "equal": true
+          },
+          "model": {
+            "old": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "new": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "equal": true
+          },
+          "health_history": {
+            "old": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "new": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "equal": true
+          },
+          "source_sha256": {
+            "old": "1cb2d29c59a39fa57fdc855d02a5d73d11bae40a785f171d7d4728f2046b6422",
+            "new": "1cb2d29c59a39fa57fdc855d02a5d73d11bae40a785f171d7d4728f2046b6422",
+            "equal": true
+          },
+          "lanes": {
+            "old": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "new": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "equal": true
+          },
+          "optimizer": {
+            "old": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "new": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "equal": true
+          },
+          "version": {
+            "old": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "new": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "equal": true
+          },
+          "case": {
+            "old": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "new": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "equal": true
+          },
+          "evaluation_seconds": {
+            "old": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "new": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "equal": true
+          },
+          "next_evaluation": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_version": {
+            "old": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "new": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "equal": true
+          },
+          "assessments": {
+            "old": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "new": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "equal": true
+          },
+          "ready": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "initialization": {
+            "old": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "new": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "equal": true
+          },
+          "phase": {
+            "old": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "new": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "equal": true
+          },
+          "best": {
+            "old": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "new": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "equal": true
+          },
+          "fork_metrics": {
+            "old": "39cd997cd4b068b63dee4666fa19c9b7205f07b8073b3505fdf78c626a944e0b",
+            "new": "39cd997cd4b068b63dee4666fa19c9b7205f07b8073b3505fdf78c626a944e0b",
+            "equal": true
+          },
+          "training_rng": {
+            "old": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "new": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "equal": true
+          }
+        },
+        "metadata_old": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "yield_to_waiting_user",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 60
+        },
+        "metadata_new": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "started",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 60
+        }
+      },
+      {
+        "rank": 3,
+        "old_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "new_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "fields": {
+          "stagnant": {
+            "old": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "new": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "equal": true
+          },
+          "combat_diagnostics": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "ppo_rng": {
+            "old": "a6839bb5f0eb736dcb33c6ee2283c0baca3abeaa9bd7980764bfc297bd9e698f",
+            "new": "a6839bb5f0eb736dcb33c6ee2283c0baca3abeaa9bd7980764bfc297bd9e698f",
+            "equal": true
+          },
+          "train_state": {
+            "old": "2e0ca13c6022602e252cc759bae993703c758755575c9a6dd43524b39c9d5530",
+            "new": "2e0ca13c6022602e252cc759bae993703c758755575c9a6dd43524b39c9d5530",
+            "equal": true
+          },
+          "trials": {
+            "old": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "new": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "equal": true
+          },
+          "torch_rng": {
+            "old": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "new": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "equal": true
+          },
+          "evaluation_state": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "capacity_metrics": {
+            "old": "aae31c7b69ceb625e2781e1658b321cfb0c4ddd934ddc22cf75457d3e646bfa9",
+            "new": "aae31c7b69ceb625e2781e1658b321cfb0c4ddd934ddc22cf75457d3e646bfa9",
+            "equal": true
+          },
+          "epochs": {
+            "old": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "new": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "equal": true
+          },
+          "imitation_entropy_target": {
+            "old": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "new": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "equal": true
+          },
+          "target_training_seconds": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_trained_seconds": {
+            "old": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "new": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "equal": true
+          },
+          "search_metrics": {
+            "old": "de4c3be9708ce13a4483759caf10ccd39a9972cec59d8873f57ce9635243a799",
+            "new": "de4c3be9708ce13a4483759caf10ccd39a9972cec59d8873f57ce9635243a799",
+            "equal": true
+          },
+          "source_commit": {
+            "old": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "new": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "equal": true
+          },
+          "event_trial_max_steps": {
+            "old": "8dd7876c3b4435f83d10fd6d74937f3b7c80214bbb9643c3908c2b8d23a60355",
+            "new": "8dd7876c3b4435f83d10fd6d74937f3b7c80214bbb9643c3908c2b8d23a60355",
+            "equal": true
+          },
+          "commit": {
+            "old": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "new": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "equal": true
+          },
+          "updates": {
+            "old": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "new": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "equal": true
+          },
+          "best_floor": {
+            "old": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "new": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "equal": true
+          },
+          "reason": {
+            "old": "550ad98c041dbd26ce9539e25e3fcd2ad9869c4875b6f3f78f89e5de4bf895c3",
+            "new": "443312ecae1cb7aabf421ddc30ce7a24a8cedf03e83019dd55cc2f95d32c2f11",
+            "equal": false
+          },
+          "actual_steps": {
+            "old": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "new": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "equal": true
+          },
+          "loop_metrics": {
+            "old": "1feb9a9cae2cd59599bc71bae6187a96e0e1a8101db32ef17e6937d797d9adf8",
+            "new": "1feb9a9cae2cd59599bc71bae6187a96e0e1a8101db32ef17e6937d797d9adf8",
+            "equal": true
+          },
+          "world_size": {
+            "old": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "new": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "equal": true
+          },
+          "imitation_beta": {
+            "old": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "new": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "equal": true
+          },
+          "cuda_rng": {
+            "old": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "new": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "equal": true
+          },
+          "trained_seconds": {
+            "old": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "new": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "equal": true
+          },
+          "model": {
+            "old": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "new": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "equal": true
+          },
+          "health_history": {
+            "old": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "new": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "equal": true
+          },
+          "source_sha256": {
+            "old": "9186d9cf1b8a74fd1a80f532ce07dd4902bee31b70bd10811747054426e0f06a",
+            "new": "9186d9cf1b8a74fd1a80f532ce07dd4902bee31b70bd10811747054426e0f06a",
+            "equal": true
+          },
+          "lanes": {
+            "old": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "new": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "equal": true
+          },
+          "optimizer": {
+            "old": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "new": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "equal": true
+          },
+          "version": {
+            "old": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "new": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "equal": true
+          },
+          "case": {
+            "old": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "new": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "equal": true
+          },
+          "evaluation_seconds": {
+            "old": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "new": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "equal": true
+          },
+          "next_evaluation": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_version": {
+            "old": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "new": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "equal": true
+          },
+          "assessments": {
+            "old": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "new": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "equal": true
+          },
+          "ready": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "initialization": {
+            "old": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "new": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "equal": true
+          },
+          "phase": {
+            "old": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "new": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "equal": true
+          },
+          "best": {
+            "old": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "new": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "equal": true
+          },
+          "fork_metrics": {
+            "old": "a9aeaae482651aa6f52465ad32eae51aa53140a12f6336ffc28a591649217b9d",
+            "new": "a9aeaae482651aa6f52465ad32eae51aa53140a12f6336ffc28a591649217b9d",
+            "equal": true
+          },
+          "training_rng": {
+            "old": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "new": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "equal": true
+          }
+        },
+        "metadata_old": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "yield_to_waiting_user",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 64
+        },
+        "metadata_new": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "started",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 64
+        }
+      },
+      {
+        "rank": 4,
+        "old_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "new_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "fields": {
+          "stagnant": {
+            "old": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "new": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "equal": true
+          },
+          "combat_diagnostics": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "ppo_rng": {
+            "old": "55a44b0bb83100b157eb7b0cd1111cbd21fdabe80e4142266141855ecf49fb3c",
+            "new": "55a44b0bb83100b157eb7b0cd1111cbd21fdabe80e4142266141855ecf49fb3c",
+            "equal": true
+          },
+          "train_state": {
+            "old": "e605daa19a8594e5d37216c6e3001550106bc498409887a30536646eacc5b617",
+            "new": "e605daa19a8594e5d37216c6e3001550106bc498409887a30536646eacc5b617",
+            "equal": true
+          },
+          "trials": {
+            "old": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "new": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "equal": true
+          },
+          "torch_rng": {
+            "old": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "new": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "equal": true
+          },
+          "evaluation_state": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "capacity_metrics": {
+            "old": "49c45a974be18338bf7c67095f1e4fcd865f6dac19afdb517eedad3ae9bb21b9",
+            "new": "49c45a974be18338bf7c67095f1e4fcd865f6dac19afdb517eedad3ae9bb21b9",
+            "equal": true
+          },
+          "epochs": {
+            "old": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "new": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "equal": true
+          },
+          "imitation_entropy_target": {
+            "old": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "new": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "equal": true
+          },
+          "target_training_seconds": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_trained_seconds": {
+            "old": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "new": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "equal": true
+          },
+          "search_metrics": {
+            "old": "07e54d325dab0a3cda16c140dfb5669f56c9c89c2721e8eb3c7d3ebb4716b23d",
+            "new": "07e54d325dab0a3cda16c140dfb5669f56c9c89c2721e8eb3c7d3ebb4716b23d",
+            "equal": true
+          },
+          "source_commit": {
+            "old": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "new": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "equal": true
+          },
+          "event_trial_max_steps": {
+            "old": "bf968dddcf61da117aa8cdab01c107b536abe8eaa62bc895f851e0bd73ecb1e2",
+            "new": "bf968dddcf61da117aa8cdab01c107b536abe8eaa62bc895f851e0bd73ecb1e2",
+            "equal": true
+          },
+          "commit": {
+            "old": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "new": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "equal": true
+          },
+          "updates": {
+            "old": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "new": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "equal": true
+          },
+          "best_floor": {
+            "old": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "new": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "equal": true
+          },
+          "reason": {
+            "old": "550ad98c041dbd26ce9539e25e3fcd2ad9869c4875b6f3f78f89e5de4bf895c3",
+            "new": "443312ecae1cb7aabf421ddc30ce7a24a8cedf03e83019dd55cc2f95d32c2f11",
+            "equal": false
+          },
+          "actual_steps": {
+            "old": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "new": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "equal": true
+          },
+          "loop_metrics": {
+            "old": "0b99d3f5337e2b746576778e670c6b318f3746866d8e76422f2ea81b7d5a9ee3",
+            "new": "0b99d3f5337e2b746576778e670c6b318f3746866d8e76422f2ea81b7d5a9ee3",
+            "equal": true
+          },
+          "world_size": {
+            "old": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "new": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "equal": true
+          },
+          "imitation_beta": {
+            "old": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "new": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "equal": true
+          },
+          "cuda_rng": {
+            "old": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "new": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "equal": true
+          },
+          "trained_seconds": {
+            "old": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "new": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "equal": true
+          },
+          "model": {
+            "old": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "new": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "equal": true
+          },
+          "health_history": {
+            "old": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "new": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "equal": true
+          },
+          "source_sha256": {
+            "old": "9ca3ee55ec3ca881907cacf610e3d40e3ea5509d24d82bd44be469a7310e8aaa",
+            "new": "9ca3ee55ec3ca881907cacf610e3d40e3ea5509d24d82bd44be469a7310e8aaa",
+            "equal": true
+          },
+          "lanes": {
+            "old": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "new": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "equal": true
+          },
+          "optimizer": {
+            "old": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "new": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "equal": true
+          },
+          "version": {
+            "old": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "new": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "equal": true
+          },
+          "case": {
+            "old": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "new": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "equal": true
+          },
+          "evaluation_seconds": {
+            "old": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "new": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "equal": true
+          },
+          "next_evaluation": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_version": {
+            "old": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "new": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "equal": true
+          },
+          "assessments": {
+            "old": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "new": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "equal": true
+          },
+          "ready": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "initialization": {
+            "old": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "new": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "equal": true
+          },
+          "phase": {
+            "old": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "new": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "equal": true
+          },
+          "best": {
+            "old": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "new": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "equal": true
+          },
+          "fork_metrics": {
+            "old": "20d623b8cf0e73854e23dbdf3503e5eb1ef1381acb2bbd051c2936b6166916b4",
+            "new": "20d623b8cf0e73854e23dbdf3503e5eb1ef1381acb2bbd051c2936b6166916b4",
+            "equal": true
+          },
+          "training_rng": {
+            "old": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "new": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "equal": true
+          }
+        },
+        "metadata_old": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "yield_to_waiting_user",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 53
+        },
+        "metadata_new": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "started",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 53
+        }
+      },
+      {
+        "rank": 5,
+        "old_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "new_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "fields": {
+          "stagnant": {
+            "old": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "new": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "equal": true
+          },
+          "combat_diagnostics": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "ppo_rng": {
+            "old": "0af23b185c802390282a6f24d403c7ce618abc054c78b1739a24871b9df78396",
+            "new": "0af23b185c802390282a6f24d403c7ce618abc054c78b1739a24871b9df78396",
+            "equal": true
+          },
+          "train_state": {
+            "old": "de68eb76fb3c82df69aa383330dadf3728b15517f9e027d955e728518ea1a20a",
+            "new": "de68eb76fb3c82df69aa383330dadf3728b15517f9e027d955e728518ea1a20a",
+            "equal": true
+          },
+          "trials": {
+            "old": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "new": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "equal": true
+          },
+          "torch_rng": {
+            "old": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "new": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "equal": true
+          },
+          "evaluation_state": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "capacity_metrics": {
+            "old": "5b581875930775646553fb5401eed61295e617b3a2f7194add703b522d05aaad",
+            "new": "5b581875930775646553fb5401eed61295e617b3a2f7194add703b522d05aaad",
+            "equal": true
+          },
+          "epochs": {
+            "old": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "new": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "equal": true
+          },
+          "imitation_entropy_target": {
+            "old": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "new": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "equal": true
+          },
+          "target_training_seconds": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_trained_seconds": {
+            "old": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "new": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "equal": true
+          },
+          "search_metrics": {
+            "old": "f5218c43da823b259e1310b2691e4f6d5fdcf03190f1b962df2dcd81d84825f9",
+            "new": "f5218c43da823b259e1310b2691e4f6d5fdcf03190f1b962df2dcd81d84825f9",
+            "equal": true
+          },
+          "source_commit": {
+            "old": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "new": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "equal": true
+          },
+          "event_trial_max_steps": {
+            "old": "535ba3554f6d655d2a8edb7c01ec439d0c4f8a31219f400d6e985abbba85cee1",
+            "new": "535ba3554f6d655d2a8edb7c01ec439d0c4f8a31219f400d6e985abbba85cee1",
+            "equal": true
+          },
+          "commit": {
+            "old": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "new": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "equal": true
+          },
+          "updates": {
+            "old": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "new": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "equal": true
+          },
+          "best_floor": {
+            "old": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "new": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "equal": true
+          },
+          "reason": {
+            "old": "550ad98c041dbd26ce9539e25e3fcd2ad9869c4875b6f3f78f89e5de4bf895c3",
+            "new": "443312ecae1cb7aabf421ddc30ce7a24a8cedf03e83019dd55cc2f95d32c2f11",
+            "equal": false
+          },
+          "actual_steps": {
+            "old": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "new": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "equal": true
+          },
+          "loop_metrics": {
+            "old": "15166fabc6bbee8f1f712d5ce7a1d67f86d219e336a0bbc8e83d710aea2c0008",
+            "new": "15166fabc6bbee8f1f712d5ce7a1d67f86d219e336a0bbc8e83d710aea2c0008",
+            "equal": true
+          },
+          "world_size": {
+            "old": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "new": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "equal": true
+          },
+          "imitation_beta": {
+            "old": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "new": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "equal": true
+          },
+          "cuda_rng": {
+            "old": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "new": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "equal": true
+          },
+          "trained_seconds": {
+            "old": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "new": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "equal": true
+          },
+          "model": {
+            "old": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "new": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "equal": true
+          },
+          "health_history": {
+            "old": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "new": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "equal": true
+          },
+          "source_sha256": {
+            "old": "f286dee2bf2ff0fe2d348ca7cd4833d2aa258bbfc4d1bb4bea917398b4285e75",
+            "new": "f286dee2bf2ff0fe2d348ca7cd4833d2aa258bbfc4d1bb4bea917398b4285e75",
+            "equal": true
+          },
+          "lanes": {
+            "old": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "new": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "equal": true
+          },
+          "optimizer": {
+            "old": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "new": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "equal": true
+          },
+          "version": {
+            "old": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "new": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "equal": true
+          },
+          "case": {
+            "old": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "new": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "equal": true
+          },
+          "evaluation_seconds": {
+            "old": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "new": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "equal": true
+          },
+          "next_evaluation": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_version": {
+            "old": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "new": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "equal": true
+          },
+          "assessments": {
+            "old": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "new": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "equal": true
+          },
+          "ready": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "initialization": {
+            "old": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "new": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "equal": true
+          },
+          "phase": {
+            "old": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "new": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "equal": true
+          },
+          "best": {
+            "old": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "new": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "equal": true
+          },
+          "fork_metrics": {
+            "old": "bf4b98cde7567c8f715d0a999926501fd95b5801e765492687869ed734f6f08b",
+            "new": "bf4b98cde7567c8f715d0a999926501fd95b5801e765492687869ed734f6f08b",
+            "equal": true
+          },
+          "training_rng": {
+            "old": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "new": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "equal": true
+          }
+        },
+        "metadata_old": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "yield_to_waiting_user",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 78
+        },
+        "metadata_new": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "started",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 78
+        }
+      },
+      {
+        "rank": 6,
+        "old_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "new_keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "fields": {
+          "stagnant": {
+            "old": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "new": "669b4c24c93570eb1df6701e382789cb22aeb1d5b23911779997f87e898dcb5c",
+            "equal": true
+          },
+          "combat_diagnostics": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "ppo_rng": {
+            "old": "657169b2e24cc314ac40b80397745d342288b48fab39426d17751dbafd7b8bbe",
+            "new": "657169b2e24cc314ac40b80397745d342288b48fab39426d17751dbafd7b8bbe",
+            "equal": true
+          },
+          "train_state": {
+            "old": "9615cea724e8d87e9f73af595164e265316c4523371188f86635cbcaec5d4b9b",
+            "new": "9615cea724e8d87e9f73af595164e265316c4523371188f86635cbcaec5d4b9b",
+            "equal": true
+          },
+          "trials": {
+            "old": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "new": "df2d35083108f9b2ce8b27047314c746441aef52766ca3a738c330f0e3ccde42",
+            "equal": true
+          },
+          "torch_rng": {
+            "old": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "new": "86f8c2a6aa0d84be6b2b833f01763f94f696b8b25f86ef6b5310c7eb0f07123d",
+            "equal": true
+          },
+          "evaluation_state": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "capacity_metrics": {
+            "old": "99a4ae651782f44554b9c09861eec8f57b41b90258f104387078ea654062f546",
+            "new": "99a4ae651782f44554b9c09861eec8f57b41b90258f104387078ea654062f546",
+            "equal": true
+          },
+          "epochs": {
+            "old": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "new": "fd5a1bd7edca9cbb011ef0f2f8eed1d61fe80c32d05e2c37759caa1d9cb396da",
+            "equal": true
+          },
+          "imitation_entropy_target": {
+            "old": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "new": "79a4e6c6d49a28cf3062c4e7336f20e58614a1b592505a3de0892b476f827819",
+            "equal": true
+          },
+          "target_training_seconds": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_trained_seconds": {
+            "old": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "new": "97bc15066b2e10752bb7fa76d0a81708e6b81d56c172a2426e34cfa5774dd9e4",
+            "equal": true
+          },
+          "search_metrics": {
+            "old": "2a98598918c1441fda7769b7d480c5932dc2863ce8d2472125a6dd230c63031d",
+            "new": "2a98598918c1441fda7769b7d480c5932dc2863ce8d2472125a6dd230c63031d",
+            "equal": true
+          },
+          "source_commit": {
+            "old": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "new": "903df69f4767e886dd2c3916e6a99e8868953324daa45496a2b7c293c0a176ec",
+            "equal": true
+          },
+          "event_trial_max_steps": {
+            "old": "fd148d566a79f62cec65da5844dd972a79d758509b7207e911f2b7181463bc84",
+            "new": "fd148d566a79f62cec65da5844dd972a79d758509b7207e911f2b7181463bc84",
+            "equal": true
+          },
+          "commit": {
+            "old": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "new": "c11440366f435bcdf9d15884a7e2f9aa6141e595fb1ab0045a13eeeb1a7431ac",
+            "equal": true
+          },
+          "updates": {
+            "old": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "new": "c98d807b4db0affee380fe08faa5b99de294203aa079e15b3fcd890fd0bdbeb4",
+            "equal": true
+          },
+          "best_floor": {
+            "old": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "new": "5c91e6b3745e3a9002f36b0ba1b91c4e9f2e5d0353a0b3b8e68713104d708915",
+            "equal": true
+          },
+          "reason": {
+            "old": "550ad98c041dbd26ce9539e25e3fcd2ad9869c4875b6f3f78f89e5de4bf895c3",
+            "new": "443312ecae1cb7aabf421ddc30ce7a24a8cedf03e83019dd55cc2f95d32c2f11",
+            "equal": false
+          },
+          "actual_steps": {
+            "old": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "new": "d177d3bc0e42b6902ec4438a7c5a59e67fdc5fce92123b82ccf3ce5c80c6ae66",
+            "equal": true
+          },
+          "loop_metrics": {
+            "old": "92a8d062646123ebac7ec7d510df74c209bab5a3c6ed1bcde25aa7a01b9cf915",
+            "new": "92a8d062646123ebac7ec7d510df74c209bab5a3c6ed1bcde25aa7a01b9cf915",
+            "equal": true
+          },
+          "world_size": {
+            "old": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "new": "a6abe6506e94a095d028c434bf4817bf97fa4626e799586bebd0aaeaaa4d5973",
+            "equal": true
+          },
+          "imitation_beta": {
+            "old": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "new": "ed04f1893a0ab0bf577b096967ae3f147e131daaa3268c5ef8129132492d0cf8",
+            "equal": true
+          },
+          "cuda_rng": {
+            "old": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "new": "18724907c5b0bd4cfa8b8c67c323e3dbb49676235eb2587fbd2794a7d7d3e305",
+            "equal": true
+          },
+          "trained_seconds": {
+            "old": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "new": "0606bcf8010f160071c2c7c95430262d98994011e6ef0b6c04cea7eb0c326ff2",
+            "equal": true
+          },
+          "model": {
+            "old": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "new": "f7d99cfbd3d4e53bbd00356fc9317ae19fe1d734c35210e5bee66c996fa494ae",
+            "equal": true
+          },
+          "health_history": {
+            "old": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "new": "db7fa0792c7d819cbe9568736a98c2ca3df0ee796bcd48c1385ea7b1cd0d6120",
+            "equal": true
+          },
+          "source_sha256": {
+            "old": "d31efe580d8475624f3d2093bed7370544c0edf05a97cb9740a0589ea6d750d4",
+            "new": "d31efe580d8475624f3d2093bed7370544c0edf05a97cb9740a0589ea6d750d4",
+            "equal": true
+          },
+          "lanes": {
+            "old": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "new": "93850baedf0bbab2749371ab0f40258eb51a1e17ac609463037738f197062603",
+            "equal": true
+          },
+          "optimizer": {
+            "old": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "new": "21004b4c05f61859202518f8e2f5c27e238ee67f672943831f23bfb83eae36a6",
+            "equal": true
+          },
+          "version": {
+            "old": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "new": "5c6f52c6f55cf91f0aa3b5c402bea07fa1bd59c13ae06d26a9f365ab82c13b3b",
+            "equal": true
+          },
+          "case": {
+            "old": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "new": "2bc602408143363e4ab5375c381d1abcdccc87c999946af52ee42f6243325520",
+            "equal": true
+          },
+          "evaluation_seconds": {
+            "old": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "new": "f32a8e375dba1cdd56f07c476065438ca96abbb49e11dc635e871f99457e13d0",
+            "equal": true
+          },
+          "next_evaluation": {
+            "old": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "new": "10d10c3f43d0361af9671ed81f2ccb80aaf3d719269df1706e2f06e8e4e92b4a",
+            "equal": true
+          },
+          "source_version": {
+            "old": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "new": "2156c8c22d205a936a7f7818a17c4e6031baa99e86e9af55bf6ec89d9a62cfa6",
+            "equal": true
+          },
+          "assessments": {
+            "old": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "new": "f3daed7dbf6a1d490fc8f04894ebe066636f8947f46fb3806c28528e680207c9",
+            "equal": true
+          },
+          "ready": {
+            "old": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "new": "99bf08d8dc95c6aeb2d65ed7025a39215e31b4c92fccc2b5ed130b640db2cd7d",
+            "equal": true
+          },
+          "initialization": {
+            "old": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "new": "fe76cda3b16011991fb6bdf4e99be2adc4a7358241198a32ca11aa2dd7691046",
+            "equal": true
+          },
+          "phase": {
+            "old": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "new": "bf2772839c8dc1ad58c68e8eb87f3541950f21a17bd841d225ae1865456b14c4",
+            "equal": true
+          },
+          "best": {
+            "old": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "new": "9cd503134422ac43f20a502075acd0980dc73203b38d91b5a49e86697aeb4cbe",
+            "equal": true
+          },
+          "fork_metrics": {
+            "old": "7df167d5eb922f8bbedf983e97abecc887f4980dac3088863834c66dedd3d8a9",
+            "new": "7df167d5eb922f8bbedf983e97abecc887f4980dac3088863834c66dedd3d8a9",
+            "equal": true
+          },
+          "training_rng": {
+            "old": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "new": "5cf50ca730bf528bd81322c4403011282261c5973720c99258710afc36c88b17",
+            "equal": true
+          }
+        },
+        "metadata_old": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "yield_to_waiting_user",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 69
+        },
+        "metadata_new": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "training",
+          "reason": "started",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 165,
+          "epochs": 4,
+          "trained_seconds": 1271.0292358398438,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 0.0,
+          "actual_steps": 229376,
+          "evaluation_state": null,
+          "ready": null,
+          "stagnant": 0,
+          "combat_diagnostics": null,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.09703024470856389,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 69
+        }
+      }
+    ],
+    "equal_non_reason_fields_per_rank": 41,
+    "qualification": "Field-value digests equal including tensors dtype/shape/raw bytes and canonical set/dict order; checkpoint file bytes differ because reason changed",
+    "external_file": "job3891-resume165-preservation-canonical.json",
+    "sha256": "54c689381e798d88839eaf5add6f7e2dd69809a2eaafb8fda931eae56bad401b"
+  },
+  "parent_acceptance": {
+    "status": "verified",
+    "subagent": "/root/c72_job3891_startup_review",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "checks_passed": 88,
+    "checks_failed": 0,
+    "report_sha256": "44d161410409896d70c6d21cf86b53a3ff649b8897d5f95966fb847aa17d04a1",
+    "script_sha256": "bfb2f14a1582806703f1a2f0f455bc8594e5c4e149a331d5f49c20480cf6b520",
+    "parent_reran_script": true
+  },
+  "external_bundle": {
+    "file": "job3891-startup-ready.json",
+    "sha256": "70941802822c5b0b40e5f6fc65f9e3d880ed07a50b53190448469b2e81ef4ca7"
+  },
+  "budget": {
+    "step1_charged": 66433.625,
+    "step2_charged": 1208.375,
+    "step2_reserved": 12600,
+    "active_job": 3891,
+    "settled": false
+  },
+  "limitations": [
+    "No real job cgroup peak yet; capture at EXIT with unavailable/null when inaccessible.",
+    "Final1024 dev/18 actual action-prefix audit/results and job accounting pending.",
+    "Initial CPU comparison attempts failed import/scalar view; no training or checkpoint edits. Initial set repr digest mismatch was ordering-only, canonical comparison all7 verified.",
+    "Active observed elapsed is not charged and does not replace reservation. No repeated charge for3770."
+  ]
+}
