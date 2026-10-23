@@ -1,0 +1,2730 @@
+{
+  "key": "claude76-job3924-yield-exit-review-c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+  "scope": "read-only CPU stdlib sealed job3924 exit evidence review",
+  "accepted": false,
+  "parent_inspection_and_rerun_required": true,
+  "source_commit": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+  "decision_commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+  "passed": true,
+  "check_count": 231,
+  "passed_count": 231,
+  "checks": [
+    {
+      "name": "sealed_xz_size_sha256",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "raw_size_and_extracted_bundle",
+      "passed": true,
+      "evidence": "36b4f01c2c449634cf91d15a36eb1daf5b0c49629f91065ade40c0de7403ba2a"
+    },
+    {
+      "name": "exact_38_manifest_names",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "exact_extracted_file_inventory",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "file:allocations/3924/manifest.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 19771,
+        "sha256": "9a301aa3bd1aa387bb628397e4170d891396e60b46e602371d7aea8c681ec9d1"
+      }
+    },
+    {
+      "name": "file:allocations/3924/preflight-before-submit.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 34933,
+        "sha256": "622f56bb16374aa3a25ea7700d58627bb1a980efaa6a8f68e89189f3391f6b35"
+      }
+    },
+    {
+      "name": "file:allocations/3924/budget-before-submit.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 764,
+        "sha256": "db496017803f1315386b43509f62a138b30e827130faca73e441579321294181"
+      }
+    },
+    {
+      "name": "file:allocations/3924/inputs-before.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 12900,
+        "sha256": "46d819c22dafd33aed8da2d466c45ab86cddb7c99cd2173b694752018d3df8b7"
+      }
+    },
+    {
+      "name": "file:allocations/3924/source.txt",
+      "passed": true,
+      "evidence": {
+        "bytes": 41,
+        "sha256": "6d725b08f44eb6725535977c6707611bf005cc9efbec13c5f9b8caba8ecf46bd"
+      }
+    },
+    {
+      "name": "file:allocations/3924/cuda-gates.log",
+      "passed": true,
+      "evidence": {
+        "bytes": 770,
+        "sha256": "f0565850b531f8b3ead477f11ebedfce514141fb9b4f0a755c9f9443d08b8cb9"
+      }
+    },
+    {
+      "name": "file:allocations/3924/cuda-prefix-discovery.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 2927,
+        "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+      }
+    },
+    {
+      "name": "file:allocations/3924/cuda-gates-discovery.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 2927,
+        "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+      }
+    },
+    {
+      "name": "file:allocations/3924/cuda-gates.junit.xml",
+      "passed": true,
+      "evidence": {
+        "bytes": 2679,
+        "sha256": "d012ee6122a97ec001fc6cc48ee47bee13fe7fb2793839c7adde0c6e965d35ad"
+      }
+    },
+    {
+      "name": "file:allocations/3924/cuda-gates-verified.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 247,
+        "sha256": "98994a085c95286c84845548bc3c63a1d0e5e07a9d044ba07f288ab6170001d1"
+      }
+    },
+    {
+      "name": "file:allocations/3924/wall-plan.txt",
+      "passed": true,
+      "evidence": {
+        "bytes": 87,
+        "sha256": "2e4af5dd4dffb5a9bffa5521ca856397ec4e7436d9146d567629126c0d21a7ac"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-started-checkpoints.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 33494,
+        "sha256": "ed68eca5eccd970d477d6a033565daf1008e01c96c7f0d939472fb53e0ed3260"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-1935.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 2864,
+        "sha256": "118cd23842d322310e2bf3d2d4aa3baf615a2e8aee2739cd283bce117aaf18e4"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-1942.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 3314,
+        "sha256": "f65658966435d18ade68834c6c6e2abea6f6e7fe81eba7f0a4ae5ad8e2004333"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-1946.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 3312,
+        "sha256": "2671f56345d7152feeb91fbf766f37bdb008b8db72af7960c4bf5cf6c322324a"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-1956.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 3705,
+        "sha256": "70ad25aee3f703eae975963ee8d864439d02302ae3f4eedf33f8aaf2762d4a92"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-2006.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 4099,
+        "sha256": "05a177e640a5a958a525f10f5e8b0c36553dc965141c92b877121ffec009c837"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-2016.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 4491,
+        "sha256": "dee3655719199e75f87f791da67b354563e24e05629cb82561487f6ab7906afc"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-2026.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 4885,
+        "sha256": "5a2ec77a688d47f2a1179e7c82ec26839320e246bbf35ed6089e5642edf0a725"
+      }
+    },
+    {
+      "name": "file:allocations/3924/exit.txt",
+      "passed": true,
+      "evidence": {
+        "bytes": 41,
+        "sha256": "725de23401eaf5f70284221541394bde9d651a357b9b204625f8c6d9e92e16c1"
+      }
+    },
+    {
+      "name": "file:allocations/3924/accounting-at-exit.txt",
+      "passed": true,
+      "evidence": {
+        "bytes": 1349,
+        "sha256": "4454a18b508d0cb93e8ca4821f85244b96b2f8d0b91d815568341b2290ffe211"
+      }
+    },
+    {
+      "name": "file:allocations/3924/manifest-at-exit.txt",
+      "passed": true,
+      "evidence": {
+        "bytes": 93,
+        "sha256": "d0cf9637e2c99a36b694fab1bee126799734900ef527857a18a07bb42057840f"
+      }
+    },
+    {
+      "name": "file:allocations/3924/inputs-at-exit.log",
+      "passed": true,
+      "evidence": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "file:allocations/3924/inputs-at-exit.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 12901,
+        "sha256": "6ff439a7559db7a8f76f7e40b81bce51ef7cde5b482081e39d5df643efe43047"
+      }
+    },
+    {
+      "name": "file:allocations/3924/memory-peak.log",
+      "passed": true,
+      "evidence": {
+        "bytes": 104,
+        "sha256": "973ffdaea7f77f4e915ef66ffb33fd2b2626267cbd2dba33c342baba3300ce5d"
+      }
+    },
+    {
+      "name": "file:allocations/3924/memory-peak.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 5728,
+        "sha256": "fdc62569a89c440abaafd33afa443327cbdb842472c5b2a3548f2569245cbb43"
+      }
+    },
+    {
+      "name": "file:allocations/3924/exit-validation.txt",
+      "passed": true,
+      "evidence": {
+        "bytes": 68,
+        "sha256": "3bfc666cb04fc165f73ce8b0e7d69ca9ebbcef5a8916d7a0e398aa2f8520194a"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-poll-2036.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 12461,
+        "sha256": "d2316cf28344682be4baa593c10bf8f69210c40ca1db09fc2d1a34dfdb7e7fe8"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-yield-resume.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 32820,
+        "sha256": "12cccce1433fb7f67ca6743fa53fd922677904f4413fbb0b5d8a179dda96aff8"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-yield-checkpoints.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 28443,
+        "sha256": "35bf55a74e5ff2ee8cf55705f8b2b170c2896050cc3500d7c633fc50718ef70d"
+      }
+    },
+    {
+      "name": "file:allocations/3924/parent-yield-resume-bound.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 34685,
+        "sha256": "56ad976de354d7d7bb21fa75594067dd48e38f8bfd605ea71a61fc1ed4b45ba0"
+      }
+    },
+    {
+      "name": "file:experiment-contract.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 971,
+        "sha256": "3ef39c8d8d2103a95c8fe9da134cb2ba7985aa77b752809a83472fdc2f2ecf21"
+      }
+    },
+    {
+      "name": "file:status.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 2368,
+        "sha256": "a1e7ef175ece285383eaa790597c22487ee3ab25c78b8c9df6a1757e8dc4a6db"
+      }
+    },
+    {
+      "name": "file:queue-last.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 4079,
+        "sha256": "8e247ce9c72c57b2a71931ea7337f89a01fff25fb930eab0f818c9b8ffbd2da5"
+      }
+    },
+    {
+      "name": "file:heldout-reports.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 1530,
+        "sha256": "5bf3297af799c4f17a381644da20a5d73fa9fa99e01b4744d13001016e69082d"
+      }
+    },
+    {
+      "name": "file:sl-over-limit-1.jsonl",
+      "passed": true,
+      "evidence": {
+        "bytes": 9850,
+        "sha256": "99305b5f285309cb0dbd71f8634d2e0afbd25fd7fac21999d1d9368a80feb5c2"
+      }
+    },
+    {
+      "name": "file:queue-yield-18.json",
+      "passed": true,
+      "evidence": {
+        "bytes": 4079,
+        "sha256": "8e247ce9c72c57b2a71931ea7337f89a01fff25fb930eab0f818c9b8ffbd2da5"
+      }
+    },
+    {
+      "name": "file:job.log",
+      "passed": true,
+      "evidence": {
+        "bytes": 8810569,
+        "sha256": "fc30e9299202644e73097a041c1df6610dbfb0de29c0179b7fd28b81f8af8236"
+      }
+    },
+    {
+      "name": "fixed_source_manifest_and_record",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "manifest_hash_at_both_checks",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:checkpoints:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:checkpoints:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:checkpoints:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:checkpoints:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:checkpoints:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:checkpoints:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:checkpoints:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:baseline:/home/zhuyouwei/spire-downloads/e4-c73-3897/E4-C73-180-N32-D1024-summary.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:binaries:/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/cuda-gates.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/generate-job.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/immutable-inputs.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/job.sh.in",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/memory-peak.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/preflight.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/prepare-bundle.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/c74-slurm-preparation/verify-inputs.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-0.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-1.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-2.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-3.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-4.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-5.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-6.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-0.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-1.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-2.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-3.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-4.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-5.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-6.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-0.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-1.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-2.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-3.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-4.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-5.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-6.pt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_continue.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_run.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/train/checkpoint.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/train/e4.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/train/e4_learner.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/train/e4_rewards.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/train/model.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:protected_files:/home/zhuyouwei/sts-silent-gpu-c73/train/rollout.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_distill.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_continue.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_run.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/train/e4.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/train/e4_rewards.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/train/e4_learner.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/train/model.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/train/rollout.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:source_files:/home/zhuyouwei/sts-silent-gpu-c76/train/checkpoint.py",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "consistent_manifest_entry:selection:/home/zhuyouwei/spire-downloads/e4-c76-4a-3923/selection.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "exact_88_unique_inputs_before_exit",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mutable_checked_before_only_not_claimed_immutable_at_exit",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "protected_A_B_C73_heads",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "protected_history_teacher_selection_helpers_counts",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "nine_fixed_source_files",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "fixed_git_blob:tools/e4_distill.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1",
+        "git_blob_sha1": "2b4cbdb06070593a4d03399f388f1d6a1ae0bf3c"
+      }
+    },
+    {
+      "name": "fixed_git_blob:tools/e4_continue.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c",
+        "git_blob_sha1": "f1ea49c282890ccc45d1388276a797eb6920fe55"
+      }
+    },
+    {
+      "name": "fixed_git_blob:tools/e4_run.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+        "git_blob_sha1": "ee5a4031f1441353ba37cdc3d847fc772f04f8e6"
+      }
+    },
+    {
+      "name": "fixed_git_blob:train/e4.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9",
+        "git_blob_sha1": "185ab01aec92a429d6ebce748bdc4b460523777e"
+      }
+    },
+    {
+      "name": "fixed_git_blob:train/e4_rewards.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908",
+        "git_blob_sha1": "1f12eb288628eeb77b0b8b0ed34a2d8c2756d9c3"
+      }
+    },
+    {
+      "name": "fixed_git_blob:train/e4_learner.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "310a83116bfe20e3691451c63e8f484659f552ff39fa4db7aee41823808eb50c",
+        "git_blob_sha1": "10d539af77d74eeebbbbca249cf6f9ada29621b6"
+      }
+    },
+    {
+      "name": "fixed_git_blob:train/model.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "4f4b30f670542ac9ccee5ac7eec126f88a0a295d8934da26d02c93d56f12bb42",
+        "git_blob_sha1": "71747d6b8e4b6d24c099a874f72b40250317cbed"
+      }
+    },
+    {
+      "name": "fixed_git_blob:train/rollout.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "7f618d58876b99e54d2cbee44a2361e380ce3a932fafba1344afefb6c1b2f941",
+        "git_blob_sha1": "dfa7bb1ec32f0f7925514a7a3dd3b4bfc480ea7b"
+      }
+    },
+    {
+      "name": "fixed_git_blob:train/checkpoint.py",
+      "passed": true,
+      "evidence": {
+        "sha256": "2af93f8623a80370378feeb0db03421022ecdc011eb2abd8204f27e24f3488af",
+        "git_blob_sha1": "365504968252b65ae90621304692e102a4496570"
+      }
+    },
+    {
+      "name": "fixed_decision_74_76",
+      "passed": true,
+      "evidence": {
+        "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+        "sha256": "0d04ef4a7052821bf7f920c6d80fe40a1403c7803fb94470018cfe09c4b1ccf4"
+      }
+    },
+    {
+      "name": "final_slurm_completed_zero",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "final_slurm_times",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "actual_4117_seconds_7_gpu",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "original_exit_and_all_validation_zero",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "in_job_accounting_is_earlier_snapshot",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "final_poll_exit_file:exit.txt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "final_poll_exit_file:exit-validation.txt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "final_poll_exit_file:memory-peak.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "final_poll_exit_file:accounting-at-exit.txt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "job_aggregate_exact_memory_peak",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "memory_proc_and_mount_binding",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "actual_exact_five_junit_gates",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "junit_positive_executed:test_cuda_effect_fields",
+      "passed": true,
+      "evidence": "12.8526"
+    },
+    {
+      "name": "junit_positive_executed:test_cuda_faults",
+      "passed": true,
+      "evidence": "12.6133"
+    },
+    {
+      "name": "junit_positive_executed:test_cuda_parity",
+      "passed": true,
+      "evidence": "36.0917"
+    },
+    {
+      "name": "junit_positive_executed:test_cuda_root_cache",
+      "passed": true,
+      "evidence": "12.6934"
+    },
+    {
+      "name": "junit_positive_executed:test_cuda_dispatch",
+      "passed": true,
+      "evidence": "0.452643"
+    },
+    {
+      "name": "queue_74_single_actual_other_user_3926",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "queue_last_matches_yield",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "fixed_queue_predicate_matches_74",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "yield_training_not_final_or_4c",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "experiment_contract_fixed_world_config_teacher_selection",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "five_fixed_complete_holdout_reports",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "heldout_report:0",
+      "passed": true,
+      "evidence": {
+        "kl": 0.15270167885862998,
+        "actual_fraction": 0.052346568554639816,
+        "exact_ratio": 0.052346570397111915
+      }
+    },
+    {
+      "name": "heldout_report:1",
+      "passed": true,
+      "evidence": {
+        "kl": 0.1236175332393095,
+        "actual_fraction": 0.05747126415371895,
+        "exact_ratio": 0.05747126436781609
+      }
+    },
+    {
+      "name": "heldout_report:2",
+      "passed": true,
+      "evidence": {
+        "kl": 0.10468729936784237,
+        "actual_fraction": 0.058809056878089905,
+        "exact_ratio": 0.058809055118110236
+      }
+    },
+    {
+      "name": "heldout_report:3",
+      "passed": true,
+      "evidence": {
+        "kl": 0.08762761782660732,
+        "actual_fraction": 0.05803024023771286,
+        "exact_ratio": 0.058030241111565184
+      }
+    },
+    {
+      "name": "heldout_report:4",
+      "passed": true,
+      "evidence": {
+        "kl": 0.07661552082157058,
+        "actual_fraction": 0.05729525163769722,
+        "exact_ratio": 0.05729525120440468
+      }
+    },
+    {
+      "name": "reported_cpu_loaded_resume_contract",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "bound_keeps_original_snapshot_metadata",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "seven_resume_and_checkpoint_metadata_ranks",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "original_immutable_26_preserved_bound_34",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "mutable_original_rank_and_tape_files_before_only",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_cursors:0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_model_adam_rng_collector_search:0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_stopped_checkpoint_and_sealed_copy_hash:0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_current_tape_and_holdout_retained:0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_reports_and_provisional_accounting:0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_cursors:1",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_model_adam_rng_collector_search:1",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_stopped_checkpoint_and_sealed_copy_hash:1",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_current_tape_and_holdout_retained:1",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_reports_and_provisional_accounting:1",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_cursors:2",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_model_adam_rng_collector_search:2",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_stopped_checkpoint_and_sealed_copy_hash:2",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_current_tape_and_holdout_retained:2",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_reports_and_provisional_accounting:2",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_cursors:3",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_model_adam_rng_collector_search:3",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_stopped_checkpoint_and_sealed_copy_hash:3",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_current_tape_and_holdout_retained:3",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_reports_and_provisional_accounting:3",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_cursors:4",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_model_adam_rng_collector_search:4",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_stopped_checkpoint_and_sealed_copy_hash:4",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_current_tape_and_holdout_retained:4",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_reports_and_provisional_accounting:4",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_cursors:5",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_model_adam_rng_collector_search:5",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_stopped_checkpoint_and_sealed_copy_hash:5",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_current_tape_and_holdout_retained:5",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_reports_and_provisional_accounting:5",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_cursors:6",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_model_adam_rng_collector_search:6",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_stopped_checkpoint_and_sealed_copy_hash:6",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_current_tape_and_holdout_retained:6",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "rank_reports_and_provisional_accounting:6",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "bound_parent_report_hash",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "all_ranks_agree_model_and_adam",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "reported_initial_contract_all7",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "fixed_save_retains_model_optimizer_rng_collector_tape_cursors",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "all_five_sl_diagnostics_preserved",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "full_log_retains_same_five_sl_records",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "no_reported_fault_files_or_three_error_markers",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "fixed_search_budget_not_engine_fault_semantics",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "recorded_pre_submit_budget",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "3924_reservation_12600_prospective",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "only3924_proposed_charge_and_balances",
+      "passed": true,
+      "evidence": null
+    }
+  ],
+  "archive": {
+    "xz_bytes": 627580,
+    "xz_sha256": "deb55fd5c9b207664e3b281d753f38973322748ba33701a8967956f816fc91d4",
+    "raw_bytes": 10423263,
+    "raw_sha256": "36b4f01c2c449634cf91d15a36eb1daf5b0c49629f91065ade40c0de7403ba2a",
+    "file_count": 38
+  },
+  "outcome": {
+    "slurm_state": "COMPLETED",
+    "exit_code": "0:0",
+    "start": "2026-10-23T19:25:17",
+    "end": "2026-10-23T20:33:54",
+    "runtime_seconds": 4117.0,
+    "memory_peak_bytes": 13034467328,
+    "reason": "yield_to_waiting_user",
+    "phase": "training",
+    "updates": 18,
+    "final_distilled_dev_evaluation": false,
+    "gate4c": false,
+    "blocker": {
+      "JobId": "3926",
+      "JobName": "ps_pic_b96c9f66",
+      "UserId": "zwh(1005)",
+      "JobState": "PENDING",
+      "Reason": "Resources",
+      "Dependency": "(null)",
+      "TimeLimit": "00:10:00",
+      "StartTime": "2026-10-23T23:25:17",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": "gres:gpu:V100:1",
+      "TRES": "cpu=2,mem=8G,node=1,billing=2"
+    },
+    "holdout_reports": [
+      {
+        "kl": 0.15270167885862998,
+        "value_error": 0.0015094346774400234,
+        "decisions": 3886,
+        "seconds": 786.0578415985219,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 2100,
+        "seen_heldout_episodes": 116,
+        "actual_holdout_episode_fraction": 0.052346568554639816,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.1236175332393095,
+        "value_error": 0.0010132429410291532,
+        "decisions": 3886,
+        "seconds": 1409.9008670051116,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 2952,
+        "seen_heldout_episodes": 180,
+        "actual_holdout_episode_fraction": 0.05747126415371895,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.10468729936784237,
+        "value_error": 0.0007200395907071668,
+        "decisions": 3886,
+        "seconds": 2046.1498136951122,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 3825,
+        "seen_heldout_episodes": 239,
+        "actual_holdout_episode_fraction": 0.058809056878089905,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.08762761782660732,
+        "value_error": 0.000691664923016179,
+        "decisions": 3886,
+        "seconds": 2681.1126586969476,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 4610,
+        "seen_heldout_episodes": 284,
+        "actual_holdout_episode_fraction": 0.05803024023771286,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.07661552082157058,
+        "value_error": 0.0006827725702176912,
+        "decisions": 3886,
+        "seconds": 3343.2853980762884,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 5479,
+        "seen_heldout_episodes": 333,
+        "actual_holdout_episode_fraction": 0.05729525163769722,
+        "fixed_complete_holdout_episodes": 23
+      }
+    ]
+  },
+  "checkpoint_verification": {
+    "method": "verified supplied parent CPU-load reports only; no pt file opened or deserialized by this worker",
+    "checkpoint_sha256": [
+      "d0635d4c35c08c17264d31a28ba7ce1d1498da8a87e78b4c7ca252c4399af7ec",
+      "807c427192452b2c732e4dc777b7b4f44ac33b8caffa3c0e8d0be63e31456b01",
+      "cab654b93c5c1cb79dc85fa40228e8fe96d5faa84efa8a6aaf406712a2ae093c",
+      "6b14cc7a6810ec655ff5be3d88743a055eb9bcddee28f2ea757cc149a65ff487",
+      "ab5f125255d110149cae790492edca0c372f9a1149364d184d37484925be53e3",
+      "906ed44f566eb1226ed66434e97af7004c0197061d8c60a6511175b1ca25f7cb",
+      "6d2fe901af92ae39c420f89167bd4925110b782d9778ebbe8f0631504eb3daaa"
+    ],
+    "sealed_copy_count": 7,
+    "immutable_resume_files_count": 34,
+    "mutable_originals_before_only": true
+  },
+  "sl_over_limit": {
+    "records": [
+      {
+        "event": "sl_over_limit",
+        "device": 1,
+        "kind": "combat",
+        "slot": 8664,
+        "seed": 1733288798,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 1,
+        "kind": "combat",
+        "slot": 8667,
+        "seed": 1733288798,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 1,
+        "kind": "combat",
+        "slot": 8672,
+        "seed": 1733288798,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 1,
+        "kind": "combat",
+        "slot": 8679,
+        "seed": 1733288798,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 1,
+        "kind": "combat",
+        "slot": 8681,
+        "seed": 1733288798,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          }
+        ]
+      }
+    ],
+    "interpretation": "Five search-copy combat budget diagnostics at 3001 steps; capped trials excluded from eligible search scoring. They are not automatically native game faults or deaths, and are not independent original-game proof.",
+    "original_cause": "unverified",
+    "waiver_or_rule_change": false
+  },
+  "proposed_accounting": {
+    "applied": false,
+    "allocation": "3924",
+    "formula": "4117*7/8",
+    "charge_node_seconds": 3602.375,
+    "release_only3924_reserve": 12600,
+    "step1_before": {
+      "charged": 66514.125,
+      "reserved": 25200
+    },
+    "step1_after": {
+      "charged": 70116.5,
+      "reserved": 12600
+    },
+    "claude76_before": {
+      "charged": 80.5,
+      "reserved": 12600
+    },
+    "claude76_after": {
+      "charged": 3682.875,
+      "reserved": 0
+    },
+    "phase4b_after": {
+      "charged": 3602.375,
+      "reserved": 0
+    },
+    "frozen_stage_cap": 21519.5,
+    "stage_remaining": 17917.125,
+    "unchanged": {
+      "step0_charged": 2127,
+      "step2_charged": 3118.5,
+      "step2_closed": true,
+      "old3897_unsettled_reserve": 12600
+    }
+  },
+  "limitations": [
+    "No SSH, GPU or native tests; existing actual JUnit execution evidence inspected only.",
+    "No torch import, checkpoint deserialization, independent original-game reproduction, or new waiver/rule change.",
+    "Stopped checkpoint source/world/config/teacher/selection are linked through the supplied parent resume contract and initial metadata, not independently decoded by this worker.",
+    "Remote file hashes and history protection are report-based; local archive bytes and fixed Git source blobs independently checked.",
+    "Budget-before-submit precedes reservation: its step1 reserve is 12600; proposed pre-exit 25200 includes the additional 3924 reserve. No ledger was read or mutated.",
+    "Step0 2127 and unchanged old3897 hold are parent-supplied accounting constraints; no new proof or settlement of old3897.",
+    "Review is limited to exit3924, not a new resume allocation; parent must inspect/rerun before acceptance."
+  ],
+  "status": "pass",
+  "parent_accepted": true,
+  "parent_acceptance": {
+    "at": "2026-10-23T13:04:28.629973+00:00",
+    "status": "completed_verified",
+    "independent_checks": 231,
+    "parent_independent_checks": 231,
+    "script_sha256": "5850e7060dcec0158dedcb9cf6323febf48ad40128d6aafe945a447cc1c2eb42",
+    "report_sha256": "520ad9ea820443240b57102e0ad4b229f875d1b61910cc770755e9f42fbfc5a3",
+    "parent_report": "c76-parent-job3924-yield-accepted/report.json",
+    "scope": "Parent inspected script and independently reran supplied JSON/XML/Gitblob evidence; child did not load pt or run GPU."
+  },
+  "actual_accounting": {
+    "at": "2026-10-23T13:04:28.629973+00:00",
+    "acceptance": {
+      "at": "2026-10-23T13:04:28.629973+00:00",
+      "status": "completed_verified",
+      "independent_checks": 231,
+      "parent_independent_checks": 231,
+      "script_sha256": "5850e7060dcec0158dedcb9cf6323febf48ad40128d6aafe945a447cc1c2eb42",
+      "report_sha256": "520ad9ea820443240b57102e0ad4b229f875d1b61910cc770755e9f42fbfc5a3",
+      "parent_report": "c76-parent-job3924-yield-accepted/report.json",
+      "scope": "Parent inspected script and independently reran supplied JSON/XML/Gitblob evidence; child did not load pt or run GPU."
+    },
+    "settlement": {
+      "job_id": 3924,
+      "step": 1,
+      "phase": "4b",
+      "gpu_seconds": 28819,
+      "charged_node_seconds": 3602.375,
+      "released_reservation_node_seconds": 12600,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "runtime_seconds": 4117,
+      "start": "2026-10-23T19:25:17+08:00",
+      "end": "2026-10-23T20:33:54+08:00",
+      "source": "Actual final scontrol COMPLETED RunTime01:08:37 seven GPUs; original EXIT0 and all exit validations0",
+      "reason": "yield_to_waiting_user:OTHERUSER3926 PENDING Resources",
+      "evidence": "inventory/e4-c76-job3924-yield.json",
+      "raw_bundle_sha256": "deb55fd5c9b207664e3b281d753f38973322748ba33701a8967956f816fc91d4",
+      "settled_once_at": "2026-10-23T13:04:28.629973+00:00"
+    },
+    "step1": {
+      "charged_node_seconds": 70116.5,
+      "reserved_node_seconds": 12600
+    },
+    "claude76_pretraining": {
+      "charged_node_seconds": 3682.875,
+      "reserved_node_seconds": 0
+    },
+    "phase4b": {
+      "charged_node_seconds": 3602.375,
+      "reserved_node_seconds": 0,
+      "world_size": 7,
+      "frozen_stage_cap_node_seconds": 21519.5,
+      "remaining_stage_node_seconds": 17917.125
+    },
+    "unsettled3897_reserved_node_seconds": 12600,
+    "memory_peak_bytes": 13034467328,
+    "request_resume_memory_mib": 15539,
+    "next": "new manifest/fresh resources for same persistent root/world7; no reset of model/Adam/RNG/collector/tape/holdout/cursors; no full studentdev yet"
+  },
+  "same_state_resume3936": {
+    "at": "2026-10-23T13:12:16.637077+00:00",
+    "status": "pass",
+    "check_count": 219,
+    "checks": [
+      "original26file bundle SHA",
+      "original bytes allocations/3936/manifest.json",
+      "original bytes allocations/3936/preflight-before-submit.json",
+      "original bytes allocations/3936/budget-before-submit.json",
+      "original bytes allocations/3936/inputs-before.json",
+      "original bytes allocations/3936/source.txt",
+      "original bytes allocations/3936/cuda-gates.log",
+      "original bytes allocations/3936/cuda-prefix-discovery.json",
+      "original bytes allocations/3936/cuda-gates-discovery.json",
+      "original bytes allocations/3936/cuda-gates.junit.xml",
+      "original bytes allocations/3936/cuda-gates-verified.json",
+      "original bytes allocations/3936/wall-plan.txt",
+      "original bytes allocations/3936/parent-startup-poll.json",
+      "original bytes allocations/3936/parent-first-observed-checkpoints.json",
+      "original bytes runtime/manifest.json",
+      "original bytes runtime/source-files.json",
+      "original bytes runtime/resume-evidence.json",
+      "original bytes runtime/previous-memory-peak.json",
+      "original bytes runtime/parent-inputs-before.json",
+      "original bytes runtime/budget-resume.json",
+      "original bytes runtime/preflight-resume.json",
+      "original bytes runtime/job-resume.sh",
+      "original bytes runtime/submission-resume.json",
+      "original bytes status.json",
+      "original bytes heldout-reports.json",
+      "original bytes experiment-contract.json",
+      "original bytes job3936.log",
+      "same runtime manifest and preflight budget copied exactly",
+      "manifest actual hash",
+      "fresh receipt actual3936",
+      "actual jobscript hash and same-root resume",
+      "frozen stagecap and fixedworld",
+      "actual peak plus25 memory",
+      "fresh resource gates",
+      "post3924 fresh actual budget",
+      "new allocation12600 reserve not charged",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/E4-C73-180-N32-D1024-summary.json",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+      "manifest duplicate consistency /home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/cuda-gates.py",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/generate-job.py",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/immutable-inputs.json",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/job.sh.in",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/memory-peak.py",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/preflight.py",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/prepare-bundle.py",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c74-slurm-preparation/verify-inputs.py",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/tools/e4_continue.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/tools/e4_run.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/train/checkpoint.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/train/e4.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/train/e4_learner.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/train/e4_rewards.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/train/model.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c73/train/rollout.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/tools/e4_distill.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/tools/e4_continue.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/tools/e4_run.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/train/e4.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/train/e4_rewards.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/train/e4_learner.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/train/model.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/train/rollout.py",
+      "manifest duplicate consistency /home/zhuyouwei/sts-silent-gpu-c76/train/checkpoint.py",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4a-3923/selection.json",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3924/resume-evidence.json",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3924/previous-memory-peak.json",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/train-18.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/train-18.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/train-18.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/train-18.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/train-18.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/train-18.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/train-18.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/frozen-holdout-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/frozen-holdout-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/experiment-contract.json",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-0.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-1.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-2.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-3.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-4.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-5.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-6.pt",
+      "manifest duplicate consistency /home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints.json",
+      "138 actual before hashes",
+      "fixed source tools/e4_distill.py",
+      "fixed source tools/e4_continue.py",
+      "fixed source tools/e4_run.py",
+      "fixed source train/e4.py",
+      "fixed source train/e4_rewards.py",
+      "fixed source train/e4_learner.py",
+      "fixed source train/model.py",
+      "fixed source train/rollout.py",
+      "fixed source train/checkpoint.py",
+      "mutable14 oldimmutable34",
+      "accepted helper prepare-bundle.py",
+      "accepted helper preflight.py",
+      "accepted helper generate-job.py",
+      "accepted helper job.sh.in",
+      "accepted helper verify-inputs.py",
+      "accepted helper snapshot-resume.py",
+      "accepted helper cuda-gates.py",
+      "accepted helper validate-junit.py",
+      "accepted helper memory-peak.py",
+      "accepted helper immutable-inputs.json",
+      "exact5 discovery cuda-prefix-discovery.json",
+      "exact5 discovery cuda-gates-discovery.json",
+      "unified actual exact5 JUnit",
+      "actual run positive finite test_cuda_effect_fields",
+      "actual run positive finite test_cuda_faults",
+      "actual run positive finite test_cuda_parity",
+      "actual run positive finite test_cuda_root_cache",
+      "actual run positive finite test_cuda_dispatch",
+      "parent actually CPUload copied seven19",
+      "rank first observed restored continuity 0",
+      "rank first observed restored continuity 1",
+      "rank first observed restored continuity 2",
+      "rank first observed restored continuity 3",
+      "rank first observed restored continuity 4",
+      "rank first observed restored continuity 5",
+      "rank first observed restored continuity 6",
+      "crossrank model Adam agree",
+      "actual3936 running not4c",
+      "no reported fault/error"
+    ],
+    "actual_job_id": 3936,
+    "manifest_sha256": "b240a668b7c8fb8d3d5cc4f0b4d4f748fd454a48cd0262794dacf674ba8f282a",
+    "jobscript_sha256": "2b2efb7642df20682b9a15c4b03423d4e92a1226b0621ef3144ff9e3763b2f4a",
+    "source_commit": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+    "preflight": {
+      "at": "2026-10-23T13:06:48.951586+00:00",
+      "free_gpu_count": 8,
+      "world_size": 7,
+      "memory_mib": 15539,
+      "cpus": 8,
+      "slurm_spare_mib": 110440.0,
+      "memavailable_before_mib": 95014.625,
+      "home_mib": 28365,
+      "unique_hashes": 138
+    },
+    "cuda_tests": {
+      "test_cuda_effect_fields": 11.4748,
+      "test_cuda_faults": 10.8992,
+      "test_cuda_parity": 33.3315,
+      "test_cuda_root_cache": 10.7944,
+      "test_cuda_dispatch": 0.446743
+    },
+    "actual_parent_cpu_load": {
+      "copies": 7,
+      "updates": 19,
+      "adam_entries": 93
+    },
+    "limitation": "First18 started checkpoint bytes not copied before update19. Parent CPUload verifies actual progressed19, and source assertions/immutable before138 link stopped18 resume. No exact bytewise18-started comparison or independent child ptload is claimed.",
+    "raw_bundle": {
+      "bytes": 130555,
+      "sha256": "22e9c9f0a5ed17cd943e6193d7b514f6288784f65f3774377e920abfb167fc47",
+      "files": 26
+    },
+    "status_snapshot": {
+      "task": "distill",
+      "reason": "distill_update_complete",
+      "phase": "training",
+      "config": {
+        "width": 256,
+        "layers": 6,
+        "heads": 8,
+        "feedforward": 1024
+      },
+      "world_size": 7,
+      "trained_seconds": 0.0,
+      "node_seconds": 3525.9616381437227,
+      "distill_node_seconds": 3525.9616381437227,
+      "updates": 19,
+      "total_stage_node_seconds_cap": 21519.5,
+      "distillation_training_node_seconds_cap": 14400,
+      "reports": [
+        {
+          "kl": 0.15270167885862998,
+          "value_error": 0.0015094346774400234,
+          "decisions": 3886,
+          "seconds": 786.0578415985219,
+          "expected_holdout_fraction": 0.05,
+          "seen_train_episodes": 2100,
+          "seen_heldout_episodes": 116,
+          "actual_holdout_episode_fraction": 0.052346568554639816,
+          "fixed_complete_holdout_episodes": 23
+        },
+        {
+          "kl": 0.1236175332393095,
+          "value_error": 0.0010132429410291532,
+          "decisions": 3886,
+          "seconds": 1409.9008670051116,
+          "expected_holdout_fraction": 0.05,
+          "seen_train_episodes": 2952,
+          "seen_heldout_episodes": 180,
+          "actual_holdout_episode_fraction": 0.05747126415371895,
+          "fixed_complete_holdout_episodes": 23
+        },
+        {
+          "kl": 0.10468729936784237,
+          "value_error": 0.0007200395907071668,
+          "decisions": 3886,
+          "seconds": 2046.1498136951122,
+          "expected_holdout_fraction": 0.05,
+          "seen_train_episodes": 3825,
+          "seen_heldout_episodes": 239,
+          "actual_holdout_episode_fraction": 0.058809056878089905,
+          "fixed_complete_holdout_episodes": 23
+        },
+        {
+          "kl": 0.08762761782660732,
+          "value_error": 0.000691664923016179,
+          "decisions": 3886,
+          "seconds": 2681.1126586969476,
+          "expected_holdout_fraction": 0.05,
+          "seen_train_episodes": 4610,
+          "seen_heldout_episodes": 284,
+          "actual_holdout_episode_fraction": 0.05803024023771286,
+          "fixed_complete_holdout_episodes": 23
+        },
+        {
+          "kl": 0.07661552082157058,
+          "value_error": 0.0006827725702176912,
+          "decisions": 3886,
+          "seconds": 3343.2853980762884,
+          "expected_holdout_fraction": 0.05,
+          "seen_train_episodes": 5479,
+          "seen_heldout_episodes": 333,
+          "actual_holdout_episode_fraction": 0.05729525163769722,
+          "fixed_complete_holdout_episodes": 23
+        },
+        {
+          "kl": 0.07366940132265463,
+          "value_error": 0.0005355551046197718,
+          "decisions": 3886,
+          "seconds": 4029.667628762778,
+          "expected_holdout_fraction": 0.05,
+          "seen_train_episodes": 6355,
+          "seen_heldout_episodes": 373,
+          "actual_holdout_episode_fraction": 0.05543995276093483,
+          "fixed_complete_holdout_episodes": 23
+        }
+      ],
+      "assessments": [],
+      "best": {
+        "act1_boss": 0.5927734375,
+        "act2_boss": 0.00390625,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "shield_spear": 0.0,
+        "heart": 0.0
+      },
+      "best_floor": 19.4931640625,
+      "stagnant": 0,
+      "distill_gate_passed": false,
+      "peak_torch_allocated_bytes": 783741952,
+      "peak_torch_reserved_bytes": 1356857344,
+      "accounting": "provisional_process_wall_times_world_over_8_parent_finalizes_actual_allocation"
+    }
+  },
+  "preservation": {
+    "old_audit_roots": 432,
+    "old_rounds": 24,
+    "audit_inventory_sha256": "3db87e151d5f0733f777d4a1e78b27092332cf434ab80227fa9abbc995854311",
+    "old_history_unchanged": true
+  },
+  "external_evidence": {
+    "exit_bundle": "c76-job3924-yield/bundle.json.xz",
+    "parent_exit_report": "c76-parent-job3924-yield-accepted/report.json",
+    "resume_bundle": "c76-4b-resume3924-production/startup3936.json.gz",
+    "parent_resume_report": "c76-4b-resume3924-production/parent-resume3936-verified.json"
+  }
+}
