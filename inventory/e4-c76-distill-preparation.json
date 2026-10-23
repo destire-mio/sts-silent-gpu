@@ -1,0 +1,95 @@
+{
+  "decision": 76,
+  "decision_commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+  "decision_full_commit_diff_and_message_read": true,
+  "decision_git_object_local": false,
+  "base": "660f3d9963c61af4bdd99ce94211b0f5080c94b9",
+  "at": "2026-10-23T10:19:37.737805+00:00",
+  "status": "CPU_prepared_no_GPU_run",
+  "source_files": {
+    "tools/e4_distill.py": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1",
+    "tests/test_e4_distill.py": "8738ac8cc8585659e1df77fad27bf78cea177572702f4c65223176d58d353053"
+  },
+  "model_config_defaults_unchanged": true,
+  "new_model_configs": [
+    {
+      "width": 256,
+      "layers": 6,
+      "heads": 8,
+      "feedforward": 1024
+    },
+    {
+      "width": 192,
+      "layers": 6,
+      "heads": 6,
+      "feedforward": 768
+    }
+  ],
+  "teacher": "inventory/e4-c76-selected-C180.json",
+  "teacher_mapping": "rank%7,benchmark rank0",
+  "parent_CPU_tests": {
+    "passed": 9,
+    "stdout": ".........                                                                [100%]\n9 passed in 4.84s\n",
+    "report_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-parent-implementation-accepted\\parent-test-report.json",
+    "report_sha256": "05e1c9a015db6b1f0dc84d4cea99d633e3fb6a54bae3cddda49dcc08a592ff77"
+  },
+  "independent_review": {
+    "at": "2026-10-23T10:17:29.139043+00:00",
+    "source_sha256": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1",
+    "tests_sha256": "8738ac8cc8585659e1df77fad27bf78cea177572702f4c65223176d58d353053",
+    "independent_cpu_pytest": {
+      "passed": 9,
+      "seconds": 5.21,
+      "exit_code": 0,
+      "workers": 1,
+      "torch_threads": 1
+    },
+    "scope": "Read-only independent review and CPU tests; no CUDA/NCCL/GPU/remote/submission/ledger mutation",
+    "verdict": "No remaining code blocker for publishing 4a; actual gates precede execution; 4b/c gated on real preceding results and new phase manifests"
+  },
+  "parent_helpers": {
+    "checks": {
+      "synthetic_resource_budget_initial_resume_and_negative_cases": true,
+      "actual_generator_bash_n_embedded_python_ast_and_stale_refusal": true,
+      "mocked_ctest_junit_cases": 8,
+      "actual_bash_exit_matrix_cases": 16,
+      "cuda_memory_helpers_byte_identical_to_c74": true
+    },
+    "report_sha256": "8e69a8867172c918b856912135c89eaa39cf6540c6acd07c5b7ae3d32a7ad830",
+    "directory": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-parent-design-accepted",
+    "runtime_files": {
+      "cuda-gates.py": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e",
+      "generate-job.py": "5266ed037962b8907efeb11183671953f7034bb99135641413a89fea146c89ff",
+      "immutable-inputs.json": "1abd6a3e3beb6a7de2bc5534b1d30014378a9c80002d4258da44a29a1f09a321",
+      "job.sh.in": "2ce71f8b6153c785738753f5f93684c4f4815c8c5d3ee3d506d9353a74314e81",
+      "memory-peak.py": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc",
+      "preflight.py": "f484ecf8f0aa4584bcb6dc4a02a34334867cb739aa6bea0d7ebda9e153f75eb9",
+      "prepare-bundle.py": "95950dca6f5c8780101181229695963335cd8f7d5acede389a1df279a577b35e",
+      "verify-inputs.py": "b9415b22f7758d7bd77327af210bdb45069281b530b797d299bafdbdd5a55bb3"
+    }
+  },
+  "limits": {
+    "4a_gpu_count": 1,
+    "4a_cumulative_wall_seconds": 1200,
+    "4a_memory_gib": 16,
+    "4a_plus_4b_node_seconds": 21600,
+    "4b_distillation_training_node_seconds": 14400,
+    "4b_final_evaluation_within_combined_cap": true,
+    "4b_initial_memory_gib": 20,
+    "4c_node_seconds": 30000,
+    "source_budget": "step1 remaining",
+    "new_charged": 0,
+    "new_reserved": 0
+  },
+  "gates": {
+    "4a": "largest model with actual five-minute decision throughput at least 50% of C180",
+    "4b_to_4c": "student actual full1024 mean >=19.0 after distillation",
+    "before_every_allocation": "fresh resource/hash/budget; actual exact five CUDA CTests; memory aggregate peak; Resources/Priority yield on failure or pending"
+  },
+  "limitations": [
+    "CPU collective helpers mocked; no actual CUDA/NCCL/collector engine run in these tests.",
+    "Source model configuration already parameterized; no engine or existing training source changed.",
+    "4b/4c require actual preceding results and new manifests before submission.",
+    "3897 EXIT0 but final scheduler allocation evidence unavailable; old12600 remains reserved once, no settlement."
+  ]
+}
