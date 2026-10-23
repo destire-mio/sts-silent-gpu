@@ -1,0 +1,73 @@
+{
+  "message": 74,
+  "decision_commit": "3de833377a127c8982d312d28cc344a0a5087a16",
+  "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/3de833377a127c8982d312d28cc344a0a5087a16",
+  "raw73and74_git_objects_locally_obtained": true,
+  "source_scope": "Mergedrawmain messages; runtime only Reason predicate changed",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "low",
+  "policy": {
+    "other_user_pending_block_reasons": [
+      "Resources",
+      "Priority"
+    ],
+    "personal_limits_do_not_block": [
+      "JobArrayTaskLimit",
+      "Dependency",
+      "DependencyNeverSatisfied",
+      "BeginTime",
+      "JobHeldUser",
+      "JobHeldAdmin",
+      "QOSMax*PerUser",
+      "AssocMax*"
+    ],
+    "query_failure": "existing runtime error evidence andTruebroadcast/yield; preflightqueryexceptionsabortsubmission",
+    "own_project_jobs": "preflight stillrefusesduplicateownjob"
+  },
+  "unchanged": [
+    "C163 source/model/Adam/beta and explicit1e-4",
+    "freshinitialcollector/rootcache; continuationpreservespayload",
+    "4epochs/SL32/1800puretraining evaluation/1024dev/18audit/stoprules",
+    "7or8fixedworld/memory15or17GiB/16GiBnodeheadroom",
+    "exactfiveCUDAgates/jobaggregatepeak/step1cap30000/step2closed"
+  ],
+  "acceptance": {
+    "runtime_test": "singleCPUtest15reason/user/statecases+5query/malformedfailures",
+    "parent_pytest": "1passed3.41s actualmoduleimports+queue_snapshot/waiting/atomic_json; subprocess/distmocked",
+    "helper_parent_checks": {
+      "python_ast": true,
+      "preflight_cpu_cases": 25,
+      "memory_aggregate_cpu_cases": 10,
+      "actual_bound_generator_and_bash_n_cpu_cases": 2,
+      "cuda_gate_mocked_cpu_cases": 8,
+      "actual_bash_exit_matrix_cases": 8,
+      "actual_bash_n_and_embedded_python_ast": true,
+      "prior_cuda_memory_helpers_byte_identical": true
+    },
+    "actual_GPU_tests": false,
+    "actual_Slurm_queries": false,
+    "this_heartbeat": "startedbefore12:31:17.815345; Git/localonlyevenifworkextendslater"
+  },
+  "files": {
+    "tools/e4_continue.py": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c",
+    "tests/test_e4_queue_failure.py": "fe421e670ddf0f25758800a59d1af767c1d918e94081acb644b40dd6f8a71932"
+  },
+  "helper_files": {
+    "cuda-gates.py": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e",
+    "generate-job.py": "4540de3d2ec0ede45dda91555de9ee28f18229139a4f0e5f5a33fce931c9e421",
+    "immutable-inputs.json": "98ef8af6ccfe1a5b72531a32800cccf6cb51f500c8482327b9b4ba2949a50327",
+    "job.sh.in": "ce4ee9f0c2aa876be890cd9e803fe9db04924a92f41cb21a5237ef3ff69198fa",
+    "memory-peak.py": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc",
+    "preflight.py": "ef26f63c2edd3c4ecd585eadfa852c747a68a9489a47cea62e389fce12ec6e9d",
+    "prepare-bundle.py": "af1f309d241c8b7ba536ea16c58a679bbd6d08c88ffb5ad6e71c9f1e353075c0",
+    "README.md": "802a3cfabb14f39ccde346940709fbd2cfee3898f56278833b0009e8f52f0507",
+    "verify-inputs.py": "c97054d75cf3fefc4e00ce886305568f801a3ff75087cc6b09b4c41f1fcb4cb5",
+    "verify-local.py": "30eec3dfd7a65c0de4c21ce771c68186872fb61cab2af8416010adb7546c9ea5"
+  },
+  "helper_directory": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation",
+  "old_C73_bundle": "Retainedasoriginalevidence; oldpolicy mustnotbe submitted",
+  "deployment": "pendingnewcodepublication andlatereligibleheartbeat; productionmanifestnotyetbound",
+  "previous_3893_block": "Correctlyblockedunderold54 at12:20; supersededby74 policy, notafreshresourcepass",
+  "no_new_job_or_charge_or_reservation": true,
+  "next_action": "Publish thenbindnewmanifest; nexteligibleheartbeat deploynewruntime+preflightpolicy beforefreshbudget/allhash/resources+actual5CTest andsingleC73job"
+}

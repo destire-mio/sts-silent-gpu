@@ -43,8 +43,7 @@ def queue_snapshot():
     for job in jobs:
         if job.get('UserId').split('(')[0] == os.environ['USER']:
             continue
-        dependency_wait = job.get('Reason') in ('Dependency', 'DependencyNeverSatisfied')
-        if job.get('JobState') == 'PENDING' and not dependency_wait:
+        if job.get('JobState') == 'PENDING' and job.get('Reason') in ('Resources', 'Priority'):
             blockers.append(job.get('JobId'))
     return dict(checked_at=datetime.now().astimezone().isoformat(), jobs=jobs, node=node,
                 blocking_job_ids=blockers,
