@@ -395,8 +395,30 @@
         "episodes": 1024,
         "scope": "actual trajectories; displayed combat/treasure reward rows"
       },
-      "Mac": "pending",
-      "new_Macfault0": false
+      "Mac": "mac_reported_pass",
+      "new_Macfault0": false,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #76",
+        "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "high",
+        "round": "E4-C75-job3897-180-N32-D1024",
+        "traces": 18,
+        "decisions": 7319,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "19.493"
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+      }
     },
     {
       "source_round": "E4-C73-188-N32-D1024",
@@ -780,8 +802,30 @@
         "episodes": 1024,
         "scope": "actual trajectories; displayed combat/treasure reward rows"
       },
-      "Mac": "pending",
-      "new_Macfault0": false
+      "Mac": "mac_reported_pass",
+      "new_Macfault0": false,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #76",
+        "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "high",
+        "round": "E4-C75-job3897-188-N32-D1024",
+        "traces": 18,
+        "decisions": 5914,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "19.105"
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+      }
     }
   ],
   "training": {
@@ -1138,7 +1182,7 @@
   },
   "limitations": [
     "CPU artifact consistency only; no SSH, GPU, tensor load, local simulation or original-game replay.",
-    "Mac180 and Mac188 remain pending; no new Macfault0.",
+    "Mac180 and Mac188 original-game dual-scope passes and rounded full1024 means are reported in #76; no independent Windows replay and no new Macfault0 claim.",
     "Producer faults/truncated zero do not prove original-game agreement.",
     "Inherited C163 and prior 172 assessments used solely for stop-rule calculation; no old evaluation rerun.",
     "Exit-time 46-file chain is archived evidence; fresh remote hash and checkpoint metadata verification is separate parent evidence.",
@@ -3712,8 +3756,71 @@
     "old_roots_preserved": 396,
     "old_rounds_preserved": 22,
     "Mac172_preserved": true,
-    "Mac180": "pending",
-    "Mac188": "pending",
-    "new_Macfault0": false
+    "Mac180": "mac_reported_pass",
+    "Mac188": "mac_reported_pass",
+    "new_Macfault0": false,
+    "mac_report_76": [
+      {
+        "source": "docs/messages/claude-to-gpt.md #76",
+        "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "high",
+        "round": "E4-C75-job3897-180-N32-D1024",
+        "traces": 18,
+        "decisions": 7319,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "19.493"
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+      },
+      {
+        "source": "docs/messages/claude-to-gpt.md #76",
+        "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "high",
+        "round": "E4-C75-job3897-188-N32-D1024",
+        "traces": 18,
+        "decisions": 5914,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "19.105"
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+      }
+    ],
+    "Mac76_staged_successor": {
+      "e4-c75-job3897-audit180.json": {
+        "path": "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-record-mac180188\\inventory\\e4-c75-job3897-audit180.json",
+        "bytes": 89635,
+        "sha256": "69b828e74eefe4d9f63d32024242206d03790d386aab19ee442a8d2ba51a66b4"
+      },
+      "e4-c75-job3897-audit188.json": {
+        "path": "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-record-mac180188\\inventory\\e4-c75-job3897-audit188.json",
+        "bytes": 74168,
+        "sha256": "4aeaad70369fc15d015867e1a7cd5ac0e76fdf4c812759e964838e1dc37b41bc"
+      },
+      "e4-audit-roots.json": {
+        "path": "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-record-mac180188\\inventory\\e4-audit-roots.json",
+        "bytes": 1566238,
+        "sha256": "3db87e151d5f0733f777d4a1e78b27092332cf434ab80227fa9abbc995854311"
+      }
+    }
   }
 }

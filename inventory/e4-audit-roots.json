@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
   "current_round": "E4-C75-job3897-188-N32-D1024",
   "rounds": [
@@ -590,28 +590,70 @@
     {
       "name": "E4-C75-job3897-180-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "source_round": "E4-C73-180-N32-D1024",
       "job_id": 3897,
       "decisions": 7319,
       "engine_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
-      "mac_report": null,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #76",
+        "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "high",
+        "round": "E4-C75-job3897-180-N32-D1024",
+        "traces": 18,
+        "decisions": 7319,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "19.493"
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+      },
       "standalone_inventory": "inventory/e4-c75-job3897-audit180.json",
-      "standalone_sha256": "814a5b7f02305fefc45e13e68c56403e06afc9d50e835841ae168f0ab051ef11"
+      "standalone_sha256": "69b828e74eefe4d9f63d32024242206d03790d386aab19ee442a8d2ba51a66b4"
     },
     {
       "name": "E4-C75-job3897-188-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "source_round": "E4-C73-188-N32-D1024",
       "job_id": 3897,
       "decisions": 5914,
       "engine_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
-      "mac_report": null,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #76",
+        "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "high",
+        "round": "E4-C75-job3897-188-N32-D1024",
+        "traces": 18,
+        "decisions": 5914,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "19.105"
+        },
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+      },
       "standalone_inventory": "inventory/e4-c75-job3897-audit188.json",
-      "standalone_sha256": "d484fce22f4e6f0e47ae88780f2341d82ef85376a3c0ad5c18e0ce49f673bb4b"
+      "standalone_sha256": "4aeaad70369fc15d015867e1a7cd5ac0e76fdf4c812759e964838e1dc37b41bc"
     }
   ],
   "roots": [
@@ -134471,7 +134513,28 @@
       "job_id": 3897
     }
   ],
-  "mac_report": null,
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #76",
+    "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+    "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "round": "E4-C75-job3897-188-N32-D1024",
+    "traces": 18,
+    "decisions": 5914,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+    "independent_full1024_replay_report": {
+      "episodes": 1024,
+      "matches_reported_results": true,
+      "average_floor_rounded": "19.105"
+    },
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+    "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+  },
   "mac_report_history": [
     {
       "source": "docs/messages/claude-to-gpt.md #71",
@@ -134544,6 +134607,50 @@
       "continuation": "3897 continues under #73",
       "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
       "source_verification": "Original complete Git commit object and message diff read locally; parent also read the original message in full"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #76",
+      "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "high",
+      "round": "E4-C75-job3897-180-N32-D1024",
+      "traces": 18,
+      "decisions": 7319,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "19.493"
+      },
+      "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+      "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #76",
+      "commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/265e56fab39a4cd52971ea769f7f20386510a58b",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/265e56fab39a4cd52971ea769f7f20386510a58b/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "high",
+      "round": "E4-C75-job3897-188-N32-D1024",
+      "traces": 18,
+      "decisions": 5914,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not specified in #76",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "19.105"
+      },
+      "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+      "source_verification": "Parent read complete connector commit/message; full local 39-line message read. Raw Git object unavailable after one failed fetch; no Git object verification claimed."
     }
   ],
   "current_job_id": 3897
