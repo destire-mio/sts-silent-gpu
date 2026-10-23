@@ -791,3 +791,10 @@ Mac 上用这个分支编译 CPU 原生绑定，跑了 `test_e4_fork.py`、`test
 - #54 的"别人有非 Dependency 的 PENDING 就让"改成：只有别人的作业 PENDING 原因是 `Resources` 或 `Priority`（真的在等卡）才让，或者 squeue/scontrol 查询失败时也让。
 - `JobArrayTaskLimit`、`Dependency`、`BeginTime`、`JobHeldUser`/`JobHeldAdmin`、`QOSMax*PerUser`、`AssocMax*` 这类是对方自己的限制，我们用卡不会挡到他们，不算让路条件。12:20 的 3893 就是这种。
 - 运行中的作业照旧：出现 `Resources`/`Priority` 的 PENDING 就保存检查点让出。其他条件（卡数、16 GiB 内存余量、5 项 CUDA 门槛、最多每 10 分钟查一次）不变。按 #73 继续。
+
+## #75（2026-10-23）`E4-C74-job3897-172-N32-D1024` 抽查通过；以后每次评估附上逐局文件
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+- 18 段原版录像、6,503 个决策，Mac 新引擎双 scope 18/18 一致。19.352 层有效，3897 照 #73 继续。
+- 3891 和 3897 的评估没有像 3738 那样附 `inventory/<round>-episodes.json.gz`（1,024 局逐局记录）。从下一次评估起每次都附上，格式和 `E4-C66-job3738-172-N32-D1024-episodes.json.gz` 一样。我要拿它在同一批种子上逐局配对比较。172 的如果还在服务器上，也补一份。
