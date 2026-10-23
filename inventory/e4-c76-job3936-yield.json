@@ -1,0 +1,1554 @@
+{
+  "key": "claude76-job3936-yield-exit-review-c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+  "scope": "read-only CPU stdlib sealed job3936 yielded exit review",
+  "source_commit": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+  "decision_commit": "265e56fab39a4cd52971ea769f7f20386510a58b",
+  "archive": {
+    "xz_bytes": 1155072,
+    "xz_sha256": "5a1be4014521d1fb9ff0ce7a091774fd63a4581e8b0d3695302f06f478355a5a",
+    "raw_bytes": 19231325,
+    "raw_sha256": "ecc92a9fa0aed56400b56e55fc4ac9b9eee542210aa2464ce5d2bd4ceb0a95c2",
+    "file_count": 55
+  },
+  "outcome": {
+    "final_scheduler_source": "actual parent-poll-2317 preserved before purge; no repeatedpurged query",
+    "slurm_state": "COMPLETED",
+    "exit_code": "0:0",
+    "start": "2026-10-23T21:07:34",
+    "end": "2026-10-23T23:13:35",
+    "runtime_seconds": 7561.0,
+    "memory_peak_bytes": 12965302272,
+    "reason": "yield_to_waiting_user",
+    "phase": "training",
+    "updates": 53,
+    "final_distilled_dev_evaluation": false,
+    "gate4c": false,
+    "blocker": {
+      "JobId": "3943",
+      "JobName": "ps_pic_ffac91e6",
+      "UserId": "zwh(1005)",
+      "JobState": "PENDING",
+      "Reason": "Resources",
+      "Dependency": "(null)",
+      "TimeLimit": "3-00:00:00",
+      "StartTime": "2026-10-24T01:07:34",
+      "RunTime": "00:00:00",
+      "NodeList": "",
+      "TresPerNode": "gres:gpu:V100:6",
+      "TRES": "cpu=12,mem=96G,node=1,billing=12"
+    },
+    "holdout_reports": [
+      {
+        "kl": 0.15270167885862998,
+        "value_error": 0.0015094346774400234,
+        "decisions": 3886,
+        "seconds": 786.0578415985219,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 2100,
+        "seen_heldout_episodes": 116,
+        "actual_holdout_episode_fraction": 0.052346568554639816,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.1236175332393095,
+        "value_error": 0.0010132429410291532,
+        "decisions": 3886,
+        "seconds": 1409.9008670051116,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 2952,
+        "seen_heldout_episodes": 180,
+        "actual_holdout_episode_fraction": 0.05747126415371895,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.10468729936784237,
+        "value_error": 0.0007200395907071668,
+        "decisions": 3886,
+        "seconds": 2046.1498136951122,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 3825,
+        "seen_heldout_episodes": 239,
+        "actual_holdout_episode_fraction": 0.058809056878089905,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.08762761782660732,
+        "value_error": 0.000691664923016179,
+        "decisions": 3886,
+        "seconds": 2681.1126586969476,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 4610,
+        "seen_heldout_episodes": 284,
+        "actual_holdout_episode_fraction": 0.05803024023771286,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.07661552082157058,
+        "value_error": 0.0006827725702176912,
+        "decisions": 3886,
+        "seconds": 3343.2853980762884,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 5479,
+        "seen_heldout_episodes": 333,
+        "actual_holdout_episode_fraction": 0.05729525163769722,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.07366940132265463,
+        "value_error": 0.0005355551046197718,
+        "decisions": 3886,
+        "seconds": 4029.667628762778,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 6355,
+        "seen_heldout_episodes": 373,
+        "actual_holdout_episode_fraction": 0.05543995276093483,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.06804221628160434,
+        "value_error": 0.0004652937998819413,
+        "decisions": 3886,
+        "seconds": 4686.90333520039,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 7213,
+        "seen_heldout_episodes": 417,
+        "actual_holdout_episode_fraction": 0.05465268716216087,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.06692194290001856,
+        "value_error": 0.0004970002292092936,
+        "decisions": 3886,
+        "seconds": 5305.687542245258,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 8068,
+        "seen_heldout_episodes": 467,
+        "actual_holdout_episode_fraction": 0.054715875536203384,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.06237509802601476,
+        "value_error": 0.00036570666373234836,
+        "decisions": 3886,
+        "seconds": 5924.264132692013,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 8909,
+        "seen_heldout_episodes": 508,
+        "actual_holdout_episode_fraction": 0.053944993764162064,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.06246483235595025,
+        "value_error": 0.0004364304415758892,
+        "decisions": 3886,
+        "seconds": 6541.05143263354,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 9809,
+        "seen_heldout_episodes": 550,
+        "actual_holdout_episode_fraction": 0.05309392884373665,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.06315751680156502,
+        "value_error": 0.00030003960542028584,
+        "decisions": 3886,
+        "seconds": 7213.45031721401,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 10689,
+        "seen_heldout_episodes": 595,
+        "actual_holdout_episode_fraction": 0.0527295283973217,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.05803969187806901,
+        "value_error": 0.0005172779378020213,
+        "decisions": 3886,
+        "seconds": 7853.8312756579835,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 11529,
+        "seen_heldout_episodes": 642,
+        "actual_holdout_episode_fraction": 0.052748337388038635,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.05737988948068248,
+        "value_error": 0.00025609561546058475,
+        "decisions": 3886,
+        "seconds": 8486.643028505147,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 12390,
+        "seen_heldout_episodes": 689,
+        "actual_holdout_episode_fraction": 0.052679870277643204,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.05502842887703523,
+        "value_error": 0.000274642926736655,
+        "decisions": 3886,
+        "seconds": 9106.724336051848,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 13263,
+        "seen_heldout_episodes": 735,
+        "actual_holdout_episode_fraction": 0.05250750109553337,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.05500414950600355,
+        "value_error": 0.0002891271958914067,
+        "decisions": 3886,
+        "seconds": 9747.969714603852,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 14098,
+        "seen_heldout_episodes": 762,
+        "actual_holdout_episode_fraction": 0.051278598606586456,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.05351721235841051,
+        "value_error": 0.00022675606543218788,
+        "decisions": 3886,
+        "seconds": 10431.60009273584,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 14970,
+        "seen_heldout_episodes": 817,
+        "actual_holdout_episode_fraction": 0.05175144225358963,
+        "fixed_complete_holdout_episodes": 23
+      },
+      {
+        "kl": 0.05552033847123679,
+        "value_error": 0.0002431852926345092,
+        "decisions": 3886,
+        "seconds": 11057.067896493012,
+        "expected_holdout_fraction": 0.05,
+        "seen_train_episodes": 15825,
+        "seen_heldout_episodes": 860,
+        "actual_holdout_episode_fraction": 0.051543302834033966,
+        "fixed_complete_holdout_episodes": 23
+      }
+    ],
+    "latest_kl": 0.05552033847123679,
+    "previous_kl": 0.05351721235841051,
+    "nondecreases": 1
+  },
+  "checkpoint_verification": {
+    "method": "supplied parent sequential CPU-load reports inspected only; this worker opened no PT file",
+    "checkpoint_sha256": [
+      "f7111bd66705c54a42f26adc00520c4527b0a256f92de6f877ccdbdd6f671e3f",
+      "3c6f878c7c2806160d22b57b22f1a89e0786e5b6a0630479d45637dbd1a654f9",
+      "b019058c753ee6559d39c2608c362394103dcf94368fe104715a62fbecba4e39",
+      "7c2343f4f0fb52ef571cc225c15333af802f9b7c5cab450cf906ba8e21670635",
+      "4f2909d6c20c90cc6bf9ef7508ef3c627d55dced8a6083d055a6114642103347",
+      "92c0cae5eae23c6d56e7e41675e0f651310349bdb9f3e4d0ad8aa454cf753e32",
+      "4e920fa3f17a9dd1fbb75804819baf0c04dad26c6230f53e976159a9759f4e1a"
+    ],
+    "stopped_sealed_count": 7,
+    "first_observed_sealed_count": 7,
+    "immutable_resume_files_count": 50,
+    "mutable_rank_and_tape_files": 14,
+    "required_future_resume": {
+      "updates": 53,
+      "shard": 54,
+      "minibatch": 7,
+      "plan_length": 14,
+      "preserve_nonzero_cursor": true,
+      "reshuffle_or_reset": false
+    }
+  },
+  "sl_over_limit": {
+    "cumulative_records": 38,
+    "new3936_log_records": 33,
+    "old3924_prefix_records": 5,
+    "counts_by_device": {
+      "0": 1,
+      "1": 30,
+      "2": 7
+    },
+    "counts_by_seed": {
+      "1250244792": 1,
+      "1733288798": 18,
+      "1302406449": 12,
+      "1798998902": 7
+    },
+    "interpretation": "Existing RoomSearch search-copy combat budget diagnostics at 3001 steps. Capped trials are excluded from eligible search scoring. These are not automatically native faults or deaths, and are not independent original-game proof.",
+    "original_cause": "unverified",
+    "new_waiver_or_rule_change": false
+  },
+  "accepted": true,
+  "parent_acceptance": {
+    "at": "2026-10-23T15:39:54.449026+00:00",
+    "status": "completed_verified",
+    "independent_checks": 311,
+    "parent_independent_checks": 311,
+    "script_sha256": "c4fc2ba7aaa2d2542cd78f6be1931427471f278564e4b513d4d57b443511e5ff",
+    "report_sha256": "310fc4070c3774b97584d60c960547e33779f5a9a2340263844d23e2fdb441eb",
+    "parent_report": "c76-parent-job3936-yield-accepted/report.json",
+    "scope": "Parent inspected and independently reran stdlib actual55file/Slurm/peak/metadata proof; child did not deserialize pt or run GPU."
+  },
+  "settlement": {
+    "job_id": 3936,
+    "step": 1,
+    "phase": "4b",
+    "gpu_seconds": 52927,
+    "charged_node_seconds": 6615.875,
+    "released_reservation_node_seconds": 12600,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "runtime_seconds": 7561,
+    "start": "2026-10-23T21:07:34+08:00",
+    "end": "2026-10-23T23:13:35+08:00",
+    "source": "Actual preserved parent-poll-2317 final scontrol COMPLETED02:06:01 world7; originalEXIT/allvalidation0; later scheduler purged, original final proof retained",
+    "reason": "yield_to_waiting_user OTHERUSER3943 PENDING Resources6GPU96GiB",
+    "evidence": "inventory/e4-c76-job3936-yield.json",
+    "raw_bundle_sha256": "5a1be4014521d1fb9ff0ce7a091774fd63a4581e8b0d3695302f06f478355a5a",
+    "settled_once_at": "2026-10-23T15:39:54.449026+00:00"
+  },
+  "budgets_after": {
+    "charged_node_seconds": 10218.25,
+    "reserved_node_seconds": 0,
+    "world_size": 7,
+    "frozen_stage_cap_node_seconds": 21519.5,
+    "remaining_stage_node_seconds": 11301.25
+  },
+  "step1_after": {
+    "charged_node_seconds": 76732.375,
+    "reserved_node_seconds": 12600
+  },
+  "pretraining_after": {
+    "charged_node_seconds": 10298.75,
+    "reserved_node_seconds": 0
+  },
+  "unsettled3897_reserved_node_seconds": 12600,
+  "file_manifest": {
+    "allocations/3936/accounting-at-exit.txt": {
+      "bytes": 1381,
+      "sha256": "ab67cbeaa48c5023fc378af722187162935a3608ad87350fa4568f7795c1da04"
+    },
+    "allocations/3936/budget-before-submit.json": {
+      "bytes": 739,
+      "sha256": "7c2455b09d46e1b60a6ab99724826a34ed88ba396ec268606f56bc43185159b0"
+    },
+    "allocations/3936/cuda-gates-discovery.json": {
+      "bytes": 2927,
+      "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+    },
+    "allocations/3936/cuda-gates-verified.json": {
+      "bytes": 247,
+      "sha256": "98994a085c95286c84845548bc3c63a1d0e5e07a9d044ba07f288ab6170001d1"
+    },
+    "allocations/3936/cuda-gates.junit.xml": {
+      "bytes": 2679,
+      "sha256": "53e8e66115833d45310d1bb849f07d53d1e75f17421c129400f8b03a41673316"
+    },
+    "allocations/3936/cuda-gates.log": {
+      "bytes": 770,
+      "sha256": "9417e33c20832472172dbc3f5917ed1fecbc8acd93f883c85718c52f9e128e44"
+    },
+    "allocations/3936/cuda-prefix-discovery.json": {
+      "bytes": 2927,
+      "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+    },
+    "allocations/3936/exit-validation.txt": {
+      "bytes": 68,
+      "sha256": "3bfc666cb04fc165f73ce8b0e7d69ca9ebbcef5a8916d7a0e398aa2f8520194a"
+    },
+    "allocations/3936/exit.txt": {
+      "bytes": 41,
+      "sha256": "75bf62630e3065bde21f30364c5b84f5e80bea441200d33e5412dfe36b1da560"
+    },
+    "allocations/3936/inputs-at-exit.json": {
+      "bytes": 18684,
+      "sha256": "5c515e5f18a1e8771eb9f70f265711b5ee465c09501c04b719883aefd36eda5c"
+    },
+    "allocations/3936/inputs-at-exit.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "allocations/3936/inputs-before.json": {
+      "bytes": 20629,
+      "sha256": "96d12ffb0e4d647698492199560a7c4325a404fbba1bff110dcc15260999537a"
+    },
+    "allocations/3936/manifest-at-exit.txt": {
+      "bytes": 98,
+      "sha256": "469162bbace739f924f62ed8ac1ed9f3df73ada75b4104ac3a714313817a3c98"
+    },
+    "allocations/3936/manifest.json": {
+      "bytes": 29409,
+      "sha256": "b240a668b7c8fb8d3d5cc4f0b4d4f748fd454a48cd0262794dacf674ba8f282a"
+    },
+    "allocations/3936/memory-peak.json": {
+      "bytes": 5728,
+      "sha256": "b02a2d765ea9629147d37c14481d5635d7ba78b9ec11ed5963b8b7db2a3bcd3c"
+    },
+    "allocations/3936/memory-peak.log": {
+      "bytes": 104,
+      "sha256": "973ffdaea7f77f4e915ef66ffb33fd2b2626267cbd2dba33c342baba3300ce5d"
+    },
+    "allocations/3936/parent-first-observed-checkpoints.json": {
+      "bytes": 28201,
+      "sha256": "9a79bfac81bed8207326d63f12bfedabeab1a586747f8ead23ef693ee1df038b"
+    },
+    "allocations/3936/parent-poll-2121.json": {
+      "bytes": 8806,
+      "sha256": "093f9a15be56d786b56dc9f21e6d2511f5d3a04be8eebb30d9f6444fd3718082"
+    },
+    "allocations/3936/parent-poll-2127.json": {
+      "bytes": 8840,
+      "sha256": "39bf33d9cbd74a2987661fd690f9a9145ce164a0484c46b75d842eeba2ca9ef7"
+    },
+    "allocations/3936/parent-poll-2137.json": {
+      "bytes": 9205,
+      "sha256": "8b137413419c84279b76b0bae20fec017b889d543f9397d91a7ced226fbefbd7"
+    },
+    "allocations/3936/parent-poll-2147.json": {
+      "bytes": 9622,
+      "sha256": "871ee466d0aaa47b61b4fc99422ca7de31377878387f7d2eb6f8aa26acfa3f4c"
+    },
+    "allocations/3936/parent-poll-2157.json": {
+      "bytes": 9987,
+      "sha256": "68476251e06e2c5f430d697d058b5d10c728a7f303b5cb074d944650345ac99a"
+    },
+    "allocations/3936/parent-poll-2207.json": {
+      "bytes": 10402,
+      "sha256": "dbec43d9aae19bf69398a0fdde91f446c8bcefbb1689ede11260e0abca41d9a1"
+    },
+    "allocations/3936/parent-poll-2217.json": {
+      "bytes": 10818,
+      "sha256": "4223bb4496b648b8a736c0ae5a6c5ee33559e1f703e1538767fa49ebbda05914"
+    },
+    "allocations/3936/parent-poll-2227.json": {
+      "bytes": 11203,
+      "sha256": "e9884be369d9fec755fc96035e87122e8d792fda6c85fe75997988b3cec69f3c"
+    },
+    "allocations/3936/parent-poll-2237.json": {
+      "bytes": 11587,
+      "sha256": "fb985773642a5065bc5a0640b20a631ac3b812b6efb477e01670a5ba601ff4a4"
+    },
+    "allocations/3936/parent-poll-2247.json": {
+      "bytes": 11999,
+      "sha256": "ee9ecdf74a6c91cf700699c0471a9f0ab360208947444499ffe4cf8c6925b619"
+    },
+    "allocations/3936/parent-poll-2257.json": {
+      "bytes": 12391,
+      "sha256": "9240fedda82d33cd9a0aa8c6e5155bcb4ed59af89001266c9ebafda2f50b4670"
+    },
+    "allocations/3936/parent-poll-2307.json": {
+      "bytes": 12759,
+      "sha256": "188cb7f832fdf299938eb6ab74665ab75643b77083f0b2b2e7dda63ecdc5c2bf"
+    },
+    "allocations/3936/parent-poll-2317.json": {
+      "bytes": 18757,
+      "sha256": "91776d1ea6d2daa778dc38b4fd84f306204fb622496243a9e38f2944baa9caf2"
+    },
+    "allocations/3936/parent-startup-poll.json": {
+      "bytes": 107360,
+      "sha256": "aec6c9fe610632ad14cb90ac375ad56777a8341809e002762ad6332b17d308ad"
+    },
+    "allocations/3936/parent-yield-checkpoints.json": {
+      "bytes": 65045,
+      "sha256": "b6909eb166ec08eb4081221005b5b7650310253b8013c4b4e197c3d48a05288f"
+    },
+    "allocations/3936/parent-yield-resume-bound.json": {
+      "bytes": 72940,
+      "sha256": "0ca35da262a6009afa3e383d202de744c8970863a451bb5113f842ff606d8fa9"
+    },
+    "allocations/3936/parent-yield-resume.json": {
+      "bytes": 67624,
+      "sha256": "993deab06d8fc8a6d97ae5c5ce0abd41cb93809b7422686f783d7e3bda5ec6f4"
+    },
+    "allocations/3936/preflight-before-submit.json": {
+      "bytes": 36689,
+      "sha256": "2fdea0b9ac4778beb13d8ec0b7f4ead5fd635c8001b01a5afe2ef1f9c9bfbd54"
+    },
+    "allocations/3936/source.txt": {
+      "bytes": 41,
+      "sha256": "6d725b08f44eb6725535977c6707611bf005cc9efbec13c5f9b8caba8ecf46bd"
+    },
+    "allocations/3936/wall-plan.txt": {
+      "bytes": 87,
+      "sha256": "a99616db2a89e3162cc8597abe5be976848c772abc52428c28976498ce0ad659"
+    },
+    "experiment-contract.json": {
+      "bytes": 971,
+      "sha256": "3ef39c8d8d2103a95c8fe9da134cb2ba7985aa77b752809a83472fdc2f2ecf21"
+    },
+    "heldout-reports.json": {
+      "bytes": 5204,
+      "sha256": "a2efa2bb36544ca0ba2fb0cf94f11b1ef0756709a409e101d400634ed1e2ae22"
+    },
+    "queue-last.json": {
+      "bytes": 4736,
+      "sha256": "460a6bb60a28583bd383ebd89b24f62d9573c69e68ac0dff36995c7b765d3e5d"
+    },
+    "queue-yield-18.json": {
+      "bytes": 4079,
+      "sha256": "8e247ce9c72c57b2a71931ea7337f89a01fff25fb930eab0f818c9b8ffbd2da5"
+    },
+    "queue-yield-53.json": {
+      "bytes": 4736,
+      "sha256": "460a6bb60a28583bd383ebd89b24f62d9573c69e68ac0dff36995c7b765d3e5d"
+    },
+    "sl-over-limit-0.jsonl": {
+      "bytes": 1970,
+      "sha256": "b3586635a9027c7be18f837382495c0e7602a755ef92b2617731d8681dcdbf27"
+    },
+    "sl-over-limit-1.jsonl": {
+      "bytes": 59120,
+      "sha256": "f036c3f2e4d4ac799b6c55c9d2866b3a20f1721ac46b1f1929dadd50128ad6a8"
+    },
+    "sl-over-limit-2.jsonl": {
+      "bytes": 13790,
+      "sha256": "f2debeb51bf6eddce0087ec55ec60bd707a0d73183b71f58c4bd2d2c1c02d372"
+    },
+    "status.json": {
+      "bytes": 6044,
+      "sha256": "153c5c34f528f93441568fcc99825e96589110bd8cee077f898baefc9b3d3084"
+    },
+    "runtime/manifest.json": {
+      "bytes": 29409,
+      "sha256": "b240a668b7c8fb8d3d5cc4f0b4d4f748fd454a48cd0262794dacf674ba8f282a"
+    },
+    "runtime/source-files.json": {
+      "bytes": 2056,
+      "sha256": "3d6fd7b57e69410677a77bd6b4bd26c77164b2a4540ed180713c754286e5d2a9"
+    },
+    "runtime/resume-evidence.json": {
+      "bytes": 34685,
+      "sha256": "56ad976de354d7d7bb21fa75594067dd48e38f8bfd605ea71a61fc1ed4b45ba0"
+    },
+    "runtime/previous-memory-peak.json": {
+      "bytes": 5728,
+      "sha256": "fdc62569a89c440abaafd33afa443327cbdb842472c5b2a3548f2569245cbb43"
+    },
+    "runtime/budget-resume.json": {
+      "bytes": 739,
+      "sha256": "7c2455b09d46e1b60a6ab99724826a34ed88ba396ec268606f56bc43185159b0"
+    },
+    "runtime/preflight-resume.json": {
+      "bytes": 36689,
+      "sha256": "2fdea0b9ac4778beb13d8ec0b7f4ead5fd635c8001b01a5afe2ef1f9c9bfbd54"
+    },
+    "runtime/submission-resume.json": {
+      "bytes": 578,
+      "sha256": "029c3e78adb940208c4427367db109cf5e23892e2f20bc184a84245274532cd2"
+    },
+    "runtime/job-resume.sh": {
+      "bytes": 6224,
+      "sha256": "2b2efb7642df20682b9a15c4b03423d4e92a1226b0621ef3144ff9e3763b2f4a"
+    },
+    "job3936.log": {
+      "bytes": 15971535,
+      "sha256": "ae1685b2758dcdc144ff1cf44b4459243a57c9b8c43cf51ec8aeef94c0ff9146"
+    }
+  },
+  "external_bundle": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3936-yield\\bundle.json.xz",
+  "external_full_review": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-parent-job3936-yield-accepted\\report.json",
+  "external_full_diagnostics": "c76-job3936-yield/files/sl-over-limit-*.jsonl and full job3936.log; exact raw records retained in external review/bundle",
+  "next_resume": {
+    "runtime_directory": "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936",
+    "manifest_sha256": "57cb53115cd338c778dcc15689c03082262342b39a6b9b80aec98f35a9b4c27c",
+    "manifest": {
+      "checkpoints": [
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+          "sha256": "2bac4afd004002a773642f9671482cd0b9aa71c8b9c59ca2ba1713ffa02eefc6"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+          "sha256": "276586824760c171c277ada13d94e2c72faf40cc73ed5e751dfa8b34727e7893"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+          "sha256": "19a9f2c30ac5d0f0f533c874f946d76c0b95b17cebc9fb6e5c5c256d156bab74"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+          "sha256": "58976667069ced8a0ac0db7510d4988fb14b28180443102e3a86692e6e9eb94c"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+          "sha256": "e1a371d29dbdc29a7bc63fd8c98a0af4fa155d559d539de9f454069812d7bfad"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+          "sha256": "a9365bafee30bbc4ff7343e0a37c50783e8ec777bd90becd33e8c21290cc3f73"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+          "sha256": "a7d321f9e9ffe3856ee9347c321733f67b5fbbedb74ed5c9372c06777e0bb7c6"
+        }
+      ],
+      "baseline": [
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/E4-C73-180-N32-D1024-summary.json",
+          "sha256": "5f031bfa1ae7cd539b608d944916be6f3cdfbca4f3947038d8ed33d36082cfc8"
+        }
+      ],
+      "binaries": [
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+          "sha256": "9955e920ed3465c7726f2e97a0f3cc1fbd531279c0d31ad8a73436df6717d9d2"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+          "sha256": "245b417db210212ce3330d73d1fa6706f12e8bf7445518c6f3abad75c0b73985"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+          "sha256": "e735dc5c73acb316bca7759cf39822ec689b498e283ce084138c69d25502c20e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+          "sha256": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+          "sha256": "f1bc04565a4b6fb5387471570865e765bd2f976576027eeab50755b989e9e6a2"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+          "sha256": "d83fa023de12b6f388e781be837aa0ecbd713fe49891030e69e7ceac3e541e50"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+          "sha256": "7ed5efb6c6e3150aef9707dc5d8220844c613ad263a7278f23230aad278b5966"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+          "sha256": "f9f749c29b34d84a21ee4d459f0f66508268a55c9b22b75a5d93330173b8c5f6"
+        }
+      ],
+      "protected_files": [
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+          "sha256": "9955e920ed3465c7726f2e97a0f3cc1fbd531279c0d31ad8a73436df6717d9d2"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+          "sha256": "245b417db210212ce3330d73d1fa6706f12e8bf7445518c6f3abad75c0b73985"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+          "sha256": "e735dc5c73acb316bca7759cf39822ec689b498e283ce084138c69d25502c20e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+          "sha256": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+          "sha256": "f1bc04565a4b6fb5387471570865e765bd2f976576027eeab50755b989e9e6a2"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+          "sha256": "d83fa023de12b6f388e781be837aa0ecbd713fe49891030e69e7ceac3e541e50"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+          "sha256": "7ed5efb6c6e3150aef9707dc5d8220844c613ad263a7278f23230aad278b5966"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+          "sha256": "f9f749c29b34d84a21ee4d459f0f66508268a55c9b22b75a5d93330173b8c5f6"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/cuda-gates.py",
+          "sha256": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/generate-job.py",
+          "sha256": "4540de3d2ec0ede45dda91555de9ee28f18229139a4f0e5f5a33fce931c9e421"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/immutable-inputs.json",
+          "sha256": "98ef8af6ccfe1a5b72531a32800cccf6cb51f500c8482327b9b4ba2949a50327"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/job.sh.in",
+          "sha256": "ce4ee9f0c2aa876be890cd9e803fe9db04924a92f41cb21a5237ef3ff69198fa"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/memory-peak.py",
+          "sha256": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/preflight.py",
+          "sha256": "ef26f63c2edd3c4ecd585eadfa852c747a68a9489a47cea62e389fce12ec6e9d"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/prepare-bundle.py",
+          "sha256": "af1f309d241c8b7ba536ea16c58a679bbd6d08c88ffb5ad6e71c9f1e353075c0"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/verify-inputs.py",
+          "sha256": "c97054d75cf3fefc4e00ce886305568f801a3ff75087cc6b09b4c41f1fcb4cb5"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json",
+          "sha256": "ab37dfce4e9b55722ccccc5744ca15721ecc443f568988fbc1d69be3d1aed081"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt",
+          "sha256": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt",
+          "sha256": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt",
+          "sha256": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt",
+          "sha256": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt",
+          "sha256": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt",
+          "sha256": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt",
+          "sha256": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-0.pt",
+          "sha256": "5c42e943d509060eeb85efabe9f0474a63fc386ee0dedfbb9a088bb616495261"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-1.pt",
+          "sha256": "119ccb95d3fa3bbe569f4f7b75c36a9cd509b7380375acc163ceb1b64f74c87e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-2.pt",
+          "sha256": "105de0a2ff7cd3a86f0ff32ce92c9c662f4e9b7ce45d9931b56f2e434ae2ed46"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-3.pt",
+          "sha256": "3e0bd39e9621ada631025afb790a20dc216539b334177cf93be558e2cf728709"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-4.pt",
+          "sha256": "519789559e6e32547098ddc0846cf3efd432593badf35e2ec2385de84fb48221"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-5.pt",
+          "sha256": "c3428c8e48d81cf3ad8f843ec783cca30c9cf7a9368e8d53e68e2cd4613cb929"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-6.pt",
+          "sha256": "d09fc6b7f8d12dc0df0059f4fb7453dcd4c6de87b38e6c8eda1464da5c7d2e5b"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt",
+          "sha256": "e018a03374c2e3ce2806c912a2c1796bd9396d7da6debd38a320004bb988a3ab"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt",
+          "sha256": "98d90eeba4382024e063bc565f61ee26bc27420a5e69d3a0a7f293e9e102edd1"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt",
+          "sha256": "ccaa006b278e16ac54551ebba40e259cfc9f0aa0db604e63862caa5b694f7208"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt",
+          "sha256": "9a7a475760ccf0b49bb235ecd6d9310d069af546098c61bdcd834cdcedc96f08"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt",
+          "sha256": "35f5ef1a2ec207886a0d037f69768c3578fe72423ed75c53d6e1437cb65904e3"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt",
+          "sha256": "ff77c2a39fb7de65d062ea9f142be62523d034ebd66ce7efd30dca097f07adcd"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt",
+          "sha256": "14eced8c80c1bcaace4a049ff5bc82392a3bd8023542f295a11f0e173e12e34e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+          "sha256": "2bac4afd004002a773642f9671482cd0b9aa71c8b9c59ca2ba1713ffa02eefc6"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+          "sha256": "276586824760c171c277ada13d94e2c72faf40cc73ed5e751dfa8b34727e7893"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+          "sha256": "19a9f2c30ac5d0f0f533c874f946d76c0b95b17cebc9fb6e5c5c256d156bab74"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+          "sha256": "58976667069ced8a0ac0db7510d4988fb14b28180443102e3a86692e6e9eb94c"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+          "sha256": "e1a371d29dbdc29a7bc63fd8c98a0af4fa155d559d539de9f454069812d7bfad"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+          "sha256": "a9365bafee30bbc4ff7343e0a37c50783e8ec777bd90becd33e8c21290cc3f73"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+          "sha256": "a7d321f9e9ffe3856ee9347c321733f67b5fbbedb74ed5c9372c06777e0bb7c6"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-0.pt",
+          "sha256": "3b3abec21afb649ac447b72f555ad742852c3ea070651377cf5383919eeb9970"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-1.pt",
+          "sha256": "26f44310507ce9e3983d738005b2a3a461fcf609723790efc159f3ebe4437373"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-2.pt",
+          "sha256": "02023757f27de793d41d9cfd0396c0a1fe856c9ff48ad016917a26ca1617b735"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-3.pt",
+          "sha256": "6450cfc641165e479cb16188c193f63cd744d5db5e2d35e6d5c735e23e17ac04"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-4.pt",
+          "sha256": "aef3ff1ef7ffd5fedd2f31e414a5a7c2ed2b8707e78d2029132d932e80e29ca2"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-5.pt",
+          "sha256": "b359cca3fc1c8f0ab81097f8884fcab964e426f9ffd61821690dc9229aec042c"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-6.pt",
+          "sha256": "1727a8909150fbc883afdfa858d4543614419627b4cf9a6afc39daf73f1f37d1"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-0.pt",
+          "sha256": "4c3951afb9a481ba38dd20210502ba99489869eccc6dc9f4bfcb82eaa14a9d4d"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-1.pt",
+          "sha256": "f9638c01e301de7e7ef0019f3b4c9a4b64c0fedc957afa30bb4e363b1905a9c4"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-2.pt",
+          "sha256": "b8bcda7e65ad9ab2dd979e8b41063351cdc2d8b9591288210d7493f2e03dab7b"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-3.pt",
+          "sha256": "b6b0c8c3707bf6a21bb495e10563f86801f6dde855f485d4b60a6070867a38f4"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-4.pt",
+          "sha256": "2037375f785860b93cf3138cbc9c80222e36e27020b2b87716b7afd55f520490"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-5.pt",
+          "sha256": "9ee5a8786ec024e682d50b3023eaebea5374bf87b895a838404c49db78efb680"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-6.pt",
+          "sha256": "ac5e74b991bb13dd4640928744f57affc32951b32cc8872b9c068177bd975d74"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_continue.py",
+          "sha256": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_run.py",
+          "sha256": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/train/checkpoint.py",
+          "sha256": "2af93f8623a80370378feeb0db03421022ecdc011eb2abd8204f27e24f3488af"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/train/e4.py",
+          "sha256": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/train/e4_learner.py",
+          "sha256": "310a83116bfe20e3691451c63e8f484659f552ff39fa4db7aee41823808eb50c"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/train/e4_rewards.py",
+          "sha256": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/train/model.py",
+          "sha256": "4f4b30f670542ac9ccee5ac7eec126f88a0a295d8934da26d02c93d56f12bb42"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73/train/rollout.py",
+          "sha256": "7f618d58876b99e54d2cbee44a2361e380ce3a932fafba1344afefb6c1b2f941"
+        }
+      ],
+      "protected_repo_heads": {
+        "A": "d28c060f92e38385670d70defad5a41fea3421a9",
+        "B": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6"
+      },
+      "protected_repositories": [
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-split",
+          "head": "d28c060f92e38385670d70defad5a41fea3421a9"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-fork-c70",
+          "head": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c73",
+          "head": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2"
+        }
+      ],
+      "experiment": "C76",
+      "phase": "4b",
+      "source_commit": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+      "repo": "/home/zhuyouwei/sts-silent-gpu-c76",
+      "fixed_engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+      "runtime_directory": "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936",
+      "source_files": [
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_distill.py",
+          "sha256": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1",
+          "git_blob_sha1": "2b4cbdb06070593a4d03399f388f1d6a1ae0bf3c"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_continue.py",
+          "sha256": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c",
+          "git_blob_sha1": "f1ea49c282890ccc45d1388276a797eb6920fe55"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_run.py",
+          "sha256": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+          "git_blob_sha1": "ee5a4031f1441353ba37cdc3d847fc772f04f8e6"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/train/e4.py",
+          "sha256": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9",
+          "git_blob_sha1": "185ab01aec92a429d6ebce748bdc4b460523777e"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/train/e4_rewards.py",
+          "sha256": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908",
+          "git_blob_sha1": "1f12eb288628eeb77b0b8b0ed34a2d8c2756d9c3"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/train/e4_learner.py",
+          "sha256": "310a83116bfe20e3691451c63e8f484659f552ff39fa4db7aee41823808eb50c",
+          "git_blob_sha1": "10d539af77d74eeebbbbca249cf6f9ada29621b6"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/train/model.py",
+          "sha256": "4f4b30f670542ac9ccee5ac7eec126f88a0a295d8934da26d02c93d56f12bb42",
+          "git_blob_sha1": "71747d6b8e4b6d24c099a874f72b40250317cbed"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/train/rollout.py",
+          "sha256": "7f618d58876b99e54d2cbee44a2361e380ce3a932fafba1344afefb6c1b2f941",
+          "git_blob_sha1": "dfa7bb1ec32f0f7925514a7a3dd3b4bfc480ea7b"
+        },
+        {
+          "path": "/home/zhuyouwei/sts-silent-gpu-c76/train/checkpoint.py",
+          "sha256": "2af93f8623a80370378feeb0db03421022ecdc011eb2abd8204f27e24f3488af",
+          "git_blob_sha1": "365504968252b65ae90621304692e102a4496570"
+        }
+      ],
+      "build": "/home/zhuyouwei/spire-build-e4-5eb2832",
+      "source_directory": "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180",
+      "selection": [
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4a-3923/selection.json",
+          "sha256": "0992a479f2e369c00e9b8f03e7c73215093aa5f62532df5ea9f6686aff0d0ad2"
+        }
+      ],
+      "total_stage_cap_node_seconds": 21519.5,
+      "training_subcap_node_seconds": 14400,
+      "world_size": 7,
+      "resume_directory": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924",
+      "resume_files": [
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/train-53.pt",
+          "sha256": "9182ea0d2b8f68ebf9818860fc91c1b988979d9a2306206e1a7ed4519d73824f"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/train-53.pt",
+          "sha256": "34d256a8565c47986e2e0bebd6830a1c444f4013cc24ab7d35d0d2c2e320bb0d"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/train-53.pt",
+          "sha256": "8508071818a0494db9272581d197958871d7d5e872082ed2de086a4de0fafab4"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/train-53.pt",
+          "sha256": "09390fca7f34912b18c0d93216011cfca42d01e2ec4743b89f7b49f844c4c16e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/train-53.pt",
+          "sha256": "b6424fc02ebf6974134cad93e8a9bef3494f09c670090e7ec229039addc3882e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/train-53.pt",
+          "sha256": "d70a31a57a092096512961e0244d50672e06502bd69e2df7d18f58ec11637f28"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/train-53.pt",
+          "sha256": "165b1df9b623de03127199cfd971a98487211972b050be941d648a4398f64e9c"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-0.pt",
+          "sha256": "f7111bd66705c54a42f26adc00520c4527b0a256f92de6f877ccdbdd6f671e3f"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-1.pt",
+          "sha256": "3c6f878c7c2806160d22b57b22f1a89e0786e5b6a0630479d45637dbd1a654f9"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-2.pt",
+          "sha256": "b019058c753ee6559d39c2608c362394103dcf94368fe104715a62fbecba4e39"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-3.pt",
+          "sha256": "7c2343f4f0fb52ef571cc225c15333af802f9b7c5cab450cf906ba8e21670635"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-4.pt",
+          "sha256": "4f2909d6c20c90cc6bf9ef7508ef3c627d55dced8a6083d055a6114642103347"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-5.pt",
+          "sha256": "92c0cae5eae23c6d56e7e41675e0f651310349bdb9f3e4d0ad8aa454cf753e32"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-6.pt",
+          "sha256": "4e920fa3f17a9dd1fbb75804819baf0c04dad26c6230f53e976159a9759f4e1a"
+        }
+      ],
+      "immutable_resume_files": [
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints.json",
+          "sha256": "35bf55a74e5ff2ee8cf55705f8b2b170c2896050cc3500d7c633fc50718ef70d"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-0.pt",
+          "sha256": "d0635d4c35c08c17264d31a28ba7ce1d1498da8a87e78b4c7ca252c4399af7ec"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-1.pt",
+          "sha256": "807c427192452b2c732e4dc777b7b4f44ac33b8caffa3c0e8d0be63e31456b01"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-2.pt",
+          "sha256": "cab654b93c5c1cb79dc85fa40228e8fe96d5faa84efa8a6aaf406712a2ae093c"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-3.pt",
+          "sha256": "6b14cc7a6810ec655ff5be3d88743a055eb9bcddee28f2ea757cc149a65ff487"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-4.pt",
+          "sha256": "ab5f125255d110149cae790492edca0c372f9a1149364d184d37484925be53e3"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-5.pt",
+          "sha256": "906ed44f566eb1226ed66434e97af7004c0197061d8c60a6511175b1ca25f7cb"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-6.pt",
+          "sha256": "6d2fe901af92ae39c420f89167bd4925110b782d9778ebbe8f0631504eb3daaa"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints.json",
+          "sha256": "9a79bfac81bed8207326d63f12bfedabeab1a586747f8ead23ef693ee1df038b"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-0.pt",
+          "sha256": "69529518d8c8a19ef7d106fcf65826ae28c94297389749effaeab7fb580d6436"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-1.pt",
+          "sha256": "ff141e6f144d4116b3dc376d533bf2ac44f7d0a086eae4a543d19f8720435f2f"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-2.pt",
+          "sha256": "6a1794fa759436a83ce6ec8de9af5c495c33a32bd1130587cf7b516613b2cb27"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-3.pt",
+          "sha256": "7d42b2196753004e5f5d91b20bf797751ee6255d191b144c86060287bb7cb6f3"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-4.pt",
+          "sha256": "50094802000b36e2b73553a2af9f4e78dd6f364a5b34766f0186aae3cf218447"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-5.pt",
+          "sha256": "2729f0f96dfcf5ce1a4f60aa8c32b052467d747c298fa3b13a35bd80c9246215"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-6.pt",
+          "sha256": "d61bca29542cfc0f4e5ec18538d0e17f8828f0964e22dea943237691d2b6f55c"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints.json",
+          "sha256": "b6909eb166ec08eb4081221005b5b7650310253b8013c4b4e197c3d48a05288f"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-0.pt",
+          "sha256": "f7111bd66705c54a42f26adc00520c4527b0a256f92de6f877ccdbdd6f671e3f"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-1.pt",
+          "sha256": "3c6f878c7c2806160d22b57b22f1a89e0786e5b6a0630479d45637dbd1a654f9"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-2.pt",
+          "sha256": "b019058c753ee6559d39c2608c362394103dcf94368fe104715a62fbecba4e39"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-3.pt",
+          "sha256": "7c2343f4f0fb52ef571cc225c15333af802f9b7c5cab450cf906ba8e21670635"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-4.pt",
+          "sha256": "4f2909d6c20c90cc6bf9ef7508ef3c627d55dced8a6083d055a6114642103347"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-5.pt",
+          "sha256": "92c0cae5eae23c6d56e7e41675e0f651310349bdb9f3e4d0ad8aa454cf753e32"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-6.pt",
+          "sha256": "4e920fa3f17a9dd1fbb75804819baf0c04dad26c6230f53e976159a9759f4e1a"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-0.pt",
+          "sha256": "a9c9bf79b45efd539b6a44fb7e7b95c246a8356d721922e98aee75dc10ee9e72"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-1.pt",
+          "sha256": "6ae6859aabd23f52e252f4361b1146a630b503380aad2a2ad4a29325f2fb30f6"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-2.pt",
+          "sha256": "9044af37309eaa35febee0db1af714d41058854c42434aab51d021d256510361"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-3.pt",
+          "sha256": "b7b27fe59788721353e5ccc4814cba9db3cec67cd54511f6f37281ee5ad6cac6"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-0.pt",
+          "sha256": "4c065f05dbaa135bfc91d0e13b323d8ca534bc2e75a3af0411c1468ff17022da"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-1.pt",
+          "sha256": "d95ed19efa2639ce3f3c910f3a5cecc59e8005dec312c204179d52d6a31fbf9e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-2.pt",
+          "sha256": "3cbd862f9f32b5eb11f53bbc6822924c5d5023caf4523468ed474028385063d1"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-0.pt",
+          "sha256": "476621fc59756efb29d078abbda65ee7e87e816dadffda45aee302557c6a66eb"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-1.pt",
+          "sha256": "c33d26eb51048900cad173d1c47faab201bb9f37745dfdc40e445c3c3bd82da3"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-2.pt",
+          "sha256": "54d8d61f9cba6d0b4d0de28dc78370e860316d0a7eb1b26115dbe6600d0e59c7"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-3.pt",
+          "sha256": "7464f5507f82c91aef0fdd65156583fe08cc59766da6237ff6cf58623d46c18b"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-0.pt",
+          "sha256": "31b7d7ad524abee6409f0af63b31ade1668de96f7ae35ded67b5a05cd8bd4dcb"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-1.pt",
+          "sha256": "ebf28c7607c7490a7357801c17b81bd87fa344342e92bef479d5ad1f984ecfba"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-2.pt",
+          "sha256": "fd48fe752b23aff86a00fe0824d5cc7b4927ab36763ede84ae8ae2b0ea1c6cb9"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-3.pt",
+          "sha256": "b4da2f24d806c372c95db8ea4f32506c465100edd6d305c4a7cad80597fba023"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/frozen-holdout-0.pt",
+          "sha256": "40dd5d652e7988c6f407e8cc512573aea3c73d0aad719c16a3e1e08f1a2e0321"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/frozen-holdout-1.pt",
+          "sha256": "1b0e8414c2bc08b01bba2d3697f20647f033278ccf93ea4fb76de13840773ce6"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-0.pt",
+          "sha256": "bb34b7d8887c18509e76e1f143e2a700721e0f7390e48f8bb9e92ad4fe442c2f"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-1.pt",
+          "sha256": "8e0d42478ea0900bed14e84dcc8fa8ce1fdf0f4cc37dc75cd147e8f183f154dd"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-2.pt",
+          "sha256": "10117333fb1596f6af6b095de2ff1157cbc42684cbf5ad4907d29b9312edfddb"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-3.pt",
+          "sha256": "a3d9ba6f83250b9940c994db7754eda7c39984b95638f5ea78042b84105f1c1d"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-0.pt",
+          "sha256": "e4d7da56cf91c429fa987ab4552c3bb24e6f850e2d7a1757b7bcc1e1d16465db"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-1.pt",
+          "sha256": "f587122423ed7d31d3a36885f71506c9bd4dd7aaafddcddfb4d0d82bc35ba94e"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-2.pt",
+          "sha256": "c490b525c7be5f6e8cccf876419a00639df95a7efb7d3da16fdacb2fa789a337"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-3.pt",
+          "sha256": "b4e1c7a08d503da80000a3b45d5e5eee35af67efc66ed2cac3aa2c3a1dd1ea29"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/experiment-contract.json",
+          "sha256": "3ef39c8d8d2103a95c8fe9da134cb2ba7985aa77b752809a83472fdc2f2ecf21"
+        }
+      ],
+      "binding_files": [
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/resume-evidence.json",
+          "sha256": "0ca35da262a6009afa3e383d202de744c8970863a451bb5113f842ff606d8fa9"
+        },
+        {
+          "path": "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/previous-memory-peak.json",
+          "sha256": "b02a2d765ea9629147d37c14481d5635d7ba78b9ec11ed5963b8b7db2a3bcd3c"
+        }
+      ],
+      "previous_memory_peak_bytes": 12965302272,
+      "request_memory_mib": 15456,
+      "helpers": [
+        {
+          "name": "prepare-bundle.py",
+          "sha256": "5d97da1eef03938872a329ab3d056762e7a39aac90ada15911dca911da07ef34"
+        },
+        {
+          "name": "preflight.py",
+          "sha256": "3e6c6337c345dd70a7a42b4f03c03e6f54cb311963d9c66cc355a9d303ef3c69"
+        },
+        {
+          "name": "generate-job.py",
+          "sha256": "849f268d0794a5144f39035a7987f8b92a3c2fb816c082a4302445d1eb2ad6f7"
+        },
+        {
+          "name": "job.sh.in",
+          "sha256": "f165bc7351c6e3a2ce04f9a73f0a37c258cc6d4f3a4c686e7b59e92e082c7390"
+        },
+        {
+          "name": "verify-inputs.py",
+          "sha256": "c6752da23807ca1f25c2b330d56acf1ccf0f17cb9a64470c7e632ccc78a32d2d"
+        },
+        {
+          "name": "snapshot-resume.py",
+          "sha256": "6c9025d43438d5dbdb82f7d6d8fdd919e76166792ce86b6fb7bc5aa6b7d92bb0"
+        },
+        {
+          "name": "cuda-gates.py",
+          "sha256": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e"
+        },
+        {
+          "name": "validate-junit.py",
+          "sha256": "d9577a1cdbfbdf68a12e3d389f0c6fc9485ff5afc70fa3651e90e198e3174404"
+        },
+        {
+          "name": "memory-peak.py",
+          "sha256": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc"
+        },
+        {
+          "name": "immutable-inputs.json",
+          "sha256": "1abd6a3e3beb6a7de2bc5534b1d30014378a9c80002d4258da44a29a1f09a321"
+        }
+      ]
+    },
+    "before": {
+      "source_commit": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+      "manifest_sha256": "57cb53115cd338c778dcc15689c03082262342b39a6b9b80aec98f35a9b4c27c",
+      "inputs": {
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt": "2bac4afd004002a773642f9671482cd0b9aa71c8b9c59ca2ba1713ffa02eefc6",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt": "276586824760c171c277ada13d94e2c72faf40cc73ed5e751dfa8b34727e7893",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt": "19a9f2c30ac5d0f0f533c874f946d76c0b95b17cebc9fb6e5c5c256d156bab74",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt": "58976667069ced8a0ac0db7510d4988fb14b28180443102e3a86692e6e9eb94c",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt": "e1a371d29dbdc29a7bc63fd8c98a0af4fa155d559d539de9f454069812d7bfad",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt": "a9365bafee30bbc4ff7343e0a37c50783e8ec777bd90becd33e8c21290cc3f73",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt": "a7d321f9e9ffe3856ee9347c321733f67b5fbbedb74ed5c9372c06777e0bb7c6",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/E4-C73-180-N32-D1024-summary.json": "5f031bfa1ae7cd539b608d944916be6f3cdfbca4f3947038d8ed33d36082cfc8",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so": "9955e920ed3465c7726f2e97a0f3cc1fbd531279c0d31ad8a73436df6717d9d2",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so": "245b417db210212ce3330d73d1fa6706f12e8bf7445518c6f3abad75c0b73985",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch": "e735dc5c73acb316bca7759cf39822ec689b498e283ce084138c69d25502c20e",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults": "f1bc04565a4b6fb5387471570865e765bd2f976576027eeab50755b989e9e6a2",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity": "d83fa023de12b6f388e781be837aa0ecbd713fe49891030e69e7ceac3e541e50",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache": "7ed5efb6c6e3150aef9707dc5d8220844c613ad263a7278f23230aad278b5966",
+        "/home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so": "f9f749c29b34d84a21ee4d459f0f66508268a55c9b22b75a5d93330173b8c5f6",
+        "/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_distill.py": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1",
+        "/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_continue.py": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c",
+        "/home/zhuyouwei/sts-silent-gpu-c76/tools/e4_run.py": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+        "/home/zhuyouwei/sts-silent-gpu-c76/train/e4.py": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9",
+        "/home/zhuyouwei/sts-silent-gpu-c76/train/e4_rewards.py": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908",
+        "/home/zhuyouwei/sts-silent-gpu-c76/train/e4_learner.py": "310a83116bfe20e3691451c63e8f484659f552ff39fa4db7aee41823808eb50c",
+        "/home/zhuyouwei/sts-silent-gpu-c76/train/model.py": "4f4b30f670542ac9ccee5ac7eec126f88a0a295d8934da26d02c93d56f12bb42",
+        "/home/zhuyouwei/sts-silent-gpu-c76/train/rollout.py": "7f618d58876b99e54d2cbee44a2361e380ce3a932fafba1344afefb6c1b2f941",
+        "/home/zhuyouwei/sts-silent-gpu-c76/train/checkpoint.py": "2af93f8623a80370378feeb0db03421022ecdc011eb2abd8204f27e24f3488af",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/cuda-gates.py": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/generate-job.py": "4540de3d2ec0ede45dda91555de9ee28f18229139a4f0e5f5a33fce931c9e421",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/immutable-inputs.json": "98ef8af6ccfe1a5b72531a32800cccf6cb51f500c8482327b9b4ba2949a50327",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/job.sh.in": "ce4ee9f0c2aa876be890cd9e803fe9db04924a92f41cb21a5237ef3ff69198fa",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/memory-peak.py": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/preflight.py": "ef26f63c2edd3c4ecd585eadfa852c747a68a9489a47cea62e389fce12ec6e9d",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/prepare-bundle.py": "af1f309d241c8b7ba536ea16c58a679bbd6d08c88ffb5ad6e71c9f1e353075c0",
+        "/home/zhuyouwei/spire-downloads/c74-slurm-preparation/verify-inputs.py": "c97054d75cf3fefc4e00ce886305568f801a3ff75087cc6b09b4c41f1fcb4cb5",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json": "ab37dfce4e9b55722ccccc5744ca15721ecc443f568988fbc1d69be3d1aed081",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-0.pt": "5c42e943d509060eeb85efabe9f0474a63fc386ee0dedfbb9a088bb616495261",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-1.pt": "119ccb95d3fa3bbe569f4f7b75c36a9cd509b7380375acc163ceb1b64f74c87e",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-2.pt": "105de0a2ff7cd3a86f0ff32ce92c9c662f4e9b7ce45d9931b56f2e434ae2ed46",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-3.pt": "3e0bd39e9621ada631025afb790a20dc216539b334177cf93be558e2cf728709",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-4.pt": "519789559e6e32547098ddc0846cf3efd432593badf35e2ec2385de84fb48221",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-5.pt": "c3428c8e48d81cf3ad8f843ec783cca30c9cf7a9368e8d53e68e2cd4613cb929",
+        "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-6.pt": "d09fc6b7f8d12dc0df0059f4fb7453dcd4c6de87b38e6c8eda1464da5c7d2e5b",
+        "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt": "e018a03374c2e3ce2806c912a2c1796bd9396d7da6debd38a320004bb988a3ab",
+        "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt": "98d90eeba4382024e063bc565f61ee26bc27420a5e69d3a0a7f293e9e102edd1",
+        "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt": "ccaa006b278e16ac54551ebba40e259cfc9f0aa0db604e63862caa5b694f7208",
+        "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt": "9a7a475760ccf0b49bb235ecd6d9310d069af546098c61bdcd834cdcedc96f08",
+        "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt": "35f5ef1a2ec207886a0d037f69768c3578fe72423ed75c53d6e1437cb65904e3",
+        "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt": "ff77c2a39fb7de65d062ea9f142be62523d034ebd66ce7efd30dca097f07adcd",
+        "/home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt": "14eced8c80c1bcaace4a049ff5bc82392a3bd8023542f295a11f0e173e12e34e",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-0.pt": "3b3abec21afb649ac447b72f555ad742852c3ea070651377cf5383919eeb9970",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-1.pt": "26f44310507ce9e3983d738005b2a3a461fcf609723790efc159f3ebe4437373",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-2.pt": "02023757f27de793d41d9cfd0396c0a1fe856c9ff48ad016917a26ca1617b735",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-3.pt": "6450cfc641165e479cb16188c193f63cd744d5db5e2d35e6d5c735e23e17ac04",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-4.pt": "aef3ff1ef7ffd5fedd2f31e414a5a7c2ed2b8707e78d2029132d932e80e29ca2",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-5.pt": "b359cca3fc1c8f0ab81097f8884fcab964e426f9ffd61821690dc9229aec042c",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-6.pt": "1727a8909150fbc883afdfa858d4543614419627b4cf9a6afc39daf73f1f37d1",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-0.pt": "4c3951afb9a481ba38dd20210502ba99489869eccc6dc9f4bfcb82eaa14a9d4d",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-1.pt": "f9638c01e301de7e7ef0019f3b4c9a4b64c0fedc957afa30bb4e363b1905a9c4",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-2.pt": "b8bcda7e65ad9ab2dd979e8b41063351cdc2d8b9591288210d7493f2e03dab7b",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-3.pt": "b6b0c8c3707bf6a21bb495e10563f86801f6dde855f485d4b60a6070867a38f4",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-4.pt": "2037375f785860b93cf3138cbc9c80222e36e27020b2b87716b7afd55f520490",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-5.pt": "9ee5a8786ec024e682d50b3023eaebea5374bf87b895a838404c49db78efb680",
+        "/home/zhuyouwei/spire-downloads/e4-c73-3897/rank-6.pt": "ac5e74b991bb13dd4640928744f57affc32951b32cc8872b9c068177bd975d74",
+        "/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_continue.py": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c",
+        "/home/zhuyouwei/sts-silent-gpu-c73/tools/e4_run.py": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+        "/home/zhuyouwei/sts-silent-gpu-c73/train/checkpoint.py": "2af93f8623a80370378feeb0db03421022ecdc011eb2abd8204f27e24f3488af",
+        "/home/zhuyouwei/sts-silent-gpu-c73/train/e4.py": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9",
+        "/home/zhuyouwei/sts-silent-gpu-c73/train/e4_learner.py": "310a83116bfe20e3691451c63e8f484659f552ff39fa4db7aee41823808eb50c",
+        "/home/zhuyouwei/sts-silent-gpu-c73/train/e4_rewards.py": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908",
+        "/home/zhuyouwei/sts-silent-gpu-c73/train/model.py": "4f4b30f670542ac9ccee5ac7eec126f88a0a295d8934da26d02c93d56f12bb42",
+        "/home/zhuyouwei/sts-silent-gpu-c73/train/rollout.py": "7f618d58876b99e54d2cbee44a2361e380ce3a932fafba1344afefb6c1b2f941",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4a-3923/selection.json": "0992a479f2e369c00e9b8f03e7c73215093aa5f62532df5ea9f6686aff0d0ad2",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints.json": "35bf55a74e5ff2ee8cf55705f8b2b170c2896050cc3500d7c633fc50718ef70d",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-0.pt": "d0635d4c35c08c17264d31a28ba7ce1d1498da8a87e78b4c7ca252c4399af7ec",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-1.pt": "807c427192452b2c732e4dc777b7b4f44ac33b8caffa3c0e8d0be63e31456b01",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-2.pt": "cab654b93c5c1cb79dc85fa40228e8fe96d5faa84efa8a6aaf406712a2ae093c",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-3.pt": "6b14cc7a6810ec655ff5be3d88743a055eb9bcddee28f2ea757cc149a65ff487",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-4.pt": "ab5f125255d110149cae790492edca0c372f9a1149364d184d37484925be53e3",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-5.pt": "906ed44f566eb1226ed66434e97af7004c0197061d8c60a6511175b1ca25f7cb",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3924/parent-yield-checkpoints/rank-6.pt": "6d2fe901af92ae39c420f89167bd4925110b782d9778ebbe8f0631504eb3daaa",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints.json": "9a79bfac81bed8207326d63f12bfedabeab1a586747f8ead23ef693ee1df038b",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-0.pt": "69529518d8c8a19ef7d106fcf65826ae28c94297389749effaeab7fb580d6436",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-1.pt": "ff141e6f144d4116b3dc376d533bf2ac44f7d0a086eae4a543d19f8720435f2f",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-2.pt": "6a1794fa759436a83ce6ec8de9af5c495c33a32bd1130587cf7b516613b2cb27",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-3.pt": "7d42b2196753004e5f5d91b20bf797751ee6255d191b144c86060287bb7cb6f3",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-4.pt": "50094802000b36e2b73553a2af9f4e78dd6f364a5b34766f0186aae3cf218447",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-5.pt": "2729f0f96dfcf5ce1a4f60aa8c32b052467d747c298fa3b13a35bd80c9246215",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-first-observed-checkpoints/rank-6.pt": "d61bca29542cfc0f4e5ec18538d0e17f8828f0964e22dea943237691d2b6f55c",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints.json": "b6909eb166ec08eb4081221005b5b7650310253b8013c4b4e197c3d48a05288f",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-0.pt": "f7111bd66705c54a42f26adc00520c4527b0a256f92de6f877ccdbdd6f671e3f",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-1.pt": "3c6f878c7c2806160d22b57b22f1a89e0786e5b6a0630479d45637dbd1a654f9",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-2.pt": "b019058c753ee6559d39c2608c362394103dcf94368fe104715a62fbecba4e39",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-3.pt": "7c2343f4f0fb52ef571cc225c15333af802f9b7c5cab450cf906ba8e21670635",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-4.pt": "4f2909d6c20c90cc6bf9ef7508ef3c627d55dced8a6083d055a6114642103347",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-5.pt": "92c0cae5eae23c6d56e7e41675e0f651310349bdb9f3e4d0ad8aa454cf753e32",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/allocations/3936/parent-yield-checkpoints/rank-6.pt": "4e920fa3f17a9dd1fbb75804819baf0c04dad26c6230f53e976159a9759f4e1a",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-0.pt": "a9c9bf79b45efd539b6a44fb7e7b95c246a8356d721922e98aee75dc10ee9e72",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-1.pt": "6ae6859aabd23f52e252f4361b1146a630b503380aad2a2ad4a29325f2fb30f6",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-2.pt": "9044af37309eaa35febee0db1af714d41058854c42434aab51d021d256510361",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/frozen-holdout-3.pt": "b7b27fe59788721353e5ccc4814cba9db3cec67cd54511f6f37281ee5ad6cac6",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-0.pt": "4c065f05dbaa135bfc91d0e13b323d8ca534bc2e75a3af0411c1468ff17022da",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-1.pt": "d95ed19efa2639ce3f3c910f3a5cecc59e8005dec312c204179d52d6a31fbf9e",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/frozen-holdout-2.pt": "3cbd862f9f32b5eb11f53bbc6822924c5d5023caf4523468ed474028385063d1",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-0.pt": "476621fc59756efb29d078abbda65ee7e87e816dadffda45aee302557c6a66eb",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-1.pt": "c33d26eb51048900cad173d1c47faab201bb9f37745dfdc40e445c3c3bd82da3",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-2.pt": "54d8d61f9cba6d0b4d0de28dc78370e860316d0a7eb1b26115dbe6600d0e59c7",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/frozen-holdout-3.pt": "7464f5507f82c91aef0fdd65156583fe08cc59766da6237ff6cf58623d46c18b",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-0.pt": "31b7d7ad524abee6409f0af63b31ade1668de96f7ae35ded67b5a05cd8bd4dcb",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-1.pt": "ebf28c7607c7490a7357801c17b81bd87fa344342e92bef479d5ad1f984ecfba",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-2.pt": "fd48fe752b23aff86a00fe0824d5cc7b4927ab36763ede84ae8ae2b0ea1c6cb9",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/frozen-holdout-3.pt": "b4da2f24d806c372c95db8ea4f32506c465100edd6d305c4a7cad80597fba023",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/frozen-holdout-0.pt": "40dd5d652e7988c6f407e8cc512573aea3c73d0aad719c16a3e1e08f1a2e0321",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/frozen-holdout-1.pt": "1b0e8414c2bc08b01bba2d3697f20647f033278ccf93ea4fb76de13840773ce6",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-0.pt": "bb34b7d8887c18509e76e1f143e2a700721e0f7390e48f8bb9e92ad4fe442c2f",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-1.pt": "8e0d42478ea0900bed14e84dcc8fa8ce1fdf0f4cc37dc75cd147e8f183f154dd",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-2.pt": "10117333fb1596f6af6b095de2ff1157cbc42684cbf5ad4907d29b9312edfddb",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/frozen-holdout-3.pt": "a3d9ba6f83250b9940c994db7754eda7c39984b95638f5ea78042b84105f1c1d",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-0.pt": "e4d7da56cf91c429fa987ab4552c3bb24e6f850e2d7a1757b7bcc1e1d16465db",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-1.pt": "f587122423ed7d31d3a36885f71506c9bd4dd7aaafddcddfb4d0d82bc35ba94e",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-2.pt": "c490b525c7be5f6e8cccf876419a00639df95a7efb7d3da16fdacb2fa789a337",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/frozen-holdout-3.pt": "b4e1c7a08d503da80000a3b45d5e5eee35af67efc66ed2cac3aa2c3a1dd1ea29",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/experiment-contract.json": "3ef39c8d8d2103a95c8fe9da134cb2ba7985aa77b752809a83472fdc2f2ecf21",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/resume-evidence.json": "0ca35da262a6009afa3e383d202de744c8970863a451bb5113f842ff606d8fa9",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/previous-memory-peak.json": "b02a2d765ea9629147d37c14481d5635d7ba78b9ec11ed5963b8b7db2a3bcd3c",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/prepare-bundle.py": "5d97da1eef03938872a329ab3d056762e7a39aac90ada15911dca911da07ef34",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/preflight.py": "3e6c6337c345dd70a7a42b4f03c03e6f54cb311963d9c66cc355a9d303ef3c69",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/generate-job.py": "849f268d0794a5144f39035a7987f8b92a3c2fb816c082a4302445d1eb2ad6f7",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/job.sh.in": "f165bc7351c6e3a2ce04f9a73f0a37c258cc6d4f3a4c686e7b59e92e082c7390",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/verify-inputs.py": "c6752da23807ca1f25c2b330d56acf1ccf0f17cb9a64470c7e632ccc78a32d2d",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/snapshot-resume.py": "6c9025d43438d5dbdb82f7d6d8fdd919e76166792ce86b6fb7bc5aa6b7d92bb0",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/cuda-gates.py": "59d9afd7c722ba789b226f9a3afb391e533503ef9e6132a799c73f762881060e",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/validate-junit.py": "d9577a1cdbfbdf68a12e3d389f0c6fc9485ff5afc70fa3651e90e198e3174404",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/memory-peak.py": "4d2849fb9b158a96d9191eb93ea7588bd172f18530abc7a8d439a121f4a45adc",
+        "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936/immutable-inputs.json": "1abd6a3e3beb6a7de2bc5534b1d30014378a9c80002d4258da44a29a1f09a321",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-0/train-53.pt": "9182ea0d2b8f68ebf9818860fc91c1b988979d9a2306206e1a7ed4519d73824f",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-1/train-53.pt": "34d256a8565c47986e2e0bebd6830a1c444f4013cc24ab7d35d0d2c2e320bb0d",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-2/train-53.pt": "8508071818a0494db9272581d197958871d7d5e872082ed2de086a4de0fafab4",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-3/train-53.pt": "09390fca7f34912b18c0d93216011cfca42d01e2ec4743b89f7b49f844c4c16e",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-4/train-53.pt": "b6424fc02ebf6974134cad93e8a9bef3494f09c670090e7ec229039addc3882e",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-5/train-53.pt": "d70a31a57a092096512961e0244d50672e06502bd69e2df7d18f58ec11637f28",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/data-rank-6/train-53.pt": "165b1df9b623de03127199cfd971a98487211972b050be941d648a4398f64e9c",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-0.pt": "f7111bd66705c54a42f26adc00520c4527b0a256f92de6f877ccdbdd6f671e3f",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-1.pt": "3c6f878c7c2806160d22b57b22f1a89e0786e5b6a0630479d45637dbd1a654f9",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-2.pt": "b019058c753ee6559d39c2608c362394103dcf94368fe104715a62fbecba4e39",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-3.pt": "7c2343f4f0fb52ef571cc225c15333af802f9b7c5cab450cf906ba8e21670635",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-4.pt": "4f2909d6c20c90cc6bf9ef7508ef3c627d55dced8a6083d055a6114642103347",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-5.pt": "92c0cae5eae23c6d56e7e41675e0f651310349bdb9f3e4d0ad8aa454cf753e32",
+        "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924/rank-6.pt": "4e920fa3f17a9dd1fbb75804819baf0c04dad26c6230f53e976159a9759f4e1a"
+      },
+      "checked_mutable_resume_inputs": true,
+      "protected_repository_heads": {
+        "/home/zhuyouwei/sts-silent-gpu-split": "d28c060f92e38385670d70defad5a41fea3421a9",
+        "/home/zhuyouwei/sts-silent-gpu-fork-c70": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+        "/home/zhuyouwei/sts-silent-gpu-c73": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2"
+      }
+    },
+    "root": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924",
+    "same_output_and_resume": true,
+    "max_wall_seconds": 12915,
+    "max_prospective_reservation_node_seconds": 11300.625,
+    "request_memory_mib": 15456,
+    "fresh_resource_preflight": {
+      "at": "2026-10-23T15:40:51.575810+00:00",
+      "status": "blocked_resources_no_submission",
+      "owner": "/root",
+      "fixed_world_size": 7,
+      "free_gpu_count": 1,
+      "request_memory_mib": 15456,
+      "slurm_memory_after_request_mib": 10171,
+      "minimum_memory_spare_mib": 16384,
+      "memavailable_before_mib": 96069.52734375,
+      "memavailable_after_request_mib": 80613.52734375,
+      "home_mib": 29343,
+      "own_queue_empty": true,
+      "pending_resources_or_priority": [],
+      "running_3943": {
+        "JobId": "3943",
+        "JobName": "ps_pic_ffac91e6",
+        "UserId": "zwh(1005)",
+        "GroupId": "zwh(1005)",
+        "MCS_label": "N/A",
+        "Priority": "4294899682",
+        "Nice": "0",
+        "Account": "(null)",
+        "QOS": "(null)",
+        "JobState": "RUNNING",
+        "Reason": "None",
+        "Dependency": "(null)",
+        "Requeue": "1",
+        "Restarts": "0",
+        "BatchFlag": "1",
+        "Reboot": "0",
+        "ExitCode": "0:0",
+        "RunTime": "00:26:49",
+        "TimeLimit": "3-00:00:00",
+        "TimeMin": "N/A",
+        "SubmitTime": "2026-10-23T23:13:20",
+        "EligibleTime": "2026-10-23T23:13:20",
+        "AccrueTime": "2026-10-23T23:13:20",
+        "StartTime": "2026-10-23T23:13:35",
+        "EndTime": "2026-10-26T23:13:35",
+        "Deadline": "N/A",
+        "SuspendTime": "None",
+        "SecsPreSuspend": "0",
+        "LastSchedEval": "2026-10-23T23:13:35",
+        "Scheduler": "Main",
+        "Partition": "N56_128G_V100",
+        "AllocNode:Sid": "gpu01:733725",
+        "ReqNodeList": "(null)",
+        "ExcNodeList": "(null)",
+        "NodeList": "gpu01",
+        "BatchHost": "gpu01",
+        "NumNodes": "1",
+        "NumCPUs": "12",
+        "NumTasks": "6",
+        "CPUs/Task": "2",
+        "ReqB:S:C:T": "0:0:*:*",
+        "TRES": "cpu=12,mem=96G,node=1,billing=12",
+        "Socks/Node": "*",
+        "NtasksPerN:B:S:C": "0:0:*:*",
+        "CoreSpec": "*",
+        "MinCPUsNode": "2",
+        "MinMemoryNode": "96G",
+        "MinTmpDiskNode": "0",
+        "Features": "(null)",
+        "DelayBoot": "00:00:00",
+        "OverSubscribe": "OK",
+        "Contiguous": "0",
+        "Licenses": "(null)",
+        "Network": "(null)",
+        "Command": "/home/zwh/WarpXPIC_XRAYSOURCE_pipeline_v1_runs/ffac91e61e6a49b082953e0e6dccf5f4/pic.sh",
+        "WorkDir": "/home/zwh/WarpXPIC_XRAYSOURCE_pipeline_v1",
+        "StdErr": "/home/zwh/WarpXPIC_XRAYSOURCE_pipeline_v1_runs/ffac91e61e6a49b082953e0e6dccf5f4/logs/pic_3943_4294967294.log",
+        "StdIn": "/dev/null",
+        "StdOut": "/home/zwh/WarpXPIC_XRAYSOURCE_pipeline_v1_runs/ffac91e61e6a49b082953e0e6dccf5f4/logs/pic_3943_4294967294.log",
+        "Power": "",
+        "TresPerNode": "gres:gpu:V100:6"
+      },
+      "next_query_not_before": "2026-10-23T15:51:21.575810+00:00",
+      "raw_evidence": "c76-4b-resume3936-production/preflight-failure-full.json",
+      "raw_gzip_sha256": "7c662d9a5d6567b29065d6ad620dea99abed9fb1c13b5bc021cded8630483c00",
+      "reservation_written": false,
+      "submission_attempted": false,
+      "scope": "One actual fresh preflight after actual3936 settlement; assertion failed on free1<world7; independently derived Slurm spare10171MiB also below16384; actual MemAvailable spare passes."
+    },
+    "actual_receipt": null,
+    "reservation_written": false
+  },
+  "limitations": [
+    "Review worker verified parent CPU-load reports; only parent actually deserialized seven stopped53 checkpoints.",
+    "Actual final Slurm is preserved parent-poll-2317; a later required read found the object purged.",
+    "Provisional distill node10039.123479405243 is not allocation cost.",
+    "No full student1024dev or new18 path audit; no4c gate.",
+    "SL-copy budget diagnostics: original-game cause unverified; no new rule/waiver or nativefault/death claim.",
+    "New154 hashes passed before preflight; no new allocation, GPU run, reserve or submission."
+  ]
+}
