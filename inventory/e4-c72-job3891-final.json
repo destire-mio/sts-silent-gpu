@@ -6,14 +6,15 @@
     68,
     70,
     71,
-    72
+    72,
+    73
   ],
   "main_read_sha": "2c73d8c59ae03471bfaf05f77eb2a2bc812b965e",
   "fixed_source": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
   "baseline_A_source": "d28c060f92e38385670d70defad5a41fea3421a9",
   "round": "E4-C72-job3891-B167-N32-D1024",
   "source_round": "E4-C68-B-167-N32-D1024",
-  "status": "gpu_run_complete_verified_pending_mac",
+  "status": "mac_reported_pass_fork_rejected_step2_closed",
   "result_summary": {
     "episodes": 1024,
     "average_floor": 16.1572265625,
@@ -3577,14 +3578,33 @@
   },
   "audit_handoff": {
     "qualified_round": "E4-C72-job3891-B167-N32-D1024",
-    "status": "pending_mac_original_replay",
+    "status": "mac_reported_pass",
     "roots": 18,
     "decisions": 6029,
     "standalone": "inventory/e4-c72-job3891-audit167.json",
-    "standalone_sha256": "8bad17a2d73172a29e9c401eca454415a090dd3aafeaebe00e9b7650d5ce566e",
+    "standalone_sha256": "2e90939e7e2335b1ce04f5aebb64baf263a4d9d3d55a90b1b5d02fd624284e63",
     "cumulative": "inventory/e4-audit-roots.json",
-    "cumulative_sha256": "4e9aa18f37e841e15bb37baa828e5bc6a4377e553253f7591e99bedfaa753a98",
-    "prior_roots_and_rounds_preserved": true
+    "cumulative_sha256": "c77a54d01836707565d36451c059ecb447073d2893d508be5e4ef0272a85fd5f",
+    "prior_roots_and_rounds_preserved": true,
+    "mac_report": {
+      "source": "docs/messages/claude-to-gpt.md #73",
+      "commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/c153ea257976ac454f7bc6f594eae08d01606de3/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C72-job3891-B167-N32-D1024",
+      "traces": 18,
+      "decisions": 6029,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not specified in #73",
+      "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+      "source_verification": "Connector commit diff read in full by parent; raw Git object availability not established by this staging task"
+    },
+    "handoff_standalone_sha256": "8bad17a2d73172a29e9c401eca454415a090dd3aafeaebe00e9b7650d5ce566e",
+    "handoff_cumulative_sha256": "4e9aa18f37e841e15bb37baa828e5bc6a4377e553253f7591e99bedfaa753a98"
   },
   "acceptance": {
     "subagent": "/root/c72_job3891_final_review",
@@ -3599,7 +3619,7 @@
     "script_external": "job3891-final-verify.py"
   },
   "limitations": [
-    "Mac original-game oracle replay remains pending; this is an independent artifact consistency verification.",
+    "Claude #73 reports Mac original-game replay18/18 in both scopes; this Windows host independently checked artifact consistency and did not rerun the Mac oracle.",
     "Summary faults/truncated zeros are producer constants, not independent original-game proof.",
     "Original round/actions are unchanged; enclosing handoff scope uniquely limits them to job3891.",
     "Search caps are training speculative-copy caps, not episode deaths or game-rule exemptions; their original-game cause remains unverified.",
@@ -3607,5 +3627,41 @@
     "Boss reach flags and boss deck arrival denominators are different metrics; noncombat rates retain producer definitions.",
     "Checkpoint metadata was obtained by parent remote CPU torch.load and checked here as a digest; no pt tensor file was downloaded or loaded locally."
   ],
-  "next_action": "Claude Mac original replay18 true paths and decision on regression; no automatic extension/new experiment"
+  "next_action": "B167 fork experiment closed by Claude #73; preserve codex/e4-fork unmerged and cancel unused step2 budget. New C163 continuation is recorded separately.",
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #73",
+    "commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+    "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/c153ea257976ac454f7bc6f594eae08d01606de3/docs/messages/claude-to-gpt.md",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "round": "E4-C72-job3891-B167-N32-D1024",
+    "traces": 18,
+    "decisions": 6029,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "engine_description": "Mac new engine; exact replay-engine SHA not specified in #73",
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+    "source_verification": "Connector commit diff read in full by parent; raw Git object availability not established by this staging task"
+  },
+  "claude73_decision": {
+    "source": "docs/messages/claude-to-gpt.md #73",
+    "commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+    "fork_retained": false,
+    "step2_status": "closed",
+    "branch": "codex/e4-fork",
+    "branch_disposition": "preserve_unmerged",
+    "charged_node_seconds": 3118.5,
+    "unused_budget_disposition": "cancelled",
+    "comparison_report": {
+      "B167_average_floor": 16.1572265625,
+      "A172_average_floor": 18.04296875,
+      "C163_average_floor": 19.2021484375,
+      "paired_per_episode_standard_error_approx": 0.27
+    },
+    "interpretation": "Claude rejects training forks: B167 is substantially below both A172 and C163",
+    "new_phase_scope": "Separate C163 learning-rate continuation handled outside this Mac167 record"
+  }
 }

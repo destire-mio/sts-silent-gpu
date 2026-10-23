@@ -78,6 +78,7 @@ def main():
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--resume', type=Path)
+    parser.add_argument('--lr', type=float, default=3e-4)
     parser.add_argument('--seconds', type=int, required=True)
     parser.add_argument('--evaluate-only', action='store_true')
     args = parser.parse_args()
@@ -89,31 +90,33 @@ def main():
     dist.init_process_group('nccl', timeout=timedelta(minutes=60))
     args.output.mkdir(parents=True, exist_ok=True)
     commit = engine_commit()
-    source_path = args.source / f'rank-{rank}.pt'
+    source_rank = rank % 7
+    source_path = args.source / f'rank-{source_rank}.pt'
     source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
     source = torch.load(source_path, map_location='cpu', weights_only=False)
-    assert source['commit'] == '3b54843df8c36d856f9c9425bb1279833f956fab'
-    assert source['initialization'] == 1729 and source['version'] == 105
+    assert source['commit'] == 'd28c060f92e38385670d70defad5a41fea3421a9'
+    assert source['initialization'] == 1729 and source['version'] == 163
     assert source['reason'] == 'before_evaluation'
     assert source['lanes'] == 256 and source['trials'] == 32 and source['phase'] == 'evaluation'
+    assert source['world_size'] == 7 and source['epochs'] == 4
     assert source['ready'] is None and source['train_state']['partial'] is None
     torch.manual_seed(1729)
     policy = Policy(ModelConfig()).to(device)
     ddp = DistributedDataParallel(policy, device_ids=[device.index], broadcast_buffers=False)
-    optimizer = torch.optim.Adam(policy.parameters(), lr=3e-4)
-    ppo_rng = torch.Generator(device=device)
-    search_rng = torch.Generator(device=device)
-    seed_rng = torch.Generator()
+    optimizer = torch.optim.Adam(policy.parameters(), lr=args.lr)
+    ppo_rng = torch.Generator(device=device).manual_seed(1729 + rank)
+    search_rng = torch.Generator(device=device).manual_seed(2729 + rank)
+    seed_rng = torch.Generator().manual_seed(3729 + rank)
     deadline = time.monotonic() + args.seconds - 120
     phase, epochs = 'training', 4
     trained_seconds, evaluation_seconds, next_evaluation = 0., 0., 1800.
     updates, actual_steps = [], 0
     health_history = deque(source['health_history'], maxlen=20)
-    train_state = deepcopy(source['train_state'])
-    training_rng = source['training_rng']
+    train_state = None
+    training_rng = None
     evaluation_state, ready = None, None
-    baseline = json.loads((args.source.parent / 'E4-C49-105-N32-D1024-summary.json').read_text())
-    assert baseline['version'] == 105 and baseline['average_floor'] == 15.2451171875
+    baseline = json.loads((args.source.parent / 'E4-C53-163-N32-D1024-summary.json').read_text())
+    assert baseline['version'] == source['version'] and baseline['average_floor'] == 19.2021484375
     assessments = [baseline]
     best, stagnant = baseline['reach'].copy(), 0
     best_floor = baseline['average_floor']
@@ -124,6 +127,8 @@ def main():
         assert saved is not None and saved['ready'] is None
     if saved:
         assert saved['commit'] == commit and saved['source_sha256'] == source_hash
+        assert saved['lr'] == args.lr and saved['world_size'] == world
+        assert saved['source_rank'] == source_rank
         phase, epochs = saved['phase'], saved['epochs']
         assert epochs == 4
         best_floor = saved['best_floor']
@@ -141,38 +146,25 @@ def main():
     weights = saved if saved else source
     policy.load_state_dict(weights['model'])
     optimizer.load_state_dict(weights['optimizer'])
-    ppo_rng.set_state(weights['ppo_rng'])
+    for group in optimizer.param_groups:
+        group['lr'] = args.lr
+    if saved:
+        ppo_rng.set_state(saved['ppo_rng'])
     search = RoomSearch(256, 32, device, search_rng, scratch_slots=256*33)
     search.evidence_directory = args.output
     search.deadline = deadline
     collector = SegmentCollector(search, seed_rng, rank=rank)
-    if saved is None:
-        start = time.monotonic()
-        slots = [s for s, seed in enumerate(train_state['seeds']) if seed is not None]
-        search.batch.reset_to_many(slots, [train_state['seeds'][s] for s in slots], [[] for _ in slots])
-        search.check(slots)
-        search.reset_seen(slots)
-        for s in slots:
-            search.provenance[s] = (train_state['seeds'][s], [])
-        for t in range(max(len(train_state['paths'][s]) for s in slots)):
-            active = [s for s in slots if t < len(train_state['paths'][s])]
-            search.step(active, [train_state['paths'][s][t] for s in active])
-        train_state['reward_history'] = deepcopy(search.reward_history[:search.lanes])
-        for history in train_state['reward_history']:
-            history.counts.clear()
-        atomic_json(args.output / f'reward-history-migration-{rank}.json', dict(
-            source_sha256=source_hash, source_version=105, lanes=len(slots),
-            decisions=sum(len(train_state['paths'][s]) for s in slots),
-            seconds=time.monotonic()-start, method='replay saved actual prefixes using visible observations'))
-    if phase == 'training':
-        collector.restore(train_state)
-    elif evaluation_state is not None:
-        collector.restore(evaluation_state)
+    if saved:
+        if phase == 'training':
+            collector.restore(train_state)
+        elif evaluation_state is not None:
+            collector.restore(evaluation_state)
+        torch.set_rng_state(saved['torch_rng'])
+        torch.cuda.set_rng_state(saved['cuda_rng'], device)
     else:
-        search_rng.manual_seed(2729 + rank)
-    rng = saved if saved else training_rng
-    torch.set_rng_state(rng['torch_rng'])
-    torch.cuda.set_rng_state(rng['cuda_rng'], device)
+        torch.manual_seed(1729 + rank)
+        train_state = deepcopy(collector.state())
+        training_rng = dict(torch_rng=torch.get_rng_state(), cuda_rng=torch.cuda.get_rng_state(device))
     if saved:
         search.metrics = saved['search_metrics']
         search.capacity_metrics = saved['capacity_metrics']
@@ -187,9 +179,10 @@ def main():
         elif phase == 'evaluation':
             evaluation_state = collector.state()
         atomic_checkpoint(args.output / f'rank-{rank}.pt', dict(commit=commit,
-            source_sha256=source_hash, source_commit=source['commit'], source_version=105,
+            source_sha256=source_hash, source_commit=source['commit'],
+            source_version=source['version'], source_rank=source_rank,
             initialization=1729, phase=phase, reason=reason, lanes=256, trials=32, world_size=world,
-            version=105+len(updates), epochs=epochs, trained_seconds=trained_seconds,
+            version=source['version']+len(updates), epochs=epochs, lr=args.lr, trained_seconds=trained_seconds,
             source_trained_seconds=source['trained_seconds'], next_evaluation=next_evaluation,
             evaluation_seconds=evaluation_seconds, updates=updates, actual_steps=actual_steps,
             model=policy.state_dict(), optimizer=optimizer.state_dict(), ppo_rng=ppo_rng.get_state(),
@@ -205,7 +198,8 @@ def main():
         if rank == 0:
             atomic_json(args.output / 'status.json', dict(reason=reason, phase=phase,
                 job=os.environ['SLURM_JOB_ID'], commit=commit, source_directory=str(args.source),
-                source_version=105, version=105+len(updates), lanes=256, epochs=epochs, trials=32, world_size=world,
+                source_version=source['version'], source_rank=source_rank, version=source['version']+len(updates),
+                lanes=256, epochs=epochs, lr=args.lr, trials=32, world_size=world,
                 evaluation_lanes=256, dev_seed_count=1024, trained_seconds=trained_seconds,
                 next_evaluation=next_evaluation, evaluation_seconds=evaluation_seconds,
                 capacity_metrics=search.capacity_metrics,
@@ -218,7 +212,7 @@ def main():
             return
         checkpoint('started')
         while True:
-            if waiting(rank, args.output, 105+len(updates)):
+            if waiting(rank, args.output, source['version']+len(updates)):
                 checkpoint('yield_to_waiting_user')
                 return
             if collective_stop(time.monotonic() >= deadline, device):
@@ -289,11 +283,11 @@ def main():
                 search.event_trial_max_steps = 0
                 search.combat_diagnostics = []
                 phase = 'evaluation'
-            if waiting(rank, args.output, 105+len(updates)):
+            if waiting(rank, args.output, source['version']+len(updates)):
                 checkpoint('yield_to_waiting_user')
                 return
             checkpoint('before_evaluation')
-            evaluation_checkpoint = args.output / f'evaluation-{105+len(updates)}'
+            evaluation_checkpoint = args.output / f"evaluation-{source['version']+len(updates)}"
             evaluation_checkpoint.mkdir(exist_ok=True)
             archived_rank = evaluation_checkpoint / f'rank-{rank}.pt'
             if not archived_rank.exists():
@@ -327,8 +321,8 @@ def main():
             search_summary['combat_played_cards_limit_fraction'] = (
                 search_summary['combat_played_cards_limit'] / search_summary['combat_trials']
                 if search_summary['combat_trials'] else 0.)
-            version = 105+len(updates)
-            round_name = f'E4-C53-{version}-N32-D1024'
+            version = source['version']+len(updates)
+            round_name = f'E4-C73-{version}-N32-D1024'
             atomic_json(args.output / f'{round_name}-rank-{rank}.json', episodes)
             atomic_json(args.output / f'{round_name}-combat-{rank}.json', search.combat_diagnostics)
             dist.barrier()
@@ -387,7 +381,7 @@ def main():
     finally:
         if sys.exc_info()[0] is not None:
             atomic_checkpoint(args.output / f'fault-rank-{rank}.pt', dict(commit=commit,
-                phase=phase, collector=collector.state(), train_state=train_state, ready=ready,
+                phase=phase, lr=args.lr, collector=collector.state(), train_state=train_state, ready=ready,
                 combat_diagnostics=search.combat_diagnostics, imitation_beta=imitation_beta,
                 imitation_entropy_target=imitation_entropy_target,
                 model=policy.state_dict(), optimizer=optimizer.state_dict(), ppo_rng=ppo_rng.get_state(),

@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "job_id": 3891,
   "engine_commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
   "current_round": "E4-C72-job3891-B167-N32-D1024",
@@ -12550,5 +12550,22 @@
       "job_id": 3891
     }
   ],
-  "qualification": "Outer job-qualified handoff scope only; original audit round/actions preserved in original_audit; Mac original replay pending"
+  "qualification": "Outer job-qualified Mac report applies to 18 original segments/6029 decisions; original_audit is the unchanged handoff snapshot, including its historical pending status",
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #73",
+    "commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+    "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/c153ea257976ac454f7bc6f594eae08d01606de3/docs/messages/claude-to-gpt.md",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "round": "E4-C72-job3891-B167-N32-D1024",
+    "traces": 18,
+    "decisions": 6029,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "engine_description": "Mac new engine; exact replay-engine SHA not specified in #73",
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+    "source_verification": "Connector commit diff read in full by parent; raw Git object availability not established by this staging task"
+  }
 }

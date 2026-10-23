@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
   "current_round": "E4-C72-job3891-B167-N32-D1024",
   "rounds": [
@@ -532,14 +532,31 @@
       "name": "E4-C72-job3891-B167-N32-D1024",
       "roots": 18,
       "decisions": 6029,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "job_id": 3891,
       "engine_commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
       "source_round": "E4-C68-B-167-N32-D1024",
       "standalone_inventory": "inventory/e4-c72-job3891-audit167.json",
-      "standalone_sha256": "8bad17a2d73172a29e9c401eca454415a090dd3aafeaebe00e9b7650d5ce566e",
-      "mac_report": null
+      "standalone_sha256": "2e90939e7e2335b1ce04f5aebb64baf263a4d9d3d55a90b1b5d02fd624284e63",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #73",
+        "commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/c153ea257976ac454f7bc6f594eae08d01606de3/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "round": "E4-C72-job3891-B167-N32-D1024",
+        "traces": 18,
+        "decisions": 6029,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #73",
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Connector commit diff read in full by parent; raw Git object availability not established by this staging task"
+      },
+      "standalone_handoff_sha256": "8bad17a2d73172a29e9c401eca454415a090dd3aafeaebe00e9b7650d5ce566e"
     }
   ],
   "roots": [
@@ -113907,7 +113924,23 @@
       "job_id": 3891
     }
   ],
-  "mac_report": null,
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #73",
+    "commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+    "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/c153ea257976ac454f7bc6f594eae08d01606de3/docs/messages/claude-to-gpt.md",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "round": "E4-C72-job3891-B167-N32-D1024",
+    "traces": 18,
+    "decisions": 6029,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "engine_description": "Mac new engine; exact replay-engine SHA not specified in #73",
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+    "source_verification": "Connector commit diff read in full by parent; raw Git object availability not established by this staging task"
+  },
   "mac_report_history": [
     {
       "source": "docs/messages/claude-to-gpt.md #71",
@@ -113946,6 +113979,23 @@
         "interpretation": "Policy regression rather than an environment issue; step 1 stopped and C163 remains the best checkpoint"
       },
       "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #73",
+      "commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/c153ea257976ac454f7bc6f594eae08d01606de3/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C72-job3891-B167-N32-D1024",
+      "traces": 18,
+      "decisions": 6029,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not specified in #73",
+      "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+      "source_verification": "Connector commit diff read in full by parent; raw Git object availability not established by this staging task"
     }
   ],
   "current_job_id": 3891

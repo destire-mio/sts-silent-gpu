@@ -1,0 +1,69 @@
+{
+  "decision_commit": "c153ea257976ac454f7bc6f594eae08d01606de3",
+  "decision_url": "https://github.com/destire-mio/sts-silent-gpu/commit/c153ea257976ac454f7bc6f594eae08d01606de3",
+  "source_message": 73,
+  "decision_read_via": "GitHub connector fetch_commit fullmetadata/diff; localnormalfetchsinglefailure",
+  "raw_decision_git_object_locally_obtained": false,
+  "prepared_at": "2026-10-23T11:58:13.736612+08:00",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "source": {
+    "commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "version": 163,
+    "directory": "/home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163",
+    "world_size": 7,
+    "baseline": "E4-C53-163-N32-D1024-summary.json",
+    "average_floor": 19.2021484375,
+    "trained_seconds": 13474.011901855469
+  },
+  "new_experiment": {
+    "lr": 0.0001,
+    "CLI_default": 0.0003,
+    "source_rank_mapping": "rank % 7; fresh eighth rank takes rank0 model/Adam/beta; fresh per-rank RNG streams",
+    "source_collector_and_root_cache": "discarded; no replay of in-flight source state",
+    "resume": "matching saved lr, world, source rank/hash required; collector/RNG restored",
+    "epochs": 4,
+    "SL_trials": 32,
+    "evaluation_training_seconds": 1800,
+    "dev_seed_count": 1024,
+    "audit_count": 18,
+    "stop": "same step1 baselineC163;3without2pp improvement or floor>1belowbest"
+  },
+  "acceptance": {
+    "CPU_regression": "1passed agent2.01s; parent appliedrepo rerun1passed3.84s",
+    "real_CPU": "actualmain/Adam2populatedgroups/SegmentCollector/checkpointIO; models/moments/beta unchanged; lr mismatch rejected",
+    "mocked": "CUDA/DDP/distributed/RoomSearch/queue; no nativeCUDAacceptance claimed",
+    "Mac_record_checks": 12,
+    "parent_Mac_preservation_rerun": true
+  },
+  "files": {
+    "tools/e4_continue.py": "7b48dec07748bad9cf244a5f05f04941764ef25b680c5f5b1765c5d17cb1f6d4",
+    "tests/test_e4_continue_lr.py": "e768f88f361671df0438f81952397988ddff30cc791e0ebc5f7ab11657f35963",
+    "inventory/e4-c72-job3891-final.json": "64d3a44264fe4a714e01879ca5e9419d4969c63d65dbbd4570868396da683bfb",
+    "inventory/e4-c72-job3891-audit167.json": "2e90939e7e2335b1ce04f5aebb64baf263a4d9d3d55a90b1b5d02fd624284e63",
+    "inventory/e4-audit-roots.json": "c77a54d01836707565d36451c059ecb447073d2893d508be5e4ef0272a85fd5f"
+  },
+  "budget": {
+    "charged_to": "step1",
+    "step1_charged": 66433.625,
+    "step1_limit": 194400,
+    "C73_experiment_cap": 30000,
+    "C73_charged": 0,
+    "C73_reserved": 0,
+    "step2_closed_charged": 3118.5,
+    "step2_unused_cancelled": true
+  },
+  "preparation_status": "CPUimplementationverified; helpersunderreview; not yet deployed/submitted",
+  "remote_precheck": {
+    "error": "du -sm /home/zhuyouwei timeout60s; no complete resource report",
+    "next_resource_query_not_before": "2026-10-23T12:04:21.158761+08:00",
+    "sole_SSH_session": 45076,
+    "no_reconnect": true
+  },
+  "limitations": [
+    "Claude reported Mac18/18bothscopes/6029decisions; replay engineSHA unspecified and no inventedMacfaultcount",
+    "OriginalC163 checkpoints and oldA/B folders are retained; newisolatedC73repo planned",
+    "Raw#73object not locallyobtained; no fabricatedGit ancestry",
+    "GPU exactfive unifiedCTest/JUnit must run inside futureactualjob afterfresh54resources/source/hash/budget gates"
+  ]
+}
