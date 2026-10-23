@@ -1,0 +1,244 @@
+{
+  "decision": {
+    "Claude": 75,
+    "commit": "1b116235feea265fdf991525657bdfa24022875e",
+    "raw_git_object_local": true,
+    "full_commit_diff_message_read": true,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low"
+  },
+  "Mac172": {
+    "round": "E4-C74-job3897-172-N32-D1024",
+    "status": "mac_reported_pass",
+    "paths": 18,
+    "decisions": 6503,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "reported_average_floor_rounded": "19.352",
+    "original_replay": "Claude Mac reported; no independent replay here",
+    "exact_Mac_engine_SHA": null,
+    "Mac_fault_stall_act2_counts": null,
+    "cumulative_roots": 396,
+    "cumulative_rounds": 22,
+    "old_roots_actions_rounds_reports_preserved": true
+  },
+  "episodes": [
+    {
+      "source": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\job3897-evaluation172",
+      "source_stem": "E4-C73-172-N32-D1024",
+      "inputs": {
+        "E4-C73-172-N32-D1024-rank-0.json": {
+          "bytes": 247324,
+          "sha256": "c56ab012238b4542f0e31cb1392f0fbe27bff68bb9d2e613040816682db63771"
+        },
+        "E4-C73-172-N32-D1024-rank-1.json": {
+          "bytes": 262905,
+          "sha256": "cb915e04227617ee74ccf38a4e4b583920c337feaa1ebc5e4aa7ab8bf587d4a4"
+        },
+        "E4-C73-172-N32-D1024-rank-2.json": {
+          "bytes": 261029,
+          "sha256": "748d2f655a0b95b7460c10dc52d2cf45a214595dcaa23978d38da1af3c745ee6"
+        },
+        "E4-C73-172-N32-D1024-rank-3.json": {
+          "bytes": 251626,
+          "sha256": "9da1697732f1fa6d34f7b2a3c7f3cdbab532f33b450e563cbfb3574f335dcf4b"
+        },
+        "E4-C73-172-N32-D1024-rank-4.json": {
+          "bytes": 250121,
+          "sha256": "958a79b1d8306b572237f91c58a91a5dc9d56ddcb821e45b3ab9671869607767"
+        },
+        "E4-C73-172-N32-D1024-rank-5.json": {
+          "bytes": 261059,
+          "sha256": "37fa69fed064c7fe3f459c9e27725980c1d1b520b5aaed74de1e38bb4fb01519"
+        },
+        "E4-C73-172-N32-D1024-rank-6.json": {
+          "bytes": 256466,
+          "sha256": "26a66814f0767523445aa8708a2ec7882ff8d3921af043b8125276625ddebb6b"
+        }
+      },
+      "summary": {
+        "bytes": 3304,
+        "sha256": "5303ab41be18f8991d69f7a65188b1895a010b21703c33f91adaeb47834ddc75"
+      },
+      "output": {
+        "bytes": 188767,
+        "sha256": "7cd0c529e1ba2910bea507b8779ac747e1d8f9b5ceef06e3a73d7412abaa9711"
+      },
+      "statistics": {
+        "episodes": 1024,
+        "average_floor": 19.3515625,
+        "reach": {
+          "act1_boss": 0.587890625,
+          "act2_boss": 0.001953125,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 0,
+        "stall_classes": {}
+      },
+      "outcomes": {
+        "death": 1024
+      },
+      "full_records_equal": 1024,
+      "schema_matches": 1024,
+      "candidate_actions": 391697,
+      "path": "inventory/E4-C74-job3897-172-N32-D1024-episodes.json.gz"
+    },
+    {
+      "source": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\job3891-final-results-bundle.json.gz",
+      "source_stem": "E4-C68-B-167-N32-D1024",
+      "inputs": {
+        "E4-C68-B-167-N32-D1024-rank-0.json": {
+          "bytes": 241319,
+          "sha256": "7ca4e946128fc0ae3ead44761a24ef2c2a47029c217b1e1ca4fcbebb4f71c8c3"
+        },
+        "E4-C68-B-167-N32-D1024-rank-1.json": {
+          "bytes": 243545,
+          "sha256": "b506423dd9544a1a798e4cd8ee956e6967419ea6fd21277f70a3bf51bf4299cb"
+        },
+        "E4-C68-B-167-N32-D1024-rank-2.json": {
+          "bytes": 253149,
+          "sha256": "2be32c9bc5bacba21847a9b48f94c2dc32b445346e35a03d7685c8a4c6b000ec"
+        },
+        "E4-C68-B-167-N32-D1024-rank-3.json": {
+          "bytes": 236481,
+          "sha256": "eb7e3fd1edc7c1f5b5037bba7fe42be1f34d13174019604b1f860b5b83d5f434"
+        },
+        "E4-C68-B-167-N32-D1024-rank-4.json": {
+          "bytes": 243664,
+          "sha256": "f79681d14c6781684f290fec765d2184e9cb70e8dcdd0079208c3970a8b8cc5a"
+        },
+        "E4-C68-B-167-N32-D1024-rank-5.json": {
+          "bytes": 252262,
+          "sha256": "5434c3a0fbef59b58b9c9dc47aeb86b46b11efd429b0aabc2f6c8baa8d77a81c"
+        },
+        "E4-C68-B-167-N32-D1024-rank-6.json": {
+          "bytes": 238033,
+          "sha256": "ff6ff3cc55f6a281a5d36ac70542c003d2d90d0a940a5a66b370953a0d188412"
+        }
+      },
+      "summary": {
+        "bytes": 4450,
+        "sha256": "5bec875154c6db67212006a5f734dbfc5fd34aad80d45ae57bc8643a539db0e8"
+      },
+      "output": {
+        "bytes": 173471,
+        "sha256": "2f64a8ed37804e807e2a04af57a0a97d4ecfc9d6515db38ce6f318a0f10d6263"
+      },
+      "statistics": {
+        "episodes": 1024,
+        "average_floor": 16.1572265625,
+        "reach": {
+          "act1_boss": 0.380859375,
+          "act2_boss": 0.0,
+          "act3_first_boss": 0.0,
+          "act3_second_boss": 0.0,
+          "act3_three_keys": 0.0,
+          "act4": 0.0,
+          "shield_spear": 0.0,
+          "heart": 0.0
+        },
+        "victories": 0,
+        "stalled": 0,
+        "stall_classes": {}
+      },
+      "outcomes": {
+        "death": 1024
+      },
+      "full_records_equal": 1024,
+      "schema_matches": 1024,
+      "candidate_actions": 339338,
+      "path": "inventory/E4-C72-job3891-B167-N32-D1024-episodes.json.gz"
+    }
+  ],
+  "format": {
+    "reference": "inventory/E4-C66-job3738-172-N32-D1024-episodes.json.gz",
+    "schema": [
+      "seed",
+      "candidates",
+      "reach",
+      "floor",
+      "stall_class",
+      "noncombat",
+      "final_deck_size",
+      "outcome",
+      "reward"
+    ],
+    "records": 1024,
+    "unique_dev_seed_range": [
+      2000000000,
+      2000001023
+    ],
+    "full_original_records_and_candidates_unchanged": true,
+    "ordering": "New lists sorted by seed for pairing; reference C66 list is not sorted",
+    "gzip_mtime": 0
+  },
+  "future_evaluation_policy": {
+    "required": true,
+    "decision": "1b116235feea265fdf991525657bdfa24022875e",
+    "artifact": "inventory/<job-qualified-round>-episodes.json.gz",
+    "inputs": "all seven actual accepted rank episode JSON lists",
+    "external_exporter": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c75-mac172-episodes-parent-accepted\\c75-episodes\\export-episodes.py",
+    "exporter_sha256": "652bb3e28754d83251a4d4d1245f73ad0483c73fa16bfd1587b7fec63e3229f1",
+    "command": "python export-episodes.py <accepted-rank-directory-or-bundle> <actual-source-stem> <exclusive-output.json.gz>",
+    "acceptance": "Verify all1024 exact unique dev seeds and full per-seed records against actual source; publish alongside summary and18 actual audit paths before marking handoff complete"
+  },
+  "parent_acceptance": {
+    "Mac_checks": 457,
+    "episodes_checks": 4199,
+    "scripts_read_and_independently_rerun": true,
+    "old_1034_854_216_reviews_not_repeated": true,
+    "scope": "CPU JSON/gzip preservation only; no CUDA, checkpoint load, original replay or training",
+    "evidence_directory": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c75-mac172-episodes-parent-accepted",
+    "files": {
+      "c75-record-mac172": {
+        "verify.py": "ba3416383cfa4cf131788c9da936ca9b935db3993a7b1b3511035b212adb8131",
+        "report.json": "947ca3fe067b693fb7035f915049ccfd8fa98caa649e10045605b89e1568ea8a"
+      },
+      "c75-episodes": {
+        "verify.py": "09d70c09a8e35434dbb88ce58bc2562a20406941f966954d84ef3ed8bd4f80d7",
+        "report.json": "540c8c55793b5de7584447995fcd826205cffad14b3fb2cc66e9ba14fcaad982",
+        "export-episodes.py": "652bb3e28754d83251a4d4d1245f73ad0483c73fa16bfd1587b7fec63e3229f1"
+      }
+    }
+  },
+  "current_job_observation": {
+    "job_id": 3897,
+    "at": "2026-10-23T06:10:33.032723+00:00",
+    "status": "RUNNING",
+    "version": 180,
+    "phase": "evaluation",
+    "reason": "before_evaluation",
+    "trained_seconds": 3884.0415954589844,
+    "actual_steps": 1949696,
+    "next_evaluation_threshold": 3774.6651153564453,
+    "new_complete_180_result_available_at_capture": false,
+    "evidence": "job3897-poll-20261023-1410.json"
+  },
+  "runtime": {
+    "source_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
+    "world_size": 7,
+    "lr": 0.0001,
+    "source_unchanged": true,
+    "new_GPU_job": false,
+    "new_training_or_replay": false
+  },
+  "accounting": {
+    "step0_charged": 2127,
+    "step1_charged": 66433.625,
+    "step1_reserved": 12600,
+    "C73_charged": 0,
+    "C73_reserved_same_allocation": 12600,
+    "C73_cap": 30000,
+    "step2_closed_charged": 3118.5,
+    "new_charge": 0,
+    "new_reservation": 0,
+    "settlement": "Only after actual EXIT/final scheduler; actual GPU seconds /8 once"
+  }
+}

@@ -825,7 +825,7 @@
       "Independent CPU artifact consistency verification; no local checkpoint load, GPU execution, SSH, or original-game replay.",
       "Seven checkpoint tensors were CPU-loaded by parent remotely; this script checks the reported metadata and hashes.",
       "Summary faults/truncated zero are producer constants and do not prove original-game agreement.",
-      "Mac172 remains pending; do not append Macfault0 or inherit historical Mac pass.",
+      "Historical acceptance limitation at capture: Mac172 was pending. Claude #75 now reports both scopes 18/18 for 6503 decisions; no Mac fault/stall/act2 counts or exact replay-engine SHA supplied.",
       "Running queue/status captures are time-specific.",
       "Noncombat source exposes counts/deck mean only; no fork-only fields invented.",
       "Manifest comparison proves archived hash-chain consistency; actual remote 46-file hash rerun is parent evidence."
@@ -833,17 +833,34 @@
   },
   "audit": {
     "inventory": "inventory/e4-c74-job3897-audit172.json",
-    "sha256": "ac7bf303a7ad5790f507d5abf28b6792a8e01213704baa061d1e6efb9ffcc913",
+    "sha256": "55726831be2e47006253a676d90f0d0a52d55c0c0e42adfdb3d4f21edf97d0f2",
     "roots": 18,
     "decisions": 6503,
     "raw_source_round": "E4-C73-172-N32-D1024",
     "qualified_round": "E4-C74-job3897-172-N32-D1024",
-    "Mac_status": "pending_mac_original_replay",
+    "Mac_status": "mac_reported_pass",
     "old_roots_preserved": 378,
     "cumulative_roots": 396,
     "old_rounds_and_Mac_history_preserved": true,
     "Mac_fault_count": null,
-    "producer_faults_truncated_zero": "constant counters; not independent original-game proof"
+    "producer_faults_truncated_zero": "constant counters; not independent original-game proof",
+    "mac_report": {
+      "source": "docs/messages/claude-to-gpt.md #75",
+      "commit": "1b116235feea265fdf991525657bdfa24022875e",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "low",
+      "round": "E4-C74-job3897-172-N32-D1024",
+      "traces": 18,
+      "decisions": 6503,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not specified in #75",
+      "average_floor_rounded": "19.352",
+      "continuation": "3897 continues under #73",
+      "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+      "source_verification": "Original complete Git commit object and message diff read locally; parent also read the original message in full"
+    }
   },
   "latest_running_observation": {
     "at": "2026-10-23T05:52:22.689238+00:00",
@@ -869,5 +886,5 @@
     "new_settlement": false,
     "exit_required_for_settlement": true
   },
-  "next_action": "Mac original replay of18 actual paths; parent follows current3897 at3774.665 puretraining seconds; C163 stop rules; job EXIT aggregate peak and actualGPU_seconds/8 once"
+  "next_action": "Claude #75 reports Mac original replay passed for 18 paths / 6503 decisions in both scopes; continue current3897 under #73 at3774.665 puretraining seconds and C163 stop rules; publish per-episode artifacts from next evaluation and backfill172 if available; job EXIT aggregate peak and actualGPU_seconds/8 once"
 }

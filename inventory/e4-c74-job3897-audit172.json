@@ -1,17 +1,34 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
   "current_round": "E4-C74-job3897-172-N32-D1024",
   "rounds": [
     {
       "name": "E4-C74-job3897-172-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "source_round": "E4-C73-172-N32-D1024",
       "job_id": 3897,
-      "decisions": 6503
+      "decisions": 6503,
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #75",
+        "commit": "1b116235feea265fdf991525657bdfa24022875e",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "low",
+        "round": "E4-C74-job3897-172-N32-D1024",
+        "traces": 18,
+        "decisions": 6503,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #75",
+        "average_floor_rounded": "19.352",
+        "continuation": "3897 continues under #73",
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Original complete Git commit object and message diff read locally; parent also read the original message in full"
+      }
     }
   ],
   "roots": [
@@ -6773,5 +6790,21 @@
   ],
   "current_job_id": 3897,
   "source_round": "E4-C73-172-N32-D1024",
-  "mac_report": null
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #75",
+    "commit": "1b116235feea265fdf991525657bdfa24022875e",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "round": "E4-C74-job3897-172-N32-D1024",
+    "traces": 18,
+    "decisions": 6503,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "engine_description": "Mac new engine; exact replay-engine SHA not specified in #75",
+    "average_floor_rounded": "19.352",
+    "continuation": "3897 continues under #73",
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+    "source_verification": "Original complete Git commit object and message diff read locally; parent also read the original message in full"
+  }
 }

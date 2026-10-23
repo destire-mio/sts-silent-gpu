@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "mac_reported_pass",
   "engine_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
   "current_round": "E4-C74-job3897-172-N32-D1024",
   "rounds": [
@@ -562,13 +562,30 @@
       "name": "E4-C74-job3897-172-N32-D1024",
       "roots": 18,
       "decisions": 6503,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "job_id": 3897,
       "engine_commit": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2",
       "source_round": "E4-C73-172-N32-D1024",
       "standalone_inventory": "inventory/e4-c74-job3897-audit172.json",
-      "standalone_sha256": "ac7bf303a7ad5790f507d5abf28b6792a8e01213704baa061d1e6efb9ffcc913"
+      "standalone_sha256": "55726831be2e47006253a676d90f0d0a52d55c0c0e42adfdb3d4f21edf97d0f2",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #75",
+        "commit": "1b116235feea265fdf991525657bdfa24022875e",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "low",
+        "round": "E4-C74-job3897-172-N32-D1024",
+        "traces": 18,
+        "decisions": 6503,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not specified in #75",
+        "average_floor_rounded": "19.352",
+        "continuation": "3897 continues under #73",
+        "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+        "source_verification": "Original complete Git commit object and message diff read locally; parent also read the original message in full"
+      }
     }
   ],
   "roots": [
@@ -120691,7 +120708,23 @@
       "job_id": 3897
     }
   ],
-  "mac_report": null,
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #75",
+    "commit": "1b116235feea265fdf991525657bdfa24022875e",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "round": "E4-C74-job3897-172-N32-D1024",
+    "traces": 18,
+    "decisions": 6503,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 18,
+    "both_scopes_pass": 18,
+    "engine_description": "Mac new engine; exact replay-engine SHA not specified in #75",
+    "average_floor_rounded": "19.352",
+    "continuation": "3897 continues under #73",
+    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+    "source_verification": "Original complete Git commit object and message diff read locally; parent also read the original message in full"
+  },
   "mac_report_history": [
     {
       "source": "docs/messages/claude-to-gpt.md #71",
