@@ -1,0 +1,553 @@
+{
+  "task_key": "claude76-job3923-benchmark-review-c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+  "status": "pass",
+  "scope": "Independent single-worker stdlib CPU evidence validation only; no GPU, SSH, native build, repository or ledger writes",
+  "check_count": 181,
+  "checks": [
+    "original compressed bundle size and hash",
+    "decompressed bundle exact original local bytes",
+    "job ID and exactly 23 evidence files",
+    "original UTF8 bytes manifest.json",
+    "original UTF8 bytes inputs-before.json",
+    "original UTF8 bytes source.txt",
+    "original UTF8 bytes preflight-before-submit.json",
+    "original UTF8 bytes budget-before-submit.json",
+    "original UTF8 bytes cuda-gates.log",
+    "original UTF8 bytes cuda-prefix-discovery.json",
+    "original UTF8 bytes cuda-gates-discovery.json",
+    "original UTF8 bytes cuda-gates.junit.xml",
+    "original UTF8 bytes cuda-gates-verified.json",
+    "original UTF8 bytes wall-plan.txt",
+    "original UTF8 bytes queue-last.json",
+    "original UTF8 bytes status.json",
+    "original UTF8 bytes selection.json",
+    "original UTF8 bytes exit.txt",
+    "original UTF8 bytes accounting-at-exit.txt",
+    "original UTF8 bytes manifest-at-exit.txt",
+    "original UTF8 bytes inputs-at-exit.log",
+    "original UTF8 bytes inputs-at-exit.json",
+    "original UTF8 bytes memory-peak.log",
+    "original UTF8 bytes memory-peak.json",
+    "original UTF8 bytes exit-validation.txt",
+    "original UTF8 bytes job.log",
+    "original production copy manifest.json",
+    "original production copy budget-before-submit.json",
+    "original production copy preflight-before-submit.json",
+    "fixed runtime source not message-only current HEAD",
+    "manifest hash bound before after and preflight",
+    "manifest repeated path consistent checkpoints /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+    "manifest repeated path consistent checkpoints /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+    "manifest repeated path consistent checkpoints /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+    "manifest repeated path consistent checkpoints /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+    "manifest repeated path consistent checkpoints /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+    "manifest repeated path consistent checkpoints /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+    "manifest repeated path consistent checkpoints /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+    "manifest repeated path consistent baseline /home/zhuyouwei/spire-downloads/e4-c73-3897/E4-C73-180-N32-D1024-summary.json",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+    "manifest repeated path consistent binaries /home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/tools/e4_distill.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/tools/e4_continue.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/tools/e4_run.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/train/e4.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/train/e4_rewards.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/train/e4_learner.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/train/model.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/train/rollout.py",
+    "manifest repeated path consistent source_files /home/zhuyouwei/sts-silent-gpu-c76/train/checkpoint.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/spire.cpython-312-x86_64-linux-gnu.so",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_dispatch",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_effect_fields",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_faults",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_parity",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/test_cuda_root_cache",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-build-e4-5eb2832/training_state.cpython-312-x86_64-linux-gnu.so",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/cuda-gates.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/generate-job.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/immutable-inputs.json",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/job.sh.in",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/memory-peak.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/preflight.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/prepare-bundle.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/c74-slurm-preparation/verify-inputs.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/E4-C53-163-N32-D1024-summary.json",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-0.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-1.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-2.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-3.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-4.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-5.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-163/rank-6.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-0.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-1.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-2.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-3.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-4.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-5.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c66-3738/evaluation-172/rank-6.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-0.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-1.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-2.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-3.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-4.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-5.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c70-B-3770/rank-6.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-0.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-1.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-2.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-3.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-4.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-5.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-180/rank-6.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-0.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-1.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-2.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-3.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-4.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-5.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/evaluation-188/rank-6.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-0.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-1.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-2.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-3.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-4.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-5.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/spire-downloads/e4-c73-3897/rank-6.pt",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/tools/e4_continue.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/tools/e4_run.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/train/checkpoint.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/train/e4.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/train/e4_learner.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/train/e4_rewards.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/train/model.py",
+    "manifest repeated path consistent protected_files /home/zhuyouwei/sts-silent-gpu-c73/train/rollout.py",
+    "85 unique manifest-bound input hashes before and after",
+    "preflight input evidence exact before copy",
+    "protected A B C73 HEADs unchanged",
+    "runtime distillation script pinned hash",
+    "read-only local script matches executed runtime script",
+    "seven runtime teacher pins",
+    "seven manifest and prior selected C180 teacher hashes",
+    "pinned source collector 256 lanes N32",
+    "pinned source C180 small weights and seeded random large",
+    "two complete benchmark rows and final state",
+    "selection checkpoint and status rows identical",
+    "small original actual counters config and full duration",
+    "small recomputed actual throughput",
+    "small recomputed SL throughput separately",
+    "small exact boundary overshoot",
+    "small positive CUDA allocated and reserved counters",
+    "large original actual counters config and full duration",
+    "large recomputed actual throughput",
+    "large recomputed SL throughput separately",
+    "large exact boundary overshoot",
+    "large positive CUDA allocated and reserved counters",
+    "largest width256 passes half-throughput no width192 fallback",
+    "selection provenance",
+    "parent CPU-load report only benchmark checkpoint complete metadata",
+    "two actual benchmark log rows exact final evidence",
+    "cuda-prefix-discovery.json exactly five unique tests",
+    "cuda-prefix-discovery.json none disabled",
+    "cuda-gates-discovery.json exactly five unique tests",
+    "cuda-gates-discovery.json none disabled",
+    "JUnit exactly five and no suite failures skips disabled",
+    "actual JUnit test_cuda_effect_fields run positive duration no failures",
+    "actual JUnit test_cuda_faults run positive duration no failures",
+    "actual JUnit test_cuda_parity run positive duration no failures",
+    "actual JUnit test_cuda_root_cache run positive duration no failures",
+    "actual JUnit test_cuda_dispatch run positive duration no failures",
+    "gate verified report exact tests and no errors",
+    "real gate log before benchmark",
+    "preflight bound original budget bytes",
+    "budget authorized source decision old hold retained",
+    "budget phase caps and no previous C76 cost",
+    "receipt original successful job3923 source preflight",
+    "actual preflight freshness and 1GPU16GiB2CPU20min",
+    "preflight memory disk spare GPU gates",
+    "preflight and last queue no Resources Priority blocker",
+    "final Slurm COMPLETED zero exit and single GPU allocation",
+    "final644s from runtime and start end not trap sample duration",
+    "original trap exit0 recorded two seconds earlier",
+    "original exit and all final checks zero",
+    "no own queue after completion",
+    "actual job aggregate cgroup v2 peak",
+    "proc current allocation ancestor exact job3923 evidence",
+    "cgroup mount evidence current job aggregate peak read",
+    "job memory below allocation",
+    "actual fault file list empty",
+    "actual Traceback reported and actual job log count zero",
+    "actual RuntimeError reported and actual job log count zero",
+    "actual AssertionError reported and actual job log count zero",
+    "proposed arithmetic exact80.5 and66514.125 old12600 unchanged"
+  ],
+  "verifier": {
+    "bytes": 19829,
+    "sha256": "f9c672e085a1f671ab59258f0a06c602643605aaa23772b5b11ee70dcc8177b3"
+  },
+  "evidence": {
+    "bundle_gzip": {
+      "bytes": 42202,
+      "sha256": "9e4d9b9731b0a72f7c8b843701d6d6020bc0f186dafca77f40ee6911453cd83a"
+    },
+    "bundle_json": {
+      "bytes": 363970,
+      "sha256": "fe9ca4c59aaa316dcf616011aaa568674da7cca3b8f8d60723700c641919d46a"
+    },
+    "files": {
+      "manifest.json": {
+        "bytes": 18490,
+        "sha256": "5abd38c54a480d28948f19d523939cbb6fd8b1d4623078d9cad5888fff1125bb"
+      },
+      "inputs-before.json": {
+        "bytes": 12329,
+        "sha256": "667ae112ba30cc41dc546fac5600ff3a96eb3a7070ee922a722b80cb71d024ed"
+      },
+      "source.txt": {
+        "bytes": 41,
+        "sha256": "6d725b08f44eb6725535977c6707611bf005cc9efbec13c5f9b8caba8ecf46bd"
+      },
+      "preflight-before-submit.json": {
+        "bytes": 34934,
+        "sha256": "d48bd22eaa056fa5148b3062c2a11b6f70c1eb8383c87955e824851210676128"
+      },
+      "budget-before-submit.json": {
+        "bytes": 1374,
+        "sha256": "3859b41ea7e03cf0cc9328669aed6eaacfa7bafcc2b4cdb342ceaff4281773fc"
+      },
+      "cuda-gates.log": {
+        "bytes": 730,
+        "sha256": "074114168320acfbe7a1a47c7d145af22c6e055fc30eeb2fccc7c7097200dbb0"
+      },
+      "cuda-prefix-discovery.json": {
+        "bytes": 2927,
+        "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+      },
+      "cuda-gates-discovery.json": {
+        "bytes": 2927,
+        "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+      },
+      "cuda-gates.junit.xml": {
+        "bytes": 2677,
+        "sha256": "dceac5e5454078793a8d86ef01878696917beb3f9b627ae8da446c8dde67d81f"
+      },
+      "cuda-gates-verified.json": {
+        "bytes": 247,
+        "sha256": "98994a085c95286c84845548bc3c63a1d0e5e07a9d044ba07f288ab6170001d1"
+      },
+      "wall-plan.txt": {
+        "bytes": 59,
+        "sha256": "0c4734ca777d79cfc97ce52c72c51948934fdb2569642826bf898a4e45f3ba31"
+      },
+      "queue-last.json": {
+        "bytes": 2507,
+        "sha256": "12512a7e936e2337a99498b7aa32891fd0a0447ec6f2514cf852ad372f968686"
+      },
+      "status.json": {
+        "bytes": 1099,
+        "sha256": "30dbe3f407466af5993df547b0caad6340b4f21500dc19b1e5c36e3950fff51d"
+      },
+      "selection.json": {
+        "bytes": 1666,
+        "sha256": "0992a479f2e369c00e9b8f03e7c73215093aa5f62532df5ea9f6686aff0d0ad2"
+      },
+      "exit.txt": {
+        "bytes": 41,
+        "sha256": "29e076b6dbd8541d2a07c541c8e5b7af42f2497bf59908c6115f35abadaef642"
+      },
+      "accounting-at-exit.txt": {
+        "bytes": 1340,
+        "sha256": "007368367e12d304fba410e519b4865a5f06833fdbddec1c285d263642bbcc1c"
+      },
+      "manifest-at-exit.txt": {
+        "bytes": 85,
+        "sha256": "3a1c9104a681bb7340c1099f7c1be806a65d39cce8086f847f2760c19fc70e34"
+      },
+      "inputs-at-exit.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "inputs-at-exit.json": {
+        "bytes": 12329,
+        "sha256": "667ae112ba30cc41dc546fac5600ff3a96eb3a7070ee922a722b80cb71d024ed"
+      },
+      "memory-peak.log": {
+        "bytes": 104,
+        "sha256": "973ffdaea7f77f4e915ef66ffb33fd2b2626267cbd2dba33c342baba3300ce5d"
+      },
+      "memory-peak.json": {
+        "bytes": 5726,
+        "sha256": "830d8f0e5559aa6e5b58e93ee9e329cb873ef267e8066c5bc79b15e84dcd99c0"
+      },
+      "exit-validation.txt": {
+        "bytes": 68,
+        "sha256": "3bfc666cb04fc165f73ce8b0e7d69ca9ebbcef5a8916d7a0e398aa2f8520194a"
+      },
+      "job.log": {
+        "bytes": 219181,
+        "sha256": "9f1c3cc9bbddc35a4d47244482273173418c65cce2fa8dd50345ea5038710003"
+      }
+    },
+    "submission_receipt": {
+      "bytes": 242,
+      "sha256": "6d8656a6bdd0d0722053f03d683c1957b8f0c75408834ce78df9afc6662acdf5"
+    },
+    "runtime_source": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+    "main76_decision": "265e56fab39a4cd52971ea769f7f20386510a58b",
+    "runtime_script_sha256": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1"
+  },
+  "benchmark": {
+    "rows": [
+      {
+        "name": "small",
+        "config": {
+          "width": 128,
+          "layers": 4,
+          "heads": 4,
+          "feedforward": 256
+        },
+        "seconds": 300.0081664829049,
+        "actual_steps": 51968,
+        "sl_trial_steps": 1395347,
+        "actual_steps_per_second": 173.2219512863202,
+        "sl_trial_steps_per_second": 4651.0300581418,
+        "peak_torch_allocated_bytes": 624046080,
+        "peak_torch_reserved_bytes": 715128832,
+        "boundary_overshoot_seconds": 0.008166482904925942,
+        "boundary": "RoomSearch.clock_before_next_actual_or_SL_step"
+      },
+      {
+        "name": "large",
+        "config": {
+          "width": 256,
+          "layers": 6,
+          "heads": 8,
+          "feedforward": 1024
+        },
+        "seconds": 300.03144825203344,
+        "actual_steps": 57856,
+        "sl_trial_steps": 1127626,
+        "actual_steps_per_second": 192.8331191182319,
+        "sl_trial_steps_per_second": 3758.3593538926884,
+        "peak_torch_allocated_bytes": 695581184,
+        "peak_torch_reserved_bytes": 851443712,
+        "boundary_overshoot_seconds": 0.03144825203344226,
+        "boundary": "RoomSearch.clock_before_next_actual_or_SL_step"
+      }
+    ],
+    "large_to_small_actual_throughput_ratio": 1.1132141029833813,
+    "large_to_small_actual_throughput_percent": 111.32141029833814,
+    "gate_threshold_ratio": 0.5,
+    "gate_passed": true,
+    "selected_config": {
+      "width": 256,
+      "layers": 6,
+      "heads": 8,
+      "feedforward": 1024
+    },
+    "width192_fallback_required": false,
+    "teacher_hashes": [
+      "2bac4afd004002a773642f9671482cd0b9aa71c8b9c59ca2ba1713ffa02eefc6",
+      "276586824760c171c277ada13d94e2c72faf40cc73ed5e751dfa8b34727e7893",
+      "19a9f2c30ac5d0f0f533c874f946d76c0b95b17cebc9fb6e5c5c256d156bab74",
+      "58976667069ced8a0ac0db7510d4988fb14b28180443102e3a86692e6e9eb94c",
+      "e1a371d29dbdc29a7bc63fd8c98a0af4fa155d559d539de9f454069812d7bfad",
+      "a9365bafee30bbc4ff7343e0a37c50783e8ec777bd90becd33e8c21290cc3f73",
+      "a7d321f9e9ffe3856ee9347c321733f67b5fbbedb74ed5c9372c06777e0bb7c6"
+    ],
+    "source_rank_mapping": [
+      0
+    ],
+    "collector": {
+      "lanes": 256,
+      "combat_sl_trials": 32,
+      "event_sl": true
+    },
+    "checkpoint_validation": "Validated supplied parent remote CPU torch.load report; this verifier did not load rank-0.pt",
+    "parent_checkpoint_report": {
+      "task": "benchmark",
+      "commit": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+      "teacher_hashes": [
+        "2bac4afd004002a773642f9671482cd0b9aa71c8b9c59ca2ba1713ffa02eefc6",
+        "276586824760c171c277ada13d94e2c72faf40cc73ed5e751dfa8b34727e7893",
+        "19a9f2c30ac5d0f0f533c874f946d76c0b95b17cebc9fb6e5c5c256d156bab74",
+        "58976667069ced8a0ac0db7510d4988fb14b28180443102e3a86692e6e9eb94c",
+        "e1a371d29dbdc29a7bc63fd8c98a0af4fa155d559d539de9f454069812d7bfad",
+        "a9365bafee30bbc4ff7343e0a37c50783e8ec777bd90becd33e8c21290cc3f73",
+        "a7d321f9e9ffe3856ee9347c321733f67b5fbbedb74ed5c9372c06777e0bb7c6"
+      ],
+      "source_rank_mapping": [
+        0
+      ],
+      "world_size": 1,
+      "state": {
+        "rows": [
+          {
+            "name": "small",
+            "config": {
+              "width": 128,
+              "layers": 4,
+              "heads": 4,
+              "feedforward": 256
+            },
+            "seconds": 300.0081664829049,
+            "actual_steps": 51968,
+            "sl_trial_steps": 1395347,
+            "actual_steps_per_second": 173.2219512863202,
+            "sl_trial_steps_per_second": 4651.0300581418,
+            "peak_torch_allocated_bytes": 624046080,
+            "peak_torch_reserved_bytes": 715128832,
+            "boundary_overshoot_seconds": 0.008166482904925942,
+            "boundary": "RoomSearch.clock_before_next_actual_or_SL_step"
+          },
+          {
+            "name": "large",
+            "config": {
+              "width": 256,
+              "layers": 6,
+              "heads": 8,
+              "feedforward": 1024
+            },
+            "seconds": 300.03144825203344,
+            "actual_steps": 57856,
+            "sl_trial_steps": 1127626,
+            "actual_steps_per_second": 192.8331191182319,
+            "sl_trial_steps_per_second": 3758.3593538926884,
+            "peak_torch_allocated_bytes": 695581184,
+            "peak_torch_reserved_bytes": 851443712,
+            "boundary_overshoot_seconds": 0.03144825203344226,
+            "boundary": "RoomSearch.clock_before_next_actual_or_SL_step"
+          }
+        ],
+        "index": 2,
+        "sample_seconds": 0.0,
+        "sample_steps": 0,
+        "sample_sl_steps": 0,
+        "peak_allocated": 0,
+        "peak_reserved": 0
+      },
+      "collector_is_none": true,
+      "torch_rng_numel": 5056,
+      "cuda_rng_numel": 16,
+      "pt_sha256": "45bd50db94f0009a66090ae5fbb6ba8e5973a6caf76d85a5f756d892cb6ef65e"
+    }
+  },
+  "cuda_gate_evidence": {
+    "durations_seconds": {
+      "test_cuda_effect_fields": 1.1304,
+      "test_cuda_faults": 1.58266,
+      "test_cuda_parity": 24.9832,
+      "test_cuda_root_cache": 1.6229,
+      "test_cuda_dispatch": 0.463872
+    },
+    "actual_run": true,
+    "dispatch_scope": "host CPU kernel-body dispatch; remaining four tests actual CUDA per supplied evidence"
+  },
+  "final_slurm": {
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "start": "2026-10-23T18:45:30",
+    "end": "2026-10-23T18:56:14",
+    "runtime_seconds": 644,
+    "trap_end": "2026-10-23T18:56:12+08:00",
+    "preflight_to_submission_seconds": 71.124257
+  },
+  "memory": {
+    "peak_bytes": 1535426560,
+    "peak_gib": 1.4299774169921875,
+    "plus25percent_gib": 1.7874717712402344,
+    "scope": "job_aggregate",
+    "backend": "v2",
+    "cgroup_path": "/system.slice/slurmstepd.scope/job_3923"
+  },
+  "protected_inputs": {
+    "unique_count": 85,
+    "before_after_identical": true,
+    "repository_heads": {
+      "/home/zhuyouwei/sts-silent-gpu-split": "d28c060f92e38385670d70defad5a41fea3421a9",
+      "/home/zhuyouwei/sts-silent-gpu-fork-c70": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+      "/home/zhuyouwei/sts-silent-gpu-c73": "0722b1b4e2a2c2dadda19e5b1eea7864363073c2"
+    }
+  },
+  "proposed_accounting": {
+    "bookkeeping_performed": false,
+    "accounting_basis": "final Slurm RunTime * 1 GPU / 8",
+    "actual_gpu_seconds": 644,
+    "actual_node_seconds": 80.5,
+    "release_only_job3923_reserved_node_seconds": 150,
+    "step1": {
+      "charged_node_seconds": 66514.125,
+      "reserved_node_seconds": 12600
+    },
+    "claude76_pretraining": {
+      "charged_node_seconds": 80.5,
+      "reserved_node_seconds": 0
+    },
+    "phase4a": {
+      "charged_gpu_seconds": 644,
+      "reserved_gpu_seconds": 0
+    },
+    "old3897_C73_reserved_node_seconds": 12600,
+    "all_older_costs_unchanged": true,
+    "step2_unchanged": {
+      "limit": 36000,
+      "charged_node_seconds": 3118.5,
+      "reserved_node_seconds": 0,
+      "closed": true
+    }
+  },
+  "next_gate": {
+    "phase4a_passed": true,
+    "phase4b_authorized_by_76_after_actual_gate": true,
+    "phase4b_source_selection_sha256": "0992a479f2e369c00e9b8f03e7c73215093aa5f62532df5ea9f6686aff0d0ad2",
+    "phase4b_not_started_by_verifier": true,
+    "phase4c_student_dev_average_floor_gate": 19.0
+  },
+  "limitations": [
+    "C180 trained policy and randomly initialized large policy take different paths: measured ratio is a selection gate, not causal model speedup.",
+    "No student dev evaluation, distillation quality, SL quality or reinforcement-learning result follows from this benchmark.",
+    "The empty actual fault-file listing and exact zero error-marker counts are evidence scoped to this supplied job bundle, not original-game or all-state fault proof.",
+    "Parent separately attested all 23 remote original read_bytes equal supplied UTF8 strings; verifier independently checks exact local bytes without newline normalization.",
+    "Source hash and supplied protected input records are verified; no native engine rule testing was rerun.",
+    "All accounting is proposed only; parent must independently accept and apply single settlement."
+  ],
+  "parent_acceptance": {
+    "at": "2026-10-23T11:17:14.275242+00:00",
+    "status": "completed_verified",
+    "independent_checks": 181,
+    "parent_independent_checks": 181,
+    "script_sha256": "f9c672e085a1f671ab59258f0a06c602643605aaa23772b5b11ee70dcc8177b3",
+    "report_sha256": "dd435126bb6b7ec601650cc85c89a510f367fa34927c77d025f2fc3f3dc21914",
+    "parent_report": "c76-parent-job3923-accepted/report.json"
+  },
+  "accounting_applied": {
+    "job_id": 3923,
+    "step": 1,
+    "phase": "4a",
+    "gpu_seconds": 644,
+    "charged_node_seconds": 80.5,
+    "released_reservation_node_seconds": 150,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "runtime_seconds": 644,
+    "start": "2026-10-23T18:45:30+08:00",
+    "end": "2026-10-23T18:56:14+08:00",
+    "source": "Actual final scontrol COMPLETED RunTime00:10:44 one GPU; original EXIT0 and all exit validations0",
+    "evidence": "inventory/e4-c76-job3923-benchmark.json",
+    "raw_bundle_sha256": "9e4d9b9731b0a72f7c8b843701d6d6020bc0f186dafca77f40ee6911453cd83a",
+    "settled_once_at": "2026-10-23T11:17:14.275242+00:00"
+  },
+  "post_settlement_budgets": {
+    "step1_charged": 66514.125,
+    "step1_reserved": 12600,
+    "C76_pretraining_charged": 80.5,
+    "C76_pretraining_reserved": 0,
+    "4b_frozen_stage_cap": 21519.5,
+    "old3897_reservation_unchanged": 12600
+  }
+}
