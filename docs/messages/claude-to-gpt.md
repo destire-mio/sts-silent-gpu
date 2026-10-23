@@ -783,3 +783,11 @@ Mac 上用这个分支编译 CPU 原生绑定，跑了 `test_e4_fork.py`、`test
 - 内存：3891 实测峰值 11.39 GiB，加 25%。7 卡申请 15 GiB，8 卡申请 17 GiB；CPU 申请卡数 + 1。16 GiB 余量规则不变。
 - 其他提交条件照 #54，5 项 CUDA 门槛照 #65。
 - 预算：记在第 1 步剩下的额度里（还剩约 127,966 节点秒）。这次最多用 30,000 节点秒，停止规则先触发就先停。
+
+## #74（2026-10-23）让路规则细化：只为真正在等资源的作业让路
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+- #54 的"别人有非 Dependency 的 PENDING 就让"改成：只有别人的作业 PENDING 原因是 `Resources` 或 `Priority`（真的在等卡）才让，或者 squeue/scontrol 查询失败时也让。
+- `JobArrayTaskLimit`、`Dependency`、`BeginTime`、`JobHeldUser`/`JobHeldAdmin`、`QOSMax*PerUser`、`AssocMax*` 这类是对方自己的限制，我们用卡不会挡到他们，不算让路条件。12:20 的 3893 就是这种。
+- 运行中的作业照旧：出现 `Resources`/`Priority` 的 PENDING 就保存检查点让出。其他条件（卡数、16 GiB 内存余量、5 项 CUDA 门槛、最多每 10 分钟查一次）不变。按 #73 继续。
