@@ -1,0 +1,3611 @@
+{
+  "schema_version": 1,
+  "job_id": 3891,
+  "created_at": "2026-10-23T11:30:55.486793+08:00",
+  "claude_decisions": [
+    68,
+    70,
+    71,
+    72
+  ],
+  "main_read_sha": "2c73d8c59ae03471bfaf05f77eb2a2bc812b965e",
+  "fixed_source": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+  "baseline_A_source": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "round": "E4-C72-job3891-B167-N32-D1024",
+  "source_round": "E4-C68-B-167-N32-D1024",
+  "status": "gpu_run_complete_verified_pending_mac",
+  "result_summary": {
+    "episodes": 1024,
+    "average_floor": 16.1572265625,
+    "reach": {
+      "act1_boss": 0.380859375,
+      "act2_boss": 0.0,
+      "act3_first_boss": 0.0,
+      "act3_second_boss": 0.0,
+      "act3_three_keys": 0.0,
+      "act4": 0.0,
+      "shield_spear": 0.0,
+      "heart": 0.0
+    },
+    "victories": 0,
+    "stalled": 0,
+    "stall_classes": {},
+    "faults": 0,
+    "truncated": 0,
+    "round": "E4-C68-B-167-N32-D1024",
+    "version": 167,
+    "case": "B",
+    "source_version": 163,
+    "fork": {
+      "forks": 3616,
+      "branches": 10870,
+      "completed_branches": 10870,
+      "capped_branches": 0,
+      "fork_all_capped": 0,
+      "score_gap_count": 3616,
+      "score_gap_sum": 110.69955826517307,
+      "score_gap_max": 0.19490953019032112,
+      "seconds": 10334.892832063022,
+      "searched_decisions": 5129209,
+      "combat_over_limit": 0,
+      "event_over_limit": 0,
+      "combat_normal_max_steps": 259,
+      "event_normal_max_steps": 280,
+      "combat_played_cards_limit": 0,
+      "combat_trials": 152504,
+      "repeat_check_seconds": 311.8359030757565,
+      "repeat_check_decisions": 141805,
+      "repeat_check_candidates": 473175,
+      "all_candidates_repeat": 158,
+      "time_fraction": 0.5803793495469938,
+      "score_gap_mean": 0.03061381589191733,
+      "combat_played_cards_limit_fraction": 0.0
+    },
+    "source_trained_seconds": 13474.011901855469,
+    "target_training_seconds": 2002.1460876464844,
+    "training_seconds_overshoot": 541.7301940917969,
+    "trials": 32,
+    "training_lanes": 256,
+    "evaluation_lanes": 256,
+    "dev_seed_count": 1024,
+    "world_size": 7,
+    "evaluation_seconds": 777.8869018554688,
+    "trained_seconds": 2543.8762817382812,
+    "update_count": 4,
+    "actual_steps": 458752,
+    "next_epochs": 4,
+    "combat": {
+      "all": {
+        "combats": 8474,
+        "decisions": 8356662,
+        "complete_trial_groups": 8474,
+        "capped_trials": 0,
+        "nested_event_combats": 134,
+        "pooled_policy_entropy": 0.6383155005493487,
+        "means": {
+          "policy_entropy": 0.6482394607955114,
+          "win_fraction": 0.7561806702855794,
+          "score_std": 0.009241551827613067,
+          "distinct_end_states": 16.56915270238376,
+          "selected_score_gain": 0.012911015728756097
+        }
+      },
+      "act1": {
+        "combats": 7030,
+        "decisions": 6933902,
+        "complete_trial_groups": 7030,
+        "capped_trials": 0,
+        "nested_event_combats": 100,
+        "pooled_policy_entropy": 0.6458648776925859,
+        "means": {
+          "policy_entropy": 0.6559141211864163,
+          "win_fraction": 0.8051298008534851,
+          "score_std": 0.008715782488004122,
+          "distinct_end_states": 16.590184921763868,
+          "selected_score_gain": 0.012042908995477867
+        }
+      },
+      "act2": {
+        "combats": 1444,
+        "decisions": 1422760,
+        "complete_trial_groups": 1444,
+        "capped_trials": 0,
+        "nested_event_combats": 34,
+        "pooled_policy_entropy": 0.6015231805008188,
+        "means": {
+          "policy_entropy": 0.6108759825766324,
+          "win_fraction": 0.5178756925207756,
+          "score_std": 0.011801218349393466,
+          "distinct_end_states": 16.466759002770083,
+          "selected_score_gain": 0.01713732482497906
+        }
+      },
+      "act3": {
+        "combats": 0,
+        "decisions": 0,
+        "complete_trial_groups": 0,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": null,
+        "means": {
+          "policy_entropy": null,
+          "win_fraction": null,
+          "score_std": null,
+          "distinct_end_states": null,
+          "selected_score_gain": null
+        }
+      },
+      "act4": {
+        "combats": 0,
+        "decisions": 0,
+        "complete_trial_groups": 0,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": null,
+        "means": {
+          "policy_entropy": null,
+          "win_fraction": null,
+          "score_std": null,
+          "distinct_end_states": null,
+          "selected_score_gain": null
+        }
+      }
+    },
+    "noncombat": {
+      "card_skip_rate": 0.003504515433346812,
+      "rest_upgrade_rate": 0.21898683685680095,
+      "boss_deck_size_mean": {
+        "act1": 19.107526881720432,
+        "act2": 25.346153846153847,
+        "act3": null,
+        "act4": null
+      },
+      "counts": {
+        "gold_appeared": 8098,
+        "gold_taken": 7987,
+        "potion_appeared": 3751,
+        "potion_taken": 3420,
+        "card_appeared": 7286,
+        "card_taken": 7272,
+        "relic_appeared": 1874,
+        "relic_taken": 1035,
+        "card_opened": 7286,
+        "card_bowl": 13,
+        "card_choices": 7419,
+        "card_skipped": 26,
+        "shop_purchases": 430,
+        "mask_gold": 8098,
+        "mask_potion": 3455,
+        "mask_card": 7624,
+        "rest_rest": 1777,
+        "rest_smith": 549,
+        "rest_lift": 1,
+        "rest_toke": 1,
+        "rest_dig": 0,
+        "rest_recall": 179,
+        "boss_act1_arrivals": 651,
+        "boss_act1_deck_size_sum": 12439,
+        "boss_act2_arrivals": 26,
+        "boss_act2_deck_size_sum": 659
+      },
+      "final_deck_size_mean": 19.318359375,
+      "episodes": 1024,
+      "scope": "actual trajectories; displayed combat/treasure reward rows"
+    },
+    "imitation_beta": 0.10568253768849062,
+    "imitation_entropy_target": 0.6716025225602738,
+    "best_average_floor_before": 19.2021484375,
+    "combat_over_limit": 0,
+    "event_over_limit": 0,
+    "combat_normal_max_steps": 414,
+    "event_normal_max_steps": 81,
+    "combat_played_cards_limit": 0,
+    "combat_trials": 271168,
+    "combat_played_cards_limit_fraction": 0.0
+  },
+  "independent_recomputed": {
+    "episodes": 1024,
+    "exact_unique_dev_seed_range": [
+      2000000000,
+      2000001023
+    ],
+    "rank_episode_counts": [
+      147,
+      147,
+      146,
+      146,
+      146,
+      146,
+      146
+    ],
+    "outcomes": {
+      "death": 1024
+    },
+    "boss_counts": {
+      "act1_boss": 390,
+      "act2_boss": 0,
+      "act3_first_boss": 0,
+      "act3_second_boss": 0,
+      "act3_three_keys": 0,
+      "act4": 0,
+      "shield_spear": 0,
+      "heart": 0
+    },
+    "audit_roots": [
+      {
+        "seed": 2000000113,
+        "decisions": 272,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000933,
+        "decisions": 412,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000501,
+        "decisions": 176,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000002,
+        "decisions": 314,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000209,
+        "decisions": 257,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000801,
+        "decisions": 326,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000110,
+        "decisions": 315,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000049,
+        "decisions": 439,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000476,
+        "decisions": 411,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000875,
+        "decisions": 415,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000178,
+        "decisions": 222,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000513,
+        "decisions": 520,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000472,
+        "decisions": 246,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000074,
+        "decisions": 311,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000099,
+        "decisions": 572,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000249,
+        "decisions": 489,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000203,
+        "decisions": 166,
+        "outcome": "death"
+      },
+      {
+        "seed": 2000000382,
+        "decisions": 166,
+        "outcome": "death"
+      }
+    ],
+    "audit_decisions": 6029
+  },
+  "comparison": {
+    "B": 16.1572265625,
+    "A172": 18.04296875,
+    "C163": 19.2021484375,
+    "B_minus_A": -1.8857421875,
+    "B_minus_C": -3.044921875
+  },
+  "training": {
+    "target": 2002.1460876464844,
+    "actual": 2543.8762817382812,
+    "overshoot": 541.7301940917969,
+    "updates": 4,
+    "actual_steps": 458752,
+    "throughput": 180.3358140068532,
+    "baseline": 473.9470836897199,
+    "A_throughput": 515.5427999828614
+  },
+  "fork": {
+    "forks": 3616,
+    "branches": 10870,
+    "completed_branches": 10870,
+    "capped_branches": 0,
+    "fork_all_capped": 0,
+    "score_gap_count": 3616,
+    "score_gap_sum": 110.69955826517307,
+    "score_gap_max": 0.19490953019032112,
+    "seconds": 10334.892832063022,
+    "searched_decisions": 5129209,
+    "combat_over_limit": 0,
+    "event_over_limit": 0,
+    "combat_normal_max_steps": 259,
+    "event_normal_max_steps": 280,
+    "combat_played_cards_limit": 0,
+    "combat_trials": 152504,
+    "repeat_check_seconds": 311.8359030757565,
+    "repeat_check_decisions": 141805,
+    "repeat_check_candidates": 473175,
+    "all_candidates_repeat": 158,
+    "time_fraction": 0.5803793495469938,
+    "score_gap_mean": 0.03061381589191733,
+    "combat_played_cards_limit_fraction": 0.0
+  },
+  "noncombat": {
+    "card_skip_rate": 0.003504515433346812,
+    "rest_upgrade_rate": 0.21898683685680095,
+    "boss_deck_size_mean": {
+      "act1": 19.107526881720432,
+      "act2": 25.346153846153847,
+      "act3": null,
+      "act4": null
+    },
+    "counts": {
+      "gold_appeared": 8098,
+      "gold_taken": 7987,
+      "potion_appeared": 3751,
+      "potion_taken": 3420,
+      "card_appeared": 7286,
+      "card_taken": 7272,
+      "relic_appeared": 1874,
+      "relic_taken": 1035,
+      "card_opened": 7286,
+      "card_bowl": 13,
+      "card_choices": 7419,
+      "card_skipped": 26,
+      "shop_purchases": 430,
+      "mask_gold": 8098,
+      "mask_potion": 3455,
+      "mask_card": 7624,
+      "rest_rest": 1777,
+      "rest_smith": 549,
+      "rest_lift": 1,
+      "rest_toke": 1,
+      "rest_dig": 0,
+      "rest_recall": 179,
+      "boss_act1_arrivals": 651,
+      "boss_act1_deck_size_sum": 12439,
+      "boss_act2_arrivals": 26,
+      "boss_act2_deck_size_sum": 659
+    },
+    "final_deck_size_mean": 19.318359375,
+    "episodes": 1024,
+    "scope": "actual trajectories; displayed combat/treasure reward rows"
+  },
+  "combat": {
+    "all": {
+      "combats": 8474,
+      "decisions": 8356662,
+      "complete_trial_groups": 8474,
+      "capped_trials": 0,
+      "nested_event_combats": 134,
+      "pooled_policy_entropy": 0.6383155005493487,
+      "means": {
+        "policy_entropy": 0.6482394607955114,
+        "win_fraction": 0.7561806702855794,
+        "score_std": 0.009241551827613067,
+        "distinct_end_states": 16.56915270238376,
+        "selected_score_gain": 0.012911015728756097
+      }
+    },
+    "act1": {
+      "combats": 7030,
+      "decisions": 6933902,
+      "complete_trial_groups": 7030,
+      "capped_trials": 0,
+      "nested_event_combats": 100,
+      "pooled_policy_entropy": 0.6458648776925859,
+      "means": {
+        "policy_entropy": 0.6559141211864163,
+        "win_fraction": 0.8051298008534851,
+        "score_std": 0.008715782488004122,
+        "distinct_end_states": 16.590184921763868,
+        "selected_score_gain": 0.012042908995477867
+      }
+    },
+    "act2": {
+      "combats": 1444,
+      "decisions": 1422760,
+      "complete_trial_groups": 1444,
+      "capped_trials": 0,
+      "nested_event_combats": 34,
+      "pooled_policy_entropy": 0.6015231805008188,
+      "means": {
+        "policy_entropy": 0.6108759825766324,
+        "win_fraction": 0.5178756925207756,
+        "score_std": 0.011801218349393466,
+        "distinct_end_states": 16.466759002770083,
+        "selected_score_gain": 0.01713732482497906
+      }
+    },
+    "act3": {
+      "combats": 0,
+      "decisions": 0,
+      "complete_trial_groups": 0,
+      "capped_trials": 0,
+      "nested_event_combats": 0,
+      "pooled_policy_entropy": null,
+      "means": {
+        "policy_entropy": null,
+        "win_fraction": null,
+        "score_std": null,
+        "distinct_end_states": null,
+        "selected_score_gain": null
+      }
+    },
+    "act4": {
+      "combats": 0,
+      "decisions": 0,
+      "complete_trial_groups": 0,
+      "capped_trials": 0,
+      "nested_event_combats": 0,
+      "pooled_policy_entropy": null,
+      "means": {
+        "policy_entropy": null,
+        "win_fraction": null,
+        "score_std": null,
+        "distinct_end_states": null,
+        "selected_score_gain": null
+      }
+    }
+  },
+  "search_caps": {
+    "count": 12,
+    "records": [
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8604,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8607,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8608,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8610,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8612,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8619,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8624,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8627,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8629,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8630,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 4,
+        "kind": "combat",
+        "slot": 8632,
+        "seed": 1506093904,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 1,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 0,
+            "action_kind": "choose"
+          }
+        ]
+      },
+      {
+        "event": "sl_over_limit",
+        "device": 1,
+        "kind": "combat",
+        "slot": 8656,
+        "seed": 1727070385,
+        "steps": 3001,
+        "limit_steps": 3001,
+        "last30": [
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          },
+          {
+            "screen": "grid",
+            "candidate": 2,
+            "action_kind": "choose"
+          }
+        ]
+      }
+    ],
+    "scope": "Training speculative SL copies; not episode deaths, not fault exemption; original-game cause unverified"
+  },
+  "scheduler": {
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "runtime_seconds": 2183,
+    "slurm_run_time": "00:36:23",
+    "start": "2026-10-23T10:40:14+08:00",
+    "end": "2026-10-23T11:16:37+08:00",
+    "final_scontrol": "JobId=3891 JobName=spire-e4-c72-B-resume165 UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899728 Nice=0 Account=(null) QOS=(null) JobState=COMPLETED Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:36:23 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-23T10:40:14 EligibleTime=2026-10-23T10:40:14 AccrueTime=2026-10-23T10:40:14 StartTime=2026-10-23T10:40:14 EndTime=2026-10-23T11:16:37 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-23T10:40:14 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:3721016 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=80G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=80G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/c72-B-resume165-preparation/e4-c72-B-resume165.sh WorkDir=/home/zhuyouwei StdErr=/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891.log Power= TresPerNode=gres:gpu:V100:7 \n",
+    "trap_snapshot_is_not_final": "JobId=3891 JobName=spire-e4-c72-B-resume165\n   UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A\n   Priority=4294899728 Nice=0 Account=(null) QOS=(null)\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:36:22 TimeLimit=04:00:00 TimeMin=N/A\n   SubmitTime=2026-10-23T10:40:14 EligibleTime=2026-10-23T10:40:14\n   AccrueTime=2026-10-23T10:40:14\n   StartTime=2026-10-23T10:40:14 EndTime=2026-10-23T14:40:14 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-23T10:40:14 Scheduler=Main\n   Partition=N56_128G_V100 AllocNode:Sid=gpu01:3721016\n   ReqNodeList=gpu01 ExcNodeList=(null)\n   NodeList=gpu01\n   BatchHost=gpu01\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   TRES=cpu=8,mem=80G,node=1,billing=8\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=80G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/home/zhuyouwei/spire-downloads/c72-B-resume165-preparation/e4-c72-B-resume165.sh\n   WorkDir=/home/zhuyouwei\n   StdErr=/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891.log\n   StdIn=/dev/null\n   StdOut=/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891.log\n   Power=\n   TresPerNode=gres:gpu:V100:7\n   \n\n",
+    "exit": "FORK_B_EXIT=0 END=2026-10-23T11:16:36+08:00\n",
+    "validation": "original_exit=0 manifest_check=0 inputs_check=0 memory_peak_check=0\n"
+  },
+  "memory_peak": {
+    "jobid": "3891",
+    "timestamp": "2026-10-23T03:16:37.341017+00:00",
+    "status": "available",
+    "backend": "v2",
+    "cgroup_path": "/system.slice/slurmstepd.scope/job_3891",
+    "peak_bytes": 12229136384,
+    "readable_source": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_3891/memory.peak",
+    "scope": "job_aggregate",
+    "attempts": [
+      {
+        "backend": "v2",
+        "cgroup_path": "/system.slice/slurmstepd.scope/job_3891",
+        "mount_root": "/",
+        "mountpoint": "/sys/fs/cgroup",
+        "readable_source": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_3891/memory.peak",
+        "mountinfo_line": "30 24 0:27 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:4 - cgroup2 cgroup2 rw,seclabel,nsdelegate,memory_recursiveprot",
+        "peak_bytes": 12229136384,
+        "status": "available"
+      }
+    ],
+    "proc_cgroup": "0::/system.slice/slurmstepd.scope/job_3891/step_batch/user/task_0\n",
+    "proc_mountinfo": "23 74 0:22 / /proc rw,nosuid,nodev,noexec,relatime shared:14 - proc proc rw\n24 74 0:23 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel\n25 74 0:6 / /dev rw,nosuid shared:10 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=16377683,mode=755,inode64\n26 24 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime shared:3 - securityfs securityfs rw\n27 25 0:24 / /dev/shm rw,nosuid,nodev shared:11 - tmpfs tmpfs rw,seclabel,inode64\n28 25 0:25 / /dev/pts rw,nosuid,noexec,relatime shared:12 - devpts devpts rw,seclabel,gid=5,mode=620,ptmxmode=000\n29 74 0:26 / /run rw,nosuid,nodev shared:13 - tmpfs tmpfs rw,seclabel,size=26220020k,nr_inodes=819200,mode=755,inode64\n30 24 0:27 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:4 - cgroup2 cgroup2 rw,seclabel,nsdelegate,memory_recursiveprot\n31 24 0:28 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime shared:5 - pstore pstore rw,seclabel\n32 24 0:29 / /sys/firmware/efi/efivars rw,nosuid,nodev,noexec,relatime shared:6 - efivarfs efivarfs rw\n33 24 0:30 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime shared:7 - bpf bpf rw,mode=700\n69 24 0:18 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime shared:8 - configfs configfs rw\n74 1 8:20 / / rw,relatime shared:1 - xfs /dev/sdb4 rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n35 24 0:21 / /sys/fs/selinux rw,nosuid,noexec,relatime shared:9 - selinuxfs selinuxfs rw\n34 23 0:31 / /proc/sys/fs/binfmt_misc rw,relatime shared:15 - autofs systemd-1 rw,fd=29,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=25003\n36 25 0:20 / /dev/mqueue rw,nosuid,nodev,noexec,relatime shared:16 - mqueue mqueue rw,seclabel\n37 25 0:32 / /dev/hugepages rw,relatime shared:17 - hugetlbfs hugetlbfs rw,seclabel,pagesize=2M\n38 24 0:8 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime shared:18 - debugfs debugfs rw,seclabel\n39 24 0:13 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime shared:19 - tracefs tracefs rw,seclabel\n40 24 0:33 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime shared:20 - fusectl fusectl rw\n63 29 0:34 / /run/credentials/systemd-sysctl.service ro,nosuid,nodev,noexec,relatime shared:21 - ramfs none rw,seclabel,mode=700\n65 29 0:36 / /run/credentials/systemd-tmpfiles-setup-dev.service ro,nosuid,nodev,noexec,relatime shared:22 - ramfs none rw,seclabel,mode=700\n201 74 8:1 / /home_backup rw,relatime shared:95 - xfs /dev/sda1 rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,usrquota\n208 74 8:18 / /boot rw,relatime shared:110 - ext4 /dev/sdb2 rw,seclabel,stripe=4095\n217 208 8:17 / /boot/efi rw,relatime shared:116 - vfat /dev/sdb1 rw,fmask=0077,dmask=0077,codepage=437,iocharset=ascii,shortname=winnt,errors=remount-ro\n253 29 0:37 / /run/credentials/systemd-tmpfiles-setup.service ro,nosuid,nodev,noexec,relatime shared:122 - ramfs none rw,seclabel,mode=700\n226 74 0:38 / /var/lib/nfs/rpc_pipefs rw,relatime shared:126 - rpc_pipefs sunrpc rw\n692 29 0:46 / /run/user/1015 rw,nosuid,nodev,relatime shared:367 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1015,gid=1015,inode64\n693 29 0:47 / /run/user/1003 rw,nosuid,nodev,relatime shared:390 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1003,gid=1003,inode64\n935 74 0:49 / /home rw,noatime shared:486 - nfs4 login:/home rw,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,acregmin=1800,acregmax=1800,acdirmin=1800,acdirmax=1800,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=192.168.100.2,local_lock=none,addr=192.168.100.1\n570 29 0:43 / /run/user/1005 rw,nosuid,nodev,relatime shared:259 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1005,gid=1005,inode64\n593 29 0:45 / /run/user/1007 rw,nosuid,nodev,relatime shared:293 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1007,gid=1007,inode64\n788 34 0:50 / /proc/sys/fs/binfmt_misc rw,nosuid,nodev,noexec,relatime shared:409 - binfmt_misc binfmt_misc rw\n756 29 0:52 / /run/user/1013 rw,nosuid,nodev,relatime shared:415 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1013,gid=1013,inode64\n931 693 0:54 / /run/user/1003/doc rw,nosuid,nodev,relatime shared:453 - fuse.portal portal rw,user_id=1003,group_id=1003\n737 29 0:51 / /run/user/1002 rw,nosuid,nodev,relatime shared:403 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1002,gid=1002,inode64\n1063 29 0:55 / /run/user/1001 rw,nosuid,nodev,relatime shared:594 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1001,gid=1001,inode64\n616 29 0:48 / /run/user/1017 rw,nosuid,nodev,relatime shared:307 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1017,gid=1018,inode64\n",
+    "reason": "exact current allocation ancestor; includes descendant scopes"
+  },
+  "memory_arithmetic": {
+    "peak_bytes": 12229136384,
+    "peak_GiB": 11.389270782470703,
+    "future_peak_plus25pct_GiB": 14.236588478088379,
+    "current_request_GiB": 80
+  },
+  "accounting": {
+    "job_gpu_seconds": 15281,
+    "job_node_seconds": 1910.125,
+    "step2_cumulative_node_seconds": 3118.5,
+    "step2_limit": 36000,
+    "step2_reserved": 0,
+    "active_job": null,
+    "rule": "Final2183seconds*7GPUs/8 charged once;3770 previous1208.375 preserved"
+  },
+  "checkpoint_manifest": {
+    "job_id": 3891,
+    "captured_at": "2026-10-23T11:26:07.532296+08:00",
+    "ranks": [
+      {
+        "rank": 0,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/rank-0.pt",
+        "bytes": 12976321,
+        "sha256": "f0a0754200337a834461162248bc95d3c184940f244cd534e607b2591c349c15",
+        "metadata": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "620d9fb32e38bb4f01932c6c4244b8c46485b5433e7e643371f6b07b9902df4a",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "complete",
+          "reason": "matched_training_seconds_complete",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 167,
+          "epochs": 4,
+          "trained_seconds": 2543.8762817382812,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 777.8869018554688,
+          "actual_steps": 458752,
+          "ready": null,
+          "stagnant": 0,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.10568253768849062,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 36
+        },
+        "keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "train_state_keys": [
+          "seeds",
+          "paths",
+          "floor_steps",
+          "reward_history",
+          "noncombat_floor_steps",
+          "tails",
+          "map_returned",
+          "seen",
+          "last_stall_classes",
+          "pending",
+          "rewards",
+          "seed_rng",
+          "search_rng",
+          "fork_rng",
+          "decisions",
+          "completed",
+          "partial",
+          "evaluation_waiting"
+        ],
+        "fork_rng_present": true,
+        "update_versions": [
+          164,
+          165,
+          166,
+          167
+        ],
+        "assessment_versions": [
+          163,
+          167
+        ],
+        "fork_metrics": {
+          "forks": 510,
+          "branches": 1533,
+          "completed_branches": 1533,
+          "capped_branches": 0,
+          "fork_all_capped": 0,
+          "score_gap_count": 510,
+          "score_gap_sum": 15.267041140546421,
+          "score_gap_max": 0.16657322836227906,
+          "seconds": 1556.787840794772,
+          "searched_decisions": 733664,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 167,
+          "event_normal_max_steps": 194,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 21592,
+          "repeat_check_seconds": 46.97627828095574,
+          "repeat_check_decisions": 20192,
+          "repeat_check_candidates": 68745,
+          "all_candidates_repeat": 30
+        }
+      },
+      {
+        "rank": 1,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/rank-1.pt",
+        "bytes": 12988161,
+        "sha256": "992961e39b5e9e538710baad36aa0262e73cceb16680c6f5f8f31806afd616bc",
+        "metadata": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "512a50b9b7866dbc269a3a1a1193b38846a4c2327cb0700fdc64af338fd5687e",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "complete",
+          "reason": "matched_training_seconds_complete",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 167,
+          "epochs": 4,
+          "trained_seconds": 2543.8762817382812,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 777.8869018554688,
+          "actual_steps": 458752,
+          "ready": null,
+          "stagnant": 0,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.10568253768849062,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 48
+        },
+        "keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "train_state_keys": [
+          "seeds",
+          "paths",
+          "floor_steps",
+          "reward_history",
+          "noncombat_floor_steps",
+          "tails",
+          "map_returned",
+          "seen",
+          "last_stall_classes",
+          "pending",
+          "rewards",
+          "seed_rng",
+          "search_rng",
+          "fork_rng",
+          "decisions",
+          "completed",
+          "partial",
+          "evaluation_waiting"
+        ],
+        "fork_rng_present": true,
+        "update_versions": [
+          164,
+          165,
+          166,
+          167
+        ],
+        "assessment_versions": [
+          163,
+          167
+        ],
+        "fork_metrics": {
+          "forks": 558,
+          "branches": 1672,
+          "completed_branches": 1672,
+          "capped_branches": 0,
+          "fork_all_capped": 0,
+          "score_gap_count": 558,
+          "score_gap_sum": 16.740993470526686,
+          "score_gap_max": 0.17626448090259844,
+          "seconds": 1535.168216037564,
+          "searched_decisions": 775978,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 154,
+          "event_normal_max_steps": 228,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 23400,
+          "repeat_check_seconds": 44.200828483793885,
+          "repeat_check_decisions": 21508,
+          "repeat_check_candidates": 72785,
+          "all_candidates_repeat": 22
+        }
+      },
+      {
+        "rank": 2,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/rank-2.pt",
+        "bytes": 12991233,
+        "sha256": "37ca9c54e62a3fe8898fe963e07e6910a8ae83ed2c3f58755afa110e79af9f9b",
+        "metadata": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "3dfd955a6deaa906e5d13bd53acdfa3bd84f8a8b3ffd9fdc5085cbd0a98bbf55",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "complete",
+          "reason": "matched_training_seconds_complete",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 167,
+          "epochs": 4,
+          "trained_seconds": 2543.8762817382812,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 777.8869018554688,
+          "actual_steps": 458752,
+          "ready": null,
+          "stagnant": 0,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.10568253768849062,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 53
+        },
+        "keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "train_state_keys": [
+          "seeds",
+          "paths",
+          "floor_steps",
+          "reward_history",
+          "noncombat_floor_steps",
+          "tails",
+          "map_returned",
+          "seen",
+          "last_stall_classes",
+          "pending",
+          "rewards",
+          "seed_rng",
+          "search_rng",
+          "fork_rng",
+          "decisions",
+          "completed",
+          "partial",
+          "evaluation_waiting"
+        ],
+        "fork_rng_present": true,
+        "update_versions": [
+          164,
+          165,
+          166,
+          167
+        ],
+        "assessment_versions": [
+          163,
+          167
+        ],
+        "fork_metrics": {
+          "forks": 495,
+          "branches": 1492,
+          "completed_branches": 1492,
+          "capped_branches": 0,
+          "fork_all_capped": 0,
+          "score_gap_count": 495,
+          "score_gap_sum": 16.093931864469504,
+          "score_gap_max": 0.19490953019032112,
+          "seconds": 1504.9703114377335,
+          "searched_decisions": 718612,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 259,
+          "event_normal_max_steps": 255,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 21184,
+          "repeat_check_seconds": 44.38283035310451,
+          "repeat_check_decisions": 20096,
+          "repeat_check_candidates": 67071,
+          "all_candidates_repeat": 28
+        }
+      },
+      {
+        "rank": 3,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/rank-3.pt",
+        "bytes": 12986945,
+        "sha256": "9ad44a7d1facd77ef5eb7ce8fbf23c1593e9072ebda5d4e222f39c6579b4409e",
+        "metadata": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "97f49e1f0fcbcbd8d527b39c6f6fea270f5a6a27d810ed106c6639fe3d623747",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "complete",
+          "reason": "matched_training_seconds_complete",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 167,
+          "epochs": 4,
+          "trained_seconds": 2543.8762817382812,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 777.8869018554688,
+          "actual_steps": 458752,
+          "ready": null,
+          "stagnant": 0,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.10568253768849062,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 50
+        },
+        "keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "train_state_keys": [
+          "seeds",
+          "paths",
+          "floor_steps",
+          "reward_history",
+          "noncombat_floor_steps",
+          "tails",
+          "map_returned",
+          "seen",
+          "last_stall_classes",
+          "pending",
+          "rewards",
+          "seed_rng",
+          "search_rng",
+          "fork_rng",
+          "decisions",
+          "completed",
+          "partial",
+          "evaluation_waiting"
+        ],
+        "fork_rng_present": true,
+        "update_versions": [
+          164,
+          165,
+          166,
+          167
+        ],
+        "assessment_versions": [
+          163,
+          167
+        ],
+        "fork_metrics": {
+          "forks": 527,
+          "branches": 1587,
+          "completed_branches": 1587,
+          "capped_branches": 0,
+          "fork_all_capped": 0,
+          "score_gap_count": 527,
+          "score_gap_sum": 16.755644766613866,
+          "score_gap_max": 0.17309974401425093,
+          "seconds": 1513.303049547132,
+          "searched_decisions": 764352,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 195,
+          "event_normal_max_steps": 215,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 22616,
+          "repeat_check_seconds": 46.9428985909326,
+          "repeat_check_decisions": 21534,
+          "repeat_check_candidates": 71207,
+          "all_candidates_repeat": 18
+        }
+      },
+      {
+        "rank": 4,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/rank-4.pt",
+        "bytes": 13000961,
+        "sha256": "b922c19bb771e8bcb60002285f7cf39c1aab6003f78b7474a79175d81a0d4acb",
+        "metadata": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "934e0f2c5243e849f1baac0645cd828fd5df6811ae0aa1af15ec75166bdb5fac",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "complete",
+          "reason": "matched_training_seconds_complete",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 167,
+          "epochs": 4,
+          "trained_seconds": 2543.8762817382812,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 777.8869018554688,
+          "actual_steps": 458752,
+          "ready": null,
+          "stagnant": 0,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.10568253768849062,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 81
+        },
+        "keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "train_state_keys": [
+          "seeds",
+          "paths",
+          "floor_steps",
+          "reward_history",
+          "noncombat_floor_steps",
+          "tails",
+          "map_returned",
+          "seen",
+          "last_stall_classes",
+          "pending",
+          "rewards",
+          "seed_rng",
+          "search_rng",
+          "fork_rng",
+          "decisions",
+          "completed",
+          "partial",
+          "evaluation_waiting"
+        ],
+        "fork_rng_present": true,
+        "update_versions": [
+          164,
+          165,
+          166,
+          167
+        ],
+        "assessment_versions": [
+          163,
+          167
+        ],
+        "fork_metrics": {
+          "forks": 516,
+          "branches": 1551,
+          "completed_branches": 1551,
+          "capped_branches": 0,
+          "fork_all_capped": 0,
+          "score_gap_count": 516,
+          "score_gap_sum": 16.501622538249496,
+          "score_gap_max": 0.17434890759296906,
+          "seconds": 1468.634324925486,
+          "searched_decisions": 735778,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 183,
+          "event_normal_max_steps": 206,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 21616,
+          "repeat_check_seconds": 45.82614573743194,
+          "repeat_check_decisions": 20324,
+          "repeat_check_candidates": 66607,
+          "all_candidates_repeat": 21
+        }
+      },
+      {
+        "rank": 5,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/rank-5.pt",
+        "bytes": 13001601,
+        "sha256": "c5a8e38976aa22cf449574382534b6449177e2ced6e079f4bdf017bdc8d2eedb",
+        "metadata": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "cd16075efada084002f9bdba05b98d565aa4aa162f43f17bdeaead809c45af51",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "complete",
+          "reason": "matched_training_seconds_complete",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 167,
+          "epochs": 4,
+          "trained_seconds": 2543.8762817382812,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 777.8869018554688,
+          "actual_steps": 458752,
+          "ready": null,
+          "stagnant": 0,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.10568253768849062,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 54
+        },
+        "keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "train_state_keys": [
+          "seeds",
+          "paths",
+          "floor_steps",
+          "reward_history",
+          "noncombat_floor_steps",
+          "tails",
+          "map_returned",
+          "seen",
+          "last_stall_classes",
+          "pending",
+          "rewards",
+          "seed_rng",
+          "search_rng",
+          "fork_rng",
+          "decisions",
+          "completed",
+          "partial",
+          "evaluation_waiting"
+        ],
+        "fork_rng_present": true,
+        "update_versions": [
+          164,
+          165,
+          166,
+          167
+        ],
+        "assessment_versions": [
+          163,
+          167
+        ],
+        "fork_metrics": {
+          "forks": 498,
+          "branches": 1498,
+          "completed_branches": 1498,
+          "capped_branches": 0,
+          "fork_all_capped": 0,
+          "score_gap_count": 498,
+          "score_gap_sum": 16.40931243821981,
+          "score_gap_max": 0.17688402724571717,
+          "seconds": 1277.9780802547466,
+          "searched_decisions": 695520,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 233,
+          "event_normal_max_steps": 264,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 20704,
+          "repeat_check_seconds": 39.446337274624966,
+          "repeat_check_decisions": 18728,
+          "repeat_check_candidates": 61520,
+          "all_candidates_repeat": 20
+        }
+      },
+      {
+        "rank": 6,
+        "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/rank-6.pt",
+        "bytes": 12988033,
+        "sha256": "7f86b812f28ae465e58fd97dda25c71967d8f12236af86a3d410fed7457052b7",
+        "metadata": {
+          "commit": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6",
+          "source_sha256": "9c61fd34c207e5ecd2d559514d0df48acd434e0b1310a262828d271d1ddc84fa",
+          "source_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+          "source_version": 163,
+          "case": "B",
+          "target_training_seconds": 2002.1460876464844,
+          "initialization": 1729,
+          "phase": "complete",
+          "reason": "matched_training_seconds_complete",
+          "lanes": 256,
+          "trials": 32,
+          "world_size": 7,
+          "version": 167,
+          "epochs": 4,
+          "trained_seconds": 2543.8762817382812,
+          "source_trained_seconds": 13474.011901855469,
+          "next_evaluation": 2002.1460876464844,
+          "evaluation_seconds": 777.8869018554688,
+          "actual_steps": 458752,
+          "ready": null,
+          "stagnant": 0,
+          "best_floor": 19.2021484375,
+          "imitation_beta": 0.10568253768849062,
+          "imitation_entropy_target": 0.6716025225602738,
+          "event_trial_max_steps": 69
+        },
+        "keys": [
+          "commit",
+          "source_sha256",
+          "source_commit",
+          "source_version",
+          "case",
+          "fork_metrics",
+          "target_training_seconds",
+          "initialization",
+          "phase",
+          "reason",
+          "lanes",
+          "trials",
+          "world_size",
+          "version",
+          "epochs",
+          "trained_seconds",
+          "source_trained_seconds",
+          "next_evaluation",
+          "evaluation_seconds",
+          "updates",
+          "actual_steps",
+          "model",
+          "optimizer",
+          "ppo_rng",
+          "torch_rng",
+          "cuda_rng",
+          "training_rng",
+          "train_state",
+          "evaluation_state",
+          "ready",
+          "health_history",
+          "assessments",
+          "best",
+          "stagnant",
+          "search_metrics",
+          "capacity_metrics",
+          "combat_diagnostics",
+          "best_floor",
+          "imitation_beta",
+          "imitation_entropy_target",
+          "event_trial_max_steps",
+          "loop_metrics"
+        ],
+        "train_state_keys": [
+          "seeds",
+          "paths",
+          "floor_steps",
+          "reward_history",
+          "noncombat_floor_steps",
+          "tails",
+          "map_returned",
+          "seen",
+          "last_stall_classes",
+          "pending",
+          "rewards",
+          "seed_rng",
+          "search_rng",
+          "fork_rng",
+          "decisions",
+          "completed",
+          "partial",
+          "evaluation_waiting"
+        ],
+        "fork_rng_present": true,
+        "update_versions": [
+          164,
+          165,
+          166,
+          167
+        ],
+        "assessment_versions": [
+          163,
+          167
+        ],
+        "fork_metrics": {
+          "forks": 512,
+          "branches": 1537,
+          "completed_branches": 1537,
+          "capped_branches": 0,
+          "fork_all_capped": 0,
+          "score_gap_count": 512,
+          "score_gap_sum": 12.931012046547282,
+          "score_gap_max": 0.1677684206993152,
+          "seconds": 1478.051009065588,
+          "searched_decisions": 705305,
+          "combat_over_limit": 0,
+          "event_over_limit": 0,
+          "combat_normal_max_steps": 215,
+          "event_normal_max_steps": 280,
+          "combat_played_cards_limit": 0,
+          "combat_trials": 21392,
+          "repeat_check_seconds": 44.06058435491286,
+          "repeat_check_decisions": 19423,
+          "repeat_check_candidates": 65240,
+          "all_candidates_repeat": 19
+        }
+      }
+    ]
+  },
+  "source_and_file_manifest": {
+    "E4-C68-B-167-N32-D1024-rank-2.json": {
+      "bytes": 253149,
+      "sha256": "2be32c9bc5bacba21847a9b48f94c2dc32b445346e35a03d7685c8a4c6b000ec",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-rank-2.json"
+    },
+    "E4-C68-B-167-N32-D1024-rank-3.json": {
+      "bytes": 236481,
+      "sha256": "eb7e3fd1edc7c1f5b5037bba7fe42be1f34d13174019604b1f860b5b83d5f434",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-rank-3.json"
+    },
+    "E4-C68-B-167-N32-D1024-rank-6.json": {
+      "bytes": 238033,
+      "sha256": "ff6ff3cc55f6a281a5d36ac70542c003d2d90d0a940a5a66b370953a0d188412",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-rank-6.json"
+    },
+    "E4-C68-B-167-N32-D1024-rank-0.json": {
+      "bytes": 241319,
+      "sha256": "7ca4e946128fc0ae3ead44761a24ef2c2a47029c217b1e1ca4fcbebb4f71c8c3",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-rank-0.json"
+    },
+    "E4-C68-B-167-N32-D1024-rank-4.json": {
+      "bytes": 243664,
+      "sha256": "f79681d14c6781684f290fec765d2184e9cb70e8dcdd0079208c3970a8b8cc5a",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-rank-4.json"
+    },
+    "E4-C68-B-167-N32-D1024-rank-1.json": {
+      "bytes": 243545,
+      "sha256": "b506423dd9544a1a798e4cd8ee956e6967419ea6fd21277f70a3bf51bf4299cb",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-rank-1.json"
+    },
+    "E4-C68-B-167-N32-D1024-combat-2.json": {
+      "bytes": 410171,
+      "sha256": "0e35eef6d14e72a4dda7fcf7ee6559efb24b99c20911938d809891bd12518158",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-combat-2.json"
+    },
+    "E4-C68-B-167-N32-D1024-combat-4.json": {
+      "bytes": 387528,
+      "sha256": "6b1b9b6f025e4aff8d057308978895e770cecacd2415a5a6e2c69023503206b4",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-combat-4.json"
+    },
+    "E4-C68-B-167-N32-D1024-rank-5.json": {
+      "bytes": 252262,
+      "sha256": "5434c3a0fbef59b58b9c9dc47aeb86b46b11efd429b0aabc2f6c8baa8d77a81c",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-rank-5.json"
+    },
+    "E4-C68-B-167-N32-D1024-combat-0.json": {
+      "bytes": 381395,
+      "sha256": "d003de793c177705fced3d61301179ed2ec835d0f62855c16e7e99d69589ab5c",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-combat-0.json"
+    },
+    "E4-C68-B-167-N32-D1024-combat-3.json": {
+      "bytes": 371387,
+      "sha256": "1a37a23c3ed45431be15cdeabeedf3b87fc09ec9592ebe9038f0cc7ba9fda5ba",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-combat-3.json"
+    },
+    "E4-C68-B-167-N32-D1024-combat-1.json": {
+      "bytes": 386370,
+      "sha256": "8616758eb168994561dce7155b50631e3a880f9ebafc085cc437a07c1c088f7c",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-combat-1.json"
+    },
+    "E4-C68-B-167-N32-D1024-fork-2.json": {
+      "bytes": 570,
+      "sha256": "b3dc23f6bde54756ca03ca2888e61bc983d923981eb8545a495274d204c58c0c",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-fork-2.json"
+    },
+    "E4-C68-B-167-N32-D1024-fork-4.json": {
+      "bytes": 569,
+      "sha256": "bd02199ecbd6cb53dd2f551ba37e1618e4baafc543368c6da506f3b856dca239",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-fork-4.json"
+    },
+    "E4-C68-B-167-N32-D1024-fork-0.json": {
+      "bytes": 569,
+      "sha256": "2ada5bade9a8f217417dfb02f9b49cc41a6fb62c861e0c9525a11a4f50b915d0",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-fork-0.json"
+    },
+    "E4-C68-B-167-N32-D1024-fork-3.json": {
+      "bytes": 568,
+      "sha256": "ff8fb271e5f1f7716c6f9cce9f553a60f597c4b50c0ba2f2abac1c3d87590eaf",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-fork-3.json"
+    },
+    "E4-C68-B-167-N32-D1024-fork-1.json": {
+      "bytes": 570,
+      "sha256": "8ba55c4ad78bdb9895f95a964014d275d9c01fa921d697751934e3fd3bcc9395",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-fork-1.json"
+    },
+    "E4-C68-B-167-N32-D1024-combat-5.json": {
+      "bytes": 408669,
+      "sha256": "5a69bf257fb0f6ca9522e7010a7f7bdd2d8c9375eb7e38c50d180c54e270b482",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-combat-5.json"
+    },
+    "E4-C68-B-167-N32-D1024-fork-5.json": {
+      "bytes": 570,
+      "sha256": "7d6732039a6e98a0d27f60b417efecec093049c26d063854b8ed3730ddbe886b",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-fork-5.json"
+    },
+    "E4-C68-B-167-N32-D1024-combat-6.json": {
+      "bytes": 381658,
+      "sha256": "ddee35ab3152838cc2435583560dad94d0207148413292e75e7b829ad9d07572",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-combat-6.json"
+    },
+    "E4-C68-B-167-N32-D1024-fork-6.json": {
+      "bytes": 568,
+      "sha256": "de6314588e8c3079cc504c779553a1a7f9887a835e63b2747c857c989d89b781",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-fork-6.json"
+    },
+    "E4-C68-B-167-N32-D1024-summary.json": {
+      "bytes": 4450,
+      "sha256": "5bec875154c6db67212006a5f734dbfc5fd34aad80d45ae57bc8643a539db0e8",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-summary.json"
+    },
+    "E4-C68-B-167-N32-D1024-audit.json": {
+      "bytes": 21754,
+      "sha256": "d33488249f387ea24e659f52559c4d0c544bfcaea0004e5b2d180f7afd79c038",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/E4-C68-B-167-N32-D1024-audit.json"
+    },
+    "status.json": {
+      "bytes": 14391,
+      "sha256": "d8f2694bff6d2548ac7d4a6e29947ccdc1aa3573089bbdb1e12f6cf18ccd48a2",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/status.json"
+    },
+    "inputs-at-exit.json": {
+      "bytes": 4398,
+      "sha256": "09efc762e51bb5d1f536e79f5738d6e08e4c1704f9ec4b0f95e770234f9af3d6",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/inputs-at-exit.json"
+    },
+    "manifest-at-exit.txt": {
+      "bytes": 82,
+      "sha256": "077ad7403dcc595e983bb6b4c3c13f740d37da183eb117be99b14de6a1886e80",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/manifest-at-exit.txt"
+    },
+    "exit-validation.txt": {
+      "bytes": 68,
+      "sha256": "3bfc666cb04fc165f73ce8b0e7d69ca9ebbcef5a8916d7a0e398aa2f8520194a",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/exit-validation.txt"
+    },
+    "exit.txt": {
+      "bytes": 44,
+      "sha256": "59c156527ba2b4323cb8fb576308199c6acf760486cf9e556ccbe1841ebe765e",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/exit.txt"
+    },
+    "accounting-at-exit.txt": {
+      "bytes": 1352,
+      "sha256": "e861c6625f8048523d3778f894e5a1215bfde3d3b5866055509c1c949512caa5",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/accounting-at-exit.txt"
+    },
+    "memory-peak.json": {
+      "bytes": 5728,
+      "sha256": "69c616d502c7b8a0b756992f81a5f4147adec4e2ee2f7864af44ab1a3cebc217",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/memory-peak.json"
+    },
+    "memory-peak.log": {
+      "bytes": 104,
+      "sha256": "973ffdaea7f77f4e915ef66ffb33fd2b2626267cbd2dba33c342baba3300ce5d",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/memory-peak.log"
+    },
+    "queue-last.json": {
+      "bytes": 2517,
+      "sha256": "2558b28eebc6a86a7f2c651f7658933609388e950b02bce281c332fb8ccc0ee6",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/queue-last.json"
+    },
+    "sl-over-limit-4.jsonl": {
+      "bytes": 21670,
+      "sha256": "25e0f522a7f1f4e2c8ed0ea2998854ca57b54bf045ecaee62d76a5f92b72ecb7",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/sl-over-limit-4.jsonl"
+    },
+    "sl-over-limit-1.jsonl": {
+      "bytes": 1970,
+      "sha256": "8fc4d04a1a8f0f2b3f85064f3f1dcbb2c121724806a4f4d6a5521f6122bf2cd9",
+      "path": "/home/zhuyouwei/spire-downloads/e4-c72-B-resume165-3891/sl-over-limit-1.jsonl"
+    }
+  },
+  "source_hashes": {
+    "tools/e4_continue.py": "90a0363db8f94b97cbf03860ed9e813511a6bfea4d65f400dda0f5904d76b3bb",
+    "tools/e4_run.py": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+    "train/e4.py": "2f0a00e6cac27f6b10770d8f038fc028d24048c3a7c797384cd3030dff4c7126",
+    "train/e4_rewards.py": "0970c0f4ca0069cf02934c4ed3c84459fed4045e1019d12b25ad40a708508a97"
+  },
+  "complete_external_bundle": {
+    "file": "job3891-final-results-bundle.json.gz",
+    "bytes": 643032,
+    "sha256": "639c044cbed06704dad6c1f5b74335ca25959ca9619c0c2e95ef593a9aef216e",
+    "file_count": 34
+  },
+  "audit_handoff": {
+    "qualified_round": "E4-C72-job3891-B167-N32-D1024",
+    "status": "pending_mac_original_replay",
+    "roots": 18,
+    "decisions": 6029,
+    "standalone": "inventory/e4-c72-job3891-audit167.json",
+    "standalone_sha256": "8bad17a2d73172a29e9c401eca454415a090dd3aafeaebe00e9b7650d5ce566e",
+    "cumulative": "inventory/e4-audit-roots.json",
+    "cumulative_sha256": "4e9aa18f37e841e15bb37baa828e5bc6a4377e553253f7591e99bedfaa753a98",
+    "prior_roots_and_rounds_preserved": true
+  },
+  "acceptance": {
+    "subagent": "/root/c72_job3891_final_review",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "checks": 854,
+    "failed": 0,
+    "parent_reran": true,
+    "report_sha256": "1b4b5ad4db48f300887b7cef537a971c5b6977394402be7af3a674cfc341a2ec",
+    "script_sha256": "8a3e3d67478efe2f59917165e145aec4962dcc98ab9149e2438dc463fafd26b5",
+    "report_external": "job3891-final-verification.json",
+    "script_external": "job3891-final-verify.py"
+  },
+  "limitations": [
+    "Mac original-game oracle replay remains pending; this is an independent artifact consistency verification.",
+    "Summary faults/truncated zeros are producer constants, not independent original-game proof.",
+    "Original round/actions are unchanged; enclosing handoff scope uniquely limits them to job3891.",
+    "Search caps are training speculative-copy caps, not episode deaths or game-rule exemptions; their original-game cause remains unverified.",
+    "Overshoot and additional fork compute prevent an equal-time causal quality conclusion.",
+    "Boss reach flags and boss deck arrival denominators are different metrics; noncombat rates retain producer definitions.",
+    "Checkpoint metadata was obtained by parent remote CPU torch.load and checked here as a digest; no pt tensor file was downloaded or loaded locally."
+  ],
+  "next_action": "Claude Mac original replay18 true paths and decision on regression; no automatic extension/new experiment"
+}
