@@ -1,0 +1,161 @@
+{
+  "at": "2026-10-24T22:11:16.767009+00:00",
+  "status": "preflight_incomplete_home_du_timeout_no_submission",
+  "heartbeat_trigger": "2026-10-24T21:40:45.349Z",
+  "source_commit": "67735d2808018721eb318d2c954de6954eeb314a",
+  "decision_commit": "138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+  "manifest_sha256": "d4968549e7fbdd4233f1cf82eda870356dee181438688658c816d446d8e63dde",
+  "unique_deployment_hashes_verified": 244,
+  "actual_resource_query_at": "2026-10-24T22:06:09.082666+00:00",
+  "next_query_not_before": "2026-10-24T22:16:39.082666+00:00",
+  "ssh_session": 48017,
+  "actual_raw_jobs": "JobId=3920 JobName=compute UserId=shaoy(1013) GroupId=shaoy(1013) MCS_label=N/A Priority=4294899704 Nice=0 Account=(null) QOS=(null) JobState=PENDING Reason=DependencyNeverSatisfied Dependency=afterok:3919(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=06:00:00 TimeMin=N/A SubmitTime=2026-10-23T18:36:09 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-23T18:36:09 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:575834 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* TRES=cpu=2,mem=4G,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryCPU=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/shaoy/Betatron_project/sub/sub_compute.slurm WorkDir=/home/shaoy/Betatron_project StdErr=/home/shaoy/Betatron_project/sub/compute_submit.log StdIn=/dev/null StdOut=/home/shaoy/Betatron_project/sub/compute_submit.log Power= TresPerNode=gres:gpu:V100:1 \nJobId=3921 JobName=analysis UserId=shaoy(1013) GroupId=shaoy(1013) MCS_label=N/A Priority=4294899703 Nice=0 Account=(null) QOS=(null) JobState=PENDING Reason=Dependency Dependency=afterok:3920(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-10-23T18:36:09 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-23T18:36:09 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:575834 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* TRES=cpu=2,mem=4G,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryCPU=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/shaoy/Betatron_project/sub/sub_analysis.slurm WorkDir=/home/shaoy/Betatron_project StdErr=/home/shaoy/Betatron_project/sub/analysis_submit.log StdIn=/dev/null StdOut=/home/shaoy/Betatron_project/sub/analysis_submit.log Power= \nJobId=3922 JobName=plot UserId=shaoy(1013) GroupId=shaoy(1013) MCS_label=N/A Priority=4294899702 Nice=0 Account=(null) QOS=(null) JobState=PENDING Reason=Dependency Dependency=afterok:3921(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-10-23T18:36:09 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-23T18:36:09 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:575834 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* TRES=cpu=2,mem=4G,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryCPU=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/shaoy/Betatron_project/sub/sub_plot.slurm WorkDir=/home/shaoy/Betatron_project StdErr=/home/shaoy/Betatron_project/sub/plot_submit.log StdIn=/dev/null StdOut=/home/shaoy/Betatron_project/sub/plot_submit.log Power= \n",
+  "own_queue": "",
+  "raw_node": "NodeName=gpu01 Arch=x86_64 CoresPerSocket=28  CPUAlloc=0 CPUEfctv=56 CPUTot=56 CPULoad=1.29 AvailableFeatures=(null) ActiveFeatures=(null) Gres=gpu:V100:8 GresDrain=N/A GresUsed=gpu:V100:0(IDX:N/A) NodeAddr=gpu01 NodeHostName=gpu01 Version=22.05.9 OS=Linux 5.14.0-648.el9.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Dec 5 11:18:23 UTC 2025  RealMemory=128027 AllocMem=0 FreeMem=792 Sockets=2 Boards=1 State=IDLE ThreadsPerCore=1 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=N56_128G_V100  BootTime=2026-10-11T13:12:33 SlurmdStartTime=2026-10-11T13:12:51 LastBusyTime=2026-10-25T02:15:58 CfgTRES=cpu=56,mem=128027M,billing=56 AllocTRES= CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/s ExtSensorsWatts=0 ExtSensorsTemp=n/s\n",
+  "partial_free_gpus": 8,
+  "actual_request_world": null,
+  "home_size_mib": null,
+  "memavailable_margin_verified": false,
+  "full_resource_gates_passed": false,
+  "error": "subprocess.TimeoutExpired: Command '('du', '-sm', '/home/zhuyouwei')' timed out after60 seconds",
+  "error_stage": "home disk usage; no assess/render/sbatch reached",
+  "budget_snapshot_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c79-budget-20261024T220544Z.json",
+  "new_receipt": null,
+  "new_reservation": 0,
+  "active_job": null,
+  "no_resubmit": true,
+  "no_same_heartbeat_resource_retry": true,
+  "helper_files_unchanged": true,
+  "next_preflight_wrapper": "Parent same command du -sm /home/zhuyouwei with180-second timeout; other commands60; actual size still mandatory; freshbudget/fullhash/resources nextactualheartbeat >=630seconds",
+  "evidence": "c79-4c2-preflight-incomplete",
+  "next": "Next actual heartbeat at/after2026-10-24T22:16:39.082666+00:00 fresh budget/full244hashes and resource query once; render/submit only on pass, receipt before reserve",
+  "code_acceptance": {
+    "at": "2026-10-24T21:49:26.861997+00:00",
+    "status": "completed_verified",
+    "task_key": "claude79-adam-warmup-138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "parent_complete_script_read": true,
+    "parent_independent_rerun": true,
+    "script_sha256": "9f19ded9b2fdc625104a12bef843fb07d798e9e5745585bd4d28f7234fb6421d",
+    "parent_report_sha256": "4f7f72e476391821a9dcc569b379b2deeef29468ea352fa2c51927bf96bd2a24",
+    "evidence": "c79-parent-adam-warmup-accepted/report.json",
+    "child_cpu_tests": 10,
+    "parent_cpu_tests": 10,
+    "new_cpu_tests": 1,
+    "lr_schedule": [
+      0,
+      3.3e-05,
+      6.7e-05,
+      0.0001
+    ],
+    "fresh_student_source_world": 7,
+    "allowed_initial_worlds": [
+      7,
+      8
+    ],
+    "parameter_unchanged_and_adam_moments_nonzero_update1": true,
+    "scope": [
+      "tools/e4_distill.py",
+      "tests/test_e4_distill.py"
+    ],
+    "limits": [
+      "Single CPU worker; real tiny Policy, Adam and full four-epoch PPO update; distributed reductions mocked.",
+      "Existing synthetic checkpoint tests only; no running checkpoint files accessed.",
+      "No GPU, network, SSH, Slurm, deployment, repository writes or ledger writes.",
+      "Fresh student rank mapping statically reviewed; no eight-process or GPU runtime claim.",
+      "Frozen sources only; Git HEAD unavailable through current sandbox, parent provided HEAD 5eabab."
+    ]
+  },
+  "metrics_acceptance": {
+    "at": "2026-10-24T21:49:26.861997+00:00",
+    "status": "completed_verified",
+    "task_key": "claude79-update-metrics-138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "parent_complete_script_read": true,
+    "parent_independent_rerun": true,
+    "script_sha256": "9fb6dd071c69e08a8e85cf40035a2269805ebad46c25492397c0cb28fed855ca",
+    "parent_report_sha256": "c886778c42880351aa086d8b5fee33d2fc749384269c990d5ee3f9259fe922c3",
+    "evidence": "c79-parent-update-metrics-accepted/report.json",
+    "original_metric_values": 128,
+    "updates_each_job": 8,
+    "grad_norm": null,
+    "grad_norm_reason": "Not logged in all16 original records",
+    "data_sha256": "46433ef4d819fca80fc526726acf13f9c1d87b50601de91760201886888c4aaa",
+    "explained_variance_recomputed": 16
+  },
+  "helpers_acceptance": {
+    "at": "2026-10-24T21:55:13.243779+00:00",
+    "status": "completed_verified",
+    "task_key": "claude79-4c2-helper-preparation-138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "child_cpu_checks": 30,
+    "parent_cpu_checks": 30,
+    "parent_read_complete_helpers_and_verify": true,
+    "verify_sha256": "745e72bcd4967050945fdd0c17f78a145d710108b225f3386eb38f492b76ebde",
+    "file_inventory_sha256": "9cdf7c90751b39610961328fa40f639018962f04f692f613df1056bc1251ac07",
+    "bundle_sha256": "3f81d5ea1923987a5e32aabfa5f50b526a3d6b1cb756d24cd559bbc236582aba",
+    "bundle_bytes": 119516,
+    "files": 33,
+    "evidence": "c79-parent-4c2-helpers-accepted/fixture-report.json",
+    "limits": "CPU metadata fixtures only, not actual fullhash/CUDA/allocation. Parent must bind actual source/history proof and fresh budget/resources before receipt."
+  },
+  "deployment": {
+    "at": "2026-10-24T22:05:20.061009+00:00",
+    "status": "all_deployment_inputs_verified_no_resource_query_no_submission",
+    "source_commit": "67735d2808018721eb318d2c954de6954eeb314a",
+    "repo": "/home/zhuyouwei/sts-silent-gpu-c79",
+    "runtime_directory": "/home/zhuyouwei/spire-downloads/c79-4c2-slurm-preparation",
+    "output_directory": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77",
+    "manifest_sha256": "d4968549e7fbdd4233f1cf82eda870356dee181438688658c816d446d8e63dde",
+    "unique_inputs": 244,
+    "old3964_immutable_inputs": 180,
+    "frozen_inputs": 181,
+    "new_source_files": 10,
+    "historical_final3964_pts": 7,
+    "historical_eval_files": 17,
+    "student77_files": 7,
+    "new_receipt": null,
+    "new_reservation": 0,
+    "evidence": "c79-4c2-deployment-accepted/deployment-actual-inputs.json",
+    "next": "Fresh budget then one actual resource preflight; receipt before reserve"
+  },
+  "budget": {
+    "schema": "c79_4c2_budget_v1",
+    "checked_at": "2026-10-24T22:05:44.440911+00:00",
+    "step1": {
+      "limit": 194400,
+      "charged_node_seconds": 84781.5,
+      "reserved_node_seconds": 12600.0
+    },
+    "phase4c_rl": {
+      "limit_node_seconds": 30000,
+      "charged_node_seconds": 2631.125,
+      "reserved_node_seconds": 0,
+      "charged_to": "step_1"
+    },
+    "unsettled3897_reserved_node_seconds": 12600,
+    "phase4b_closed": {
+      "charged_node_seconds": 15636.25,
+      "reserved_node_seconds": 0,
+      "closed": true
+    },
+    "step2": {
+      "limit": 36000,
+      "charged_node_seconds": 3118.5,
+      "reserved_node_seconds": 0,
+      "closed": true
+    }
+  },
+  "costs_unchanged": {
+    "step1_charged": 84781.5,
+    "step1_reserved": 12600,
+    "RL_charged": 2631.125,
+    "RL_reserved": 0,
+    "RL_remaining": 27368.875,
+    "old3897_hold": 12600
+  },
+  "external_evidence_root": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4"
+}
