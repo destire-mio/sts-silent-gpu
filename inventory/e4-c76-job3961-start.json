@@ -1,0 +1,202 @@
+{
+  "scope": "actual_job3961_resume_startup_not_project_completion",
+  "at": "2026-10-24T13:52:31.165634+00:00",
+  "observed_refs": {
+    "main": "265e56fab39a4cd52971ea769f7f20386510a58b",
+    "codex/e4": "b5de9de35e93a6b2a9dcfa5c43ea171e263a676c",
+    "codex/e4-fork": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6"
+  },
+  "read_refs": {
+    "main": "265e56fab39a4cd52971ea769f7f20386510a58b",
+    "codex/e4": "b5de9de35e93a6b2a9dcfa5c43ea171e263a676c",
+    "codex/e4-fork": "b3c5fc0e0f85cc131add95e980cecbdfff7ce4d6"
+  },
+  "executed_main_ref": "2c73d8c59ae03471bfaf05f77eb2a2bc812b965e",
+  "receipt": {
+    "at": "2026-10-24T13:36:27.199833+00:00",
+    "returncode": 0,
+    "stdout": "3961\n",
+    "stderr": "",
+    "jobscript": "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936-minute-wall/job-20261024T133337Z.sh",
+    "jobscript_sha256": "8312e09323d021c214f38c7fdffe45aa59b55f9fa70690f76895e7fec4788f08",
+    "reservation_node_seconds": 11287.5,
+    "log_pattern": "/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936-minute-wall/job-%j.log",
+    "job_id": 3961
+  },
+  "preflight": {
+    "phase": "4b",
+    "world_size": 7,
+    "free_gpu_count": 8,
+    "request_cpus": 8,
+    "request_memory_mib": 15456,
+    "wall_seconds": 12900,
+    "budget_step": "step1",
+    "experiment": "claude76_pretraining",
+    "total_stage_cap_node_seconds": 21519.5,
+    "training_subcap_node_seconds": 14400,
+    "prospective_reservation_node_seconds": 11287.5,
+    "reservation_written": false,
+    "resume_directory": "/home/zhuyouwei/spire-downloads/e4-c76-4b-3924",
+    "memory_left_mib": 112571.0,
+    "memavailable_mib": 101234.46875,
+    "home_mib": 29345,
+    "status": "preflight_passed",
+    "checked_at": "2026-10-24T13:34:22.001875+00:00",
+    "manifest_sha256": "6a2e3f306ca56c93207e68cb23b09bc8584eab1f6c8ccd367678d0da1e8f86a4",
+    "budget_sha256": "7f01da3723b9fa7e1fa405a79b1bd62340a170cdcb62cb12705a41313cd611e5",
+    "own_queue": ""
+  },
+  "startup_slurm": {
+    "returncode": 0,
+    "stdout": "JobId=3961 JobName=spire-e4-c76-4b UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899666 Nice=0 Account=(null) QOS=(null) JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:02:07 TimeLimit=03:35:00 TimeMin=N/A SubmitTime=2026-10-24T21:36:27 EligibleTime=2026-10-24T21:36:27 AccrueTime=2026-10-24T21:36:27 StartTime=2026-10-24T21:36:27 EndTime=2026-10-25T01:11:27 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-24T21:36:27 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:2094771 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=15456M,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=15456M MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936-minute-wall/job-20261024T133337Z.sh WorkDir=/home/zhuyouwei StdErr=/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936-minute-wall/job-3961.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/c76-4b-slurm-preparation-c3e697c-resume3936-minute-wall/job-3961.log Power= TresPerNode=gres:gpu:V100:7 \n",
+    "stderr": ""
+  },
+  "startup_files": [
+    {
+      "name": "manifest.json",
+      "bytes": 32899
+    },
+    {
+      "name": "preflight-before-submit.json",
+      "bytes": 36496
+    },
+    {
+      "name": "budget-before-submit.json",
+      "bytes": 743
+    },
+    {
+      "name": "inputs-before.json",
+      "bytes": 23619
+    },
+    {
+      "name": "source.txt",
+      "bytes": 41
+    },
+    {
+      "name": "cuda-gates.log",
+      "bytes": 770
+    },
+    {
+      "name": "cuda-prefix-discovery.json",
+      "bytes": 2927
+    },
+    {
+      "name": "cuda-gates-discovery.json",
+      "bytes": 2927
+    },
+    {
+      "name": "cuda-gates.junit.xml",
+      "bytes": 2678
+    },
+    {
+      "name": "cuda-gates-verified.json",
+      "bytes": 247
+    },
+    {
+      "name": "wall-plan.txt",
+      "bytes": 87
+    }
+  ],
+  "startup_bundle": {
+    "bytes": 43186,
+    "sha256": "3ee7ce93a2f41ad13ffa7dd7ec69de60e6813c548a30e8ba147b88e78e5ae21e"
+  },
+  "acceptance": {
+    "at": "2026-10-24T13:52:31.165634+00:00",
+    "status": "completed_verified",
+    "job_id": 3961,
+    "owner": "/root/c76_job3961_startup_review",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "independent_cpu_checks": 451,
+    "parent_read_complete_verifier": true,
+    "parent_independent_cpu_checks": 451,
+    "artifacts": {
+      "c76-job3961-startup-review": {
+        "verify.py": {
+          "bytes": 21819,
+          "sha256": "c3889399b56a2408bd6e375d126f9f53947ab8f65b8ae4e63cf91e33f173010b"
+        },
+        "report.json": {
+          "bytes": 87505,
+          "sha256": "e5909294e8c6a67dc7bdee149704dc3f30fb05a0cdd6f11e61b28d6673465636"
+        },
+        "review.md": {
+          "bytes": 11714,
+          "sha256": "2585859b4e18e5892f71db6d96d046a204ff90e16a01008d702ae02e190afe55"
+        }
+      },
+      "c76-parent-job3961-startup-accepted": {
+        "verify.py": {
+          "bytes": 21819,
+          "sha256": "c3889399b56a2408bd6e375d126f9f53947ab8f65b8ae4e63cf91e33f173010b"
+        },
+        "report.json": {
+          "bytes": 87514,
+          "sha256": "fa2adf836d709f553d02f4392e6314035ffa3ae4e1601ab5d335e93129d05c6a"
+        },
+        "review.md": {
+          "bytes": 11714,
+          "sha256": "2585859b4e18e5892f71db6d96d046a204ff90e16a01008d702ae02e190afe55"
+        }
+      }
+    },
+    "limitations": [
+      "Offline CPU audit of recorded evidence; no remote state refresh or GPU execution by this reviewer.",
+      "154 input entries are exact manifest-to-startup recorded hash bindings; remote input bytes were not reread.",
+      "No .pt file loaded. Bound resume metadata and reconstructed command do not prove model, optimizer, or RNG restoration by job3961.",
+      "Expected plan length 14 is supplied context; these startup JSON metadata do not independently expose or validate that plan.",
+      "The faults case has empty system-out; its proof is positive run status, zero skip/failure, discovery command and bound binary hash.",
+      "JUnit parity output is explicitly truncated by CTest; no claim of complete raw parity stdout.",
+      "No full-student-dev result, completion, final CPU acceptance, phase4c authorization, or final Slurm accounting is established.",
+      "cancel=null supports no cancellation recorded in this receipt-state file; lifecycle remains solely with the parent SSH owner.",
+      "23887.5 is 12600 + 11287.5 arithmetic; no shared ledger was read or changed and stale stdout 23900.625 is not evidence."
+    ]
+  },
+  "progress": {
+    "at": "2026-10-24T13:46:31.004880+00:00",
+    "job_id": 3961,
+    "updates": 56,
+    "phase": "training",
+    "reports_count": 18,
+    "last_report": {
+      "kl": 0.05093491515379975,
+      "value_error": 0.00021937684486902264,
+      "decisions": 3886,
+      "seconds": 11711.932507892372,
+      "expected_holdout_fraction": 0.05,
+      "seen_train_episodes": 16692,
+      "seen_heldout_episodes": 903,
+      "actual_holdout_episode_fraction": 0.051321398466825485,
+      "fixed_complete_holdout_episodes": 23
+    },
+    "distill_gate_passed": false,
+    "assessments": [],
+    "provisional_process_node_seconds": 10433.028399493574,
+    "not_allocation_accounting": true,
+    "evidence": "c76-job3961-progress/bundle.json"
+  },
+  "accounting": {
+    "step1_charged": 76732.375,
+    "step1_reserved": 23887.5,
+    "old3897_same_hold": 12600,
+    "job3961_reserved": 11287.5,
+    "C76_charged": 10298.75,
+    "C76_reserved": 11287.5,
+    "phase4b_charged": 10218.25,
+    "phase4b_frozen_cap": 21519.5,
+    "phase4b_remaining_unreserved": 13.75,
+    "job3961_charged": 0,
+    "final_actual_accounting_pending": true
+  },
+  "external_evidence_root": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4",
+  "evidence": [
+    "job3961-startup-accepted451.json",
+    "job3961-receipt-state.json",
+    "job3961-receipt-reservation-20261024T133337Z.json",
+    "c76-job3961-startup/bundle.json",
+    "c76-job3961-progress/bundle.json",
+    "job3961-progress-first56.json"
+  ],
+  "limits": "No running .pt loaded by reviewer/parent; no independently verified runtime plan14 or complete model/Adam/RNG restore claim. Prior sealed53 parent evidence retained. No fullstudent1024dev, no finalCPU/4c, no EXIT/peak/finalSlurm yet. Initial pending snapshot transitioned RUNNING at same submit second; conditional cancellation branch not entered."
+}
