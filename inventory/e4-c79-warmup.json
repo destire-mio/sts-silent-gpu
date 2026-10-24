@@ -1,0 +1,121 @@
+{
+  "at": "2026-10-24T21:49:26.861997+00:00",
+  "decision_commit": "138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+  "acceptance": {
+    "adam-warmup": {
+      "at": "2026-10-24T21:49:26.861997+00:00",
+      "status": "completed_verified",
+      "task_key": "claude79-adam-warmup-138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "parent_complete_script_read": true,
+      "parent_independent_rerun": true,
+      "script_sha256": "9f19ded9b2fdc625104a12bef843fb07d798e9e5745585bd4d28f7234fb6421d",
+      "parent_report_sha256": "4f7f72e476391821a9dcc569b379b2deeef29468ea352fa2c51927bf96bd2a24",
+      "evidence": "c79-parent-adam-warmup-accepted/report.json",
+      "child_cpu_tests": 10,
+      "parent_cpu_tests": 10,
+      "new_cpu_tests": 1,
+      "lr_schedule": [
+        0,
+        3.3e-05,
+        6.7e-05,
+        0.0001
+      ],
+      "fresh_student_source_world": 7,
+      "allowed_initial_worlds": [
+        7,
+        8
+      ],
+      "parameter_unchanged_and_adam_moments_nonzero_update1": true,
+      "scope": [
+        "tools/e4_distill.py",
+        "tests/test_e4_distill.py"
+      ],
+      "limits": [
+        "Single CPU worker; real tiny Policy, Adam and full four-epoch PPO update; distributed reductions mocked.",
+        "Existing synthetic checkpoint tests only; no running checkpoint files accessed.",
+        "No GPU, network, SSH, Slurm, deployment, repository writes or ledger writes.",
+        "Fresh student rank mapping statically reviewed; no eight-process or GPU runtime claim.",
+        "Frozen sources only; Git HEAD unavailable through current sandbox, parent provided HEAD 5eabab."
+      ]
+    },
+    "update-metrics": {
+      "at": "2026-10-24T21:49:26.861997+00:00",
+      "status": "completed_verified",
+      "task_key": "claude79-update-metrics-138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "parent_complete_script_read": true,
+      "parent_independent_rerun": true,
+      "script_sha256": "9fb6dd071c69e08a8e85cf40035a2269805ebad46c25492397c0cb28fed855ca",
+      "parent_report_sha256": "c886778c42880351aa086d8b5fee33d2fc749384269c990d5ee3f9259fe922c3",
+      "evidence": "c79-parent-update-metrics-accepted/report.json",
+      "original_metric_values": 128,
+      "updates_each_job": 8,
+      "grad_norm": null,
+      "grad_norm_reason": "Not logged in all16 original records",
+      "data_sha256": "46433ef4d819fca80fc526726acf13f9c1d87b50601de91760201886888c4aaa",
+      "explained_variance_recomputed": 16
+    }
+  },
+  "mac_reports": [
+    {
+      "source": "docs/messages/claude-to-gpt.md #79",
+      "commit": "138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/138f96a06a0b7b67bc5498b17d9f843c84a3185a/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C76-job3961-student77-N32-D1024",
+      "traces": 18,
+      "decisions": 7278,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not specified in #79",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "19.480"
+      },
+      "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+      "source_verification": "Parent read complete original Git commit/diff/message; no extra exact Mac fault/stall/Act2 or engine SHA inferred"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #79",
+      "commit": "138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/138f96a06a0b7b67bc5498b17d9f843c84a3185a/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C76-job3964-RL8-N32-D1024",
+      "traces": 18,
+      "decisions": 7070,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not specified in #79",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "18.214"
+      },
+      "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
+      "source_verification": "Parent read complete original Git commit/diff/message; no extra exact Mac fault/stall/Act2 or engine SHA inferred"
+    }
+  ],
+  "request": "Fresh4c2 fromstudent77/newAdam; inheritedC180beta/Hstar;4epochs;1800puretrainsec full1024N32+18paths+originalgzip;C180stop unchanged",
+  "remaining_RL_node_seconds": 27368.875,
+  "original_RL_cap": 30000,
+  "previous_RL_charged": 2631.125,
+  "new_reservation": 0,
+  "new_receipt": null,
+  "source_applied": true,
+  "source_files": {
+    "tools/e4_distill.py": "3d01d81fd13ca23cadd174fde22b443cfb688de9261a5fe3c668573fa510ed4a",
+    "tests/test_e4_distill.py": "7a10622a94681d930325a78345e4f0db9aefc980925111832eb109a57896efcc"
+  },
+  "external_evidence_root": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4",
+  "limits": "CPU real tiny Policy/Adam/PPO test; mocked distributed reductions. NoGPUallocation yet. Mac only Claude report, no invented precise engineSHA/fault/stall/Act2. Adam cold-start explanation is Claude hypothesis, not causal finding of this extraction."
+}

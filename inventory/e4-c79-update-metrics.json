@@ -1,0 +1,614 @@
+{
+  "schema": 1,
+  "decision_commit": "138f96a06a0b7b67bc5498b17d9f843c84a3185a",
+  "extraction": "Values copied from original update JSON, with no rounding or substituted zeros.",
+  "explained_variance_field": "value_explained_variance",
+  "update_numbering": "update is allocation-local 1..8 for both jobs. 3897 resumed checkpoint 163; its logged version is 164..171. 3964 has no version field, represented as null.",
+  "jobs": {
+    "3964": {
+      "selection": "all 8 rl_update records in complete allocation log",
+      "original_log": {
+        "local_path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-full-log\\job3964.log",
+        "bytes": 5124539,
+        "sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+        "verification": "Whole original local log bytes independently hashed."
+      },
+      "updates": [
+        {
+          "allocation_update_ordinal": 1,
+          "update": 1,
+          "version": null,
+          "metrics": {
+            "kl": 0.009455120502169213,
+            "clip_fraction": 0.05200250043110881,
+            "entropy": 0.15292965665929484,
+            "imitation_kl": 0.062452565511905894,
+            "H_imit": 0.7486623577056624,
+            "imitation_beta_used": 0.0837332699980915,
+            "value_loss": 0.00018564224276827642,
+            "value_explained_variance": -0.19626043825546247,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.00020238219546960326,
+            "ppo_value_error_variance": 0.00024210181384757027,
+            "value_explained_variance_samples": 23196
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 32,
+            "raw_record_bytes": 1037,
+            "raw_record_sha256": "cf927df6b4ef7dda11bc23279c7a419e946b68aff09161e87340d52a6b48db2a",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogMSwgInRyYWluZWRfc2Vjb25kcyI6IDIwMi4yNTQyMjY2ODQ1NzAzLCAicG9saWN5X2xvc3MiOiAwLjU3MDUwMTMxNjcxODI1MjgsICJ2YWx1ZV9sb3NzIjogMC4wMDAxODU2NDIyNDI3NjgyNzY0MiwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzk3NzQ2OTMwODAzNTcxNCwgImxvc3MiOiAwLjUyMDg2NjIwMTk5MjQ2OCwgImtsIjogMC4wMDk0NTUxMjA1MDIxNjkyMTMsICJjbGlwX2ZyYWN0aW9uIjogMC4wNTIwMDI1MDA0MzExMDg4MSwgImVudHJvcHkiOiAwLjE1MjkyOTY1NjY1OTI5NDg0LCAicHBvX2xvc3MiOiAwLjAwMTIwMzc5MTQ5MTUxODE1NSwgImltaXRhdGlvbl9sb3NzIjogMC43MTQ4MzU1MjUxMjA3Mjg5LCAicHBvX3NhbXBsZXMiOiA5Mjc4NCwgImltaXRhdGlvbl9zYW1wbGVzIjogMzY1OTY4LCAiSF9pbWl0IjogMC43NDg2NjIzNTc3MDU2NjI0LCAiaW1pdGF0aW9uX2tsIjogMC4wNjI0NTI1NjU1MTE5MDU4OTQsICJpbWl0YXRpb25fZW50cm9weV9zYW1wbGVzIjogOTE0OTIsICJpbWl0YXRpb25fYmV0YV91c2VkIjogMC4wODM3MzMyNjk5OTgwOTE1LCAiaW1pdGF0aW9uX2VudHJvcHlfc2NvcGUiOiAicmF3X25hdHNfdmFsaWRfaW1pdGF0aW9uX2ZpcnN0X2Vwb2NoX2ZvcndhcmQiLCAiaW1pdGF0aW9uX2tsX3Njb3BlIjogImszX3ZhbGlkX2ltaXRhdGlvbl9hbGxfZXBvY2hfZm9yd2FyZHNfdnNfcm9sbG91dF9zZWxlY3RlZF9hY3Rpb24iLCAiZXBvY2hzIjogNCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZSI6IC0wLjE5NjI2MDQzODI1NTQ2MjQ3LCAicHBvX3JldHVybl92YXJpYW5jZSI6IDAuMDAwMjAyMzgyMTk1NDY5NjAzMjYsICJwcG9fdmFsdWVfZXJyb3JfdmFyaWFuY2UiOiAwLjAwMDI0MjEwMTgxMzg0NzU3MDI3LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlX3NhbXBsZXMiOiAyMzE5NiwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zY29wZSI6ICJwcmVfdXBkYXRlX3JvbGxvdXRfdmFsdWVzX3ZhbGlkX1BQT19yb3dzX29uY2UifQo="
+          }
+        },
+        {
+          "allocation_update_ordinal": 2,
+          "update": 2,
+          "version": null,
+          "metrics": {
+            "kl": 0.0037416746383569072,
+            "clip_fraction": 0.02869530800230282,
+            "entropy": 0.08085041324269232,
+            "imitation_kl": 0.013383049655002525,
+            "H_imit": 0.7323686079841153,
+            "imitation_beta_used": 0.07602728648355264,
+            "value_loss": 0.0005877130466345837,
+            "value_explained_variance": 0.0623543934754357,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0005457059238977643,
+            "ppo_value_error_variance": 0.000511678761997167,
+            "value_explained_variance_samples": 27792
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 57,
+            "raw_record_bytes": 1035,
+            "raw_record_sha256": "00074d0b4a58a0651d940b66585e6d9bcaf9d17e2918793baf50af202c26a160",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogMiwgInRyYWluZWRfc2Vjb25kcyI6IDQ0OS44MTIwMTE3MTg3NSwgInBvbGljeV9sb3NzIjogMC41MzA1MjA3MjM5ODcyOTgxLCAidmFsdWVfbG9zcyI6IDAuMDAwNTg3NzEzMDQ2NjM0NTgzNywgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzU3NjcyOTkxMDcxNDI4NSwgImxvc3MiOiAwLjQ4ODY3Mzk5NDA2Mzc3MTgsICJrbCI6IDAuMDAzNzQxNjc0NjM4MzU2OTA3MiwgImNsaXBfZnJhY3Rpb24iOiAwLjAyODY5NTMwODAwMjMwMjgyLCAiZW50cm9weSI6IDAuMDgwODUwNDEzMjQyNjkyMzIsICJwcG9fbG9zcyI6IC0wLjAwMDkzODAxOTQ3OTU3OTMwOTEsICJpbWl0YXRpb25fbG9zcyI6IDAuNzAwNDk3NDkzOTAxMTE5OSwgInBwb19zYW1wbGVzIjogMTExMTY4LCAiaW1pdGF0aW9uX3NhbXBsZXMiOiAzNDc1ODQsICJIX2ltaXQiOiAwLjczMjM2ODYwNzk4NDExNTMsICJpbWl0YXRpb25fa2wiOiAwLjAxMzM4MzA0OTY1NTAwMjUyNSwgImltaXRhdGlvbl9lbnRyb3B5X3NhbXBsZXMiOiA4Njg5NiwgImltaXRhdGlvbl9iZXRhX3VzZWQiOiAwLjA3NjAyNzI4NjQ4MzU1MjY0LCAiaW1pdGF0aW9uX2VudHJvcHlfc2NvcGUiOiAicmF3X25hdHNfdmFsaWRfaW1pdGF0aW9uX2ZpcnN0X2Vwb2NoX2ZvcndhcmQiLCAiaW1pdGF0aW9uX2tsX3Njb3BlIjogImszX3ZhbGlkX2ltaXRhdGlvbl9hbGxfZXBvY2hfZm9yd2FyZHNfdnNfcm9sbG91dF9zZWxlY3RlZF9hY3Rpb24iLCAiZXBvY2hzIjogNCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZSI6IDAuMDYyMzU0MzkzNDc1NDM1NywgInBwb19yZXR1cm5fdmFyaWFuY2UiOiAwLjAwMDU0NTcwNTkyMzg5Nzc2NDMsICJwcG9fdmFsdWVfZXJyb3JfdmFyaWFuY2UiOiAwLjAwMDUxMTY3ODc2MTk5NzE2NywgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjc3OTIsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIn0K"
+          }
+        },
+        {
+          "allocation_update_ordinal": 3,
+          "update": 3,
+          "version": null,
+          "metrics": {
+            "kl": 0.0038405540589077497,
+            "clip_fraction": 0.035006535024197254,
+            "entropy": 0.11431650584096874,
+            "imitation_kl": 0.013168487938899602,
+            "H_imit": 0.7246107539756658,
+            "imitation_beta_used": 0.0699506779411685,
+            "value_loss": 0.0006491149241424017,
+            "value_explained_variance": 0.14957645533194452,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0006268457135421394,
+            "ppo_value_error_variance": 0.0005330843536704827,
+            "value_explained_variance_samples": 28309
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 85,
+            "raw_record_bytes": 1040,
+            "raw_record_sha256": "bb60b0dde51f102f8c938d814f544b4955f518ae6df398461e40404d874c2097",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogMywgInRyYWluZWRfc2Vjb25kcyI6IDcwMS4zNDAyNDA0Nzg1MTU2LCAicG9saWN5X2xvc3MiOiAwLjUyMTE3NzIzMjE2MDY5MzQsICJ2YWx1ZV9sb3NzIjogMC4wMDA2NDkxMTQ5MjQxNDI0MDE3LCAiaW1pdGF0aW9uX2ZyYWN0aW9uIjogMC43NTMxNjUxMDg4MTY5NjQyLCAibG9zcyI6IDAuNDgzMzY1NDA3MDkxNTkwNTQsICJrbCI6IDAuMDAzODQwNTU0MDU4OTA3NzQ5NywgImNsaXBfZnJhY3Rpb24iOiAwLjAzNTAwNjUzNTAyNDE5NzI1NCwgImVudHJvcHkiOiAwLjExNDMxNjUwNTg0MDk2ODc0LCAicHBvX2xvc3MiOiAtMC4wMDE3MzM1NzMzMDM4Nzk3NTM0LCAiaW1pdGF0aW9uX2xvc3MiOiAwLjY5MjU1MDg1Mjk3MDExMDIsICJwcG9fc2FtcGxlcyI6IDExMzIzNiwgImltaXRhdGlvbl9zYW1wbGVzIjogMzQ1NTE2LCAiSF9pbWl0IjogMC43MjQ2MTA3NTM5NzU2NjU4LCAiaW1pdGF0aW9uX2tsIjogMC4wMTMxNjg0ODc5Mzg4OTk2MDIsICJpbWl0YXRpb25fZW50cm9weV9zYW1wbGVzIjogODYzNzksICJpbWl0YXRpb25fYmV0YV91c2VkIjogMC4wNjk5NTA2Nzc5NDExNjg1LCAiaW1pdGF0aW9uX2VudHJvcHlfc2NvcGUiOiAicmF3X25hdHNfdmFsaWRfaW1pdGF0aW9uX2ZpcnN0X2Vwb2NoX2ZvcndhcmQiLCAiaW1pdGF0aW9uX2tsX3Njb3BlIjogImszX3ZhbGlkX2ltaXRhdGlvbl9hbGxfZXBvY2hfZm9yd2FyZHNfdnNfcm9sbG91dF9zZWxlY3RlZF9hY3Rpb24iLCAiZXBvY2hzIjogNCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZSI6IDAuMTQ5NTc2NDU1MzMxOTQ0NTIsICJwcG9fcmV0dXJuX3ZhcmlhbmNlIjogMC4wMDA2MjY4NDU3MTM1NDIxMzk0LCAicHBvX3ZhbHVlX2Vycm9yX3ZhcmlhbmNlIjogMC4wMDA1MzMwODQzNTM2NzA0ODI3LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlX3NhbXBsZXMiOiAyODMwOSwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zY29wZSI6ICJwcmVfdXBkYXRlX3JvbGxvdXRfdmFsdWVzX3ZhbGlkX1BQT19yb3dzX29uY2UifQo="
+          }
+        },
+        {
+          "allocation_update_ordinal": 4,
+          "update": 4,
+          "version": null,
+          "metrics": {
+            "kl": 0.00390884126874068,
+            "clip_fraction": 0.03273104880581516,
+            "entropy": 0.11779112286502344,
+            "imitation_kl": 0.011831188234359212,
+            "H_imit": 0.7384933322267141,
+            "imitation_beta_used": 0.06464985479962929,
+            "value_loss": 0.0006786286112811765,
+            "value_explained_variance": 0.22782189839779932,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0007424111496472825,
+            "ppo_value_error_variance": 0.000573273632142946,
+            "value_explained_variance_samples": 24075
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 115,
+            "raw_record_bytes": 1035,
+            "raw_record_sha256": "b84001a31c33bbca874f41f81f4db0aafbc59e6aca9f9080f44c66f1e64679a3",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogNCwgInRyYWluZWRfc2Vjb25kcyI6IDk3My42OTM0ODE0NDUzMTI1LCAicG9saWN5X2xvc3MiOiAwLjU1Nzc1ODg4ODExNzI3OTksICJ2YWx1ZV9sb3NzIjogMC4wMDA2Nzg2Mjg2MTEyODExNzY1LCAiaW1pdGF0aW9uX2ZyYWN0aW9uIjogMC43OTAwODI2NTkwNDAxNzg1LCAibG9zcyI6IDAuNTIwNTMxMDc3MjUxMzk3MiwgImtsIjogMC4wMDM5MDg4NDEyNjg3NDA2OCwgImNsaXBfZnJhY3Rpb24iOiAwLjAzMjczMTA0ODgwNTgxNTE2LCAiZW50cm9weSI6IDAuMTE3NzkxMTIyODY1MDIzNDQsICJwcG9fbG9zcyI6IC0wLjAwMTExODAzODczODA4MzA2ODQsICJpbWl0YXRpb25fbG9zcyI6IDAuNzA2MjQ3MDk2MzY2MDE3NywgInBwb19zYW1wbGVzIjogOTYzMDAsICJpbWl0YXRpb25fc2FtcGxlcyI6IDM2MjQ1MiwgIkhfaW1pdCI6IDAuNzM4NDkzMzMyMjI2NzE0MSwgImltaXRhdGlvbl9rbCI6IDAuMDExODMxMTg4MjM0MzU5MjEyLCAiaW1pdGF0aW9uX2VudHJvcHlfc2FtcGxlcyI6IDkwNjEzLCAiaW1pdGF0aW9uX2JldGFfdXNlZCI6IDAuMDY0NjQ5ODU0Nzk5NjI5MjksICJpbWl0YXRpb25fZW50cm9weV9zY29wZSI6ICJyYXdfbmF0c192YWxpZF9pbWl0YXRpb25fZmlyc3RfZXBvY2hfZm9yd2FyZCIsICJpbWl0YXRpb25fa2xfc2NvcGUiOiAiazNfdmFsaWRfaW1pdGF0aW9uX2FsbF9lcG9jaF9mb3J3YXJkc192c19yb2xsb3V0X3NlbGVjdGVkX2FjdGlvbiIsICJlcG9jaHMiOiA0LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlIjogMC4yMjc4MjE4OTgzOTc3OTkzMiwgInBwb19yZXR1cm5fdmFyaWFuY2UiOiAwLjAwMDc0MjQxMTE0OTY0NzI4MjUsICJwcG9fdmFsdWVfZXJyb3JfdmFyaWFuY2UiOiAwLjAwMDU3MzI3MzYzMjE0Mjk0NiwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjQwNzUsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIn0K"
+          }
+        },
+        {
+          "allocation_update_ordinal": 5,
+          "update": 5,
+          "version": null,
+          "metrics": {
+            "kl": 0.0034645926501411153,
+            "clip_fraction": 0.03229246549079755,
+            "entropy": 0.12896095897734572,
+            "imitation_kl": 0.011660843825070658,
+            "H_imit": 0.7252352830828733,
+            "imitation_beta_used": 0.05796077383298525,
+            "value_loss": 0.0006556883754290464,
+            "value_explained_variance": 0.37100055052168435,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0008765619838235657,
+            "ppo_value_error_variance": 0.0005513570052586431,
+            "value_explained_variance_samples": 20864
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 145,
+            "raw_record_bytes": 1038,
+            "raw_record_sha256": "4e3a6a158a351af64e78a83193ccf3fab9a7e7dc9be53e97add3ec50fd09d4f3",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogNSwgInRyYWluZWRfc2Vjb25kcyI6IDEyMzQuODkzNTg1MjA1MDc4MSwgInBvbGljeV9sb3NzIjogMC41NzAwOTg4MDk5NDIwMjUzLCAidmFsdWVfbG9zcyI6IDAuMDAwNjU1Njg4Mzc1NDI5MDQ2NCwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuODE4MDgwMzU3MTQyODU3MSwgImxvc3MiOiAwLjUzNjEzNzQzODI0ODkyNjcsICJrbCI6IDAuMDAzNDY0NTkyNjUwMTQxMTE1MywgImNsaXBfZnJhY3Rpb24iOiAwLjAzMjI5MjQ2NTQ5MDc5NzU1LCAiZW50cm9weSI6IDAuMTI4OTYwOTU4OTc3MzQ1NzIsICJwcG9fbG9zcyI6IC0wLjAwMjc5OTkwMjI5ODAxNzE5NCwgImltaXRhdGlvbl9sb3NzIjogMC42OTc0OTY0NzcxOTMyMjE3LCAicHBvX3NhbXBsZXMiOiA4MzQ1NiwgImltaXRhdGlvbl9zYW1wbGVzIjogMzc1Mjk2LCAiSF9pbWl0IjogMC43MjUyMzUyODMwODI4NzMzLCAiaW1pdGF0aW9uX2tsIjogMC4wMTE2NjA4NDM4MjUwNzA2NTgsICJpbWl0YXRpb25fZW50cm9weV9zYW1wbGVzIjogOTM4MjQsICJpbWl0YXRpb25fYmV0YV91c2VkIjogMC4wNTc5NjA3NzM4MzI5ODUyNSwgImltaXRhdGlvbl9lbnRyb3B5X3Njb3BlIjogInJhd19uYXRzX3ZhbGlkX2ltaXRhdGlvbl9maXJzdF9lcG9jaF9mb3J3YXJkIiwgImltaXRhdGlvbl9rbF9zY29wZSI6ICJrM192YWxpZF9pbWl0YXRpb25fYWxsX2Vwb2NoX2ZvcndhcmRzX3ZzX3JvbGxvdXRfc2VsZWN0ZWRfYWN0aW9uIiwgImVwb2NocyI6IDQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2UiOiAwLjM3MTAwMDU1MDUyMTY4NDM1LCAicHBvX3JldHVybl92YXJpYW5jZSI6IDAuMDAwODc2NTYxOTgzODIzNTY1NywgInBwb192YWx1ZV9lcnJvcl92YXJpYW5jZSI6IDAuMDAwNTUxMzU3MDA1MjU4NjQzMSwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjA4NjQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIn0K"
+          }
+        },
+        {
+          "allocation_update_ordinal": 6,
+          "update": 6,
+          "version": null,
+          "metrics": {
+            "kl": 0.003970812957789106,
+            "clip_fraction": 0.035076101108966015,
+            "entropy": 0.12601902466417644,
+            "imitation_kl": 0.012354027685419919,
+            "H_imit": 0.7199825389294682,
+            "imitation_beta_used": 0.05259749778072529,
+            "value_loss": 0.0008141647959185212,
+            "value_explained_variance": 0.3970945780353473,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0013150343341296472,
+            "ppo_value_error_variance": 0.000792841330116441,
+            "value_explained_variance_samples": 22273
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 175,
+            "raw_record_bytes": 1035,
+            "raw_record_sha256": "05d3b2e0a108abeca9acd1444e3b3b3fe0ba520f8c227ada77d0547b3a6bdd6c",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogNiwgInRyYWluZWRfc2Vjb25kcyI6IDE1MjIuNDc2ODY3Njc1NzgxMiwgInBvbGljeV9sb3NzIjogMC41NTk0MDgxNjkzODc3NTIyLCAidmFsdWVfbG9zcyI6IDAuMDAwODE0MTY0Nzk1OTE4NTIxMiwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuODA1Nzk0ODUyMTIwNTM1NywgImxvc3MiOiAwLjUyOTM0NTMwNDg2NTI5OCwgImtsIjogMC4wMDM5NzA4MTI5NTc3ODkxMDYsICJjbGlwX2ZyYWN0aW9uIjogMC4wMzUwNzYxMDExMDg5NjYwMTUsICJlbnRyb3B5IjogMC4xMjYwMTkwMjQ2NjQxNzY0NCwgInBwb19sb3NzIjogLTAuMDAyMDEyNzMyMjI4MjI1ODU5NCwgImltaXRhdGlvbl9sb3NzIjogMC42OTQ3MTY1OTA1NDk4MjIsICJwcG9fc2FtcGxlcyI6IDg5MDkyLCAiaW1pdGF0aW9uX3NhbXBsZXMiOiAzNjk2NjAsICJIX2ltaXQiOiAwLjcxOTk4MjUzODkyOTQ2ODIsICJpbWl0YXRpb25fa2wiOiAwLjAxMjM1NDAyNzY4NTQxOTkxOSwgImltaXRhdGlvbl9lbnRyb3B5X3NhbXBsZXMiOiA5MjQxNSwgImltaXRhdGlvbl9iZXRhX3VzZWQiOiAwLjA1MjU5NzQ5Nzc4MDcyNTI5LCAiaW1pdGF0aW9uX2VudHJvcHlfc2NvcGUiOiAicmF3X25hdHNfdmFsaWRfaW1pdGF0aW9uX2ZpcnN0X2Vwb2NoX2ZvcndhcmQiLCAiaW1pdGF0aW9uX2tsX3Njb3BlIjogImszX3ZhbGlkX2ltaXRhdGlvbl9hbGxfZXBvY2hfZm9yd2FyZHNfdnNfcm9sbG91dF9zZWxlY3RlZF9hY3Rpb24iLCAiZXBvY2hzIjogNCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZSI6IDAuMzk3MDk0NTc4MDM1MzQ3MywgInBwb19yZXR1cm5fdmFyaWFuY2UiOiAwLjAwMTMxNTAzNDMzNDEyOTY0NzIsICJwcG9fdmFsdWVfZXJyb3JfdmFyaWFuY2UiOiAwLjAwMDc5Mjg0MTMzMDExNjQ0MSwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjIyNzMsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIn0K"
+          }
+        },
+        {
+          "allocation_update_ordinal": 7,
+          "update": 7,
+          "version": null,
+          "metrics": {
+            "kl": 0.0068542362240191215,
+            "clip_fraction": 0.039932496345343536,
+            "entropy": 0.1259340943974727,
+            "imitation_kl": 0.011913012667702406,
+            "H_imit": 0.7250139857234736,
+            "imitation_beta_used": 0.04775949614380585,
+            "value_loss": 0.0007621551345148067,
+            "value_explained_variance": 0.5346880331727888,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0017371210066040466,
+            "ppo_value_error_variance": 0.000808303192199794,
+            "value_explained_variance_samples": 23258
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 203,
+            "raw_record_bytes": 1036,
+            "raw_record_sha256": "7a40dbd93ceea8da7cbb8d796155db85a4d08a27676f14256ff6478a12b2f580",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogNywgInRyYWluZWRfc2Vjb25kcyI6IDE3NzYuNTkwNDU0MTAxNTYyNSwgInBvbGljeV9sb3NzIjogMC41NjEzMTMxNDgxMjI5NTg1LCAidmFsdWVfbG9zcyI6IDAuMDAwNzYyMTU1MTM0NTE0ODA2NywgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzk3MjA2MzMzNzA1MzU3MSwgImxvc3MiOiAwLjUzNDAxMzM4MzE5ODcyNTksICJrbCI6IDAuMDA2ODU0MjM2MjI0MDE5MTIxNSwgImNsaXBfZnJhY3Rpb24iOiAwLjAzOTkzMjQ5NjM0NTM0MzUzNiwgImVudHJvcHkiOiAwLjEyNTkzNDA5NDM5NzQ3MjcsICJwcG9fbG9zcyI6IC01LjYyMTEyNzg0NTY5ODAwMWUtMDUsICJpbWl0YXRpb25fbG9zcyI6IDAuNzA0MTE0NTEwNDg3MTUxLCAicHBvX3NhbXBsZXMiOiA5MzAzMiwgImltaXRhdGlvbl9zYW1wbGVzIjogMzY1NzIwLCAiSF9pbWl0IjogMC43MjUwMTM5ODU3MjM0NzM2LCAiaW1pdGF0aW9uX2tsIjogMC4wMTE5MTMwMTI2Njc3MDI0MDYsICJpbWl0YXRpb25fZW50cm9weV9zYW1wbGVzIjogOTE0MzAsICJpbWl0YXRpb25fYmV0YV91c2VkIjogMC4wNDc3NTk0OTYxNDM4MDU4NSwgImltaXRhdGlvbl9lbnRyb3B5X3Njb3BlIjogInJhd19uYXRzX3ZhbGlkX2ltaXRhdGlvbl9maXJzdF9lcG9jaF9mb3J3YXJkIiwgImltaXRhdGlvbl9rbF9zY29wZSI6ICJrM192YWxpZF9pbWl0YXRpb25fYWxsX2Vwb2NoX2ZvcndhcmRzX3ZzX3JvbGxvdXRfc2VsZWN0ZWRfYWN0aW9uIiwgImVwb2NocyI6IDQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2UiOiAwLjUzNDY4ODAzMzE3Mjc4ODgsICJwcG9fcmV0dXJuX3ZhcmlhbmNlIjogMC4wMDE3MzcxMjEwMDY2MDQwNDY2LCAicHBvX3ZhbHVlX2Vycm9yX3ZhcmlhbmNlIjogMC4wMDA4MDgzMDMxOTIxOTk3OTQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2FtcGxlcyI6IDIzMjU4LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlX3Njb3BlIjogInByZV91cGRhdGVfcm9sbG91dF92YWx1ZXNfdmFsaWRfUFBPX3Jvd3Nfb25jZSJ9Cg=="
+          }
+        },
+        {
+          "allocation_update_ordinal": 8,
+          "update": 8,
+          "version": null,
+          "metrics": {
+            "kl": 0.003778514193299565,
+            "clip_fraction": 0.033725068277745594,
+            "entropy": 0.12215904638360997,
+            "imitation_kl": 0.010958847606962087,
+            "H_imit": 0.7132213931807965,
+            "imitation_beta_used": 0.04241834982748586,
+            "value_loss": 0.0006917709632982064,
+            "value_explained_variance": 0.5970386620669194,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0018966226375086853,
+            "ppo_value_error_variance": 0.0007642655955646681,
+            "value_explained_variance_samples": 24166
+          },
+          "provenance": {
+            "log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+            "line_1based": 231,
+            "raw_record_bytes": 1038,
+            "raw_record_sha256": "9cb4e3bd9f90f9c254b699b81f60cfd147281c1a4b3dfeca7b8125ac996505a8",
+            "raw_b64": "eyJldmVudCI6ICJybF91cGRhdGUiLCAidXBkYXRlIjogOCwgInRyYWluZWRfc2Vjb25kcyI6IDIwMjQuMjc4NzYyODE3MzgyOCwgInBvbGljeV9sb3NzIjogMC41NDM3ODgyNzg4OTY0MTE3LCAidmFsdWVfbG9zcyI6IDAuMDAwNjkxNzcwOTYzMjk4MjA2NCwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzg5Mjg5MjAyMDA4OTI4NSwgImxvc3MiOiAwLjUyMDMwODQxNTU0NDM1OTIsICJrbCI6IDAuMDAzNzc4NTE0MTkzMjk5NTY1LCAiY2xpcF9mcmFjdGlvbiI6IDAuMDMzNzI1MDY4Mjc3NzQ1NTk0LCAiZW50cm9weSI6IDAuMTIyMTU5MDQ2MzgzNjA5OTcsICJwcG9fbG9zcyI6IC0wLjAwMTY4ODQ2NzAzMDY3NTI4NTQsICJpbWl0YXRpb25fbG9zcyI6IDAuNjg5NDEwMjM4NjYzOTE1NiwgInBwb19zYW1wbGVzIjogOTY2NjQsICJpbWl0YXRpb25fc2FtcGxlcyI6IDM2MjA4OCwgIkhfaW1pdCI6IDAuNzEzMjIxMzkzMTgwNzk2NSwgImltaXRhdGlvbl9rbCI6IDAuMDEwOTU4ODQ3NjA2OTYyMDg3LCAiaW1pdGF0aW9uX2VudHJvcHlfc2FtcGxlcyI6IDkwNTIyLCAiaW1pdGF0aW9uX2JldGFfdXNlZCI6IDAuMDQyNDE4MzQ5ODI3NDg1ODYsICJpbWl0YXRpb25fZW50cm9weV9zY29wZSI6ICJyYXdfbmF0c192YWxpZF9pbWl0YXRpb25fZmlyc3RfZXBvY2hfZm9yd2FyZCIsICJpbWl0YXRpb25fa2xfc2NvcGUiOiAiazNfdmFsaWRfaW1pdGF0aW9uX2FsbF9lcG9jaF9mb3J3YXJkc192c19yb2xsb3V0X3NlbGVjdGVkX2FjdGlvbiIsICJlcG9jaHMiOiA0LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlIjogMC41OTcwMzg2NjIwNjY5MTk0LCAicHBvX3JldHVybl92YXJpYW5jZSI6IDAuMDAxODk2NjIyNjM3NTA4Njg1MywgInBwb192YWx1ZV9lcnJvcl92YXJpYW5jZSI6IDAuMDAwNzY0MjY1NTk1NTY0NjY4MSwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjQxNjYsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIn0K"
+          }
+        }
+      ]
+    },
+    "3897": {
+      "selection": "first 8 actual update records of this allocation, in original order",
+      "source_checkpoint_version": 163,
+      "original_log": {
+        "remote_path": "/home/zhuyouwei/spire-downloads/e4-c73-3897.slurm.log",
+        "bytes": 14367262,
+        "sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+        "all_update_count": 25,
+        "verification": "Parent captured whole-log size/hash remotely; this extractor independently verifies the immutable local raw-line bundle, not the unavailable whole remote log."
+      },
+      "raw_line_bundle": {
+        "path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c79-update-metrics-original\\job3897-first8-original.json",
+        "bytes": 15623,
+        "sha256": "07859f3e2f6a040fa5d51c69eca768f711032e7f6c4952532d4fd4f4e4594d06"
+      },
+      "updates": [
+        {
+          "allocation_update_ordinal": 1,
+          "update": 1,
+          "version": 164,
+          "metrics": {
+            "kl": 0.0024736402383816716,
+            "clip_fraction": 0.02313589582020584,
+            "entropy": 0.14024787913937997,
+            "imitation_kl": 0.007795448060319602,
+            "H_imit": 0.6515067238833092,
+            "imitation_beta_used": 0.08886731540352022,
+            "value_loss": 0.00016115087040928185,
+            "value_explained_variance": -0.02142492872295465,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.00018121067219024553,
+            "ppo_value_error_variance": 0.00018509309792576024,
+            "value_explained_variance_samples": 23805
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 32,
+            "raw_record_bytes": 1411,
+            "raw_record_sha256": "fa0e57e331171267cbb73974d12095d06f23d9c76d163a4acfa9bf5a100da84a",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogMSwgInZlcnNpb24iOiAxNjQsICJ0cmFpbmluZ19zZWNvbmRzIjogMTgxLjYxOTA2NDMzMTA1NDcsICJ1cGRhdGVfc2Vjb25kcyI6IDE4MS42MTkwNjQzMzEwNTQ3LCAiYWN0dWFsX3N0ZXBzIjogMTE0Njg4LCAic2xfdHJpYWxfc3RlcHMiOiAzMjk5NzQ3LCAibGFuZXMiOiAyNTYsICJ3b3JsZF9zaXplIjogNywgIm5leHRfZXBvY2hzIjogNCwgImNvbXBsZXRlZF9lcGlzb2RlcyI6IDAsICJzdGFsbGVkX2VwaXNvZGVzIjogMCwgImNvbXBsZXRlZF9hdmVyYWdlX2Zsb29yIjogbnVsbCwgImFjdGl2ZV9tYXhfZmxvb3Jfc3RlcHMiOiA1OCwgInN0YWxsX2NsYXNzZXMiOiB7fSwgInBvbGljeV9sb3NzIjogMC40OTkzODg3MDQ4NjQxNTEsICJ2YWx1ZV9sb3NzIjogMC4wMDAxNjExNTA4NzA0MDkyODE4NSwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzkyNDM2ODcyMjA5ODIxNCwgImxvc3MiOiAwLjQ1MzExODU1ODM0Mzk0OTY1LCAia2wiOiAwLjAwMjQ3MzY0MDIzODM4MTY3MTYsICJjbGlwX2ZyYWN0aW9uIjogMC4wMjMxMzU4OTU4MjAyMDU4NCwgImVudHJvcHkiOiAwLjE0MDI0Nzg3OTEzOTM3OTk3LCAicHBvX2xvc3MiOiAtMC4wMDEyMjEwOTI1NTA2ODU0OTQsICJpbWl0YXRpb25fbG9zcyI6IDAuNjMwNTEzNTE2MTg3MDYyOCwgInBwb19zYW1wbGVzIjogOTUyMjAsICJpbWl0YXRpb25fc2FtcGxlcyI6IDM2MzUzMiwgIkhfaW1pdCI6IDAuNjUxNTA2NzIzODgzMzA5MiwgImltaXRhdGlvbl9rbCI6IDAuMDA3Nzk1NDQ4MDYwMzE5NjAyLCAiaW1pdGF0aW9uX2VudHJvcHlfc2FtcGxlcyI6IDkwODgzLCAiaW1pdGF0aW9uX2JldGFfdXNlZCI6IDAuMDg4ODY3MzE1NDAzNTIwMjIsICJpbWl0YXRpb25fZW50cm9weV9zY29wZSI6ICJyYXdfbmF0c192YWxpZF9pbWl0YXRpb25fZmlyc3RfZXBvY2hfZm9yd2FyZCIsICJpbWl0YXRpb25fa2xfc2NvcGUiOiAiazNfdmFsaWRfaW1pdGF0aW9uX2FsbF9lcG9jaF9mb3J3YXJkc192c19yb2xsb3V0X3NlbGVjdGVkX2FjdGlvbiIsICJlcG9jaHMiOiA0LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlIjogLTAuMDIxNDI0OTI4NzIyOTU0NjUsICJwcG9fcmV0dXJuX3ZhcmlhbmNlIjogMC4wMDAxODEyMTA2NzIxOTAyNDU1MywgInBwb192YWx1ZV9lcnJvcl92YXJpYW5jZSI6IDAuMDAwMTg1MDkzMDk3OTI1NzYwMjQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2FtcGxlcyI6IDIzODA1LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlX3Njb3BlIjogInByZV91cGRhdGVfcm9sbG91dF92YWx1ZXNfdmFsaWRfUFBPX3Jvd3Nfb25jZSIsICJpbWl0YXRpb25fYmV0YSI6IDAuMDkwODc2ODk1MjcxMjE2NjcsICJpbWl0YXRpb25fZW50cm9weV90YXJnZXQiOiAwLjY3MTYwMjUyMjU2MDI3Mzh9Cg=="
+          }
+        },
+        {
+          "allocation_update_ordinal": 2,
+          "update": 2,
+          "version": 165,
+          "metrics": {
+            "kl": 0.002246965070154084,
+            "clip_fraction": 0.018344542898829225,
+            "entropy": 0.06894285778059367,
+            "imitation_kl": 0.008516851593122573,
+            "H_imit": 0.6185179931946037,
+            "imitation_beta_used": 0.09087689527121667,
+            "value_loss": 0.0005357116855918848,
+            "value_explained_variance": 0.04324823838863601,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0004967608041467377,
+            "ppo_value_error_variance": 0.000475276774466869,
+            "value_explained_variance_samples": 28101
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 55,
+            "raw_record_bytes": 1426,
+            "raw_record_sha256": "ceb6f49e0015b32a3000feea19aabc27b32ddefda2959c7936dfa1e8b615a446",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogMiwgInZlcnNpb24iOiAxNjUsICJ0cmFpbmluZ19zZWNvbmRzIjogNDA1LjU3NDU2OTcwMjE0ODQ0LCAidXBkYXRlX3NlY29uZHMiOiAyMjMuOTU1NTA1MzcxMDkzNzUsICJhY3R1YWxfc3RlcHMiOiAxMTQ2ODgsICJzbF90cmlhbF9zdGVwcyI6IDMwNTU3MTgsICJsYW5lcyI6IDI1NiwgIndvcmxkX3NpemUiOiA3LCAibmV4dF9lcG9jaHMiOiA0LCAiY29tcGxldGVkX2VwaXNvZGVzIjogNzcsICJzdGFsbGVkX2VwaXNvZGVzIjogMCwgImNvbXBsZXRlZF9hdmVyYWdlX2Zsb29yIjogNi4zNzY2MjMzNzY2MjMzNzYsICJhY3RpdmVfbWF4X2Zsb29yX3N0ZXBzIjogNjksICJzdGFsbF9jbGFzc2VzIjoge30sICJwb2xpY3lfbG9zcyI6IDAuNDQ1ODAyMjA4NjYxNDk4NTYsICJ2YWx1ZV9sb3NzIjogMC4wMDA1MzU3MTE2ODU1OTE4ODQ4LCAiaW1pdGF0aW9uX2ZyYWN0aW9uIjogMC43NTQ5Nzg3MjQ4ODgzOTI4LCAibG9zcyI6IDAuNDAzNTQ2MzQ2MTk5NTI1OTUsICJrbCI6IDAuMDAyMjQ2OTY1MDcwMTU0MDg0LCAiY2xpcF9mcmFjdGlvbiI6IDAuMDE4MzQ0NTQyODk4ODI5MjI1LCAiZW50cm9weSI6IDAuMDY4OTQyODU3NzgwNTkzNjcsICJwcG9fbG9zcyI6IC0wLjAwMTQ1OTI4MjUwODA5NDk5NzIsICJpbWl0YXRpb25fbG9zcyI6IDAuNTkwOTU2NzM3MjA5MTY0NSwgInBwb19zYW1wbGVzIjogMTEyNDA0LCAiaW1pdGF0aW9uX3NhbXBsZXMiOiAzNDYzNDgsICJIX2ltaXQiOiAwLjYxODUxNzk5MzE5NDYwMzcsICJpbWl0YXRpb25fa2wiOiAwLjAwODUxNjg1MTU5MzEyMjU3MywgImltaXRhdGlvbl9lbnRyb3B5X3NhbXBsZXMiOiA4NjU4NywgImltaXRhdGlvbl9iZXRhX3VzZWQiOiAwLjA5MDg3Njg5NTI3MTIxNjY3LCAiaW1pdGF0aW9uX2VudHJvcHlfc2NvcGUiOiAicmF3X25hdHNfdmFsaWRfaW1pdGF0aW9uX2ZpcnN0X2Vwb2NoX2ZvcndhcmQiLCAiaW1pdGF0aW9uX2tsX3Njb3BlIjogImszX3ZhbGlkX2ltaXRhdGlvbl9hbGxfZXBvY2hfZm9yd2FyZHNfdnNfcm9sbG91dF9zZWxlY3RlZF9hY3Rpb24iLCAiZXBvY2hzIjogNCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZSI6IDAuMDQzMjQ4MjM4Mzg4NjM2MDEsICJwcG9fcmV0dXJuX3ZhcmlhbmNlIjogMC4wMDA0OTY3NjA4MDQxNDY3Mzc3LCAicHBvX3ZhbHVlX2Vycm9yX3ZhcmlhbmNlIjogMC4wMDA0NzUyNzY3NzQ0NjY4NjksICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2FtcGxlcyI6IDI4MTAxLCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlX3Njb3BlIjogInByZV91cGRhdGVfcm9sbG91dF92YWx1ZXNfdmFsaWRfUFBPX3Jvd3Nfb25jZSIsICJpbWl0YXRpb25fYmV0YSI6IDAuMDk2MTg1MzQ4MjA3NzgzNjgsICJpbWl0YXRpb25fZW50cm9weV90YXJnZXQiOiAwLjY3MTYwMjUyMjU2MDI3Mzh9Cg=="
+          }
+        },
+        {
+          "allocation_update_ordinal": 3,
+          "update": 3,
+          "version": 166,
+          "metrics": {
+            "kl": 0.0022899168624602034,
+            "clip_fraction": 0.019741201590340155,
+            "entropy": 0.08672565578960431,
+            "imitation_kl": 0.009232345588663997,
+            "H_imit": 0.6011918910094326,
+            "imitation_beta_used": 0.09618534820778368,
+            "value_loss": 0.0006298233661545225,
+            "value_explained_variance": 0.07977023959938101,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0005876694391187265,
+            "ppo_value_error_variance": 0.0005407909071549918,
+            "value_explained_variance_samples": 27164
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 78,
+            "raw_record_bytes": 1426,
+            "raw_record_sha256": "465f7e8b0dbf1a6100659eacfcc2d9ad1d792c257deff7560ea00f6931d64a65",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogMywgInZlcnNpb24iOiAxNjYsICJ0cmFpbmluZ19zZWNvbmRzIjogNjIzLjM4NDA0ODQ2MTkxNDEsICJ1cGRhdGVfc2Vjb25kcyI6IDIxNy44MDk0Nzg3NTk3NjU2MiwgImFjdHVhbF9zdGVwcyI6IDExNDY4OCwgInNsX3RyaWFsX3N0ZXBzIjogMjgyNTk4MywgImxhbmVzIjogMjU2LCAid29ybGRfc2l6ZSI6IDcsICJuZXh0X2Vwb2NocyI6IDQsICJjb21wbGV0ZWRfZXBpc29kZXMiOiAxNjMsICJzdGFsbGVkX2VwaXNvZGVzIjogMCwgImNvbXBsZXRlZF9hdmVyYWdlX2Zsb29yIjogNy45ODE1OTUwOTIwMjQ1Mzk1LCAiYWN0aXZlX21heF9mbG9vcl9zdGVwcyI6IDg3LCAic3RhbGxfY2xhc3NlcyI6IHt9LCAicG9saWN5X2xvc3MiOiAwLjQzNjA5NDI5NTAwOTAzNTIsICJ2YWx1ZV9sb3NzIjogMC4wMDA2Mjk4MjMzNjYxNTQ1MjI1LCAiaW1pdGF0aW9uX2ZyYWN0aW9uIjogMC43NjMxNDg3MTY1MTc4NTcxLCAibG9zcyI6IDAuMzkxOTEzMDg1MjgxOTQyNjMsICJrbCI6IDAuMDAyMjg5OTE2ODYyNDYwMjAzNCwgImNsaXBfZnJhY3Rpb24iOiAwLjAxOTc0MTIwMTU5MDM0MDE1NSwgImVudHJvcHkiOiAwLjA4NjcyNTY1NTc4OTYwNDMxLCAicHBvX2xvc3MiOiAtMC4wMDE0NTkyMDU5MTc0NjIzNDQsICJpbWl0YXRpb25fbG9zcyI6IDAuNTcxODkzNjU2MzE3NTYwNiwgInBwb19zYW1wbGVzIjogMTA4NjU2LCAiaW1pdGF0aW9uX3NhbXBsZXMiOiAzNTAwOTYsICJIX2ltaXQiOiAwLjYwMTE5MTg5MTAwOTQzMjYsICJpbWl0YXRpb25fa2wiOiAwLjAwOTIzMjM0NTU4ODY2Mzk5NywgImltaXRhdGlvbl9lbnRyb3B5X3NhbXBsZXMiOiA4NzUyNCwgImltaXRhdGlvbl9iZXRhX3VzZWQiOiAwLjA5NjE4NTM0ODIwNzc4MzY4LCAiaW1pdGF0aW9uX2VudHJvcHlfc2NvcGUiOiAicmF3X25hdHNfdmFsaWRfaW1pdGF0aW9uX2ZpcnN0X2Vwb2NoX2ZvcndhcmQiLCAiaW1pdGF0aW9uX2tsX3Njb3BlIjogImszX3ZhbGlkX2ltaXRhdGlvbl9hbGxfZXBvY2hfZm9yd2FyZHNfdnNfcm9sbG91dF9zZWxlY3RlZF9hY3Rpb24iLCAiZXBvY2hzIjogNCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZSI6IDAuMDc5NzcwMjM5NTk5MzgxMDEsICJwcG9fcmV0dXJuX3ZhcmlhbmNlIjogMC4wMDA1ODc2Njk0MzkxMTg3MjY1LCAicHBvX3ZhbHVlX2Vycm9yX3ZhcmlhbmNlIjogMC4wMDA1NDA3OTA5MDcxNTQ5OTE4LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlX3NhbXBsZXMiOiAyNzE2NCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zY29wZSI6ICJwcmVfdXBkYXRlX3JvbGxvdXRfdmFsdWVzX3ZhbGlkX1BQT19yb3dzX29uY2UiLCAiaW1pdGF0aW9uX2JldGEiOiAwLjEwMzIyNjQxMTM2Mjg2NzgsICJpbWl0YXRpb25fZW50cm9weV90YXJnZXQiOiAwLjY3MTYwMjUyMjU2MDI3Mzh9Cg=="
+          }
+        },
+        {
+          "allocation_update_ordinal": 4,
+          "update": 4,
+          "version": 167,
+          "metrics": {
+            "kl": 0.0017627523581995944,
+            "clip_fraction": 0.01584507042253521,
+            "entropy": 0.08889481565199571,
+            "imitation_kl": 0.009870712857261477,
+            "H_imit": 0.6426626650164906,
+            "imitation_beta_used": 0.1032264113628678,
+            "value_loss": 0.0006449534947287849,
+            "value_explained_variance": 0.23680855025994885,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0007575340418785603,
+            "ppo_value_error_variance": 0.0005781435036487391,
+            "value_explained_variance_samples": 23572
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 107,
+            "raw_record_bytes": 1424,
+            "raw_record_sha256": "e3237a068d007cacf973b923bbe7e692bf4d27473762b41858b65033f17778d4",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogNCwgInZlcnNpb24iOiAxNjcsICJ0cmFpbmluZ19zZWNvbmRzIjogODYyLjU1ODQxMDY0NDUzMTIsICJ1cGRhdGVfc2Vjb25kcyI6IDIzOS4xNzQzNjIxODI2MTcyLCAiYWN0dWFsX3N0ZXBzIjogMTE0Njg4LCAic2xfdHJpYWxfc3RlcHMiOiAzMTQxNjYzLCAibGFuZXMiOiAyNTYsICJ3b3JsZF9zaXplIjogNywgIm5leHRfZXBvY2hzIjogNCwgImNvbXBsZXRlZF9lcGlzb2RlcyI6IDE3OSwgInN0YWxsZWRfZXBpc29kZXMiOiAwLCAiY29tcGxldGVkX2F2ZXJhZ2VfZmxvb3IiOiAxMi4yNDAyMjM0NjM2ODcxNTEsICJhY3RpdmVfbWF4X2Zsb29yX3N0ZXBzIjogMTE2LCAic3RhbGxfY2xhc3NlcyI6IHt9LCAicG9saWN5X2xvc3MiOiAwLjQ4MjA1MTc3Nzk5OTI3MDU3LCAidmFsdWVfbG9zcyI6IDAuMDAwNjQ0OTUzNDk0NzI4Nzg0OSwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzk0NDY4NDcwOTgyMTQyOCwgImxvc3MiOiAwLjQyOTU0NDI1MzU0MTc3MTYsICJrbCI6IDAuMDAxNzYyNzUyMzU4MTk5NTk0NCwgImNsaXBfZnJhY3Rpb24iOiAwLjAxNTg0NTA3MDQyMjUzNTIxLCAiZW50cm9weSI6IDAuMDg4ODk0ODE1NjUxOTk1NzEsICJwcG9fbG9zcyI6IC0wLjAwMTgxODE5MjEyNzcxNzY5MjUsICJpbWl0YXRpb25fbG9zcyI6IDAuNjA3MjMwNDgzNTU5NTgyMywgInBwb19zYW1wbGVzIjogOTQyODgsICJpbWl0YXRpb25fc2FtcGxlcyI6IDM2NDQ2NCwgIkhfaW1pdCI6IDAuNjQyNjYyNjY1MDE2NDkwNiwgImltaXRhdGlvbl9rbCI6IDAuMDA5ODcwNzEyODU3MjYxNDc3LCAiaW1pdGF0aW9uX2VudHJvcHlfc2FtcGxlcyI6IDkxMTE2LCAiaW1pdGF0aW9uX2JldGFfdXNlZCI6IDAuMTAzMjI2NDExMzYyODY3OCwgImltaXRhdGlvbl9lbnRyb3B5X3Njb3BlIjogInJhd19uYXRzX3ZhbGlkX2ltaXRhdGlvbl9maXJzdF9lcG9jaF9mb3J3YXJkIiwgImltaXRhdGlvbl9rbF9zY29wZSI6ICJrM192YWxpZF9pbWl0YXRpb25fYWxsX2Vwb2NoX2ZvcndhcmRzX3ZzX3JvbGxvdXRfc2VsZWN0ZWRfYWN0aW9uIiwgImVwb2NocyI6IDQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2UiOiAwLjIzNjgwODU1MDI1OTk0ODg1LCAicHBvX3JldHVybl92YXJpYW5jZSI6IDAuMDAwNzU3NTM0MDQxODc4NTYwMywgInBwb192YWx1ZV9lcnJvcl92YXJpYW5jZSI6IDAuMDAwNTc4MTQzNTAzNjQ4NzM5MSwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjM1NzIsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIiwgImltaXRhdGlvbl9iZXRhIjogMC4xMDYxMjAzOTcxMTcyNDYxLCAiaW1pdGF0aW9uX2VudHJvcHlfdGFyZ2V0IjogMC42NzE2MDI1MjI1NjAyNzM4fQo="
+          }
+        },
+        {
+          "allocation_update_ordinal": 5,
+          "update": 5,
+          "version": 168,
+          "metrics": {
+            "kl": 0.0018516501203023215,
+            "clip_fraction": 0.01719381688466112,
+            "entropy": 0.10659889006010168,
+            "imitation_kl": 0.008056052475626022,
+            "H_imit": 0.6559291096605178,
+            "imitation_beta_used": 0.1061203971172461,
+            "value_loss": 0.0007681117517356657,
+            "value_explained_variance": 0.3022285732081783,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.000916187240828651,
+            "ppo_value_error_variance": 0.0006392892782414701,
+            "value_explained_variance_samples": 21025
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 131,
+            "raw_record_bytes": 1421,
+            "raw_record_sha256": "98207bf5d9e4aa38e4404e6cfaad0fe412f03253546539f6a506432980d3519e",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogNSwgInZlcnNpb24iOiAxNjgsICJ0cmFpbmluZ19zZWNvbmRzIjogMTA4OS43NDk2Nzk1NjU0Mjk3LCAidXBkYXRlX3NlY29uZHMiOiAyMjcuMTkxMjY4OTIwODk4NDQsICJhY3R1YWxfc3RlcHMiOiAxMTQ2ODgsICJzbF90cmlhbF9zdGVwcyI6IDI3NTAzMDgsICJsYW5lcyI6IDI1NiwgIndvcmxkX3NpemUiOiA3LCAibmV4dF9lcG9jaHMiOiA0LCAiY29tcGxldGVkX2VwaXNvZGVzIjogMjIxLCAic3RhbGxlZF9lcGlzb2RlcyI6IDAsICJjb21wbGV0ZWRfYXZlcmFnZV9mbG9vciI6IDE1LjA3MjM5ODE5MDA0NTI0OSwgImFjdGl2ZV9tYXhfZmxvb3Jfc3RlcHMiOiAxMzIsICJzdGFsbF9jbGFzc2VzIjoge30sICJwb2xpY3lfbG9zcyI6IDAuNTA1Mzg4ODE1NDU3MTQsICJ2YWx1ZV9sb3NzIjogMC4wMDA3NjgxMTE3NTE3MzU2NjU3LCAiaW1pdGF0aW9uX2ZyYWN0aW9uIjogMC44MTY2NzY1NDg1NDkxMDcxLCAibG9zcyI6IDAuNDQ4NzQ2NjgzMDg5NjI5OSwgImtsIjogMC4wMDE4NTE2NTAxMjAzMDIzMjE1LCAiY2xpcF9mcmFjdGlvbiI6IDAuMDE3MTkzODE2ODg0NjYxMTIsICJlbnRyb3B5IjogMC4xMDY1OTg4OTAwNjAxMDE2OCwgInBwb19sb3NzIjogLTAuMDAyMTYxMjcwODc0NjQxOTQ2NCwgImltaXRhdGlvbl9sb3NzIjogMC42MTkzMjExMTA2NTUwOTEzLCAicHBvX3NhbXBsZXMiOiA4NDEwMCwgImltaXRhdGlvbl9zYW1wbGVzIjogMzc0NjUyLCAiSF9pbWl0IjogMC42NTU5MjkxMDk2NjA1MTc4LCAiaW1pdGF0aW9uX2tsIjogMC4wMDgwNTYwNTI0NzU2MjYwMjIsICJpbWl0YXRpb25fZW50cm9weV9zYW1wbGVzIjogOTM2NjMsICJpbWl0YXRpb25fYmV0YV91c2VkIjogMC4xMDYxMjAzOTcxMTcyNDYxLCAiaW1pdGF0aW9uX2VudHJvcHlfc2NvcGUiOiAicmF3X25hdHNfdmFsaWRfaW1pdGF0aW9uX2ZpcnN0X2Vwb2NoX2ZvcndhcmQiLCAiaW1pdGF0aW9uX2tsX3Njb3BlIjogImszX3ZhbGlkX2ltaXRhdGlvbl9hbGxfZXBvY2hfZm9yd2FyZHNfdnNfcm9sbG91dF9zZWxlY3RlZF9hY3Rpb24iLCAiZXBvY2hzIjogNCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZSI6IDAuMzAyMjI4NTczMjA4MTc4MywgInBwb19yZXR1cm5fdmFyaWFuY2UiOiAwLjAwMDkxNjE4NzI0MDgyODY1MSwgInBwb192YWx1ZV9lcnJvcl92YXJpYW5jZSI6IDAuMDAwNjM5Mjg5Mjc4MjQxNDcwMSwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjEwMjUsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIiwgImltaXRhdGlvbl9iZXRhIjogMC4xMDc2ODc3Mzg0MDcyMjE3LCAiaW1pdGF0aW9uX2VudHJvcHlfdGFyZ2V0IjogMC42NzE2MDI1MjI1NjAyNzM4fQo="
+          }
+        },
+        {
+          "allocation_update_ordinal": 6,
+          "update": 6,
+          "version": 169,
+          "metrics": {
+            "kl": 0.0018060957190732315,
+            "clip_fraction": 0.017478574650428506,
+            "entropy": 0.11024838085398449,
+            "imitation_kl": 0.008143991099462844,
+            "H_imit": 0.6600341074941015,
+            "imitation_beta_used": 0.1076877384072217,
+            "value_loss": 0.0008260858047843424,
+            "value_explained_variance": 0.4285007088027726,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0012300398926203722,
+            "ppo_value_error_variance": 0.0007029669267768564,
+            "value_explained_variance_samples": 22170
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 154,
+            "raw_record_bytes": 1425,
+            "raw_record_sha256": "5db9b66b19f316d0735866b4fe3874cd7c60c535787e245b3aa796c5c1bc80e9",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogNiwgInZlcnNpb24iOiAxNjksICJ0cmFpbmluZ19zZWNvbmRzIjogMTMwOS43MTMzMzMxMjk4ODI4LCAidXBkYXRlX3NlY29uZHMiOiAyMTkuOTYzNjUzNTY0NDUzMTIsICJhY3R1YWxfc3RlcHMiOiAxMTQ2ODgsICJzbF90cmlhbF9zdGVwcyI6IDI3MDU0MjQsICJsYW5lcyI6IDI1NiwgIndvcmxkX3NpemUiOiA3LCAibmV4dF9lcG9jaHMiOiA0LCAiY29tcGxldGVkX2VwaXNvZGVzIjogMzA0LCAic3RhbGxlZF9lcGlzb2RlcyI6IDAsICJjb21wbGV0ZWRfYXZlcmFnZV9mbG9vciI6IDE4LjEzODE1Nzg5NDczNjg0MiwgImFjdGl2ZV9tYXhfZmxvb3Jfc3RlcHMiOiAxMjUsICJzdGFsbF9jbGFzc2VzIjoge30sICJwb2xpY3lfbG9zcyI6IDAuNTAxNDY1OTEyNDYyNDYyNSwgInZhbHVlX2xvc3MiOiAwLjAwMDgyNjA4NTgwNDc4NDM0MjQsICJpbWl0YXRpb25fZnJhY3Rpb24iOiAwLjgwNjY5Mjk0MDg0ODIxNDIsICJsb3NzIjogMC40NDQyNjMxMzkzODY1NDM2LCAia2wiOiAwLjAwMTgwNjA5NTcxOTA3MzIzMTUsICJjbGlwX2ZyYWN0aW9uIjogMC4wMTc0Nzg1NzQ2NTA0Mjg1MDYsICJlbnRyb3B5IjogMC4xMTAyNDgzODA4NTM5ODQ0OSwgInBwb19sb3NzIjogLTAuMDAyNTQwNzY1Mjk3ODY2MTkyNiwgImltaXRhdGlvbl9sb3NzIjogMC42MjIyNDA1NTE0MDc4MTksICJwcG9fc2FtcGxlcyI6IDg4NjgwLCAiaW1pdGF0aW9uX3NhbXBsZXMiOiAzNzAwNzIsICJIX2ltaXQiOiAwLjY2MDAzNDEwNzQ5NDEwMTUsICJpbWl0YXRpb25fa2wiOiAwLjAwODE0Mzk5MTA5OTQ2Mjg0NCwgImltaXRhdGlvbl9lbnRyb3B5X3NhbXBsZXMiOiA5MjUxOCwgImltaXRhdGlvbl9iZXRhX3VzZWQiOiAwLjEwNzY4NzczODQwNzIyMTcsICJpbWl0YXRpb25fZW50cm9weV9zY29wZSI6ICJyYXdfbmF0c192YWxpZF9pbWl0YXRpb25fZmlyc3RfZXBvY2hfZm9yd2FyZCIsICJpbWl0YXRpb25fa2xfc2NvcGUiOiAiazNfdmFsaWRfaW1pdGF0aW9uX2FsbF9lcG9jaF9mb3J3YXJkc192c19yb2xsb3V0X3NlbGVjdGVkX2FjdGlvbiIsICJlcG9jaHMiOiA0LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlIjogMC40Mjg1MDA3MDg4MDI3NzI2LCAicHBvX3JldHVybl92YXJpYW5jZSI6IDAuMDAxMjMwMDM5ODkyNjIwMzcyMiwgInBwb192YWx1ZV9lcnJvcl92YXJpYW5jZSI6IDAuMDAwNzAyOTY2OTI2Nzc2ODU2NCwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjIxNzAsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIiwgImltaXRhdGlvbl9iZXRhIjogMC4xMDg4NDQ1Nzk5MTM4Mzg5MywgImltaXRhdGlvbl9lbnRyb3B5X3RhcmdldCI6IDAuNjcxNjAyNTIyNTYwMjczOH0K"
+          }
+        },
+        {
+          "allocation_update_ordinal": 7,
+          "update": 7,
+          "version": 170,
+          "metrics": {
+            "kl": 0.002136701624363727,
+            "clip_fraction": 0.019690397210172662,
+            "entropy": 0.10387617051422986,
+            "imitation_kl": 0.008909909271350986,
+            "H_imit": 0.6692815229479345,
+            "imitation_beta_used": 0.10884457991383893,
+            "value_loss": 0.0008039774589416076,
+            "value_explained_variance": 0.5004066277987291,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.0016921510670993047,
+            "ppo_value_error_variance": 0.0008453874578861206,
+            "value_explained_variance_samples": 23514
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 177,
+            "raw_record_bytes": 1425,
+            "raw_record_sha256": "397b0f25a1074e1535d42ad05234039d986a9a7d85bdaaa01491438d12376785",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogNywgInZlcnNpb24iOiAxNzAsICJ0cmFpbmluZ19zZWNvbmRzIjogMTUzMy41NDM4ODQyNzczNDM4LCAidXBkYXRlX3NlY29uZHMiOiAyMjMuODMwNTUxMTQ3NDYwOTQsICJhY3R1YWxfc3RlcHMiOiAxMTQ2ODgsICJzbF90cmlhbF9zdGVwcyI6IDI4Mjk4NzgsICJsYW5lcyI6IDI1NiwgIndvcmxkX3NpemUiOiA3LCAibmV4dF9lcG9jaHMiOiA0LCAiY29tcGxldGVkX2VwaXNvZGVzIjogMzY5LCAic3RhbGxlZF9lcGlzb2RlcyI6IDAsICJjb21wbGV0ZWRfYXZlcmFnZV9mbG9vciI6IDIwLjYzNDE0NjM0MTQ2MzQxMywgImFjdGl2ZV9tYXhfZmxvb3Jfc3RlcHMiOiAxMzMsICJzdGFsbF9jbGFzc2VzIjoge30sICJwb2xpY3lfbG9zcyI6IDAuNTAxNDIyMjU5MDMwODg0LCAidmFsdWVfbG9zcyI6IDAuMDAwODAzOTc3NDU4OTQxNjA3NiwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzk0OTc0MTkwODQ4MjE0MiwgImxvc3MiOiAwLjQ0MzY5NTY4OTIzNjY4NDcsICJrbCI6IDAuMDAyMTM2NzAxNjI0MzYzNzI3LCAiY2xpcF9mcmFjdGlvbiI6IDAuMDE5NjkwMzk3MjEwMTcyNjYyLCAiZW50cm9weSI6IDAuMTAzODc2MTcwNTE0MjI5ODYsICJwcG9fbG9zcyI6IC0wLjAwMjUxNTUyNjE5MzI0NTAxMjYsICJpbWl0YXRpb25fbG9zcyI6IDAuNjMxMzg5MDU5NjczMTc0MiwgInBwb19zYW1wbGVzIjogOTQwNTYsICJpbWl0YXRpb25fc2FtcGxlcyI6IDM2NDY5NiwgIkhfaW1pdCI6IDAuNjY5MjgxNTIyOTQ3OTM0NSwgImltaXRhdGlvbl9rbCI6IDAuMDA4OTA5OTA5MjcxMzUwOTg2LCAiaW1pdGF0aW9uX2VudHJvcHlfc2FtcGxlcyI6IDkxMTc0LCAiaW1pdGF0aW9uX2JldGFfdXNlZCI6IDAuMTA4ODQ0NTc5OTEzODM4OTMsICJpbWl0YXRpb25fZW50cm9weV9zY29wZSI6ICJyYXdfbmF0c192YWxpZF9pbWl0YXRpb25fZmlyc3RfZXBvY2hfZm9yd2FyZCIsICJpbWl0YXRpb25fa2xfc2NvcGUiOiAiazNfdmFsaWRfaW1pdGF0aW9uX2FsbF9lcG9jaF9mb3J3YXJkc192c19yb2xsb3V0X3NlbGVjdGVkX2FjdGlvbiIsICJlcG9jaHMiOiA0LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlIjogMC41MDA0MDY2Mjc3OTg3MjkxLCAicHBvX3JldHVybl92YXJpYW5jZSI6IDAuMDAxNjkyMTUxMDY3MDk5MzA0NywgInBwb192YWx1ZV9lcnJvcl92YXJpYW5jZSI6IDAuMDAwODQ1Mzg3NDU3ODg2MTIwNiwgInZhbHVlX2V4cGxhaW5lZF92YXJpYW5jZV9zYW1wbGVzIjogMjM1MTQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2NvcGUiOiAicHJlX3VwZGF0ZV9yb2xsb3V0X3ZhbHVlc192YWxpZF9QUE9fcm93c19vbmNlIiwgImltaXRhdGlvbl9iZXRhIjogMC4xMDkwNzY2Nzk4NzUwNzI4NiwgImltaXRhdGlvbl9lbnRyb3B5X3RhcmdldCI6IDAuNjcxNjAyNTIyNTYwMjczOH0K"
+          }
+        },
+        {
+          "allocation_update_ordinal": 8,
+          "update": 8,
+          "version": 171,
+          "metrics": {
+            "kl": 0.0020389835011964306,
+            "clip_fraction": 0.0184852456244187,
+            "entropy": 0.10117839087845465,
+            "imitation_kl": 0.007095490927324069,
+            "H_imit": 0.6677471792837185,
+            "imitation_beta_used": 0.10907667987507286,
+            "value_loss": 0.0007037017497477715,
+            "value_explained_variance": 0.5760026404909353,
+            "grad_norm": null
+          },
+          "missing_fields": {
+            "grad_norm": "No gradient norm field was logged; no value inferred from clipping settings."
+          },
+          "scopes": {
+            "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+            "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+            "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once"
+          },
+          "explained_variance_support": {
+            "ppo_return_variance": 0.001703276294733165,
+            "ppo_value_error_variance": 0.0007221846514812455,
+            "value_explained_variance_samples": 23654
+          },
+          "provenance": {
+            "log_sha256": "efde1a3bb7a5dc7b50ed71e6ccff9d9f51e85424f9206541a04f80435fde7211",
+            "line_1based": 200,
+            "raw_record_bytes": 1423,
+            "raw_record_sha256": "85a83039b15764e2d62321612cd99be9c467f7bc1f6c6c30ff49ce3c4e81e060",
+            "raw_b64": "eyJldmVudCI6ICJ1cGRhdGUiLCAidXBkYXRlIjogOCwgInZlcnNpb24iOiAxNzEsICJ0cmFpbmluZ19zZWNvbmRzIjogMTc1NC4yNjQ5Njg4NzIwNzAzLCAidXBkYXRlX3NlY29uZHMiOiAyMjAuNzIxMDg0NTk0NzI2NTYsICJhY3R1YWxfc3RlcHMiOiAxMTQ2ODgsICJzbF90cmlhbF9zdGVwcyI6IDI4NzE5ODUsICJsYW5lcyI6IDI1NiwgIndvcmxkX3NpemUiOiA3LCAibmV4dF9lcG9jaHMiOiA0LCAiY29tcGxldGVkX2VwaXNvZGVzIjogMzY5LCAic3RhbGxlZF9lcGlzb2RlcyI6IDAsICJjb21wbGV0ZWRfYXZlcmFnZV9mbG9vciI6IDIwLjkyMTQwOTIxNDA5MjE0LCAiYWN0aXZlX21heF9mbG9vcl9zdGVwcyI6IDEzNiwgInN0YWxsX2NsYXNzZXMiOiB7fSwgInBvbGljeV9sb3NzIjogMC41MDExNjIzMDQ3ODYwMjM1LCAidmFsdWVfbG9zcyI6IDAuMDAwNzAzNzAxNzQ5NzQ3NzcxNSwgImltaXRhdGlvbl9mcmFjdGlvbiI6IDAuNzkzNzUzNDg3NzIzMjE0MiwgImxvc3MiOiAwLjQ0MzQwNTQxNzAzMTAwNTU2LCAia2wiOiAwLjAwMjAzODk4MzUwMTE5NjQzMDYsICJjbGlwX2ZyYWN0aW9uIjogMC4wMTg0ODUyNDU2MjQ0MTg3LCAiZW50cm9weSI6IDAuMTAxMTc4MzkwODc4NDU0NjUsICJwcG9fbG9zcyI6IC0wLjAwMjM1MTk2MzcxNDg3MDg3MzMsICJpbWl0YXRpb25fbG9zcyI6IDAuNjMxOTkzOTMzNzA2MjA5LCAicHBvX3NhbXBsZXMiOiA5NDYxNiwgImltaXRhdGlvbl9zYW1wbGVzIjogMzY0MTM2LCAiSF9pbWl0IjogMC42Njc3NDcxNzkyODM3MTg1LCAiaW1pdGF0aW9uX2tsIjogMC4wMDcwOTU0OTA5MjczMjQwNjksICJpbWl0YXRpb25fZW50cm9weV9zYW1wbGVzIjogOTEwMzQsICJpbWl0YXRpb25fYmV0YV91c2VkIjogMC4xMDkwNzY2Nzk4NzUwNzI4NiwgImltaXRhdGlvbl9lbnRyb3B5X3Njb3BlIjogInJhd19uYXRzX3ZhbGlkX2ltaXRhdGlvbl9maXJzdF9lcG9jaF9mb3J3YXJkIiwgImltaXRhdGlvbl9rbF9zY29wZSI6ICJrM192YWxpZF9pbWl0YXRpb25fYWxsX2Vwb2NoX2ZvcndhcmRzX3ZzX3JvbGxvdXRfc2VsZWN0ZWRfYWN0aW9uIiwgImVwb2NocyI6IDQsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2UiOiAwLjU3NjAwMjY0MDQ5MDkzNTMsICJwcG9fcmV0dXJuX3ZhcmlhbmNlIjogMC4wMDE3MDMyNzYyOTQ3MzMxNjUsICJwcG9fdmFsdWVfZXJyb3JfdmFyaWFuY2UiOiAwLjAwMDcyMjE4NDY1MTQ4MTI0NTUsICJ2YWx1ZV9leHBsYWluZWRfdmFyaWFuY2Vfc2FtcGxlcyI6IDIzNjU0LCAidmFsdWVfZXhwbGFpbmVkX3ZhcmlhbmNlX3Njb3BlIjogInByZV91cGRhdGVfcm9sbG91dF92YWx1ZXNfdmFsaWRfUFBPX3Jvd3Nfb25jZSIsICJpbWl0YXRpb25fYmV0YSI6IDAuMTA5NDYyMjE0MjAyNzI4MzgsICJpbWl0YXRpb25fZW50cm9weV90YXJnZXQiOiAwLjY3MTYwMjUyMjU2MDI3Mzh9Cg=="
+          }
+        }
+      ]
+    }
+  }
+}

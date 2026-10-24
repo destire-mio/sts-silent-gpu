@@ -402,6 +402,13 @@ def stage_deadline(now, seconds, node_cap, node_used, world, parent_deadline):
     return min(now+seconds, parent_deadline, now+(node_cap-node_used)*8/world)-120
 
 
+def rl_update(model, optimizer, fragment, rng, completed_updates, imitation_beta):
+    lr = (0., 3.3e-5, 6.7e-5, 1e-4)[min(completed_updates, 3)]
+    for group in optimizer.param_groups:
+        group['lr'] = lr
+    return dict(update(model, optimizer, fragment, rng, 4, imitation_beta), lr=lr)
+
+
 def train_student(args, source, hashes, device, rank, world):
     assert args.node_seconds is not None and args.node_seconds > 0
     assert args.node_seconds <= (21600 if args.task == 'distill' else 30000)
@@ -418,11 +425,11 @@ def train_student(args, source, hashes, device, rank, world):
         student_source = None
     else:
         assert args.student is not None
-        student_path = args.student / f'rank-{rank}.pt'
+        student_path = args.student / f'rank-{rank % 7}.pt'
         student_hash = sha256(student_path)
         student_source = torch.load(student_path, map_location='cpu', weights_only=False)
         assert student_source['task'] == 'distill' and student_source['teacher_hashes'] == hashes
-        assert student_source['world_size'] == world
+        assert student_source['world_size'] == 7 and world in (7, 8)
         assert student_source['state']['phase'] == 'complete' and student_source['state']['distill_gate_passed']
         assert student_source['state']['assessments'][-1]['average_floor'] >= 19.
         config = ModelConfig(**student_source['config'])
@@ -755,7 +762,7 @@ def train_student(args, source, hashes, device, rank, world):
             save('allocation_limit_during_training')
             return
         ddp.train()
-        metrics = update(ddp, optimizer, state['ready'], ppo_rng, 4, state['imitation_beta'])
+        metrics = rl_update(ddp, optimizer, state['ready'], ppo_rng, state['updates'], state['imitation_beta'])
         state['imitation_beta'] = update_beta(state['imitation_beta'], state['imitation_entropy_target'], metrics['H_imit'])
         health = state['ready']['health'].clone()
         dist.all_reduce(health[:3])

@@ -199,3 +199,58 @@ def test_rl_stop_uses_C180_baseline_and_three_nonimprovements():
     worse = deepcopy(assessment)
     worse['average_floor'] = floor-1.00001
     assert e4.rl_stop(worse, best, floor, 0)[3] == 'average_floor_more_than_one_below_best'
+
+
+def test_rl_warmup_freezes_first_update_but_accumulates_adam_and_resumes(monkeypatch):
+    monkeypatch.setattr(e4.dist, 'all_reduce', lambda value, **kwargs: None)
+    monkeypatch.setattr(e4.dist, 'get_world_size', lambda: 1)
+
+    class LocalPolicy(e4.Policy):
+        def no_sync(self):
+            return nullcontext()
+
+    torch.manual_seed(79)
+    config = e4.ModelConfig(width=8, layers=1, heads=2, feedforward=16)
+    model = LocalPolicy(config).eval()
+    fragment = observation_fragment([1000000001]*35)
+    inputs = e4.packed_inputs(fragment['data'], fragment['offsets'], torch.arange(35), torch.device('cpu'))
+    with torch.no_grad():
+        logits, values = model(inputs)
+    fragment.update(logs=logits.log_softmax(-1)[:, 0], values=values,
+        returns=torch.linspace(.1, .9, 35), advantages=torch.linspace(-1., 1., 35),
+        imitation=torch.arange(35) % 2 == 0)
+    model.train()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    rng = torch.Generator().manual_seed(1729)
+    initial = deepcopy(model.state_dict())
+    step_lrs = []
+    optimizer.register_step_pre_hook(lambda opt, args, kwargs: step_lrs.append(opt.param_groups[0]['lr']))
+    metrics = e4.rl_update(model, optimizer, fragment, rng, 0, .08)
+    assert metrics['lr'] == 0. and metrics['epochs'] == 4
+    assert step_lrs == [0.]*4
+    assert all(torch.equal(value, model.state_dict()[key]) for key, value in initial.items())
+    moments = list(optimizer.state.values())
+    assert moments and all(int(item['step']) == 4 for item in moments)
+    assert any(torch.count_nonzero(item['exp_avg']) for item in moments)
+    assert any(torch.count_nonzero(item['exp_avg_sq']) for item in moments)
+    saved = deepcopy(dict(model=model.state_dict(), optimizer=optimizer.state_dict(),
+                         rng=rng.get_state(), state=dict(updates=1)))
+    resumed = LocalPolicy(config).train()
+    resumed.load_state_dict(saved['model'])
+    resumed_optimizer = torch.optim.Adam(resumed.parameters(), lr=1e-4)
+    resumed_optimizer.load_state_dict(saved['optimizer'])
+    resumed_rng = torch.Generator()
+    resumed_rng.set_state(saved['rng'])
+    for completed_updates, expected_lr in ((1, 3.3e-5), (2, 6.7e-5), (3, 1e-4), (4, 1e-4)):
+        step_lrs.clear()
+        metrics = e4.rl_update(model, optimizer, fragment, rng, completed_updates, .08)
+        assert metrics['lr'] == expected_lr and step_lrs == [expected_lr]*4
+        if completed_updates == 1:
+            resumed_metrics = e4.rl_update(resumed, resumed_optimizer, fragment, resumed_rng,
+                                           saved['state']['updates'], .08)
+            assert resumed_metrics == metrics
+            assert all(torch.equal(value, resumed.state_dict()[key]) for key, value in model.state_dict().items())
+            for parameter, other in zip(model.parameters(), resumed.parameters()):
+                for key in ('step', 'exp_avg', 'exp_avg_sq'):
+                    assert torch.equal(optimizer.state[parameter][key], resumed_optimizer.state[other][key])
+            assert any(not torch.equal(value, model.state_dict()[key]) for key, value in initial.items())
