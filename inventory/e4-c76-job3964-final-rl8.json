@@ -1,0 +1,1087 @@
+{
+  "at": "2026-10-24T21:27:14.276111+00:00",
+  "job_id": 3964,
+  "claude_messages": [
+    76,
+    77,
+    78
+  ],
+  "source_commit": "c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+  "output": "/home/zhuyouwei/spire-downloads/e4-c76-4c-3961",
+  "acceptance": {
+    "at": "2026-10-24T21:27:14.276111+00:00",
+    "status": "completed_verified",
+    "task_key": "claude76-job3964-eval8-exit-review-c3e697c59e94ab1629d1af3696c015a3b28f3c3c",
+    "owner": "/root/c76_job3964_eval8_exit_review",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "child_checks": 326,
+    "parent_checks": 326,
+    "verify_bytes": 35743,
+    "verify_sha256": "16b401d72cf2f3499be8355cea151e2c7252cba7623138b22f5d8b4615db4635",
+    "report_sha256": "58d609bd2c97051f173ed16686197de2246d40d49518a07c97cdf5869dae3e15",
+    "evidence": "c76-parent-job3964-final-accepted/report.json",
+    "original_eval_files": 17,
+    "episodes": 1024,
+    "mean": 18.2138671875,
+    "act1_boss": 558,
+    "act2_boss": 1,
+    "new_paths": 18,
+    "new_actions": 7070,
+    "roots_after": 468,
+    "rounds_after": 26,
+    "original_gzip_bytes": 169643,
+    "original_gzip_sha256": "8c7ac088b1c02ac2fd8801670aaa9cacce5652144645a5ac1b9ab52ca81cc59b",
+    "full_log_bytes": 5124539,
+    "full_log_sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+    "known_training_SL_copy_budget_diagnostics": 2,
+    "mac_status": "pending_mac_original_replay",
+    "automatic_resume_allowed": false,
+    "limits": [
+      "No GPU execution, torch import, .pt loading, original Mac replay, SSH or network performed.",
+      "Hash consistency establishes preserved evidence identity; remote source bytes are not independently reacquired.",
+      "summary.faults and summary.truncated are source constants, not independent fault/truncation proof.",
+      "Audit roots remain pending_mac_original_replay; this review checks full preserved action paths, not original Mac replay."
+    ]
+  },
+  "evaluation": {
+    "episodes": 1024,
+    "average_floor": 18.2138671875,
+    "reach_counts": {
+      "act1_boss": 558,
+      "act2_boss": 1,
+      "act3_first_boss": 0,
+      "act3_second_boss": 0,
+      "act3_three_keys": 0,
+      "act4": 0,
+      "shield_spear": 0,
+      "heart": 0
+    },
+    "outcome_counts": {
+      "death": 1024
+    },
+    "total_recorded_actions": 353584,
+    "raw_combat_diagnostic_rows": 9559,
+    "recomputed_summary": {
+      "episodes": 1024,
+      "average_floor": 18.2138671875,
+      "reach": {
+        "act1_boss": 0.544921875,
+        "act2_boss": 0.0009765625,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "shield_spear": 0.0,
+        "heart": 0.0
+      },
+      "victories": 0,
+      "stalled": 0,
+      "stall_classes": {}
+    },
+    "recomputed_combat": {
+      "all": {
+        "combats": 9559,
+        "decisions": 8646299,
+        "complete_trial_groups": 9559,
+        "capped_trials": 0,
+        "nested_event_combats": 178,
+        "pooled_policy_entropy": 0.7249205947555135,
+        "means": {
+          "policy_entropy": 0.7375867638912579,
+          "win_fraction": 0.7721845904383303,
+          "score_std": 0.009347696841662489,
+          "distinct_end_states": 15.961397635735956,
+          "selected_score_gain": 0.013411654247374514
+        }
+      },
+      "act1": {
+        "combats": 7478,
+        "decisions": 6755968,
+        "complete_trial_groups": 7478,
+        "capped_trials": 0,
+        "nested_event_combats": 119,
+        "pooled_policy_entropy": 0.7205518884240243,
+        "means": {
+          "policy_entropy": 0.7322972186335251,
+          "win_fraction": 0.8401770192564857,
+          "score_std": 0.009017122507919074,
+          "distinct_end_states": 15.988767050013372,
+          "selected_score_gain": 0.012558700337402117
+        }
+      },
+      "act2": {
+        "combats": 2078,
+        "decisions": 1888935,
+        "complete_trial_groups": 2078,
+        "capped_trials": 0,
+        "nested_event_combats": 59,
+        "pooled_policy_entropy": 0.740397495341516,
+        "means": {
+          "policy_entropy": 0.7562503050425297,
+          "win_fraction": 0.5281219923002888,
+          "score_std": 0.010544353236716876,
+          "distinct_end_states": 15.870548604427334,
+          "selected_score_gain": 0.016476950487044627
+        }
+      },
+      "act3": {
+        "combats": 3,
+        "decisions": 1396,
+        "complete_trial_groups": 3,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": 0.9254800277913221,
+        "means": {
+          "policy_entropy": 0.9950470722185375,
+          "win_fraction": 0.34375,
+          "score_std": 0.004475323111743971,
+          "distinct_end_states": 10.666666666666666,
+          "selected_score_gain": 0.016312905160399776
+        }
+      },
+      "act4": {
+        "combats": 0,
+        "decisions": 0,
+        "complete_trial_groups": 0,
+        "capped_trials": 0,
+        "nested_event_combats": 0,
+        "pooled_policy_entropy": null,
+        "means": {
+          "policy_entropy": null,
+          "win_fraction": null,
+          "score_std": null,
+          "distinct_end_states": null,
+          "selected_score_gain": null
+        }
+      }
+    },
+    "recomputed_noncombat": {
+      "counts": {
+        "gold_appeared": 9072,
+        "gold_taken": 8854,
+        "potion_appeared": 3846,
+        "potion_taken": 3668,
+        "card_appeared": 8326,
+        "card_taken": 8322,
+        "relic_appeared": 2105,
+        "relic_taken": 764,
+        "card_opened": 8326,
+        "card_bowl": 4,
+        "shop_purchases": 605,
+        "mask_gold": 9072,
+        "mask_potion": 3711,
+        "mask_card": 8713,
+        "rest_rest": 2755,
+        "rest_smith": 36,
+        "rest_lift": 1,
+        "rest_toke": 0,
+        "rest_dig": 2,
+        "rest_recall": 22
+      },
+      "final_deck_size_mean": 20.1337890625,
+      "episodes": 1024,
+      "scope": "actual trajectories; displayed combat/treasure reward rows"
+    },
+    "recomputed_diagnostics": {
+      "combat_over_limit": 0,
+      "event_over_limit": 0,
+      "combat_normal_max_steps": 266,
+      "event_normal_max_steps": 66,
+      "combat_played_cards_limit": 0,
+      "combat_trials": 305888,
+      "repeat_check_seconds": 154.86674233479425,
+      "repeat_check_decisions": 152161,
+      "repeat_check_candidates": 779759,
+      "all_candidates_repeat": 183,
+      "combat_played_cards_limit_fraction": 0.0
+    },
+    "baseline_mean": 19.4931640625,
+    "mean_drop": 1.279296875,
+    "stop_reason": "average_floor_more_than_one_below_best",
+    "automatic_resume_allowed": false,
+    "world8_allocation_performed": false
+  },
+  "audit": {
+    "status": "pending_mac_original_replay",
+    "selected_seeds": [
+      2000000835,
+      2000000188,
+      2000000428,
+      2000000187,
+      2000000417,
+      2000000495,
+      2000000154,
+      2000000594,
+      2000000438,
+      2000000696,
+      2000000768,
+      2000000247,
+      2000000042,
+      2000000500,
+      2000000068,
+      2000000051,
+      2000000250,
+      2000000324
+    ],
+    "full_action_counts": [
+      228,
+      435,
+      422,
+      512,
+      279,
+      519,
+      394,
+      413,
+      99,
+      406,
+      543,
+      447,
+      366,
+      487,
+      461,
+      205,
+      137,
+      717
+    ],
+    "total_actions": 7070,
+    "roots_canonical_sha256": "f170c77cf6ce195dd48707da2d22fd2273658c344992026c654ace7e6c8656ab",
+    "original_mac_replay_performed": false
+  },
+  "package": {
+    "published_round": "E4-C76-job3964-RL8-N32-D1024",
+    "source_round": "E4-C76-rl-8-N32-D1024",
+    "prior_roots": 450,
+    "prior_rounds": 25,
+    "total_roots": 468,
+    "total_rounds": 26,
+    "new_roots": 18,
+    "new_decisions": 7070,
+    "old_roots_sha256": "ea03b29e4bd43f5ed16dfd2751333b558b7be34cb6d3470b6429adba5b3780a6",
+    "old_rounds_sha256": "4e1ec9642683caa4a3bed381b8da631cc345cbef5431f6f1aca4a6448dd5dc2f",
+    "historical_mac_reports_preserved": true,
+    "new_round_mac_status": "pending_mac_original_replay"
+  },
+  "proposed_artifacts": {
+    "proposed\\e4-audit-roots.json": {
+      "bytes": 1890448,
+      "sha256": "c5e46cf64de7fa2611ea4e2cd612e4ab704a19690a95f491ba65542f70cac048"
+    },
+    "proposed\\E4-C76-job3964-RL8-N32-D1024-episodes.json.gz": {
+      "bytes": 169643,
+      "sha256": "8c7ac088b1c02ac2fd8801670aaa9cacce5652144645a5ac1b9ab52ca81cc59b"
+    }
+  },
+  "exit": {
+    "immutable_inputs": 180,
+    "peak": {
+      "jobid": "3964",
+      "timestamp": "2026-10-24T18:15:58.477034+00:00",
+      "status": "available",
+      "backend": "v2",
+      "cgroup_path": "/system.slice/slurmstepd.scope/job_3964",
+      "peak_bytes": 17556291584,
+      "readable_source": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_3964/memory.peak",
+      "scope": "job_aggregate",
+      "attempts": [
+        {
+          "backend": "v2",
+          "cgroup_path": "/system.slice/slurmstepd.scope/job_3964",
+          "mount_root": "/",
+          "mountpoint": "/sys/fs/cgroup",
+          "readable_source": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_3964/memory.peak",
+          "mountinfo_line": "30 24 0:27 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:4 - cgroup2 cgroup2 rw,seclabel,nsdelegate,memory_recursiveprot",
+          "peak_bytes": 17556291584,
+          "status": "available"
+        }
+      ],
+      "proc_cgroup": "0::/system.slice/slurmstepd.scope/job_3964/step_batch/user/task_0\n",
+      "proc_mountinfo": "23 74 0:22 / /proc rw,nosuid,nodev,noexec,relatime shared:14 - proc proc rw\n24 74 0:23 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel\n25 74 0:6 / /dev rw,nosuid shared:10 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=16377683,mode=755,inode64\n26 24 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime shared:3 - securityfs securityfs rw\n27 25 0:24 / /dev/shm rw,nosuid,nodev shared:11 - tmpfs tmpfs rw,seclabel,inode64\n28 25 0:25 / /dev/pts rw,nosuid,noexec,relatime shared:12 - devpts devpts rw,seclabel,gid=5,mode=620,ptmxmode=000\n29 74 0:26 / /run rw,nosuid,nodev shared:13 - tmpfs tmpfs rw,seclabel,size=26220020k,nr_inodes=819200,mode=755,inode64\n30 24 0:27 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:4 - cgroup2 cgroup2 rw,seclabel,nsdelegate,memory_recursiveprot\n31 24 0:28 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime shared:5 - pstore pstore rw,seclabel\n32 24 0:29 / /sys/firmware/efi/efivars rw,nosuid,nodev,noexec,relatime shared:6 - efivarfs efivarfs rw\n33 24 0:30 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime shared:7 - bpf bpf rw,mode=700\n69 24 0:18 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime shared:8 - configfs configfs rw\n74 1 8:20 / / rw,relatime shared:1 - xfs /dev/sdb4 rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n35 24 0:21 / /sys/fs/selinux rw,nosuid,noexec,relatime shared:9 - selinuxfs selinuxfs rw\n34 23 0:31 / /proc/sys/fs/binfmt_misc rw,relatime shared:15 - autofs systemd-1 rw,fd=29,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=25003\n36 25 0:20 / /dev/mqueue rw,nosuid,nodev,noexec,relatime shared:16 - mqueue mqueue rw,seclabel\n37 25 0:32 / /dev/hugepages rw,relatime shared:17 - hugetlbfs hugetlbfs rw,seclabel,pagesize=2M\n38 24 0:8 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime shared:18 - debugfs debugfs rw,seclabel\n39 24 0:13 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime shared:19 - tracefs tracefs rw,seclabel\n40 24 0:33 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime shared:20 - fusectl fusectl rw\n63 29 0:34 / /run/credentials/systemd-sysctl.service ro,nosuid,nodev,noexec,relatime shared:21 - ramfs none rw,seclabel,mode=700\n65 29 0:36 / /run/credentials/systemd-tmpfiles-setup-dev.service ro,nosuid,nodev,noexec,relatime shared:22 - ramfs none rw,seclabel,mode=700\n201 74 8:1 / /home_backup rw,relatime shared:95 - xfs /dev/sda1 rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,usrquota\n208 74 8:18 / /boot rw,relatime shared:110 - ext4 /dev/sdb2 rw,seclabel,stripe=4095\n217 208 8:17 / /boot/efi rw,relatime shared:116 - vfat /dev/sdb1 rw,fmask=0077,dmask=0077,codepage=437,iocharset=ascii,shortname=winnt,errors=remount-ro\n253 29 0:37 / /run/credentials/systemd-tmpfiles-setup.service ro,nosuid,nodev,noexec,relatime shared:122 - ramfs none rw,seclabel,mode=700\n226 74 0:38 / /var/lib/nfs/rpc_pipefs rw,relatime shared:126 - rpc_pipefs sunrpc rw\n692 29 0:46 / /run/user/1015 rw,nosuid,nodev,relatime shared:367 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1015,gid=1015,inode64\n693 29 0:47 / /run/user/1003 rw,nosuid,nodev,relatime shared:390 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1003,gid=1003,inode64\n935 74 0:49 / /home rw,noatime shared:486 - nfs4 login:/home rw,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,acregmin=1800,acregmax=1800,acdirmin=1800,acdirmax=1800,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=192.168.100.2,local_lock=none,addr=192.168.100.1\n570 29 0:43 / /run/user/1005 rw,nosuid,nodev,relatime shared:259 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1005,gid=1005,inode64\n593 29 0:45 / /run/user/1007 rw,nosuid,nodev,relatime shared:293 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1007,gid=1007,inode64\n788 34 0:50 / /proc/sys/fs/binfmt_misc rw,nosuid,nodev,noexec,relatime shared:409 - binfmt_misc binfmt_misc rw\n756 29 0:52 / /run/user/1013 rw,nosuid,nodev,relatime shared:415 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1013,gid=1013,inode64\n931 693 0:54 / /run/user/1003/doc rw,nosuid,nodev,relatime shared:453 - fuse.portal portal rw,user_id=1003,group_id=1003\n737 29 0:51 / /run/user/1002 rw,nosuid,nodev,relatime shared:403 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1002,gid=1002,inode64\n1063 29 0:55 / /run/user/1001 rw,nosuid,nodev,relatime shared:594 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1001,gid=1001,inode64\n616 29 0:48 / /run/user/1017 rw,nosuid,nodev,relatime shared:307 - tmpfs tmpfs rw,seclabel,size=13110008k,nr_inodes=3277502,mode=700,uid=1017,gid=1018,inode64\n",
+      "reason": "exact current allocation ancestor; includes descendant scopes"
+    },
+    "final_slurm": {
+      "at": "2026-10-24T18:16:36.031533+00:00",
+      "job": {
+        "returncode": 0,
+        "stdout": "JobId=3964 JobName=spire-e4-c76-4c UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=4294899663 Nice=0 Account=(null) QOS=(null) JobState=COMPLETED Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:50:07 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-10-25T01:25:51 EligibleTime=2026-10-25T01:25:51 AccrueTime=2026-10-25T01:25:51 StartTime=2026-10-25T01:25:51 EndTime=2026-10-25T02:15:58 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-25T01:25:51 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:2094771 ReqNodeList=gpu01 ExcNodeList=(null) NodeList=gpu01 BatchHost=gpu01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=19321M,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=19321M MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/c76-4c-slurm-preparation-c3e697c-student3961-tapescope/job-20261024T1720.sh WorkDir=/home/zhuyouwei StdErr=/home/zhuyouwei/spire-downloads/c76-4c-slurm-preparation-c3e697c-student3961-tapescope/job-3964.log StdIn=/dev/null StdOut=/home/zhuyouwei/spire-downloads/c76-4c-slurm-preparation-c3e697c-student3961-tapescope/job-3964.log Power= TresPerNode=gres:gpu:V100:7 \n",
+        "stderr": ""
+      },
+      "allocation_files": [
+        {
+          "name": "manifest.json",
+          "bytes": 40968
+        },
+        {
+          "name": "preflight-before-submit.json",
+          "bytes": 41164
+        },
+        {
+          "name": "budget-before-submit.json",
+          "bytes": 661
+        },
+        {
+          "name": "allocation-start.txt",
+          "bytes": 1373
+        },
+        {
+          "name": "allocation-clock.json",
+          "bytes": 190
+        },
+        {
+          "name": "inputs-before.json",
+          "bytes": 28325
+        },
+        {
+          "name": "source.txt",
+          "bytes": 41
+        },
+        {
+          "name": "cuda-gates.log",
+          "bytes": 770
+        },
+        {
+          "name": "cuda-prefix-discovery.json",
+          "bytes": 2927
+        },
+        {
+          "name": "cuda-gates-discovery.json",
+          "bytes": 2927
+        },
+        {
+          "name": "cuda-gates.junit.xml",
+          "bytes": 2679
+        },
+        {
+          "name": "cuda-gates-verified.json",
+          "bytes": 247
+        },
+        {
+          "name": "wall-plan.txt",
+          "bytes": 91
+        },
+        {
+          "name": "parent-startup-1720.json.gz",
+          "bytes": 55308
+        },
+        {
+          "name": "exit.txt",
+          "bytes": 41
+        },
+        {
+          "name": "accounting-at-exit.txt",
+          "bytes": 1455
+        },
+        {
+          "name": "manifest-at-exit.txt",
+          "bytes": 109
+        },
+        {
+          "name": "inputs-at-exit.log",
+          "bytes": 0
+        },
+        {
+          "name": "inputs-at-exit.json",
+          "bytes": 28326
+        },
+        {
+          "name": "memory-peak.log",
+          "bytes": 84
+        },
+        {
+          "name": "memory-peak.json",
+          "bytes": 5728
+        },
+        {
+          "name": "exit-validation.txt",
+          "bytes": 68
+        }
+      ]
+    },
+    "runtime_seconds": 3007,
+    "actual_charge_node_seconds": 2631.125,
+    "provisional_status_node_seconds": 2513.937700406008
+  },
+  "settlement": {
+    "cost_entry": {
+      "job_id": 3964,
+      "step": 1,
+      "phase": "4c",
+      "gpu_seconds": 21049,
+      "charged_node_seconds": 2631.125,
+      "released_reservation_node_seconds": 12600,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "runtime_seconds": 3007,
+      "start": "2026-10-25T01:25:51+08:00",
+      "end": "2026-10-25T02:15:58+08:00",
+      "source": "Actual final scontrol captured18:16:36 beforepurge; originalEXIT/checks0; exactjobaggregatev2peak",
+      "reason": "average_floor_more_than_one_below_best",
+      "evidence": "job3964-final-settlement.json",
+      "raw_bundle_sha256": "0b57705b23e4eeb573fcea00178fbd4933a9a662f89b02490fab5122008bbfec",
+      "settled_once_at": "2026-10-24T18:21:51.115696+00:00"
+    },
+    "ledgers": {
+      "continuation-state.json": {
+        "active_job": null,
+        "old3897_hold": 12600,
+        "settlement": {
+          "job_id": 3964,
+          "step": 1,
+          "phase": "4c",
+          "gpu_seconds": 21049,
+          "charged_node_seconds": 2631.125,
+          "released_reservation_node_seconds": 12600,
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "runtime_seconds": 3007,
+          "start": "2026-10-25T01:25:51+08:00",
+          "end": "2026-10-25T02:15:58+08:00",
+          "source": "Actual final scontrol captured18:16:36 beforepurge; originalEXIT/checks0; exactjobaggregatev2peak",
+          "reason": "average_floor_more_than_one_below_best",
+          "evidence": "job3964-final-settlement.json",
+          "raw_bundle_sha256": "0b57705b23e4eeb573fcea00178fbd4933a9a662f89b02490fab5122008bbfec",
+          "settled_once_at": "2026-10-24T18:21:51.115696+00:00"
+        }
+      },
+      "coordinator-dispatch-state.json": {
+        "active_job": null,
+        "old3897_hold": 12600,
+        "settlement": {
+          "job_id": 3964,
+          "step": 1,
+          "phase": "4c",
+          "gpu_seconds": 21049,
+          "charged_node_seconds": 2631.125,
+          "released_reservation_node_seconds": 12600,
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "runtime_seconds": 3007,
+          "start": "2026-10-25T01:25:51+08:00",
+          "end": "2026-10-25T02:15:58+08:00",
+          "source": "Actual final scontrol captured18:16:36 beforepurge; originalEXIT/checks0; exactjobaggregatev2peak",
+          "reason": "average_floor_more_than_one_below_best",
+          "evidence": "job3964-final-settlement.json",
+          "raw_bundle_sha256": "0b57705b23e4eeb573fcea00178fbd4933a9a662f89b02490fab5122008bbfec",
+          "settled_once_at": "2026-10-24T18:21:51.115696+00:00"
+        }
+      },
+      "github-watch-state.json": {
+        "active_job": null,
+        "old3897_hold": 12600,
+        "settlement": {
+          "job_id": 3964,
+          "step": 1,
+          "phase": "4c",
+          "gpu_seconds": 21049,
+          "charged_node_seconds": 2631.125,
+          "released_reservation_node_seconds": 12600,
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "runtime_seconds": 3007,
+          "start": "2026-10-25T01:25:51+08:00",
+          "end": "2026-10-25T02:15:58+08:00",
+          "source": "Actual final scontrol captured18:16:36 beforepurge; originalEXIT/checks0; exactjobaggregatev2peak",
+          "reason": "average_floor_more_than_one_below_best",
+          "evidence": "job3964-final-settlement.json",
+          "raw_bundle_sha256": "0b57705b23e4eeb573fcea00178fbd4933a9a662f89b02490fab5122008bbfec",
+          "settled_once_at": "2026-10-24T18:21:51.115696+00:00"
+        }
+      }
+    }
+  },
+  "full_log": {
+    "available": true,
+    "path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-full-log\\job3964.log",
+    "bytes": 5124539,
+    "sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c",
+    "line_count": 341,
+    "error_needles": [
+      "Traceback",
+      "AssertionError",
+      "E4 engine fault",
+      "Unresolved search truncation",
+      "CUDA error",
+      "device-side assert",
+      "illegal memory access",
+      "out of memory",
+      "NCCL error",
+      "Segmentation fault",
+      "Bus error",
+      "slurmstepd: error",
+      "DUE TO TIME LIMIT",
+      "sl_over_limit"
+    ],
+    "matches": [],
+    "evaluation_event_line": 340,
+    "known_combat_copy_budget_diagnostics": [
+      {
+        "line": 173,
+        "record": {
+          "event": "combat_played_cards_limit",
+          "device": 2,
+          "slot": 8647,
+          "seed": 1361898954,
+          "fault": 1128353841,
+          "steps": 1393,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 0,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 0,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            }
+          ]
+        }
+      },
+      {
+        "line": 174,
+        "record": {
+          "event": "combat_played_cards_limit",
+          "device": 2,
+          "slot": 8648,
+          "seed": 1361898954,
+          "fault": 1128353841,
+          "steps": 1400,
+          "last30": [
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 4,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 0,
+              "action_kind": "choose"
+            },
+            {
+              "screen": "hand_select",
+              "candidate": 0,
+              "action_kind": "proceed"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 3,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 1,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "end_turn"
+            },
+            {
+              "screen": "combat",
+              "candidate": 2,
+              "action_kind": "play"
+            },
+            {
+              "screen": "combat",
+              "candidate": 0,
+              "action_kind": "play"
+            }
+          ]
+        }
+      }
+    ],
+    "event_name_counts": {
+      "sl_heartbeat": 279,
+      "rl_update": 8,
+      "combat_played_cards_limit": 2,
+      "evaluation_progress": 14,
+      "evaluation": 1
+    },
+    "interpretation": "Two preserved training SL-copy played-card-budget diagnostics are distinct from native engine failure and actual trajectory death. Evaluation reports zero of this budget diagnostic. No new waiver, recoding or original-game proof is made; the explicit string scan is limited evidence, not universal fault freedom."
+  },
+  "input_hashes": {
+    "D:\\google download\\sts-silent-gpu-split-review\\tools\\e4_run.py": {
+      "bytes": 21394,
+      "sha256": "04195e58dde01bb14fbe7736004fde0abec16e07c98fc3000c6044637da0a990"
+    },
+    "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-job3961-final-eval-exit-review\\source-tools-e4_run.py": {
+      "bytes": 21026,
+      "sha256": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652"
+    },
+    "D:\\google download\\sts-silent-gpu-split-review\\tools\\e4_distill.py": {
+      "bytes": 42184,
+      "sha256": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1"
+    },
+    "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-job3961-final-eval-exit-review\\source-tools-e4_distill.py": {
+      "bytes": 42184,
+      "sha256": "68aded6b387b75d4fc9842222143af1006b23d1bb6ed90db437e8ca62f49ced1"
+    },
+    "D:\\google download\\sts-silent-gpu-split-review\\train\\e4.py": {
+      "bytes": 45433,
+      "sha256": "f1bd6b2f81f144353456644b81fbc17cc614f2f47bee9664d2d2b122e35ff5fe"
+    },
+    "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-job3961-final-eval-exit-review\\source-train-e4.py": {
+      "bytes": 44613,
+      "sha256": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9"
+    },
+    "D:\\google download\\sts-silent-gpu-split-review\\train\\e4_rewards.py": {
+      "bytes": 5036,
+      "sha256": "1018efce47abd6d52635292ef6140cd049a00c8a35973e309a81b7ea93fa3837"
+    },
+    "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-job3961-final-eval-exit-review\\source-train-e4_rewards.py": {
+      "bytes": 4931,
+      "sha256": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\bundle.json.xz": {
+      "bytes": 826104,
+      "sha256": "2aeb7ebab4edf336b141c8cbd21b81fa71b2c016b9cef6831e983be83b701b58"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\bundle.json": {
+      "bytes": 6596326,
+      "sha256": "b386316c57e074c934c05226ceef17fe6b1539c2e2ea4acb6300ad4aa6bad4ad"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-audit.json": {
+      "bytes": 24842,
+      "sha256": "a73f774d8b9f4e2603a3cfb0c749866ae1496cb25a4ee28aa257796deb25a9fe"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-diagnostics-0.json": {
+      "bytes": 425985,
+      "sha256": "0a9a43a65197b44b81f2e45fe47ed3c75044d867cc15eb5c9ab4b4b78fd54366"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-diagnostics-1.json": {
+      "bytes": 431857,
+      "sha256": "fdde86afa8c27f7594185b941a6530a221041cc4e6b41c074bff0a1695e9484d"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-diagnostics-2.json": {
+      "bytes": 458756,
+      "sha256": "4a9ccddb4bec9ff865c54c91adf7956dbcca7551aa1a80c5aa7c3721ae3eb421"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-diagnostics-3.json": {
+      "bytes": 434687,
+      "sha256": "327e41e11e49fbf465323958b23dbe3e25482cc84d4b7bbde50b6a65d8127dcb"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-diagnostics-4.json": {
+      "bytes": 441475,
+      "sha256": "3c4bd543559a61b1518d8c65009a03194b2f4097d640e00b77a06ce918f0545c"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-diagnostics-5.json": {
+      "bytes": 446484,
+      "sha256": "43254d7a357e0eb08b2ef776331ac207d95fbf3307046a4afc6cb77973a01dc2"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-diagnostics-6.json": {
+      "bytes": 439890,
+      "sha256": "90e2267eba2e223c064d1c504e560e7e1d0e3bf8eb1228e2015a4a1e3e6bb7ac"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-episodes.json.gz": {
+      "bytes": 169643,
+      "sha256": "8c7ac088b1c02ac2fd8801670aaa9cacce5652144645a5ac1b9ab52ca81cc59b"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-rank-0.json": {
+      "bytes": 231455,
+      "sha256": "fbe0db4d8acf86b03b61c4a133bd9a839d1e62494d249ed101468117e77d7777"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-rank-1.json": {
+      "bytes": 238581,
+      "sha256": "0fb7a79b2cc021a2979136bb073cce7eefaae9257fbec6645482d23537566c5d"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-rank-2.json": {
+      "bytes": 243869,
+      "sha256": "951aba5140ca06fefc0c16e0ebb2665bab27e576cc4d343bbaff7a6aefbe5486"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-rank-3.json": {
+      "bytes": 233980,
+      "sha256": "253b3c62f50ed28a0aeaaf9a2387826e2ea7d7285d0130e554eccb3828fb33bf"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-rank-4.json": {
+      "bytes": 240183,
+      "sha256": "1ff80f765ea68d895b0e7dd6a0e3ab21fc275cc08464e2f9b77604661f8196c7"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-rank-5.json": {
+      "bytes": 241775,
+      "sha256": "4fb568e21ef17e466d35cddb780710a6c8e1c3ec25f506386ee5e784ba7d9a7a"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-rank-6.json": {
+      "bytes": 238489,
+      "sha256": "6841706fb3a7d77c00e6d00e91ac54ad2e0001ed5080e7e01605cdcdc74fc701"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-evaluation8\\E4-C76-rl-8-N32-D1024-summary.json": {
+      "bytes": 3332,
+      "sha256": "cd039eafabdaacafecdbdb60b22cee715fa72c00208485635890412a4fe7be99"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\bundle.json": {
+      "bytes": 48841,
+      "sha256": "9087bed6eddb3024008f7ee908079dd03b5a7e4e2477edc884406d72fb7b4348"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\bundle.json.gz": {
+      "bytes": 17015,
+      "sha256": "0b57705b23e4eeb573fcea00178fbd4933a9a662f89b02490fab5122008bbfec"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\exit.txt": {
+      "bytes": 41,
+      "sha256": "10664d9953a9ac9c34c0accf7c8e8ad2caeb81be81520f8109517c01e2a18adb"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\exit-validation.txt": {
+      "bytes": 68,
+      "sha256": "3bfc666cb04fc165f73ce8b0e7d69ca9ebbcef5a8916d7a0e398aa2f8520194a"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\memory-peak.json": {
+      "bytes": 5728,
+      "sha256": "117fc66df428a7e0ca8015cfe7f1993f1a4d8cfac5ecec55fee9cece49c441d9"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\memory-peak.log": {
+      "bytes": 84,
+      "sha256": "26e73d65450366b6ce25fa6aa4dcade369612abf5ec8873bf019f7e4b35b8731"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\manifest-at-exit.txt": {
+      "bytes": 109,
+      "sha256": "8c8e1619590693b6ba95adaf0376cb5a6d72dba67c6a74aaf60f2d531bbbefbd"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\accounting-at-exit.txt": {
+      "bytes": 1455,
+      "sha256": "85e96b53bf75b7c6eda1940b90d07c33457ff49b535ff0482fb9d13e150d25d9"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\inputs-at-exit.json": {
+      "bytes": 28326,
+      "sha256": "c111071557f6c97624b86123120c2799c708ef13814805844106138cd0eb0de9"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\inputs-at-exit.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "C:\\Users\\15052\\.codex\\visualizations\\2026\\10\\22\\01a162af-feea-7841-ab99-df0094beb41d\\c76-job3964-startup\\bundle.json": {
+      "bytes": 179679,
+      "sha256": "4224293f3f75439740f994fe9d308cb4dd3f703ea8f0a1839eb27ed5047e1148"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\final-slurm.json": {
+      "bytes": 2540,
+      "sha256": "1c7bee46090ff9e6e539c301d35b0b1708339533c6efe6e520bf8becf93cc55e"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-exit\\status.json": {
+      "bytes": 4185,
+      "sha256": "1e80676f56e22c7f85b7e15e627bb3be012a63691de3ea1ab861b117614d5e5c"
+    },
+    "D:\\google download\\sts-silent-gpu-split-review\\inventory\\e4-c76-selected-C180.json": {
+      "bytes": 30852,
+      "sha256": "37c4b8a92fec5cc9d4f2021b33ea38d4d55c2ef8e35f92e06e44da5b132c08c2"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\job3964-final-settlement.json": {
+      "bytes": 1431,
+      "sha256": "439e3bc79d86b7c04051fb1046564e96453121872fedf4bc7f327d4f307f8b21"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\continuation-state.json": {
+      "bytes": 946387,
+      "sha256": "a04083cbb4de394c302501f4da82f94c8b9a294221033f639b301ef4dcba5cdb"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\coordinator-dispatch-state.json": {
+      "bytes": 884656,
+      "sha256": "05663c3460c6c8b4f2711a1d08f02fa1e3a1e6e50fdf5d3d43bf530d4aa71d25"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\github-watch-state.json": {
+      "bytes": 792814,
+      "sha256": "281ead40f705a9623822d89753346067b56e512d32b6225e114617c74d4c8b0e"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c76-job3964-full-log\\job3964.log": {
+      "bytes": 5124539,
+      "sha256": "630980629aed74e53537c573890ad8f8673f95460db00f5ef4617a053c93b73c"
+    },
+    "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\job3964-full-log-meta.json": {
+      "bytes": 205,
+      "sha256": "360c43ac480b7d6eaf538e2efbfb38ae4eb453a52af7fd84a256193aa33e6c4a"
+    },
+    "D:\\google download\\sts-silent-gpu-split-review\\inventory\\e4-audit-roots.json": {
+      "bytes": 1655021,
+      "sha256": "1de28fe944ecf93d52cbf6ab63a4d95fb9af0726983e45498e06b47e75125042"
+    },
+    "D:\\google download\\sts-silent-gpu-split-review\\inventory\\E4-C66-job3738-154-N32-D1024-episodes.json.gz": {
+      "bytes": 185876,
+      "sha256": "0b94636d2c2dc256ac8a5bb0c4a5f0af447c5d6b307d37c183ef5c9d08a1e848"
+    }
+  },
+  "future_world8_preparation": {
+    "at": "2026-10-24T21:20:21.585588+00:00",
+    "status": "completed_verified_future_only_not_applied",
+    "child_cpu_tests": 32,
+    "parent_cpu_tests": 32,
+    "files": {
+      "tools/e4_distill.py": "9decef4fe0ee0b4382b221064285de9c64c3150a31190bc6a9597a686f9fef49",
+      "tests/test_e4_distill.py": "af0e920256b593b5202f0908109ad54d23657dc22d32de89825a690e04fe90b2",
+      "verify.py": "2c50a6ecaae54a1baa753cfd4127821178cf1c396831ffc2afd68631e9059004"
+    },
+    "verify_sha256": "2c50a6ecaae54a1baa753cfd4127821178cf1c396831ffc2afd68631e9059004",
+    "parent_verification_sha256": "f5947198c6a9ac1f94ce6dcae0e8be9b7aaad1560a07af4fab2f0d504aa986f6",
+    "child_verification_sha256": "1834641939a1214a0df9f28e2668a57cc7d1f985fd40f9a75d459f50a290a054",
+    "original29_preserved": true,
+    "review_issue": "Repeated full rank0checkpoint load on all ranks corrected to one full load/rank and compact world-size broadcast;32 meaningfulCPUtests including loadcounts",
+    "source_applied_to_repository": false,
+    "source_deployed": false,
+    "new_allocation": false,
+    "actual3964_resume_allowed": false,
+    "evidence": "c78-world8-parent-final-accepted/verification.json",
+    "limits": [
+      "Single worker CPU mocks for CUDA, collector, distributed collectives and waiting.",
+      "Real CPU torch serialization and Adam state restore, tiny Linear surrogate policy.",
+      "No real running checkpoints read; no GPU, SSH, Slurm, network, deployment or allocation.",
+      "Job3964 stopped by unchanged C180 rule; this code cannot authorize a new resume.",
+      "Only RL world7 to8 migration; world8 to7 and complete phase migrations abort."
+    ]
+  },
+  "limits": [
+    "No GPU execution, torch import, .pt loading, original Mac replay, SSH or network performed.",
+    "Hash consistency establishes preserved evidence identity; remote source bytes are not independently reacquired.",
+    "summary.faults and summary.truncated are source constants, not independent fault/truncation proof.",
+    "Audit roots remain pending_mac_original_replay; this review checks full preserved action paths, not original Mac replay."
+  ],
+  "external_evidence_root": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4",
+  "decision": "Stopped by existing C180 mean-drop rule; no automatic resume, new allocation or unused-budget transfer"
+}
