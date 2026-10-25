@@ -1,0 +1,272 @@
+{
+  "at": "2026-10-25T08:01:32.122499+00:00",
+  "decision": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+  "status": "source_fix_native_CPU_verified_stage5_prepared_no_allocation",
+  "source_base": "67735d2808018721eb318d2c954de6954eeb314a",
+  "source_files": {
+    "train/e4.py": "3adfb14f9b4f10fb4b4a2bbccd598cf8c9c7a80c299980e14b83714a9f1c465e",
+    "tests/test_e4_reward_mask.py": "8a7e7ce3b8f619e377cd2238e20f125d5e45e90edf2221a87331e42ac69875b6"
+  },
+  "mac_reports": [
+    {
+      "source": "docs/messages/claude-to-gpt.md #81",
+      "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C79-job3967-RL8-N32-D1024",
+      "traces": 18,
+      "decisions": 7846,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "19.567"
+      },
+      "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+      "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #81",
+      "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C79-job3967-RL16-N32-D1024",
+      "traces": 18,
+      "decisions": 7748,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "18.812"
+      },
+      "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+      "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #81",
+      "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C79-job3967-RL23-N32-D1024",
+      "traces": 18,
+      "decisions": 5868,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "18.721"
+      },
+      "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+      "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+    }
+  ],
+  "native_cpu": {
+    "status": "completed_verified",
+    "native_CPU_fixed": "2 passed",
+    "native_CPU_original_negative_control": "expected failure at first skip allowed assertion line92",
+    "test_added": 1,
+    "existing_tests": 1,
+    "parent_sole_ssh": 69248,
+    "scope": "Real native CPU engine only; no GPU/Mac execution",
+    "inputs": {
+      "original/tests/test_e4_reward_mask.py": "8a7e7ce3b8f619e377cd2238e20f125d5e45e90edf2221a87331e42ac69875b6",
+      "original/train/e4.py": "1d365e67d5c79114eeec880c42691f5cb893957bdb659af441d962efa6432bb9",
+      "proposed/tests/test_e4_reward_mask.py": "8a7e7ce3b8f619e377cd2238e20f125d5e45e90edf2221a87331e42ac69875b6",
+      "proposed/train/e4.py": "3adfb14f9b4f10fb4b4a2bbccd598cf8c9c7a80c299980e14b83714a9f1c465e"
+    },
+    "full_original_logs_preserved": true,
+    "initial_acceptance_error": "Expected local CRLF working-tree SHA for original remote LF Git source; original Git blob independently read/hash matched remote1d365; error preserved, raw logs untouched"
+  },
+  "external_stage5": {
+    "path": "c81-stage5-runner/stage5.py",
+    "sha256": "a428f18771d6c63f07050a570dec31136d77f92da3c0e6eda4b56fc74afb1f6b",
+    "parent_complete_final_script_read": true,
+    "parent_independent_fixture_rerun": {
+      "passed": true,
+      "cpu_threads": 1,
+      "real_policy_config": {
+        "width": 16,
+        "layers": 1,
+        "heads": 2,
+        "feedforward": 32
+      },
+      "hot_adam_moments_and_steps_exact": true,
+      "next_real_forward_backward_step_bitwise_equal": true,
+      "first_update_nonzero_lr": 0.0001,
+      "baseline_does_not_call_stop": true,
+      "stop_on_third_postbaseline_stagnant": true,
+      "hashes": {
+        "original.py": "3d01d81fd13ca23cadd174fde22b443cfb688de9261a5fe3c668573fa510ed4a",
+        "stage5.py": "a428f18771d6c63f07050a570dec31136d77f92da3c0e6eda4b56fc74afb1f6b"
+      },
+      "mainline_metric_counts_rates_and_null_denominator": true,
+      "actual_training_path_uses_hot_optimizer_helper": true,
+      "single_full_episode_gzip_and_separate_audit": true,
+      "limits": [
+        "CPU fixtures only; no CUDA, actual source checkpoint, engine collection, Slurm, or original replay exercised.",
+        "Update remains atomic: only completed update boundaries checkpoint; no mid-minibatch preemption recovery."
+      ]
+    }
+  },
+  "source_rl8": {
+    "job_id": 3967,
+    "version": 8,
+    "files": [
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69657605,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-0.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 0,
+        "sha256": "0b1df9d03f4d7f51f1d37460bf8e884fbff446ff6f7dfb31329417422fa4ce81"
+      },
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69654917,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-1.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 1,
+        "sha256": "f883c3e16f04161fa7908b4bda76602e3f1fc45d3363a4160c277e85f3dd1bf9"
+      },
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69656133,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-2.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 2,
+        "sha256": "63d5a95dbf690af0dc02a61393b3ad4b2d586a6b0c719d3addf2114c6f933021"
+      },
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69646213,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-3.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 3,
+        "sha256": "8852a7af71522b837b4f1ee054d55748d091c2a576d73a23edcd7e1a435f5ab9"
+      },
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69658885,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-4.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 4,
+        "sha256": "91d9328a283d6b3a69f7f07940eb6408e9fed2fc695ba8886d7f072f8cdb9fe8"
+      },
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69656837,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-5.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 5,
+        "sha256": "6861bef645457c0e1b3a87b0c9a32cc08da75c4ee61e6130fcd8835bda6002ab"
+      },
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69654405,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-6.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 6,
+        "sha256": "f0533221403aa61f96b8401bb34ed9c607340c5cc294a135064f95d36e6c83d4"
+      },
+      {
+        "beta": 0.031673695195944346,
+        "bytes": 69645253,
+        "entropy_target": 0.6716025225602738,
+        "file": "/home/zhuyouwei/spire-downloads/e4-c79-4c2-student77/evaluation-8/rank-7.pt",
+        "model_sha256": "c945159bbdf09020948589eddf6996abe7b4879426c0a2d5297d0e15a6272e29",
+        "optimizer_sha256": "4c1988aaf9e0cd126f6cc24578420383d4b1705b49956dbc7fba1cf89d9e6315",
+        "optimizer_steps": [
+          512.0
+        ],
+        "rank": 7,
+        "sha256": "d7f5deab7db83d69a5a4622d87e960be1a2edddcf8208e7c076b41f671e337cd"
+      }
+    ],
+    "actual_sequential_parent_CPU_loads": 8
+  },
+  "new_stage": {
+    "source": "job3967 RL8 hot model/Adam512/beta/H* and global/PPO/private RNG positions",
+    "initial_discard": "old collector in-flight trajectories and root cache only",
+    "learning_rate": 0.0001,
+    "warmup": false,
+    "initial_evaluation": "full1024 N32 zero new updates; establishes new baseline without stagnant increment",
+    "later_evaluation": "every1800 pure training seconds +18 actual paths+original1024 gzip",
+    "stop": "existing three no reach+2pp or mean>1 below best, compared to new baseline",
+    "metrics": [
+      "actual mainline card skip numerator/denominator/rate",
+      "shop purchases",
+      "skip_repeat_exempt by screen",
+      "pre-Boss deck sizes"
+    ],
+    "cap_node_seconds": 30000,
+    "charged_to": "step_1 actual remaining after all charges and reservations",
+    "memory_mib": 25208,
+    "new_allocation": false,
+    "new_reservation": false
+  },
+  "accounting": {
+    "step1charged": 84781.5,
+    "step1reserved": 27000,
+    "old3897hold": 12600,
+    "old3967hold": 14400,
+    "job3967_actual_charge": null,
+    "cost_ledger_entries": 35,
+    "jobs": 37
+  },
+  "limits": [
+    "CPU fixtures and native CPU regression are not actual CUDA gates or original Mac execution by parent.",
+    "No stage5 allocation, baseline result, optimizer GPU step, or cost is claimed.",
+    "Original update remains atomic; no new mid-minibatch instruction-pointer recovery promise.",
+    "Old3967 final Slurm purged; never substitute trap RUNNING/TimeLimit or process counters for actual charge."
+  ]
+}

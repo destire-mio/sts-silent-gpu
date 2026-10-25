@@ -47,3 +47,87 @@ def test_free_reward_mask_and_opened_card_memory():
     assert copy.counts['card_taken'] == 1
     assert history.mask(dict(frame, floor=2), [True] * 5)[1] == 'card'
     assert history.mask(dict(frame, screen=8), [True] * 5) == ([True] * 5, None)
+
+
+def test_native_card_reward_skip_returns_once_per_floor():
+    import pickle
+
+    import torch
+
+    from train.e4 import FLOOR, SCREEN, RoomSearch, SegmentCollector
+
+    torch.set_num_threads(1)
+    search = RoomSearch(1, 1, torch.device('cpu'), torch.Generator().manual_seed(1729), scratch_slots=2)
+    collector = SegmentCollector(search, torch.Generator().manual_seed(10))
+    collector.reset([0], [10])
+    # Recorded full-run-10 prefix stops at real combat rewards containing gold and a card row.
+    prefix = [0, 1, 0, 1, 9, 6, 2, 4, 7, 1, 4, 1, 0, 0, 2, 6, 6, 8, 3,
+              0, 6, 2, 4, 0, 0, 2, 0, 6, 2, 0, 1, 3, 4, 3, 3, 1, 1]
+    search.batch.reset_to(0, 10, prefix)
+    search.provenance[0] = (10, prefix.copy())
+    search.frame_cache.clear()
+    search.reset_seen([0])
+    assert search.progress()[0][SCREEN] == 7
+    frame = search.frames([0], search.progress())[0]
+    gold = next(a for a, (kind, reward) in enumerate(frame['actions'])
+                if kind == 3 and reward is not None and frame['rewards'][reward][0] == 2)
+    assert bool(search.policy_masks([0])[0, gold])
+    search.step([0], [gold])
+    target = search.loop_keys([0])[0]
+    floor = search.progress()[0][FLOOR]
+    frame = search.frames([0], search.progress())[0]
+    card = next(a for a, (kind, reward) in enumerate(frame['actions'])
+                if kind == 3 and reward is not None and frame['rewards'][reward][0] == 1)
+    assert bool(search.policy_masks([0])[0, card])
+    search.step([0], [card])
+    assert search.progress()[0][SCREEN] == 6
+    skip = next(a for a, (kind, _) in enumerate(search.frames([0], search.progress())[0]['actions']) if kind == 7)
+    search.clone([0], [1])
+    search.clone([0], [2])
+    search.batch.step_slots([2], [skip])
+    assert search.progress()[2][FLOOR] == floor
+    assert search.loop_keys([2])[0] == target and target in search.seen[0]
+    # The old repeat rule masks this real skip: its probe returns a same-floor seen key.
+    raw = search.batch.state_bytes(0)
+    assert bool(search.policy_masks([0])[0, skip])
+    assert bool(search.policy_masks([0])[0, skip])
+    search.mask_cache.pop(0)
+    assert bool(search.policy_masks([0])[0, skip])
+    assert search.batch.state_bytes(0) == raw and search.skip_returns[0] == set()
+    assert search.loop_metrics['skip_repeat_exempt_card_reward'] == 0
+    search.step([0], [skip])
+    assert search.progress()[0][SCREEN] == 7 and search.loop_keys([0])[0] == target
+    assert search.skip_returns[0] == {target} and search.skip_returns[1] == set()
+    assert search.loop_metrics['skip_repeat_exempt_card_reward'] == 1
+    counts = search.reward_history[0].counts
+    assert counts['skip_repeat_exempt_card_reward'] == counts['card_skipped'] == counts['card_reward_choices'] == 1
+    frame = search.frames([0], search.progress())[0]
+    reopen = next(a for a, (kind, reward) in enumerate(frame['actions'])
+                  if kind == 3 and reward is not None and frame['rewards'][reward][0] == 1)
+    proceed = next(a for a, (kind, _) in enumerate(frame['actions']) if kind == 6)
+    mask = search.policy_masks([0])[0]
+    assert bool(mask[proceed]) and not bool(mask[reopen])
+    collector.paths[0] = search.provenance[0][1].copy()
+    saved = pickle.loads(pickle.dumps(collector.state()))
+    search.clone([0], [2])
+    assert search.skip_returns[2] == {target} and search.skip_returns[2] is not search.skip_returns[0]
+    search.reset_seen([0])
+    assert search.skip_returns[0] == set() and saved['skip_returns'][0] == {target}
+    collector.restore(saved)
+    assert search.batch.state_bytes(0) == search.batch.state_bytes(2)
+    assert search.skip_returns[0] == {target}
+    assert search.reward_history[0].counts['card_skipped'] == 1
+    assert collector.pre_boss_deck_sizes == saved['pre_boss_deck_sizes']
+    # Force the already masked reopen to exercise the second-return bound on native state.
+    search.step([0], [reopen])
+    assert search.progress()[0][SCREEN] == 6
+    assert not bool(search.policy_masks([0])[0, skip])
+    assert search.loop_metrics['skip_repeat_exempt_card_reward'] == 1
+    collector.restore(saved)
+    search.step([0], [proceed])
+    assert search.progress()[0][SCREEN] == 9
+    next_room = next(a for a, (kind, _) in enumerate(search.frames([0], search.progress())[0]['actions']) if kind == 3)
+    search.step([0], [next_room])
+    assert search.progress()[0][FLOOR] != floor and search.skip_returns[0] == set()
+    collector.reset([0], [10])
+    assert search.skip_returns[0] == set() and search.reward_history[0].counts == {}

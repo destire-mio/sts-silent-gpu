@@ -20,7 +20,8 @@ MAX_REWARD = 156
 ACTION_KINDS = ("padding", "play", "end_turn", "choose", "potion_use", "potion_discard", "proceed", "skip")
 SEARCH_METRICS = ("combat_over_limit", "event_over_limit", "combat_normal_max_steps", "event_normal_max_steps")
 CAPACITY_METRICS = ("combat_played_cards_limit", "combat_trials")
-LOOP_METRICS = ("repeat_check_seconds", "repeat_check_decisions", "repeat_check_candidates", "all_candidates_repeat")
+LOOP_METRICS = ("repeat_check_seconds", "repeat_check_decisions", "repeat_check_candidates", "all_candidates_repeat") + tuple(
+    "skip_repeat_exempt_" + screen for screen in SCREENS)
 REACH = ("act1_boss", "act2_boss", "act3_first_boss", "act3_second_boss",
          "act3_three_keys", "act4", "shield_spear", "heart")
 
@@ -104,6 +105,7 @@ class RoomSearch:
         self.available = list(range(lanes, lanes + scratch_slots))
         self.probe_slots = list(range(lanes + scratch_slots, self.size))
         self.seen = {}
+        self.skip_returns = {}
         self.mask_cache = {}
         self.frame_cache = {}
         self.reward_history = [RewardHistory() for _ in range(self.size)]
@@ -237,6 +239,7 @@ class RoomSearch:
     def reset_seen(self, slots):
         for s, key in zip(slots, self.loop_keys(slots)):
             self.seen[s] = {key}
+            self.skip_returns[s] = set()
             self.mask_cache.pop(s, None)
 
     def frames(self, slots, progress):
@@ -307,7 +310,8 @@ class RoomSearch:
                 floors = self.progress_buffer.view(-1, 9)[probes, FLOOR].cpu().tolist()
                 for (s, a), key, floor in zip(group, keys, floors):
                     if floor == progress[s][FLOOR] and key in self.seen[s]:
-                        repeated[s].append(a)
+                        if frames[s]["actions"][a][0] != 7 or key in self.skip_returns[s]:
+                            repeated[s].append(a)
             for s in missing:
                 row = allowed[s]
                 if repeated[s] and len(repeated[s]) == sum(row):
@@ -343,6 +347,7 @@ class RoomSearch:
         self.batch.progress_tensors(self.progress_buffer)
         before = self.progress_buffer.view(-1, 9)[indices].clone()
         before_progress = dict(zip(slots, before.cpu().tolist()))
+        kinds_before = self.arrays["candidate_kinds"][indices, choices].cpu().tolist()
         tracked = [s for s in slots if before_progress[s][PHASE] != COMBAT_PHASE]
         frames_before = self.frames(tracked, before_progress)
         action_by_slot = dict(zip(slots, choices))
@@ -377,11 +382,23 @@ class RoomSearch:
                 self.reward_history[s].observe(frames_after[s])
         valid = [s for s in slots if s not in capped]
         keys = dict(zip(valid, self.loop_keys(valid))) if valid else {}
-        for s, old, new in zip(slots, floors_before, floors_after):
+        for s, old, new, kind in zip(slots, floors_before, floors_after, kinds_before):
             if s in capped:
                 continue
+            if before_progress[s][SCREEN] == 6 and kind in (3, 7):
+                self.reward_history[s].counts["card_reward_choices"] += 1
+                if kind == 7:
+                    self.reward_history[s].counts["card_skipped"] += 1
             if old != new:
                 self.seen[s] = set()
+                self.skip_returns[s] = set()
+            elif s in frames_before and frames_before[s]["actions"][action_by_slot[s]][0] == 7:
+                key = keys[s]
+                if key in self.seen[s] and key not in self.skip_returns[s]:
+                    metric = "skip_repeat_exempt_" + SCREENS[before_progress[s][SCREEN]]
+                    self.loop_metrics[metric] += 1
+                    self.reward_history[s].counts[metric] += 1
+                self.skip_returns[s].add(key)
             self.seen[s].add(keys[s])
             self.mask_cache.pop(s, None)
         return capped
@@ -393,6 +410,7 @@ class RoomSearch:
             seed, path = self.provenance[s]
             self.provenance[t] = (seed, path.copy())
             self.seen[t] = self.seen[s].copy()
+            self.skip_returns[t] = self.skip_returns[s].copy()
             self.reward_history[t] = deepcopy(self.reward_history[s])
             self.frame_cache.pop(t, None)
             if s in self.mask_cache:
@@ -586,6 +604,7 @@ class SegmentCollector:
         self.last_stall_classes = {}
         self.pending = [deque() for _ in self.seeds]
         self.rewards = [RewardLedger() for _ in self.seeds]
+        self.pre_boss_deck_sizes = [[] for _ in self.seeds]
         self.completed = []
         self.decisions = 0
         self.partial = None
@@ -610,6 +629,7 @@ class SegmentCollector:
             self.tails[slot].clear()
             self.pending[slot].clear()
             self.rewards[slot] = RewardLedger()
+            self.pre_boss_deck_sizes[slot] = []
 
     def fresh(self, slots):
         seeds = torch.randint(1000000000, 2000000000, (len(slots),),
@@ -622,19 +642,23 @@ class SegmentCollector:
                     noncombat_floor_steps=self.noncombat_floor_steps, tails=[list(t) for t in self.tails],
                     map_returned=self.search.map_returned[:self.search.lanes].cpu().tolist(),
                     seen={s: self.search.seen[s] for s in range(self.search.lanes) if s in self.search.seen},
+                    skip_returns={s: self.search.skip_returns[s].copy() for s in range(self.search.lanes)
+                                  if s in self.search.skip_returns},
                     last_stall_classes=self.last_stall_classes,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
+                    pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes),
                     seed_rng=self.seed_rng.get_state(), search_rng=self.search.rng.get_state(),
                     decisions=self.decisions, completed=self.completed, partial=self.partial,
                     evaluation_waiting=self.evaluation_waiting)
 
     def restore(self, state):
         for name in ("seeds", "paths", "floor_steps", "noncombat_floor_steps", "last_stall_classes",
-                     "rewards", "decisions", "completed", "partial", "evaluation_waiting"):
+                     "rewards", "pre_boss_deck_sizes", "decisions", "completed", "partial", "evaluation_waiting"):
             setattr(self, name, state[name])
         self.tails = [deque(t, maxlen=10) for t in state["tails"]]
         self.search.map_returned[:self.search.lanes] = torch.tensor(state["map_returned"], device=self.search.device)
         self.search.seen = {s: keys.copy() for s, keys in state["seen"].items()}
+        self.search.skip_returns = {s: keys.copy() for s, keys in state["skip_returns"].items()}
         self.search.mask_cache.clear()
         self.search.frame_cache.clear()
         self.search.reward_history[:self.search.lanes] = deepcopy(state["reward_history"])
@@ -697,6 +721,12 @@ class SegmentCollector:
             stalled = slot in self.stalled
             stall_reason = "all_sl_trials_capped" if stalled else None
             if not stalled:
+                if (after[slot][ROOM] == BOSS_ROOM and after[slot][PHASE] == COMBAT_PHASE
+                        and (progress[slot][ROOM] != BOSS_ROOM or progress[slot][PHASE] != COMBAT_PHASE
+                             or progress[slot][FLOOR] != after[slot][FLOOR])):
+                    self.pre_boss_deck_sizes[slot].append(dict(seed=self.seeds[slot],
+                        act=after[slot][ACT], floor=after[slot][FLOOR],
+                        deck_size=self.search.frames([slot], after)[slot]["deck_size"]))
                 self.paths[slot].append(action)
                 self.decisions += 1
                 self.floor_steps[slot] = (self.floor_steps[slot] + 1
@@ -731,6 +761,7 @@ class SegmentCollector:
                     stall_class=stall_class,
                     noncombat=dict(counts=dict(self.search.reward_history[slot].counts)),
                     final_deck_size=self.search.frames([slot], after)[slot]["deck_size"],
+                    pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes[slot]),
                     outcome="stalled" if stalled else "victory" if after[slot][SCREEN] == VICTORY else "death",
                     reward=self.rewards[slot].total / MAX_REWARD))
                 self.seeds[slot] = None

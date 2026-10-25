@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "current_round_mac_reported_pass",
   "engine_commit": "67735d2808018721eb318d2c954de6954eeb314a",
   "current_round": "E4-C79-job3967-RL23-N32-D1024",
   "rounds": [
@@ -729,40 +729,106 @@
       "name": "E4-C79-job3967-RL8-N32-D1024",
       "roots": 18,
       "decisions": 7846,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
       "engine_commit": "67735d2808018721eb318d2c954de6954eeb314a",
       "episodes": "inventory/E4-C79-job3967-RL8-N32-D1024-episodes.json.gz",
-      "verification": "Actual job3967 frozen-policy evaluation paths; original Mac replay pending. Historical named-round Mac reports apply only to those old rounds. Source commit identifies the producer, not new original-game parity proof."
+      "verification": "Claude81 reports18/18 matching in both original Mac scopes and complete1024 replay rounded mean 19.567; parent CPU evidence review remains distinct.",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #81",
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "round": "E4-C79-job3967-RL8-N32-D1024",
+        "traces": 18,
+        "decisions": 7846,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "19.567"
+        },
+        "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+        "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+      }
     },
     {
       "name": "E4-C79-job3967-RL16-N32-D1024",
       "roots": 18,
       "decisions": 7748,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
       "engine_commit": "67735d2808018721eb318d2c954de6954eeb314a",
       "episodes": "inventory/E4-C79-job3967-RL16-N32-D1024-episodes.json.gz",
-      "verification": "Actual job3967 frozen-policy evaluation paths; original Mac replay pending. Historical named-round Mac reports apply only to those old rounds. Source commit identifies the producer, not new original-game parity proof."
+      "verification": "Claude81 reports18/18 matching in both original Mac scopes and complete1024 replay rounded mean 18.812; parent CPU evidence review remains distinct.",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #81",
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "round": "E4-C79-job3967-RL16-N32-D1024",
+        "traces": 18,
+        "decisions": 7748,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "18.812"
+        },
+        "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+        "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+      }
     },
     {
       "name": "E4-C79-job3967-RL23-N32-D1024",
       "roots": 18,
       "decisions": 5868,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_pass",
       "observation_version": 2,
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
       "engine_commit": "67735d2808018721eb318d2c954de6954eeb314a",
       "episodes": "inventory/E4-C79-job3967-RL23-N32-D1024-episodes.json.gz",
-      "verification": "Actual job3967 frozen-policy evaluation paths; original Mac replay pending. Historical named-round Mac reports apply only to those old rounds. Source commit identifies the producer, not new original-game parity proof."
+      "verification": "Claude81 reports18/18 matching in both original Mac scopes and complete1024 replay rounded mean 18.721; parent CPU evidence review remains distinct.",
+      "mac_report": {
+        "source": "docs/messages/claude-to-gpt.md #81",
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "round": "E4-C79-job3967-RL23-N32-D1024",
+        "traces": 18,
+        "decisions": 5868,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 18,
+        "both_scopes_pass": 18,
+        "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+        "independent_full1024_replay_report": {
+          "episodes": 1024,
+          "matches_reported_results": true,
+          "average_floor_rounded": "18.721"
+        },
+        "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+        "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+      }
     }
   ],
   "roots": [
@@ -149955,7 +150021,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000903,
@@ -150439,7 +150509,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000209,
@@ -151055,7 +151129,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000038,
@@ -151547,7 +151625,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000060,
@@ -152247,7 +152329,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000566,
@@ -152756,7 +152842,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000456,
@@ -153250,7 +153340,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000199,
@@ -153695,7 +153789,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000868,
@@ -154153,7 +154251,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000220,
@@ -154455,7 +154557,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000926,
@@ -154994,7 +155100,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000539,
@@ -155155,7 +155265,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000344,
@@ -155596,7 +155710,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000260,
@@ -155999,7 +156117,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000670,
@@ -156452,7 +156574,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000882,
@@ -156831,7 +156957,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000549,
@@ -157315,7 +157445,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000187,
@@ -157677,7 +157811,11 @@
       "source_round": "E4-C76-rl-8-N32-D1024",
       "job_id": 3967,
       "rl_version": 8,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000796,
@@ -158189,7 +158327,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000029,
@@ -158692,7 +158834,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000676,
@@ -159224,7 +159370,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000555,
@@ -159826,7 +159976,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000902,
@@ -160293,7 +160447,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000246,
@@ -160850,7 +161008,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000766,
@@ -161135,7 +161297,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000980,
@@ -161259,7 +161425,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000854,
@@ -161792,7 +161962,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000696,
@@ -162226,7 +162400,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000691,
@@ -162520,7 +162698,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000661,
@@ -163027,7 +163209,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000985,
@@ -163595,7 +163781,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000921,
@@ -163857,7 +164047,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000657,
@@ -164258,7 +164452,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000732,
@@ -164782,7 +164980,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000864,
@@ -165180,7 +165382,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000060,
@@ -165713,7 +165919,11 @@
       "source_round": "E4-C76-rl-16-N32-D1024",
       "job_id": 3967,
       "rl_version": 16,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000931,
@@ -166078,7 +166288,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000584,
@@ -166528,7 +166742,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000041,
@@ -166923,7 +167141,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000156,
@@ -167129,7 +167351,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000914,
@@ -167275,7 +167501,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000977,
@@ -167508,7 +167738,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000290,
@@ -167902,7 +168136,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000960,
@@ -168238,7 +168476,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000356,
@@ -168502,7 +168744,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000735,
@@ -168730,7 +168976,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000581,
@@ -169370,7 +169620,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000627,
@@ -169811,7 +170065,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000523,
@@ -170256,7 +170514,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000233,
@@ -170401,7 +170663,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000124,
@@ -170741,7 +171007,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000730,
@@ -171143,7 +171413,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000345,
@@ -171574,7 +171848,11 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     },
     {
       "seed": 2000000901,
@@ -171869,30 +172147,34 @@
       "source_round": "E4-C76-rl-23-N32-D1024",
       "job_id": 3967,
       "rl_version": 23,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_pass",
+      "mac_report_source": {
+        "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+        "message": 81
+      }
     }
   ],
   "mac_report": {
-    "source": "docs/messages/claude-to-gpt.md #79",
-    "commit": "138f96a06a0b7b67bc5498b17d9f843c84a3185a",
-    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/138f96a06a0b7b67bc5498b17d9f843c84a3185a",
-    "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/138f96a06a0b7b67bc5498b17d9f843c84a3185a/docs/messages/claude-to-gpt.md",
+    "source": "docs/messages/claude-to-gpt.md #81",
+    "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+    "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
     "model": "gpt-6.1-sol",
     "reasoning_effort": "medium",
-    "round": "E4-C76-job3964-RL8-N32-D1024",
+    "round": "E4-C79-job3967-RL23-N32-D1024",
     "traces": 18,
-    "decisions": 7070,
+    "decisions": 5868,
     "run_scope_pass": 18,
     "combat_scope_pass": 18,
     "both_scopes_pass": 18,
-    "engine_description": "Mac new engine; exact replay-engine SHA not specified in #79",
+    "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
     "independent_full1024_replay_report": {
       "episodes": 1024,
       "matches_reported_results": true,
-      "average_floor_rounded": "18.214"
+      "average_floor_rounded": "18.721"
     },
-    "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
-    "source_verification": "Parent read complete original Git commit/diff/message; no extra exact Mac fault/stall/Act2 or engine SHA inferred"
+    "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+    "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
   },
   "mac_report_history": [
     {
@@ -172054,6 +172336,72 @@
       },
       "verification": "Claude Mac reported original-game replay; not independently rerun on this Windows host",
       "source_verification": "Parent read complete original Git commit/diff/message; no extra exact Mac fault/stall/Act2 or engine SHA inferred"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #81",
+      "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C79-job3967-RL8-N32-D1024",
+      "traces": 18,
+      "decisions": 7846,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "19.567"
+      },
+      "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+      "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #81",
+      "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C79-job3967-RL16-N32-D1024",
+      "traces": 18,
+      "decisions": 7748,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "18.812"
+      },
+      "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+      "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #81",
+      "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "round": "E4-C79-job3967-RL23-N32-D1024",
+      "traces": 18,
+      "decisions": 5868,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+      "independent_full1024_replay_report": {
+        "episodes": 1024,
+        "matches_reported_results": true,
+        "average_floor_rounded": "18.721"
+      },
+      "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
+      "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
     }
   ],
   "current_job_id": 3967,
