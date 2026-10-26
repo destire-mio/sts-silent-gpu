@@ -1,0 +1,278 @@
+{
+  "schema": "e4_c81_job4032_verified_startup_v1",
+  "decision_main": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+  "runtime_source": "08d51219e718f117bc0c12be1c5571dcf4a0393e",
+  "job_id": 4032,
+  "job_state_at_actual_observation": "RUNNING",
+  "startup_acceptance": {
+    "at": "2026-10-26T06:57:34.047400+00:00",
+    "status": "completed_verified",
+    "task_key": "claude81-job4032-startup-08d51219e718f117bc0c12be1c5571dcf4a0393e",
+    "owner": "/root/c81_job4032_startup_review",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "child_checks": 558,
+    "parent_checks": 558,
+    "parent_complete_final_verify_read": true,
+    "parent_independent_output_rerun": true,
+    "verify_bytes": 25884,
+    "verify_sha256": "18fbf057fabb39a89957a78e1be7cbbcd3c7462d06bc82b5c3c37f598c43a7d7",
+    "report_sha256": "4b06309cb8673c1c9238d37b0a7e19f531dd68b847e012f6f8e8ec0a335972b9",
+    "original_startup_files": 14,
+    "actual_input_hashes": 329,
+    "actual_cuda_tests": 5,
+    "all_positive_finite_junit": true,
+    "dispatch_execution": "host CPU",
+    "other_four_execution": "CUDA recorded run/pass",
+    "bundle_sha256": "310e3afbd74814c75b1048f1dbb5b12df7d48b93d51c1039be6a5e8df048d83c",
+    "manifest_sha256": "f840aaef7b45e7238c09ff8fcc3d3a94b3947c20568230ff45f243b4d01e8b59",
+    "evidence": "c81-job4032-startup-review/parent-rerun/report.json",
+    "limits": [
+      "Offline review authenticates byte consistency against pinned digests, not origin or current remote state.",
+      "No SSH, network, Slurm commands, GPU work, repository imports, torch imports, PT loading, training, compilation or ledger access performed.",
+      "reserved_once is a binding-receipt assertion. Global single reservation is parent-supplied fact; no ledger deduplication was independently proven.",
+      "12600 node-seconds is a reservation (7/8 times 14400), not measured final GPU cost. Startup evidence contains no final accounting.",
+      "CTest dispatch executes CUDA kernel bodies and tensor dispatch on host CPU; four remaining CTest CUDA gates record run/pass. Faults system-out is empty; its test registration, binary hash, positive duration and run/pass are the evidence.",
+      "Discovery backtrace names the protected split-engine CMakeLists; local static helper hashes, binary paths and manifest bindings are checked. No fresh compiler execution or binary semantics independently reproduced.",
+      "Source clean and protected heads at startup are supported by hash-bound verify-inputs result plus statically read verifier; detailed git command journal is preflight evidence.",
+      "Model/Adam/beta continuation and source3967RL8 are checked only as static runner intent and sealed job metadata. No Adam, RNG, checkpoint deserialization or PT execution proven.",
+      "No complete Stage5 evaluation, Mac validation, final correctness or final training success is claimed."
+    ]
+  },
+  "junit_durations": {
+    "test_cuda_dispatch": 0.462496,
+    "test_cuda_effect_fields": 12.2293,
+    "test_cuda_faults": 12.7107,
+    "test_cuda_parity": 36.0004,
+    "test_cuda_root_cache": 12.6923
+  },
+  "startup_transport": {
+    "bundle_bytes": 25560,
+    "bundle_sha256": "310e3afbd74814c75b1048f1dbb5b12df7d48b93d51c1039be6a5e8df048d83c",
+    "files": {
+      "reservation-receipt.sha256": {
+        "bytes": 146,
+        "sha256": "ab1042364ce3e1ead5636599f339746ad2abcacc569ae57eb2d6ae1d00480c8e"
+      },
+      "reservation-receipt.json": {
+        "bytes": 446,
+        "sha256": "9a3da0421a143fa59b9962ecf2aae2b00bab687c19d46c016b742b4a52ce22bd"
+      },
+      "manifest.json": {
+        "bytes": 65508,
+        "sha256": "f840aaef7b45e7238c09ff8fcc3d3a94b3947c20568230ff45f243b4d01e8b59"
+      },
+      "preflight-before-submit.json": {
+        "bytes": 98415,
+        "sha256": "4a38ed59ab34c0a4c9cfe96d4750d83d1d48033000e269bac6c78e4506d0e101"
+      },
+      "budget-before-submit.json": {
+        "bytes": 558,
+        "sha256": "195ff2108148aebedbd13a9de400a0b5f6a03e4994f837f4f1ff884288ccba80"
+      },
+      "allocation-start.txt": {
+        "bytes": 1354,
+        "sha256": "5f9b9066bb86ec2e03051f93e9d0cfcd7195c19bc7b989f60537fb385b5139aa"
+      },
+      "allocation-clock.json": {
+        "bytes": 241,
+        "sha256": "de8154d15b006bff7e4a64e18dbf243509c877bbb3d27f1c14792b2c9728e646"
+      },
+      "inputs-before.json": {
+        "bytes": 51018,
+        "sha256": "f4e1851942b69b59111e0d3783604c30c0ea2917843accfbd172eaf8dc959c89"
+      },
+      "source.txt": {
+        "bytes": 41,
+        "sha256": "2c49eda0254a544cd11e0fcd4df2066c14c15950cbd4297e23440ab1dc76b735"
+      },
+      "cuda-gates.log": {
+        "bytes": 770,
+        "sha256": "2af97ad5db0f68e3394c0b967d64be4c7ee2d514ce3450d7461d846abf29ff49"
+      },
+      "cuda-prefix-discovery.json": {
+        "bytes": 2927,
+        "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+      },
+      "cuda-gates-discovery.json": {
+        "bytes": 2927,
+        "sha256": "6c837580b59986079068aeb6d0788fe334f20c0b8de96098a212a79de9edf3d6"
+      },
+      "cuda-gates.junit.xml": {
+        "bytes": 2679,
+        "sha256": "942ea1f01816f9d748f27d49819b0e1f688ee00ca135028195e6dd64cf1553be"
+      },
+      "cuda-gates-verified.json": {
+        "bytes": 247,
+        "sha256": "98994a085c95286c84845548bc3c63a1d0e5e07a9d044ba07f288ab6170001d1"
+      }
+    }
+  },
+  "preflight": {
+    "at": "2026-10-26T06:39:16.999122+00:00",
+    "status": "all_resource_gates_passed_no_submission",
+    "blockers": [],
+    "resource_query_count": 1,
+    "last_resource_query_at": "2026-10-26T06:37:38.972767+00:00",
+    "next_resource_query_not_before": "2026-10-26T06:48:08.972767+00:00",
+    "next_query_only_next_actual_heartbeat": true,
+    "world_size": 7,
+    "free_gpu_count": 7,
+    "available_cpus": 54,
+    "request_cpus": 8,
+    "request_memory_mib": 25208,
+    "slurm_memory_after_request_mib": 98723.0,
+    "memavailable_mib": 94318.51953125,
+    "memavailable_after_request_mib": 69110.51953125,
+    "node_state": "MIXED",
+    "disk": {
+      "df_available_bytes": 33574611845120,
+      "whole_home_du": "not_run_submission_round",
+      "quota": {
+        "status": "unavailable",
+        "reason": "explicit_no_quota"
+      },
+      "output": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8",
+        "exists": false,
+        "bytes": 0
+      }
+    },
+    "immutable_unique_inputs_verified": 329,
+    "parent_wrapper_sha256": "b4f9de5cb10a3caee1a66c0220f52038ef5e65ba7d4cff4544d8b036faf2c50b",
+    "current_manifest_sha256": "f840aaef7b45e7238c09ff8fcc3d3a94b3947c20568230ff45f243b4d01e8b59",
+    "original_meminfo_and_snapshot_preserved": true,
+    "new_job": null,
+    "new_reservation": 0,
+    "new_cost": 0,
+    "evidence": "c81-preflight-20261026T063633Z/original",
+    "bundle_sha256": "ade6798734604aa4ecb5a91ae686438f6e9580667cbb69353791561a1b214529",
+    "actual_query_interval_seconds": 1162.456006,
+    "budget_clock_gate": {
+      "before_preflight_original": {
+        "remote_now": "2026-10-26T06:36:59.550633+00:00",
+        "budget_checked_at": "2026-10-26T06:36:33.483269+00:00",
+        "age_seconds": 26.067364
+      },
+      "initial_clock_original": {
+        "remote_now": "2026-10-26T06:36:17.258331+00:00",
+        "budget_checked_at": "2026-10-26T06:36:33.483269+00:00",
+        "age_seconds": -16.224938
+      },
+      "system_clock_or_network_changes": false,
+      "same_budget_sha_reverified_before_preflight": true
+    },
+    "preflight_sha256": "4a38ed59ab34c0a4c9cfe96d4750d83d1d48033000e269bac6c78e4506d0e101",
+    "jobscript_sha256": "d850ecd59a4951ee0aa46b275a84e3b322db43e1ada077bc9c159ec9bc8d9484",
+    "budget_age_at_parent_acceptance_seconds": 163.515853
+  },
+  "actual_held_receipt": {
+    "at": "2026-10-26T06:39:31.480019+00:00",
+    "returncode": 0,
+    "stdout": "4032\n",
+    "stderr": "",
+    "argv": [
+      "sbatch",
+      "--hold",
+      "--parsable",
+      "--export=ALL,C81_PREFLIGHT=/home/zhuyouwei/spire-downloads/c81-stage5-slurm-preparation/preflight-20261026T063633Z.json,C81_BUDGET=/home/zhuyouwei/spire-downloads/c81-stage5-slurm-preparation/budget-20261026T063633Z.json",
+      "/home/zhuyouwei/spire-downloads/c81-stage5-slurm-preparation/job-20261026T063633Z.sbatch"
+    ],
+    "submission_mode": "held_then_parent_reserved",
+    "jobscript": "/home/zhuyouwei/spire-downloads/c81-stage5-slurm-preparation/job-20261026T063633Z.sbatch",
+    "jobscript_sha256": "d850ecd59a4951ee0aa46b275a84e3b322db43e1ada077bc9c159ec9bc8d9484",
+    "manifest_sha256": "f840aaef7b45e7238c09ff8fcc3d3a94b3947c20568230ff45f243b4d01e8b59",
+    "preflight_sha256": "4a38ed59ab34c0a4c9cfe96d4750d83d1d48033000e269bac6c78e4506d0e101",
+    "budget_sha256": "195ff2108148aebedbd13a9de400a0b5f6a03e4994f837f4f1ff884288ccba80"
+  },
+  "binding_receipt": {
+    "schema": "c81_stage5_reservation_v1",
+    "job_id": 4032,
+    "submission_mode": "held_then_parent_reserved",
+    "reserved_once": true,
+    "ledger_reservation_id": "claude81-stage5-job4032-held",
+    "preflight_sha256": "4a38ed59ab34c0a4c9cfe96d4750d83d1d48033000e269bac6c78e4506d0e101",
+    "manifest_sha256": "f840aaef7b45e7238c09ff8fcc3d3a94b3947c20568230ff45f243b4d01e8b59",
+    "world_size": 7,
+    "wall_seconds": 14400,
+    "node_seconds": 12600.0
+  },
+  "actual_release": {
+    "at": "2026-10-26T06:40:18.624681+00:00",
+    "job_id": 4032,
+    "command": [
+      "scontrol",
+      "release",
+      "4032"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "binding_sha256": "9a3da0421a143fa59b9962ecf2aae2b00bab687c19d46c016b742b4a52ce22bd",
+    "budget_age_seconds": 225.14155,
+    "preflight_age_seconds": 159.628738
+  },
+  "allocation": {
+    "start": "2026-10-26T14:40:18+08:00",
+    "absolute_time_limit_end": "2026-10-26T18:40:18+08:00",
+    "world_size": 7,
+    "cpus": 8,
+    "memory_mib": 25208,
+    "wall_seconds": 14400,
+    "reserved_node_seconds": 12600,
+    "actual_charge_node_seconds": null
+  },
+  "budget_snapshot": {
+    "step1_charged": 84781.5,
+    "step1_reserved": 39600,
+    "stage5_limit": 30000,
+    "stage5_charged": 0,
+    "stage5_reserved": 12600,
+    "RL_charged": 2631.125,
+    "RL_reserved": 14400,
+    "old3897_hold": 12600,
+    "old3967_hold": 14400,
+    "cost_entries": 35,
+    "jobs": 38
+  },
+  "progress": {
+    "at": "2026-10-26T06:53:48.320770+00:00",
+    "job_id": 4032,
+    "phase": "evaluation",
+    "updates": 0,
+    "trained_seconds": 0,
+    "assessments": [],
+    "complete_evaluation_available": false,
+    "exit_observed": false,
+    "explicit_error_counts": {
+      "Traceback (most recent call last)": 0,
+      "SPIRE_ASSERT": 0,
+      "CUDA error:": 0,
+      "AssertionError": 0,
+      "RuntimeError": 0,
+      "unknown_fault": 0,
+      "NCCL error": 0,
+      "out of memory": 0
+    },
+    "log_bytes": 782236,
+    "log_sha256": "8349b6800ca1b82e39b3923c52c98d3337d84d66b8e85e2961be515d0ef0b3c1",
+    "status_sha256": "3bdcfad0512e19ab15fac0930268b38cd6ca366c454da7dc5ca98ca42756dcaa",
+    "evidence": "hb20261026T0651/progress.original.json.xz",
+    "limits": "Eight explicit strings zero is a finite scan, not universal correctness proof. Provisional process node counter is not final allocation charge. No complete baseline/Mac result."
+  },
+  "new_stage5_baseline_available": false,
+  "new_mac_result": false,
+  "preserved_audit_roots": 522,
+  "preserved_audit_rounds": 29,
+  "limits": [
+    "Offline review authenticates byte consistency against pinned digests, not origin or current remote state.",
+    "No SSH, network, Slurm commands, GPU work, repository imports, torch imports, PT loading, training, compilation or ledger access performed.",
+    "reserved_once is a binding-receipt assertion. Global single reservation is parent-supplied fact; no ledger deduplication was independently proven.",
+    "12600 node-seconds is a reservation (7/8 times 14400), not measured final GPU cost. Startup evidence contains no final accounting.",
+    "CTest dispatch executes CUDA kernel bodies and tensor dispatch on host CPU; four remaining CTest CUDA gates record run/pass. Faults system-out is empty; its test registration, binary hash, positive duration and run/pass are the evidence.",
+    "Discovery backtrace names the protected split-engine CMakeLists; local static helper hashes, binary paths and manifest bindings are checked. No fresh compiler execution or binary semantics independently reproduced.",
+    "Source clean and protected heads at startup are supported by hash-bound verify-inputs result plus statically read verifier; detailed git command journal is preflight evidence.",
+    "Model/Adam/beta continuation and source3967RL8 are checked only as static runner intent and sealed job metadata. No Adam, RNG, checkpoint deserialization or PT execution proven.",
+    "No complete Stage5 evaluation, Mac validation, final correctness or final training success is claimed."
+  ]
+}
