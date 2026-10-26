@@ -126,6 +126,11 @@ def test_native_card_reward_skip_returns_once_per_floor():
     collector.restore(saved)
     search.step([0], [proceed])
     assert search.progress()[0][SCREEN] == 9
+    map_skip = next(a for a, (kind, _) in enumerate(search.frames([0], search.progress())[0]["actions"])
+                    if kind == 7)
+    assert not bool(search.policy_masks([0])[0, map_skip])
+    assert search.loop_metrics["skip_repeat_exempt_map"] == 0
+    assert search.reward_history[0].counts["skip_repeat_exempt_map"] == 0
     next_room = next(a for a, (kind, _) in enumerate(search.frames([0], search.progress())[0]['actions']) if kind == 3)
     search.step([0], [next_room])
     assert search.progress()[0][FLOOR] != floor and search.skip_returns[0] == set()

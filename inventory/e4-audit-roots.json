@@ -834,14 +834,39 @@
       "name": "E4-C81-job4032-stage5-0-N32-D1024",
       "roots": 18,
       "decisions": 6698,
-      "status": "pending_mac_original_replay",
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
       "observation_version": 2,
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
       "engine_commit": "08d51219e718f117bc0c12be1c5571dcf4a0393e",
       "episodes": "inventory/E4-C81-job4032-stage5-0-N32-D1024-episodes.json.gz",
-      "verification": "Original complete1024N32 baseline +18 complete integer paths; independent17897/parent17897 CPU evidence checks. Per-state original Mac action legality remains pending."
+      "verification": "Original complete1024N32 baseline +18 complete integer paths; independent17897/parent17897 CPU evidence checks. Per-state original Mac action legality remains pending.",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     }
   ],
   "roots": [
@@ -172608,7 +172633,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000761,
@@ -173110,7 +173160,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000993,
@@ -173439,7 +173514,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000548,
@@ -173754,7 +173854,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000343,
@@ -174279,7 +174404,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000709,
@@ -174682,7 +174832,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000536,
@@ -174843,7 +175018,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000467,
@@ -175014,7 +175214,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000438,
@@ -175130,7 +175355,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000492,
@@ -175687,7 +175937,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000863,
@@ -175925,7 +176200,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000951,
@@ -176897,7 +177197,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000357,
@@ -177048,7 +177373,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000510,
@@ -177370,7 +177720,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000789,
@@ -177599,7 +177974,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000677,
@@ -178008,7 +178408,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000809,
@@ -178654,7 +179079,32 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     },
     {
       "seed": 2000000803,
@@ -179150,30 +179600,58 @@
       "source_round": "E4-C81-stage5-0-N32-D1024",
       "job_id": 4032,
       "stage5_version": 0,
-      "status": "pending_mac_original_replay"
+      "status": "mac_reported_run18_combat17_with_explicit_known_field_exception",
+      "mac_report": {
+        "source": "Claude82 direct project decision",
+        "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+        "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+        "round": "E4-C81-job4032-stage5-0-N32-D1024",
+        "traces": 18,
+        "decisions": 6698,
+        "run_scope_pass": 18,
+        "combat_scope_pass": 17,
+        "combat_scope_total": 18,
+        "both_scopes_pass": false,
+        "independent_full1024_replay_report": {
+          "mean_rounded": 18.494
+        },
+        "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+        "explicit_allowed_known_mismatch": {
+          "root": 16,
+          "seed": 2000000809,
+          "line": 418,
+          "field": "damage[0].DamageInfo.isModified",
+          "original": true,
+          "engine": false,
+          "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+        }
+      }
     }
   ],
   "mac_report": {
-    "source": "docs/messages/claude-to-gpt.md #81",
-    "commit": "5ec03dce7a8857af71716af3a9139c31d4625bec",
-    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/5ec03dce7a8857af71716af3a9139c31d4625bec",
-    "message_url": "https://github.com/destire-mio/sts-silent-gpu/blob/5ec03dce7a8857af71716af3a9139c31d4625bec/docs/messages/claude-to-gpt.md",
-    "model": "gpt-6.1-sol",
-    "reasoning_effort": "medium",
-    "round": "E4-C79-job3967-RL23-N32-D1024",
+    "source": "Claude82 direct project decision",
+    "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+    "round": "E4-C81-job4032-stage5-0-N32-D1024",
     "traces": 18,
-    "decisions": 5868,
+    "decisions": 6698,
     "run_scope_pass": 18,
-    "combat_scope_pass": 18,
-    "both_scopes_pass": 18,
-    "engine_description": "Mac new engine; exact replay-engine SHA not supplied in Claude81",
+    "combat_scope_pass": 17,
+    "combat_scope_total": 18,
+    "both_scopes_pass": false,
     "independent_full1024_replay_report": {
-      "episodes": 1024,
-      "matches_reported_results": true,
-      "average_floor_rounded": "18.721"
+      "mean_rounded": 18.494
     },
-    "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
-    "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+    "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+    "explicit_allowed_known_mismatch": {
+      "root": 16,
+      "seed": 2000000809,
+      "line": 418,
+      "field": "damage[0].DamageInfo.isModified",
+      "original": true,
+      "engine": false,
+      "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+    }
   },
   "mac_report_history": [
     {
@@ -179401,6 +179879,31 @@
       },
       "verification": "Claude81 reported original Mac replay; parent did not execute Mac; no exact engine SHA/fault/stall/Act2 counts inferred",
       "source_verification": "Complete connector commit/diff and raw message blob read and preserved; local original Git object unavailable after one failed fetch"
+    },
+    {
+      "source": "Claude82 direct project decision",
+      "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+      "round": "E4-C81-job4032-stage5-0-N32-D1024",
+      "traces": 18,
+      "decisions": 6698,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 17,
+      "combat_scope_total": 18,
+      "both_scopes_pass": false,
+      "independent_full1024_replay_report": {
+        "mean_rounded": 18.494
+      },
+      "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+      "explicit_allowed_known_mismatch": {
+        "root": 16,
+        "seed": 2000000809,
+        "line": 418,
+        "field": "damage[0].DamageInfo.isModified",
+        "original": true,
+        "engine": false,
+        "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+      }
     }
   ],
   "current_job_id": 4032,

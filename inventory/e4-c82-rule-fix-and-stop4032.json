@@ -1,0 +1,110 @@
+{
+  "decision_main": "7cbab590bc7607be19daac180722673a98ce2b5a",
+  "source_before": "08d51219e718f117bc0c12be1c5571dcf4a0393e",
+  "scope": "Production train/e4.py and minimal existing native test assertions only",
+  "bindings": {
+    "train/e4.py": {
+      "old_raw": "3adfb14f9b4f10fb4b4a2bbccd598cf8c9c7a80c299980e14b83714a9f1c465e",
+      "old_git_LF": "1eef92bb665877ba0ca9f576312513b9bf026b83c2bab89c9334abb03ccec71c",
+      "new_raw": "380ed6a8cdc10cb424fab2fda012d541e8c68f39689aaf9711fca5d209a9e503",
+      "new_git_LF": "c8eaf0a7d071d866eae5eb1c125ee1f0305b1b1aa8aa0c9a4468f356c895ff7f"
+    },
+    "tests/test_e4_reward_mask.py": {
+      "old_raw": "8a7e7ce3b8f619e377cd2238e20f125d5e45e90edf2221a87331e42ac69875b6",
+      "old_git_LF": "8a7e7ce3b8f619e377cd2238e20f125d5e45e90edf2221a87331e42ac69875b6",
+      "new_raw": "0117ee61f29a58f5a62568e1ef1979c0bc593600cab83572258851253b4f9b0b",
+      "new_git_LF": "0117ee61f29a58f5a62568e1ef1979c0bc593600cab83572258851253b4f9b0b"
+    }
+  },
+  "mask": {
+    "map": "No repeat exemption",
+    "shop": "At most one repeat exemption per floor independent of return key; clone/reset/checkpoint state retained",
+    "card_reward_boss_reward_grid": "Unchanged"
+  },
+  "mainline_metric": "out_of_combat_potion_discards; actual noncombat kind5 per completed episode",
+  "cpu": {
+    "parent_full_diff_and_verifier_read": true,
+    "child_parent_predicate_cases": 388,
+    "negative_controls": 2,
+    "native_cpu_tests_passed": 2,
+    "native_log": "72bf9cd320838e6eabd1829241b14212055ae44e371beb3e14bec18b2bff9ce5",
+    "shop_real_prefix": "Not available; no invented shop native assertion"
+  },
+  "runner": {
+    "child_parent_checks": 44,
+    "sha256": "e8e3eadc80e05a4852734983118bdae46a3f27786bdc8d50c98dbdc1e6866031",
+    "first_new_root_cap": 26059,
+    "actual_prior_new_root_cost": 0,
+    "global_stage5_cap": 30000,
+    "already_charged4032": 3941
+  },
+  "job4032": {
+    "job_id": 4032,
+    "step": 1,
+    "phase": "stage5",
+    "gpu_seconds": 31528,
+    "charged_node_seconds": 3941.0,
+    "released_reservation_node_seconds": 12600,
+    "state": "CANCELLED",
+    "exit_code": "0:9",
+    "runtime_seconds": 4504,
+    "start": "2026-10-26T14:40:18+08:00",
+    "end": "2026-10-26T15:55:22+08:00",
+    "source": "Actual terminal scontrol captured07:56:35.784663UTC; distinct from COMPLETING trap",
+    "reason": "Claude82 cancel map/shop repeat policy and discard training",
+    "decision_main": "7cbab590bc7607be19daac180722673a98ce2b5a",
+    "evidence": "c82-job4032-stop-settlement/settlement.json",
+    "raw_bundle_sha256": "b194725180c1e6f57990d0ec9419dd57df461632aa717e4f35604f57d060afd8",
+    "settled_once_at": "2026-10-26T08:06:27.968893+00:00"
+  },
+  "exit_limitations": {
+    "original_exit_trap_complete": false,
+    "original_exit_validation_missing": true,
+    "original_exit_inputs_bytes": 0,
+    "original_exit_memory_peak_missing": true,
+    "original_exit": "C81_EXIT=0 is not terminal Slurm0:9 success",
+    "parent_postcancel_peak_bytes": 13525188608,
+    "parent_postcancel_peak_scope": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_4032",
+    "no_estimated_charge": true,
+    "training_discarded": true,
+    "no_resume4032": true
+  },
+  "parent_postcancel_inputs": {
+    "count": 329,
+    "passed": true,
+    "original_exit_trap": false
+  },
+  "baseline0_mac": {
+    "source": "Claude82 direct project decision",
+    "commit": "7cbab590bc7607be19daac180722673a98ce2b5a",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/blob/7cbab590bc7607be19daac180722673a98ce2b5a/docs/messages/claude-to-gpt.md",
+    "round": "E4-C81-job4032-stage5-0-N32-D1024",
+    "traces": 18,
+    "decisions": 6698,
+    "run_scope_pass": 18,
+    "combat_scope_pass": 17,
+    "combat_scope_total": 18,
+    "both_scopes_pass": false,
+    "independent_full1024_replay_report": {
+      "mean_rounded": 18.494
+    },
+    "verification": "Claude-reported original Mac replay, parent did not execute Mac",
+    "explicit_allowed_known_mismatch": {
+      "root": 16,
+      "seed": 2000000809,
+      "line": 418,
+      "field": "damage[0].DamageInfo.isModified",
+      "original": true,
+      "engine": false,
+      "reason": "Act2 Byrd poison death at monster-turn start; same #55, allowed by Claude82 under#4 only; Mac fix by Claude"
+    }
+  },
+  "restart": "Original3967RL8 hot model/Adam/beta, new full1024N32 baseline then1800puretraining assessments; discarded4032 training never resumed",
+  "limits": [
+    "No new GPU allocation or new baseline yet.",
+    "Original EXIT trap incomplete; parent postcancel329 hashes and exactjob peak separately recorded.",
+    "CPU proofs do not execute actual GPU, Mac or checkpoint load.",
+    "Old3897/3967 holds27000 unchanged."
+  ],
+  "external_evidence": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c82-rule-fix-parent-accepted"
+}

@@ -106,6 +106,7 @@ class RoomSearch:
         self.probe_slots = list(range(lanes + scratch_slots, self.size))
         self.seen = {}
         self.skip_returns = {}
+        self.shop_skip_used = {}
         self.mask_cache = {}
         self.frame_cache = {}
         self.reward_history = [RewardHistory() for _ in range(self.size)]
@@ -240,6 +241,7 @@ class RoomSearch:
         for s, key in zip(slots, self.loop_keys(slots)):
             self.seen[s] = {key}
             self.skip_returns[s] = set()
+            self.shop_skip_used[s] = False
             self.mask_cache.pop(s, None)
 
     def frames(self, slots, progress):
@@ -310,7 +312,9 @@ class RoomSearch:
                 floors = self.progress_buffer.view(-1, 9)[probes, FLOOR].cpu().tolist()
                 for (s, a), key, floor in zip(group, keys, floors):
                     if floor == progress[s][FLOOR] and key in self.seen[s]:
-                        if frames[s]["actions"][a][0] != 7 or key in self.skip_returns[s]:
+                        if (frames[s]["actions"][a][0] != 7 or progress[s][SCREEN] == MAP
+                                or key in self.skip_returns[s]
+                                or (progress[s][SCREEN] == 11 and self.shop_skip_used[s])):
                             repeated[s].append(a)
             for s in missing:
                 row = allowed[s]
@@ -385,6 +389,8 @@ class RoomSearch:
         for s, old, new, kind in zip(slots, floors_before, floors_after, kinds_before):
             if s in capped:
                 continue
+            if before_progress[s][PHASE] != COMBAT_PHASE and kind == 5:
+                self.reward_history[s].counts["out_of_combat_potion_discards"] += 1
             if before_progress[s][SCREEN] == 6 and kind in (3, 7):
                 self.reward_history[s].counts["card_reward_choices"] += 1
                 if kind == 7:
@@ -392,13 +398,17 @@ class RoomSearch:
             if old != new:
                 self.seen[s] = set()
                 self.skip_returns[s] = set()
-            elif s in frames_before and frames_before[s]["actions"][action_by_slot[s]][0] == 7:
+                self.shop_skip_used[s] = False
+            elif s in frames_before and kind == 7 and before_progress[s][SCREEN] != MAP:
                 key = keys[s]
-                if key in self.seen[s] and key not in self.skip_returns[s]:
+                if (key in self.seen[s] and key not in self.skip_returns[s]
+                        and (before_progress[s][SCREEN] != 11 or not self.shop_skip_used[s])):
                     metric = "skip_repeat_exempt_" + SCREENS[before_progress[s][SCREEN]]
                     self.loop_metrics[metric] += 1
                     self.reward_history[s].counts[metric] += 1
                 self.skip_returns[s].add(key)
+                if before_progress[s][SCREEN] == 11:
+                    self.shop_skip_used[s] = True
             self.seen[s].add(keys[s])
             self.mask_cache.pop(s, None)
         return capped
@@ -411,6 +421,7 @@ class RoomSearch:
             self.provenance[t] = (seed, path.copy())
             self.seen[t] = self.seen[s].copy()
             self.skip_returns[t] = self.skip_returns[s].copy()
+            self.shop_skip_used[t] = self.shop_skip_used[s]
             self.reward_history[t] = deepcopy(self.reward_history[s])
             self.frame_cache.pop(t, None)
             if s in self.mask_cache:
@@ -644,6 +655,8 @@ class SegmentCollector:
                     seen={s: self.search.seen[s] for s in range(self.search.lanes) if s in self.search.seen},
                     skip_returns={s: self.search.skip_returns[s].copy() for s in range(self.search.lanes)
                                   if s in self.search.skip_returns},
+                    shop_skip_used={s: self.search.shop_skip_used[s] for s in range(self.search.lanes)
+                                    if s in self.search.shop_skip_used},
                     last_stall_classes=self.last_stall_classes,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
                     pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes),
@@ -659,6 +672,7 @@ class SegmentCollector:
         self.search.map_returned[:self.search.lanes] = torch.tensor(state["map_returned"], device=self.search.device)
         self.search.seen = {s: keys.copy() for s, keys in state["seen"].items()}
         self.search.skip_returns = {s: keys.copy() for s, keys in state["skip_returns"].items()}
+        self.search.shop_skip_used = state["shop_skip_used"].copy()
         self.search.mask_cache.clear()
         self.search.frame_cache.clear()
         self.search.reward_history[:self.search.lanes] = deepcopy(state["reward_history"])
