@@ -1,0 +1,5699 @@
+{
+  "schema": "e4_c81_job4032_baseline0_verified_v1",
+  "job_id": 4032,
+  "source_commit": "08d51219e718f117bc0c12be1c5571dcf4a0393e",
+  "fixed_engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+  "producer_round": "E4-C81-stage5-0-N32-D1024",
+  "publication_round": "E4-C81-job4032-stage5-0-N32-D1024",
+  "parent_acceptance": {
+    "at": "2026-10-26T07:35:44.839624+00:00",
+    "status": "completed_verified",
+    "task_key": "claude81-job4032-baseline0-review-08d51219e718f117bc0c12be1c5571dcf4a0393e",
+    "owner": "/root/c81_job4032_baseline0_review",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "child_checks": 17897,
+    "parent_checks": 17897,
+    "parent_complete_final_verify_read": true,
+    "parent_independent_output_rerun": true,
+    "verify_bytes": 31225,
+    "verify_sha256": "332451b7b0b425acf68da794b8c1532126fbccc9f14cee609c8bfb8a45ee088c",
+    "report_sha256": "46da99469e157a3d17566eb1fad1b7435156f0b83cbd80cc59069b9aca546130",
+    "original_files": 21,
+    "complete_unique_episodes": 1024,
+    "trials": 32,
+    "actual_full_paths": 18,
+    "actual_path_decisions": 6698,
+    "producer_round": "E4-C81-stage5-0-N32-D1024",
+    "publication_round": "E4-C81-job4032-stage5-0-N32-D1024",
+    "mac_status": "pending_mac_original_replay",
+    "evidence": "c81-job4032-baseline0-review/parent-rerun/report.json",
+    "limits": [
+      "No original Mac or engine replay was performed. Full candidate integer paths correspond to producer records; [0,128) domain checks and producer static masks do not prove legality in each original-game state. No legal masks/state snapshots are in the bundle.",
+      "PT manifest hashes bind seven evaluation0 labels only. No PT content was loaded or locally hashed; model/Adam/collector/RNG equality and runtime restoration were not executed or independently proved.",
+      "faults=0 and truncated=0 are producer constants. Episode completeness, outcomes, sharding and hash consistency were checked, but those constants are not independent original-game fault/truncation proof.",
+      "Diagnostic metrics are independently reaggregated producer observations, not independently regenerated SL rollouts or game states.",
+      "The live log/status/queue snapshots include later training updates and are not final job state. Snapshot time is the bundle producer timestamp.",
+      "Repository HEAD could not be queried in this environment. Five allowed source files match startup/preflight manifest bytes and hashes after explicit CRLF-to-LF conversion only: e4_run/e4/e4_rewards require conversion; e4_distill/e4_continue match raw bytes. Raw and LF hashes are both recorded. The audit engine_commit field names the producer source commit, not the fixed engine commit.",
+      "Parent must read this complete verifier and rerun to a fresh output before completed_verified or publication. This review writes only local proposals."
+    ]
+  },
+  "review": {
+    "audit": {
+      "original_audit_sha256": "5a5a7fbca05c96f7c7ea8665b6854360ae04190aa9e1fed01b54309f227d9359",
+      "original_candidate_bytes_preserved": true,
+      "original_game_action_legality": "not independently established",
+      "paths": [
+        {
+          "candidates_canonical_sha256": "b61647a3b6d1c64a0654f230fe2955ea008cdcc24ff38d1dd0dde3b646eefea8",
+          "decisions": 428,
+          "floor": 21,
+          "max_candidate": 17,
+          "original_audit_candidate_byte_end": 1638,
+          "original_audit_candidate_byte_start": 351,
+          "original_audit_candidate_bytes_sha256": "9716cc3959340b73f8713ecde979df81bbb662f59480416ffe6100b21b548dcc",
+          "original_rank_candidate_bytes_sha256": "9716cc3959340b73f8713ecde979df81bbb662f59480416ffe6100b21b548dcc",
+          "outcome": "death",
+          "rank": 0,
+          "seed": 2000000931
+        },
+        {
+          "candidates_canonical_sha256": "02eba74f04e3162b993a9f4b44312a5484c9a6c478c0716420838ddbc4f8e624",
+          "decisions": 486,
+          "floor": 20,
+          "max_candidate": 18,
+          "original_audit_candidate_byte_end": 3284,
+          "original_audit_candidate_byte_start": 1823,
+          "original_audit_candidate_bytes_sha256": "c735a5f6fbdfe6db6884fb120f1dc21527cfb0521c27ac06ab059194b871f810",
+          "original_rank_candidate_bytes_sha256": "c735a5f6fbdfe6db6884fb120f1dc21527cfb0521c27ac06ab059194b871f810",
+          "outcome": "death",
+          "rank": 5,
+          "seed": 2000000761
+        },
+        {
+          "candidates_canonical_sha256": "b56cbb5253846a30d476ece2a3fa2de81a4d1bb237a06b476c20fe7d6fbc5745",
+          "decisions": 313,
+          "floor": 16,
+          "max_candidate": 16,
+          "original_audit_candidate_byte_end": 4410,
+          "original_audit_candidate_byte_start": 3469,
+          "original_audit_candidate_bytes_sha256": "87cd656d4fabf845e695cce0a46d1bb1cbf2852fcbff6606c80a84941b49645c",
+          "original_rank_candidate_bytes_sha256": "87cd656d4fabf845e695cce0a46d1bb1cbf2852fcbff6606c80a84941b49645c",
+          "outcome": "death",
+          "rank": 6,
+          "seed": 2000000993
+        },
+        {
+          "candidates_canonical_sha256": "724f534e0d52cea94cab1f3e4e8efa5853cfd7d32d4d21b5f8da735a53ef9a4b",
+          "decisions": 299,
+          "floor": 16,
+          "max_candidate": 15,
+          "original_audit_candidate_byte_end": 5494,
+          "original_audit_candidate_byte_start": 4595,
+          "original_audit_candidate_bytes_sha256": "b41cf58f591f252a3a241ff16ef667d0ed2d98e82a86cb3c0fa59a70ea4dbad0",
+          "original_rank_candidate_bytes_sha256": "b41cf58f591f252a3a241ff16ef667d0ed2d98e82a86cb3c0fa59a70ea4dbad0",
+          "outcome": "death",
+          "rank": 2,
+          "seed": 2000000548
+        },
+        {
+          "candidates_canonical_sha256": "3fbe86e4866b7900bcfbd2a465f3c2bc400d55752462cfe24be24dd077c865ec",
+          "decisions": 509,
+          "floor": 21,
+          "max_candidate": 12,
+          "original_audit_candidate_byte_end": 7208,
+          "original_audit_candidate_byte_start": 5679,
+          "original_audit_candidate_bytes_sha256": "0c45a6b832464d986831ba7948a9ef41f57424d9c5a7fc3980b52dfbb2796dc1",
+          "original_rank_candidate_bytes_sha256": "0c45a6b832464d986831ba7948a9ef41f57424d9c5a7fc3980b52dfbb2796dc1",
+          "outcome": "death",
+          "rank": 0,
+          "seed": 2000000343
+        },
+        {
+          "candidates_canonical_sha256": "41ae4ae9fabce1c4debdee9a7565f87d0691d8be331acd3a393ed3d90a790262",
+          "decisions": 387,
+          "floor": 24,
+          "max_candidate": 17,
+          "original_audit_candidate_byte_end": 8558,
+          "original_audit_candidate_byte_start": 7393,
+          "original_audit_candidate_bytes_sha256": "6bdd5b330dc798758aefcb59c3c82edd5bde2751921087ca622f13ed13b5fa43",
+          "original_rank_candidate_bytes_sha256": "6bdd5b330dc798758aefcb59c3c82edd5bde2751921087ca622f13ed13b5fa43",
+          "outcome": "death",
+          "rank": 2,
+          "seed": 2000000709
+        },
+        {
+          "candidates_canonical_sha256": "c196b56f03a933ed989a7b96123293d666354ecb39ebf738578e3a4fc19345d1",
+          "decisions": 145,
+          "floor": 8,
+          "max_candidate": 11,
+          "original_audit_candidate_byte_end": 9179,
+          "original_audit_candidate_byte_start": 8743,
+          "original_audit_candidate_bytes_sha256": "45c84fa2f60a0f964ff20765c631b9f2d20185f4c2dd1063219594d5aba56466",
+          "original_rank_candidate_bytes_sha256": "45c84fa2f60a0f964ff20765c631b9f2d20185f4c2dd1063219594d5aba56466",
+          "outcome": "death",
+          "rank": 4,
+          "seed": 2000000536
+        },
+        {
+          "candidates_canonical_sha256": "f10ed3f20a8fa025643ea4c328f6298ad92b8a6987a91908acf6866c5df612b3",
+          "decisions": 155,
+          "floor": 11,
+          "max_candidate": 9,
+          "original_audit_candidate_byte_end": 9829,
+          "original_audit_candidate_byte_start": 9364,
+          "original_audit_candidate_bytes_sha256": "5a43999ee76937a120bd08e43c97a010da03de8b71e2766f2e64509ee0d2b76e",
+          "original_rank_candidate_bytes_sha256": "5a43999ee76937a120bd08e43c97a010da03de8b71e2766f2e64509ee0d2b76e",
+          "outcome": "death",
+          "rank": 5,
+          "seed": 2000000467
+        },
+        {
+          "candidates_canonical_sha256": "9ee0d2473245d09bd404ece3711bdbcdaed4a7c4778a01ed421a23105a73a4e3",
+          "decisions": 100,
+          "floor": 6,
+          "max_candidate": 6,
+          "original_audit_candidate_byte_end": 10314,
+          "original_audit_candidate_byte_start": 10014,
+          "original_audit_candidate_bytes_sha256": "893bbdf8f1fa723f73bcdf4ab09184c0dfb7a902419aedf76a20f7abba137b17",
+          "original_rank_candidate_bytes_sha256": "893bbdf8f1fa723f73bcdf4ab09184c0dfb7a902419aedf76a20f7abba137b17",
+          "outcome": "death",
+          "rank": 4,
+          "seed": 2000000438
+        },
+        {
+          "candidates_canonical_sha256": "56a86e9ef875837281fb158cc663705b4c77116218af00cc30fb5de5630af51b",
+          "decisions": 541,
+          "floor": 21,
+          "max_candidate": 18,
+          "original_audit_candidate_byte_end": 12128,
+          "original_audit_candidate_byte_start": 10499,
+          "original_audit_candidate_bytes_sha256": "4ccae25f8942f73847514e9eb99556b14d4752ea97bfd7da52dd2ca2f19f40f8",
+          "original_rank_candidate_bytes_sha256": "4ccae25f8942f73847514e9eb99556b14d4752ea97bfd7da52dd2ca2f19f40f8",
+          "outcome": "death",
+          "rank": 2,
+          "seed": 2000000492
+        },
+        {
+          "candidates_canonical_sha256": "9a4ce8605047eb93425dbdb7badebc8a0324b393199be6f355f615607ff7d362",
+          "decisions": 222,
+          "floor": 10,
+          "max_candidate": 10,
+          "original_audit_candidate_byte_end": 12980,
+          "original_audit_candidate_byte_start": 12313,
+          "original_audit_candidate_bytes_sha256": "55561abc724c1b360579189569bd6068a9f114b360d599266a5d2b4c644cec72",
+          "original_rank_candidate_bytes_sha256": "55561abc724c1b360579189569bd6068a9f114b360d599266a5d2b4c644cec72",
+          "outcome": "death",
+          "rank": 2,
+          "seed": 2000000863
+        },
+        {
+          "candidates_canonical_sha256": "d4116ca29b957dc7df5813a7a5a6770655b45f464641b4dbf08ecd3a8e347685",
+          "decisions": 956,
+          "floor": 33,
+          "max_candidate": 20,
+          "original_audit_candidate_byte_end": 16045,
+          "original_audit_candidate_byte_start": 13165,
+          "original_audit_candidate_bytes_sha256": "f911969f08ba67370e04fd663429947d552f9f30f1c3d90417e90df1ade86c89",
+          "original_rank_candidate_bytes_sha256": "f911969f08ba67370e04fd663429947d552f9f30f1c3d90417e90df1ade86c89",
+          "outcome": "death",
+          "rank": 6,
+          "seed": 2000000951
+        },
+        {
+          "candidates_canonical_sha256": "7f5b3222383e179eca698d1f02373946999fa7521015798c0e2b1b09600546f1",
+          "decisions": 135,
+          "floor": 7,
+          "max_candidate": 14,
+          "original_audit_candidate_byte_end": 16636,
+          "original_audit_candidate_byte_start": 16230,
+          "original_audit_candidate_bytes_sha256": "eea7dd0a200d9a66bb6cf31ea2d8af23c13c51e2ac28aad54c9b1dd03f6c0950",
+          "original_rank_candidate_bytes_sha256": "eea7dd0a200d9a66bb6cf31ea2d8af23c13c51e2ac28aad54c9b1dd03f6c0950",
+          "outcome": "death",
+          "rank": 0,
+          "seed": 2000000357
+        },
+        {
+          "candidates_canonical_sha256": "e01e991d106b42697e276f1eed8f7a74ee522bda5054dd47d8323b5a575f4a15",
+          "decisions": 306,
+          "floor": 16,
+          "max_candidate": 17,
+          "original_audit_candidate_byte_end": 17744,
+          "original_audit_candidate_byte_start": 16821,
+          "original_audit_candidate_bytes_sha256": "fda1ca8bcc8bf5537771037e7ff03cdf71888e3d3f19f4811c181b627ed168ff",
+          "original_rank_candidate_bytes_sha256": "fda1ca8bcc8bf5537771037e7ff03cdf71888e3d3f19f4811c181b627ed168ff",
+          "outcome": "death",
+          "rank": 6,
+          "seed": 2000000510
+        },
+        {
+          "candidates_canonical_sha256": "92620dfb4a3b4e5a815927381db74ba1b00124087f5ca6fc48038a870085d317",
+          "decisions": 213,
+          "floor": 10,
+          "max_candidate": 11,
+          "original_audit_candidate_byte_end": 18569,
+          "original_audit_candidate_byte_start": 17929,
+          "original_audit_candidate_bytes_sha256": "791ae1fa1a7363db093b9b663871f29c64743d32111a28479d2cbd9c0f07699f",
+          "original_rank_candidate_bytes_sha256": "791ae1fa1a7363db093b9b663871f29c64743d32111a28479d2cbd9c0f07699f",
+          "outcome": "death",
+          "rank": 5,
+          "seed": 2000000789
+        },
+        {
+          "candidates_canonical_sha256": "b673fb373129bfc7415506e9b654e2482ef243f579e63a9ea81f874ca83de5f2",
+          "decisions": 393,
+          "floor": 21,
+          "max_candidate": 15,
+          "original_audit_candidate_byte_end": 19940,
+          "original_audit_candidate_byte_start": 18754,
+          "original_audit_candidate_bytes_sha256": "aed9bc429103958e7e01480b86f42efef0c71054ae1267b9727d9cf2f9857a7e",
+          "original_rank_candidate_bytes_sha256": "aed9bc429103958e7e01480b86f42efef0c71054ae1267b9727d9cf2f9857a7e",
+          "outcome": "death",
+          "rank": 5,
+          "seed": 2000000677
+        },
+        {
+          "candidates_canonical_sha256": "704a3413e25d65650c18f2476dcbedda9328357f18b156ead4bd1c4a7757df96",
+          "decisions": 630,
+          "floor": 33,
+          "max_candidate": 19,
+          "original_audit_candidate_byte_end": 22023,
+          "original_audit_candidate_byte_start": 20125,
+          "original_audit_candidate_bytes_sha256": "9da612769f4831a6a20c5228b46cc9c0a723450f85d3b532c82becf087d348af",
+          "original_rank_candidate_bytes_sha256": "9da612769f4831a6a20c5228b46cc9c0a723450f85d3b532c82becf087d348af",
+          "outcome": "death",
+          "rank": 4,
+          "seed": 2000000809
+        },
+        {
+          "candidates_canonical_sha256": "538936a915beca862a50e4070c8f67e645f961fefb6b4648f0ddc446f1c482cc",
+          "decisions": 480,
+          "floor": 27,
+          "max_candidate": 17,
+          "original_audit_candidate_byte_end": 23654,
+          "original_audit_candidate_byte_start": 22208,
+          "original_audit_candidate_bytes_sha256": "d79f9a8b52330020cf44a81327d25b105622db9a9eb81a43d4002fcda28d8c2d",
+          "original_rank_candidate_bytes_sha256": "d79f9a8b52330020cf44a81327d25b105622db9a9eb81a43d4002fcda28d8c2d",
+          "outcome": "death",
+          "rank": 5,
+          "seed": 2000000803
+        }
+      ],
+      "roots": 18,
+      "sampling": "random.Random(0 + 1729).sample(rank0+...+rank6, 18)",
+      "status": "pending_mac_original_replay",
+      "total_decisions": 6698
+    },
+    "baseline_rule": {
+      "best": {
+        "act1_boss": 0.54296875,
+        "act2_boss": 0.0009765625,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "heart": 0.0,
+        "shield_spear": 0.0
+      },
+      "best_floor": 18.494140625,
+      "cap_stop": "combat played card cap fraction > 0.001",
+      "floor_stop": "best floor minus current floor > 1.0",
+      "next_full_evaluation_after_pure_training_seconds": 1800,
+      "reach_improvement": "any reach fraction improves by >= 0.02",
+      "stagnant": 0,
+      "stagnation_stop": "three subsequent nonimproving complete assessments; baseline does not count"
+    },
+    "bundle_sha256": "37dc1aa43648b0a70fc8496a2f47024e9b53e96441ec8108434da98b6be210ab",
+    "diagnostics": {
+      "all_sl_search": {
+        "all_candidates_repeat": 988,
+        "combat_normal_max_steps": 582,
+        "combat_over_limit": 0,
+        "combat_played_cards_limit": 0,
+        "combat_trials": 309536,
+        "event_normal_max_steps": 83,
+        "event_over_limit": 0,
+        "repeat_check_candidates": 862482,
+        "repeat_check_decisions": 165647,
+        "repeat_check_seconds": 152.4644855915103,
+        "skip_repeat_exempt_boss_reward": 1,
+        "skip_repeat_exempt_card_reward": 55,
+        "skip_repeat_exempt_combat": 0,
+        "skip_repeat_exempt_combat_reward": 0,
+        "skip_repeat_exempt_death": 0,
+        "skip_repeat_exempt_event": 0,
+        "skip_repeat_exempt_grid": 101,
+        "skip_repeat_exempt_hand_select": 0,
+        "skip_repeat_exempt_map": 1758,
+        "skip_repeat_exempt_none": 0,
+        "skip_repeat_exempt_room": 0,
+        "skip_repeat_exempt_shop": 56,
+        "skip_repeat_exempt_victory": 0
+      },
+      "combat": {
+        "act1": {
+          "capped_trials": 0,
+          "combats": 7423,
+          "complete_trial_groups": 7423,
+          "decisions": 7081835,
+          "means": {
+            "distinct_end_states": 15.623737033544389,
+            "policy_entropy": 0.702861510067562,
+            "score_std": 0.008963563314114967,
+            "selected_score_gain": 0.01208707285340096,
+            "win_fraction": 0.841438771386232
+          },
+          "nested_event_combats": 135,
+          "pooled_policy_entropy": 0.7000490038008671
+        },
+        "act2": {
+          "capped_trials": 0,
+          "combats": 2248,
+          "complete_trial_groups": 2248,
+          "decisions": 2129399,
+          "means": {
+            "distinct_end_states": 16.67170818505338,
+            "policy_entropy": 0.7403754004393164,
+            "score_std": 0.009396035632303401,
+            "selected_score_gain": 0.01369465900845229,
+            "win_fraction": 0.5815725088967971
+          },
+          "nested_event_combats": 62,
+          "pooled_policy_entropy": 0.7314406998946846
+        },
+        "act3": {
+          "capped_trials": 0,
+          "combats": 2,
+          "complete_trial_groups": 2,
+          "decisions": 1324,
+          "means": {
+            "distinct_end_states": 17.0,
+            "policy_entropy": 0.8361420222239919,
+            "score_std": 0.00896180352993611,
+            "selected_score_gain": 0.017730951367411762,
+            "win_fraction": 0.171875
+          },
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": 0.6570124128853461
+        },
+        "act4": {
+          "capped_trials": 0,
+          "combats": 0,
+          "complete_trial_groups": 0,
+          "decisions": 0,
+          "means": {
+            "distinct_end_states": null,
+            "policy_entropy": null,
+            "score_std": null,
+            "selected_score_gain": null,
+            "win_fraction": null
+          },
+          "nested_event_combats": 0,
+          "pooled_policy_entropy": null
+        },
+        "all": {
+          "capped_trials": 0,
+          "combats": 9673,
+          "complete_trial_groups": 9673,
+          "decisions": 9212558,
+          "means": {
+            "distinct_end_states": 15.867569523415693,
+            "policy_entropy": 0.711607275246929,
+            "score_std": 0.009064069284519107,
+            "selected_score_gain": 0.01246184194609024,
+            "win_fraction": 0.7809075519487233
+          },
+          "nested_event_combats": 197,
+          "pooled_policy_entropy": 0.7072987237835372
+        }
+      },
+      "event_trial_max_steps": 83,
+      "searched_decisions": 9311899
+    },
+    "episodes": {
+      "average_floor": 18.494140625,
+      "candidate_decisions": 375215,
+      "canonical_sha256": "069cd795c74805ae1a5b8ecaf9908cb78c69e7176935b6bfcf9e7206370acb40",
+      "episodes": 1024,
+      "floor_total": 18938,
+      "original_gzip_sha256": "9cd59526d34bcae98f9945f9b45c2550496b5c2db18cf7a34df3cc9781627a4f",
+      "rank_counts": [
+        147,
+        147,
+        146,
+        146,
+        146,
+        146,
+        146
+      ],
+      "reach": {
+        "act1_boss": 0.54296875,
+        "act2_boss": 0.0009765625,
+        "act3_first_boss": 0.0,
+        "act3_second_boss": 0.0,
+        "act3_three_keys": 0.0,
+        "act4": 0.0,
+        "heart": 0.0,
+        "shield_spear": 0.0
+      },
+      "reach_counts": {
+        "act1_boss": 556,
+        "act2_boss": 1,
+        "act3_first_boss": 0,
+        "act3_second_boss": 0,
+        "act3_three_keys": 0,
+        "act4": 0,
+        "heart": 0,
+        "shield_spear": 0
+      },
+      "stall_classes": {
+        "{\"reason\":\"noncombat_floor_limit\",\"last10\":[[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"],[\"shop\",\"skip\"],[\"room\",\"choose\"]]}": 1
+      },
+      "stalled": 1,
+      "uncompressed_json_sha256": "d8fa186945100d0b855fcea83153d90606cbcc5bd2ecc4f0e431a3a46338a017",
+      "victories": 0
+    },
+    "fixed_engine_commit": "d28c060f92e38385670d70defad5a41fea3421a9",
+    "inventory_append_context": {
+      "preservation": "Append only a separate alias round and 18 roots; retain all existing roots, rounds, mac_report and mac_report_history verbatim. Historical Mac claims never transfer to this round.",
+      "proposed_roots": 540,
+      "proposed_rounds": 30,
+      "roots": 522,
+      "rounds": 29,
+      "sha256": "6b48e0852345199ac2cce09c22ad4fa7ee6b4c3a64876fbb1e3de650513430b1"
+    },
+    "job_id": 4032,
+    "limitations": [
+      "No original Mac or engine replay was performed. Full candidate integer paths correspond to producer records; [0,128) domain checks and producer static masks do not prove legality in each original-game state. No legal masks/state snapshots are in the bundle.",
+      "PT manifest hashes bind seven evaluation0 labels only. No PT content was loaded or locally hashed; model/Adam/collector/RNG equality and runtime restoration were not executed or independently proved.",
+      "faults=0 and truncated=0 are producer constants. Episode completeness, outcomes, sharding and hash consistency were checked, but those constants are not independent original-game fault/truncation proof.",
+      "Diagnostic metrics are independently reaggregated producer observations, not independently regenerated SL rollouts or game states.",
+      "The live log/status/queue snapshots include later training updates and are not final job state. Snapshot time is the bundle producer timestamp.",
+      "Repository HEAD could not be queried in this environment. Five allowed source files match startup/preflight manifest bytes and hashes after explicit CRLF-to-LF conversion only: e4_run/e4/e4_rewards require conversion; e4_distill/e4_continue match raw bytes. Raw and LF hashes are both recorded. The audit engine_commit field names the producer source commit, not the fixed engine commit.",
+      "Parent must read this complete verifier and rerun to a fresh output before completed_verified or publication. This review writes only local proposals."
+    ],
+    "live_snapshot": {
+      "evaluation_log_line": 121,
+      "final": false,
+      "phase": "training",
+      "reason": "rl_update_complete",
+      "rl_updates": [
+        {
+          "log_line": 140,
+          "lr": 0.0001,
+          "trained_seconds": 199.38946533203125,
+          "update": 1
+        },
+        {
+          "log_line": 164,
+          "lr": 0.0001,
+          "trained_seconds": 434.6693420410156,
+          "update": 2
+        }
+      ],
+      "status_trained_seconds": 434.6693420410156,
+      "status_updates": 2
+    },
+    "mainline": {
+      "card_reward_choices": 9072,
+      "card_skip_rate": 0.006283068783068783,
+      "card_skipped": 57,
+      "scope": "actual_mainline_completed_dev1024_trajectories_only",
+      "shop_purchases": 1007,
+      "skip_repeat_exempt_by_screen": {
+        "boss_reward": 1,
+        "card_reward": 54,
+        "combat": 0,
+        "combat_reward": 0,
+        "death": 0,
+        "event": 0,
+        "grid": 39,
+        "hand_select": 0,
+        "map": 1758,
+        "none": 0,
+        "room": 0,
+        "shop": 56,
+        "victory": 0
+      }
+    },
+    "noncombat": {
+      "counts": {
+        "card_appeared": 8416,
+        "card_bowl": 33,
+        "card_opened": 8416,
+        "card_reward_choices": 9072,
+        "card_skipped": 57,
+        "card_taken": 8332,
+        "gold_appeared": 9308,
+        "gold_taken": 9041,
+        "mask_card": 8899,
+        "mask_gold": 9308,
+        "mask_potion": 3749,
+        "potion_appeared": 3862,
+        "potion_taken": 3700,
+        "relic_appeared": 2139,
+        "relic_taken": 1241,
+        "rest_dig": 3,
+        "rest_lift": 1,
+        "rest_recall": 8,
+        "rest_rest": 2851,
+        "rest_smith": 34,
+        "rest_toke": 0,
+        "shop_purchases": 1007,
+        "skip_repeat_exempt_boss_reward": 1,
+        "skip_repeat_exempt_card_reward": 54,
+        "skip_repeat_exempt_grid": 39,
+        "skip_repeat_exempt_map": 1758,
+        "skip_repeat_exempt_shop": 56
+      },
+      "episodes": 1024,
+      "final_deck_size_mean": 20.12890625,
+      "scope": "actual trajectories; displayed combat/treasure reward rows"
+    },
+    "original_files": {
+      "E4-C81-stage5-0-N32-D1024-audit.json": {
+        "bytes": 23805,
+        "sha256": "5a5a7fbca05c96f7c7ea8665b6854360ae04190aa9e1fed01b54309f227d9359"
+      },
+      "E4-C81-stage5-0-N32-D1024-diagnostics-0.json": {
+        "bytes": 436990,
+        "sha256": "4925b430a4f966f6982a05593c5856e690923cb127682fbb334af047e642d25f"
+      },
+      "E4-C81-stage5-0-N32-D1024-diagnostics-1.json": {
+        "bytes": 432228,
+        "sha256": "508e3d1b65a1baf53803b2ec07e8f5bc2464f97b875c4358306efd659f6f4e78"
+      },
+      "E4-C81-stage5-0-N32-D1024-diagnostics-2.json": {
+        "bytes": 446768,
+        "sha256": "32878c37ddd4f31790b8d6d36253c8268b1be1683ee0bbacadbb56e1ea1f03c2"
+      },
+      "E4-C81-stage5-0-N32-D1024-diagnostics-3.json": {
+        "bytes": 441810,
+        "sha256": "8ce5b97de0eee2658987d0c85b158bae5674e8f24ba4d6ada0b6a2ef629a58ca"
+      },
+      "E4-C81-stage5-0-N32-D1024-diagnostics-4.json": {
+        "bytes": 459585,
+        "sha256": "8c78e6c6df3a6fa0906d61576083b4b9f05f1ba67008901c0aa68babe4a7e64c"
+      },
+      "E4-C81-stage5-0-N32-D1024-diagnostics-5.json": {
+        "bytes": 449227,
+        "sha256": "8af997fab87352fc4c1433ab719fe61570f1dd877b437cbce80b42e2a4fca2b1"
+      },
+      "E4-C81-stage5-0-N32-D1024-diagnostics-6.json": {
+        "bytes": 452648,
+        "sha256": "354a6b3e0296fa3d4154771d613a72f3fef342fc0bb3a06f74fdf77c5f2c37fe"
+      },
+      "E4-C81-stage5-0-N32-D1024-episodes.json.gz": {
+        "bytes": 193179,
+        "sha256": "9cd59526d34bcae98f9945f9b45c2550496b5c2db18cf7a34df3cc9781627a4f"
+      },
+      "E4-C81-stage5-0-N32-D1024-rank-0.json": {
+        "bytes": 266200,
+        "sha256": "07760e7ba579bf5b4b0ae5972bdcc4e908670ca3f95c394e4cd2879e5a46737e"
+      },
+      "E4-C81-stage5-0-N32-D1024-rank-1.json": {
+        "bytes": 264894,
+        "sha256": "1a56dab19fb19a70609e1503c2520de2259cab6dee372fcd597773013441d0ed"
+      },
+      "E4-C81-stage5-0-N32-D1024-rank-2.json": {
+        "bytes": 264821,
+        "sha256": "61ec00eb3fb00483beb50d1f23afe4b09be92b9aa9740364775581359f3a393d"
+      },
+      "E4-C81-stage5-0-N32-D1024-rank-3.json": {
+        "bytes": 266099,
+        "sha256": "a862fa0628fb7a27bda0337a5e9b86bdd9901649602a34b834a281a1552b44ab"
+      },
+      "E4-C81-stage5-0-N32-D1024-rank-4.json": {
+        "bytes": 277114,
+        "sha256": "2a27bdf56792653d6f7743491f2d3202f0eeaee5f1b57bd4835a6c81e4bb3738"
+      },
+      "E4-C81-stage5-0-N32-D1024-rank-5.json": {
+        "bytes": 269027,
+        "sha256": "b3dab0b901b42b4601006a838094a2a7429f531c5ac4eae67ca77c9679ae7403"
+      },
+      "E4-C81-stage5-0-N32-D1024-rank-6.json": {
+        "bytes": 266946,
+        "sha256": "6013e8c432ac2cde02cdb2aed7c8950fcd9a5d40cad61a3a3b0ad9065503ac89"
+      },
+      "E4-C81-stage5-0-N32-D1024-summary.json": {
+        "bytes": 54251,
+        "sha256": "be605366d89893745829ae2830cb47a0e9246eced9b78fbef0b422cf7006f85b"
+      },
+      "job4032.log.snapshot": {
+        "bytes": 2099675,
+        "sha256": "e72ab05a6feea200c4dca162299ab2632347bcd756484f3fc2dcfb0ad2188f72"
+      },
+      "queue-last.json": {
+        "bytes": 2518,
+        "sha256": "167d1e6a5e76197292f3e247af446122595a26497e1baa8f60499c8501f2e8df"
+      },
+      "stalled-4.jsonl": {
+        "bytes": 360,
+        "sha256": "17cecfaa101e01f576d3a348a3846b44a39afde0b26ea5b4cb343348d212b725"
+      },
+      "status.json": {
+        "bytes": 55087,
+        "sha256": "d3374fb31a471ab6aec9389ffcabe5bf08d68df239ccb7a860c7d37eddb14592"
+      }
+    },
+    "pre_boss": {
+      "act_counts": {
+        "1": 750,
+        "2": 50
+      },
+      "canonical_sha256": "757d36d565001715c72fcbb58f89c51c2b7225cd4311417688dd01bbafaaec85",
+      "count": 800,
+      "deck_size_max": 32,
+      "deck_size_mean": 19.43875,
+      "deck_size_min": 13
+    },
+    "producer_round": "E4-C81-stage5-0-N32-D1024",
+    "producer_snapshot_at": "2026-10-26T07:06:57.976894+00:00",
+    "pt_hashes_only": {
+      "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8/evaluation-0/rank-0.pt": {
+        "bytes": 69088709,
+        "sha256": "a206276ecf3da81a01e27e875d5c323ad87e9cb6aa8e5ab0fa07f369ba2861e5"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8/evaluation-0/rank-1.pt": {
+        "bytes": 69088837,
+        "sha256": "0ce51a0da282ec786bbb2cd9a2fcadd3f502c71664e1c4d32d4528476d4d6651"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8/evaluation-0/rank-2.pt": {
+        "bytes": 69088709,
+        "sha256": "4d728fb51701c5510b16088bac082cda56ea647b3af16f4c71dbf3c0d973f326"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8/evaluation-0/rank-3.pt": {
+        "bytes": 69088773,
+        "sha256": "35b500bce1788b9ec641345360bfb21ab4f3766b7effd7176d8e663b4fad1460"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8/evaluation-0/rank-4.pt": {
+        "bytes": 69088773,
+        "sha256": "62f55d0498efe88055d7f039407ca52f283672aa2a5cb6308746807b1d92a3be"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8/evaluation-0/rank-5.pt": {
+        "bytes": 69088709,
+        "sha256": "af4f36bdefe0ce50527ca7846ceb9fb407ada0997fd94fb4990a616142ed6b83"
+      },
+      "/home/zhuyouwei/spire-downloads/e4-c81-stage5-rl8/evaluation-0/rank-6.pt": {
+        "bytes": 69088709,
+        "sha256": "7f2c7ecec306206dc70339cc3e3e7f6a72d052fba95c64f6dc6130af518cc31f"
+      }
+    },
+    "publication_alias": "E4-C81-job4032-stage5-0-N32-D1024",
+    "review_scope": "completed CPU evidence consistency review; original Mac replay pending; parent independent rerun pending",
+    "schema": "c81_job4032_baseline0_independent_stdlib_review_v1",
+    "source_commit": "08d51219e718f117bc0c12be1c5571dcf4a0393e",
+    "source_files": {
+      "runner/stage5.py": {
+        "bytes": 20696,
+        "sha256": "a428f18771d6c63f07050a570dec31136d77f92da3c0e6eda4b56fc74afb1f6b"
+      },
+      "tools/e4_continue.py": {
+        "bytes": 22222,
+        "crlf_count": 0,
+        "lf_bytes": 22222,
+        "lf_sha256": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c",
+        "raw_matches_manifest": true,
+        "sha256": "30918d27eadc7a7bb58ce1eba6eab7bea3a4b529326903ccd48337c2e5be4f1c"
+      },
+      "tools/e4_distill.py": {
+        "bytes": 42519,
+        "crlf_count": 0,
+        "lf_bytes": 42519,
+        "lf_sha256": "3d01d81fd13ca23cadd174fde22b443cfb688de9261a5fe3c668573fa510ed4a",
+        "raw_matches_manifest": true,
+        "sha256": "3d01d81fd13ca23cadd174fde22b443cfb688de9261a5fe3c668573fa510ed4a"
+      },
+      "tools/e4_run.py": {
+        "bytes": 21394,
+        "crlf_count": 368,
+        "lf_bytes": 21026,
+        "lf_sha256": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+        "raw_matches_manifest": false,
+        "sha256": "04195e58dde01bb14fbe7736004fde0abec16e07c98fc3000c6044637da0a990"
+      },
+      "train/e4.py": {
+        "bytes": 47687,
+        "crlf_count": 851,
+        "lf_bytes": 46836,
+        "lf_sha256": "1eef92bb665877ba0ca9f576312513b9bf026b83c2bab89c9334abb03ccec71c",
+        "raw_matches_manifest": false,
+        "sha256": "3adfb14f9b4f10fb4b4a2bbccd598cf8c9c7a80c299980e14b83714a9f1c465e"
+      },
+      "train/e4_rewards.py": {
+        "bytes": 5036,
+        "crlf_count": 105,
+        "lf_bytes": 4931,
+        "lf_sha256": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908",
+        "raw_matches_manifest": false,
+        "sha256": "1018efce47abd6d52635292ef6140cd049a00c8a35973e309a81b7ea93fa3837"
+      }
+    },
+    "stalled_original_diagnostic": {
+      "event": "stalled_episode",
+      "floor": 10,
+      "floor_steps": 201,
+      "last10": [
+        [
+          "shop",
+          "skip"
+        ],
+        [
+          "room",
+          "choose"
+        ],
+        [
+          "shop",
+          "skip"
+        ],
+        [
+          "room",
+          "choose"
+        ],
+        [
+          "shop",
+          "skip"
+        ],
+        [
+          "room",
+          "choose"
+        ],
+        [
+          "shop",
+          "skip"
+        ],
+        [
+          "room",
+          "choose"
+        ],
+        [
+          "shop",
+          "skip"
+        ],
+        [
+          "room",
+          "choose"
+        ]
+      ],
+      "noncombat_floor_steps": 201,
+      "rank": 4,
+      "reason": "noncombat_floor_limit",
+      "seed": 2000000879
+    },
+    "static_definitions": {
+      "audit": {
+        "end": 66,
+        "path": "D:\\google download\\sts-silent-gpu-split-review\\tools\\e4_run.py",
+        "sha256": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+        "start": 58
+      },
+      "combat_diagnostics_summary": {
+        "end": 43,
+        "path": "D:\\google download\\sts-silent-gpu-split-review\\train\\e4.py",
+        "sha256": "1eef92bb665877ba0ca9f576312513b9bf026b83c2bab89c9334abb03ccec71c",
+        "start": 32
+      },
+      "hot_optimizer": {
+        "end": 297,
+        "path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c81-stage5-runner\\stage5.py",
+        "sha256": "e08d393827ba193b5ebfad5e2c2f06965e36dbe7fca9aca25c9f207886a30d1a",
+        "start": 291
+      },
+      "mainline_summary": {
+        "end": 310,
+        "path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c81-stage5-runner\\stage5.py",
+        "sha256": "e08d393827ba193b5ebfad5e2c2f06965e36dbe7fca9aca25c9f207886a30d1a",
+        "start": 299
+      },
+      "noncombat_summary": {
+        "end": 105,
+        "path": "D:\\google download\\sts-silent-gpu-split-review\\train\\e4_rewards.py",
+        "sha256": "30c03c313af2c8c7387674033e916306dd1aea7f94da0aa22ff12eb3cda82908",
+        "start": 97
+      },
+      "rl_stop": {
+        "end": 44,
+        "path": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\c81-stage5-runner\\stage5.py",
+        "sha256": "e08d393827ba193b5ebfad5e2c2f06965e36dbe7fca9aca25c9f207886a30d1a",
+        "start": 38
+      },
+      "summaries": {
+        "end": 55,
+        "path": "D:\\google download\\sts-silent-gpu-split-review\\tools\\e4_run.py",
+        "sha256": "38df89206fd1e07e48fcd5ecce58dbf20415c57df9e114a39d6c2ac47f24e652",
+        "start": 49
+      }
+    },
+    "task_key": "claude81-job4032-baseline0-review-08d51219e718f117bc0c12be1c5571dcf4a0393e",
+    "transport_reader_correction": "Preserved first ingest assertion failed before D writes due to 65-character hand transcription; clean remote 32+32 digest equals complete bundle. This is not a training fault.",
+    "transport_transcripts": {
+      "clean-digest.original.json": {
+        "bytes": 791,
+        "sha256": "847659bf2831df2c99a17b2c9bdffd8173e20e49096f730a8958a44abf05b33b"
+      },
+      "first-reader-error.transcribed.txt": {
+        "bytes": 375,
+        "sha256": "ca46fb23c49035d9a62b0fd173c3706853451e468a7e3c404390c3adeb70d0e2"
+      },
+      "transport-verified.json": {
+        "bytes": 5078,
+        "sha256": "1b8ce9551020c84188a29315369aa6553a625601b40e11b111997bb81fdefad6"
+      },
+      "truncated-observation-terminal.original.json": {
+        "bytes": 14822,
+        "sha256": "cd5e14fed0c3c76b7e6fd04acce49123256bd1821329b28d2f1ea11be19f8be4"
+      }
+    },
+    "unpacked_json_sha256": "942b9e150b13791defaca47c02bbd544f3a059ebc2a84daf74e2efddf195f92e",
+    "verification": {
+      "checks_sha256": "79ae1eeb5bb6749cc544d9d8e946bb0224ed4c92e576743d5925aa5daed47237",
+      "failed_checks": 0,
+      "method": "stdlib single process, no project imports or subprocesses",
+      "passed_checks": 17897
+    },
+    "verifier_sha256": "332451b7b0b425acf68da794b8c1532126fbccc9f14cee609c8bfb8a45ee088c"
+  },
+  "source_summary_sha256": "be605366d89893745829ae2830cb47a0e9246eced9b78fbef0b422cf7006f85b",
+  "original_mainline": {
+    "card_reward_choices": 9072,
+    "card_skipped": 57,
+    "card_skip_rate": 0.006283068783068783,
+    "shop_purchases": 1007,
+    "skip_repeat_exempt_by_screen": {
+      "combat": 0,
+      "hand_select": 0,
+      "grid": 39,
+      "victory": 0,
+      "death": 0,
+      "none": 0,
+      "card_reward": 54,
+      "combat_reward": 0,
+      "event": 0,
+      "map": 1758,
+      "room": 0,
+      "shop": 56,
+      "boss_reward": 1
+    },
+    "pre_boss_deck_sizes": [
+      {
+        "seed": 2000000497,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000749,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000665,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000469,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000602,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000001008,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000056,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000000,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000889,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000427,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000833,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000224,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000028,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000294,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000315,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000434,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000518,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000616,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000210,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000301,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000798,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000735,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000763,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000308,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000728,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000560,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000581,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000147,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000609,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000714,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000896,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000035,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000245,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000882,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000364,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000868,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000966,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000329,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000182,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000952,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000378,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000847,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000077,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000903,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000273,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000707,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000931,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000070,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000910,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000189,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000203,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000098,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000511,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000644,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000819,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000007,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000623,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000001015,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000574,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000392,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000119,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000021,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000504,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000280,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000805,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000875,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000630,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000042,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000105,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000756,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000588,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000112,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000385,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000343,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000350,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000840,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000399,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000672,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000679,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000217,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000063,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000168,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000049,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000001022,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000812,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000812,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000637,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000175,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000175,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000322,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000854,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000287,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000476,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000924,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000462,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000448,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000945,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000238,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000238,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 27
+      },
+      {
+        "seed": 2000000161,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000161,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000987,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000196,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000231,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000084,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000988,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000561,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000442,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000071,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000862,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000449,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000883,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000848,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000981,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000148,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000897,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000624,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 14
+      },
+      {
+        "seed": 2000000855,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000001023,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000267,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000491,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000505,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000806,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000092,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000330,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000001016,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000141,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000106,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000470,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000589,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000302,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000162,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000638,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000008,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000813,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000050,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000022,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000113,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000512,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000666,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000582,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000687,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000680,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000001002,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000309,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000743,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000785,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000771,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000379,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000078,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000337,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000477,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000099,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000827,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000554,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000344,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000372,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000274,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000596,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000694,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000820,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000155,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000183,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000960,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000295,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000393,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000428,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000890,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000323,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000540,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000778,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000435,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000414,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000547,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000029,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000057,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000407,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000722,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000953,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000197,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000603,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000365,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000701,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000568,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000631,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000925,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000281,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000281,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000218,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000484,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000764,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000799,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000799,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000456,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000876,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000876,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 29
+      },
+      {
+        "seed": 2000000211,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000708,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000708,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000253,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000253,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000967,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000127,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000834,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000064,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000400,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000918,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000036,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000036,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 26
+      },
+      {
+        "seed": 2000000911,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000911,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000358,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000610,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000463,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000001009,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000001009,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000673,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000120,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000120,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 26
+      },
+      {
+        "seed": 2000000156,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000226,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000611,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000835,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000177,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 14
+      },
+      {
+        "seed": 2000000240,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000877,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000590,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000001003,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000688,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000569,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000653,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000926,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000317,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000352,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000443,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000660,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000947,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000387,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000548,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000849,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000415,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000002,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000114,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000807,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000793,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000107,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000268,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000485,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000044,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000303,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000464,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000037,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000884,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000023,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000135,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000695,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000058,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000254,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000212,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000275,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000716,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000555,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000821,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000828,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000709,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000702,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000989,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000030,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000842,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000345,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000499,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000541,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000597,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000506,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000478,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000408,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000422,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000674,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000919,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000786,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000954,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000401,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000534,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000800,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000604,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000184,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000646,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000205,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000583,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000940,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000394,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000870,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000001017,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000009,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000233,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000625,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000282,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000898,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000905,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000373,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000100,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000982,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000632,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000219,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000093,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000618,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000758,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000001010,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000912,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000576,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000079,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000968,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000247,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000814,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000639,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 13
+      },
+      {
+        "seed": 2000000730,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000492,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000324,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000261,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000170,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000170,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000975,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000359,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000520,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000933,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000065,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000065,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 27
+      },
+      {
+        "seed": 2000000163,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000121,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000772,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000142,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000142,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000723,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000723,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000436,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000122,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000549,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000556,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000031,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000367,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000808,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000913,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000325,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000444,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000640,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000878,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000493,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000710,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000220,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000241,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000381,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000332,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000584,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000773,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000794,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000857,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000521,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 14
+      },
+      {
+        "seed": 2000000752,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000815,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000178,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000066,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000374,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000388,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000073,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000234,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000059,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000864,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000612,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000346,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000339,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000731,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 14
+      },
+      {
+        "seed": 2000000822,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000990,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000395,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000836,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000003,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000528,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000472,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000577,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000780,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000311,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000647,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000717,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000255,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000010,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000199,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000633,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000745,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000206,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000045,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000801,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000570,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000402,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000934,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000906,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000955,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000885,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000850,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000661,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000360,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000542,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000017,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000276,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000479,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000423,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000997,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000437,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000920,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000353,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000591,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000703,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000087,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000598,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000024,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000535,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000001011,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000171,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000038,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000458,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000983,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000318,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000626,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000654,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000682,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000892,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000892,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000451,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000451,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 32
+      },
+      {
+        "seed": 2000000689,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000605,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000563,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000766,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000052,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000430,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000787,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000948,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000899,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000129,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000129,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 27
+      },
+      {
+        "seed": 2000000416,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000976,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000164,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000094,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000465,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000500,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000500,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 27
+      },
+      {
+        "seed": 2000000150,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000150,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 26
+      },
+      {
+        "seed": 2000000304,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000304,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 29
+      },
+      {
+        "seed": 2000000543,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000207,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000739,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000298,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000249,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000417,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000627,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000795,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000137,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000949,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000977,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000333,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000459,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000578,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000025,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000823,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000851,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000389,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000886,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000697,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000319,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000396,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000585,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000984,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000480,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000774,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000683,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000487,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000179,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000571,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000767,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000998,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000221,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000158,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000116,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000410,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000095,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000109,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000557,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000354,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000473,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000375,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000746,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000001005,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000620,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000921,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000186,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000753,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000039,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000165,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000956,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000662,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 14
+      },
+      {
+        "seed": 2000000816,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000914,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000865,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000235,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000067,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000382,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000970,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000508,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000907,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000123,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000550,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000725,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000431,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000564,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000599,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000130,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000732,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000277,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000340,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000592,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000001019,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000788,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000081,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000935,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000046,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000655,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000228,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000305,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000837,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000053,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000711,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000711,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000928,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000648,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000844,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000942,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000088,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000312,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000060,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000515,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000001012,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000802,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000718,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000270,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000270,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000242,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000326,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000151,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 13
+      },
+      {
+        "seed": 2000000494,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000144,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000872,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000466,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000214,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000445,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000102,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000291,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000291,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 27
+      },
+      {
+        "seed": 2000000809,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000809,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000606,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000606,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 27
+      },
+      {
+        "seed": 2000000830,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000830,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000424,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000424,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 27
+      },
+      {
+        "seed": 2000000256,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000256,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000011,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000011,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 31
+      },
+      {
+        "seed": 2000000768,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000278,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000530,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000985,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000425,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000124,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000334,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000362,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000635,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000033,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000901,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000012,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000432,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000369,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000831,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000348,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000887,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000341,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000859,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000243,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000922,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 14
+      },
+      {
+        "seed": 2000000313,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000397,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000040,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000824,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000607,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000271,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000208,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000152,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000845,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000411,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000236,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000782,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000936,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000131,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000908,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000628,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000964,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000026,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000677,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000019,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000068,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000047,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000600,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000796,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000096,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000138,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000852,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000810,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000754,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000222,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000173,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000320,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000894,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000264,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000509,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000838,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000705,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000817,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000691,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000292,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000306,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000537,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000376,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000285,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000166,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000516,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000299,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000803,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000761,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000117,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000775,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000103,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 15
+      },
+      {
+        "seed": 2000000957,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000614,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000698,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000558,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000075,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000978,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000978,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000001006,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000180,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000873,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000551,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000670,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000390,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000502,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000005,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000418,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000404,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000971,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000001020,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000383,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000999,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000950,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000054,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000474,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000474,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000572,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000572,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000145,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000145,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000719,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000719,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000593,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000001013,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000001013,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000656,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000656,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000565,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000488,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000488,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 28
+      },
+      {
+        "seed": 2000000663,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000663,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000586,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000586,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 29
+      },
+      {
+        "seed": 2000000314,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000979,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 16
+      },
+      {
+        "seed": 2000000090,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000237,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000706,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000020,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000860,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000608,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000538,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000461,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000384,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000699,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000741,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000748,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000118,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000055,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000552,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000510,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000993,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000930,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000566,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000363,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000503,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000279,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000622,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000349,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000181,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000209,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000482,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000146,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000132,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000328,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000370,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000041,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000342,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000006,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000076,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000188,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000419,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000895,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000454,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000545,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000902,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000937,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000573,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000650,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000594,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000769,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000174,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000986,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000013,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 24
+      },
+      {
+        "seed": 2000000195,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000909,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000657,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000001007,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000923,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000524,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000874,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000139,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000321,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000790,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000125,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000335,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000531,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000048,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000804,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000958,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000755,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000734,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000475,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000636,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000797,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000230,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000300,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000692,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000713,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000377,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000412,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000489,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000062,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 23
+      },
+      {
+        "seed": 2000000286,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000167,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000517,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000034,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000720,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000916,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000244,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 18
+      },
+      {
+        "seed": 2000000083,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000104,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000202,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000069,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000027,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000027,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000251,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 22
+      },
+      {
+        "seed": 2000000223,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000867,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000867,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 28
+      },
+      {
+        "seed": 2000000293,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000293,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 28
+      },
+      {
+        "seed": 2000000216,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000216,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 26
+      },
+      {
+        "seed": 2000000307,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000853,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000853,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 25
+      },
+      {
+        "seed": 2000000272,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000587,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 21
+      },
+      {
+        "seed": 2000000587,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 28
+      },
+      {
+        "seed": 2000000468,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000888,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 17
+      },
+      {
+        "seed": 2000000818,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 19
+      },
+      {
+        "seed": 2000000818,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 28
+      },
+      {
+        "seed": 2000000951,
+        "act": 1,
+        "floor": 16,
+        "deck_size": 20
+      },
+      {
+        "seed": 2000000951,
+        "act": 2,
+        "floor": 33,
+        "deck_size": 29
+      }
+    ],
+    "scope": "actual_mainline_completed_dev1024_trajectories_only"
+  },
+  "artifacts": {
+    "audit": "inventory/e4-audit-roots.json",
+    "episodes": "inventory/E4-C81-job4032-stage5-0-N32-D1024-episodes.json.gz",
+    "original_gzip_sha256": "9cd59526d34bcae98f9945f9b45c2550496b5c2db18cf7a34df3cc9781627a4f",
+    "original_gzip_bytes": 193179,
+    "roots_before": 522,
+    "roots_after": 540,
+    "rounds_before": 29,
+    "rounds_after": 30
+  },
+  "job_lifecycle": {
+    "active": true,
+    "final_allocation_cost": null,
+    "reservation_node_seconds": 12600,
+    "old3897_hold": 12600,
+    "old3967_hold": 14400
+  },
+  "original_mac_status": "pending_mac_original_replay"
+}
