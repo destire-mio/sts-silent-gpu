@@ -1,0 +1,162 @@
+{
+  "at": "2026-10-27T12:46:36.380629+00:00",
+  "status": "eval_a_running_startup_CUDA5_parent_verified",
+  "job_id": 4138,
+  "task": "eval-a",
+  "source_commit": "be2c262a234d397eb392172ec4b247834326e8be",
+  "runtime": "/home/zhuyouwei/spire-downloads/c85-step0-slurm-eval-a-be2c262",
+  "output": "/home/zhuyouwei/spire-downloads/e4-c85-step0-eval-a-rl8",
+  "manifest_sha256": "4e27d6730be4d33a4d683b903f3eb6a1661d454ff111de74adece3a8088883d1",
+  "world_size": 7,
+  "cpus": 8,
+  "memory_mib": 16407,
+  "wall_seconds": 2700,
+  "reserved_once": 2362.5,
+  "new_charge": 0,
+  "startup_actual_CUDA": {
+    "status": "completed_verified_actual_exact5_this_allocation",
+    "durations": {
+      "test_cuda_effect_fields": 12.2757,
+      "test_cuda_faults": 12.7483,
+      "test_cuda_parity": 36.4308,
+      "test_cuda_root_cache": 12.8247,
+      "test_cuda_dispatch": 0.528615
+    },
+    "job_id": 4138,
+    "inputs_before": {
+      "bytes": 451400,
+      "sha256": "791880eb1ead2b451b43e665d8a082e70cedf7dee0d2b87d0b860a8166705a1e"
+    },
+    "whole_packet_sha256": "eb96bf7abb3250dcfe67d4703917468c4bfc54b0aaa0aac878b85653b1966474",
+    "whole_packet_bytes": 4180,
+    "limits": "Actual allocated hostdispatch+4CUDA tests only; not a complete1024 evaluation or originalMac proof. Original discovery/source/JUnit/log bytes preserved. Inputs-before exact original bytes reconstructed only after whole original proof SHA/byte count matched.",
+    "discovery_exact5": true,
+    "compiled_executable_paths_match_frozen_build": true,
+    "host_dispatch_and_four_actual_CUDA": true,
+    "CPU_does_not_prove_GPU": true
+  },
+  "requested_evaluation": {
+    "seeds": "2000000000..2000001023",
+    "count": 1024,
+    "trials": 32,
+    "bosses_seen": 0,
+    "paired_baseline": "4082baseline0 mean19.31640625",
+    "originalRL8": true,
+    "optimizer_steps": 0
+  },
+  "latest_progress": {
+    "at": "2026-10-27T12:43:43.025643+00:00",
+    "state": "RUNNING",
+    "runtime": "00:08:39",
+    "log_bytes": 530531,
+    "log_sha256": "bdb585d16426bc81126498068dc7acc6a35e6a9a8c154c57125a964a8e948622",
+    "explicit_errors": {
+      "Traceback (most recent call last)": 0,
+      "SPIRE_ASSERT": 0,
+      "CUDA error:": 0,
+      "AssertionError": 0,
+      "RuntimeError": 0,
+      "NCCL error": 0,
+      "out of memory": 0
+    },
+    "scope": "Full log byte count/hash and7 literal error scans; only last8000 original bytes downloaded in snapshot. No complete1024 results, no originalMac proof."
+  },
+  "evaluation_complete": false,
+  "full_evaluation_results_available": false,
+  "resource_queries_this_HB": 1,
+  "resource_round": {
+    "schema": "c83_resource_cadence_v1",
+    "heartbeat_trigger": "2026-10-27T12:09:05.243000+00:00",
+    "queried_at": "2026-10-27T12:31:45.128688+00:00",
+    "task": "eval-a",
+    "next_query_not_before": "2026-10-27T12:42:15.128688+00:00",
+    "resource_query_count": 1,
+    "next_query_only_next_actual_heartbeat": true
+  },
+  "old_holds": {
+    "3897": 12600,
+    "3967": 14400,
+    "4082": 12600
+  },
+  "jobs": 42,
+  "cost_ledger": 37,
+  "tasks": 85,
+  "evidence": "hb20261027T1209/preflight-eval-a",
+  "next": "Only root reuseSSH68370 monitor own4138 actual evaluation/EXIT; no emptyqueue preflight/prepare/sbatch. CurrentHB resource1 already consumed. Next actual trigger must >=2026-10-27T12:42:15.128688+00:00 AND servercadence>=630 before once#74 scan; use actual ledger/server deadline, do not wait past an early trigger. On actualEXIT immediately preserve originalchecks/jobaggregatepeak/finalSlurm, settle actualGPUtime/8 once and only release2362.5. Full1024+18actualpaths+originalgzip/pairedseedcompare/diagnostics then parentCPUreview/publication; no inheritedMacpass, no stage1GPU.",
+  "normal_release": {
+    "at": "2026-10-27T12:35:04.515286+00:00",
+    "job_id": 4138,
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "held_before_release": "JobId=4138 JobName=spire-e4-c83-step0-eval-a UserId=zhuyouwei(1017) GroupId=zhuyouwei(1018) MCS_label=N/A Priority=0 Nice=0 Account=(null) QOS=(null) JobState=PENDING Reason=JobHeldUser Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:45:00 TimeMin=N/A SubmitTime=2026-10-27T20:33:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-27T20:33:25 Scheduler=Main Partition=N56_128G_V100 AllocNode:Sid=gpu01:2086320 ReqNodeList=gpu01 ExcNodeList=(null) NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* TRES=cpu=8,mem=16407M,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16407M MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/home/zhuyouwei/spire-downloads/c85-step0-slurm-eval-a-be2c262/job-20261027T120905Z.sbatch WorkDir=/home/zhuyouwei StdErr=/home/zhuyouwei/slurm-4138.out StdIn=/dev/null StdOut=/home/zhuyouwei/slurm-4138.out Power= TresPerNode=gres:gpu:V100:7 \n",
+    "budget_age_seconds": 226.100954,
+    "preflight_age_seconds": 198.995108
+  },
+  "budget_totals": {
+    "step_1": {
+      "charged_node_seconds": 88955.25,
+      "limit_node_seconds": 194400,
+      "reserved_node_seconds": 41962.5,
+      "limit_authorization": "Claude39 original64800 plusClaude59 supplemental129600 reclassifiedasstep1 byClaude61",
+      "active_observed_node_seconds": 0,
+      "accounting_rule": "Claude54: new jobs GPU seconds / 8; prior cumulative charges preserved",
+      "active_observed_gpu_seconds": 0,
+      "original_limit_node_seconds": 64800,
+      "continuation_limit_node_seconds": 129600,
+      "charge_order": "Consume original64800 first, then step1 continuation129600; all accumulatedcharges preserved"
+    },
+    "claude81_stage5": {
+      "charged_to": "step_1",
+      "limit_node_seconds": 30000,
+      "charged_node_seconds": 4173.75,
+      "reserved_node_seconds": 14962.5,
+      "decision": "5ec03dce7a8857af71716af3a9139c31d4625bec",
+      "source": "job3967 RL8 hot model/Adam/beta",
+      "status": "normal_RL16_mean_drop_stopped_final_evidence_verified_actual_accounting_pending",
+      "active_job": null,
+      "old_holds_preserved": {
+        "3897": 12600,
+        "3967": 14400
+      },
+      "accounting": "Actual allocation GPU seconds/8 only; receipt before reserve; no process-counter charge",
+      "world_size": 7,
+      "latest_decision": "7cbab590bc7607be19daac180722673a98ce2b5a",
+      "unsettled_job4082_hold": 12600,
+      "final_review_evidence": "c82-job4082-final-parent-accepted"
+    },
+    "claude83_step0": {
+      "charged_to": "step_1",
+      "shared_parent": "claude81_stage5",
+      "decision": "b455829ea0d2578d9c6fe3059c5f310124e195fd",
+      "limit_node_seconds": 5400,
+      "charged_node_seconds": 232.75,
+      "reserved_node_seconds": 2362.5,
+      "charged_by_task": {
+        "timing": 232.75,
+        "eval-a": 0,
+        "eval-b": 0
+      },
+      "reserved_by_task": {
+        "timing": 0.0,
+        "eval-a": 2362.5,
+        "eval-b": 0
+      },
+      "allocations_by_task": {
+        "timing": [
+          4130,
+          4137
+        ],
+        "eval-a": [
+          4138
+        ],
+        "eval-b": []
+      },
+      "verified_tasks": [],
+      "active_job": 4138,
+      "status": "eval_a_running_actual_CUDA5_verified",
+      "accounting": "Actual allocation GPU seconds/8; shared parent caps; receipt before reserve"
+    }
+  },
+  "limits": "RUNNING EndTime is allocation deadline, not final accounting. Parent did not independently PTload/execute Adam/RNG. Actual live evaluate heartbeat follows originalRL8 hot-source assertions; no optimizer step planned. summaryfault constants are not originalMac proof."
+}
