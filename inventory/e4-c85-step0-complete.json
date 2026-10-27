@@ -1,0 +1,157 @@
+{
+  "status": "completed_verified",
+  "source_commit": "be2c262a234d397eb392172ec4b247834326e8be",
+  "decision_main": "fd6ab2362a29f91e9e8be8c84a4ec3ef4e916780",
+  "scope": "All authorized stage0 execution/results CPU accepted; A/B originalMac remains pending; project notcomplete. Stage1 code authorized byClaude83, GPU requires new explicit message.",
+  "eval_a": {
+    "job_id": 4138,
+    "bosses_seen": 0,
+    "episodes": 1024,
+    "trials": 32,
+    "mean": 20.302734375,
+    "act1_boss": 655,
+    "act2_boss": 5,
+    "paired_baseline_mean": 19.31640625,
+    "paired_delta": 0.986328125,
+    "CPUchecks": 18713,
+    "actual_paths": 18,
+    "path_actions": 7396,
+    "rawgzip_bytes": 218280,
+    "evidence": "inventory/e4-c85-job4138-eval-a-final.json",
+    "publication": "705e1d47c22b519a5fbb90429ddc63ed1a6bb7d0",
+    "mac_status": "pending_mac_original_replay"
+  },
+  "eval_b": {
+    "job_id": 4145,
+    "bosses_seen": 511,
+    "episodes": 1024,
+    "trials": 32,
+    "mean": 18.7548828125,
+    "act1_boss": 483,
+    "act2_boss": 1,
+    "new_baseline": true,
+    "paired_comparison": null,
+    "CPUchecks": 17983,
+    "actual_paths": 18,
+    "path_actions": 6845,
+    "rawgzip_bytes": 201446,
+    "evidence": "inventory/e4-c85-job4145-eval-b-final.json",
+    "publication": "0857e6850ac69f3c563bc3a1d5f40c53f56d518c",
+    "mac_status": "pending_mac_original_replay"
+  },
+  "timing": {
+    "job_id": 4153,
+    "rank_count": 7,
+    "logical_global_updates": 1,
+    "complete_updates_per_rank": 1,
+    "rank_wall_mean": 244.90171341388486,
+    "rank_wall_max": 244.91911366209388,
+    "labels": {
+      "learning": {
+        "seconds_sum": 533.7401075274684,
+        "seconds_mean": 76.24858678963834,
+        "count_sum": 7,
+        "fraction_of_all_label_seconds": 0.18033154376187255,
+        "fraction_of_summed_rank_update_wall": 0.3113436232305077
+      },
+      "repeat_check": {
+        "seconds_sum": 295.7819708609022,
+        "seconds_mean": 42.25456726584317,
+        "count_sum": 21038,
+        "fraction_of_all_label_seconds": 0.09993406654292075,
+        "fraction_of_summed_rank_update_wall": 0.17253683805156883
+      },
+      "combat_sl": {
+        "seconds_sum": 916.268274322385,
+        "seconds_mean": 130.89546776034072,
+        "count_sum": 345,
+        "fraction_of_all_label_seconds": 0.3095740231589756,
+        "fraction_of_summed_rank_update_wall": 0.534481633205754
+      },
+      "event_sl": {
+        "seconds_sum": 118.31657679541968,
+        "seconds_mean": 16.902368113631383,
+        "count_sum": 356,
+        "fraction_of_all_label_seconds": 0.039974906598226986,
+        "fraction_of_summed_rank_update_wall": 0.06901694511653463
+      },
+      "mainline": {
+        "seconds_sum": 1095.6642585687805,
+        "seconds_mean": 156.5234655098258,
+        "count_sum": 896,
+        "fraction_of_all_label_seconds": 0.37018545993800417,
+        "fraction_of_summed_rank_update_wall": 0.639127686482538
+      }
+    },
+    "CPUchecks": 218,
+    "evidence": "inventory/e4-c85-job4153-timing-final.json",
+    "metrics": {
+      "policy_loss": 0.5037780897894533,
+      "value_loss": 0.00023747266444726456,
+      "imitation_fraction": 0.7752423967633928,
+      "loss": 0.4877391265560795,
+      "kl": 0.0,
+      "clip_fraction": 0.0,
+      "entropy": 0.0,
+      "ppo_loss": 0.0,
+      "imitation_loss": 0.649832996612037,
+      "ppo_samples": 0,
+      "imitation_samples": 355644,
+      "H_imit": 0.6620554240512269,
+      "imitation_kl": 0.027299330798069975,
+      "imitation_entropy_samples": 88911,
+      "imitation_beta_used": 0.031673695195944346,
+      "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+      "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+      "epochs": 4,
+      "value_explained_variance": null,
+      "ppo_return_variance": null,
+      "ppo_value_error_variance": null,
+      "value_explained_variance_samples": 0,
+      "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+      "actual_valid_decisions": 114688,
+      "frozen_noncombat_policy_samples": 103108,
+      "value_scope": "all_fragment_rows_unchanged_including_frozen_noncombat"
+    },
+    "scope": [
+      "Labelseconds are synchronized inclusive timings; mainline/combat_sl/repeat_check overlap. Sum and wall ratios are not GPU utilization or exclusive shares.",
+      "Rank wall times include measurement overhead; summed rankwall is not global elapsed time. No causal speedup comparison with profiler or other jobs.",
+      "All7 ranks perform one distributed logicalupdate; repeated global metrics must not be multiplied by7.",
+      "The actual update reports PPOsamples0, imitation355644 and frozen noncombat103108 across4epochs; no claim of a PPO policy timing benchmark."
+    ]
+  },
+  "actual_accounting": {
+    "cap": 5400,
+    "charged": 2738.75,
+    "reserved": 0,
+    "remaining": 2661.25,
+    "actual_node_seconds_by_job": {
+      "4130": 232.75,
+      "4138": 1119.125,
+      "4145": 1017.625,
+      "4153": 369.25
+    },
+    "held4137_cancelled_unstarted_charge": 0,
+    "allocations_by_task": {
+      "timing": [
+        4130,
+        4137,
+        4153
+      ],
+      "eval-a": [
+        4138
+      ],
+      "eval-b": [
+        4145
+      ]
+    },
+    "old_holds_retained": {
+      "3897": 12600,
+      "3967": 14400,
+      "4082": 12600
+    }
+  },
+  "audit_roots": 648,
+  "audit_rounds": 36,
+  "next": "Claude83 stage1 CPU implementation only: 32combat copies/select8 includingadopted, combat valuehead/GAE lambda.95, ratio entropycontrol, fixed B combat examination and comparisons. Fully reread original#83/#84 engine determinizereadiness before source work; no phase1 GPU allocation until newexplicitClaude decision. Remaining stage0cap not a newexperiment grant."
+}
