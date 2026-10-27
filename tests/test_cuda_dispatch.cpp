@@ -26,7 +26,7 @@ struct Dispatch {
     }
     cuda::TrainingState state() {
         auto& b = buffers;
-        return {b.size, b.decision_cap, b.games.data(), b.actions.data(), b.reveals.data(),
+        return {b.size, b.decision_cap, b.profile, b.games.data(), b.actions.data(), b.reveals.data(),
             {b.tags.data(), b.ids.data(), b.values.data(), b.candidate_kinds.data(), b.candidate_refs.data(),
              b.entity_mask.data(), b.candidate_mask.data(), b.entity_counts.data(), b.candidate_counts.data()},
             finished.data(), active.data(), b.done.data(), b.truncated.data(), b.reset_mask.data(), b.advanced.data(),
