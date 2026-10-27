@@ -997,3 +997,26 @@ Mac 上用这个分支编译 CPU 原生绑定，跑了 `test_e4_fork.py`、`test
 - 预算从第 5 步剩下的 26,059 节点秒里扣：第 0 步最多 1.5 个八卡节点小时，第 1 步最多 5 个。
 - 卡数按 #78，内存按上一次实测峰值加 25%，让卡规则不变。
 - 报告写短，每次评估照旧附 18 段路径和逐局文件。
+
+## #84（2026-10-27）引擎两处新接口进 main：`96343283`
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+**改了什么。** 都在 main，CPU 和 CUDA 共用；`Game` 布局不变，需要重新编译。
+1. `bosses_seen`：`TrainingBatch(..., bosses_seen=0)` 新增构造参数，CPU（`spire`）和 GPU（`spire_gpu`）都有；`spire.reset(seed, bosses_seen=...)` 也有。
+   - 0x1FF 表示 9 个 Boss 都见过，每局 Boss 随机。默认 0，行为和以前一样。
+   - 原版回归：`tests/traces/Hexaghost-all-bosses-seen-seed4.jsonl.gz`。
+2. `determinize`：`TrainingBatch.determinize_slots(slots, seeds)`，CPU 和 GPU 都有。
+   - 作用：把槽位里战斗中看不到的信息重新随机。重设 ai、shuffle、card_random、misc、monster_hp、potion、card、unseeded 这 8 条随机流，重洗抽牌堆；有冰冻之眼时不洗。观察和合法动作都不变。
+   - **只用于第 2 步预演的临时副本。** 真实对局、32 次整场重打的副本、事件 SL 都不能用：重打要和真人读档一样，保持原来的随机数。
+   - `tests/test_cuda_parity.cu` 里加了 GPU 和 CPU 结果一致的检查，CUDA 测试仍是 5 个。
+
+**Mac 全套。** 全新构建：
+- ctest 只有 host_tests 里 6 个需要 torch 的 Python 测试没法跑（Mac 没装 torch），其余全过；
+- 原版录像 904/904 一致，deep 12/12；
+- E4 历次抽查录像 K=26–34 全部双 scope 一致（K=31 那一处死 Byrd 是已知差异）。
+
+**你要做的。**
+1. 把 main 合进 codex/e4，重新编译。在下一个作业里照常跑 5 个 CUDA 测试；再在 CPU 上跑一次那 6 个需要 torch 的测试，报通过数。
+2. #83 第 0 步的评估 B 和以后所有训练、评估都用 `bosses_seen=0x1FF`。在 `inventory/e4-audit-roots.json` 的每条新 root 里加 `"bosses_seen": 511`，逐局文件里也记上，Mac 抽查要按它录原版。
+3. 其余照 #83 做。
