@@ -27,6 +27,7 @@ struct RootCache {
 struct TrainingBatch : ObservationBatch {
     const int threads;
     const uint64_t decision_cap;
+    const RunProfile profile;
     std::vector<Game> games;
     std::vector<ActionSet> actions;
     std::vector<Episode> episodes;
@@ -36,8 +37,8 @@ struct TrainingBatch : ObservationBatch {
     std::vector<uint32_t> faults;
     std::vector<int64_t> seed_indices, decision_counts, timing_ns;
 
-    TrainingBatch(int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds)
-        : ObservationBatch(size), threads(threads), decision_cap(cap), games(size, initial_game.value), actions(size), episodes(size), reveals(size),
+    TrainingBatch(int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds, uint16_t bosses_seen = 0)
+        : ObservationBatch(size), threads(threads), decision_cap(cap), profile{1, bosses_seen}, games(size, initial_game.value), actions(size), episodes(size), reveals(size),
           done(size), truncated(size), reset_mask(size), advanced(size), rewards(size), faults(size),
           seed_indices(size), decision_counts(size), timing_ns(size * 3),
           seeds_(seeds), next_seeds_(size), active_(size), slot_choices_(size) {
@@ -104,6 +105,18 @@ struct TrainingBatch : ObservationBatch {
     void reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates) {
         std::lock_guard<std::mutex> operation(operation_mutex_);
         replay(slot, seed, candidates);
+    }
+    void determinize_slots(const std::vector<int32_t>& slots, const std::vector<uint64_t>& seeds) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        SPIRE_ASSERT(slots.size() == seeds.size());
+        for (std::size_t j = 0; j < slots.size(); ++j) {
+            const int i = slots[j];
+            SPIRE_ASSERT(i >= 0 && i < size);
+            for (std::size_t k = 0; k < j; ++k) SPIRE_ASSERT(i != slots[k]);
+            spire::determinize(games[i], seeds[j]);
+            if (faults[i]) fail(i, faults[i]);
+            else publish(i);
+        }
     }
     void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
                        const std::vector<std::vector<int32_t>>& candidates) {
@@ -218,7 +231,7 @@ private:
     void replay(int i, int64_t seed, const int32_t* candidates, int count) {
         SPIRE_ASSERT(i >= 0 && i < size);
         const auto start = Clock::now();
-        spire::reset(games[i], seed);
+        spire::reset(games[i], seed, profile);
         reveals[i] = {};
         timing_ns[i * 3] += elapsed(start);
         episodes[i] = Episode{};
@@ -248,7 +261,7 @@ private:
             if (episode.finished) {
                 if (next_seeds_[i] < 0) { fail(i, static_cast<uint32_t>(obs::Fault::SeedsExhausted)); continue; }
                 const auto start = Clock::now();
-                spire::reset(g, seeds_[next_seeds_[i]]);
+                spire::reset(g, seeds_[next_seeds_[i]], profile);
                 reveals[i] = {};
                 timing_ns[i * 3] += elapsed(start);
                 episode = Episode{0, next_seeds_[i], false};

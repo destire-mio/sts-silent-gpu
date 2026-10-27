@@ -34,6 +34,7 @@ struct RootCache {
 struct TrainingBatch {
     const int size;
     const uint64_t decision_cap;
+    const RunProfile profile;
     const int device;
     Buffer<Game> games;
     Buffer<ActionSet> actions;
@@ -47,7 +48,7 @@ struct TrainingBatch {
     Buffer<int64_t> seed_indices, decision_counts, next_seeds;
     Buffer<uint64_t> next_seed;
 
-    TrainingBatch(int size, uint64_t decision_cap, const std::vector<int64_t>& seeds);
+    TrainingBatch(int size, uint64_t decision_cap, const std::vector<int64_t>& seeds, uint16_t bosses_seen = 0);
     TrainingBatch(const TrainingBatch&) = delete;
     TrainingBatch& operator=(const TrainingBatch&) = delete;
     ~TrainingBatch();
@@ -60,6 +61,7 @@ struct TrainingBatch {
     void cache_roots(RootCache& cache, const int64_t* slots, const int64_t* roots, int count, cudaStream_t stream);
     void reset_cached(const RootCache& cache, const int64_t* slots, const int64_t* roots, int count, cudaStream_t stream);
     void step_slots(const std::vector<int32_t>& slots, const std::vector<int32_t>& selected);
+    void determinize_slots(const std::vector<int32_t>& slots, const std::vector<uint64_t>& seeds);
     void reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates);
     void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
                        const std::vector<std::vector<int32_t>>& candidates);

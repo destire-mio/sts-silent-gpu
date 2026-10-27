@@ -93,7 +93,7 @@ PYBIND11_MODULE(spire_gpu, module) {
             py::gil_scoped_release release;
             b.store_tensors(s, count, d, o, reinterpret_cast<cudaStream_t>(stream));
         });
-    cls.def(py::init<int, uint64_t, const std::vector<int64_t>&>(), "size"_a, "decision_cap"_a, "seeds"_a)
+    cls.def(py::init<int, uint64_t, const std::vector<int64_t>&, uint16_t>(), "size"_a, "decision_cap"_a, "seeds"_a, "bosses_seen"_a=0)
         .def("step", [](TrainingBatch& batch, py::object selected) {
             const auto torch = py::module_::import("torch");
             if (!selected.attr("is_cuda").cast<bool>() || !selected.attr("is_contiguous")().cast<bool>() ||
@@ -107,6 +107,7 @@ PYBIND11_MODULE(spire_gpu, module) {
             batch.step(reinterpret_cast<const int32_t*>(pointer), reinterpret_cast<cudaStream_t>(stream));
         }, "candidate_indices"_a)
         .def("step_slots", &TrainingBatch::step_slots, "slots"_a, "candidate_indices"_a, py::call_guard<py::gil_scoped_release>())
+        .def("determinize_slots", &TrainingBatch::determinize_slots, "slots"_a, "seeds"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to", &TrainingBatch::reset_to, "slot"_a, "seed"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to_many", &TrainingBatch::reset_to_many, "slots"_a, "seeds"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("clone", &TrainingBatch::clone, "source"_a, "target"_a, py::call_guard<py::gil_scoped_release>())

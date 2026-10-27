@@ -5,6 +5,7 @@ namespace spire::cuda {
 struct TrainingState {
     int size;
     uint64_t decision_cap;
+    RunProfile profile;
     Game* games;
     ActionSet* actions;
     obs::History* histories;

@@ -163,7 +163,7 @@ def replay(path, engine):
         compare(20, header["ascension"], f"{path}:1:$.ascension")
         game = engine.Game()
         result = ReplayResult(header["scenario"] is not None and "encounter" in header["scenario"])
-        if result.scenario:
+        if result.scenario or (header["scenario"] is not None and "profile" in header["scenario"]):
             game.start_combat(header["seed"], header["scenario"])
         else:
             game.reset(header["seed"], header.get("playtime_at_least_800", False))

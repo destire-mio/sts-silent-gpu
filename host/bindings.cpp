@@ -116,9 +116,10 @@ struct Environment {
     FreshRunState fresh;
     obs::History reveal{};
 
-    void reset(std::int64_t seed, bool playtime_at_least_800 = false) {
+    void reset(std::int64_t seed, bool playtime_at_least_800 = false, uint16_t bosses_seen = 0) {
         RunProfile profile{};
         profile.playtime_at_least_800 = playtime_at_least_800;
+        profile.bosses_seen = bosses_seen;
         spire::reset(game, seed, profile);
         reveal = {};
         fresh = FreshRunState{};
@@ -207,6 +208,7 @@ struct Environment {
         obs::record_action(reveal, game, selected);
         spire::step(game, selected);
     }
+    void determinize(uint64_t seed) { spire::determinize(game, seed); }
 };
 
 struct EnvironmentBatch {
@@ -260,17 +262,20 @@ PYBIND11_MODULE(spire, module) {
     module.attr("PLAYED_CARDS_CAPACITY_FAULT") = played_cards_capacity_fault;
     py::class_<Environment>(module, "Game")
         .def(py::init<>())
-        .def("reset", &Environment::reset, "seed"_a, "playtime_at_least_800"_a=false)
+        .def("reset", &Environment::reset, "seed"_a, "playtime_at_least_800"_a=false, "bosses_seen"_a=0)
         .def("start_combat", &Environment::start_combat, "seed"_a, "scenario"_a)
         .def("legal_actions", &Environment::legal_actions)
         .def("step", &Environment::step, "action"_a)
+        .def("determinize", &Environment::determinize, "seed"_a)
         .def("snapshot", &Environment::snapshot)
         .def("copy", [](const Environment& env) { return env; })
         .def("search_state", &Environment::search_state)
         .def("observation", &observation)
         .def("schema_gaps", &Environment::schema_gaps)
         .def_property_readonly("fault", [](const Environment& env) { return env.game.fault; });
-    module.def("reset", [](std::int64_t seed, bool playtime_at_least_800) { Environment result; result.reset(seed, playtime_at_least_800); return result; }, "seed"_a, "playtime_at_least_800"_a=false);
+    module.def("reset", [](std::int64_t seed, bool playtime_at_least_800, uint16_t bosses_seen) {
+        Environment result; result.reset(seed, playtime_at_least_800, bosses_seen); return result;
+    }, "seed"_a, "playtime_at_least_800"_a=false, "bosses_seen"_a=0);
     module.def("start_combat", [](std::int64_t seed, const py::dict& scenario) {
         Environment result; result.start_combat(seed, scenario); return result;
     }, "seed"_a, "scenario"_a);
@@ -381,16 +386,17 @@ PYBIND11_MODULE(spire, module) {
         });
     observation_arrays(training);
     training
-        .def(py::init([](int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds) {
+        .def(py::init([](int size, int threads, uint64_t cap, const std::vector<int64_t>& seeds, uint16_t bosses_seen) {
             py::gil_scoped_release release;
-            return std::make_unique<TrainingBatch>(size, threads, cap, seeds);
-        }), "size"_a, "threads"_a, "decision_cap"_a, "seeds"_a)
+            return std::make_unique<TrainingBatch>(size, threads, cap, seeds, bosses_seen);
+        }), "size"_a, "threads"_a, "decision_cap"_a, "seeds"_a, "bosses_seen"_a=0)
         .def("step", [](TrainingBatch& batch, py::array_t<int32_t, py::array::c_style> selected) {
             if (selected.ndim() != 1 || selected.size() != batch.size) throw py::value_error("Expected one int32 candidate index per game");
             py::gil_scoped_release release;
             batch.step(selected.data());
         }, "candidate_indices"_a.noconvert())
         .def("step_slots", &TrainingBatch::step_slots, "slots"_a, "candidate_indices"_a, py::call_guard<py::gil_scoped_release>())
+        .def("determinize_slots", &TrainingBatch::determinize_slots, "slots"_a, "seeds"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to", &TrainingBatch::reset_to, "slot"_a, "seed"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to_many", &TrainingBatch::reset_to_many, "slots"_a, "seeds"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("clone", &TrainingBatch::clone, "source"_a, "target"_a, py::call_guard<py::gil_scoped_release>())

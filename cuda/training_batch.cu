@@ -8,8 +8,8 @@ static int current_device() { int device; check(cudaGetDevice(&device)); return 
 RootCache::RootCache(int n) : size(n), device(current_device()), games(n), histories(n), faults(n) {
     SPIRE_ASSERT(n > 0);
 }
-TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& seeds)
-    : size(n), decision_cap(cap), device(current_device()), games(n), actions(n), histories(n),
+TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& seeds, uint16_t bosses_seen)
+    : size(n), decision_cap(cap), profile{1, bosses_seen}, device(current_device()), games(n), actions(n), histories(n),
       tags(n * obs::tag_rows * obs::entity_capacity), candidate_kinds(n * obs::candidate_capacity),
       entity_mask(n * obs::entity_mask_bytes), candidate_mask(n * obs::candidate_mask_bytes),
       ids(n * obs::id_rows * obs::entity_capacity), values(n * obs::value_rows * obs::entity_capacity),
@@ -24,7 +24,7 @@ TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& se
 }
 TrainingBatch::~TrainingBatch() { if (device_seeds_) check(cudaFree(device_seeds_)); }
 TrainingState TrainingBatch::state() {
-    return {size, decision_cap, games.data, actions.data, histories.data,
+    return {size, decision_cap, profile, games.data, actions.data, histories.data,
         {tags.data, ids.data, values.data, candidate_kinds.data, candidate_refs.data,
          entity_mask.data, candidate_mask.data, entity_counts.data, candidate_counts.data},
         finished.data, active.data, done.data, truncated.data, reset_mask.data, advanced.data,
@@ -103,6 +103,18 @@ void TrainingBatch::step_slots(const std::vector<int32_t>& slots, const std::vec
 }
 void TrainingBatch::reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates) {
     reset_to_many({slot}, {seed}, {candidates});
+}
+void TrainingBatch::determinize_slots(const std::vector<int32_t>& slots, const std::vector<uint64_t>& seeds) {
+    SPIRE_ASSERT(slots.size() == seeds.size());
+    if (slots.empty()) return;
+    for (std::size_t j = 0; j < slots.size(); ++j) {
+        SPIRE_ASSERT(slots[j] >= 0 && slots[j] < size);
+        for (std::size_t k = 0; k < j; ++k) SPIRE_ASSERT(slots[j] != slots[k]);
+    }
+    Buffer<int32_t> ds(slots.size()); ds.upload(slots.data());
+    Buffer<uint64_t> seeds_device(seeds.size()); seeds_device.upload(seeds.data());
+    spire_training_determinize<<<(slots.size() + 31) / 32, 32>>>(state(), ds.data, seeds_device.data, slots.size());
+    check(cudaGetLastError()); check(cudaDeviceSynchronize());
 }
 void TrainingBatch::reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
                                 const std::vector<std::vector<int32_t>>& candidates) {
