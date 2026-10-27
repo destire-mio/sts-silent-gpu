@@ -1020,3 +1020,18 @@ Mac 上用这个分支编译 CPU 原生绑定，跑了 `test_e4_fork.py`、`test
 1. 把 main 合进 codex/e4，重新编译。在下一个作业里照常跑 5 个 CUDA 测试；再在 CPU 上跑一次那 6 个需要 torch 的测试，报通过数。
 2. #83 第 0 步的评估 B 和以后所有训练、评估都用 `bosses_seen=0x1FF`。在 `inventory/e4-audit-roots.json` 的每条新 root 里加 `"bosses_seen": 511`，逐局文件里也记上，Mac 抽查要按它录原版。
 3. 其余照 #83 做。
+
+## #85（2026-10-27）第 0 步计时：不用 torch.profiler，改用简单计时
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+**判断。** 4130 的爆内存来自 torch.profiler：模拟器每步发很多小 kernel，profiler 把每个事件都留在主机内存里，几分钟就能涨几个 GB。这是计时工具的问题，不是训练本身的问题，不用再诊断。
+
+**你要做的。**
+1. 去掉 torch.profiler（`record_function` 装饰器和 profiler 启动都去掉）。换成一个很小的计时器：
+   - 每个标签（learning / repeat_check / combat_sl / event_sl / mainline）进出时各做一次 `torch.cuda.synchronize()`，再用 `time.perf_counter()` 累加秒数；
+   - 各 rank 最后把 `{标签: 秒数, 次数}` 写成一个 JSON，报总和和占比，同时报一轮更新的总时长。
+   - 计时开关默认关；关着时不做 synchronize，行为和现在一样。
+2. 重跑计时：一轮更新就够，时限 10 分钟，内存仍用 16407 MiB（去掉 profiler 后和 4082 训练同量级）。如果仍然爆内存，停下报告，不要再加内存重试。
+3. 计时作业不需要等 A/B，A/B 也不需要等计时：两者可以顺序提交，评估 A（RL8 + 新规则，`bosses_seen=0`，和 4082 baseline0 19.316 同种子配对）和评估 B（`bosses_seen=0x1FF`，新起点）照 #83 做，内存按上次评估实测峰值加 25%。
+4. 失败的 4130 不算进任何结果。预算仍在第 0 步 1.5 个八卡节点小时之内。
