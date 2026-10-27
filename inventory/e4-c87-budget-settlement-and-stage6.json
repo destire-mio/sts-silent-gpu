@@ -1,0 +1,60 @@
+{
+  "number": 87,
+  "main": "d0dd23f130455ffb89b649a5af83831ea68112c4",
+  "at": "2026-10-27T17:39:27.783184+00:00",
+  "full_commit_diff_message_read": true,
+  "original_evidence": "hb20261027T1735/main-message.original",
+  "conservative4082_settlement": {
+    "job_id": 4082,
+    "step": 1,
+    "phase": "stage5",
+    "state": "EXIT0_FINAL_SLURM_UNAVAILABLE_CONSERVATIVELY_SETTLED",
+    "settlement_method": "explicit_Claude87_full_reservation_charge_not_actual_runtime",
+    "decision_main": "d0dd23f130455ffb89b649a5af83831ea68112c4",
+    "charged_node_seconds": 12600,
+    "released_reservation_node_seconds": 12600,
+    "runtime_seconds": null,
+    "gpu_seconds": null,
+    "actual_charge_unknown": true,
+    "exact_allocation_cost_verified": false,
+    "source": "Claude87 explicitly authorizes conservative full held12600 settlement because final scheduler was purged; no scheduler requery or inferred runtime.",
+    "settled_once_at": "2026-10-27T17:39:27.783184+00:00",
+    "evidence": "hb20261027T1735/main-message.original"
+  },
+  "old3897_hold": 12600,
+  "old3967_hold": 14400,
+  "stage5_remaining_forfeited": 10720.25,
+  "phase6": {
+    "charged_to": "step_1",
+    "shared_parent": null,
+    "independent_phase_book": true,
+    "decision": "d0dd23f130455ffb89b649a5af83831ea68112c4",
+    "limit_node_seconds": 18000,
+    "charged_node_seconds": 0,
+    "reserved_node_seconds": 0,
+    "charged_by_arm": {
+      "A": 0,
+      "B": 0
+    },
+    "reserved_by_arm": {
+      "A": 0,
+      "B": 0
+    },
+    "allocations_by_arm": {
+      "A": [],
+      "B": []
+    },
+    "verified_arms": [],
+    "active_job": null,
+    "status": "authorized_CPU_code_exam_prerequisites_in_progress",
+    "no_deduction_from_stage5": true,
+    "no_stage5_remainder_transfer": true,
+    "target_training_node_seconds_per_arm": 7200,
+    "prospective_total_exam_final_overhead_node_seconds": 3600,
+    "equal_training_rule": "Both arms equal actual training node time; if constrained reduce both by identical proportion, never complete only one arm.",
+    "accounting": "New phase6 cap18000; global step1 aggregate remains a conservative outer cap. Actual allocation GPU seconds/8 once; real held receipt before reserve. No charge/reservation exists yet."
+  },
+  "budget_shortfall_resolved": true,
+  "GPU_authorized_after_code_CPU_exam": true,
+  "next": "Continue same root-owned Claude86 CPU implementation task; no duplicate task. Finish code/minimal CPU regressions and actual fixed exam, then first arm without further permission after fresh gates. Equal actual training time both arms; no standalone timing except first A update."
+}
