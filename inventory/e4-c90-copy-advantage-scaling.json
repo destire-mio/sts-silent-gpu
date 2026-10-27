@@ -1,0 +1,103 @@
+{
+  "at": "2026-10-27T22:27:29.937620+00:00",
+  "decision": {
+    "at": "2026-10-27T22:20:45.851494+00:00",
+    "number": 90,
+    "decision_main": "424a8495ac27c5a51ada09659a17f1e0216bae2a",
+    "reviewed_source": "6d764ed5401a8ee81a2c1bc3bded50663cf87404",
+    "original_commit_diff_new_message_read_via_connector": true,
+    "compare_ahead_by": 1,
+    "full_new_message_read": true,
+    "local_Git_object_available": false,
+    "local_object_check_exit": 128,
+    "message_blob_sha1": "f38e2242864ef074aef5f6a12380fd32141b10a8",
+    "message_section_sha256": "28ed6c960d6b2c81ca888ca06a042ccb60f19e00a26f1599d124eedb81b6d23f",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/424a8495ac27c5a51ada09659a17f1e0216bae2a",
+    "decision": "Before any stage6 run, B copy advantage divided by cross-rank global population std +1e-8; do not recenter, leave mainline rows and A unchanged. Add one minimal CPU regression; prior86-89 authorization otherwise remains.",
+    "evidence": "hb20261027T2211",
+    "GPU_run_authorized_after_existing_gates": true,
+    "extra_permission_required": false
+  },
+  "source_parent": "6d764ed5401a8ee81a2c1bc3bded50663cf87404",
+  "source_identity": "Containing Git commit; exact SHA bound by external publication and ledgers",
+  "source_files": [
+    {
+      "path": "train/e4_stage6/copy_learner.py",
+      "bytes": 10668,
+      "sha256": "9c070a08c8994cf61888d5ec97efc952fc188c347dc60f28d8b0303a9311bf0c",
+      "git_blob_sha1": "b7e859f714c5cd1245abe89e5bfb2b1d8cf85bc8",
+      "git_blob_sha256": "9c070a08c8994cf61888d5ec97efc952fc188c347dc60f28d8b0303a9311bf0c"
+    },
+    {
+      "path": "tests/test_e4_stage6.py",
+      "bytes": 15334,
+      "sha256": "93bab251f39c290aacdfed57e4342d76ccc7ba2ee7fcfe4d3bd7fc3f23201c3d",
+      "git_blob_sha1": "61c3cb052f9aa975da93b015e08aab2a5a59146f",
+      "git_blob_sha256": "93bab251f39c290aacdfed57e4342d76ccc7ba2ee7fcfe4d3bd7fc3f23201c3d"
+    }
+  ],
+  "formula": "For B copy rows only: population std=sqrt(global_sum(x*x)/n-(global_sum(x)/n)^2); output=x/(std+1e-8). No mean subtraction.",
+  "scope": {
+    "mainline_advantages_unchanged": true,
+    "original_fragment_unmodified": true,
+    "A_normalization_unchanged": true,
+    "critic_returns_unchanged": true,
+    "normalization_before_padding": true,
+    "applied_once_per_update": true,
+    "no_added_reward_or_rule_change": true,
+    "existing86_89_gates_and_budget_unchanged": true
+  },
+  "CPU": {
+    "new_minimal_regressions": 1,
+    "real_Gloo_world": 2,
+    "copy_counts": [
+      1,
+      3
+    ],
+    "measured": [
+      {
+        "rank": 0,
+        "copies": 1,
+        "population_std": 0.9999950968477048,
+        "scaled_mean": 1.6977411210536957,
+        "mainline_unchanged": true,
+        "targets_unchanged": true
+      },
+      {
+        "rank": 1,
+        "copies": 3,
+        "population_std": 0.9999950968477048,
+        "scaled_mean": 1.6977411210536957,
+        "mainline_unchanged": true,
+        "targets_unchanged": true
+      }
+    ],
+    "repository_stage6_passed": 7,
+    "affected_regressions": 3,
+    "checks": [
+      "Global population std approximately1 despite unequal counts and rank0 localstd0",
+      "Nonzero scaled mean remains, exact raw/std result; no recentering",
+      "Mainline advantages and raw combat-value targets unchanged",
+      "Exact cursor/Adam/RNG resume after scaling, original A parity, uneven-copy DDP counts retained"
+    ],
+    "evidence": "c90-copy-advantage-scaling",
+    "broad_sweep": false
+  },
+  "actual": {
+    "original3967_checkpoint_execution": false,
+    "GPU_job": null,
+    "real1490_examination": false,
+    "learned_full1024": false,
+    "new_receipt": null,
+    "new_reserve": 0,
+    "new_charge": 0
+  },
+  "phase_budget": {
+    "book": "claude87_stage6",
+    "cap_node_seconds": 18000,
+    "charged": 0,
+    "reserved": 0,
+    "step1_old_holds": 27000
+  },
+  "next": "Use this corrected fixed source for remaining real Slurm context/helper, native0skip, protected source/anchor hashes and deployment. Existing fresh resource/budget/hash/real heldreceipt then reserve/release gates remain; no further permission needed."
+}

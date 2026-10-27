@@ -11,6 +11,7 @@ from types import SimpleNamespace
 import pytest
 import torch
 import torch.distributed as dist
+import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel
 
 from train.model import ModelConfig, Policy, packed_inputs
@@ -229,3 +230,44 @@ def test_synthetic_report_uses_engine_metric_names_and_writes_gzip_and_18_paths(
     audit = json.loads(next(directory.glob('*-audit.json')).read_bytes())
     assert len(audit['roots']) == 18
     assert audit['status'] == 'pending_mac_original_replay'
+
+
+def _copy_advantage_worker(rank, directory):
+    torch.set_num_threads(1)
+    directory = Path(directory)
+    dist.init_process_group('gloo', init_method=(directory / 'copy-std-gloo').as_uri(), rank=rank, world_size=2,
+                            timeout=timedelta(seconds=30))
+    try:
+        data = fragment()
+        mainline_advantages = data['advantages'].clone()
+        raw = torch.tensor([.001] if rank == 0 else [.002, .005, .006])
+        trial = data['combat_copies'][0]['trials'][0]
+        trial['rows'] = [deepcopy(trial['rows'][0]) for _ in raw]
+        trial['advantages'] = raw
+        trial['returns'] = torch.full_like(raw, .8)
+        cursor = begin_update(data, torch.Generator().manual_seed(1729 + rank), 4, 'B')
+        rows = cursor['rows']
+        assert torch.equal(rows['advantages'][:3], mainline_advantages)
+        assert torch.equal(data['advantages'], mainline_advantages)
+        assert torch.equal(rows['returns'][rows['copy']], trial['returns'])
+        selected = rows['advantages'][rows['copy']]
+        shards = [None, None]
+        dist.all_gather_object(shards, selected.tolist())
+        scaled = torch.tensor(shards[0] + shards[1], dtype=torch.float64)
+        original = torch.tensor([.001, .002, .005, .006], dtype=torch.float32).double()
+        expected = original / (original.std(unbiased=False) + 1e-8)
+        torch.testing.assert_close(scaled, expected, rtol=2e-6, atol=1e-6)
+        assert abs(float(scaled.std(unbiased=False)) - 1.) < 1e-5
+        assert float(scaled.mean()) > 1.
+        (directory / f'copy-std-rank-{rank}.json').write_text(json.dumps(dict(
+            rank=rank, copies=len(raw), population_std=float(scaled.std(unbiased=False)),
+            scaled_mean=float(scaled.mean()), mainline_unchanged=True, targets_unchanged=True)) + '\n')
+    finally:
+        dist.destroy_process_group()
+
+
+def test_B_copy_advantage_global_std_is_one_without_recentering_or_mainline_changes(tmp_path):
+    mp.spawn(_copy_advantage_worker, args=(str(tmp_path),), nprocs=2, join=True)
+    reports = [json.loads((tmp_path / f'copy-std-rank-{rank}.json').read_bytes()) for rank in range(2)]
+    assert [report['copies'] for report in reports] == [1, 3]
+    assert all(abs(report['population_std'] - 1.) < 1e-5 for report in reports)

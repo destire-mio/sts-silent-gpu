@@ -82,6 +82,12 @@ def begin_update(mainline, rng, epochs, arm):
     validate_training_fragment(mainline, arm)
     if arm == 'B':
         rows = combine_rows(mainline)
+        adv, copy = rows['advantages'], rows['copy']
+        moments = torch.stack((adv[copy].double().sum(), adv[copy].double().square().sum(), copy.sum().double()))
+        dist.all_reduce(moments)
+        mean = moments[0] / moments[2].clamp_min(1)
+        std = (moments[1] / moments[2].clamp_min(1) - mean.square()).clamp_min(0).sqrt()
+        rows['advantages'] = torch.where(copy, adv / (std + 1e-8), adv).float()
     else:
         names = ('data', 'offsets', 'policy_mask', 'actions', 'logs', 'values', 'returns', 'advantages', 'training_seeds', 'source_partition')
         rows = {name: mainline[name] for name in names}
