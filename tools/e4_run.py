@@ -60,7 +60,7 @@ def audit(episodes, round_name, version, commit):
     return dict(observation_version=2, status="pending_mac_original_replay",
         engine_commit=commit, current_round=round_name,
         rounds=[dict(name=round_name, roots=18, status="pending_mac_original_replay", observation_version=2)],
-        roots=[dict(seed=e["seed"], candidates=e["candidates"],
+        roots=[dict(seed=e["seed"], bosses_seen=e["bosses_seen"], candidates=e["candidates"],
                     partition="dev" if 2000000000 <= e["seed"] <= 2000004095 else "train",
                     round=round_name, source=dict(kind="frozen_policy_evaluation", policy_version=version,
                     outcome=e["outcome"])) for e in selected])

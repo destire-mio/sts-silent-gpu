@@ -15,13 +15,13 @@ def synchronize(device):
         torch.cuda.synchronize(device)
 
 
-def make_batch(size, cap, device):
+def make_batch(size, cap, device, *, bosses_seen=0):
     if device.type == "cuda":
         import spire_gpu
-        return spire_gpu.TrainingBatch(size, cap, [])
+        return spire_gpu.TrainingBatch(size, cap, [], bosses_seen=bosses_seen)
     import spire
     assert device.type == "cpu"
-    return spire.TrainingBatch(size, 1, cap, [])
+    return spire.TrainingBatch(size, 1, cap, [], bosses_seen=bosses_seen)
 
 
 def make_root_cache(size, device):

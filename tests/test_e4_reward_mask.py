@@ -57,7 +57,7 @@ def test_native_card_reward_skip_returns_once_per_floor():
     from train.e4 import FLOOR, SCREEN, RoomSearch, SegmentCollector
 
     torch.set_num_threads(1)
-    search = RoomSearch(1, 1, torch.device('cpu'), torch.Generator().manual_seed(1729), scratch_slots=2)
+    search = RoomSearch(1, 1, torch.device('cpu'), torch.Generator().manual_seed(1729), scratch_slots=2, bosses_seen=0)
     collector = SegmentCollector(search, torch.Generator().manual_seed(10))
     collector.reset([0], [10])
     # Recorded full-run-10 prefix stops at real combat rewards containing gold and a card row.

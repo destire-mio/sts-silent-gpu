@@ -126,10 +126,11 @@ class RewardLedger:
 
 
 class RoomSearch:
-    def __init__(self, lanes, trials, device, rng, *, scratch_slots=4096, inference_chunk=128):
+    def __init__(self, lanes, trials, device, rng, *, scratch_slots=4096, inference_chunk=128, bosses_seen=0x1FF):
         self.lanes, self.trials, self.device, self.rng = lanes, trials, device, rng
         self.size = lanes + scratch_slots + 128
-        self.batch = make_batch(self.size, 2**63 - 1, device)
+        self.bosses_seen = bosses_seen
+        self.batch = make_batch(self.size, 2**63 - 1, device, bosses_seen=bosses_seen)
         self.arrays = views(self.batch, device)
         for name in ("entity_counts", "candidate_counts", "faults", "done", "truncated"):
             self.arrays[name] = torch.as_tensor(getattr(self.batch, name), device=device)
@@ -839,7 +840,7 @@ class SegmentCollector:
                     if self.search.evidence_directory is not None:
                         with (self.search.evidence_directory / f"stalled-{self.rank}.jsonl").open("a") as out:
                             out.write(json.dumps(record) + "\n")
-                self.completed.append(dict(seed=self.seeds[slot], candidates=self.paths[slot],
+                self.completed.append(dict(seed=self.seeds[slot], bosses_seen=self.search.bosses_seen, candidates=self.paths[slot],
                     reach=self.rewards[slot].reach.copy(), floor=after[slot][FLOOR],
                     stall_class=stall_class,
                     noncombat=dict(counts=dict(self.search.reward_history[slot].counts)),
