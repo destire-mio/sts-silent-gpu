@@ -8,6 +8,7 @@ import time
 import torch
 
 from .model import FIELDS as views_fields, SCREENS, distribution, network_inputs, store_inputs, views
+from .e4_timing import timing
 from .rollout import make_batch
 from .e4_rewards import RewardHistory
 
@@ -59,7 +60,7 @@ def step0_mask(frame, legal, shop_opened):
     return masked
 
 
-@torch.profiler.record_function('e4.learning')
+@timing.measure('learning')
 def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
     from .e4_learner import update as learner_update
 
@@ -306,7 +307,7 @@ class RoomSearch:
         return {s: self.frame_cache[s] for s in slots}
 
     @torch.no_grad()
-    @torch.profiler.record_function('e4.repeat_check')
+    @timing.measure('repeat_check')
     def policy_masks(self, slots):
         missing = [s for s in slots if s not in self.mask_cache]
         if missing:
@@ -490,7 +491,7 @@ class RoomSearch:
         del self.available[-count:]
         return slots
 
-    @torch.profiler.record_function('e4.combat_sl')
+    @timing.measure('combat_sl')
     def combat(self, model, sources):
         selected_paths = {}
         capacity = len(self.available) // self.trials
@@ -572,7 +573,7 @@ class RoomSearch:
                 or p[ROOM] not in (EVENT_ROOM, NEOW_ROOM, 11)
                 or (p[SCREEN] == ROOM_SCREEN and p[PHASE] == COMPLETE_PHASE))
 
-    @torch.profiler.record_function('e4.event_sl')
+    @timing.measure('event_sl')
     def event(self, model, sources):
         self.event_explored = set()
         options = []
@@ -753,7 +754,7 @@ class SegmentCollector:
                                             [self.paths[i] for i in slots])
             self.search.check(slots)
 
-    @torch.profiler.record_function('e4.mainline')
+    @timing.measure('mainline')
     def choose(self, model, slots, progress):
         self.stalled = set()
         self.search.actual_lanes = [dict(lane=s, seed=self.seeds[s], steps=len(self.paths[s]),
@@ -790,7 +791,7 @@ class SegmentCollector:
                 logs[j] = action_logs[j][actions[j]]
         return actions, values, logs, imitation
 
-    @torch.profiler.record_function('e4.mainline')
+    @timing.measure('mainline')
     def advance(self, slots, actions, progress):
         active = [(s, a) for s, a in zip(slots, actions) if s not in self.stalled]
         if active:

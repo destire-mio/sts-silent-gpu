@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-27T11:13:33.467377+00:00",
+  "decision_main": "fd6ab2362a29f91e9e8be8c84a4ec3ef4e916780",
+  "claude": 85,
+  "status": "simple_timer_source_CPU18_native_test_pending",
+  "parent_source": "9e96f17f3e7749692b1f9dcc43588cb3089b1675",
+  "profiler_removed": true,
+  "timer_default_enabled": false,
+  "local_timer_tests": 5,
+  "local_combined_passed": 18,
+  "local_combined_native_unavailable": 1,
+  "limitations": "CUDA synchronizations mocked in CPU timer tests. One native mask replay cannot execute locally because spire is absent; original failure retained; must run full19 on existing remote native build before allocation.",
+  "source_algorithm_AST": "identical after replacing six observation decorators and adding timer import",
+  "A_B_runner_branch_AST": "identical",
+  "files": {
+    "train/e4.py": "6e01e4e2d211bb64faa4ed61d75e3a135322664025817a923af01f60398a1bd3",
+    "train/e4_timing.py": "8aeda44dbc0ce8fa5337794f32e4e34af3792629febd1685f0bfbdde902cec76",
+    "tests/test_e4_timing.py": "ea7a6044dbf8c14d944ff1ae2f2d8d5e92f60a8e07f47a2e20317f7edfa870f6"
+  },
+  "runner_sha256": "952ae5962f38d868d886358e86ed24eb701695c650c22b233017818d5dbde2d3",
+  "timing_retry": {
+    "initial_source": "original3967RL8_hot_model_Adam512_beta",
+    "memory_mib": 16407,
+    "max_wall_seconds": 600,
+    "on_second_OOM": "stop_and_report_no_memory_increase_retry",
+    "old_job4130": "excluded_from_results_cost232.75_preserved"
+  },
+  "A_B_wait_for_timing": false,
+  "evaluation_memory": "last actual evaluation peak plus25percent",
+  "shared_step0_cap": 5400,
+  "charged": 232.75,
+  "reserved": 0,
+  "remaining": 5167.25,
+  "bounded_observer": "CPU-only experiment superseded by85, never GPU deployed",
+  "new_job": null,
+  "new_reservation": 0,
+  "new_charge": 0,
+  "evidence": "c85-simple-timing-source; hb20261027T1105"
+}
