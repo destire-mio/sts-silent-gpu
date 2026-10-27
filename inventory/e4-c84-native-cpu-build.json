@@ -1,0 +1,220 @@
+{
+  "status": "parent_verified_compile_and_native_CPU",
+  "source": "9e96f17f3e7749692b1f9dcc43588cb3089b1675",
+  "source_clean_after_tests": true,
+  "bundle_bytes": 34212,
+  "bundle_sha256": "cbeee94154afa66e82f0f93f30abea469c6ef02f024240465a78fbd94c271342",
+  "original_files": 26,
+  "torch_modules_passed": 6,
+  "torch_tests_passed": 36,
+  "torch_tests_by_module": {
+    "test_gpu_train_check": 6,
+    "test_train_distributed": 2,
+    "test_train_packing": 2,
+    "test_train_pipeline": 1,
+    "test_train_policy": 18,
+    "test_training": 7
+  },
+  "torch_test_names": {
+    "test_gpu_train_check": [
+      "test_gpu_train_check.GPUCheckTests.test_storage_uses_measured_compact_lengths",
+      "test_gpu_train_check.GPUCheckTests.test_suite_preserves_the_allocated_cuda_device_mapping",
+      "test_gpu_train_check.GPUCheckTests.test_sweep_top_is_a_fit_and_selection_uses_end_to_end_rate",
+      "test_gpu_train_check.GPUCheckTests.test_timeout_kills_worker_process_group_and_preserves_log",
+      "test_gpu_train_check.GPUCheckTests.test_weak_efficiency_uses_per_gpu_rate",
+      "test_gpu_train_check.GPUCheckTests.test_weak_scaling_repeats_root_mixture_per_gpu"
+    ],
+    "test_train_distributed": [
+      "test_train_distributed.DistributedTests.test_ddp_matches_single_process_with_unequal_and_empty_shards",
+      "test_train_distributed.DistributedTests.test_stale_sample_rejects_entire_update"
+    ],
+    "test_train_packing": [
+      "test_train_packing.PackingTests.test_capacity_logits_losses_and_every_parameter_gradient",
+      "test_train_packing.PackingTests.test_selected_records_and_length_batches_preserve_samples"
+    ],
+    "test_train_pipeline": [
+      "test_train_pipeline.PipelineTests.test_two_device_workers_publish_versions_and_keep_trajectories"
+    ],
+    "test_train_policy": [
+      "test_train_policy.TrainerTests.test_collection_freezes_policy_and_reuses_stored_candidates",
+      "test_train_policy.TrainerTests.test_collection_releases_unused_storage",
+      "test_train_policy.TrainerTests.test_counter_matches_independent_integer_reference_and_permutation",
+      "test_train_policy.TrainerTests.test_decision_budget_keeps_terminal_targets_and_excludes_unfinished_episode",
+      "test_train_policy.TrainerTests.test_entity_order_and_chunk_sizes_preserve_rollout",
+      "test_train_policy.TrainerTests.test_evaluation_stream_is_per_seed_not_batch_order",
+      "test_train_policy.TrainerTests.test_fault_is_quarantined_without_losing_other_episode",
+      "test_train_policy.TrainerTests.test_inference_chunk_boundary_keeps_episode_identity",
+      "test_train_policy.TrainerTests.test_masking_padding_value_range_and_parameter_budget",
+      "test_train_policy.TrainerTests.test_natural_roots_do_not_grow_the_cache",
+      "test_train_policy.TrainerTests.test_post_action_fault_excludes_entire_episode_and_preserves_other_lane",
+      "test_train_policy.TrainerTests.test_repeated_roots_keep_independent_paired_attempts",
+      "test_train_policy.TrainerTests.test_returns_truncation_and_lambda",
+      "test_train_policy.TrainerTests.test_rewarded_candidate_probability_increases",
+      "test_train_policy.TrainerTests.test_root_cache_reuses_prefixes_and_keeps_rollout_bytes",
+      "test_train_policy.TrainerTests.test_tensor_collector_matches_scalar_reference",
+      "test_train_policy.TrainerTests.test_terminal_win_and_refill_match_scalar_reference",
+      "test_train_policy.TrainerTests.test_training_inputs_never_call_hidden_state_api"
+    ],
+    "test_training": [
+      "test_training.TrainingTests.test_boss_profile_snapshots",
+      "test_training.TrainingTests.test_buffer_lifetime_and_input_contract",
+      "test_training.TrainingTests.test_compact_append_gather_and_capacity",
+      "test_training.TrainingTests.test_deep_prefix_game_snapshots",
+      "test_training.TrainingTests.test_preallocated_thread_determinism_and_clone",
+      "test_training.TrainingTests.test_step_releases_gil",
+      "test_training.TrainingTests.test_tensor_interface_matches_reference_subset_and_roots"
+    ]
+  },
+  "native_determinize_passed": 1,
+  "reward_mask_tests_passed": 3,
+  "original_boss_trace": {
+    "combat": "228/228",
+    "run": "228/228",
+    "source": "tests/traces/Hexaghost-all-bosses-seen-seed4.jsonl.gz",
+    "provenance": "actual CPU replay of committed original fixture; parent did not execute Mac"
+  },
+  "steps": [
+    {
+      "name": "configure",
+      "returncode": 0,
+      "started": "2026-10-27T07:39:25.245221+00:00",
+      "ended": "2026-10-27T07:39:49.590031+00:00"
+    },
+    {
+      "name": "compile",
+      "returncode": 0,
+      "started": "2026-10-27T07:39:49.591469+00:00",
+      "ended": "2026-10-27T08:04:50.464724+00:00"
+    },
+    {
+      "name": "native_determinize",
+      "returncode": 0,
+      "started": "2026-10-27T08:04:50.469531+00:00",
+      "ended": "2026-10-27T08:04:50.537880+00:00"
+    },
+    {
+      "name": "test_gpu_train_check",
+      "returncode": 0,
+      "started": "2026-10-27T08:04:50.539733+00:00",
+      "ended": "2026-10-27T08:05:06.561676+00:00"
+    },
+    {
+      "name": "test_train_distributed",
+      "returncode": 0,
+      "started": "2026-10-27T08:05:06.563563+00:00",
+      "ended": "2026-10-27T08:06:05.375506+00:00"
+    },
+    {
+      "name": "test_train_packing",
+      "returncode": 0,
+      "started": "2026-10-27T08:06:05.377402+00:00",
+      "ended": "2026-10-27T08:06:08.405056+00:00"
+    },
+    {
+      "name": "test_train_pipeline",
+      "returncode": 0,
+      "started": "2026-10-27T08:06:08.406866+00:00",
+      "ended": "2026-10-27T08:06:22.071922+00:00"
+    },
+    {
+      "name": "test_train_policy",
+      "returncode": 0,
+      "started": "2026-10-27T08:06:22.073724+00:00",
+      "ended": "2026-10-27T08:06:28.112358+00:00"
+    },
+    {
+      "name": "test_training",
+      "returncode": 0,
+      "started": "2026-10-27T08:06:28.114345+00:00",
+      "ended": "2026-10-27T08:06:30.891142+00:00"
+    },
+    {
+      "name": "e4_reward_mask",
+      "returncode": 0,
+      "started": "2026-10-27T08:06:30.893168+00:00",
+      "ended": "2026-10-27T08:06:34.372105+00:00"
+    },
+    {
+      "name": "original_boss_trace",
+      "returncode": 0,
+      "started": "2026-10-27T08:06:34.374112+00:00",
+      "ended": "2026-10-27T08:06:36.347576+00:00"
+    }
+  ],
+  "independently_rehashed_binaries": [
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/spire.cpython-312-x86_64-linux-gnu.so",
+      "bytes": 3848248,
+      "sha256": "8348e3d554861d6796d1ba31fc69f121ea7f18db94d2ef815fbf5ea60505c2eb",
+      "actual_sha256": "8348e3d554861d6796d1ba31fc69f121ea7f18db94d2ef815fbf5ea60505c2eb"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/spire_gpu.cpython-312-x86_64-linux-gnu.so",
+      "bytes": 19302112,
+      "sha256": "461bed0f23750aa28820f3dbe1b9f5576f569db04e8ed9d0396bf19c3dcc6fec",
+      "actual_sha256": "461bed0f23750aa28820f3dbe1b9f5576f569db04e8ed9d0396bf19c3dcc6fec"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/training_state.cpython-312-x86_64-linux-gnu.so",
+      "bytes": 3504656,
+      "sha256": "267d18f337ada2c1d5a42672e0bcb704f9607c9ae11423db5ffb693ef0cbaf50",
+      "actual_sha256": "267d18f337ada2c1d5a42672e0bcb704f9607c9ae11423db5ffb693ef0cbaf50"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/test_cuda_dispatch",
+      "bytes": 1867488,
+      "sha256": "ee17845486e440e0e199ff3b281060657411d27d3c85a2aa1499bc0c2ffe9d82",
+      "actual_sha256": "ee17845486e440e0e199ff3b281060657411d27d3c85a2aa1499bc0c2ffe9d82"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/test_cuda_effect_fields",
+      "bytes": 18408,
+      "sha256": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8",
+      "actual_sha256": "528b5f40b830a63d20bb10cd8e02ccde330b160bdeff3c157cb74740621023c8"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/test_cuda_faults",
+      "bytes": 18255912,
+      "sha256": "e2bbc22e1893f906eac8215c906c9f1a57b9a6af578dc398291c5c9386ca3f6e",
+      "actual_sha256": "e2bbc22e1893f906eac8215c906c9f1a57b9a6af578dc398291c5c9386ca3f6e"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/test_cuda_parity",
+      "bytes": 18276768,
+      "sha256": "ca7a44a614a0d17d42994dc94c8982b1503cd3c6766b4564e951c305cd9b263b",
+      "actual_sha256": "ca7a44a614a0d17d42994dc94c8982b1503cd3c6766b4564e951c305cd9b263b"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/test_cuda_root_cache",
+      "bytes": 18277224,
+      "sha256": "40b0bee8582988482b7bcb7757ad0149d1cb13050c45c897b88a43649d256827",
+      "actual_sha256": "40b0bee8582988482b7bcb7757ad0149d1cb13050c45c897b88a43649d256827"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/test_determinize",
+      "bytes": 1837648,
+      "sha256": "db9117ce7ecb39426d03f9a1f5e45a4e0ade91479fa1a2c4848a3f14e2a67356",
+      "actual_sha256": "db9117ce7ecb39426d03f9a1f5e45a4e0ade91479fa1a2c4848a3f14e2a67356"
+    }
+  ],
+  "CUDA_discovered": [
+    "test_cuda_dispatch",
+    "test_cuda_effect_fields",
+    "test_cuda_faults",
+    "test_cuda_parity",
+    "test_cuda_root_cache"
+  ],
+  "CUDA_executed": 0,
+  "warnings": {
+    "make_clock_skew_present": true,
+    "make_future_mtime_present": true,
+    "cuda_partial_support_warning_count": 157,
+    "numpy_nonwritable_warning_present": true,
+    "scope": "Original warnings preserved. A new empty build was required before compile; all requested build targets and CPU tests passed. No clock/system/network setting changed. Actual GPU correctness still requires exact5 tests inside allocation."
+  },
+  "limits": "No GPU test, checkpoint load, training, new allocation, or parent Mac execution. CPU tests alone are not CUDA acceptance.",
+  "evidence_directory": "c84-native-cpu-parent-accepted",
+  "verifier_sha256": "8f99db5ecb314e9eac8c1fe7a54615bdb7497657d6f61c47934642593014556f",
+  "raw_parent_report_sha256": "bd683f02097f5f5a2b21665105bd3fa9d5af43fac71f935e469ce64451c8fcca",
+  "verification_scope": "Parent read helper and raw logs, parsed exact six modules36methods,3mask,1native and actual originaltrace, verified whole34212byte bundle and26individual bytes/hashes, independently rehashed9remote binaries. No tests repeated; no GPU execution."
+}
