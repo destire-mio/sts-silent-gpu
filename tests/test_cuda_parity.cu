@@ -101,9 +101,39 @@ static void random_and_lifecycle() {
     advance(device_capped, capped, {-1, -1});
     std::puts("CUDA random/lifecycle: 8448 batch slots, cap/reset/fault isolation/clone/root replay/seed exhaustion PASS");
 }
+static void determinized_slots() {
+    host::TrainingBatch cpu(3, 1, 1000, {1, 2, 3});
+    device::TrainingBatch gpu(3, 1000, {1, 2, 3});
+    for (int slot = 0; slot < 2; ++slot) {
+        CombatSetup setup; setup.encounter = EncounterId::JawWorm;
+        setup.deck = cpu.games[slot].run.master_deck;
+        for (int i = 0; i < cpu.games[slot].run.master_deck.size; ++i)
+            setup.deck.push_back(cpu.games[slot].run.master_deck[i]);
+        if (slot == 1) setup.relics.push_back({RelicId::FrozenEye});
+        start_combat(cpu.games[slot], setup);
+        step(cpu.games[slot], {ActionKind::EndTurn}); cpu.publish(slot);
+    }
+    gpu.games.upload(cpu.games.data()); gpu.histories.upload(cpu.reveals.data());
+    auto state = gpu.state();
+    spire_encode_batch<<<1, 32>>>(state.games, state.histories, state.observations, state.actions, state.faults, 3);
+    device::check(cudaGetLastError()); device::check(cudaDeviceSynchronize());
+    compare(gpu, cpu);
+    const Game root = cpu.games[0];
+    for (uint64_t seed : {0ULL, 42ULL, 0xffffffffffffffffULL}) {
+        cpu.determinize_slots({2, 1, 0}, {seed, seed ^ 1, seed ^ 2});
+        gpu.determinize_slots({2, 1, 0}, {seed, seed ^ 1, seed ^ 2}); compare(gpu, cpu);
+    }
+    require(std::memcmp(&root.draw, &cpu.games[0].draw, sizeof(Pile)) != 0, "parity fixture did not shuffle");
+    std::vector<int32_t> selected(3);
+    for (int i = 0; i < 2; ++i)
+        while (cpu.actions[i][selected[i]].kind != ActionKind::EndTurn) ++selected[i];
+    advance(gpu, cpu, selected);
+    cpu.determinize_slots({}, {}); gpu.determinize_slots({}, {}); compare(gpu, cpu);
+    std::puts("CUDA determinize: full Game/observations/actions/status and continuation match CPU");
+}
 int main() {
     int devices; device::check(cudaGetDeviceCount(&devices)); require(devices > 0, "CUDA parity requires a GPU");
-    routes(); random_and_lifecycle();
+    routes(); random_and_lifecycle(); determinized_slots();
     std::puts("CUDA parity: full Game bytes and all observation/status bytes match after every step");
 }
 #endif

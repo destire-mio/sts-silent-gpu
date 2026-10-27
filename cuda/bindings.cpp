@@ -89,6 +89,7 @@ PYBIND11_MODULE(spire_gpu, module) {
             batch.step(reinterpret_cast<const int32_t*>(pointer), reinterpret_cast<cudaStream_t>(stream));
         }, "candidate_indices"_a)
         .def("step_slots", &TrainingBatch::step_slots, "slots"_a, "candidate_indices"_a, py::call_guard<py::gil_scoped_release>())
+        .def("determinize_slots", &TrainingBatch::determinize_slots, "slots"_a, "seeds"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to", &TrainingBatch::reset_to, "slot"_a, "seed"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to_many", &TrainingBatch::reset_to_many, "slots"_a, "seeds"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("clone", &TrainingBatch::clone, "source"_a, "target"_a, py::call_guard<py::gil_scoped_release>())

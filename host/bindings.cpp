@@ -206,6 +206,7 @@ struct Environment {
         obs::record_action(reveal, game, selected);
         spire::step(game, selected);
     }
+    void determinize(uint64_t seed) { spire::determinize(game, seed); }
 };
 
 struct EnvironmentBatch {
@@ -263,6 +264,7 @@ PYBIND11_MODULE(spire, module) {
         .def("start_combat", &Environment::start_combat, "seed"_a, "scenario"_a)
         .def("legal_actions", &Environment::legal_actions)
         .def("step", &Environment::step, "action"_a)
+        .def("determinize", &Environment::determinize, "seed"_a)
         .def("snapshot", &Environment::snapshot)
         .def("copy", [](const Environment& env) { return env; })
         .def("search_state", &Environment::search_state)
@@ -366,6 +368,7 @@ PYBIND11_MODULE(spire, module) {
             batch.step(selected.data());
         }, "candidate_indices"_a.noconvert())
         .def("step_slots", &TrainingBatch::step_slots, "slots"_a, "candidate_indices"_a, py::call_guard<py::gil_scoped_release>())
+        .def("determinize_slots", &TrainingBatch::determinize_slots, "slots"_a, "seeds"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to", &TrainingBatch::reset_to, "slot"_a, "seed"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to_many", &TrainingBatch::reset_to_many, "slots"_a, "seeds"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("clone", &TrainingBatch::clone, "source"_a, "target"_a, py::call_guard<py::gil_scoped_release>())

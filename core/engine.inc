@@ -1777,4 +1777,20 @@ SPIRE_FN inline void step(Game& g, Action action) {
         else prune_detached_master_cards(g);
     }
 }
+SPIRE_FN inline void determinize(Game& g, uint64_t seed) {
+    if (!g.room_in_combat) return;
+    RandomXS128 seeds(seed);
+    g.rng.ai.reset(seeds.next_bits64());
+    g.rng.shuffle.reset(seeds.next_bits64());
+    g.rng.card_random.reset(seeds.next_bits64());
+    g.rng.misc.reset(seeds.next_bits64());
+    g.rng.monster_hp.reset(seeds.next_bits64());
+    g.rng.potion.reset(seeds.next_bits64());
+    g.rng.card.reset(seeds.next_bits64());
+    g.unseeded.reset(seeds.next_bits64());
+    if (!has_relic(g, RelicId::FrozenEye)) {
+        JavaRandom draw_rng(seeds.next_bits64());
+        shuffle_java(g.draw.values, g.draw.size, draw_rng);
+    }
+}
 }

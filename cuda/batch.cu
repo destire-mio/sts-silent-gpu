@@ -146,6 +146,17 @@ extern "C" __global__ void spire_training_select(spire::cuda::TrainingState b, c
     b.rewards[i] = 0; b.advanced[i] = b.reset_mask[i] = 0;
 }
 
+extern "C" __global__ void spire_training_determinize(spire::cuda::TrainingState b,
+    const int32_t* slots, const uint64_t* seeds, int count) {
+    const int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (j >= count) return;
+    const int i = slots[j];
+    spire::bind_fault(b.games[i]);
+    spire::determinize(b.games[i], seeds[j]);
+    if (b.faults[i]) b.fail(i, b.faults[i]);
+    else b.publish(i);
+}
+
 extern "C" __global__ void spire_training_refill(spire::cuda::TrainingState b, const int64_t* slots,
     const int64_t* roots, int count, const int64_t* seeds, const int64_t* offsets, const int32_t* candidates) {
     const int j = blockIdx.x * blockDim.x + threadIdx.x;
