@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-27T18:57:15.621284+00:00",
+  "number": 89,
+  "main": "35e8dbc8ceb16c318dd6f5da5d4c805a11dbac5d",
+  "full_commit_diff_message_read_via_connector": true,
+  "local_Git_object_available": false,
+  "source_evidence": "hb20261027T1849/connector-original.json",
+  "full_original_message_blob": "b649fe617a0f6d9e1e6b4cd463cf764d3ce00168",
+  "accepted_exam_samples": 1490,
+  "training_eligible": false,
+  "evaluation_accepted": true,
+  "disjoint_training_seed_range": [
+    1000000000,
+    1999999999
+  ],
+  "dev_seed_range": [
+    2000000000,
+    2000001023
+  ],
+  "exam_can_update_policy": false,
+  "exam_can_update_global_value": false,
+  "exam_can_update_combat_value": false,
+  "exam_can_be_imitation": false,
+  "actual_real_exam_used_for_any_parameter_update": false,
+  "no_actual3967_PT_load_or_GPU_run": true,
+  "previous_C88_metadata_bytes_preserved": "hb20261027T1849/before-evaluation-only89/e4-c88-stage6-combat-exam.json.gz",
+  "previous_metadata_sha256": "37b014cc317a03954249309be1ee3a9ee676746acc96f91ee5a0dafacd0dcf62",
+  "same1490_groups_prefixes": true,
+  "artifact": {
+    "path": "inventory/e4-c88-stage6-combat-exam.json.gz",
+    "bytes": 310609,
+    "sha256": "b1b25641825148558e3f1485e3562a5fef5a9fb2d109339206e78b1a4067b1d7"
+  },
+  "correction": "Claude89 explicitly corrects wording in88: formal activation is evaluation_accepted, never training eligibility. Synthetic tinyCPU regression inputs are not real1490 exam observations.",
+  "next": "Correct exam evaluator gate and assert training provenance/range before every learner entry and resumed minibatch. Continue same root code task; no new GPU authorization needed after code gates."
+}
