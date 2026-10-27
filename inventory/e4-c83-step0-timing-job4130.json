@@ -1,0 +1,196 @@
+{
+  "schema": "e4_c83_step0_timing_failure_v1",
+  "claude83": "b455829ea0d2578d9c6fe3059c5f310124e195fd",
+  "claude84": "8d24d8b59d2e5cce0f881d483d9b6c234000d354",
+  "job": {
+    "at": "2026-10-27T10:12:08.348094+00:00",
+    "job_id": 4130,
+    "status": "fault_stopped_final_oom_evidence_verified_settled_once",
+    "source_commit": "9e96f17f3e7749692b1f9dcc43588cb3089b1675",
+    "final_slurm": {
+      "JobId": "4130",
+      "JobName": "spire-e4-c83-step0-timing",
+      "UserId": "zhuyouwei(1017)",
+      "GroupId": "zhuyouwei(1018)",
+      "MCS_label": "N/A",
+      "Priority": "4294899530",
+      "Nice": "0",
+      "Account": "(null)",
+      "QOS": "(null)",
+      "JobState": "OUT_OF_MEMORY",
+      "Reason": "OutOfMemory",
+      "Dependency": "(null)",
+      "Requeue": "1",
+      "Restarts": "0",
+      "BatchFlag": "1",
+      "Reboot": "0",
+      "ExitCode": "0:125",
+      "RunTime": "00:04:26",
+      "TimeLimit": "00:10:00",
+      "TimeMin": "N/A",
+      "SubmitTime": "2026-10-27T18:00:58",
+      "EligibleTime": "2026-10-27T18:02:57",
+      "AccrueTime": "2026-10-27T18:02:57",
+      "StartTime": "2026-10-27T18:02:57",
+      "EndTime": "2026-10-27T18:07:23",
+      "Deadline": "N/A",
+      "SuspendTime": "None",
+      "SecsPreSuspend": "0",
+      "LastSchedEval": "2026-10-27T18:02:57",
+      "Scheduler": "Main",
+      "Partition": "N56_128G_V100",
+      "AllocNode:Sid": "gpu01:2086320",
+      "ReqNodeList": "gpu01",
+      "ExcNodeList": "(null)",
+      "NodeList": "gpu01",
+      "BatchHost": "gpu01",
+      "NumNodes": "1",
+      "NumCPUs": "8",
+      "NumTasks": "1",
+      "CPUs/Task": "8",
+      "ReqB:S:C:T": "0:0:*:*",
+      "TRES": "cpu=8,mem=16407M,node=1,billing=8",
+      "Socks/Node": "*",
+      "NtasksPerN:B:S:C": "0:0:*:*",
+      "CoreSpec": "*",
+      "MinCPUsNode": "8",
+      "MinMemoryNode": "16407M",
+      "MinTmpDiskNode": "0",
+      "Features": "(null)",
+      "DelayBoot": "00:00:00",
+      "OverSubscribe": "OK",
+      "Contiguous": "0",
+      "Licenses": "(null)",
+      "Network": "(null)",
+      "Command": "/home/zhuyouwei/spire-downloads/c83-step0-slurm-timing-9e96f17/job-20261027T095203Z.sbatch",
+      "WorkDir": "/home/zhuyouwei",
+      "StdErr": "/home/zhuyouwei/slurm-4130.out",
+      "StdIn": "/dev/null",
+      "StdOut": "/home/zhuyouwei/slurm-4130.out",
+      "Power": "",
+      "TresPerNode": "gres:gpu:V100:7"
+    },
+    "original_exit": 1,
+    "checks": {
+      "manifest": 0,
+      "inputs": 0,
+      "memory_peak": 0
+    },
+    "actual_input_hashes": 1851,
+    "job_aggregate_peak_bytes": 17203990528,
+    "memory_requested_mib": 16407,
+    "peak_is_oom_censored_lower_bound": true,
+    "memory_limit_bytes": 17203986432,
+    "cuda": {
+      "status": "actual_exact5_unified_pass_parent_independent",
+      "durations": {
+        "test_cuda_effect_fields": 12.2096,
+        "test_cuda_faults": 12.7406,
+        "test_cuda_parity": 36.3841,
+        "test_cuda_root_cache": 12.8153,
+        "test_cuda_dispatch": 0.532452
+      }
+    },
+    "timing_result_available": false,
+    "completed_update": null,
+    "output_files": [],
+    "A_B_started": false,
+    "new_source_PTload_proof": "Live runner reached profiler_start on7ranks after its hot-source assertions; parent did not independently load original PT files.",
+    "original_log_bytes": 164915,
+    "original_log_sha256": "58d1d549f345fff6159a86610de1dabe31152a5f02aee7acee4b047020baa452",
+    "final_slurm_sha256": "d0b1aabc71fcc138605f564edbbcd56ebe4a86d512ef499714955081bc4fc65c",
+    "exit_input_report_sha256": "ef275738686c216dec33ac4d6f18f42edf9ef47cedf41917464c8fc33b440af4",
+    "settlement": {
+      "job_id": 4130,
+      "step": 1,
+      "phase": "step0",
+      "task": "timing",
+      "gpu_seconds": 1862,
+      "charged_node_seconds": 232.75,
+      "released_reservation_node_seconds": 525,
+      "state": "OUT_OF_MEMORY",
+      "exit_code": "0:125",
+      "runtime_seconds": 266,
+      "start": "2026-10-27T18:02:57+08:00",
+      "end": "2026-10-27T18:07:23+08:00",
+      "source": "Actual terminal scontrol captured2026-10-27T10:08:02.610905Z, distinct from RUNNING trap",
+      "reason": "Cgroup host-memory OOM during profiling; no timing output",
+      "decision_main": "b455829ea0d2578d9c6fe3059c5f310124e195fd",
+      "evidence": "hb20261027T0952/preflight-timing/settlement.json",
+      "raw_bundle_sha256": "39141413d4ba15bcb31aae7ea29ca5999b8fef0b6669e02b65f0b2b33cd5ebe6",
+      "settled_once_at": "2026-10-27T10:12:08.348094+00:00"
+    },
+    "old_holds_unchanged": {
+      "3897": 12600,
+      "3967": 14400,
+      "4082": 12600
+    },
+    "evidence": "hb20261027T0952/preflight-timing",
+    "inference": "Profiler may add CPU event-buffer memory relative to prior non-profiled4082 reference; exact allocation source not yet proved. No claim of CUDA OOM or that25percent of censored peak guarantees headroom.",
+    "next": "Do not query4130 scheduler again or blindly rerun. Preserve failed output and all evidence. Diagnose/bound profiler CPU-memory usage and review CPU fixes/new source-independent memory binding before retrying same authorized stage0. No new resource query this actual heartbeat. A/B require verified timing and originalRL8 model, never failed timing outputs. Stage1GPU awaits explicit new message."
+  },
+  "parent_contract_cpu_checks": 79,
+  "parent_transaction_cpu_checks": 9,
+  "lossless_transport_checks": 2,
+  "actual_start_budget_age_seconds": 256.31284,
+  "manifest_sha256": "d4a98eee54baf3194c76e682f728f366dd5e99b15e25b6ae6004cd67fa362dc0",
+  "resources": {
+    "world": 7,
+    "cpus": 8,
+    "memory_mib": 16407,
+    "wall_seconds": 600,
+    "preflight_sha256": "1fe76d95259cfdde938ad7667aa28ebafdf84461f9fb4a37dbc4f5c6ac2ad238"
+  },
+  "cumulative": {
+    "step1_charged": 88955.25,
+    "step1_reserved": 39600,
+    "stage5_charged": 4173.75,
+    "stage5_reserved": 12600,
+    "step0_cap": 5400,
+    "step0_charged": 232.75,
+    "step0_reserved": 0
+  },
+  "original_evidence": {
+    "exit-original/full-job.log": {
+      "bytes": 164915,
+      "sha256": "58d1d549f345fff6159a86610de1dabe31152a5f02aee7acee4b047020baa452"
+    },
+    "exit-original/final-slurm.original.txt": {
+      "bytes": 1243,
+      "sha256": "d0b1aabc71fcc138605f564edbbcd56ebe4a86d512ef499714955081bc4fc65c"
+    },
+    "exit-original/exit.txt": {
+      "bytes": 41,
+      "sha256": "b6a3ef17f5f4b3b017df64dce2a3ca3e6dab3d0052ce9a81bce72e27deff08f7"
+    },
+    "exit-original/exit-validation.txt": {
+      "bytes": 68,
+      "sha256": "0039cf70b837b6822dd8792d215c0cf87cd99f07b1b485e72c35c162a894569d"
+    },
+    "exit-original/memory-peak.json": {
+      "bytes": 5567,
+      "sha256": "29882bef8699b58dcb0b0c4b7920f2974a21ffbc6f7306e0ca16e74fe8568eb1"
+    },
+    "exit-original/inputs-at-exit.json": {
+      "bytes": 264986,
+      "sha256": "ef275738686c216dec33ac4d6f18f42edf9ef47cedf41917464c8fc33b440af4"
+    },
+    "preflight.original.json": {
+      "bytes": 830874,
+      "sha256": "1fe76d95259cfdde938ad7667aa28ebafdf84461f9fb4a37dbc4f5c6ac2ad238"
+    },
+    "budget.original.json": {
+      "bytes": 1351,
+      "sha256": "010f619013f5a54a59198def042800cf064a6a19a9c6a515275da5a5f19df936"
+    },
+    "receipt.original.json": {
+      "bytes": 1219,
+      "sha256": "ef9e1b96e3e9f221faea21e4da37a97bb97cb4b8ff42a6e6a9d7ded77ba0509f"
+    },
+    "cuda-original/cuda-gates.junit.xml": {
+      "bytes": 2679,
+      "sha256": "ef56b24c54a03cf2b6c093e6c3edfc9081eda3a4ea9d1a843e41ae9954c11cc2"
+    }
+  },
+  "limits": "No completed timing report, full1024 A/B, audit paths, episode gzip, new Mac result or successful training claim. Original16384-decision/PPO rules and source9e unchanged. No extra budget or blind retry."
+}
