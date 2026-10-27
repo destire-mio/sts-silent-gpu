@@ -105,6 +105,18 @@ struct TrainingBatch : ObservationBatch {
         std::lock_guard<std::mutex> operation(operation_mutex_);
         replay(slot, seed, candidates);
     }
+    void determinize_slots(const std::vector<int32_t>& slots, const std::vector<uint64_t>& seeds) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        SPIRE_ASSERT(slots.size() == seeds.size());
+        for (std::size_t j = 0; j < slots.size(); ++j) {
+            const int i = slots[j];
+            SPIRE_ASSERT(i >= 0 && i < size);
+            for (std::size_t k = 0; k < j; ++k) SPIRE_ASSERT(i != slots[k]);
+            spire::determinize(games[i], seeds[j]);
+            if (faults[i]) fail(i, faults[i]);
+            else publish(i);
+        }
+    }
     void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
                        const std::vector<std::vector<int32_t>>& candidates) {
         std::lock_guard<std::mutex> operation(operation_mutex_);

@@ -59,6 +59,7 @@ struct TrainingBatch {
     void cache_roots(RootCache& cache, const int64_t* slots, const int64_t* roots, int count, cudaStream_t stream);
     void reset_cached(const RootCache& cache, const int64_t* slots, const int64_t* roots, int count, cudaStream_t stream);
     void step_slots(const std::vector<int32_t>& slots, const std::vector<int32_t>& selected);
+    void determinize_slots(const std::vector<int32_t>& slots, const std::vector<uint64_t>& seeds);
     void reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates);
     void reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
                        const std::vector<std::vector<int32_t>>& candidates);
