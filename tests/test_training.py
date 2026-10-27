@@ -9,6 +9,32 @@ import training_state
 
 
 class TrainingTests(unittest.TestCase):
+    def test_boss_profile_snapshots(self):
+        keys = ["GUARDIAN", "GHOST", "SLIME", "CHAMP", "AUTOMATON", "COLLECTOR", "CROW", "DONUT", "WIZARD"]
+        bosses = set()
+        for seed in range(1, 21):
+            profile = dict(neow_spirits=1, bosses_seen=keys, seeded=True)
+            expected = spire.start_combat(seed, {"actions": [], "profile": profile})
+            initial = expected.snapshot()
+            live, replayed = training_state.prefix_states(seed, [], bosses_seen=0x1FF)
+            self.assertEqual(live, initial)
+            self.assertEqual(replayed, initial)
+            self.assertEqual(spire.reset(seed, bosses_seen=0x1FF).snapshot(), initial)
+            game = spire.Game()
+            game.reset(seed, bosses_seen=0x1FF)
+            self.assertEqual(game.snapshot(), initial)
+            batch = spire.TrainingBatch(1, 1, 1, [seed], bosses_seen=0x1FF)
+            observation = expected.observation()
+            for name, values in zip(("tags", "ids", "values", "candidate_kinds", "candidate_refs", "entity_mask", "candidate_mask"), observation):
+                np.testing.assert_array_equal(getattr(batch, name)[0], values)
+            bosses.add(initial["run"]["bossKey"])
+            self.assertEqual(spire.reset(seed, bosses_seen=0).snapshot()["run"]["bossKey"], "The Guardian")
+        self.assertGreater(len(bosses), 1)
+        for mask in (1, 3):
+            profile["bosses_seen"] = [key for i, key in enumerate(keys) if mask & (1 << i)]
+            self.assertEqual(spire.reset(1, playtime_at_least_800=True, bosses_seen=mask).snapshot(),
+                             spire.start_combat(1, {"actions": [], "profile": profile, "playtime_at_least_800": True}).snapshot())
+
     def test_tensor_interface_matches_reference_subset_and_roots(self):
         import torch
         tensor = spire.TrainingBatch(3, 1, 2, [])

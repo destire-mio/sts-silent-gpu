@@ -136,4 +136,33 @@ static void selected_slots() {
     b.reset_to(1, 1, {-1});
     require(b.faults[1] == static_cast<uint32_t>(obs::Fault::InvalidCandidate) && !b.done[1], "invalid prefix became loss");
 }
-int main() { clone_and_isolation(); truncation(); observation_fault(); original_terminals(); selected_slots(); }
+static void boss_profile() {
+    std::vector<int64_t> seeds;
+    for (int64_t seed = 1; seed <= 40; ++seed) seeds.push_back(seed);
+    TrainingBatch seen(20, 2, 1, seeds, 0x1FF);
+    TrainingBatch unseen(20, 1, 1, seeds);
+    bool different = false;
+    for (int i = 0; i < 20; ++i) {
+        require(!seen.faults[i] && !unseen.faults[i], "profile initialization faulted");
+        different |= seen.games[i].run.boss_key != seen.games[0].run.boss_key;
+        require(unseen.games[i].run.boss_key == EncounterId::TheGuardian, "default profile changed boss");
+    }
+    require(different, "all-seen profile did not shuffle bosses");
+    int32_t choices[20]{};
+    seen.step(choices); seen.step(choices);
+    for (int i = 0; i < 20; ++i) {
+        require(!seen.faults[i] && seen.reset_mask[i] && seen.seed_indices[i] == i + 20, "profile autoreset failed");
+        require(seen.games[i].run.profile.bosses_seen == 0x1FF, "autoreset lost boss profile");
+    }
+    seen.reset_to(0, 1, {});
+    seen.reset_to_many({1, 2}, {2, 3}, {{0}, {0}});
+    const int64_t slots[]{3, 4}, roots[]{1, 0}, offsets[]{0, 0, 1};
+    seen.reset_tensors(slots, roots, 2, seeds.data(), offsets, choices);
+    for (int i = 0; i < 5; ++i) {
+        require(!seen.faults[i] && seen.games[i].run.profile.bosses_seen == 0x1FF, "explicit reset lost boss profile");
+        Game expected;
+        reset(expected, i == 3 ? 2 : i == 4 ? 1 : i + 1, RunProfile{1, 0x1FF});
+        require(seen.games[i].run.boss_key == expected.run.boss_key, "explicit reset changed seeded boss");
+    }
+}
+int main() { clone_and_isolation(); truncation(); observation_fault(); original_terminals(); selected_slots(); boss_profile(); }

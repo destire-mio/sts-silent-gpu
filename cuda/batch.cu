@@ -62,7 +62,7 @@ extern "C" __global__ void spire_training_step(spire::cuda::TrainingState b, con
         b.histories[i] = {};
         b.seed_indices[i] = b.next_seeds[i]; b.decision_counts[i] = 0;
         b.reset_mask[i] = 1; b.finished[i] = 0;
-        spire::reset(g, b.seeds[b.next_seeds[i]]);
+        spire::reset(g, b.seeds[b.next_seeds[i]], b.profile);
         return;
     }
     if (g.fault) { b.fail(i, g.fault); return; }
@@ -106,7 +106,7 @@ static SPIRE_FN void replay_root(spire::cuda::TrainingState b, int i, int64_t se
     b.seed_indices[i] = -1; b.decision_counts[i] = 0; b.finished[i] = 0;
     b.rewards[i] = 0; b.done[i] = b.truncated[i] = b.advanced[i] = 0;
     b.reset_mask[i] = 1; b.faults[i] = 0;
-    spire::reset(b.games[i], seed);
+    spire::reset(b.games[i], seed, b.profile);
     b.publish(i);
     for (int64_t k = begin; k < end; ++k) {
         if (b.faults[i]) return;

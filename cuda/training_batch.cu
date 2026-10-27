@@ -7,8 +7,8 @@ static int current_device() { int device; check(cudaGetDevice(&device)); return 
 RootCache::RootCache(int n) : size(n), device(current_device()), games(n), histories(n), faults(n) {
     SPIRE_ASSERT(n > 0);
 }
-TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& seeds)
-    : size(n), decision_cap(cap), device(current_device()), games(n), actions(n), histories(n),
+TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& seeds, uint16_t bosses_seen)
+    : size(n), decision_cap(cap), profile{1, bosses_seen}, device(current_device()), games(n), actions(n), histories(n),
       tags(n * obs::tag_rows * obs::entity_capacity), candidate_kinds(n * obs::candidate_capacity),
       entity_mask(n * obs::entity_mask_bytes), candidate_mask(n * obs::candidate_mask_bytes),
       ids(n * obs::id_rows * obs::entity_capacity), values(n * obs::value_rows * obs::entity_capacity),
@@ -23,7 +23,7 @@ TrainingBatch::TrainingBatch(int n, uint64_t cap, const std::vector<int64_t>& se
 }
 TrainingBatch::~TrainingBatch() { if (device_seeds_) check(cudaFree(device_seeds_)); }
 TrainingState TrainingBatch::state() {
-    return {size, decision_cap, games.data, actions.data, histories.data,
+    return {size, decision_cap, profile, games.data, actions.data, histories.data,
         {tags.data, ids.data, values.data, candidate_kinds.data, candidate_refs.data,
          entity_mask.data, candidate_mask.data, entity_counts.data, candidate_counts.data},
         finished.data, active.data, done.data, truncated.data, reset_mask.data, advanced.data,

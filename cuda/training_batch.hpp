@@ -33,6 +33,7 @@ struct RootCache {
 struct TrainingBatch {
     const int size;
     const uint64_t decision_cap;
+    const RunProfile profile;
     const int device;
     Buffer<Game> games;
     Buffer<ActionSet> actions;
@@ -46,7 +47,7 @@ struct TrainingBatch {
     Buffer<int64_t> seed_indices, decision_counts, next_seeds;
     Buffer<uint64_t> next_seed;
 
-    TrainingBatch(int size, uint64_t decision_cap, const std::vector<int64_t>& seeds);
+    TrainingBatch(int size, uint64_t decision_cap, const std::vector<int64_t>& seeds, uint16_t bosses_seen = 0);
     TrainingBatch(const TrainingBatch&) = delete;
     TrainingBatch& operator=(const TrainingBatch&) = delete;
     ~TrainingBatch();

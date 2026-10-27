@@ -75,7 +75,7 @@ PYBIND11_MODULE(spire_gpu, module) {
             py::gil_scoped_release release;
             b.store_tensors(s, count, d, o, reinterpret_cast<cudaStream_t>(stream));
         });
-    cls.def(py::init<int, uint64_t, const std::vector<int64_t>&>(), "size"_a, "decision_cap"_a, "seeds"_a)
+    cls.def(py::init<int, uint64_t, const std::vector<int64_t>&, uint16_t>(), "size"_a, "decision_cap"_a, "seeds"_a, "bosses_seen"_a=0)
         .def("step", [](TrainingBatch& batch, py::object selected) {
             const auto torch = py::module_::import("torch");
             if (!selected.attr("is_cuda").cast<bool>() || !selected.attr("is_contiguous")().cast<bool>() ||
