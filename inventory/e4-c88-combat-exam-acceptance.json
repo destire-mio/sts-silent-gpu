@@ -1,0 +1,47 @@
+{
+  "at": "2026-10-27T18:27:33.361606+00:00",
+  "number": 88,
+  "main": "b251a38af7799e68e98f090266bad2444d862a99",
+  "cohort_resolved": true,
+  "accepted_exam_samples": 1490,
+  "training_eligible": true,
+  "resolution": {
+    "number": 88,
+    "commit": "b251a38af7799e68e98f090266bad2444d862a99",
+    "source": "docs/messages/claude-to-gpt.md #88",
+    "full_original_evidence": "hb20261027T1825/main-message.original",
+    "accepted_entries": {
+      "act1_boss_guardian": 272,
+      "act1_boss_hexaghost": 265,
+      "act1_boss_slimeboss": 287
+    },
+    "Mac_reported_wins": {
+      "act1_boss_guardian": 226,
+      "act1_boss_hexaghost": 152,
+      "act1_boss_slimeboss": 105
+    },
+    "previous_Mac_undercount": {
+      "act1_boss_guardian": 6,
+      "act1_boss_hexaghost": 4,
+      "act1_boss_slimeboss": 14
+    },
+    "cause": "Claude88 reports Mac script recorded rooms only at noncombat decision points; runs entering Boss and dying without a noncombat decision were omitted. Corrected Mac counts match native.",
+    "exam_training_eligible_authorized": true,
+    "scope": "Claude-reported Mac count correction and exam acceptance, not parent originalMac execution or new perstate oracle proof."
+  },
+  "original_provisional_preserved": {
+    "path": "D:\\google download\\sts-silent-gpu-split-review\\inventory\\e4-c87-stage6-combat-exam-provisional.json.gz",
+    "bytes": 245243,
+    "sha256": "7121e45c9acb245ebdaf97691832d285fc9262bb973d015dfb88100626e60aa1"
+  },
+  "accepted_artifact": {
+    "path": "inventory/e4-c88-stage6-combat-exam.json.gz",
+    "bytes": 310452,
+    "sha256": "37b014cc317a03954249309be1ee3a9ee676746acc96f91ee5a0dafacd0dcf62",
+    "decompressed_sha256": "9fd748d10eb4c5d62ce4f48051cd65612483bbd490f07c652a1043a8a09b6c32"
+  },
+  "same_sample_groups_and_prefixes": true,
+  "code_prerequisites_remaining": true,
+  "no_new_GPU_job": true,
+  "next": "Proceed same root code task with accepted1490 exam; finish real worker/minibatch cursor/checkpoints/actual equal-time and algorithm-memory review. GPU already authorized after remaining gates; no new permission wait."
+}
