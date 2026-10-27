@@ -1,0 +1,187 @@
+{
+  "status": "PROVISIONAL_DATA_INTEGRITY_PASS_MAC_COHORT_REVIEW_PENDING",
+  "checks": [
+    "packet_and_all3_original_raw_JSON_bytes",
+    "original_B_gzip_hash_1024_exact_devseeds",
+    "actual_native_all1024_terminal_floors_outcomes_actioncounts_match_source",
+    "4056_actual_native_entries_exact_original_prefixes_and_native_groups",
+    "fixed_seed1729_reproduces_all1490_stratified_real_samples_and_hash",
+    "boss_counts_are_unique_seed_counts_not_duplicate_entries",
+    "cohort_discrepancy_preserved_and_training_gate_closed"
+  ],
+  "checks_passed": 7,
+  "original_source_job": 4145,
+  "source_episodes_sha256": "cd70e7ba8c7e447a98f2526fc8db7b899e099720f7c65fd288d008f95f9e20af",
+  "native_module": "/home/zhuyouwei/spire-build-e4-c84-9e96f17/spire.cpython-312-x86_64-linux-gnu.so",
+  "native_module_sha256": "8348e3d554861d6796d1ba31fc69f121ea7f18db94d2ef815fbf5ea60505c2eb",
+  "source_commit": "be2c262a234d397eb392172ec4b247834326e8be",
+  "extractor_sha256": "a6e64c05fcfe54c8de51161b668d1bf15d40fae1516d91c21628940c33309d30",
+  "native_replayed_episodes": 1024,
+  "actual_native_entries": 4056,
+  "actual_exam_samples": 1490,
+  "accepted_exam_samples": 0,
+  "actual_counts": {
+    "act1_elite": 400,
+    "act1_boss_guardian": 130,
+    "act1_boss_hexaghost": 130,
+    "act1_boss_slimeboss": 130,
+    "act2_normal": 500,
+    "act2_elite_boss": 200
+  },
+  "native_boss": {
+    "act1_boss_guardian": {
+      "entered_native_CPU": 272,
+      "wins_from_original_B_reach_join": 226,
+      "examples": [
+        {
+          "seed": 2000000000,
+          "prefix_decisions": 182
+        },
+        {
+          "seed": 2000000003,
+          "prefix_decisions": 237
+        },
+        {
+          "seed": 2000000005,
+          "prefix_decisions": 251
+        },
+        {
+          "seed": 2000000010,
+          "prefix_decisions": 248
+        },
+        {
+          "seed": 2000000016,
+          "prefix_decisions": 252
+        },
+        {
+          "seed": 2000000017,
+          "prefix_decisions": 352
+        },
+        {
+          "seed": 2000000021,
+          "prefix_decisions": 264
+        },
+        {
+          "seed": 2000000025,
+          "prefix_decisions": 248
+        }
+      ]
+    },
+    "act1_boss_hexaghost": {
+      "entered_native_CPU": 265,
+      "wins_from_original_B_reach_join": 152,
+      "examples": [
+        {
+          "seed": 2000000006,
+          "prefix_decisions": 238
+        },
+        {
+          "seed": 2000000007,
+          "prefix_decisions": 213
+        },
+        {
+          "seed": 2000000008,
+          "prefix_decisions": 185
+        },
+        {
+          "seed": 2000000011,
+          "prefix_decisions": 246
+        },
+        {
+          "seed": 2000000019,
+          "prefix_decisions": 220
+        },
+        {
+          "seed": 2000000022,
+          "prefix_decisions": 201
+        },
+        {
+          "seed": 2000000024,
+          "prefix_decisions": 230
+        },
+        {
+          "seed": 2000000038,
+          "prefix_decisions": 245
+        }
+      ]
+    },
+    "act1_boss_slimeboss": {
+      "entered_native_CPU": 287,
+      "wins_from_original_B_reach_join": 105,
+      "examples": [
+        {
+          "seed": 2000000001,
+          "prefix_decisions": 251
+        },
+        {
+          "seed": 2000000002,
+          "prefix_decisions": 288
+        },
+        {
+          "seed": 2000000004,
+          "prefix_decisions": 304
+        },
+        {
+          "seed": 2000000013,
+          "prefix_decisions": 245
+        },
+        {
+          "seed": 2000000020,
+          "prefix_decisions": 171
+        },
+        {
+          "seed": 2000000023,
+          "prefix_decisions": 119
+        },
+        {
+          "seed": 2000000033,
+          "prefix_decisions": 230
+        },
+        {
+          "seed": 2000000034,
+          "prefix_decisions": 237
+        }
+      ]
+    }
+  },
+  "Mac_reported_entries": {
+    "act1_boss_guardian": 266,
+    "act1_boss_hexaghost": 261,
+    "act1_boss_slimeboss": 273
+  },
+  "group_sampling": "Uniform without replacement within each stable sorted(seed,prefix) native stratum, private Python Random1729, takeall if shortage; reproduced independently locally.",
+  "original_Mac_execution": false,
+  "actual_GPU": false,
+  "resource_queries": 0,
+  "new_job": null,
+  "training_eligible": false,
+  "source_scope": "Complete B original action sequences replayed using CPU TrainingBatch.step_slots, floors/outcomes match all1024. This does not prove originalMac full1024 or perstate CPU/GPU parity; only Mac18trace report remains inherited for those18.",
+  "mismatch": "Native unique Boss entry seeds total824 versus Claude86 reported800; source cohorts/perseed Mac map unavailable. Not a demonstrated CPU/GPU decision divergence and not silently dismissed. Seek perseed Mac cohort mapping before accepting exam for training.",
+  "mistakes_preserved": [
+    "Full terminal path incorrectly passed to reset_to prefix API yielded NoDecision3758096387 after legal terminal; correct step_slots full path fault0. No engine change.",
+    "First extractor used Power kind5 as Monster; corrected to native schema Kind::Monster4 and2 targeted CPU tests passed; original failed script/empty output dirs retained.",
+    "Correct extractor completed all1024 but stopped at explicit Mac entry population assertion; unmodified script diagnostic rerun preserves all original entries/verified/selected data, not treated as accepted exam."
+  ],
+  "transport": {
+    "bytes": 336920,
+    "sha256": "fa868a6cd4713475bf5d505946dd329470955c3125203aebb1563e573ba66735",
+    "original_forensic_gzip_remote": "/home/zhuyouwei/spire-downloads/c87-exam-forensic-20261027T1735/forensic.json.gz",
+    "original_forensic_gzip_sha256": "42482f7aef357efae6d9f6f3496e24d4185392766040c0edd81ba627127aa40a",
+    "local_scope": "Original decoded JSON bytes and original XZ transport copied exactly; source forensic gzip retained unchanged remotely, not claimed copied locally."
+  },
+  "at": "2026-10-27T18:06:55.485855+00:00",
+  "evidence": "c87-native-exam-parent-review",
+  "CPU_schema_tests": 2,
+  "CPU_total_targeted_regressions": 18,
+  "owner": "/root",
+  "source_scope_note": "Only native CPU B replay and local integrity review are new here. Single-rank CPU DDP/Adam9 plus foundation7 remain prior accepted external staging, not production/GPU execution.",
+  "inventory_artifact": {
+    "path": "inventory/e4-c87-stage6-combat-exam-provisional.json.gz",
+    "bytes": 245243,
+    "sha256": "7121e45c9acb245ebdaf97691832d285fc9262bb973d015dfb88100626e60aa1",
+    "decompressed_bytes": 1412238,
+    "decompressed_sha256": "5b59cbf8d1db136b0479cb81367052f621833a1ec70e4e59043b9b26ea209ede",
+    "status": "provisional_not_training_eligible",
+    "compression_scope": "New exam export from exact verified native JSON, not recompression/replacement of original B C66 episodes gzip"
+  }
+}
