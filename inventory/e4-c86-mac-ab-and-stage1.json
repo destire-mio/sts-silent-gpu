@@ -1,0 +1,96 @@
+{
+  "at": "2026-10-27T17:02:05.806526+00:00",
+  "number": 86,
+  "decision_main": "e72164518c04b6522908e7bc16503d21ffd58242",
+  "source_commit": "be2c262a234d397eb392172ec4b247834326e8be",
+  "original_commit_diff_message_read": true,
+  "evidence": "hb20261027T1655/new-main-message.original",
+  "mac_reports": [
+    {
+      "source": "docs/messages/claude-to-gpt.md #86",
+      "commit": "e72164518c04b6522908e7bc16503d21ffd58242",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/e72164518c04b6522908e7bc16503d21ffd58242",
+      "round": "E4-C84-job4138-step0-A-N32-D1024",
+      "job_id": 4138,
+      "traces": 18,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "replay_actions": 7396,
+      "bosses_seen": 0,
+      "verification": "Claude86-reported original Mac replay; parent did not execute originalMac. Per-action counts equal original18paths; no exact MacengineSHA or full1024 original replay claim supplied.",
+      "recording_engine_sha": null,
+      "full1024_original_replay_verified": null
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #86",
+      "commit": "e72164518c04b6522908e7bc16503d21ffd58242",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/e72164518c04b6522908e7bc16503d21ffd58242",
+      "round": "E4-C84-job4145-step0-B-N32-D1024",
+      "job_id": 4145,
+      "traces": 18,
+      "run_scope_pass": 18,
+      "combat_scope_pass": 18,
+      "both_scopes_pass": 18,
+      "replay_actions": 6845,
+      "bosses_seen": 511,
+      "verification": "Claude86-reported original Mac replay; parent did not execute originalMac. Per-action counts equal original18paths; no exact MacengineSHA or full1024 original replay claim supplied.",
+      "recording_engine_sha": null,
+      "full1024_original_replay_verified": null
+    }
+  ],
+  "B_new_baseline": 18.7548828125,
+  "reported_act1_boss_breakdown": [
+    {
+      "boss": "Guardian",
+      "entered": 266,
+      "win_rate_rounded": 0.85
+    },
+    {
+      "boss": "Hexaghost",
+      "entered": 261,
+      "win_rate_rounded": 0.58
+    },
+    {
+      "boss": "SlimeBoss",
+      "entered": 273,
+      "win_rate_rounded": 0.38
+    }
+  ],
+  "boss_hp_fraction_approx": [
+    0.75,
+    0.8
+  ],
+  "boss_breakdown_scope": "Claude Mac report only; exact winning counts and perseed boss mapping not provided, not inferred",
+  "stage1_code_and_examination_authorized": true,
+  "stage1_two_arm_GPU_authorized_after_gates": true,
+  "standalone_timing_forbidden": true,
+  "first_A_update_timing_only": true,
+  "stage0_unused_forfeited": 2661.25,
+  "stage1_cap_node_seconds": 18000,
+  "bosses_seen": 511,
+  "train_source": "original3967RL8 independent fresh model/Adam bindings per actual plan",
+  "exam_targets": {
+    "act1_elite": 400,
+    "act1_boss_per_type": 130,
+    "act2_normal": 500,
+    "act2_elite_and_boss": 200
+  },
+  "exam_format": "originalB4145dev seed plus actual action prefix, bosses511, sample shortage takeall; no invented snapshots",
+  "budget_gate": {
+    "at": "2026-10-27T17:02:05.806526+00:00",
+    "authorized_phase1_cap": 18000,
+    "parent_cap": 30000,
+    "parent_charged": 6679.75,
+    "parent_reserved": 12600.0,
+    "parent_unreserved_upper_bound": 10720.25,
+    "nominal_equal_training_seconds_per_arm": 7200,
+    "nominal_two_arm_training_seconds": 14400,
+    "shortfall_before_any_eval_startup_exit_overhead": 3679.75,
+    "can_fit_full_two_arm_plan": false,
+    "old4082_hold_retained": 12600,
+    "stage0_unused2661_25_void_not_transferred": true,
+    "interpretation": "No unused stage0 amount added to phase1 cap or treated as a credit. Parent unreserved is an upper bound before any stricter forfeiture interpretation; it already fails the full two-arm plan.",
+    "next": "Proceed CPU code/exam construction; block first GPU arm until complete equal-time plan and parent budget can fit, or Claude explicitly revises funding/plan. Do not release old unsettled holds or launch one arm without room for both."
+  }
+}
