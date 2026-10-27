@@ -1,0 +1,171 @@
+{
+  "at": "2026-10-27T06:30:12.260073+00:00",
+  "decision_main": "b455829ea0d2578d9c6fe3059c5f310124e195fd",
+  "claude_number": 83,
+  "status": "local_CPU_verified_remote_native_CPU_and_GPU_pending_connection",
+  "source_parent": "cccb981ba30c43a4737cea99b9f2ed82b5621495",
+  "source_files": {
+    "train/e4.py": "bfc4ba03ef490456876852b0f82afde43d42cd0fb7e59c113c608234f2be2318",
+    "tests/test_e4_reward_mask.py": "f0920df93a61b4dfd4212d0db92b346edc691095bc6b2c3e1235f90b810f0313"
+  },
+  "source_cpu": {
+    "status": "pass",
+    "checks": 19,
+    "details": [
+      "one CPU mask regression all clauses",
+      "frozen noncombat policy gradient zero",
+      "frozen noncombat value gradient nonzero",
+      "event imitation gradient retained",
+      "combat policy entropy gradient retained",
+      "original action validity preserved",
+      "separate frozen sample count",
+      "exploration label True",
+      "evaluation passes greedy mode True",
+      "exploration label False",
+      "evaluation passes greedy mode False",
+      "evaluation short circuits random draws",
+      "event exploration probability and uniform eligible",
+      "shop state clone and resume",
+      "profiler label combat_sl",
+      "profiler label event_sl",
+      "profiler label repeat_check",
+      "profiler label mainline",
+      "profiler label learning"
+    ],
+    "source_sha256": "bfc4ba03ef490456876852b0f82afde43d42cd0fb7e59c113c608234f2be2318",
+    "mask_test_sha256": "f6047907dcc26954987913e7d66ded2e1168c35b8ba55bedd51de710f212ddb5",
+    "learner_metrics": {
+      "policy_loss": 0.07831540703773499,
+      "value_loss": 0.172500004991889,
+      "imitation_fraction": 0.25,
+      "loss": 0.15809902548789978,
+      "kl": -2.9802322387695312e-08,
+      "clip_fraction": 0.0,
+      "entropy": 0.8399414420127869,
+      "ppo_loss": 0.0,
+      "imitation_loss": 0.31326162815093994,
+      "ppo_samples": 1,
+      "imitation_samples": 1,
+      "H_imit": 0.5822030305862427,
+      "imitation_kl": -2.9802322387695312e-08,
+      "imitation_entropy_samples": 1,
+      "imitation_beta_used": 0.03,
+      "imitation_entropy_scope": "raw_nats_valid_imitation_first_epoch_forward",
+      "imitation_kl_scope": "k3_valid_imitation_all_epoch_forwards_vs_rollout_selected_action",
+      "epochs": 1,
+      "value_explained_variance": null,
+      "ppo_return_variance": 0.0,
+      "ppo_value_error_variance": 0.0,
+      "value_explained_variance_samples": 1,
+      "value_explained_variance_scope": "pre_update_rollout_values_valid_PPO_rows_once",
+      "actual_valid_decisions": 3,
+      "frozen_noncombat_policy_samples": 1,
+      "value_scope": "all_fragment_rows_unchanged_including_frozen_noncombat"
+    },
+    "scope": "Actual torch CPU gradients and mocked event collector; masks CPU fixtures; no engine/GPU/PT/Mac execution, event random selector static branch binding"
+  },
+  "runner_cpu": {
+    "status": "pass",
+    "checks": 20,
+    "details": [
+      "all zero count seed included",
+      "key selections zero",
+      "rest proportions",
+      "shop numerator denominator",
+      "skip rate",
+      "relic numerator denominator",
+      "real CPU profiler nested regions",
+      "CPU-only fixture no GPU claim",
+      "no B guessed API",
+      "timing allocation <=600",
+      "fixed source commit",
+      "new learner called",
+      "complete A1024 seeds",
+      "hot Adam512",
+      "fixed boss A",
+      "full gzip",
+      "perseed comparison",
+      "actual finalcost not estimated",
+      "evaluation has no optimizer or learner invocation",
+      "18 full paths binding"
+    ],
+    "runner_sha256": "d0f182a5667432f09f71351046c574cc149e733432685a26145ec1ea1125e00d",
+    "scope": "CPU metric fixtures, actual CPU torch profiler and AST control flow only; no GPU/native/PT/Mac/job execution. Helpers and strict job binding are not deployed or allocation-accepted."
+  },
+  "committed_test_additions": 1,
+  "existing_local_pure_pytest": "2 passed, 1 native test deselected; local spire module absent; shutdown pyreadline WinError reported after pytest exit0",
+  "native_CPU_test_status": "pending_remote_connection",
+  "GPU_measurements_performed": false,
+  "evalA": {
+    "status": "not_run",
+    "source": "original3967RL8",
+    "bosses_seen": 0,
+    "only_new_masks": true,
+    "seeds": [
+      2000000000,
+      2000001023
+    ],
+    "episodes": 1024,
+    "trials": 32,
+    "compare": "4082 baseline0 per seed"
+  },
+  "evalB": {
+    "status": "waiting_Mac_engine_main_followup",
+    "bosses_seen": 511
+  },
+  "timing": {
+    "status": "draft_CPU_checked_not_deployed",
+    "max_allocation_wall_seconds": 600,
+    "one_update": true,
+    "profile_categories": [
+      "combat_sl",
+      "event_sl",
+      "repeat_check",
+      "mainline",
+      "learning",
+      "cpu_gpu_sync"
+    ],
+    "no_optimization": true
+  },
+  "step1": {
+    "status": "not_started_until_step0_complete",
+    "run_authorized": false
+  },
+  "budgets": {
+    "stage5_cap": 30000,
+    "charged": 3941,
+    "reserved": 12600,
+    "unreserved": 13459,
+    "step0_subcap": 5400,
+    "step1_subcap": 18000,
+    "step1_cap_not_replenishment": true,
+    "step1_existing_charged": 88722.5,
+    "step1_existing_reserved": 39600
+  },
+  "connection": {
+    "old_session": 79411,
+    "old_native_pid": 5524,
+    "old_closed_confirmed_at": "2026-10-27T06:20:12.3208693Z",
+    "old_pid_exists": false,
+    "old_project_ssh_count": 0,
+    "old_socket_count": 0,
+    "replacement_session": 77434,
+    "normal_auth_result": "__C76_AUTH_FAILED_SESSION_EXITED__",
+    "tool_exit_code": 1,
+    "replacement_authenticated": false,
+    "closed_reconfirmed_at": "2026-10-27T06:27:04.7731456Z",
+    "remaining_project_ssh_count": 0,
+    "remaining_socket_count": 0,
+    "credential_reference": "C:/Users/15052/Desktop/mima.txt",
+    "credential_value_persisted": false,
+    "network_changes": false,
+    "retry_this_turn": false
+  },
+  "limits": [
+    "No original Mac execution by parent; Claude83 reports replay results.",
+    "No native CPU/GPU/PT loading or actual profiler CUDA timing here.",
+    "External runner is a CPU-checked draft, not an accepted allocation bundle; fresh hashes/budget/resource/held receipt/reservation/real exact5CUDA remain mandatory.",
+    "Policy freeze uses train.e4.update with a shallow policy eligibility view; original action_valid and value-learning rows are preserved. Existing old runners are not used for step0.",
+    "Old4082 finalSlurm is purged; preserve its12600 and all old holds, no estimated cost/release."
+  ]
+}

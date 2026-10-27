@@ -43,6 +43,38 @@ def combat_diagnostics_summary(rows):
     return result
 
 
+def step0_mask(frame, legal, shop_opened):
+    masked = legal.copy()
+    for a, (kind, reward) in enumerate(frame['actions']):
+        if (kind == 3 and ((frame['screen'] == 7 and reward is not None
+                           and frame['rewards'][reward][0] == 6)
+                          or (frame['screen'] == ROOM_SCREEN and frame['rest_options'][a] == 6))):
+            masked[a] = False
+        if (frame['screen'] == ROOM_SCREEN and frame['room'] == 3 and not shop_opened and kind == 6):
+            masked[a] = False
+    if frame['screen'] == 7:
+        for a, (kind, reward) in enumerate(frame['actions']):
+            if masked[a] and kind == 3 and reward is not None and frame['rewards'][reward][0] == 4:
+                return [i == a for i in range(len(masked))]
+    return masked
+
+
+@torch.profiler.record_function('e4.learning')
+def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
+    from .e4_learner import update as learner_update
+
+    policy_fragment = dict(fragment)
+    policy_fragment['action_valid'] = fragment['action_valid'] & (fragment['combat'] | fragment['imitation'])
+    result = learner_update(model, optimizer, policy_fragment, rng, epochs, imitation_beta)
+    counts = torch.stack((fragment['action_valid'].sum(), (fragment['action_valid']
+        & ~fragment['combat'] & ~fragment['imitation']).sum()))
+    torch.distributed.all_reduce(counts)
+    result['actual_valid_decisions'] = int(counts[0])
+    result['frozen_noncombat_policy_samples'] = int(counts[1]) * epochs
+    result['value_scope'] = 'all_fragment_rows_unchanged_including_frozen_noncombat'
+    return result
+
+
 class AllocationEnded(Exception):
     pass
 
@@ -107,6 +139,9 @@ class RoomSearch:
         self.seen = {}
         self.skip_returns = {}
         self.shop_skip_used = {}
+        self.shop_opened = {}
+        self.event_explored = set()
+        self.training = False
         self.mask_cache = {}
         self.frame_cache = {}
         self.reward_history = [RewardHistory() for _ in range(self.size)]
@@ -242,6 +277,7 @@ class RoomSearch:
             self.seen[s] = {key}
             self.skip_returns[s] = set()
             self.shop_skip_used[s] = False
+            self.shop_opened[s] = False
             self.mask_cache.pop(s, None)
 
     def frames(self, slots, progress):
@@ -256,7 +292,7 @@ class RoomSearch:
                 reward_indices = {i + 1: r for r, i in enumerate(rewards)}
                 refs = data['candidate_refs'][j][2]
                 nc = data['candidate_counts'][j]
-                self.frame_cache[s] = dict(screen=progress[s][SCREEN], floor=progress[s][FLOOR],
+                self.frame_cache[s] = dict(screen=progress[s][SCREEN], floor=progress[s][FLOOR], room=progress[s][ROOM],
                     rewards=[(ids[0][i], ids[3][i], values[0][i]) for i in rewards],
                     actions=[(data['candidate_kinds'][j][a], reward_indices.get(refs[a])) for a in range(nc)],
                     rest_options=[ids[3][refs[a]-1] if refs[a] and tags[0][refs[a]-1] == 11
@@ -269,6 +305,7 @@ class RoomSearch:
         return {s: self.frame_cache[s] for s in slots}
 
     @torch.no_grad()
+    @torch.profiler.record_function('e4.repeat_check')
     def policy_masks(self, slots):
         missing = [s for s in slots if s not in self.mask_cache]
         if missing:
@@ -287,6 +324,7 @@ class RoomSearch:
                 if s in frames:
                     nc = len(frames[s]['actions'])
                     masked, _ = self.reward_history[s].mask(frames[s], row[:nc])
+                    masked = step0_mask(frames[s], masked, self.shop_opened[s])
                     row = masked + [False] * (len(row) - nc)
                     assert any(row), 'Reward restriction removed every action'
                 allowed[s] = row + [False] * (128 - len(row))
@@ -396,6 +434,9 @@ class RoomSearch:
                 if kind == 7:
                     self.reward_history[s].counts["card_skipped"] += 1
             if old != new:
+                self.shop_opened[s] = False
+                if after_progress[s][ROOM] == 3:
+                    self.reward_history[s].counts['shop_rooms'] += 1
                 self.seen[s] = set()
                 self.skip_returns[s] = set()
                 self.shop_skip_used[s] = False
@@ -409,6 +450,17 @@ class RoomSearch:
                 self.skip_returns[s].add(key)
                 if before_progress[s][SCREEN] == 11:
                     self.shop_skip_used[s] = True
+            if before_progress[s][SCREEN] == ROOM_SCREEN and before_progress[s][ROOM] == 3 and kind == 3:
+                if not self.shop_opened[s]:
+                    self.reward_history[s].counts['shop_opened'] += 1
+                self.shop_opened[s] = True
+            if s in frames_before and kind == 3:
+                frame = frames_before[s]
+                _, reward = frame['actions'][action_by_slot[s]]
+                if frame['screen'] == 7 and reward is not None and frame['rewards'][reward][0] == 6:
+                    self.reward_history[s].counts['sapphire_key_selected'] += 1
+                if frame['screen'] == ROOM_SCREEN and frame['rest_options'][action_by_slot[s]] == 6:
+                    self.reward_history[s].counts['ruby_key_selected'] += 1
             self.seen[s].add(keys[s])
             self.mask_cache.pop(s, None)
         return capped
@@ -422,6 +474,7 @@ class RoomSearch:
             self.seen[t] = self.seen[s].copy()
             self.skip_returns[t] = self.skip_returns[s].copy()
             self.shop_skip_used[t] = self.shop_skip_used[s]
+            self.shop_opened[t] = self.shop_opened[s]
             self.reward_history[t] = deepcopy(self.reward_history[s])
             self.frame_cache.pop(t, None)
             if s in self.mask_cache:
@@ -436,6 +489,7 @@ class RoomSearch:
         del self.available[-count:]
         return slots
 
+    @torch.profiler.record_function('e4.combat_sl')
     def combat(self, model, sources):
         selected_paths = {}
         capacity = len(self.available) // self.trials
@@ -517,7 +571,9 @@ class RoomSearch:
                 or p[ROOM] not in (EVENT_ROOM, NEOW_ROOM, 11)
                 or (p[SCREEN] == ROOM_SCREEN and p[PHASE] == COMPLETE_PHASE))
 
+    @torch.profiler.record_function('e4.event_sl')
     def event(self, model, sources):
+        self.event_explored = set()
         options = []
         parents = []
         groups = []
@@ -577,6 +633,9 @@ class RoomSearch:
                 eligible = [s for s in slots[begin:end] if s not in capped]
                 if eligible:
                     winner = max(eligible, key=scores.get)
+                    if self.training and float(torch.rand((), device=self.device, generator=self.rng)) < .15:
+                        winner = eligible[int(torch.randint(len(eligible), (), device=self.device, generator=self.rng))]
+                        self.event_explored.add(parent)
                     self.clone([winner], [parent])
                     selected[parent] = paths[winner]
                 else:
@@ -657,6 +716,8 @@ class SegmentCollector:
                                   if s in self.search.skip_returns},
                     shop_skip_used={s: self.search.shop_skip_used[s] for s in range(self.search.lanes)
                                     if s in self.search.shop_skip_used},
+                    shop_opened={s: self.search.shop_opened[s] for s in range(self.search.lanes)
+                                 if s in self.search.shop_opened},
                     last_stall_classes=self.last_stall_classes,
                     pending=[list(p) for p in self.pending], rewards=self.rewards,
                     pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes),
@@ -673,6 +734,7 @@ class SegmentCollector:
         self.search.seen = {s: keys.copy() for s, keys in state["seen"].items()}
         self.search.skip_returns = {s: keys.copy() for s, keys in state["skip_returns"].items()}
         self.search.shop_skip_used = state["shop_skip_used"].copy()
+        self.search.shop_opened = state["shop_opened"].copy()
         self.search.mask_cache.clear()
         self.search.frame_cache.clear()
         self.search.reward_history[:self.search.lanes] = deepcopy(state["reward_history"])
@@ -690,6 +752,7 @@ class SegmentCollector:
                                             [self.paths[i] for i in slots])
             self.search.check(slots)
 
+    @torch.profiler.record_function('e4.mainline')
     def choose(self, model, slots, progress):
         self.stalled = set()
         self.search.actual_lanes = [dict(lane=s, seed=self.seeds[s], steps=len(self.paths[s]),
@@ -698,6 +761,8 @@ class SegmentCollector:
         action_logs = self.search.actual_policy_logs
         chosen = dict(zip(slots, actions))
         idle = [s for s in slots if not self.pending[s]]
+        explored = set()
+        self.search.training = self.evaluation_waiting is None
         combat = [s for s in idle if progress[s][PHASE] == COMBAT_PHASE]
         events = [s for s in idle if progress[s][PHASE] != COMBAT_PHASE and progress[s][SCREEN] == EVENT
                   and int(self.search.arrays["candidate_kinds"][s, chosen[s]]) == 3]
@@ -713,14 +778,18 @@ class SegmentCollector:
                     self.stalled.add(s)
                 else:
                     self.pending[s].append(path[0])
+            explored = self.search.event_explored
+            for s in explored:
+                self.search.reward_history[s].counts['event_sl_explored'] += 1
         imitation = []
         for j, s in enumerate(slots):
-            imitation.append(bool(self.pending[s]))
+            imitation.append(bool(self.pending[s]) and s not in explored)
             if self.pending[s]:
                 actions[j] = self.pending[s].popleft()
                 logs[j] = action_logs[j][actions[j]]
         return actions, values, logs, imitation
 
+    @torch.profiler.record_function('e4.mainline')
     def advance(self, slots, actions, progress):
         active = [(s, a) for s, a in zip(slots, actions) if s not in self.stalled]
         if active:
@@ -790,8 +859,8 @@ class SegmentCollector:
             result = dict(data=torch.empty(length * lanes * 32768, dtype=torch.uint8, device=device),
                           offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device),
                           policy_mask=torch.empty((length, lanes, 128), dtype=torch.bool, device=device))
-            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid"):
-                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid") else torch.float32
+            for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat"):
+                dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid", "combat") else torch.float32
                 result[name] = torch.zeros((length, lanes), device=device, dtype=dtype)
             self.partial = dict(result=result, next_step=0, length=length,
                                 completed_before=len(self.completed))
@@ -811,7 +880,8 @@ class SegmentCollector:
             reward, terminal = self.advance(slots, actions, progress)
             for name, data in (("actions", actions), ("values", values), ("logs", logs),
                                ("rewards", reward), ("terminal", terminal), ("imitation", imitation),
-                               ("action_valid", [s not in self.stalled for s in slots])):
+                               ("action_valid", [s not in self.stalled for s in slots]),
+                               ("combat", [progress[s][PHASE] == COMBAT_PHASE for s in slots])):
                 result[name][t] = torch.tensor(data, device=device)
             self.partial["next_step"] = t + 1
         live = [s for s in slots if self.seeds[s] is not None]
@@ -829,7 +899,7 @@ class SegmentCollector:
             bootstrap = result["values"][t]
         result["returns"] = result["values"] + result["advantages"]
         result["policy_mask"] = result["policy_mask"].reshape(-1, 128)
-        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "advantages", "returns"):
+        for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat", "advantages", "returns"):
             result[name] = result[name].flatten()
         completed = self.completed[self.partial["completed_before"]:]
         self.last_stall_classes = dict(Counter(e["stall_class"] for e in completed if e["outcome"] == "stalled"))
