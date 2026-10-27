@@ -51,6 +51,9 @@ def test_free_reward_mask_and_opened_card_memory():
 
 def test_native_card_reward_skip_returns_once_per_floor():
     import pickle
+    import pytest
+
+    pytest.importorskip('spire', reason='Native CPU binding unavailable; rule validation not executed')
 
     import torch
 

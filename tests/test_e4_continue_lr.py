@@ -52,6 +52,7 @@ def test_source_lr_override_preserves_adam_and_resume_requires_same_lr(tmp_path,
         return SimpleNamespace(lanes=lanes, rng=rng, device=device,
                                map_returned=torch.zeros(lanes, dtype=torch.bool),
                                reward_history=[None] * lanes, seen={}, mask_cache={}, frame_cache={},
+                               skip_returns={}, shop_skip_used={}, shop_opened={},
                                metrics={}, capacity_metrics={}, event_trial_max_steps=0,
                                loop_metrics={}, combat_diagnostics=None)
 

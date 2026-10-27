@@ -104,7 +104,7 @@ class Policy(nn.Module):
         self.score = nn.Sequential(nn.Linear(5 * width, width), nn.GELU(), nn.Linear(width, 1))
         self.value = nn.Sequential(nn.Linear(width, width), nn.GELU(), nn.Linear(width, 1), nn.Sigmoid())
 
-    def forward(self, observation):
+    def encode(self, observation):
         mask = observation["entity_mask"]
         values = observation["values"].transpose(1, 2)
         entities = self.numbers(values.sign() * values.abs().log1p())
@@ -116,6 +116,9 @@ class Policy(nn.Module):
         for layer in self.encoder:
             entities = layer(entities, src_key_padding_mask=~mask)
         pooled = (entities * mask.unsqueeze(-1)).sum(1) / mask.sum(1, keepdim=True)
+        return entities, pooled
+
+    def action_logits(self, observation, entities, pooled):
         table = torch.cat((torch.zeros_like(entities[:, :1]), entities), dim=1)
         refs = observation["candidate_refs"].transpose(1, 2)
         rows = torch.arange(len(table), device=table.device)[:, None, None]
@@ -124,7 +127,11 @@ class Policy(nn.Module):
         context = pooled[:, None].expand(-1, kinds.shape[1], -1)
         logits = self.score(torch.cat((pointed, kinds, context), dim=-1)).squeeze(-1)
         logits = logits.masked_fill(~observation["candidate_mask"], -torch.inf)
-        return logits, self.value(pooled).squeeze(-1)
+        return logits
+
+    def forward(self, observation):
+        entities, pooled = self.encode(observation)
+        return self.action_logits(observation, entities, pooled), self.value(pooled).squeeze(-1)
 
 
 def distribution(logits, legal):

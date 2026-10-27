@@ -21,6 +21,7 @@ def test_combat_capacity_excludes_only_faulted_trial(tmp_path):
     search.arrays = dict(faults=torch.zeros(3, dtype=torch.int64), truncated=torch.zeros(3, dtype=torch.bool))
     search.evidence_directory = tmp_path
     search.searched_decisions, search.combat_tails = 0, {}
+    search.combat_diagnostics = None
     search.clone = Mock()
     search.clock = Mock()
     search.predict = Mock(return_value=([0, 0], [], []))
