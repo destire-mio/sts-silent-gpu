@@ -15,7 +15,7 @@ from train.e4_stage6.copy_learner import begin_update, advance_update, finish_up
 
 
 SEARCH_STATE = ('metrics', 'capacity_metrics', 'loop_metrics', 'event_trial_max_steps',
-                'searched_decisions', 'combat_diagnostics', 'available')
+                'searched_decisions', 'combat_diagnostics', 'available', 'step0_fallback', 'step0_fallback_records')
 
 
 def training_health(history,health):
@@ -201,6 +201,8 @@ class TrainingWorker:
         self.collector.restore(collector)
         search = self.collector.search
         for key in SEARCH_STATE:
+            if key in ('step0_fallback', 'step0_fallback_records') and key not in saved['search']:
+                continue
             setattr(search, key, saved['search'][key])
         actual = {s: hashlib.sha256(search.batch.state_bytes(s)).hexdigest()
                   for s, seed in enumerate(self.collector.seeds) if seed is not None}

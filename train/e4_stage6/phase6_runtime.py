@@ -213,6 +213,8 @@ class Phase6Runtime:
             search_summary.update({key:max(row['metrics'][key] for row in counts) for key in SEARCH_METRICS[2:]})
             search_summary.update({key:sum(row['capacity_metrics'][key] for row in counts) for key in CAPACITY_METRICS})
             search_summary.update({key:sum(row['loop_metrics'][key] for row in counts) for key in LOOP_METRICS})
+            search_summary['step0_fallback'] = {screen: sum(row['step0_fallback'].get(screen, 0) for row in counts)
+                for screen in {screen for row in counts for screen in row['step0_fallback']}}
             capped = sum(row['capacity_metrics']['combat_played_cards_limit'] for row in counts)
             trials = sum(row['capacity_metrics']['combat_trials'] for row in counts)
             fraction = capped/trials if trials else 0.

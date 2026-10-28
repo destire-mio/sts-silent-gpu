@@ -66,7 +66,7 @@ class SyntheticCollector:
             rng=torch.Generator().manual_seed(21), batch=SimpleNamespace(state_bytes=lambda s: json.dumps(self.paths[s]).encode()),
             metrics=dict.fromkeys(SEARCH_METRICS, 0), capacity_metrics=dict.fromkeys(CAPACITY_METRICS, 0),
             loop_metrics=dict.fromkeys(LOOP_METRICS, 0), event_trial_max_steps=0, searched_decisions=0,
-            combat_diagnostics=[], available=[])
+            combat_diagnostics=[], available=[], step0_fallback={}, step0_fallback_records=[])
 
     def collect(self, policy):
         return fragment()
@@ -212,7 +212,8 @@ def test_synthetic_report_uses_engine_metric_names_and_writes_gzip_and_18_paths(
     runtime.store = Phase6Storage(tmp_path, runtime.binding)
     runtime.state = dict(stopped_reason=None)
     search = SimpleNamespace(metrics=dict.fromkeys(SEARCH_METRICS, 0), capacity_metrics=dict.fromkeys(CAPACITY_METRICS, 0),
-        loop_metrics=dict.fromkeys(LOOP_METRICS, 0), combat_diagnostics=[], event_trial_max_steps=0, searched_decisions=0)
+        loop_metrics=dict.fromkeys(LOOP_METRICS, 0), combat_diagnostics=[], event_trial_max_steps=0, searched_decisions=0,
+        step0_fallback={}, step0_fallback_records=[])
     search.capacity_metrics.update(combat_trials=1000, combat_played_cards_limit=2)
     episodes = [dict(seed=2000000000+i, floor=1, bosses_seen=511, candidates=[0, 1],
         reach=dict.fromkeys(REACH, False), outcome='death', final_deck_size=12,

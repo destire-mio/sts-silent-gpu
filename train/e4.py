@@ -56,8 +56,9 @@ def step0_mask(frame, legal, shop_opened):
     if frame['screen'] == 7:
         for a, (kind, reward) in enumerate(frame['actions']):
             if masked[a] and kind == 3 and reward is not None and frame['rewards'][reward][0] == 4:
-                return [i == a for i in range(len(masked))]
-    return masked
+                return [i == a for i in range(len(masked))], False
+    fallback = not any(masked) and any(legal)
+    return (legal.copy() if fallback else masked), fallback
 
 
 @timing.measure('learning')
@@ -145,6 +146,9 @@ class RoomSearch:
         self.event_explored = set()
         self.training = False
         self.mask_cache = {}
+        self.step0_fallback_slots = set()
+        self.step0_fallback = Counter()
+        self.step0_fallback_records = []
         self.frame_cache = {}
         self.reward_history = [RewardHistory() for _ in range(self.size)]
         self.loop_metrics = dict.fromkeys(LOOP_METRICS, 0)
@@ -281,6 +285,7 @@ class RoomSearch:
             self.shop_skip_used[s] = False
             self.shop_opened[s] = False
             self.mask_cache.pop(s, None)
+            self.step0_fallback_slots.discard(s)
 
     def frames(self, slots, progress):
         missing = [s for s in slots if s not in self.frame_cache]
@@ -302,6 +307,10 @@ class RoomSearch:
                     empty_potion_slot=any(tags[0][i] == 7 and tags[1][i] == 0 and ids[0][i] == 1 for i in entities),
                     potion_count=sum(tags[0][i] == 7 and tags[1][i] == 0 and ids[0][i] != 1 for i in entities),
                     relic_count=sum(tags[0][i] == 6 and tags[1][i] == 0 for i in entities),
+                    relics=[ids[0][i] for i in entities if tags[0][i] == 6 and tags[1][i] == 0],
+                    choices=[(data['candidate_kinds'][j][a],
+                              [data['candidate_refs'][j][k][a] for k in range(len(data['candidate_refs'][j]))])
+                             for a in range(nc)],
                     gold=next(values[2][i] for i in entities if tags[0][i] == 2),
                     deck_size=sum(tags[0][i] == 3 and tags[1][i] == 1 for i in entities))
         return {s: self.frame_cache[s] for s in slots}
@@ -326,7 +335,10 @@ class RoomSearch:
                 if s in frames:
                     nc = len(frames[s]['actions'])
                     masked, _ = self.reward_history[s].mask(frames[s], row[:nc])
-                    masked = step0_mask(frames[s], masked, self.shop_opened[s])
+                    masked, fallback = step0_mask(frames[s], masked, self.shop_opened[s])
+                    self.step0_fallback_slots.discard(s)
+                    if fallback:
+                        self.step0_fallback_slots.add(s)
                     row = masked + [False] * (len(row) - nc)
                     assert any(row), 'Reward restriction removed every action'
                 allowed[s] = row + [False] * (128 - len(row))
@@ -397,6 +409,15 @@ class RoomSearch:
         action_by_slot = dict(zip(slots, choices))
         for s in tracked:
             frame = frames_before[s]
+            if s < self.lanes and s in self.step0_fallback_slots:
+                self.step0_fallback[SCREENS[frame['screen']]] += 1
+                if len(self.step0_fallback_records) < 20:
+                    seed, prefix = self.provenance[s]
+                    record = dict(event='step0_fallback', slot=s, seed=seed,
+                        candidates=prefix.copy(), selected=action_by_slot[s], **deepcopy(frame))
+                    self.step0_fallback_records.append(record)
+                    print(json.dumps(record), flush=True)
+            self.step0_fallback_slots.discard(s)
             self.reward_history[s].before_step(frame, action_by_slot[s], [True] * len(frame['actions']))
         returning = (before[:, SCREEN] == MAP) & (self.arrays["candidate_kinds"][indices, choices] == 7)
         assert not bool((returning & self.map_returned[indices]).any()), "Second map return on the same floor"
@@ -478,6 +499,9 @@ class RoomSearch:
             self.shop_skip_used[t] = self.shop_skip_used[s]
             self.shop_opened[t] = self.shop_opened[s]
             self.reward_history[t] = deepcopy(self.reward_history[s])
+            self.step0_fallback_slots.discard(t)
+            if s in self.step0_fallback_slots:
+                self.step0_fallback_slots.add(t)
             self.frame_cache.pop(t, None)
             if s in self.mask_cache:
                 self.mask_cache[t] = self.mask_cache[s].copy()
@@ -710,6 +734,8 @@ class SegmentCollector:
 
     def state(self):
         return dict(seeds=self.seeds, paths=self.paths, floor_steps=self.floor_steps,
+                    step0_fallback=self.search.step0_fallback.copy(),
+                    step0_fallback_records=deepcopy(self.search.step0_fallback_records),
                     reward_history=deepcopy(self.search.reward_history[:self.search.lanes]),
                     noncombat_floor_steps=self.noncombat_floor_steps, tails=[list(t) for t in self.tails],
                     map_returned=self.search.map_returned[:self.search.lanes].cpu().tolist(),
@@ -737,6 +763,9 @@ class SegmentCollector:
         self.search.skip_returns = {s: keys.copy() for s, keys in state["skip_returns"].items()}
         self.search.shop_skip_used = state["shop_skip_used"].copy()
         self.search.shop_opened = state["shop_opened"].copy()
+        self.search.step0_fallback = Counter(state.get("step0_fallback", {}))
+        self.search.step0_fallback_records = deepcopy(state.get("step0_fallback_records", []))
+        self.search.step0_fallback_slots.clear()
         self.search.mask_cache.clear()
         self.search.frame_cache.clear()
         self.search.reward_history[:self.search.lanes] = deepcopy(state["reward_history"])

@@ -1,0 +1,322 @@
+{
+  "decision": {
+    "at": "2026-10-28T12:03:09.356277+00:00",
+    "number": 91,
+    "decision_main": "d799947121d91fa58c6e8835b8c43b41abc1c14f",
+    "source_commit": "89bd8c16d25b456212d5c8ad6c84615255fa4e41",
+    "base_publication": "0d94a4a62e309b45d1cf3c2640c86af8d94c4732",
+    "original_Git_commit_diff_message_read": true,
+    "raw_new_section_sha256": "94f2b2ca5852d418e4ded8aba74941f1ecf12186a8ba9fa6a685eec3b091a002",
+    "evidence": "hb20261028T1156",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/d799947121d91fa58c6e8835b8c43b41abc1c14f",
+    "explicit_step0_legal_fallback_authorized": true,
+    "repeat_restrictions_preserved": true,
+    "empty_after_fallback_assertion_preserved": true,
+    "per_screen_step0_fallback_count": true,
+    "first20_seed_prefix_screen_options_relic_records": true,
+    "original_campfire_hypothesis_not_verified": true,
+    "resume_from_saved_matched_round0_authorized": true,
+    "discard_post_round0_A_state_keep_all_expense": true,
+    "report_both_completed_round0_examinations": true,
+    "Slurm_when_available_actual_accounting": true,
+    "unavailable_Slurm_accounting_explicit_method": "Actual job start to original EXIT timestamp measured duration times7/8; release only4192 actual12600hold after one settlement; do not label proxy finalSlurm.",
+    "other86_90_budget_resource_receipt_CUDA_integrity_gates_unchanged": true,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "new_GPU_authorized_after_all_gates": true
+  },
+  "CPU_fallback_parent": {
+    "at": "2026-10-28T12:10:08.838481+00:00",
+    "status": "parent_read_full_diff_and_independently_reran_focused_CPU15pass1native_skip",
+    "argv": [
+      "D:/anaconda/python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tests/test_e4_step0_fallback.py",
+      "tests/test_e4_reward_mask.py",
+      "tests/test_e4_capacity.py",
+      "tests/test_e4_stage6.py"
+    ],
+    "returncode": 0,
+    "source_sha256": {
+      "train/e4.py": "1d08070dae1f3a9b93bca943a0210bc6365a3f821b37a0f29c40eae1c75f8055",
+      "train/e4_stage6/training_worker.py": "b86bf3437684ab05435552d91b18c0cb1c6dbed9d70f7be7280100416a5eb59c",
+      "train/e4_stage6/evaluation_worker.py": "f695a046c250667113a38eb9647b445041780f04d33ea1226acab66cde0f7d0d",
+      "train/e4_stage6/phase6_runtime.py": "747f936be232aa028d9bc6add677e1ba4ed907ff7bd26b530e280974d23b1383",
+      "tests/test_e4_reward_mask.py": "70f2b7f5694e8cb05e8dcea215bf0d24a1079c860bb790318a98ecd1e9bf3b9f",
+      "tests/test_e4_stage6.py": "32e1ecfea22856fae37e50d8afe77ad9cb1ab5131283d15aa017bc56f46955c2",
+      "tests/test_e4_step0_fallback.py": "71e2bf4f74e85b06daa606dd0df88fce214b1f2a8a3ed6f7b12079989d11ff1a"
+    },
+    "skipped_reason": "Native spire binding unavailable on Windows; actual server native remains required before GPU",
+    "GPU": false,
+    "PTload": false,
+    "Mac": false,
+    "scope": "Recall-only fallback/caller/step, restored candidate repeat exclusion, original-empty assertion, first20 per-search evidence, telemetry snapshot and old-round0 migration; affected reward/capacity/Stage6 tests."
+  },
+  "CPU_binding_parent": {
+    "at": "2026-10-28T12:20:29.851150+00:00",
+    "status": "parent_read_complete_storage_and_test_and_independently_CPU18_pass",
+    "argv": [
+      "D:/anaconda/python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tests/test_e4_stage6_source_upgrade.py",
+      "tests/test_e4_stage6.py"
+    ],
+    "returncode": 0,
+    "source_sha256": {
+      "train/e4_stage6/phase6_storage.py": "9b651e7f0a467d7ae17d42bd2fbf4b687a07030abe5df0cccf375fa8097de8a1",
+      "tests/test_e4_stage6_source_upgrade.py": "3fac68da05e4460caee1ac81ac433d25541ce8b9c351b5ccf318f3c18351985d"
+    },
+    "original_round0_PT_loaded": false,
+    "native": false,
+    "GPU": false,
+    "Mac": false,
+    "scope": "Actual hash-bound generated CPU storage; exactly89bd to current binding only; all other outer identity strict, schedule consistency, nested runtime identity, original manifest and local PT integrity before normalization, payload tensor/optimizer/RNG/tape/cursor and original bytes unchanged."
+  },
+  "CPU_runs_overlap": "Both focused runs include existing Stage6 tests;15+18 is not33 unique new cases.",
+  "telemetry_scope": "Fallback counters per screen count actual mainline steps; first20 evidence per RoomSearch/rank/arm worker, preserved across training resume and reset at evaluation full-run start. Exact original seed-origin candidate prefix/selected action/screen/options/relic IDs retained.",
+  "binding_upgrade": "Only89bd->current runtime_commit, all other outer identity exact; original manifestSHA/local rankPT bytes+SHA checked first, only metadata normalized in memory, original bytes and model/Adam/RNG/tape/collector/cursors unchanged.",
+  "settlement4192": {
+    "at": "2026-10-28T12:06:45.939665+00:00",
+    "status": "settled_once_using_Claude91_explicit_measured_start_to_EXIT_7over8",
+    "job_id": 4192,
+    "decision_main": "d799947121d91fa58c6e8835b8c43b41abc1c14f",
+    "decision_section_sha256": "94f2b2ca5852d418e4ded8aba74941f1ecf12186a8ba9fa6a685eec3b091a002",
+    "method": "Claude91_measured_start_to_original_EXIT_duration_times7over8",
+    "start_at": "2026-10-28T07:30:58+00:00",
+    "EXIT_at": "2026-10-28T08:58:26.505610+00:00",
+    "duration_seconds_decimal": "5248.50561",
+    "duration_microseconds": 5248505610,
+    "actual_allocated_GPUs": 7,
+    "actual_GPU_count_source": "original own job detailed RUNNING JOB_GRES gpu:V100:7, NodeListgpu01/NumNodes1",
+    "measured_proxy_GPU_seconds_decimal": "36739.53927",
+    "charged_node_seconds_decimal": "4592.44240875",
+    "charged_node_seconds": 4592.44240875,
+    "released_reservation_node_seconds": 12600,
+    "final_Slurm_available": false,
+    "Slurm_controller_reachable_but_job_record_unavailable": true,
+    "Slurm_record_status": "Invalid job id specified; purged, never query4192 again",
+    "exact_final_Slurm_allocation_cost_verified": false,
+    "actual_final_Slurm_cost": null,
+    "authorization_interpretation": "Claude91 explicitly requires unavailable-Slurm measured-interval settlement and releasing4192hold rather than retaining it indefinitely. The controller now responds but the actual job record is purged; use the same explicitly supplied measured-interval method for this unavailable final record, recorded openly as proxy, not actualSlurm.",
+    "precision_scope": "Original Slurm StartTime has second precision; original EXIT timestamp has microsecond precision. Explicitly authorized measured interval proxy, not actual final Slurm runtime/bill.",
+    "original_exit": 1,
+    "inputs_and_peak_checks_passed": true,
+    "all_post_round0_A_consumed_expense_included": true,
+    "no_credit_or_new_phase_budget": true,
+    "old3897_and3967_holds_preserved": 27000,
+    "evidence": "hb20261028T1156/job4192-Claude91-settlement/parent-acceptance.json"
+  },
+  "round0_examination": {
+    "round": 0,
+    "evaluation_only": true,
+    "world": 7,
+    "scene_count": 1490,
+    "rows_per_arm": 7450,
+    "arms": {
+      "A": {
+        "bytes": 9294795,
+        "sha256": "7835cb93ba91bce3341b1f3223c8f77b11a7a1c29d94781fc1b596a52aaf4d8e",
+        "rows": 7450,
+        "groups": {
+          "act1_elite": 2000,
+          "act1_boss_guardian": 650,
+          "act1_boss_hexaghost": 650,
+          "act1_boss_slimeboss": 650,
+          "act2_normal": 2500,
+          "act2_elite_boss": 1000
+        },
+        "summary": {
+          "act1_elite/replay32": {
+            "samples": 400,
+            "death_rate": 0.15,
+            "mean_score": 0.11044409399852156
+          },
+          "act1_boss_guardian/replay32": {
+            "samples": 130,
+            "death_rate": 0.13846153846153847,
+            "mean_score": 0.09293521017982409
+          },
+          "act1_boss_hexaghost/replay32": {
+            "samples": 130,
+            "death_rate": 0.3230769230769231,
+            "mean_score": 0.07044299365236209
+          },
+          "act1_boss_slimeboss/replay32": {
+            "samples": 130,
+            "death_rate": 0.5538461538461539,
+            "mean_score": 0.04355431359547835
+          },
+          "act2_normal/replay32": {
+            "samples": 500,
+            "death_rate": 0.134,
+            "mean_score": 0.08435425579547882
+          },
+          "act2_elite_boss/replay32": {
+            "samples": 200,
+            "death_rate": 0.705,
+            "mean_score": 0.02632141601294279
+          },
+          "act1_elite/single": {
+            "samples": 1600,
+            "death_rate": 0.335,
+            "mean_score": 0.08192504281178117
+          },
+          "act1_boss_guardian/single": {
+            "samples": 520,
+            "death_rate": 0.4288461538461538,
+            "mean_score": 0.05866870962513181
+          },
+          "act1_boss_hexaghost/single": {
+            "samples": 520,
+            "death_rate": 0.6711538461538461,
+            "mean_score": 0.03268226866538708
+          },
+          "act1_boss_slimeboss/single": {
+            "samples": 520,
+            "death_rate": 0.9019230769230769,
+            "mean_score": 0.009201625935160197
+          },
+          "act2_normal/single": {
+            "samples": 2000,
+            "death_rate": 0.274,
+            "mean_score": 0.06869198013283312
+          },
+          "act2_elite_boss/single": {
+            "samples": 800,
+            "death_rate": 0.855,
+            "mean_score": 0.012416852763853967
+          }
+        },
+        "checkpoint": {
+          "directory": "training-A-round0-6cedb20cdd384306a5f539c7a1da7297",
+          "manifest_sha256": "177a9b0269dec21e5575148d371ea51964412867d88c8d3f51383dab4db86d97",
+          "kind": "training",
+          "arm": "A",
+          "round": 0
+        }
+      },
+      "B": {
+        "bytes": 9302644,
+        "sha256": "854c9828c62abf4025d8dd0e45041a4ebac74a1f41cac6b6eaa23a1f16af6ced",
+        "rows": 7450,
+        "groups": {
+          "act1_elite": 2000,
+          "act1_boss_guardian": 650,
+          "act1_boss_hexaghost": 650,
+          "act1_boss_slimeboss": 650,
+          "act2_normal": 2500,
+          "act2_elite_boss": 1000
+        },
+        "summary": {
+          "act1_elite/replay32": {
+            "samples": 400,
+            "death_rate": 0.155,
+            "mean_score": 0.10702723979949952
+          },
+          "act1_boss_guardian/replay32": {
+            "samples": 130,
+            "death_rate": 0.15384615384615385,
+            "mean_score": 0.09647601943176526
+          },
+          "act1_boss_hexaghost/replay32": {
+            "samples": 130,
+            "death_rate": 0.38461538461538464,
+            "mean_score": 0.06856770876508493
+          },
+          "act1_boss_slimeboss/replay32": {
+            "samples": 130,
+            "death_rate": 0.6307692307692307,
+            "mean_score": 0.03830763944066488
+          },
+          "act2_normal/replay32": {
+            "samples": 500,
+            "death_rate": 0.132,
+            "mean_score": 0.0941071367636323
+          },
+          "act2_elite_boss/replay32": {
+            "samples": 200,
+            "death_rate": 0.74,
+            "mean_score": 0.025081215761601924
+          },
+          "act1_elite/single": {
+            "samples": 1600,
+            "death_rate": 0.371875,
+            "mean_score": 0.07473975636297837
+          },
+          "act1_boss_guardian/single": {
+            "samples": 520,
+            "death_rate": 0.4576923076923077,
+            "mean_score": 0.057442997395992276
+          },
+          "act1_boss_hexaghost/single": {
+            "samples": 520,
+            "death_rate": 0.7442307692307693,
+            "mean_score": 0.026929978668116607
+          },
+          "act1_boss_slimeboss/single": {
+            "samples": 520,
+            "death_rate": 0.9288461538461539,
+            "mean_score": 0.007062425091862679
+          },
+          "act2_normal/single": {
+            "samples": 2000,
+            "death_rate": 0.303,
+            "mean_score": 0.07365938875451684
+          },
+          "act2_elite_boss/single": {
+            "samples": 800,
+            "death_rate": 0.89375,
+            "mean_score": 0.010208255015313625
+          }
+        },
+        "checkpoint": {
+          "directory": "training-B-round0-a6d8bec10a404671957710dbb26a0f6d",
+          "manifest_sha256": "32095bbbfe2d65a06542742201c821f6bb52109d1b227d8b4ae82712658d4a2c",
+          "kind": "training",
+          "arm": "B",
+          "round": 0
+        }
+      }
+    },
+    "matched_training": {
+      "reference_target": 1575.0267934421136,
+      "actual_A": 1575.0267934421136,
+      "actual_B": 1575.6340857701434,
+      "signed_difference_B_minus_A": 0.607292328029871,
+      "B_boundary_node_seconds": 0.6079068860562984,
+      "matching_scope": "B targets actual A time; both raw times and atomic stop discrepancy retained, not rounded to identical counters"
+    },
+    "hard_replay32_death_A_minus_B": -0.029292929292929294,
+    "hard_SE_clustered_by_seed": 0.006988008465367898,
+    "hard_samples": 990,
+    "hard_source_seeds": 691,
+    "full1024_complete": false,
+    "final_pass": null,
+    "model_reexecuted": false,
+    "scope": "CPU reads all original completed examination result rows and independently validates complete seed/prefix/mode/repetition membership and original wholeSHA; no new model/GPU/originalMac run."
+  },
+  "original_source": "89bd8c16d25b456212d5c8ad6c84615255fa4e41",
+  "new_source": "Containing Git commit; external ledgers and deployment bind exact SHA",
+  "resume": "Use existing same-root/world7 matchedround0; discard laterA model state while retaining all consumed expense. All original state/exam/PT preserved.",
+  "real_new_GPU": false,
+  "real_new_receipt": null,
+  "real_new_reservation": 0,
+  "stage6_cap": 18000,
+  "stage6_charged": 4619.56740875,
+  "stage6_reserved": 0,
+  "stage6_remaining": 13380.43259125,
+  "oldholds_preserved": 27000,
+  "limits": "Native binding unavailable on Windows: focused CPU15passed/1native skip and18passed; no server native/real originalround0 restore/PTload/GPU/Mac claim. Source/helper deployment, fresh actualbudget/fullhash/resources and one realreceipt->reserve/release still required. No full1024 final result."
+}

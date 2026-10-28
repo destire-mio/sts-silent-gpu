@@ -32,6 +32,8 @@ class EvaluationWorker:
         self.inference = policy if binding['arm'] == 'A' else policy.run_policy
         self.cursor = begin_examination(exam, search, binding['policy_sha256'], self.rank, self.world)
         self.search.combat_diagnostics = []
+        self.search.step0_fallback.clear()
+        self.search.step0_fallback_records.clear()
         self.collector = None
         self.state = dict(phase='examination', examination_seconds=0., full_run_seconds=0., interrupted_calls=0,
                           examination_search=None)
@@ -86,6 +88,8 @@ class EvaluationWorker:
             setattr(self.search,key,dict.fromkeys(getattr(self.search,key),0))
         self.search.event_trial_max_steps = self.search.searched_decisions = 0
         self.search.combat_diagnostics = []
+        self.search.step0_fallback.clear()
+        self.search.step0_fallback_records.clear()
         self.search.rng.set_state(self.full_run_rng)
         self.collector = SegmentCollector(self.search,self.seed_rng,rank=self.rank)
         self.state['phase'] = 'full_run'
@@ -111,6 +115,8 @@ class EvaluationWorker:
         assert policy_hash(self.policy) == self.binding['policy_sha256']
         self.state, self.cursor, self.full_run_rng = saved['state'], saved['cursor'], saved['full_run_rng']
         for key in SEARCH_STATE:
+            if key in ('step0_fallback', 'step0_fallback_records') and key not in saved['search']:
+                continue
             setattr(self.search, key, saved['search'][key])
         if saved['collector'] is not None:
             self.collector = SegmentCollector(self.search, self.seed_rng, rank=self.rank)

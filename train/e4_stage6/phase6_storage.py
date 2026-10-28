@@ -53,13 +53,22 @@ class Phase6Storage:
                              kind=kind, arm=arm, round=round_number)
         return self.broadcast(reference)
 
+    def resume_binding(self, binding):
+        normalized = deepcopy(binding)
+        if normalized != self.binding:
+            # Claude91 authorizes resuming the 89bd round0 snapshots after the Step0 correction.
+            assert normalized['runtime_commit'] == '89bd8c16d25b456212d5c8ad6c84615255fa4e41'
+            normalized['runtime_commit'] = self.binding['runtime_commit']
+            assert normalized == self.binding
+        return normalized
+
     def load_worker(self, reference):
         assert Path(reference['directory']).name == reference['directory']
         directory = self.root / reference['directory']
         path = directory / 'manifest.json'
         assert file_digest(path) == reference['manifest_sha256']
         manifest = json.loads(path.read_bytes())
-        assert manifest['format'] == 1 and manifest['binding'] == self.binding
+        assert manifest['format'] == 1
         assert all(manifest[key] == reference[key] for key in ('kind', 'arm', 'round'))
         assert len(manifest['files']) == self.world
         assert [row['rank'] for row in manifest['files']] == list(range(self.world))
@@ -67,9 +76,13 @@ class Phase6Storage:
         assert record['name'] == f'rank-{self.rank}.pt'
         path = directory / record['name']
         assert path.stat().st_size == record['bytes'] and file_digest(path) == record['sha256']
+        self.resume_binding(manifest['binding'])
         saved = torch.load(path, map_location='cpu', weights_only=False)
         assert saved['binding']['arm'] == manifest['arm']
         assert saved['binding']['rank'] == self.rank and saved['binding']['world'] == self.world
+        if 'runtime_commit' in manifest['binding']:
+            assert saved['binding']['runtime_commit'] == manifest['binding']['runtime_commit']
+            saved['binding']['runtime_commit'] = self.binding['runtime_commit']
         return saved
 
     def save_state(self, state):
@@ -83,6 +96,10 @@ class Phase6Storage:
             path = self.root / 'phase6-state.json'
             if path.exists():
                 saved = json.loads(path.read_bytes())
-                assert saved['format'] == 1 and saved['binding'] == self.binding
+                assert saved['format'] == 1
+                self.resume_binding(saved['binding'])
                 value = saved['state']
+                if 'schedule' in value:
+                    assert value['schedule']['binding'] == saved['binding']
+                    value['schedule']['binding'] = self.resume_binding(value['schedule']['binding'])
         return self.broadcast(value)
