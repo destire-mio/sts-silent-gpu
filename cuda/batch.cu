@@ -159,6 +159,10 @@ extern "C" __global__ void spire_training_progress(spire::cuda::TrainingState b,
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < b.size) spire::host::training_progress(b.games[i], output + i * spire::host::progress_columns);
 }
+extern "C" __global__ void spire_training_combat_turns(spire::cuda::TrainingState b, int64_t* output) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < b.size) output[i] = b.games[i].turn;
+}
 
 extern "C" __global__ void spire_training_select(spire::cuda::TrainingState b, const uint8_t* active) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;

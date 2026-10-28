@@ -1,0 +1,157 @@
+{
+  "decision": {
+    "decision_main": "1596824b9c78e8660b5230d53c29246311a5438e",
+    "claude_number": 94,
+    "phase": "claude94_stage7",
+    "kind": "frozen_B2_teacher_evaluation_only",
+    "cap_node_seconds": 3600,
+    "training_authorized": false,
+    "parameter_updates": 0,
+    "source_checkpoint": "training-B-round2-f2c54f4bac3d425aa13235f5f03f047f",
+    "source_manifest_sha256": "370aa2bb3bbc90ca030ba43eddd643d8e5d929673d5287fcdaf16147dbd9d730",
+    "T": {
+      "k": 8,
+      "R": 16,
+      "horizon": "next_player_turn_or_combat_end",
+      "determinize_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "common_seeds_across_candidates": true
+    },
+    "T2": {
+      "horizon": "combat_end",
+      "max_steps": 300,
+      "slow_subset_first_per_group": 50
+    },
+    "scenes": 990,
+    "groups": [
+      "act1_elite",
+      "act1_boss_guardian",
+      "act1_boss_hexaghost",
+      "act1_boss_slimeboss",
+      "act2_elite_boss"
+    ],
+    "CPU_required": "real_state_including_all_RNG_unchanged_by_teacher_selection",
+    "threshold": "Claude decides: more than10 percentage points lower single death rate than B2 on three act1 bosses; otherwise tune teacher, do not train",
+    "status": "implementation_and_CPU_regression_in_progress",
+    "Mac": {
+      "source": "docs/messages/claude-to-gpt.md #94",
+      "commit": "1596824b9c78e8660b5230d53c29246311a5438e",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/1596824b9c78e8660b5230d53c29246311a5438e",
+      "job_id": 4228,
+      "arms": {
+        "A": {
+          "traces": 18,
+          "actions": 5587,
+          "matched_actions": 5587
+        },
+        "B": {
+          "traces": 18,
+          "actions": 6814,
+          "matched_actions": 6814
+        }
+      },
+      "run_scope_pass": 36,
+      "combat_scope_pass": 36,
+      "both_scopes_pass": 36,
+      "verification": "Claude94 reported original Mac replay; parent did not execute original Mac. No new engine SHA or full1024 replay claim supplied.",
+      "recording_engine_sha": null,
+      "full1024_original_replay_verified": null
+    },
+    "evidence": "hb20261028T2221/main-diff.original"
+  },
+  "source_parent": "e4f989b8625850782d836175dcf12f0b0848933a",
+  "evaluation_only": true,
+  "parameter_updates": 0,
+  "teacher": {
+    "k": 8,
+    "R": 16,
+    "common_environment_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "turn_boundary": "native Game.turn advances; turn readout used only to end preview, never added to policy observation",
+    "terminal_score": "unchanged existing copy score: zero on death, frozen B2 run-value on completed combat",
+    "bootstrap": "frozen B2 combat-value head; T2 cap300 counts first candidate step"
+  },
+  "baseline": "fresh B2 single on same990 fixed scenes, no four-draw pooling; original B2 saved results remain intact",
+  "T2": "first50 per group benchmark; extend to990 only when measured remaining runtime fits allocation guard, otherwise report250 subset or incomplete coverage",
+  "budget": {
+    "phase": "claude94_stage7",
+    "cap_node_seconds": 3600,
+    "actual_charge": 0,
+    "held": 0,
+    "authorization": "new independent eval-only book; prior closed step2 and all prior books preserved"
+  },
+  "CPU": {
+    "local_semantic_and_allocation": 4,
+    "passed": true,
+    "native_Game_History_RNG_isolation": "pending Linux native binding rebuild and test; no GPU allocation until passed"
+  },
+  "GPU": "not_started",
+  "original_Mac": {
+    "source": "docs/messages/claude-to-gpt.md #94",
+    "commit": "1596824b9c78e8660b5230d53c29246311a5438e",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/1596824b9c78e8660b5230d53c29246311a5438e",
+    "job_id": 4228,
+    "arms": {
+      "A": {
+        "traces": 18,
+        "actions": 5587,
+        "matched_actions": 5587
+      },
+      "B": {
+        "traces": 18,
+        "actions": 6814,
+        "matched_actions": 6814
+      }
+    },
+    "run_scope_pass": 36,
+    "combat_scope_pass": 36,
+    "both_scopes_pass": 36,
+    "verification": "Claude94 reported original Mac replay; parent did not execute original Mac. No new engine SHA or full1024 replay claim supplied.",
+    "recording_engine_sha": null,
+    "full1024_original_replay_verified": null
+  },
+  "files": {
+    "host/bindings.cpp": "da93a3b6ac8ec8222a8440343e98d0138e807fd23a43ea53a8fba7673965a1b1",
+    "cuda/training_batch.hpp": "c8001de37f6d3c6d59f00264afe87aaf08bdd61de46437afad30241604913055",
+    "cuda/batch.cuh": "7af8abc492a3c4c2b27404b19dda080906a3329ae28ca55594615e1189aa6efe",
+    "cuda/batch.cu": "d95601031a18d640f8934df232458475fa48b7a676bdd705dfecc9ea5d330b1b",
+    "cuda/training_batch.cu": "c359df78f59fa12f315525170f9c29ddb521d95147de37dd0a7ff47282451b20",
+    "cuda/bindings.cpp": "17e35d9f061a153db5e252ecf77fcc2e4019ceeb2f9b7318b99576d79fe9b039",
+    "train/e4_teacher.py": "f6a92c7117fd3361f3e7a639c284d2c9553f469b778a7930919ec390b0b1ebea",
+    "train/e4_teacher_pilot.py": "8e9d34e23c014bacbc11cc225b93cc90baf6895b205cb5362ce27e2b4bc34967",
+    "tools/e4_teacher.py": "d986740b27667d9a4891a3a3eb041f29515bd4836ce047b68e7d22f39c7da346",
+    "tests/test_e4_teacher.py": "ad14dba7eccb0259d0070b3fa8e9be5212416b6671b3c55fe1ac7bac56b46e43"
+  }
+}

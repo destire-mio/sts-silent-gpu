@@ -69,6 +69,7 @@ struct TrainingBatch {
     void clone_many(const std::vector<int>& sources, const std::vector<int>& targets);
     void loop_keys_tensors(const int64_t* slots, int64_t* output, int count, cudaStream_t stream);
     void progress_tensors(int64_t* output, cudaStream_t stream);
+    void combat_turns_tensors(int64_t* output, cudaStream_t stream);
     std::string state_bytes(int slot);
     void extend_seeds(const std::vector<int64_t>& seeds);
 private:

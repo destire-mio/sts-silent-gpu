@@ -1,6 +1,6 @@
 {
   "observation_version": 2,
-  "status": "pending_mac_original_replay",
+  "status": "passed_original_Mac_reported_Claude94",
   "engine_commit": "f54969119faae5f5206c700ce652e7678c2b0cd3",
   "current_round": "E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-B-R2-N32-D1024",
   "rounds": [
@@ -1242,7 +1242,7 @@
     {
       "name": "E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-A-R2-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
+      "status": "passed_original_Mac_reported_Claude94",
       "observation_version": 2,
       "job_id": 4228,
       "arm": "A",
@@ -1438,14 +1438,41 @@
           }
         },
         "parent_did_not_execute_model_native_or_original_game": true,
-        "original_Mac_status": "pending_new_round_replay_not_inherited",
-        "evidence": "inventory/e4-c93-job4228-final.json"
+        "original_Mac_status": "Claude94_both_scopes_pass",
+        "evidence": "inventory/e4-c93-job4228-final.json",
+        "Mac": {
+          "source": "docs/messages/claude-to-gpt.md #94",
+          "commit": "1596824b9c78e8660b5230d53c29246311a5438e",
+          "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/1596824b9c78e8660b5230d53c29246311a5438e",
+          "job_id": 4228,
+          "arms": {
+            "A": {
+              "traces": 18,
+              "actions": 5587,
+              "matched_actions": 5587
+            },
+            "B": {
+              "traces": 18,
+              "actions": 6814,
+              "matched_actions": 6814
+            }
+          },
+          "run_scope_pass": 36,
+          "combat_scope_pass": 36,
+          "both_scopes_pass": 36,
+          "verification": "Claude94 reported original Mac replay; parent did not execute original Mac. No new engine SHA or full1024 replay claim supplied.",
+          "recording_engine_sha": null,
+          "full1024_original_replay_verified": null,
+          "arm": "A",
+          "traces": 18,
+          "replay_actions": 5587
+        }
       }
     },
     {
       "name": "E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-B-R2-N32-D1024",
       "roots": 18,
-      "status": "pending_mac_original_replay",
+      "status": "passed_original_Mac_reported_Claude94",
       "observation_version": 2,
       "job_id": 4228,
       "arm": "B",
@@ -1641,8 +1668,35 @@
           }
         },
         "parent_did_not_execute_model_native_or_original_game": true,
-        "original_Mac_status": "pending_new_round_replay_not_inherited",
-        "evidence": "inventory/e4-c93-job4228-final.json"
+        "original_Mac_status": "Claude94_both_scopes_pass",
+        "evidence": "inventory/e4-c93-job4228-final.json",
+        "Mac": {
+          "source": "docs/messages/claude-to-gpt.md #94",
+          "commit": "1596824b9c78e8660b5230d53c29246311a5438e",
+          "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/1596824b9c78e8660b5230d53c29246311a5438e",
+          "job_id": 4228,
+          "arms": {
+            "A": {
+              "traces": 18,
+              "actions": 5587,
+              "matched_actions": 5587
+            },
+            "B": {
+              "traces": 18,
+              "actions": 6814,
+              "matched_actions": 6814
+            }
+          },
+          "run_scope_pass": 36,
+          "combat_scope_pass": 36,
+          "both_scopes_pass": 36,
+          "verification": "Claude94 reported original Mac replay; parent did not execute original Mac. No new engine SHA or full1024 replay claim supplied.",
+          "recording_engine_sha": null,
+          "full1024_original_replay_verified": null,
+          "arm": "B",
+          "traces": 18,
+          "replay_actions": 6814
+        }
       }
     }
   ],
@@ -224988,7 +225042,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000242,
@@ -225464,7 +225518,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000630,
@@ -225931,7 +225985,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000672,
@@ -226176,7 +226230,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000821,
@@ -226641,7 +226695,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000930,
@@ -227134,7 +227188,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000288,
@@ -227318,7 +227372,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000990,
@@ -227524,7 +227578,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000726,
@@ -227719,7 +227773,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000740,
@@ -227865,7 +227919,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000665,
@@ -227993,7 +228047,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000831,
@@ -228346,7 +228400,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000813,
@@ -228732,7 +228786,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000036,
@@ -228883,7 +228937,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000142,
@@ -229400,7 +229454,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000469,
@@ -229753,7 +229807,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000554,
@@ -230162,7 +230216,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000336,
@@ -230407,7 +230461,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000506,
@@ -230609,7 +230663,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000242,
@@ -231184,7 +231238,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000630,
@@ -231622,7 +231676,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000672,
@@ -231984,7 +232038,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000821,
@@ -232487,7 +232541,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000930,
@@ -232884,7 +232938,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000288,
@@ -233035,7 +233089,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000990,
@@ -233559,7 +233613,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000726,
@@ -233741,7 +233795,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000740,
@@ -233998,7 +234052,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000665,
@@ -234265,7 +234319,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000831,
@@ -234583,7 +234637,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000813,
@@ -235126,7 +235180,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000036,
@@ -235914,7 +235968,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000142,
@@ -236395,7 +236449,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000469,
@@ -236773,7 +236827,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000554,
@@ -237275,7 +237329,7 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     },
     {
       "seed": 2000000336,
@@ -237491,10 +237545,33 @@
         "outcome": "death"
       },
       "job_id": 4228,
-      "status": "pending_mac_original_replay"
+      "status": "passed_original_Mac_reported_Claude94"
     }
   ],
-  "mac_report": null,
+  "mac_report": {
+    "source": "docs/messages/claude-to-gpt.md #94",
+    "commit": "1596824b9c78e8660b5230d53c29246311a5438e",
+    "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/1596824b9c78e8660b5230d53c29246311a5438e",
+    "job_id": 4228,
+    "arms": {
+      "A": {
+        "traces": 18,
+        "actions": 5587,
+        "matched_actions": 5587
+      },
+      "B": {
+        "traces": 18,
+        "actions": 6814,
+        "matched_actions": 6814
+      }
+    },
+    "run_scope_pass": 36,
+    "combat_scope_pass": 36,
+    "both_scopes_pass": 36,
+    "verification": "Claude94 reported original Mac replay; parent did not execute original Mac. No new engine SHA or full1024 replay claim supplied.",
+    "recording_engine_sha": null,
+    "full1024_original_replay_verified": null
+  },
   "mac_report_history": [
     {
       "source": "docs/messages/claude-to-gpt.md #71",
@@ -237852,11 +237929,35 @@
       "verification": "Claude86-reported original Mac replay; parent did not execute originalMac. Per-action counts equal original18paths; no exact MacengineSHA or full1024 original replay claim supplied.",
       "recording_engine_sha": null,
       "full1024_original_replay_verified": null
+    },
+    {
+      "source": "docs/messages/claude-to-gpt.md #94",
+      "commit": "1596824b9c78e8660b5230d53c29246311a5438e",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/1596824b9c78e8660b5230d53c29246311a5438e",
+      "job_id": 4228,
+      "arms": {
+        "A": {
+          "traces": 18,
+          "actions": 5587,
+          "matched_actions": 5587
+        },
+        "B": {
+          "traces": 18,
+          "actions": 6814,
+          "matched_actions": 6814
+        }
+      },
+      "run_scope_pass": 36,
+      "combat_scope_pass": 36,
+      "both_scopes_pass": 36,
+      "verification": "Claude94 reported original Mac replay; parent did not execute original Mac. No new engine SHA or full1024 replay claim supplied.",
+      "recording_engine_sha": null,
+      "full1024_original_replay_verified": null
     }
   ],
   "current_job_id": 4228,
   "current_round_verification": {
-    "status": "parent_CPU_verified_original_Mac_pending",
+    "status": "parent_CPU_verified_Claude94_original_Mac_both_scopes_pass",
     "job_id": 4228,
     "rounds": [
       "E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-A-R2-N32-D1024",
@@ -237864,6 +237965,30 @@
     ],
     "new_roots": 36,
     "new_actions": 12401,
-    "evidence": "inventory/e4-c93-job4228-final.json"
+    "evidence": "inventory/e4-c93-job4228-final.json",
+    "original_Mac": {
+      "source": "docs/messages/claude-to-gpt.md #94",
+      "commit": "1596824b9c78e8660b5230d53c29246311a5438e",
+      "source_url": "https://github.com/destire-mio/sts-silent-gpu/commit/1596824b9c78e8660b5230d53c29246311a5438e",
+      "job_id": 4228,
+      "arms": {
+        "A": {
+          "traces": 18,
+          "actions": 5587,
+          "matched_actions": 5587
+        },
+        "B": {
+          "traces": 18,
+          "actions": 6814,
+          "matched_actions": 6814
+        }
+      },
+      "run_scope_pass": 36,
+      "combat_scope_pass": 36,
+      "both_scopes_pass": 36,
+      "verification": "Claude94 reported original Mac replay; parent did not execute original Mac. No new engine SHA or full1024 replay claim supplied.",
+      "recording_engine_sha": null,
+      "full1024_original_replay_verified": null
+    }
   }
 }

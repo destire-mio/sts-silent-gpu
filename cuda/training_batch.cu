@@ -162,6 +162,10 @@ void TrainingBatch::progress_tensors(int64_t* output, cudaStream_t stream) {
     spire_training_progress<<<(size + 31) / 32, 32, 0, stream>>>(state(), output);
     check(cudaGetLastError());
 }
+void TrainingBatch::combat_turns_tensors(int64_t* output, cudaStream_t stream) {
+    spire_training_combat_turns<<<(size + 31) / 32, 32, 0, stream>>>(state(), output);
+    check(cudaGetLastError());
+}
 std::string TrainingBatch::state_bytes(int slot) {
     SPIRE_ASSERT(slot >= 0 && slot < size);
     std::string bytes(sizeof(Game) + sizeof(obs::History), '\0');

@@ -329,6 +329,11 @@ PYBIND11_MODULE(spire, module) {
         auto* out = tensor_pointer<int64_t>(output, "int64", -1);
         for (int i = 0; i < b.size; ++i) training_progress(b.games[i], out + i * progress_columns);
     });
+    training.def("combat_turns_tensors", [](TrainingBatch& b, py::object output) {
+        SPIRE_ASSERT(output.attr("numel")().cast<int>() == b.size);
+        auto* out = tensor_pointer<int64_t>(output, "int64", -1);
+        for (int i = 0; i < b.size; ++i) out[i] = b.games[i].turn;
+    });
     training.def("clone_many", [](TrainingBatch& b, const std::vector<int>& sources, const std::vector<int>& targets) {
         SPIRE_ASSERT(sources.size() == targets.size());
         for (std::size_t i = 0; i < targets.size(); ++i) {

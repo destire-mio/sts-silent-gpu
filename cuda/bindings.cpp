@@ -29,6 +29,13 @@ PYBIND11_MODULE(spire_gpu, module) {
     auto cls = py::class_<TrainingBatch>(module, "TrainingBatch");
     cls.def("clone_many", &TrainingBatch::clone_many, py::call_guard<py::gil_scoped_release>());
     cls.def("state_bytes", [](TrainingBatch& b, int slot) { return py::bytes(b.state_bytes(slot)); });
+    cls.def("combat_turns_tensors", [](TrainingBatch& b, py::object output) {
+        SPIRE_ASSERT(output.attr("numel")().cast<int>() == b.size);
+        auto* out = spire::host::tensor_pointer<int64_t>(output, "int64", b.device);
+        auto stream = py::module_::import("torch").attr("cuda").attr("current_stream")(b.device).attr("cuda_stream").cast<uintptr_t>();
+        py::gil_scoped_release release;
+        b.combat_turns_tensors(out, reinterpret_cast<cudaStream_t>(stream));
+    });
     cls.def("loop_keys_tensors", [](TrainingBatch& b, py::object slots, py::object output) {
         const int count = slots.attr("numel")().cast<int>();
         SPIRE_ASSERT(output.attr("numel")().cast<int>() == count);
