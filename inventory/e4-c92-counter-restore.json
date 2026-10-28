@@ -1,0 +1,32 @@
+{
+  "base_runtime_source": "1dfe39a3d9b0b33c453579c32c32b591911115bc",
+  "failure_job": 4219,
+  "change": "Reconstruct step0_fallback as Counter when training and evaluation workers restore a stored plain mapping.",
+  "checkpoint_representation_unchanged": true,
+  "counter_values_preserved": true,
+  "selected_actions_and_reward_repeat_assertions_unchanged": true,
+  "model_Adam_RNG_cursor_restore_unchanged": true,
+  "CPU": {
+    "before_fix": "Both new actual restore->policy_masks->step callers fail with KeyError room",
+    "after_fix_passed": 9,
+    "after_fix_failed": 0,
+    "new_regression_cases": 2,
+    "existing_rules_and_real_checkpoint_entropy_tests_included": true,
+    "scope": "CPU synthetic room/native-batch fixtures and existing model/Adam/Gloo restore coverage; evaluation cursor validator mocked in the new telemetry-only case"
+  },
+  "source_sha256": {
+    "tests/test_e4_step0_fallback.py": "d31a1782a1949603c62537e2a0e7db7d2d93e126b577a74bc39bdc26d5f31515",
+    "train/e4_stage6/evaluation_worker.py": "c05b9b16fe23eee366ae4807213b2d5d560e6aa876087f53b0228d22cbab3ca6",
+    "train/e4_stage6/training_worker.py": "b02470786608eb059475a77e370207e5a4f66370bd70ab1d0510350ea23912c5"
+  },
+  "CPU_originals": {
+    "before_stdout_sha256": "72eb187308bafbb8c66ce4eae06108b41b3809c374e808db6c01eb5960dffe33",
+    "after_stdout_sha256": "c907363052319a0b5df7cee5570c89b005a126a703b6a146fcbe6ba410978ad7",
+    "evidence": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\hb20261028T1632\\counter-restore-fix"
+  },
+  "new_GPU_run": false,
+  "new_native_CPU_claim": false,
+  "new_Mac_claim": false,
+  "deployed": false,
+  "resume_contract": "Old89bd->1dfe matched-round0 helper cannot be reused as a post4219 migration. Preserve matched-round1/baseline complete and all consumed expense; exact new source migration and fresh gates remain before any continuation."
+}

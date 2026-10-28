@@ -1,0 +1,99 @@
+{
+  "job_id": 4219,
+  "runtime_source": "1dfe39a3d9b0b33c453579c32c32b591911115bc",
+  "status": "FAILED_Python_telemetry_counter",
+  "original_exit": 1,
+  "root_cause": {
+    "rank": 1,
+    "location": "train/e4.py:413",
+    "exception": "KeyError: 'room'",
+    "mechanism": "move_tensors stores a plain mapping; TrainingWorker.restore overwrote SegmentCollector-restored Counter with that mapping. Evaluation-only restore had the same missing-default behavior.",
+    "reproduced_on_CPU_in_training_and_examination_restore": true
+  },
+  "actual_final_Slurm": {
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "runtime_seconds": 4853,
+    "allocated_GPUs": 7,
+    "CPU_count": 8,
+    "original_sha256": "d524c8b3457b39ee3b1ec3e1595691595b5120c3ac95ccbaee25173fbf67b78f",
+    "start": "2026-10-28T23:10:27",
+    "end": "2026-10-29T00:31:20",
+    "timestamp_scope": "Original Slurm host timestamps"
+  },
+  "accounting": {
+    "method": "actual_final_Slurm_detailed_JOB_GRES_and_exact_RunTime",
+    "charged_node_seconds": 4246.375,
+    "released_only_this_reservation": 12600,
+    "stage6_charged": 8865.94240875,
+    "stage6_remaining": 9134.05759125,
+    "step1_charged": 112927.19240875,
+    "old_holds_preserved": 27000
+  },
+  "integrity": {
+    "before_inputs": 3701,
+    "exit_immutable_inputs": 3700,
+    "source_blobs": 42,
+    "protected_heads": 9,
+    "exit_checks_all_zero": true
+  },
+  "actual_startup": {
+    "exact_five_JUnit_tests_passed": true,
+    "positive_duration": true,
+    "skips": 0,
+    "actual_CUDA_tests": 4
+  },
+  "job_aggregate_memory_peak": {
+    "jobid": "4219",
+    "backend": "v2",
+    "scope": "job_aggregate",
+    "peak_bytes": 17298055168,
+    "future_world7_quote_with25percent_mib": 20621
+  },
+  "last_matched_round": 1,
+  "matched_actual_training_node_seconds": {
+    "reference_target": 3150.05650696237,
+    "actual_A": 3150.05650696237,
+    "actual_B": 3150.7761899911857,
+    "signed_difference_B_minus_A": 0.7196830288157798,
+    "B_boundary_node_seconds": 0.7203501620097086,
+    "matching_scope": "B targets actual A time; both raw times and atomic stop discrepancy retained, not rounded to identical counters"
+  },
+  "matched_training_checkpoints": {
+    "A": {
+      "directory": "training-A-round1-607ec17370e3469fa6f53f2424d37e70",
+      "manifest_sha256": "05d0f3ff5841707558370c76aebc559f7151a4a440b7cb80300ee592ccfe8d84",
+      "kind": "training",
+      "arm": "A",
+      "round": 1
+    },
+    "B": {
+      "directory": "training-B-round1-dbc0eb0c7cd6437c8bc1e6ca505f3250",
+      "manifest_sha256": "4cad97b4420e7c8078200f2d85d1b85759929149f866c618913399cff33ecf58",
+      "kind": "training",
+      "arm": "B",
+      "round": 1
+    }
+  },
+  "source_examination": {
+    "complete_marker": true,
+    "rows": 7450,
+    "additional_training_updates": 0,
+    "results_sha256": "7a059de3a863c86d77b16a3eecb7b19c14fac79a6ced6eb57fc11ca7a605d6b5",
+    "full_raw_rows_independent_review_complete": false
+  },
+  "limits": {
+    "full_trainer_stdout_retained_on_server": true,
+    "parent_has_verified_original_prefix_and_tail": true,
+    "full_examination_comparison_pending": true,
+    "final1024N32_and18paths_complete": false,
+    "Mac_replay_complete": false,
+    "no_automatic_resume": true
+  },
+  "bundle": {
+    "XZ_bytes": 381692,
+    "XZ_sha256": "f5f8aa713e29b6d444cdf2bc1f5dc2b5c07d3b377baea4910ad39f31ac398ff1",
+    "original_files_parent_SHA_verified": 73
+  },
+  "evidence": "D:/google download/sts-silent-gpu-results/2026-10-20-e4/hb20261028T1632/final-evidence"
+}

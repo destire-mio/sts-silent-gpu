@@ -112,3 +112,58 @@ def test_fallback_evidence_stops_at_twenty_actual_steps(monkeypatch):
     assert search.step0_fallback == {'room': 21}
     assert len(search.step0_fallback_records) == 20
     assert search.step0_fallback_records[-1]['candidates'] == [2, 1, 0] + [0] * 19
+
+
+def boundary_search(monkeypatch):
+    search, _ = search_at_campfire(monkeypatch, [6])
+    search.metrics = dict.fromkeys(e4.SEARCH_METRICS, 0)
+    search.capacity_metrics = dict.fromkeys(e4.CAPACITY_METRICS, 0)
+    search.event_trial_max_steps = search.searched_decisions = 0
+    search.combat_diagnostics, search.available = [], [1, 2, 3]
+    search.step0_fallback['grid'] = 4
+    return search
+
+
+def test_training_worker_restore_keeps_missing_screen_counter(monkeypatch):
+    from train.e4_stage6.training_worker import TrainingWorker
+    search = boundary_search(monkeypatch)
+    policy = torch.nn.Linear(1, 1)
+    worker = object.__new__(TrainingWorker)
+    worker.model = SimpleNamespace(module=policy, train=policy.train)
+    worker.optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4)
+    worker.collector = e4.SegmentCollector(search, torch.Generator().manual_seed(2))
+    worker.device, worker.binding = torch.device('cpu'), dict(arm='A')
+    worker.ppo_rng = torch.Generator().manual_seed(3)
+    worker.state, worker.ready, worker.cursor = dict(updates=0), None, None
+    saved = worker.snapshot()
+    assert type(saved['search']['step0_fallback']) is dict
+    rng = search.rng.get_state().clone()
+    model = deepcopy(policy.state_dict())
+    worker.restore(saved)
+    search.policy_masks([0])
+    search.step([0], [0])
+    assert search.step0_fallback == {'grid': 4, 'room': 1}
+    assert saved['search']['step0_fallback'] == {'grid': 4}
+    assert torch.equal(search.rng.get_state(), rng)
+    assert all(torch.equal(value, policy.state_dict()[key]) for key, value in model.items())
+
+
+def test_examination_restore_keeps_missing_screen_counter(monkeypatch):
+    from train.e4_stage6.evaluation_worker import EvaluationWorker, policy_hash
+    monkeypatch.setattr('train.e4_stage6.evaluation_worker.validate_examination_cursor', Mock())
+    search = boundary_search(monkeypatch)
+    policy = torch.nn.Linear(1, 1)
+    worker = object.__new__(EvaluationWorker)
+    worker.policy, worker.search = policy, search
+    worker.binding = dict(arm='A', policy_sha256=policy_hash(policy))
+    worker.rank, worker.world, worker.exam = 0, 1, {}
+    worker.device, worker.collector = torch.device('cpu'), None
+    worker.state, worker.cursor = dict(phase='examination'), {}
+    worker.full_run_rng = search.rng.get_state().clone()
+    saved = worker.snapshot()
+    assert type(saved['search']['step0_fallback']) is dict
+    worker.restore(saved)
+    search.policy_masks([0])
+    search.step([0], [0])
+    assert search.step0_fallback == {'grid': 4, 'room': 1}
+    assert saved['search']['step0_fallback'] == {'grid': 4}

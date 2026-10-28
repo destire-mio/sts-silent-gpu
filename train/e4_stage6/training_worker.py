@@ -1,3 +1,4 @@
+from collections import Counter
 from copy import deepcopy
 import hashlib
 import json
@@ -208,7 +209,10 @@ class TrainingWorker:
         for key in SEARCH_STATE:
             if key in ('step0_fallback', 'step0_fallback_records') and key not in saved['search']:
                 continue
-            setattr(search, key, saved['search'][key])
+            value = saved['search'][key]
+            if key == 'step0_fallback':
+                value = Counter(value)
+            setattr(search, key, value)
         actual = {s: hashlib.sha256(search.batch.state_bytes(s)).hexdigest()
                   for s, seed in enumerate(self.collector.seeds) if seed is not None}
         assert actual == saved['active_native_state_sha256'], 'Restored native Game+History differs'

@@ -1,3 +1,4 @@
+from collections import Counter
 from copy import deepcopy
 import hashlib
 import time
@@ -117,7 +118,10 @@ class EvaluationWorker:
         for key in SEARCH_STATE:
             if key in ('step0_fallback', 'step0_fallback_records') and key not in saved['search']:
                 continue
-            setattr(self.search, key, saved['search'][key])
+            value = saved['search'][key]
+            if key == 'step0_fallback':
+                value = Counter(value)
+            setattr(self.search, key, value)
         if saved['collector'] is not None:
             self.collector = SegmentCollector(self.search, self.seed_rng, rank=self.rank)
             self.collector.restore(saved['collector'])
