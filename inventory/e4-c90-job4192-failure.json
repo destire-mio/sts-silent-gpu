@@ -1,0 +1,152 @@
+{
+  "at": "2026-10-28T11:49:54.783724+00:00",
+  "status": "actual_job4192_EXIT1_reward_policy_mask_assertion_preserved_no_resume",
+  "job_id": 4192,
+  "source_commit": "89bd8c16d25b456212d5c8ad6c84615255fa4e41",
+  "world": 7,
+  "exit_at": "2026-10-28T08:58:26.505610+00:00",
+  "original_exit": 1,
+  "checks": {
+    "manifest": {
+      "returncode": 0
+    },
+    "inputs": {
+      "returncode": 0
+    },
+    "memory_peak": {
+      "returncode": 0
+    }
+  },
+  "fault": {
+    "rank": 1,
+    "message": "Reward restriction removed every action",
+    "file": "train/e4.py",
+    "line": 331,
+    "function": "policy_masks",
+    "observed_during": "schedule train_A round1; current collector/policy frame not captured",
+    "exact_screen_or_seed": null,
+    "assertion_bypassed": false,
+    "root_cause_fixed": false
+  },
+  "actual_job_aggregate_peak_bytes": 14907617280,
+  "future_quote_peak_plus25percent_mib": 17772,
+  "peak_not_proof_of_OOM": true,
+  "full_input_reconstruction": {
+    "before": {
+      "inputs": 3432,
+      "bytes": 494152,
+      "sha256": "c4041653351aa7e9c82374db63057abe32644b65a5b3264fd8c9acf8c7d41123",
+      "raw_remote_downloaded": false,
+      "exact_parent_reconstruction_matches_remote_original": true
+    },
+    "exit": {
+      "inputs": 3432,
+      "bytes": 494152,
+      "sha256": "c4041653351aa7e9c82374db63057abe32644b65a5b3264fd8c9acf8c7d41123",
+      "raw_remote_downloaded": false,
+      "exact_parent_reconstruction_matches_remote_original": true
+    }
+  },
+  "compact_packet": {
+    "bytes": 151068,
+    "sha256": "dfd49984430ecb700a3eb047503f46d665545b6fed84a8f5ae8c483abdf9762d",
+    "files": 71
+  },
+  "stdout_original": {
+    "bytes": 11757401,
+    "sha256": "d7cbfd0ea52147ee0ccc5c6643f8360d064f0423de93a36decb2c3011b14afef",
+    "data": null
+  },
+  "stdout_fully_downloaded": false,
+  "observed_update_counts": {
+    "A": 12,
+    "B": 2
+  },
+  "observed_last_training_node_seconds": {
+    "A": 2500.459026753262,
+    "B": 1294.2380928036873
+  },
+  "first_actual_A_update_timing": {
+    "update_seconds": 200.5879498575814,
+    "collection_seconds": 143.17935946094804,
+    "learner_seconds": 57.40859039663337,
+    "fragment_positions_global": 114688,
+    "actual_valid_mainline_decisions_global": 114688,
+    "retained_copy_decisions_global": 0,
+    "beta_used": 0.031673695195944346
+  },
+  "saved_last_matched": {
+    "round": 0,
+    "checkpoints": {
+      "A": {
+        "directory": "training-A-round0-6cedb20cdd384306a5f539c7a1da7297",
+        "manifest_sha256": "177a9b0269dec21e5575148d371ea51964412867d88c8d3f51383dab4db86d97",
+        "kind": "training",
+        "arm": "A",
+        "round": 0
+      },
+      "B": {
+        "directory": "training-B-round0-a6d8bec10a404671957710dbb26a0f6d",
+        "manifest_sha256": "32095bbbfe2d65a06542742201c821f6bb52109d1b227d8b4ae82712658d4a2c",
+        "kind": "training",
+        "arm": "B",
+        "round": 0
+      }
+    },
+    "time": {
+      "reference_target": 1575.0267934421136,
+      "actual_A": 1575.0267934421136,
+      "actual_B": 1575.6340857701434,
+      "signed_difference_B_minus_A": 0.607292328029871,
+      "B_boundary_node_seconds": 0.6079068860562984,
+      "matching_scope": "B targets actual A time; both raw times and atomic stop discrepancy retained, not rounded to identical counters"
+    }
+  },
+  "saved_phase": "train_A",
+  "saved_round": 1,
+  "further_A_updates_after_saved_pair": true,
+  "unmatched_training_expense_must_not_be_erased": true,
+  "examination_scope": "phase6-state reports two round0 eval-only examinations,7450 model/baseline result rows each; raw full examination files not downloaded or independently reaggregated here.",
+  "full1024_results": [],
+  "actual_paths_verified": 0,
+  "Mac_new_results": [],
+  "PT_loaded_or_RNG_restored": false,
+  "final_Slurm_available": false,
+  "final_Slurm_originals": "Both original monitor and this heartbeat one own-job detailed query returned controller connect failure, not InvalidJobId. No further query this heartbeat.",
+  "final_query_count_this_heartbeat": 1,
+  "global_resource_queries_this_heartbeat": 0,
+  "actual_allocation_cost": null,
+  "charged": 0,
+  "released_hold": 0,
+  "reserved_hold_kept": 12600,
+  "next": "No new GPU/resume, rule change or assert bypass. Preserve all state and diagnose exact missing-action frame; source runtime89bd unchanged. Keep actual4192hold12600 until real finalSlurm accounting; oldholds27000 untouched. Future actual heartbeat may one own4192 final query only if controller recovers, no loops; purged means stop querying. No estimated fees or new cap.",
+  "originals": {
+    "allocation-error.json": {
+      "bytes": 1409,
+      "sha256": "f9869c4fa0a121c60b87e596b4eb8e317bf4621a68695b8a7bb20d1e5d11443a"
+    },
+    "exit.json": {
+      "bytes": 4397,
+      "sha256": "0b837dc9360730b250a4ce345bed08a45d3a13cacc690be0308247b2937557df"
+    },
+    "memory-peak.json": {
+      "bytes": 5567,
+      "sha256": "1b38362adba2b74ff576e6c1998ad9fdea9178b929baa0a170e8e979cb816f84"
+    },
+    "trainer.stderr.original": {
+      "bytes": 12253,
+      "sha256": "a4df11d34f8c23904062715890809eec19a657a78a7eb986347d536bce58af49"
+    }
+  },
+  "evidence_external": "D:/google download/sts-silent-gpu-results/2026-10-20-e4/hb20261028T1126/job4192-exit-review/parent-acceptance.json",
+  "accounting": {
+    "step1_charged": 104088.375,
+    "step1_reserved": 39600,
+    "stage6_cap": 18000,
+    "stage6_charged": 27.125,
+    "stage6_reserved": 12600,
+    "oldholds_3897_3967": 27000,
+    "new_job_cost": null,
+    "no_estimated_charge_or_release": true
+  }
+}
