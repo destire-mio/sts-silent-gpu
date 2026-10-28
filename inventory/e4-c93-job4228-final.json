@@ -1,0 +1,652 @@
+{
+  "decision_main": "280c57b720ec27fcc57eb2ba51da3b79b54f5d8d",
+  "claude_number": 93,
+  "job_id": 4228,
+  "source_commit": "f54969119faae5f5206c700ce652e7678c2b0cd3",
+  "execution": {
+    "state": "COMPLETED",
+    "EXIT": 0,
+    "all_exit_checks_zero": true,
+    "actual_startup_5_JUnit_4_CUDA": true,
+    "input_before": 3951,
+    "immutable_at_exit": 3950,
+    "source_blobs": 42,
+    "protected_heads": 10,
+    "memory_peak_bytes": 20249649152
+  },
+  "matched_round": 2,
+  "matched_times": {
+    "reference_target": 4725.133242793061,
+    "actual_A": 4725.133242793061,
+    "actual_B": 4725.192518725729,
+    "signed_difference_B_minus_A": 0.059275932668242604,
+    "B_boundary_node_seconds": 0.059824004652909935,
+    "matching_scope": "B targets actual A time; both raw times and atomic stop discrepancy retained, not rounded to identical counters"
+  },
+  "nominal_target": 6000,
+  "budget_fallback": "Selected the latest aligned pair whose exams completed; unmatched expense retained, no new training authorized by remaining budget.",
+  "source_RL8_examination_reused_not_rerun": true,
+  "CPU_raw_review": {
+    "at": "2026-10-28T21:45:03.058149+00:00",
+    "status": "parent_CPU_raw_review_passed_B_criterion_failed_Mac_pending",
+    "job_id": 4228,
+    "source": "f54969119faae5f5206c700ce652e7678c2b0cd3",
+    "packet_meta": {
+      "event": "job4228_review_export_ready",
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/recoveries/c93-final-review-20261028T2108/review.bundle.json.xz",
+      "bytes": 575544,
+      "sha256": "fd52ef7a4424a8eb0d2c224be0013e54c8232050961cd37fe2b53ff0ce37ac82",
+      "raw_bytes": 1601682,
+      "raw_sha256": "4d5e658eb266c63c8c1447b6e51971e3c4db7a1f5041358b2e42a53621e91755",
+      "files": 14,
+      "chunks": 94,
+      "chunk_bytes": 6144,
+      "exam_rows": {
+        "A": 7450,
+        "B": 7450
+      },
+      "roots": {
+        "A": 18,
+        "B": 18
+      },
+      "root_actions": {
+        "A": 5587,
+        "B": 6814
+      }
+    },
+    "original_files": 14,
+    "full_exam_rows_on_server_CPU_checked": 14900,
+    "parent_projection_rows_checked": 14900,
+    "projection_scope": "Full original exam and rank rows read/validated on CPU; all outcome, score and action-count fields projected. Full exam action arrays retained on server; ordered population hashes recorded. Final1024 original gzip and 36 selected complete candidate paths included. No model/PT/native/original-game/Mac execution.",
+    "source_scenes": 1490,
+    "source_modes_per_scene": 5,
+    "independent_stats": {
+      "grouped": {
+        "A": {
+          "act1_elite/replay32": {
+            "samples": 400,
+            "deaths": 66,
+            "death_rate": 0.165,
+            "mean_score": 0.08940222767181695
+          },
+          "act1_boss_guardian/replay32": {
+            "samples": 130,
+            "deaths": 21,
+            "death_rate": 0.16153846153846155,
+            "mean_score": 0.07351326670211095
+          },
+          "act1_boss_hexaghost/replay32": {
+            "samples": 130,
+            "deaths": 49,
+            "death_rate": 0.3769230769230769,
+            "mean_score": 0.05209153277369646
+          },
+          "act1_boss_slimeboss/replay32": {
+            "samples": 130,
+            "deaths": 74,
+            "death_rate": 0.5692307692307692,
+            "mean_score": 0.033052208847724474
+          },
+          "act2_normal/replay32": {
+            "samples": 500,
+            "deaths": 66,
+            "death_rate": 0.132,
+            "mean_score": 0.06488822633773088
+          },
+          "act2_elite_boss/replay32": {
+            "samples": 200,
+            "deaths": 145,
+            "death_rate": 0.725,
+            "mean_score": 0.01764796279370785
+          },
+          "act1_elite/single": {
+            "samples": 1600,
+            "deaths": 609,
+            "death_rate": 0.380625,
+            "mean_score": 0.06177148099988699
+          },
+          "act1_boss_guardian/single": {
+            "samples": 520,
+            "deaths": 218,
+            "death_rate": 0.41923076923076924,
+            "mean_score": 0.04786087375564071
+          },
+          "act1_boss_hexaghost/single": {
+            "samples": 520,
+            "deaths": 341,
+            "death_rate": 0.6557692307692308,
+            "mean_score": 0.02676906605036213
+          },
+          "act1_boss_slimeboss/single": {
+            "samples": 520,
+            "deaths": 481,
+            "death_rate": 0.925,
+            "mean_score": 0.005394218912204871
+          },
+          "act2_normal/single": {
+            "samples": 2000,
+            "deaths": 606,
+            "death_rate": 0.303,
+            "mean_score": 0.0511730235517025
+          },
+          "act2_elite_boss/single": {
+            "samples": 800,
+            "deaths": 696,
+            "death_rate": 0.87,
+            "mean_score": 0.008109749327413738
+          }
+        },
+        "B": {
+          "act1_elite/replay32": {
+            "samples": 400,
+            "deaths": 66,
+            "death_rate": 0.165,
+            "mean_score": 0.09993097725324333
+          },
+          "act1_boss_guardian/replay32": {
+            "samples": 130,
+            "deaths": 19,
+            "death_rate": 0.14615384615384616,
+            "mean_score": 0.0899317904160573
+          },
+          "act1_boss_hexaghost/replay32": {
+            "samples": 130,
+            "deaths": 47,
+            "death_rate": 0.36153846153846153,
+            "mean_score": 0.06603738442063331
+          },
+          "act1_boss_slimeboss/replay32": {
+            "samples": 130,
+            "deaths": 77,
+            "death_rate": 0.5923076923076923,
+            "mean_score": 0.03872931143985345
+          },
+          "act2_normal/replay32": {
+            "samples": 500,
+            "deaths": 72,
+            "death_rate": 0.144,
+            "mean_score": 0.08802374621480703
+          },
+          "act2_elite_boss/replay32": {
+            "samples": 200,
+            "deaths": 148,
+            "death_rate": 0.74,
+            "mean_score": 0.024210493806749583
+          },
+          "act1_elite/single": {
+            "samples": 1600,
+            "deaths": 579,
+            "death_rate": 0.361875,
+            "mean_score": 0.06944079593289644
+          },
+          "act1_boss_guardian/single": {
+            "samples": 520,
+            "deaths": 232,
+            "death_rate": 0.4461538461538462,
+            "mean_score": 0.05344662573904945
+          },
+          "act1_boss_hexaghost/single": {
+            "samples": 520,
+            "deaths": 368,
+            "death_rate": 0.7076923076923077,
+            "mean_score": 0.02804695966008764
+          },
+          "act1_boss_slimeboss/single": {
+            "samples": 520,
+            "deaths": 478,
+            "death_rate": 0.9192307692307692,
+            "mean_score": 0.007165377322011269
+          },
+          "act2_normal/single": {
+            "samples": 2000,
+            "deaths": 628,
+            "death_rate": 0.314,
+            "mean_score": 0.06726909137703478
+          },
+          "act2_elite_boss/single": {
+            "samples": 800,
+            "deaths": 719,
+            "death_rate": 0.89875,
+            "mean_score": 0.009030245020985603
+          }
+        }
+      },
+      "hard_death_improvement_A_minus_B": -0.00202020202020202,
+      "hard_clustered_SE": 0.00782717361423219,
+      "hard_samples": 990,
+      "hard_seed_clusters": 691,
+      "hard_pass": false,
+      "final_floor_delta_B_minus_A": 0.7958984375,
+      "final_floor_paired_SE": 0.2524137031372533,
+      "floor_pass": true,
+      "combined_pass": false,
+      "against_B4145": {
+        "A": {
+          "mean_floor": 17.9443359375,
+          "paired_delta_from_B4145": -0.810546875,
+          "paired_SE": 0.24405904978797513
+        },
+        "B": {
+          "mean_floor": 18.740234375,
+          "paired_delta_from_B4145": -0.0146484375,
+          "paired_SE": 0.2549620215633428
+        }
+      }
+    },
+    "full_runs": {
+      "A": {
+        "episodes": 1024,
+        "mean_floor": 17.9443359375,
+        "reach_counts": {
+          "act1_boss": 429,
+          "act2_boss": 3,
+          "act3_first_boss": 0,
+          "act3_second_boss": 0,
+          "act3_three_keys": 0,
+          "act4": 0,
+          "shield_spear": 0,
+          "heart": 0
+        },
+        "outcomes": {
+          "death": 1024
+        },
+        "all_candidate_actions": 347767,
+        "full_selected_paths": 18,
+        "selected_actions": 5587,
+        "card_skipped": 41,
+        "card_reward_choices": 8757,
+        "card_skip_rate_of_recorded_choices": 0.004681968710745689,
+        "shop_purchases": 1500,
+        "noncombat_counts": {
+          "gold_appeared": 8695,
+          "potion_appeared": 3813,
+          "card_appeared": 8112,
+          "mask_gold": 8695,
+          "gold_taken": 8453,
+          "mask_potion": 3500,
+          "potion_taken": 3473,
+          "mask_card": 9132,
+          "card_opened": 8112,
+          "card_taken": 8062,
+          "card_reward_choices": 8757,
+          "shop_rooms": 1385,
+          "shop_opened": 1385,
+          "shop_purchases": 1500,
+          "out_of_combat_potion_discards": 956,
+          "rest_rest": 2887,
+          "relic_appeared": 2219,
+          "relic_taken": 2219,
+          "skip_repeat_exempt_shop": 261,
+          "skip_repeat_exempt_grid": 95,
+          "rest_smith": 60,
+          "card_bowl": 14,
+          "card_skipped": 41,
+          "skip_repeat_exempt_card_reward": 37,
+          "rest_recall": 1,
+          "ruby_key_selected": 1,
+          "rest_lift": 1,
+          "rest_dig": 3
+        },
+        "final_deck_size_mean": 19.9150390625,
+        "pre_boss_deck_sizes": {
+          "1": {
+            "count": 778,
+            "mean": 19.041131105398456,
+            "minimum": 14,
+            "maximum": 26,
+            "histogram": {
+              "21": 90,
+              "20": 133,
+              "18": 142,
+              "19": 177,
+              "17": 94,
+              "16": 45,
+              "22": 46,
+              "15": 17,
+              "25": 3,
+              "23": 21,
+              "26": 1,
+              "24": 5,
+              "14": 4
+            }
+          },
+          "2": {
+            "count": 59,
+            "mean": 26.06779661016949,
+            "minimum": 20,
+            "maximum": 33,
+            "histogram": {
+              "28": 7,
+              "29": 5,
+              "24": 7,
+              "23": 6,
+              "25": 10,
+              "26": 7,
+              "20": 1,
+              "22": 2,
+              "27": 10,
+              "30": 2,
+              "32": 1,
+              "33": 1
+            }
+          },
+          "3": {
+            "count": 1,
+            "mean": 33.0,
+            "minimum": 33,
+            "maximum": 33,
+            "histogram": {
+              "33": 1
+            }
+          }
+        },
+        "loop_metrics": {
+          "all_candidates_repeat": 344,
+          "repeat_check_candidates": 784981,
+          "repeat_check_decisions": 154448,
+          "repeat_check_seconds": 157.3957102354616,
+          "skip_repeat_exempt_boss_reward": 0,
+          "skip_repeat_exempt_card_reward": 39,
+          "skip_repeat_exempt_combat": 0,
+          "skip_repeat_exempt_combat_reward": 0,
+          "skip_repeat_exempt_death": 0,
+          "skip_repeat_exempt_event": 0,
+          "skip_repeat_exempt_grid": 178,
+          "skip_repeat_exempt_hand_select": 0,
+          "skip_repeat_exempt_map": 0,
+          "skip_repeat_exempt_none": 0,
+          "skip_repeat_exempt_room": 0,
+          "skip_repeat_exempt_shop": 261,
+          "skip_repeat_exempt_victory": 0
+        },
+        "step0_fallback": {
+          "room": 1
+        },
+        "played_card_cap_count": 0,
+        "combat_trials": 297216,
+        "fault_truncated_scope": "Producer summary constants, not independent original-game proof"
+      },
+      "B": {
+        "episodes": 1024,
+        "mean_floor": 18.740234375,
+        "reach_counts": {
+          "act1_boss": 473,
+          "act2_boss": 7,
+          "act3_first_boss": 0,
+          "act3_second_boss": 0,
+          "act3_three_keys": 0,
+          "act4": 0,
+          "shield_spear": 0,
+          "heart": 0
+        },
+        "outcomes": {
+          "death": 1024
+        },
+        "all_candidate_actions": 350254,
+        "full_selected_paths": 18,
+        "selected_actions": 6814,
+        "card_skipped": 80,
+        "card_reward_choices": 9298,
+        "card_skip_rate_of_recorded_choices": 0.008604000860400087,
+        "shop_purchases": 1988,
+        "noncombat_counts": {
+          "gold_appeared": 8923,
+          "potion_appeared": 4069,
+          "card_appeared": 8463,
+          "mask_gold": 8923,
+          "gold_taken": 8753,
+          "mask_potion": 3757,
+          "potion_taken": 3730,
+          "mask_card": 9552,
+          "card_opened": 8463,
+          "card_taken": 8370,
+          "card_reward_choices": 9298,
+          "shop_rooms": 1547,
+          "shop_opened": 1547,
+          "shop_purchases": 1988,
+          "relic_appeared": 2279,
+          "relic_taken": 2279,
+          "rest_rest": 3029,
+          "skip_repeat_exempt_grid": 239,
+          "skip_repeat_exempt_shop": 274,
+          "out_of_combat_potion_discards": 212,
+          "rest_smith": 74,
+          "card_skipped": 80,
+          "skip_repeat_exempt_card_reward": 78,
+          "card_bowl": 16
+        },
+        "final_deck_size_mean": 20.650390625,
+        "pre_boss_deck_sizes": {
+          "1": {
+            "count": 817,
+            "mean": 19.24235006119951,
+            "minimum": 13,
+            "maximum": 27,
+            "histogram": {
+              "19": 164,
+              "20": 145,
+              "17": 79,
+              "22": 58,
+              "21": 109,
+              "18": 146,
+              "16": 56,
+              "23": 35,
+              "15": 13,
+              "24": 7,
+              "25": 1,
+              "14": 1,
+              "26": 1,
+              "13": 1,
+              "27": 1
+            }
+          },
+          "2": {
+            "count": 76,
+            "mean": 27.67105263157895,
+            "minimum": 20,
+            "maximum": 40,
+            "histogram": {
+              "32": 5,
+              "24": 3,
+              "25": 6,
+              "30": 9,
+              "21": 2,
+              "27": 11,
+              "28": 10,
+              "20": 1,
+              "31": 2,
+              "23": 6,
+              "34": 1,
+              "33": 1,
+              "26": 9,
+              "29": 6,
+              "38": 1,
+              "37": 1,
+              "22": 1,
+              "40": 1
+            }
+          },
+          "3": {
+            "count": 1,
+            "mean": 39.0,
+            "minimum": 39,
+            "maximum": 39,
+            "histogram": {
+              "39": 1
+            }
+          }
+        },
+        "loop_metrics": {
+          "all_candidates_repeat": 21,
+          "repeat_check_candidates": 786058,
+          "repeat_check_decisions": 156847,
+          "repeat_check_seconds": 161.88077842467465,
+          "skip_repeat_exempt_boss_reward": 0,
+          "skip_repeat_exempt_card_reward": 79,
+          "skip_repeat_exempt_combat": 0,
+          "skip_repeat_exempt_combat_reward": 0,
+          "skip_repeat_exempt_death": 0,
+          "skip_repeat_exempt_event": 0,
+          "skip_repeat_exempt_grid": 626,
+          "skip_repeat_exempt_hand_select": 0,
+          "skip_repeat_exempt_map": 0,
+          "skip_repeat_exempt_none": 0,
+          "skip_repeat_exempt_room": 0,
+          "skip_repeat_exempt_shop": 274,
+          "skip_repeat_exempt_victory": 0
+        },
+        "step0_fallback": {},
+        "played_card_cap_count": 0,
+        "combat_trials": 308608,
+        "fault_truncated_scope": "Producer summary constants, not independent original-game proof"
+      }
+    },
+    "original_gzip": {
+      "A": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round2-fedaf9dd19dd4622a00a190dab2790ad/E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-A-R2-N32-D1024-episodes.json.gz",
+        "local": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\hb20261028T2108\\raw-review\\002-E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-A-R2-N32-D1024-episodes.json.gz",
+        "bytes": 189921,
+        "sha256": "dda8ddccf4ab4f3a00d9381a6db5b3a95db2b90a12e32d2c4c33532724d3495a",
+        "round": "E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-A-R2-N32-D1024"
+      },
+      "B": {
+        "path": "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round2-34e6351b8ebe4a9aaecf47ffb917b630/E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-B-R2-N32-D1024-episodes.json.gz",
+        "local": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\hb20261028T2108\\raw-review\\006-E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-B-R2-N32-D1024-episodes.json.gz",
+        "bytes": 190942,
+        "sha256": "4cd2b31025c0c808972d57870f70d5f29bb8f5bafbf232e785bfbffa7c1060c9",
+        "round": "E4-C89-stage6-C90-stage6-hot3967-RL8-boss511-A-B-job4228-B-R2-N32-D1024"
+      }
+    },
+    "original_anomaly_logs": {
+      "sl-over-limit-0.jsonl": {
+        "bytes": 3940,
+        "sha256": "2915e3e697218c84b8bfb634c48c319fe955df13c8721a9658b5f25091a85350",
+        "rows": 2,
+        "round_field_present": 0,
+        "rank_counts": {
+          "None": 2
+        },
+        "scope": "Original accumulated logs preserved; do not infer a missing round from a window or excuse any rule."
+      },
+      "sl-over-limit-1.jsonl": {
+        "bytes": 102440,
+        "sha256": "199ff1a9bb502a6d0362d043489c746784333935d1865af801f2093644feb05c",
+        "rows": 52,
+        "round_field_present": 0,
+        "rank_counts": {
+          "None": 52
+        },
+        "scope": "Original accumulated logs preserved; do not infer a missing round from a window or excuse any rule."
+      },
+      "stalled-1.jsonl": {
+        "bytes": 359,
+        "sha256": "cffa4765912fb46cc8c1d69b7849fe1f6e95a9bfd657b4f4f05495c44ee82ac1",
+        "rows": 1,
+        "round_field_present": 0,
+        "rank_counts": {
+          "1": 1
+        },
+        "scope": "Original accumulated logs preserved; do not infer a missing round from a window or excuse any rule."
+      },
+      "stalled-6.jsonl": {
+        "bytes": 359,
+        "sha256": "1ba02293ce6a0e98ff7963ae44828f61ee2b5d1c1ed373f91d50ea4b19a90aeb",
+        "rows": 1,
+        "round_field_present": 0,
+        "rank_counts": {
+          "6": 1
+        },
+        "scope": "Original accumulated logs preserved; do not infer a missing round from a window or excuse any rule."
+      }
+    },
+    "original_selected_paths": 36,
+    "original_selected_actions": 12401,
+    "Mac_status": "pending_new_A2_B2_original_replay_not_inherited",
+    "engine_or_model_executed_by_parent": false,
+    "summary_zero_faults_not_original_game_proof": true,
+    "financial_changes": false
+  },
+  "accounting": {
+    "actual_runtime_seconds": 5741,
+    "allocated_gpus": 7,
+    "charged_node_seconds": 5023.375,
+    "released_only_current_hold": 9082.5,
+    "stage6_cap": 18000,
+    "stage6_charged": 13889.31740875,
+    "stage6_reserved": 0,
+    "stage6_remaining": 4110.68259125,
+    "step1_charged": 117950.56740875,
+    "old_unsettled_holds_retained": 27000,
+    "settled_once": true
+  },
+  "B2_diagnostics": {
+    "round": 2,
+    "start_node_seconds": 3150.7761899911857,
+    "end_node_seconds": 4725.192518725729,
+    "H_imit": 0.7853390234451804,
+    "entropy_target": 0.6716025225602738,
+    "beta_used": 0.007159143300977783,
+    "copy_kl": 0.012995091964332513,
+    "copy_clip_fraction": 0.12629771651213256,
+    "combat_value_loss": 0.0010338673090963095,
+    "copy_advantage_std_global": 0.019078534111980898,
+    "copy_advantage_moments_global": [
+      2474.1010330797126,
+      741.0459912981255,
+      2027600.0
+    ],
+    "copy_advantage_moments_complete": true,
+    "updates": [
+      {
+        "update": 5,
+        "training_node_seconds": 3242.6851477804594,
+        "H_imit": 0.7811748084181686,
+        "beta_used": 0.013818041446314154,
+        "copy_kl": 0.013421671377229393,
+        "copy_clip_fraction": 0.12815362388774712,
+        "combat_value_loss": 0.0011648777600388033,
+        "copy_advantage_std_global": 0.019858877659480828
+      },
+      {
+        "update": 6,
+        "training_node_seconds": 3849.214529857243,
+        "H_imit": 0.8021750047605813,
+        "beta_used": 0.010213501787290177,
+        "copy_kl": 0.012184919296035998,
+        "copy_clip_fraction": 0.12275507919756216,
+        "combat_value_loss": 0.0010121346715371324,
+        "copy_advantage_std_global": 0.018848791234274874
+      },
+      {
+        "update": 7,
+        "training_node_seconds": 4494.930896094447,
+        "H_imit": 0.7733400483060382,
+        "beta_used": 0.007159143300977783,
+        "copy_kl": 0.01334432791860878,
+        "copy_clip_fraction": 0.12783428242594808,
+        "combat_value_loss": 0.0009227775920728878,
+        "copy_advantage_std_global": 0.018423313719911325
+      }
+    ],
+    "scope": "Completed updates in this round; sample-weighted metrics, last beta; raw copy population std before scaling, null if unavailable in legacy cursor"
+  },
+  "prior_context": "inventory/e4-c93-round1-endpoint.json",
+  "artifact_scope": {
+    "original_two_gzip_committed_unchanged": true,
+    "new_rounds": 2,
+    "new_full_paths": 36,
+    "new_actions": 12401,
+    "total_roots": 684,
+    "total_rounds": 38,
+    "all_old_roots_rounds_Mac_history_preserved": true,
+    "new_Mac_original_replay": "pending_not_inherited",
+    "zero_fault_truncated_summary_not_original_game_proof": true,
+    "original_exam_actions": "Retained on server; CPU reader checked every row/rank and exported all identities, outcomes, scores, action counts plus ordered population hash. Parent independently recomputed statistics from that projection.",
+    "no_parent_model_PT_native_GPU_or_Mac_execution": true
+  },
+  "evidence": {
+    "parent_raw_review_sha256": "d567c2e16f80687a68fc00f28820e1bb599f03133aacac8e19526a22413dbb47",
+    "original_packet_sha256": "fd52ef7a4424a8eb0d2c224be0013e54c8232050961cd37fe2b53ff0ce37ac82",
+    "parent_accounting_sha256": "76668c544cbcbb6b7fabddb3209d0622e2f3d6986493df69104ae13f9ba8d0c4"
+  }
+}
