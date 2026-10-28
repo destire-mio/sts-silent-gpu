@@ -55,7 +55,7 @@ class Phase6Schedule:
     def __init__(self,binding):
         assert binding['world'] in (7,8)
         self.state=dict(format=1,binding=deepcopy(binding),phase='plan',round=0,
-            paired_reference=0.,nominal_target=0.,common_final_target=7200.,round_is_final=False,
+            paired_reference=0.,nominal_target=0.,common_final_target=6000.,round_is_final=False,
             B_target=None,actual_progress={'A':0.,'B':0.},checkpoints={},last_matched=None,
             last_training_reports={},examinations=[],full_runs={},unmatched_training_expense_retained=False)
 
@@ -67,10 +67,9 @@ class Phase6Schedule:
         assert min(remaining_node_seconds,examination_reserve_remaining,overhead_reserve)>=0
         s=self.state
         if s['phase']=='plan':
-            common=min(7200.,max(0.,(remaining_node_seconds-examination_reserve_remaining-
-                overhead_reserve+2*s['paired_reference'])/2))
+            common=6000.
             s['common_final_target']=common
-            if common<=s['paired_reference']:
+            if common<=s['paired_reference'] or remaining_node_seconds<=examination_reserve_remaining+overhead_reserve:
                 s['phase']='final_A' if s['last_matched'] is not None else 'no_balanced_training'
             else:
                 s['nominal_target']=min(common,s['paired_reference']+1800*s['binding']['world']/8)

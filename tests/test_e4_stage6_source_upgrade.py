@@ -9,7 +9,7 @@ import torch.distributed as dist
 from train.e4_stage6.phase6_storage import Phase6Storage, file_digest
 
 
-OLD = '89bd8c16d25b456212d5c8ad6c84615255fa4e41'
+OLD = '1dfe39a3d9b0b33c453579c32c32b591911115bc'
 NEW = 'corrected-source-test'
 
 
@@ -17,7 +17,7 @@ NEW = 'corrected-source-test'
 def bundle(tmp_path):
     dist.init_process_group('gloo', init_method=(tmp_path / 'gloo').as_uri(), rank=0, world_size=1,
                             timeout=timedelta(seconds=30))
-    outer = dict(world=1, run_id='round0', runtime_commit=OLD,
+    outer = dict(world=1, run_id='round1', runtime_commit=OLD,
                  source_hashes=['source-sha'] * 8, exam_sha256='exam', baseline_sha256='baseline',
                  evaluation_anchor_sha256='anchor')
     nested = dict(arm='A', rank=0, world=1, runtime_commit=OLD, source_commit='training-source',
@@ -28,10 +28,13 @@ def bundle(tmp_path):
         collector={'seeds': [123], 'paths': [[1, 0]], 'combat_tape': {'groups': [torch.arange(2)]}},
         ready=torch.arange(4), cursor={'epoch': 2, 'offset': 8}, active_native_state_sha256={0: 'native'})
     old = Phase6Storage(tmp_path / 'output', outer)
-    reference = old.save_worker(SimpleNamespace(binding=nested, snapshot=lambda: payload), 'training', 0)
-    state = dict(schedule={'binding': deepcopy(outer), 'phase': 'training_B', 'round': 0},
+    reference = old.save_worker(SimpleNamespace(binding=nested, snapshot=lambda: payload), 'training', 1)
+    state = dict(schedule={'binding': deepcopy(outer), 'phase': 'train_A', 'round': 2},
                  last_matched={'A': reference, 'B': reference}, training={'A': reference},
-                 evaluations={'A': {'complete': True}}, boundary={'A': 1.2, 'B': 1.3})
+                 evaluations={'A': {'complete': True}}, boundary={'A': 1.2, 'B': 1.3},
+                 source_examination={'complete': True, 'rows': 7450, 'results_sha256': 'original'},
+                 B_diagnostics=[{'round': 1, 'copy_kl': .012, 'H_imit': .754}],
+                 evaluation_node_seconds=1500.)
     old.save_state(state)
     current = dict(outer, runtime_commit=NEW)
     yield old, Phase6Storage(old.root, current), reference, payload, state
@@ -53,7 +56,7 @@ def assert_payload_equal(actual, expected):
         assert actual == expected
 
 
-def test_round0_source_upgrade_changes_only_binding_in_memory(bundle):
+def test_round1_source_upgrade_changes_only_binding_in_memory(bundle):
     old, current, reference, payload, state = bundle
     paths = [p for p in old.root.rglob('*') if p.is_file()]
     hashes = {p: (p.stat().st_size, file_digest(p)) for p in paths}
@@ -82,13 +85,14 @@ def test_outer_identity_mismatch_rejects(bundle, field, value):
         current.load_worker(reference)
 
 
-def test_unknown_saved_source_rejects(bundle):
+@pytest.mark.parametrize('source', ['unknown-source', '89bd8c16d25b456212d5c8ad6c84615255fa4e41'])
+def test_unknown_or_obsolete_saved_source_rejects(bundle, source):
     old, current, reference, payload, state = bundle
-    old.binding['runtime_commit'] = 'unknown-source'
+    old.binding['runtime_commit'] = source
     old.save_state(state)
     with pytest.raises(AssertionError):
         current.load_state()
-    payload['binding']['runtime_commit'] = 'unknown-source'
+    payload['binding']['runtime_commit'] = source
     ref = old.save_worker(SimpleNamespace(binding=payload['binding'], snapshot=lambda: payload), 'training', 0)
     with pytest.raises(AssertionError):
         current.load_worker(ref)

@@ -205,6 +205,60 @@ def test_schedule_uses_actual_A_time_and_finishes_both_final_1024_runs():
     assert restored.state['phase'] == 'complete'
 
 
+@pytest.mark.parametrize('world', [7, 8])
+def test_schedule_stops_at_6000_and_examines_final_pair_before_two_full_runs(world):
+    schedule = Phase6Schedule(dict(world=world, source='synthetic'))
+    while schedule.state['phase'] != 'final_A':
+        a = schedule.next_action(18000, 3600, 210)
+        assert a['action'] == 'train' and a['arm'] == 'A'
+        assert a['target_node_seconds'] <= 6000
+        for arm in ('A', 'B'):
+            action = schedule.next_action(18000, 3600, 210)
+            target = action['target_node_seconds']
+            schedule.record_training(arm, dict(finished=True, target_node_seconds=target,
+                actual_node_seconds=target + .01, boundary_node_seconds=.02), f'{arm}:{action["round"]}')
+        for arm in ('A', 'B'):
+            action = schedule.next_action(18000, 3600, 210)
+            assert action['action'] == 'examine' and action['arm'] == arm
+            schedule.record_examination(arm, dict(complete=True, checkpoint=action['checkpoint']))
+    matched = schedule.state['last_matched']
+    assert 6000 <= matched['time']['actual_A'] <= 6000.02
+    assert abs(matched['time']['actual_B'] - matched['time']['actual_A']) <= .02
+    for arm in ('A', 'B'):
+        action = schedule.next_action(3600, 3600, 210)
+        assert action['action'] == 'full_run_1024' and action['arm'] == arm
+        assert action['checkpoint'] == matched['checkpoints'][arm]
+        schedule.record_full_run(arm, dict(complete=True, episodes=1024, checkpoint=action['checkpoint']))
+    assert schedule.state['phase'] == 'complete'
+
+
+def test_budget_exhaustion_selects_last_examined_pair_and_retains_unmatched_expense():
+    schedule = Phase6Schedule(dict(world=7, source='synthetic'))
+    schedule.state.update(phase='train_A', round=2, nominal_target=4725., B_target=3150.,
+        paired_reference=3150., actual_progress={'A': 4000., 'B': 3150.},
+        checkpoints={'A': 'unmatched-A2', 'B': 'matched-B1'},
+        last_matched=dict(round=1, checkpoints={'A': 'matched-A1', 'B': 'matched-B1'},
+            time={'actual_A': 3150., 'actual_B': 3150.}))
+    result = schedule.next_action(2000, 1800, 210)
+    assert result['action'] == 'select_last_matched_for_evaluation'
+    assert result['unmatched_training_expense_retained'] is True
+    assert result['actual_progress']['A'] == 4000.
+    schedule.select_last_matched()
+    assert schedule.next_action(2000, 1800, 210)['checkpoint'] == 'matched-A1'
+    schedule.record_full_run('A', dict(complete=True, episodes=1024, checkpoint='matched-A1'))
+    assert schedule.next_action(1800, 1800, 210)['checkpoint'] == 'matched-B1'
+
+
+def test_budget_at_plan_selects_examined_pair_without_inventing_a_lower_training_endpoint():
+    schedule = Phase6Schedule(dict(world=7, source='synthetic'))
+    schedule.state.update(round=2, paired_reference=3150., actual_progress={'A': 3150., 'B': 3150.},
+        last_matched=dict(round=1, checkpoints={'A': 'A1', 'B': 'B1'}))
+    action = schedule.next_action(4000, 1800, 210)
+    assert action['action'] == 'select_last_matched_for_evaluation'
+    assert schedule.state['common_final_target'] == 6000.
+    assert action['matched']['checkpoints'] == {'A': 'A1', 'B': 'B1'}
+
+
 def test_synthetic_report_uses_engine_metric_names_and_writes_gzip_and_18_paths(cpu_group, tmp_path):
     runtime = object.__new__(Phase6Runtime)
     runtime.root, runtime.rank, runtime.world, runtime.job_id = tmp_path, 0, 1, 'synthetic99999'

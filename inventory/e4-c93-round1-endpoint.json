@@ -1,0 +1,819 @@
+{
+  "decision": {
+    "at": "2026-10-28T17:37:39.327700+00:00",
+    "number": 93,
+    "decision_main": "280c57b720ec27fcc57eb2ba51da3b79b54f5d8d",
+    "message_sha256": "cbde5366e0b627cf904e003c64b0feae3b1bd57f157390061f5a2cf409dfc4c9",
+    "message_evidence": "hb20261028T1729/claude93-message.original.md",
+    "fully_read": true,
+    "counter_fix72ee_approved": true,
+    "continue_authorized": true,
+    "training_target_per_arm_node_seconds": 6000,
+    "phase_cap_node_seconds": 18000,
+    "actual_remaining_at_decision": 9134.05759125,
+    "insufficient_budget_select_last_matched_examined_pair": true,
+    "then_examination_and_two_1024_runs": true,
+    "report_source_RL8_and_round1_A_B_group_death_rates_both_modes": true,
+    "report_B_copy_KL_and_H_imit": true,
+    "original_gates_preserved": true,
+    "same_chat": true,
+    "requested_model": "gpt-6.1-sol",
+    "requested_reasoning_effort": "low",
+    "no_new_thread": true,
+    "evidence": "hb20261028T1729"
+  },
+  "source_base": "72ee1640b8fa65f9338e0b15e435b123c2b47c2f",
+  "source_changes": {
+    "training_endpoint_per_arm": 6000,
+    "budget_shortfall": "Select the last matched pair whose examinations completed; retain all unmatched expense and run final1024 A/B from those checkpoints",
+    "previous_runtime_accepted_for_exact_round1_resume": "1dfe39a3d9b0b33c453579c32c32b591911115bc",
+    "obsolete_89bd_saved_runtime_rejected": true,
+    "baseline_complete_marker_and_models_Adam_RNG_tape_cursors_preserved": true
+  },
+  "CPU": {
+    "passed": 17,
+    "failed": 0,
+    "actual_GPU": false,
+    "scope": "Existing Gloo storage payload identity/integrity cases, seven/eight-world synthetic schedule through final exams and both1024 runs, insufficient-budget exact last-pair selection",
+    "stdout_sha256": "4139f861aa387840cc5b5b0b351d02cbd1384cd6b2253dfcebffcae1b6e6c71a",
+    "source_hashes": {
+      "train/e4_stage6/phase6_controller.py": "3cab92cd2dbed6c0ab9d781efcca1d8d0a9136474cf1264fb49b6a60d996dab4",
+      "train/e4_stage6/phase6_storage.py": "2cf4d71081eccf455b10995520dfd36db67bf175967e2bd2f78022987c1a4f47",
+      "tests/test_e4_stage6.py": "63627733456938cc3137add63c0940a3618ad498729389aa98a08a744bec1787",
+      "tests/test_e4_stage6_source_upgrade.py": "6fa6fe67cd613e5e733fa5075d0e6cd5a69943e0795f3fe779c1c9af06f0ec99"
+    }
+  },
+  "outcomes": {
+    "status": "parent_independent_all22350_projected_outcomes_identity_and_group_counts_verified",
+    "groups": {
+      "act1_elite": 400,
+      "act1_boss_guardian": 130,
+      "act1_boss_hexaghost": 130,
+      "act1_boss_slimeboss": 130,
+      "act2_normal": 500,
+      "act2_elite_boss": 200
+    },
+    "summary": {
+      "A1": {
+        "act1_elite/replay32": {
+          "samples": 400,
+          "deaths": 61,
+          "death_rate": 0.1525
+        },
+        "act1_elite/single": {
+          "samples": 1600,
+          "deaths": 576,
+          "death_rate": 0.36
+        },
+        "act1_boss_guardian/replay32": {
+          "samples": 130,
+          "deaths": 16,
+          "death_rate": 0.12307692307692308
+        },
+        "act1_boss_guardian/single": {
+          "samples": 520,
+          "deaths": 210,
+          "death_rate": 0.40384615384615385
+        },
+        "act1_boss_hexaghost/replay32": {
+          "samples": 130,
+          "deaths": 49,
+          "death_rate": 0.3769230769230769
+        },
+        "act1_boss_hexaghost/single": {
+          "samples": 520,
+          "deaths": 355,
+          "death_rate": 0.6826923076923077
+        },
+        "act1_boss_slimeboss/replay32": {
+          "samples": 130,
+          "deaths": 83,
+          "death_rate": 0.6384615384615384
+        },
+        "act1_boss_slimeboss/single": {
+          "samples": 520,
+          "deaths": 471,
+          "death_rate": 0.9057692307692308
+        },
+        "act2_normal/replay32": {
+          "samples": 500,
+          "deaths": 73,
+          "death_rate": 0.146
+        },
+        "act2_normal/single": {
+          "samples": 2000,
+          "deaths": 576,
+          "death_rate": 0.288
+        },
+        "act2_elite_boss/replay32": {
+          "samples": 200,
+          "deaths": 144,
+          "death_rate": 0.72
+        },
+        "act2_elite_boss/single": {
+          "samples": 800,
+          "deaths": 695,
+          "death_rate": 0.86875
+        }
+      },
+      "B1": {
+        "act1_elite/replay32": {
+          "samples": 400,
+          "deaths": 67,
+          "death_rate": 0.1675
+        },
+        "act1_elite/single": {
+          "samples": 1600,
+          "deaths": 586,
+          "death_rate": 0.36625
+        },
+        "act1_boss_guardian/replay32": {
+          "samples": 130,
+          "deaths": 20,
+          "death_rate": 0.15384615384615385
+        },
+        "act1_boss_guardian/single": {
+          "samples": 520,
+          "deaths": 252,
+          "death_rate": 0.4846153846153846
+        },
+        "act1_boss_hexaghost/replay32": {
+          "samples": 130,
+          "deaths": 51,
+          "death_rate": 0.3923076923076923
+        },
+        "act1_boss_hexaghost/single": {
+          "samples": 520,
+          "deaths": 377,
+          "death_rate": 0.725
+        },
+        "act1_boss_slimeboss/replay32": {
+          "samples": 130,
+          "deaths": 83,
+          "death_rate": 0.6384615384615384
+        },
+        "act1_boss_slimeboss/single": {
+          "samples": 520,
+          "deaths": 482,
+          "death_rate": 0.926923076923077
+        },
+        "act2_normal/replay32": {
+          "samples": 500,
+          "deaths": 77,
+          "death_rate": 0.154
+        },
+        "act2_normal/single": {
+          "samples": 2000,
+          "deaths": 643,
+          "death_rate": 0.3215
+        },
+        "act2_elite_boss/replay32": {
+          "samples": 200,
+          "deaths": 148,
+          "death_rate": 0.74
+        },
+        "act2_elite_boss/single": {
+          "samples": 800,
+          "deaths": 721,
+          "death_rate": 0.90125
+        }
+      },
+      "RL8": {
+        "act1_elite/replay32": {
+          "samples": 400,
+          "deaths": 65,
+          "death_rate": 0.1625
+        },
+        "act1_elite/single": {
+          "samples": 1600,
+          "deaths": 607,
+          "death_rate": 0.379375
+        },
+        "act1_boss_guardian/replay32": {
+          "samples": 130,
+          "deaths": 22,
+          "death_rate": 0.16923076923076924
+        },
+        "act1_boss_guardian/single": {
+          "samples": 520,
+          "deaths": 256,
+          "death_rate": 0.49230769230769234
+        },
+        "act1_boss_hexaghost/replay32": {
+          "samples": 130,
+          "deaths": 51,
+          "death_rate": 0.3923076923076923
+        },
+        "act1_boss_hexaghost/single": {
+          "samples": 520,
+          "deaths": 379,
+          "death_rate": 0.7288461538461538
+        },
+        "act1_boss_slimeboss/replay32": {
+          "samples": 130,
+          "deaths": 85,
+          "death_rate": 0.6538461538461539
+        },
+        "act1_boss_slimeboss/single": {
+          "samples": 520,
+          "deaths": 478,
+          "death_rate": 0.9192307692307692
+        },
+        "act2_normal/replay32": {
+          "samples": 500,
+          "deaths": 68,
+          "death_rate": 0.136
+        },
+        "act2_normal/single": {
+          "samples": 2000,
+          "deaths": 574,
+          "death_rate": 0.287
+        },
+        "act2_elite_boss/replay32": {
+          "samples": 200,
+          "deaths": 143,
+          "death_rate": 0.715
+        },
+        "act2_elite_boss/single": {
+          "samples": 800,
+          "deaths": 694,
+          "death_rate": 0.8675
+        }
+      }
+    },
+    "B_diagnostics": [
+      {
+        "H_imit": 0.7356683880533744,
+        "beta_used": 0.027286510419320727,
+        "combat_value_loss": 0.0008331685999456409,
+        "copy_advantage_moments_complete": false,
+        "copy_advantage_moments_global": null,
+        "copy_advantage_std_global": null,
+        "copy_clip_fraction": 0.14072875110041783,
+        "copy_kl": 0.02052185078831532,
+        "end_node_seconds": 1575.6340857701434,
+        "entropy_target": 0.6716025225602738,
+        "round": 0,
+        "scope": "Completed updates in this round; sample-weighted metrics, last beta; raw copy population std before scaling, null if unavailable in legacy cursor",
+        "start_node_seconds": 0.0,
+        "updates": [
+          {
+            "H_imit": 0.7235818852861198,
+            "beta_used": 0.031673695195944346,
+            "combat_value_loss": 0.00036065258680009375,
+            "copy_advantage_std_global": null,
+            "copy_clip_fraction": 0.1659569568935876,
+            "copy_kl": 0.028355967334084187,
+            "training_node_seconds": 634.0661195245339,
+            "update": 1
+          },
+          {
+            "H_imit": 0.7486922712579968,
+            "beta_used": 0.027286510419320727,
+            "combat_value_loss": 0.001339537851861429,
+            "copy_advantage_std_global": null,
+            "copy_clip_fraction": 0.11369307963264481,
+            "copy_kl": 0.012126461797593108,
+            "training_node_seconds": 1294.2380928036873,
+            "update": 2
+          }
+        ]
+      },
+      {
+        "H_imit": 0.7538215215935653,
+        "beta_used": 0.01723399845829735,
+        "combat_value_loss": 0.0010521838474397648,
+        "copy_advantage_moments_complete": false,
+        "copy_advantage_moments_global": null,
+        "copy_advantage_std_global": null,
+        "copy_clip_fraction": 0.12131211180124224,
+        "copy_kl": 0.012085096224945038,
+        "end_node_seconds": 3150.7761899911857,
+        "entropy_target": 0.6716025225602738,
+        "round": 1,
+        "scope": "Completed updates in this round; sample-weighted metrics, last beta; raw copy population std before scaling, null if unavailable in legacy cursor",
+        "start_node_seconds": 1575.6340857701434,
+        "updates": [
+          {
+            "H_imit": 0.7580576973497918,
+            "beta_used": 0.02195664278078092,
+            "combat_value_loss": 0.0010681408345932723,
+            "copy_advantage_std_global": null,
+            "copy_clip_fraction": 0.11791012376929756,
+            "copy_kl": 0.01162298481088014,
+            "training_node_seconds": 1905.0149753004953,
+            "update": 3
+          },
+          {
+            "H_imit": 0.7500359810922931,
+            "beta_used": 0.01723399845829735,
+            "combat_value_loss": 0.0010379265183866275,
+            "copy_advantage_std_global": 0.0194980619606096,
+            "copy_clip_fraction": 0.12435173716031947,
+            "copy_kl": 0.012497985852927584,
+            "training_node_seconds": 2572.39385324021,
+            "update": 4
+          }
+        ]
+      }
+    ],
+    "originals": {
+      "A1": {
+        "record": {
+          "arm": "A",
+          "checkpoint": {
+            "arm": "A",
+            "directory": "training-A-round1-607ec17370e3469fa6f53f2424d37e70",
+            "kind": "training",
+            "manifest_sha256": "05d0f3ff5841707558370c76aebc559f7151a4a440b7cb80300ee592ccfe8d84",
+            "round": 1
+          },
+          "complete": true,
+          "evaluation_only": true,
+          "reference": {
+            "arm": "A",
+            "directory": "evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d",
+            "kind": "evaluation",
+            "manifest_sha256": "84e824e7778333699821a55a4fdd0bd4526310fcbd06ce0bf66bd7cee7fc4ac9",
+            "round": 1
+          },
+          "results_sha256": "a315546359fd0bbe3fd5bba235b3a52610e0b78ce4a52ca29144db86797fff63",
+          "round": 1,
+          "rows": 7450
+        },
+        "original": {
+          "bytes": 9307405,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination.json",
+          "sha256": "a315546359fd0bbe3fd5bba235b3a52610e0b78ce4a52ca29144db86797fff63"
+        },
+        "rank_originals": {
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination-rank-0.json": {
+            "bytes": 1318995,
+            "rows": 1065,
+            "sha256": "1d64d59ebcd3737ccc6efab45414de11aa947c7221c4a9187e1069c6a4a89e97"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination-rank-1.json": {
+            "bytes": 1319187,
+            "rows": 1065,
+            "sha256": "891d3e6e640671ecfcca5de08f9d76737990b8c57bbd8a1358d760ca44f3faee"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination-rank-2.json": {
+            "bytes": 1328315,
+            "rows": 1065,
+            "sha256": "550467c5cf0b3ca91009e60dac0214246847b55740a9be6d039fdb02ef22811f"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination-rank-3.json": {
+            "bytes": 1338899,
+            "rows": 1065,
+            "sha256": "2845efd9cb647c2106f20c74fc3ecfb468010cb427fb90988519ef6c3ac38e6d"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination-rank-4.json": {
+            "bytes": 1358157,
+            "rows": 1065,
+            "sha256": "08459c6377ab0c317f170a2b7d24790a6e941173833e548905fb121f3a3f0e4d"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination-rank-5.json": {
+            "bytes": 1319817,
+            "rows": 1065,
+            "sha256": "0740a497755832aafb308c74b680efc7d3bd809668a9c1bdded6a194385dc35d"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round1-0c8bb60c7ffe4853859d44495f2a7c6d/examination-rank-6.json": {
+            "bytes": 1324041,
+            "rows": 1060,
+            "sha256": "615fdf84f6a134a04860fbc77f88710a68fe8dd1e324de80c9799fe209632745"
+          }
+        },
+        "manifest": {
+          "arm": "A",
+          "binding": {
+            "baseline_sha256": "cd70e7ba8c7e447a98f2526fc8db7b899e099720f7c65fd288d008f95f9e20af",
+            "evaluation_anchor_hashes": [
+              "5faa6eadedeeb6e9d9f0d0cd6100583163bfa4b72589c0346f63db1852e4708a",
+              "c01803daba9fd628ade36ca42d6395e6c60185b1a5bd2a8798ba36d5bf84df33",
+              "689bc268535aa88c91753ceb51a16862d9e59860cf1de24819628a5457443b11",
+              "f014f12d9add1bef4a40351abbe5187d21e2d603a1a7b158790bbfcf191ef077",
+              "9c2a8e7e5bcde3d2d17fbf468f1a111cb1da512372cfcd60f20e07dee2df8f90",
+              "4b2716b53e322d82b174672944717e17bdb93c7d52a24483bc4c6f75b103c19d",
+              "92cfe7afa9003312fe293778aac79555bd55b43a3ce140e21b7ef7de4abb38b9"
+            ],
+            "exam_sha256": "b1b25641825148558e3f1485e3562a5fef5a9fb2d109339206e78b1a4067b1d7",
+            "run_id": "C90-stage6-hot3967-RL8-boss511-A-B",
+            "runtime_commit": "1dfe39a3d9b0b33c453579c32c32b591911115bc",
+            "source_hashes": [
+              "0b1df9d03f4d7f51f1d37460bf8e884fbff446ff6f7dfb31329417422fa4ce81",
+              "f883c3e16f04161fa7908b4bda76602e3f1fc45d3363a4160c277e85f3dd1bf9",
+              "63d5a95dbf690af0dc02a61393b3ad4b2d586a6b0c719d3addf2114c6f933021",
+              "8852a7af71522b837b4f1ee054d55748d091c2a576d73a23edcd7e1a435f5ab9",
+              "91d9328a283d6b3a69f7f07940eb6408e9fed2fc695ba8886d7f072f8cdb9fe8",
+              "6861bef645457c0e1b3a87b0c9a32cc08da75c4ee61e6130fcd8835bda6002ab",
+              "f0533221403aa61f96b8401bb34ed9c607340c5cc294a135064f95d36e6c83d4",
+              "d7f5deab7db83d69a5a4622d87e960be1a2edddcf8208e7c076b41f671e337cd"
+            ],
+            "world": 7
+          },
+          "files": [
+            {
+              "bytes": 24053510,
+              "name": "rank-0.pt",
+              "rank": 0,
+              "sha256": "68e78ff4c96dc65c709a46942e5c751d57b494bc5af9f72757ac1a3e58e4cf4f"
+            },
+            {
+              "bytes": 24054086,
+              "name": "rank-1.pt",
+              "rank": 1,
+              "sha256": "21be0fefb6efcd57d0f15a5899786dd1b956aaec27c9519f71a025d6cd16925e"
+            },
+            {
+              "bytes": 24061318,
+              "name": "rank-2.pt",
+              "rank": 2,
+              "sha256": "433fbf6767426313e4d2e117645d1a75bea7c894d5c9e641209711f7b54e10fc"
+            },
+            {
+              "bytes": 24070278,
+              "name": "rank-3.pt",
+              "rank": 3,
+              "sha256": "9c52cb9fab7c84880df6f35ba2be3eeea9d96a117c7fe9e33a76a3e272b78802"
+            },
+            {
+              "bytes": 24084550,
+              "name": "rank-4.pt",
+              "rank": 4,
+              "sha256": "cbe5b894a7ab43eabf917bb589bacd3df28071abaece6122d4b22ff94d37088a"
+            },
+            {
+              "bytes": 24054726,
+              "name": "rank-5.pt",
+              "rank": 5,
+              "sha256": "2b936f3b20a5297ffe4f9e7d478883f3b9cdaffe38ed93044877cf83d1a660d8"
+            },
+            {
+              "bytes": 24057670,
+              "name": "rank-6.pt",
+              "rank": 6,
+              "sha256": "400add480b04858d7643b7cde4605ae20e4b9f88f7db2b8a4000a601686ad67f"
+            }
+          ],
+          "format": 1,
+          "kind": "evaluation",
+          "round": 1
+        }
+      },
+      "B1": {
+        "record": {
+          "arm": "B",
+          "checkpoint": {
+            "arm": "B",
+            "directory": "training-B-round1-dbc0eb0c7cd6437c8bc1e6ca505f3250",
+            "kind": "training",
+            "manifest_sha256": "4cad97b4420e7c8078200f2d85d1b85759929149f866c618913399cff33ecf58",
+            "round": 1
+          },
+          "complete": true,
+          "evaluation_only": true,
+          "reference": {
+            "arm": "B",
+            "directory": "evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f",
+            "kind": "evaluation",
+            "manifest_sha256": "c068d6ec86fc1d2d9c2466fbdafec9e88b2f57a38315e6f97abaa12b3452c36c",
+            "round": 1
+          },
+          "results_sha256": "c461b6dba609f028f7d0ddbf8c55d57d494dfc1a4383ba066178d2a5541b83e6",
+          "round": 1,
+          "rows": 7450,
+          "training_diagnostics": {
+            "H_imit": 0.7538215215935653,
+            "beta_used": 0.01723399845829735,
+            "combat_value_loss": 0.0010521838474397648,
+            "copy_advantage_moments_complete": false,
+            "copy_advantage_moments_global": null,
+            "copy_advantage_std_global": null,
+            "copy_clip_fraction": 0.12131211180124224,
+            "copy_kl": 0.012085096224945038,
+            "end_node_seconds": 3150.7761899911857,
+            "entropy_target": 0.6716025225602738,
+            "round": 1,
+            "scope": "Completed updates in this round; sample-weighted metrics, last beta; raw copy population std before scaling, null if unavailable in legacy cursor",
+            "start_node_seconds": 1575.6340857701434,
+            "updates": [
+              {
+                "H_imit": 0.7580576973497918,
+                "beta_used": 0.02195664278078092,
+                "combat_value_loss": 0.0010681408345932723,
+                "copy_advantage_std_global": null,
+                "copy_clip_fraction": 0.11791012376929756,
+                "copy_kl": 0.01162298481088014,
+                "training_node_seconds": 1905.0149753004953,
+                "update": 3
+              },
+              {
+                "H_imit": 0.7500359810922931,
+                "beta_used": 0.01723399845829735,
+                "combat_value_loss": 0.0010379265183866275,
+                "copy_advantage_std_global": 0.0194980619606096,
+                "copy_clip_fraction": 0.12435173716031947,
+                "copy_kl": 0.012497985852927584,
+                "training_node_seconds": 2572.39385324021,
+                "update": 4
+              }
+            ]
+          }
+        },
+        "original": {
+          "bytes": 9272804,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination.json",
+          "sha256": "c461b6dba609f028f7d0ddbf8c55d57d494dfc1a4383ba066178d2a5541b83e6"
+        },
+        "rank_originals": {
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination-rank-0.json": {
+            "bytes": 1314404,
+            "rows": 1065,
+            "sha256": "e076dbaf944571db3582f51b8132533ad55b0ac6ae8a2683098ce3a665bc0b74"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination-rank-1.json": {
+            "bytes": 1315446,
+            "rows": 1065,
+            "sha256": "0500aa85c1d476a664f3ccefe697cef346a032e71d296fc04b3e236069c10ab5"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination-rank-2.json": {
+            "bytes": 1325068,
+            "rows": 1065,
+            "sha256": "3c9e8654bee94a2177a41d5c2fc57ea1d8c5e75eb375e5d99e938c470ab0faed"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination-rank-3.json": {
+            "bytes": 1331991,
+            "rows": 1065,
+            "sha256": "c81341527981fae9be445f405d9ea5559932fe6f79bd2c8083bf447ba2917786"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination-rank-4.json": {
+            "bytes": 1353454,
+            "rows": 1065,
+            "sha256": "d3a7e0531735d398144738e9ad88c88ec0e44cb50993ea683d2181b87778ff67"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination-rank-5.json": {
+            "bytes": 1313431,
+            "rows": 1065,
+            "sha256": "4aced5a6100ef67efb79bd3e17ba0f87342931e1b1e283d3b25b0f582127920b"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-B-round1-ae276731c59b4929a0a9e78ef7c4d25f/examination-rank-6.json": {
+            "bytes": 1319016,
+            "rows": 1060,
+            "sha256": "0bfcb450707fa6eedd9d8b7ca2c4bf816f9ed23a29a4d4267b344bce12b6afc9"
+          }
+        },
+        "manifest": {
+          "arm": "B",
+          "binding": {
+            "baseline_sha256": "cd70e7ba8c7e447a98f2526fc8db7b899e099720f7c65fd288d008f95f9e20af",
+            "evaluation_anchor_hashes": [
+              "5faa6eadedeeb6e9d9f0d0cd6100583163bfa4b72589c0346f63db1852e4708a",
+              "c01803daba9fd628ade36ca42d6395e6c60185b1a5bd2a8798ba36d5bf84df33",
+              "689bc268535aa88c91753ceb51a16862d9e59860cf1de24819628a5457443b11",
+              "f014f12d9add1bef4a40351abbe5187d21e2d603a1a7b158790bbfcf191ef077",
+              "9c2a8e7e5bcde3d2d17fbf468f1a111cb1da512372cfcd60f20e07dee2df8f90",
+              "4b2716b53e322d82b174672944717e17bdb93c7d52a24483bc4c6f75b103c19d",
+              "92cfe7afa9003312fe293778aac79555bd55b43a3ce140e21b7ef7de4abb38b9"
+            ],
+            "exam_sha256": "b1b25641825148558e3f1485e3562a5fef5a9fb2d109339206e78b1a4067b1d7",
+            "run_id": "C90-stage6-hot3967-RL8-boss511-A-B",
+            "runtime_commit": "1dfe39a3d9b0b33c453579c32c32b591911115bc",
+            "source_hashes": [
+              "0b1df9d03f4d7f51f1d37460bf8e884fbff446ff6f7dfb31329417422fa4ce81",
+              "f883c3e16f04161fa7908b4bda76602e3f1fc45d3363a4160c277e85f3dd1bf9",
+              "63d5a95dbf690af0dc02a61393b3ad4b2d586a6b0c719d3addf2114c6f933021",
+              "8852a7af71522b837b4f1ee054d55748d091c2a576d73a23edcd7e1a435f5ab9",
+              "91d9328a283d6b3a69f7f07940eb6408e9fed2fc695ba8886d7f072f8cdb9fe8",
+              "6861bef645457c0e1b3a87b0c9a32cc08da75c4ee61e6130fcd8835bda6002ab",
+              "f0533221403aa61f96b8401bb34ed9c607340c5cc294a135064f95d36e6c83d4",
+              "d7f5deab7db83d69a5a4622d87e960be1a2edddcf8208e7c076b41f671e337cd"
+            ],
+            "world": 7
+          },
+          "files": [
+            {
+              "bytes": 24316282,
+              "name": "rank-0.pt",
+              "rank": 0,
+              "sha256": "c76981b9036105c1e22304f1c8806df6a9006bfe5a331826a792f7b6bd345319"
+            },
+            {
+              "bytes": 24317434,
+              "name": "rank-1.pt",
+              "rank": 1,
+              "sha256": "0aaca44824c810d3d1a1e8cff0e2b9ac255f2b9030bc239dc7209fe4cfe05ca9"
+            },
+            {
+              "bytes": 24324666,
+              "name": "rank-2.pt",
+              "rank": 2,
+              "sha256": "55e55429aebdc92cd4f299503d5831b2950bc5597046ec2bf3ca2768c569d71f"
+            },
+            {
+              "bytes": 24331578,
+              "name": "rank-3.pt",
+              "rank": 3,
+              "sha256": "cc2eeda7a7e56d6727c6698800420c35f71cd0ae830dcf020bca4e1d6dca68b4"
+            },
+            {
+              "bytes": 24347514,
+              "name": "rank-4.pt",
+              "rank": 4,
+              "sha256": "add62c1eb37bbdc5cfb78ec2da15d26667fa6ec33578a1016c80e6be9fbcf9b6"
+            },
+            {
+              "bytes": 24316602,
+              "name": "rank-5.pt",
+              "rank": 5,
+              "sha256": "bb151b1e8e1cbdacbd60148670c0181b8338786f7c587b0201c9e56bf80b1bb0"
+            },
+            {
+              "bytes": 24320058,
+              "name": "rank-6.pt",
+              "rank": 6,
+              "sha256": "116156d9f6c2e50866702c0b489e6e97e3ad1b2758ffdd00486060be12046bed"
+            }
+          ],
+          "format": 1,
+          "kind": "evaluation",
+          "round": 1
+        }
+      },
+      "RL8": {
+        "record": {
+          "checkpoint": {
+            "additional_training_updates": 0,
+            "origin": "original_job3967_RL8",
+            "source_hashes": [
+              "0b1df9d03f4d7f51f1d37460bf8e884fbff446ff6f7dfb31329417422fa4ce81",
+              "f883c3e16f04161fa7908b4bda76602e3f1fc45d3363a4160c277e85f3dd1bf9",
+              "63d5a95dbf690af0dc02a61393b3ad4b2d586a6b0c719d3addf2114c6f933021",
+              "8852a7af71522b837b4f1ee054d55748d091c2a576d73a23edcd7e1a435f5ab9",
+              "91d9328a283d6b3a69f7f07940eb6408e9fed2fc695ba8886d7f072f8cdb9fe8",
+              "6861bef645457c0e1b3a87b0c9a32cc08da75c4ee61e6130fcd8835bda6002ab",
+              "f0533221403aa61f96b8401bb34ed9c607340c5cc294a135064f95d36e6c83d4",
+              "d7f5deab7db83d69a5a4622d87e960be1a2edddcf8208e7c076b41f671e337cd"
+            ]
+          },
+          "complete": true,
+          "evaluation_only": true,
+          "reference": {
+            "arm": "A",
+            "directory": "evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f",
+            "kind": "evaluation",
+            "manifest_sha256": "cc46ba503447d3f9a1ee392b3211f1efbd5ab426b627c424a1bdb7e9ab69ef27",
+            "round": -1
+          },
+          "results_sha256": "7a059de3a863c86d77b16a3eecb7b19c14fac79a6ced6eb57fc11ca7a605d6b5",
+          "rows": 7450
+        },
+        "original": {
+          "bytes": 9312439,
+          "path": "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination.json",
+          "sha256": "7a059de3a863c86d77b16a3eecb7b19c14fac79a6ced6eb57fc11ca7a605d6b5"
+        },
+        "rank_originals": {
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination-rank-0.json": {
+            "bytes": 1319554,
+            "rows": 1065,
+            "sha256": "06b0e1a94afff610186741de7025f4649c1d73925e1a1ca39f660f2cdb00979c"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination-rank-1.json": {
+            "bytes": 1320788,
+            "rows": 1065,
+            "sha256": "07ebb11cb19e7d2fc4d91157d676e3860280d95ba5dec950a29ea535a25fc31d"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination-rank-2.json": {
+            "bytes": 1331486,
+            "rows": 1065,
+            "sha256": "4e07047ece11ae52ba62fd70994a44cc30edeedda0aa813fdd4e5150138c51e3"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination-rank-3.json": {
+            "bytes": 1340107,
+            "rows": 1065,
+            "sha256": "df8e004c4f3eea7eb4e44509d6261d2020029b2f1c238151300cfbcbf71b5019"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination-rank-4.json": {
+            "bytes": 1357069,
+            "rows": 1065,
+            "sha256": "7ef801e86aed89dc230f39b699b9e10bd302a81fc6468fca8ec118e3d6e8b702"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination-rank-5.json": {
+            "bytes": 1318624,
+            "rows": 1065,
+            "sha256": "1fb214b66ce4fe2d356944a5ce85e7bc33fc5d5210b192fdeb9f7559f796528c"
+          },
+          "/home/zhuyouwei/spire-downloads/e4-c90-stage6-ab/evaluation-A-round-1-759dfc57e6ef44e285a0d54b00b3a05f/examination-rank-6.json": {
+            "bytes": 1324817,
+            "rows": 1060,
+            "sha256": "a53c5afb21b5b7a3511edafae83f8e631ab32203a66480f83f11731b34a5639d"
+          }
+        },
+        "manifest": {
+          "arm": "A",
+          "binding": {
+            "baseline_sha256": "cd70e7ba8c7e447a98f2526fc8db7b899e099720f7c65fd288d008f95f9e20af",
+            "evaluation_anchor_hashes": [
+              "5faa6eadedeeb6e9d9f0d0cd6100583163bfa4b72589c0346f63db1852e4708a",
+              "c01803daba9fd628ade36ca42d6395e6c60185b1a5bd2a8798ba36d5bf84df33",
+              "689bc268535aa88c91753ceb51a16862d9e59860cf1de24819628a5457443b11",
+              "f014f12d9add1bef4a40351abbe5187d21e2d603a1a7b158790bbfcf191ef077",
+              "9c2a8e7e5bcde3d2d17fbf468f1a111cb1da512372cfcd60f20e07dee2df8f90",
+              "4b2716b53e322d82b174672944717e17bdb93c7d52a24483bc4c6f75b103c19d",
+              "92cfe7afa9003312fe293778aac79555bd55b43a3ce140e21b7ef7de4abb38b9"
+            ],
+            "exam_sha256": "b1b25641825148558e3f1485e3562a5fef5a9fb2d109339206e78b1a4067b1d7",
+            "run_id": "C90-stage6-hot3967-RL8-boss511-A-B",
+            "runtime_commit": "1dfe39a3d9b0b33c453579c32c32b591911115bc",
+            "source_hashes": [
+              "0b1df9d03f4d7f51f1d37460bf8e884fbff446ff6f7dfb31329417422fa4ce81",
+              "f883c3e16f04161fa7908b4bda76602e3f1fc45d3363a4160c277e85f3dd1bf9",
+              "63d5a95dbf690af0dc02a61393b3ad4b2d586a6b0c719d3addf2114c6f933021",
+              "8852a7af71522b837b4f1ee054d55748d091c2a576d73a23edcd7e1a435f5ab9",
+              "91d9328a283d6b3a69f7f07940eb6408e9fed2fc695ba8886d7f072f8cdb9fe8",
+              "6861bef645457c0e1b3a87b0c9a32cc08da75c4ee61e6130fcd8835bda6002ab",
+              "f0533221403aa61f96b8401bb34ed9c607340c5cc294a135064f95d36e6c83d4",
+              "d7f5deab7db83d69a5a4622d87e960be1a2edddcf8208e7c076b41f671e337cd"
+            ],
+            "world": 7
+          },
+          "files": [
+            {
+              "bytes": 24054150,
+              "name": "rank-0.pt",
+              "rank": 0,
+              "sha256": "b3969b60efccc408485ed5ac1821455d80cc460977281f8ad4a6e3785a42c59e"
+            },
+            {
+              "bytes": 24055366,
+              "name": "rank-1.pt",
+              "rank": 1,
+              "sha256": "0ae4c072d60b375ecb8cd3d800a045247c8bf6e27468b714f321eeac5d57705e"
+            },
+            {
+              "bytes": 24063366,
+              "name": "rank-2.pt",
+              "rank": 2,
+              "sha256": "f31d190b28fe0e2d21cbd4415f664e827e0086cfd7d75e84ef7367990e92909f"
+            },
+            {
+              "bytes": 24071046,
+              "name": "rank-3.pt",
+              "rank": 3,
+              "sha256": "2cdd1c298e1dec0f149f7a612ba32b51c1ca1bf57e598964b84c4a5a93a22dda"
+            },
+            {
+              "bytes": 24084358,
+              "name": "rank-4.pt",
+              "rank": 4,
+              "sha256": "7fa583b348802ec0b8f928c424a96ee255f8341ee177eb5198c23d1f7dcadc4e"
+            },
+            {
+              "bytes": 24054342,
+              "name": "rank-5.pt",
+              "rank": 5,
+              "sha256": "76cac0ebe7aaba3047410a024eac735af50f2e42dfd6be90263e17758672a1d2"
+            },
+            {
+              "bytes": 24058438,
+              "name": "rank-6.pt",
+              "rank": 6,
+              "sha256": "f6b460f538aa846bf00efa6a2a403c3453c3d0382a3c9f65164462dc265bc548"
+            }
+          ],
+          "format": 1,
+          "kind": "evaluation",
+          "round": -1
+        }
+      }
+    },
+    "projection": {
+      "bytes": 95820,
+      "sha256": "eecff5b57f0f852262fdd2fa18adccf077736c3d5168f4b8d54f6e2d9658fc36",
+      "raw_bytes": 626454,
+      "raw_sha256": "4a325ca4a6a92103c6cd4148f25a3202c86975ce7f1cc73dcded6a2e811178c2",
+      "state_sha256": "530d8c12f4e25ae95becc792851eb3a8187c4239cdca668a691b8bbe5b7f023f"
+    },
+    "scope": "Server parent script read all full original result JSON and matched per-rank rows; local independent reviewer recomputed every death count and five-case coverage from complete outcome projection. Full action arrays, PT/model/GPU/Mac execution not claimed.",
+    "resources_queried": 0
+  },
+  "accounting": {
+    "stage6_cap": 18000,
+    "charged": 8865.94240875,
+    "reserved": 0,
+    "remaining": 9134.05759125,
+    "step1_old_reservations_retained": 27000,
+    "new_job": null
+  },
+  "deployment": {
+    "deployed": false,
+    "source_migration_contract_pending": true,
+    "full_original_input_protection_and_fresh_allocation_gates_required": true
+  },
+  "acceptance": {
+    "full1024N32_and18paths_complete": false,
+    "Mac_original_replay_complete": false,
+    "grouped_death_rates_not_a_final_acceptance_test": true
+  },
+  "evidence": "D:/google download/sts-silent-gpu-results/2026-10-20-e4/hb20261028T1729"
+}

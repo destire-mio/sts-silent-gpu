@@ -56,8 +56,8 @@ class Phase6Storage:
     def resume_binding(self, binding):
         normalized = deepcopy(binding)
         if normalized != self.binding:
-            # Claude91 authorizes resuming the 89bd round0 snapshots after the Step0 correction.
-            assert normalized['runtime_commit'] == '89bd8c16d25b456212d5c8ad6c84615255fa4e41'
+            # Claude93 authorizes the saved 1dfe round1 pair after the Counter correction.
+            assert normalized['runtime_commit'] == '1dfe39a3d9b0b33c453579c32c32b591911115bc'
             normalized['runtime_commit'] = self.binding['runtime_commit']
             assert normalized == self.binding
         return normalized
