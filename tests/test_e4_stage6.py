@@ -256,6 +256,10 @@ def _copy_advantage_worker(rank, directory):
         dist.all_gather_object(shards, selected.tolist())
         scaled = torch.tensor(shards[0] + shards[1], dtype=torch.float64)
         original = torch.tensor([.001, .002, .005, .006], dtype=torch.float32).double()
+        moments = cursor['copy_advantage_moments_global']
+        assert moments[2] == 4
+        assert moments[0] == pytest.approx(float(original.sum()))
+        assert moments[1] == pytest.approx(float(original.square().sum()))
         expected = original / (original.std(unbiased=False) + 1e-8)
         torch.testing.assert_close(scaled, expected, rtol=2e-6, atol=1e-6)
         assert abs(float(scaled.std(unbiased=False)) - 1.) < 1e-5
@@ -272,3 +276,24 @@ def test_B_copy_advantage_global_std_is_one_without_recentering_or_mainline_chan
     reports = [json.loads((tmp_path / f'copy-std-rank-{rank}.json').read_bytes()) for rank in range(2)]
     assert [report['copies'] for report in reports] == [1, 3]
     assert all(abs(report['population_std'] - 1.) < 1e-5 for report in reports)
+
+
+def test_B_entropy_stop_is_immediate_and_survives_worker_restore(cpu_group, tmp_path, monkeypatch):
+    from train.e4_stage6.phase6_controller import run_training_slice
+    monkeypatch.setattr('train.e4_stage6.copy_learner.MINIBATCH', 2)
+    monkeypatch.setattr('train.e4_stage6.copy_learner.MICROBATCH', 1)
+    def build():
+        model = DistributedDataParallel(CombatPolicy(ModelConfig(16, 1, 2, 32)))
+        return TrainingWorker(model, torch.optim.Adam(model.parameters(), lr=1e-4), SyntheticCollector(),
+            torch.Generator().manual_seed(22), dict(arm='B', rank=0, world=1, bosses_seen=511), .03, 100.)
+    worker = build()
+    while worker.state['updates'] == 0:
+        result = worker.step(time.monotonic() + 30)
+    assert result['action'] == 'B_entropy_below_half_target'
+    assert worker.state['rows'][0]['copy_advantage_std_global'] == 0.
+    restored = build()
+    restored.restore(worker.snapshot())
+    before = deepcopy(restored.model.module.state_dict())
+    report = run_training_slice(restored, 100., time.monotonic()+30, tmp_path/'stop', 0.)
+    assert report['reason'] == 'B_entropy_below_half_target' and not report['finished']
+    assert all(torch.equal(value, restored.model.module.state_dict()[key]) for key,value in before.items())

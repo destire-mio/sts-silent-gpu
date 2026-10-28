@@ -1,0 +1,56 @@
+{
+  "decision_main": "96deb6ae91f424aa2243db7db62316ef118ee7a8",
+  "decision_number": 92,
+  "base_runtime_source": "07fb79c9fc0fe44ea3e52862622710752d9003b0",
+  "decision_read": "Normal fetch and independent CLI refs each failed once with github.com443 connection failure; connector original commit diff, one-commit compare and complete new message read. Local92 Git object unavailable, not fabricated.",
+  "same_conversation": true,
+  "requested_model": "gpt-6.1-sol",
+  "requested_reasoning_effort": "low",
+  "execution_owner": "/root in existing conversation; no new chat or agent",
+  "source_reference": {
+    "origin": "Original job3967 RL8 rank sources, hash-bound by existing eight source references",
+    "additional_training_updates": 0,
+    "policy": "Frozen original Policy without constructing a trainer/optimizer",
+    "examination": "Same accepted1490 scenes, replay32 plus4single rows; unchanged dev-only worker",
+    "storage": "Separate source_examination state and evaluation generation round-1; original A/B training and evaluation references remain separate",
+    "interruption": "Persist generation reference before completion report, resume cursor; completed record prevents subsequent execution",
+    "budget": "Actual evaluation elapsed time remains inside existing shared allocation/phase cap; no extra budget or refunds"
+  },
+  "B_round_metrics": {
+    "H_imit": "Weighted by actual first-epoch imitation entropy samples",
+    "beta_used": "Last completed update, with each actual update retained",
+    "copy_kl": "Weighted by actual copy samples",
+    "copy_clip_fraction": "Weighted by actual copy samples",
+    "combat_value_loss": "Weighted by actual copy samples",
+    "copy_advantage_std_global": "Global population sqrt(sum(x*x)/n-(sum(x)/n)^2) before division; combine cross-rank raw moments over updates, never average standard deviations",
+    "legacy_missing_moments": "Explicit null/complete=false for cursors or prior rows that never recorded raw moments; no cursor reset or invented measurements",
+    "scope": "Completed updates inside round training-time boundaries; padding excluded; raw moments count each copy before epoch repeats",
+    "artifacts": "phase6-B-diagnostics.json plus B examination/final summary training_diagnostics"
+  },
+  "stop_rules": {
+    "entropy": "Immediately after a completed B update with H_imit strictly less than original entropy_target/2; persisted stop prevents further updates after restore",
+    "copy_kl": "Two adjacent completed B training rounds with sample-weighted copy_kl strictly greater than0.05",
+    "preservation": "Save actual checkpoint and diagnostic report before ending runtime; keep all consumed expense, no automatic retry"
+  },
+  "parent_CPU": {
+    "passed": 25,
+    "failed": 0,
+    "files": ["tests/test_e4_stage6_diagnostics.py", "tests/test_e4_stage6.py", "tests/test_e4_stage6_source_upgrade.py"],
+    "evidence": "D:/google download/sts-silent-gpu-results/2026-10-20-e4/hb20261028T1322/c92-CPU/run-fb901b7fa41e40adbbab9706d156c6c7",
+    "scope": "Generated CPU fixtures and real Gloo/Adam/tensor operations; existing integrity tests overlap previous runs, not25new independent cases"
+  },
+  "heartbeat1322": {
+    "trigger": "2026-10-28T13:22:33.489Z",
+    "earliest_resource_query": "2026-10-28T13:22:52.910419Z",
+    "resource_queries": 0,
+    "reason": "Actual trigger precedes gate by19.421419seconds; no waiting until gate or late query",
+    "receipt": null,
+    "reservation": 0,
+    "charge": 0
+  },
+  "actual_new_GPU": false,
+  "actual_new_native_CPU": false,
+  "actual_original_round0_PT_loaded": false,
+  "original_Mac_replay": false,
+  "project_complete": false
+}

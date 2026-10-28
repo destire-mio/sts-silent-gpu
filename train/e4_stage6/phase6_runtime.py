@@ -20,6 +20,7 @@ from train.model import Policy
 from train.e4_stage6.phase6_controller import Phase6Schedule, run_training_slice
 from train.e4_stage6.phase6_storage import Phase6Storage, file_digest
 from train.e4_stage6.training_worker import SEARCH_STATE
+from train.e4_stage6.diagnostics import b_round_diagnostics, b_diagnostic_stop
 
 
 def decision_metrics(episodes):
@@ -100,10 +101,22 @@ class Phase6Runtime:
     def evaluator(self, arm, checkpoint, evaluation_reference=None):
         assert self.worker is None
         saved = self.store.load_worker(checkpoint)
+        if arm == 'B' and not any(r['round'] == checkpoint['round']
+                for r in self.state.get('B_diagnostics', [])):
+            assert checkpoint['round'] == 0
+            report = b_round_diagnostics(saved['state']['rows'], 0, 0.,
+                saved['state']['training_node_seconds'], saved['state']['entropy_target'])
+            self.state.setdefault('B_diagnostics', []).append(report)
+            if self.rank == 0:
+                atomic_json(self.root/'phase6-B-diagnostics.json', self.state['B_diagnostics'])
         config = ModelConfig(**saved['binding']['config'])
         policy = (Policy if arm == 'A' else CombatPolicy)(config).to(self.device)
         policy.load_state_dict(saved['model'], strict=True)
         del saved
+        return self.evaluation_worker(arm, policy, checkpoint['manifest_sha256'], evaluation_reference)
+
+    def evaluation_worker(self, arm, policy, checkpoint_sha256, evaluation_reference=None):
+        config = policy.config
         rng = torch.Generator(device=self.device)
         rng.set_state(self.evaluation_anchor['search_rng'])
         seed_rng = torch.Generator()
@@ -111,7 +124,7 @@ class Phase6Runtime:
         search = RoomSearch(256, 32, self.device, rng, scratch_slots=256*33, bosses_seen=511)
         search.evidence_directory = self.root
         binding = dict(arm=arm, rank=self.rank, world=self.world, runtime_commit=self.binding['runtime_commit'],
-            checkpoint_sha256=checkpoint['manifest_sha256'], policy_sha256=policy_hash(policy), config=asdict(config))
+            checkpoint_sha256=checkpoint_sha256, policy_sha256=policy_hash(policy), config=asdict(config))
         self.worker = EvaluationWorker(policy, search, seed_rng, self.evaluation_anchor['search_rng'],
                                        self.exam, binding, self.stop_file)
         if evaluation_reference is not None:
@@ -119,6 +132,35 @@ class Phase6Runtime:
             self.worker.restore(saved)
             del saved
         return self.worker
+
+    def source_examination(self, deadline):
+        previous = self.state.get('source_examination')
+        if previous is not None and previous['complete']:
+            return True
+        assert self.worker is None
+        source = self.source()
+        assert source['commit'] == '67735d2808018721eb318d2c954de6954eeb314a'
+        assert source['task'] == 'rl' and source['state']['phase'] == 'evaluation' and source['state']['updates'] == 8
+        policy = Policy(ModelConfig(**source['config'])).to(self.device)
+        policy.load_state_dict(source['model'], strict=True)
+        del source
+        worker = self.evaluation_worker('A', policy, self.source_sha256,
+            previous['reference'] if previous is not None else None)
+        finished = self.advance_evaluation(worker, 'examination_complete', deadline)
+        reference = self.store.save_worker(worker, 'evaluation', -1)
+        self.state['source_examination'] = dict(complete=False, reference=reference)
+        self.save()
+        if finished:
+            checkpoint = dict(origin='original_job3967_RL8', source_hashes=self.binding['source_hashes'],
+                              additional_training_updates=0)
+            record = self.write_examination(worker, dict(checkpoint=checkpoint), reference)
+            self.state['source_examination'] = record
+            if self.rank == 0:
+                atomic_json(self.root/'phase6-source-examination.json', record)
+            self.save()
+        del worker
+        self.drop_worker()
+        return finished
 
     def train(self, action, deadline):
         arm, round_number = action['arm'], action['round']
@@ -129,12 +171,28 @@ class Phase6Runtime:
         self.state['training'][arm] = reference
         self.state['boundary'][arm] = report['boundary_node_seconds']
         self.schedule.record_training(arm, report, reference)
-        if report['reason'] == 'training_health_stop':
+        if arm == 'B':
+            matched = self.schedule.state['last_matched']
+            start = matched['time']['actual_B'] if matched is not None else 0.
+            reports = self.state.setdefault('B_diagnostics', [])
+            if not reports and matched is not None:
+                assert matched['round'] == 0
+                reports.append(b_round_diagnostics(worker.state['rows'], 0, 0., start,
+                    worker.state['entropy_target']))
+            diagnostic = b_round_diagnostics(worker.state['rows'], round_number, start,
+                report['actual_node_seconds'], worker.state['entropy_target'])
+            reports[:] = [r for r in reports if r['round'] != round_number] + [diagnostic]
+            if self.rank == 0:
+                atomic_json(self.root/'phase6-B-diagnostics.json', reports)
+                print(json.dumps(dict(event='stage6_B_round_diagnostics',**diagnostic)),flush=True)
+            if report['finished']:
+                self.state['stopped_reason'] = b_diagnostic_stop(reports)
+        if report['reason'] in ('training_health_stop','B_entropy_below_half_target'):
             self.state['stopped_reason'] = report['reason']
         self.save()
         del worker
         self.drop_worker()
-        return report['finished']
+        return report['finished'] and self.state['stopped_reason'] is None
 
     def evaluate(self, action, deadline):
         arm, round_number, checkpoint = action['arm'], action['round'], action['checkpoint']
@@ -146,20 +204,9 @@ class Phase6Runtime:
             worker.begin_full_run()
         assert worker.state['phase'] in (('full_run','complete') if full else ('examination','examination_complete'))
         target = 'complete' if full else 'examination_complete'
-        while True:
-            completed = torch.tensor(int(worker.state['phase'] == target), device=self.device)
-            dist.all_reduce(completed, op=dist.ReduceOp.MIN)
-            if bool(completed):
-                break
-            if self.stopped(deadline):
-                break
-            if worker.state['phase'] != target:
-                worker.step(deadline)
+        finished = self.advance_evaluation(worker, target, deadline)
         reference = self.store.save_worker(worker, 'evaluation', round_number)
         self.state['evaluations'][key] = reference
-        completed = torch.tensor(int(worker.state['phase'] == target), device=self.device)
-        dist.all_reduce(completed, op=dist.ReduceOp.MIN)
-        finished = bool(completed)
         if finished:
             record = (self.write_full_run(worker, action, reference) if full
                       else self.write_examination(worker, action, reference))
@@ -171,6 +218,20 @@ class Phase6Runtime:
         del worker
         self.drop_worker()
         return finished
+
+    def advance_evaluation(self, worker, target, deadline):
+        while True:
+            completed = torch.tensor(int(worker.state['phase'] == target), device=self.device)
+            dist.all_reduce(completed, op=dist.ReduceOp.MIN)
+            if bool(completed):
+                break
+            if self.stopped(deadline):
+                break
+            if worker.state['phase'] != target:
+                worker.step(deadline)
+        completed = torch.tensor(int(worker.state['phase'] == target), device=self.device)
+        dist.all_reduce(completed, op=dist.ReduceOp.MIN)
+        return bool(completed)
 
     def write_rank_rows(self, reference, name, rows, diagnostics):
         directory = self.root / reference['directory']
@@ -196,6 +257,9 @@ class Phase6Runtime:
             atomic_json(path, rows)
             record = dict(complete=True, checkpoint=action['checkpoint'], rows=7450,
                 reference=reference, results_sha256=file_digest(path), evaluation_only=True)
+            if action.get('arm') == 'B':
+                record['training_diagnostics'] = next(r for r in self.state['B_diagnostics']
+                    if r['round'] == action['round'])
         return self.store.broadcast(record)
 
     def write_full_run(self, worker, action, reference):
@@ -225,6 +289,9 @@ class Phase6Runtime:
                 combat=combat_diagnostics_summary(sum([row['combat_diagnostics'] for row in counts],[])),
                 **search_summary,
                 faults_truncated_scope='Producer summary constants, not independent original-game proof')
+            if action['arm'] == 'B':
+                assessment['training_diagnostics'] = next(r for r in self.state['B_diagnostics']
+                    if r['round'] == action['round'])
             atomic_json(directory/f'{name}-summary.json', assessment)
             atomic_json(directory/f'{name}-audit.json', audit(episodes,name,action['round']+1,self.binding['runtime_commit']))
             path = directory/f'{name}-episodes.json.gz'
@@ -261,6 +328,15 @@ class Phase6Runtime:
     def run(self, allocation_clock, examination_reserve_remaining, overhead_reserve):
         if self.state['stopped_reason'] is not None:
             return dict(reason=self.state['stopped_reason'], complete=False)
+        if not (self.state.get('source_examination') or {}).get('complete',False):
+            started = time.monotonic()
+            finished = self.source_examination(allocation_clock.deadline)
+            elapsed = torch.tensor(time.monotonic()-started, dtype=torch.float64, device=self.device)
+            dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
+            self.state['evaluation_node_seconds'] += float(elapsed)*self.world/8
+            self.save()
+            if not finished:
+                return dict(reason='source_examination_interrupted', complete=False)
         while not self.stopped(allocation_clock.deadline):
             choice = None
             if self.rank == 0:

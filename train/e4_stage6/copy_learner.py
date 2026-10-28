@@ -88,6 +88,7 @@ def begin_update(mainline, rng, epochs, arm):
         mean = moments[0] / moments[2].clamp_min(1)
         std = (moments[1] / moments[2].clamp_min(1) - mean.square()).clamp_min(0).sqrt()
         rows['advantages'] = torch.where(copy, adv / (std + 1e-8), adv).float()
+        copy_moments = moments.tolist()
     else:
         names = ('data', 'offsets', 'policy_mask', 'actions', 'logs', 'values', 'returns', 'advantages', 'training_seeds', 'source_partition')
         rows = {name: mainline[name] for name in names}
@@ -101,6 +102,7 @@ def begin_update(mainline, rng, epochs, arm):
         mean = moments[0] / moments[2].clamp_min(1)
         std = (moments[1] / moments[2].clamp_min(1) - mean.square()).clamp_min(0).sqrt()
         rows['advantages'] = ((adv - mean) / (std + 1e-8)).float()
+        copy_moments = None
     device = rows['actions'].device
     count = len(rows['actions'])
     maximum = torch.tensor(count, device=device)
@@ -108,7 +110,8 @@ def begin_update(mainline, rng, epochs, arm):
     order, valid = padded_plan(count, int(maximum), rng, device)
     return dict(rows=rows, count=count, maximum=int(maximum), order=order, valid=valid,
                 epoch=0, start=0, epochs=epochs, arm=arm, done=False, metrics=None,
-                total=torch.zeros(16, dtype=torch.float64, device=device), optimizer_steps=0)
+                total=torch.zeros(16, dtype=torch.float64, device=device), optimizer_steps=0,
+                copy_advantage_moments_global=copy_moments)
 
 
 def advance_update(model, optimizer, cursor, rng, beta):
@@ -185,5 +188,11 @@ def finish_update(cursor, beta):
     if cursor['arm'] == 'A':
         result['imitation_samples'] = result.pop('event_imitation_samples')
         result['entropy_scope'] = 'raw_nats_valid_mainline_imitation_first_epoch'
+    else:
+        moments = cursor.get('copy_advantage_moments_global')
+        result['copy_advantage_moments_global'] = moments
+        result['copy_advantage_std_global'] = (max(0., moments[1] / max(1, moments[2])
+            - (moments[0] / max(1, moments[2]))**2)**.5 if moments is not None else None)
+        result['copy_advantage_std_scope'] = 'Global population before scaling; null for a cursor begun before Claude92'
     cursor['metrics'] = result
     return result

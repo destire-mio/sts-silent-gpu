@@ -77,6 +77,8 @@ class TrainingWorker:
     def step(self, deadline):
         if self.state['health_stopped']:
             return dict(action='training_health_stop',performed_training=False)
+        if self.state.get('diagnostic_stopped_reason') is not None:
+            return dict(action=self.state['diagnostic_stopped_reason'],performed_training=False)
         self.collector.search.deadline = deadline
         expired = time.monotonic() >= deadline
         if not expired:
@@ -137,6 +139,8 @@ class TrainingWorker:
                 collection_seconds=self.state['update_collection_seconds'],
                 learner_seconds=self.state['update_learner_seconds'])
             self.state['rows'].append(row)
+            if arm == 'B' and metrics['H_imit'] < self.state['entropy_target'] / 2:
+                self.state['diagnostic_stopped_reason'] = 'B_entropy_below_half_target'
             if self.binding['rank'] == 0:
                 print(json.dumps(dict(event='stage6_update',arm=arm,
                     first_A_update_timing=arm == 'A' and self.state['updates'] == 1,**row)),flush=True)
@@ -146,7 +150,8 @@ class TrainingWorker:
             self.state['update_collection_seconds'] = 0.
             self.state['update_learner_seconds'] = 0.
             self.cursor = None
-        action=('training_health_stop' if self.state['health_stopped'] else
+        action=self.state.get('diagnostic_stopped_reason') or (
+                'training_health_stop' if self.state['health_stopped'] else
                 'update_complete' if metrics is not None else 'minibatch_complete')
         return dict(action=action,
             performed_training=True, seconds=elapsed, metrics=metrics,

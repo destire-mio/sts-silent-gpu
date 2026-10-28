@@ -29,10 +29,10 @@ def run_training_slice(worker, target_node_seconds, allocation_deadline, stop_fi
         call_started=time.monotonic()
         result=worker.step(float(deadline))
         call_seconds=time.monotonic()-call_started
-        if result['action']=='training_health_stop':
+        if result['action'] in ('training_health_stop','B_entropy_below_half_target'):
             return dict(finished=False,target_node_seconds=target_node_seconds,
                 actual_node_seconds=worker.state['training_node_seconds'],started_node_seconds=started_nodes,
-                boundary_node_seconds=boundary,reason='training_health_stop')
+                boundary_node_seconds=boundary,reason=result['action'])
         if not result['performed_training']:
             flag=torch.tensor(int(stop_file.exists() or time.monotonic()>=allocation_deadline),device=device)
             dist.all_reduce(flag,op=dist.ReduceOp.MAX)
