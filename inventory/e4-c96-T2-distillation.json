@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "decision_main": "b91afd612b7af698d42404e8e3af496dce91fb3c",
+  "claude_number": 96,
+  "phase": "claude96_stage8",
+  "status": "source_and_local_CPU_ready_native_admission_pending",
+  "cap_node_seconds": 6000,
+  "label_collection_cap_node_seconds": 3500,
+  "old_stage7_unused_retired_node_seconds": 896.25,
+  "charged_node_seconds": 0,
+  "reserved_node_seconds": 0,
+  "actual_job_id": null,
+  "actual_training_parameter_updates": 0,
+  "B2_policy_sha256": "cff4cc3c6bcc63572fdc620f8e803f311d2caf0c750c1bbc546d792459716fd0",
+  "B2_source_manifest_sha256": "370aa2bb3bbc90ca030ba43eddd643d8e5d929673d5287fcdaf16147dbd9d730",
+  "source_semantics": {
+    "training_seed_range": [
+      1000000000,
+      2000000000
+    ],
+    "seed_shards": "disjoint deterministic rank-strided seeds from parent-bound training_seed_start",
+    "teacher": "reviewed T2: top8 B2 legal candidates,16 common deterministic previews,combat end/300-step horizon",
+    "mainline": "frozen B2 existing inference outside elite/Boss, T2 actually executed in elite/Boss; no event-training exploration",
+    "labels": "packed real observations, whole-encounter identity and replay prefix, selected action, candidates and their mean scores; append after actual execution",
+    "validation": "deterministic whole-encounter9:1 split, no per-decision split",
+    "learning": "same B2 architecture; mean CE(T2) + mean KL(B2||student); equal-count same-game B2 noncombat rows sampled each epoch; lr1e-4; first validation plateau stops and restores best student",
+    "examination": "student-only hard990 once, paired exact keys with job4286 B2; Boss deaths saved>5pp and elite deaths added<=3pp",
+    "full_runs": "separately admitted optional1024 existing whole-game evaluation protocol vs B4145, per-seed discard counts and post-elite bottle counts"
+  },
+  "CPU": {
+    "tests": 12,
+    "passed": 12,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "junit_sha256": "5c599466749efd3dbc18fe46c16862490c12823ef630b005db6eb21592c2dd69",
+    "scope": "local Python/Torch semantics and real CombatPolicy gradient path; no native Game execution claim",
+    "coverage": [
+      "elite/Boss routing",
+      "noncombat frozen inference",
+      "disjoint training seeds",
+      "whole-encounter split and exam-seed rejection",
+      "forward masked KL and detached B2",
+      "packed observations/real CombatPolicy finite gradients",
+      "equal CE/KL row counts and validation plateau/best restore",
+      "actual selected action commit and interrupted selection",
+      "executed-only potion counters and elite exit",
+      "stalled zero-action potion statistics",
+      "paired990 strict5pp/3pp thresholds",
+      "Stage8 budget/collection cap and rejection of Stage7 context"
+    ]
+  },
+  "native_CPU_validated": false,
+  "actual_CUDA_validated": false,
+  "Mac_original_replay_claimed": false,
+  "admission_runtime_implemented": false,
+  "remaining_before_any_GPU": [
+    "publish and pin exact source",
+    "isolated native CPU validation against unchanged engine binary hashes",
+    "Stage8-specific receipt/admission/reservation/release/settlement helpers and root budget contract",
+    "fresh full input hashes, all budgets, resources and real held receipt before reserve/release"
+  ],
+  "new_repository_remote_path_policy": "$REMOTE/...",
+  "source_files": {
+    "train/e4_teacher_distill.py": {
+      "sha256_LF": "4cbeb1c931f0718c3166c99482c7c55ae14492349a0385d9c516d1d52dd9c702"
+    },
+    "tools/e4_teacher_distill.py": {
+      "sha256_LF": "d271c540e4a79d430a09872adcbd2bf986311994dedb0aa6dda8c90a43cb2d5c"
+    },
+    "tests/test_e4_teacher_distill.py": {
+      "sha256_LF": "de172999fe78a07d421da58a87c63b29ba68e1ed243875b67949fbdad80cb5fa"
+    }
+  }
+}
