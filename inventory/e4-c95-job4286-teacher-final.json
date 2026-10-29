@@ -1,0 +1,987 @@
+{
+  "schema": 1,
+  "job_id": 4286,
+  "runtime_commit": "86e9e3667ef44b4ac05663ec9d9092285b200d15",
+  "status": "completed_parent_audited_await_Claude_judgment",
+  "evaluation_only": true,
+  "parameter_updates": 0,
+  "training_authorized": false,
+  "coverage": {
+    "B2": 990,
+    "T": 990,
+    "T2": 990
+  },
+  "grouped": {
+    "B2": {
+      "act1_elite": {
+        "scenes": 400,
+        "deaths": 146,
+        "death_rate": 0.365,
+        "mean_score": 0.0699239581823349,
+        "decisions": 13935,
+        "decision_seconds": 29.099315349509595,
+        "seconds_per_decision": 0.0020882178219956654,
+        "mean_potion_uses": 0.6225,
+        "won_combats": 252,
+        "mean_potions_remaining_when_won": 0.1865079365079365,
+        "potion_probe_seconds": 0.0,
+        "potion_probe_count": 0,
+        "mean_selected_minus_discard": null,
+        "potion_probe_top10": []
+      },
+      "act1_boss_guardian": {
+        "scenes": 130,
+        "deaths": 62,
+        "death_rate": 0.47692307692307695,
+        "mean_score": 0.05096876512353237,
+        "decisions": 7303,
+        "decision_seconds": 10.914776998150739,
+        "seconds_per_decision": 0.0014945607282145336,
+        "mean_potion_uses": 1.0384615384615385,
+        "won_combats": 68,
+        "mean_potions_remaining_when_won": 0.14705882352941177,
+        "potion_probe_seconds": 0.0,
+        "potion_probe_count": 0,
+        "mean_selected_minus_discard": null,
+        "potion_probe_top10": []
+      },
+      "act1_boss_hexaghost": {
+        "scenes": 130,
+        "deaths": 97,
+        "death_rate": 0.7461538461538462,
+        "mean_score": 0.025005921979363147,
+        "decisions": 6502,
+        "decision_seconds": 8.461288435374653,
+        "seconds_per_decision": 0.0013013362712049606,
+        "mean_potion_uses": 0.7692307692307693,
+        "won_combats": 33,
+        "mean_potions_remaining_when_won": 0.36363636363636365,
+        "potion_probe_seconds": 0.0,
+        "potion_probe_count": 0,
+        "mean_selected_minus_discard": null,
+        "potion_probe_top10": []
+      },
+      "act1_boss_slimeboss": {
+        "scenes": 130,
+        "deaths": 121,
+        "death_rate": 0.9307692307692308,
+        "mean_score": 0.005990317578499133,
+        "decisions": 5646,
+        "decision_seconds": 8.477130077769592,
+        "seconds_per_decision": 0.0015014399712663111,
+        "mean_potion_uses": 1.0307692307692307,
+        "won_combats": 9,
+        "mean_potions_remaining_when_won": 0.2222222222222222,
+        "potion_probe_seconds": 0.0,
+        "potion_probe_count": 0,
+        "mean_selected_minus_discard": null,
+        "potion_probe_top10": []
+      },
+      "act2_elite_boss": {
+        "scenes": 200,
+        "deaths": 177,
+        "death_rate": 0.885,
+        "mean_score": 0.010466601084917784,
+        "decisions": 5770,
+        "decision_seconds": 11.198131337705888,
+        "seconds_per_decision": 0.0019407506651136722,
+        "mean_potion_uses": 0.65,
+        "won_combats": 22,
+        "mean_potions_remaining_when_won": 0.36363636363636365,
+        "potion_probe_seconds": 0.0,
+        "potion_probe_count": 0,
+        "mean_selected_minus_discard": null,
+        "potion_probe_top10": []
+      }
+    },
+    "T": {
+      "act1_elite": {
+        "scenes": 400,
+        "deaths": 187,
+        "death_rate": 0.4675,
+        "mean_score": 0.056117616053670646,
+        "decisions": 14065,
+        "decision_seconds": 596.1214273112743,
+        "seconds_per_decision": 0.042383322240403434,
+        "mean_potion_uses": 0.6975,
+        "won_combats": 211,
+        "mean_potions_remaining_when_won": 0.05687203791469194,
+        "potion_probe_seconds": 31.773025909002172,
+        "potion_probe_count": 335,
+        "mean_selected_minus_discard": 0.011192180112885215,
+        "potion_probe_top10": [
+          {
+            "potion_id": 4,
+            "probes": 31,
+            "mean_selected_minus_discard": 0.009682193094293677
+          },
+          {
+            "potion_id": 14,
+            "probes": 27,
+            "mean_selected_minus_discard": 0.014739078758456916
+          },
+          {
+            "potion_id": 2,
+            "probes": 24,
+            "mean_selected_minus_discard": 0.014730035723914625
+          },
+          {
+            "potion_id": 23,
+            "probes": 24,
+            "mean_selected_minus_discard": 0.01583472321847997
+          },
+          {
+            "potion_id": 33,
+            "probes": 24,
+            "mean_selected_minus_discard": 0.009316175399969021
+          },
+          {
+            "potion_id": 11,
+            "probes": 22,
+            "mean_selected_minus_discard": 0.01043987992769954
+          },
+          {
+            "potion_id": 32,
+            "probes": 19,
+            "mean_selected_minus_discard": 0.013758855184852635
+          },
+          {
+            "potion_id": 19,
+            "probes": 17,
+            "mean_selected_minus_discard": 0.0065650479142170615
+          },
+          {
+            "potion_id": 13,
+            "probes": 14,
+            "mean_selected_minus_discard": 0.011883837291471926
+          },
+          {
+            "potion_id": 1,
+            "probes": 13,
+            "mean_selected_minus_discard": 0.006073266390908079
+          }
+        ]
+      },
+      "act1_boss_guardian": {
+        "scenes": 130,
+        "deaths": 53,
+        "death_rate": 0.4076923076923077,
+        "mean_score": 0.05618727293152075,
+        "decisions": 7420,
+        "decision_seconds": 350.0619810050833,
+        "seconds_per_decision": 0.04717816455594114,
+        "mean_potion_uses": 1.023076923076923,
+        "won_combats": 77,
+        "mean_potions_remaining_when_won": 0.06493506493506493,
+        "potion_probe_seconds": 15.08522755355807,
+        "potion_probe_count": 156,
+        "mean_selected_minus_discard": 0.011945485788694499,
+        "potion_probe_top10": [
+          {
+            "potion_id": 23,
+            "probes": 13,
+            "mean_selected_minus_discard": 0.02112282485736964
+          },
+          {
+            "potion_id": 4,
+            "probes": 12,
+            "mean_selected_minus_discard": 0.012168435957088755
+          },
+          {
+            "potion_id": 11,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.011633709686892953
+          },
+          {
+            "potion_id": 33,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.007343529829416762
+          },
+          {
+            "potion_id": 13,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.019135712238494307
+          },
+          {
+            "potion_id": 2,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.017551272941221083
+          },
+          {
+            "potion_id": 14,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.014812009238604722
+          },
+          {
+            "potion_id": 19,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.014084420117017413
+          },
+          {
+            "potion_id": 24,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.011577755029845451
+          },
+          {
+            "potion_id": 16,
+            "probes": 6,
+            "mean_selected_minus_discard": -0.0015045542289347698
+          }
+        ]
+      },
+      "act1_boss_hexaghost": {
+        "scenes": 130,
+        "deaths": 94,
+        "death_rate": 0.7230769230769231,
+        "mean_score": 0.02590771449299959,
+        "decisions": 6543,
+        "decision_seconds": 315.4222158255405,
+        "seconds_per_decision": 0.04820758303920839,
+        "mean_potion_uses": 0.9153846153846154,
+        "won_combats": 36,
+        "mean_potions_remaining_when_won": 0.1111111111111111,
+        "potion_probe_seconds": 16.16838112132973,
+        "potion_probe_count": 163,
+        "mean_selected_minus_discard": 0.012299087819844368,
+        "potion_probe_top10": [
+          {
+            "potion_id": 23,
+            "probes": 17,
+            "mean_selected_minus_discard": 0.019025468466091242
+          },
+          {
+            "potion_id": 33,
+            "probes": 15,
+            "mean_selected_minus_discard": 0.012380300817312673
+          },
+          {
+            "potion_id": 4,
+            "probes": 14,
+            "mean_selected_minus_discard": 0.010247656649361099
+          },
+          {
+            "potion_id": 13,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.015031231829198077
+          },
+          {
+            "potion_id": 14,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.013776296049036319
+          },
+          {
+            "potion_id": 32,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.013761744611838368
+          },
+          {
+            "potion_id": 11,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.01059469984829775
+          },
+          {
+            "potion_id": 19,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.019499212365190033
+          },
+          {
+            "potion_id": 2,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.01970274492798905
+          },
+          {
+            "potion_id": 29,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.004788798013968127
+          }
+        ]
+      },
+      "act1_boss_slimeboss": {
+        "scenes": 130,
+        "deaths": 116,
+        "death_rate": 0.8923076923076924,
+        "mean_score": 0.010138207043592747,
+        "decisions": 5626,
+        "decision_seconds": 294.74532780925176,
+        "seconds_per_decision": 0.05238985563619832,
+        "mean_potion_uses": 1.0692307692307692,
+        "won_combats": 14,
+        "mean_potions_remaining_when_won": 0.0,
+        "potion_probe_seconds": 16.377467833692208,
+        "potion_probe_count": 160,
+        "mean_selected_minus_discard": 0.004980680658627534,
+        "potion_probe_top10": [
+          {
+            "potion_id": 14,
+            "probes": 19,
+            "mean_selected_minus_discard": 0.004747449148118521
+          },
+          {
+            "potion_id": 4,
+            "probes": 13,
+            "mean_selected_minus_discard": 0.003217136164983878
+          },
+          {
+            "potion_id": 11,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.0039411083826879885
+          },
+          {
+            "potion_id": 23,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.010859811096452177
+          },
+          {
+            "potion_id": 19,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.008730443743115757
+          },
+          {
+            "potion_id": 13,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.006717845311868587
+          },
+          {
+            "potion_id": 32,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.0043932848566328175
+          },
+          {
+            "potion_id": 33,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.0035648800530907465
+          },
+          {
+            "potion_id": 2,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.004451866249187982
+          },
+          {
+            "potion_id": 29,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.002063375814551754
+          }
+        ]
+      },
+      "act2_elite_boss": {
+        "scenes": 200,
+        "deaths": 167,
+        "death_rate": 0.835,
+        "mean_score": 0.013861839566379786,
+        "decisions": 5725,
+        "decision_seconds": 401.77514068604074,
+        "seconds_per_decision": 0.07017906387529096,
+        "mean_potion_uses": 0.7,
+        "won_combats": 32,
+        "mean_potions_remaining_when_won": 0.15625,
+        "potion_probe_seconds": 21.616721496277023,
+        "potion_probe_count": 190,
+        "mean_selected_minus_discard": 0.008671490572075861,
+        "potion_probe_top10": [
+          {
+            "potion_id": 4,
+            "probes": 20,
+            "mean_selected_minus_discard": 0.010438783162680921
+          },
+          {
+            "potion_id": 14,
+            "probes": 17,
+            "mean_selected_minus_discard": 0.011139741645071326
+          },
+          {
+            "potion_id": 23,
+            "probes": 16,
+            "mean_selected_minus_discard": 0.011689550083247013
+          },
+          {
+            "potion_id": 33,
+            "probes": 16,
+            "mean_selected_minus_discard": 0.004701044212197303
+          },
+          {
+            "potion_id": 11,
+            "probes": 15,
+            "mean_selected_minus_discard": 0.006137647208136817
+          },
+          {
+            "potion_id": 2,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.010751573739980813
+          },
+          {
+            "potion_id": 13,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.00834014056090382
+          },
+          {
+            "potion_id": 19,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.0054081497191873495
+          },
+          {
+            "potion_id": 32,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.010762162593891844
+          },
+          {
+            "potion_id": 7,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.009086207542817906
+          }
+        ]
+      }
+    },
+    "T2": {
+      "act1_elite": {
+        "scenes": 400,
+        "deaths": 96,
+        "death_rate": 0.24,
+        "mean_score": 0.08570987893268465,
+        "decisions": 13649,
+        "decision_seconds": 4227.881597443991,
+        "seconds_per_decision": 0.3097576084287487,
+        "mean_potion_uses": 0.7175,
+        "won_combats": 302,
+        "mean_potions_remaining_when_won": 0.04966887417218543,
+        "potion_probe_seconds": 205.38280498646782,
+        "potion_probe_count": 335,
+        "mean_selected_minus_discard": 0.021085813125150638,
+        "potion_probe_top10": [
+          {
+            "potion_id": 4,
+            "probes": 31,
+            "mean_selected_minus_discard": 0.024472660858244184
+          },
+          {
+            "potion_id": 14,
+            "probes": 27,
+            "mean_selected_minus_discard": 0.02568532031512371
+          },
+          {
+            "potion_id": 2,
+            "probes": 24,
+            "mean_selected_minus_discard": 0.030953256364834186
+          },
+          {
+            "potion_id": 23,
+            "probes": 24,
+            "mean_selected_minus_discard": 0.021728143813864637
+          },
+          {
+            "potion_id": 33,
+            "probes": 24,
+            "mean_selected_minus_discard": 0.010476744044960165
+          },
+          {
+            "potion_id": 11,
+            "probes": 22,
+            "mean_selected_minus_discard": 0.01328868546988815
+          },
+          {
+            "potion_id": 32,
+            "probes": 19,
+            "mean_selected_minus_discard": 0.015323122166783401
+          },
+          {
+            "potion_id": 19,
+            "probes": 17,
+            "mean_selected_minus_discard": 0.010982200338998261
+          },
+          {
+            "potion_id": 13,
+            "probes": 14,
+            "mean_selected_minus_discard": 0.016265496794533516
+          },
+          {
+            "potion_id": 1,
+            "probes": 13,
+            "mean_selected_minus_discard": 0.011318120657681273
+          }
+        ]
+      },
+      "act1_boss_guardian": {
+        "scenes": 130,
+        "deaths": 43,
+        "death_rate": 0.33076923076923076,
+        "mean_score": 0.06764356912328646,
+        "decisions": 7540,
+        "decision_seconds": 2735.728193783712,
+        "seconds_per_decision": 0.36282867291561166,
+        "mean_potion_uses": 1.0153846153846153,
+        "won_combats": 87,
+        "mean_potions_remaining_when_won": 0.011494252873563218,
+        "potion_probe_seconds": 131.47270913183456,
+        "potion_probe_count": 156,
+        "mean_selected_minus_discard": 0.018319856166505277,
+        "potion_probe_top10": [
+          {
+            "potion_id": 23,
+            "probes": 13,
+            "mean_selected_minus_discard": 0.02679285152743642
+          },
+          {
+            "potion_id": 4,
+            "probes": 12,
+            "mean_selected_minus_discard": 0.01408508006716147
+          },
+          {
+            "potion_id": 11,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.012509211792017926
+          },
+          {
+            "potion_id": 33,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.014534207971089265
+          },
+          {
+            "potion_id": 13,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.02077911378000863
+          },
+          {
+            "potion_id": 2,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.009970926779455372
+          },
+          {
+            "potion_id": 14,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.01568168880684035
+          },
+          {
+            "potion_id": 19,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.01974427407341344
+          },
+          {
+            "potion_id": 24,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.02622065380481737
+          },
+          {
+            "potion_id": 16,
+            "probes": 6,
+            "mean_selected_minus_discard": 0.015338510042056441
+          }
+        ]
+      },
+      "act1_boss_hexaghost": {
+        "scenes": 130,
+        "deaths": 69,
+        "death_rate": 0.5307692307692308,
+        "mean_score": 0.04629513174295426,
+        "decisions": 6705,
+        "decision_seconds": 2365.439422021816,
+        "seconds_per_decision": 0.35278738583472274,
+        "mean_potion_uses": 0.9230769230769231,
+        "won_combats": 61,
+        "mean_potions_remaining_when_won": 0.0,
+        "potion_probe_seconds": 135.99729710826068,
+        "potion_probe_count": 163,
+        "mean_selected_minus_discard": 0.01565061249924492,
+        "potion_probe_top10": [
+          {
+            "potion_id": 23,
+            "probes": 17,
+            "mean_selected_minus_discard": 0.024113882415215757
+          },
+          {
+            "potion_id": 33,
+            "probes": 15,
+            "mean_selected_minus_discard": 0.014931220732008418
+          },
+          {
+            "potion_id": 4,
+            "probes": 14,
+            "mean_selected_minus_discard": 0.017198952114475623
+          },
+          {
+            "potion_id": 13,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.011664775852113961
+          },
+          {
+            "potion_id": 14,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.003543339483439922
+          },
+          {
+            "potion_id": 32,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.012296354048885405
+          },
+          {
+            "potion_id": 11,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.011348298459779471
+          },
+          {
+            "potion_id": 19,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.01409372128546238
+          },
+          {
+            "potion_id": 2,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.010794219693967275
+          },
+          {
+            "potion_id": 29,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.017618145727153336
+          }
+        ]
+      },
+      "act1_boss_slimeboss": {
+        "scenes": 130,
+        "deaths": 101,
+        "death_rate": 0.7769230769230769,
+        "mean_score": 0.02067818842255152,
+        "decisions": 5967,
+        "decision_seconds": 2046.2983490493148,
+        "seconds_per_decision": 0.34293587213831317,
+        "mean_potion_uses": 0.9153846153846154,
+        "won_combats": 29,
+        "mean_potions_remaining_when_won": 0.0,
+        "potion_probe_seconds": 104.79683977426612,
+        "potion_probe_count": 160,
+        "mean_selected_minus_discard": 0.008264687265909742,
+        "potion_probe_top10": [
+          {
+            "potion_id": 14,
+            "probes": 19,
+            "mean_selected_minus_discard": 0.0083852789707874
+          },
+          {
+            "potion_id": 4,
+            "probes": 13,
+            "mean_selected_minus_discard": 0.011565111541690735
+          },
+          {
+            "potion_id": 11,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.006232820408926768
+          },
+          {
+            "potion_id": 23,
+            "probes": 11,
+            "mean_selected_minus_discard": 0.005419012137942694
+          },
+          {
+            "potion_id": 19,
+            "probes": 10,
+            "mean_selected_minus_discard": 0.004959941422566771
+          },
+          {
+            "potion_id": 13,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.002630614035297185
+          },
+          {
+            "potion_id": 32,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.005207439418882132
+          },
+          {
+            "potion_id": 33,
+            "probes": 8,
+            "mean_selected_minus_discard": -0.0001459110644645989
+          },
+          {
+            "potion_id": 2,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.00620142330548593
+          },
+          {
+            "potion_id": 29,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.013004595945988382
+          }
+        ]
+      },
+      "act2_elite_boss": {
+        "scenes": 200,
+        "deaths": 150,
+        "death_rate": 0.75,
+        "mean_score": 0.021504199635237455,
+        "decisions": 5840,
+        "decision_seconds": 2272.936256593602,
+        "seconds_per_decision": 0.38920141380027434,
+        "mean_potion_uses": 0.685,
+        "won_combats": 49,
+        "mean_potions_remaining_when_won": 0.0,
+        "potion_probe_seconds": 110.65079450505436,
+        "potion_probe_count": 190,
+        "mean_selected_minus_discard": 0.007119202281740543,
+        "potion_probe_top10": [
+          {
+            "potion_id": 4,
+            "probes": 20,
+            "mean_selected_minus_discard": 0.007205294584855438
+          },
+          {
+            "potion_id": 14,
+            "probes": 17,
+            "mean_selected_minus_discard": 0.008273089085431659
+          },
+          {
+            "potion_id": 23,
+            "probes": 16,
+            "mean_selected_minus_discard": 0.003940152542782016
+          },
+          {
+            "potion_id": 33,
+            "probes": 16,
+            "mean_selected_minus_discard": 0.0044613691279664636
+          },
+          {
+            "potion_id": 11,
+            "probes": 15,
+            "mean_selected_minus_discard": 0.0003746952551106612
+          },
+          {
+            "potion_id": 2,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.01251423405483365
+          },
+          {
+            "potion_id": 13,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.009969205450033769
+          },
+          {
+            "potion_id": 19,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.004603472742019221
+          },
+          {
+            "potion_id": 32,
+            "probes": 8,
+            "mean_selected_minus_discard": 0.0018733674369286746
+          },
+          {
+            "potion_id": 7,
+            "probes": 7,
+            "mean_selected_minus_discard": 0.013698815102023738
+          }
+        ]
+      }
+    }
+  },
+  "paired": {
+    "T": {
+      "act1_elite": {
+        "scenes": 400,
+        "B2_minus_teacher_death_rate": -0.1025,
+        "teacher_minus_B2_mean_score": -0.013806342128664256
+      },
+      "act1_boss_guardian": {
+        "scenes": 130,
+        "B2_minus_teacher_death_rate": 0.06923076923076923,
+        "teacher_minus_B2_mean_score": 0.005218507807988387
+      },
+      "act1_boss_hexaghost": {
+        "scenes": 130,
+        "B2_minus_teacher_death_rate": 0.023076923076923078,
+        "teacher_minus_B2_mean_score": 0.0009017925136364423
+      },
+      "act1_boss_slimeboss": {
+        "scenes": 130,
+        "B2_minus_teacher_death_rate": 0.038461538461538464,
+        "teacher_minus_B2_mean_score": 0.004147889465093613
+      },
+      "act2_elite_boss": {
+        "scenes": 200,
+        "B2_minus_teacher_death_rate": 0.05,
+        "teacher_minus_B2_mean_score": 0.003395238481462002
+      }
+    },
+    "T2": {
+      "act1_elite": {
+        "scenes": 400,
+        "B2_minus_teacher_death_rate": 0.125,
+        "teacher_minus_B2_mean_score": 0.01578592075034976
+      },
+      "act1_boss_guardian": {
+        "scenes": 130,
+        "B2_minus_teacher_death_rate": 0.14615384615384616,
+        "teacher_minus_B2_mean_score": 0.016674803999754097
+      },
+      "act1_boss_hexaghost": {
+        "scenes": 130,
+        "B2_minus_teacher_death_rate": 0.2153846153846154,
+        "teacher_minus_B2_mean_score": 0.021289209763591107
+      },
+      "act1_boss_slimeboss": {
+        "scenes": 130,
+        "B2_minus_teacher_death_rate": 0.15384615384615385,
+        "teacher_minus_B2_mean_score": 0.014687870844052387
+      },
+      "act2_elite_boss": {
+        "scenes": 200,
+        "B2_minus_teacher_death_rate": 0.135,
+        "teacher_minus_B2_mean_score": 0.011037598550319671
+      }
+    }
+  },
+  "actual_allocation": {
+    "job_id": 4286,
+    "phase": "stage7",
+    "experiment": "claude94_stage7",
+    "step": "teacher_pilot",
+    "state": "COMPLETED",
+    "runtime_seconds": 3090,
+    "allocated_gpus": 7,
+    "gpu_seconds": 21630,
+    "charged_node_seconds": 2703.75,
+    "released_reservation_node_seconds": 3570.0,
+    "exact_allocation_cost_verified": true,
+    "settlement_method": "actual_final_detailed_Slurm_JOB_GRES_RunTime_Start_End",
+    "settled_once_at": "2026-10-29T14:41:38.687033+00:00",
+    "final_slurm": {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/transactions/c95-stage7-20261029T132219/final-scontrol.stdout.original",
+      "sha256": "5d52304baec8f087cbc934c03280bcab8115c1a5d1c6eda4754c49edac8565d6"
+    },
+    "context": {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/allocations/4286/context.json",
+      "sha256": "30bc1c6011847fa40501376d3abe80415c4120b77245b9b8a6d1cb7bfd6fb7e3"
+    },
+    "reservation_or_cap_exceeded": false,
+    "parameter_updates": 0
+  },
+  "stage7_budget": {
+    "limit_node_seconds": 3600,
+    "charged_node_seconds": 2703.75,
+    "reserved_node_seconds": 0,
+    "remaining_node_seconds": 896.25
+  },
+  "frozen_policy_sha256": "cff4cc3c6bcc63572fdc620f8e803f311d2caf0c750c1bbc546d792459716fd0",
+  "frozen_source_manifest_sha256": "370aa2bb3bbc90ca030ba43eddd643d8e5d929673d5287fcdaf16147dbd9d730",
+  "verification": {
+    "native_CPU_tests": 9,
+    "actual_allocation_native_gates": 5,
+    "CUDA_gates": 4,
+    "no_skips": true,
+    "all_7_ranks_complete": true,
+    "input_files_checked_before_and_after": 8172,
+    "full_original_rows_sha_checked": true,
+    "summary_recomputed_from_original_rows": true,
+    "identical_hard990_scene_keys": {
+      "act1_boss_guardian": "c2003815c90294616ec5a20dac5f43e19c922962bb76bd7fe208c6e2e024dcac",
+      "act1_boss_hexaghost": "61c9468ca87066e9b46fdbd3aed95314bc623ae6d1f1a75948904e8f8fd19df6",
+      "act1_boss_slimeboss": "b2c9853f36606db1b86577fdcd3b799ee592e6c4b56c14865b491fb51c290964",
+      "act1_elite": "5db226938be4513478c576e793a2d2d9bbf1319d5b543c96b39f8a42730358d3",
+      "act2_elite_boss": "ee91fd8aa9afb9a4dcb2bb7edc31633122f13723bbbae0cdf42dd195d1bc93fb"
+    },
+    "summary_sha256": "4af23779682d2c8bcc30f5e8591798b122ea7daed2eb08cc170b0cb464ed31d6",
+    "parent_audit_sha256": "7d3296907740336a5555655d45ea31773e2b3fee210a8763b90397b9b8fa010f"
+  },
+  "original_rows": [
+    {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/teacher-output/4286/rank-0-rows.json",
+      "bytes": 4947591,
+      "sha256": "ca5997f72c1c2abf7009b35d91808e9d509c06543237336dafe7a25457721020",
+      "rank": 0,
+      "coverage": {
+        "B2": 142,
+        "T": 142,
+        "T2": 142
+      },
+      "T2_scope": "full_hard990_attempted"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/teacher-output/4286/rank-1-rows.json",
+      "bytes": 5155124,
+      "sha256": "4b3274aca54b8813f894fb597cef2de559f8722c04d23dc6bf487555d2fdbc1a",
+      "rank": 1,
+      "coverage": {
+        "B2": 142,
+        "T": 142,
+        "T2": 142
+      },
+      "T2_scope": "full_hard990_attempted"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/teacher-output/4286/rank-2-rows.json",
+      "bytes": 5015309,
+      "sha256": "27020bcfa103d57647aa3e9703c311dd2faacfb29699605efa7eccc58f56f756",
+      "rank": 2,
+      "coverage": {
+        "B2": 142,
+        "T": 142,
+        "T2": 142
+      },
+      "T2_scope": "full_hard990_attempted"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/teacher-output/4286/rank-3-rows.json",
+      "bytes": 5169549,
+      "sha256": "3f229118eca388b6cd763e2fc80ded352a43b3f01f1843e387a09b00863b94ac",
+      "rank": 3,
+      "coverage": {
+        "B2": 141,
+        "T": 141,
+        "T2": 142
+      },
+      "T2_scope": "full_hard990_attempted"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/teacher-output/4286/rank-4-rows.json",
+      "bytes": 5135299,
+      "sha256": "abffe60d4b4f2d4126d3bfe3ae1522369a4872b1a5929db99a098bdfa3dcee67",
+      "rank": 4,
+      "coverage": {
+        "B2": 141,
+        "T": 141,
+        "T2": 142
+      },
+      "T2_scope": "full_hard990_attempted"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/teacher-output/4286/rank-5-rows.json",
+      "bytes": 5032916,
+      "sha256": "1169754b3633dbe54428e9c6fb03cac7a30f4b4929fb3d9797394827cc74a713",
+      "rank": 5,
+      "coverage": {
+        "B2": 141,
+        "T": 141,
+        "T2": 140
+      },
+      "T2_scope": "full_hard990_attempted"
+    },
+    {
+      "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/teacher-output/4286/rank-6-rows.json",
+      "bytes": 5107584,
+      "sha256": "ef811d04c918f8c61005102aa2d1bc83cd221bc9b1d8ba2c156121a0a9ebd019",
+      "rank": 6,
+      "coverage": {
+        "B2": 141,
+        "T": 141,
+        "T2": 140
+      },
+      "T2_scope": "full_hard990_attempted"
+    }
+  ],
+  "compact_scenes": {
+    "path": "/home/zhuyouwei/spire-downloads/c90-stage6-slurm-preparation/c95-stage7-preparation/parent-review-4286-20261029T1418/parent-compact-scenes.json.z",
+    "bytes": 468761,
+    "sha256": "f91fd6915d62c10f51c28e9470b2facc751d42f9a537dd289338f10d944b9f06"
+  },
+  "local_evidence_root": "D:\\google download\\sts-silent-gpu-results\\2026-10-20-e4\\hb20261029T1418",
+  "judgment": {
+    "T_Boss_death_reduction_pp": 4.358974358974359,
+    "T2_Boss_death_reduction_pp": 17.17948717948718,
+    "T_exceeds_10pp": false,
+    "T2_exceeds_10pp": true,
+    "T_Act1_elite_change_pp": 10.25,
+    "automatic_training": false,
+    "decision_owner": "Claude",
+    "potion_note": "Positive first-decision selected-minus-discard preview differences are recorded by potion type; they do not establish a causal potion-value defect. Remaining potion means condition on won combats."
+  },
+  "limits": [
+    "Original Game Mac replay for this teacher evaluation has not been claimed.",
+    "Original actions, prefixes and decision traces stay in hash-listed remote rank row files.",
+    "T2 is an evaluated alternate horizon; its result does not authorize training."
+  ]
+}
