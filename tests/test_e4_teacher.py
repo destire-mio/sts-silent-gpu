@@ -99,6 +99,49 @@ def test_common_seed_candidates_turn_boundary_terminal_death_and_300_step_cap(
     assert len(set(search.available)) == 32
 
 
+@pytest.mark.parametrize('horizon', ['turn', 'combat'])
+def test_discard_probe_is_record_only_and_restores_both_generators(monkeypatch, horizon):
+    search = TinySearch(2, 4)
+    def inputs(arrays, device, slots):
+        return dict(slots=slots, candidate_mask=torch.ones(len(slots), 2, dtype=torch.bool),
+            candidate_kinds=torch.tensor([[1, 5]] * len(slots)),
+            candidate_refs=torch.tensor([[[0, 1]]] * len(slots)),
+            ids=torch.tensor([[[8]]] * len(slots)))
+    monkeypatch.setattr('train.e4_teacher.network_inputs', inputs)
+    class Policy:
+        def __call__(self, inputs):
+            n = len(inputs['slots'])
+            return torch.tensor([[3., 2.]] * n), torch.zeros(n), torch.ones(n)
+        def run_policy(self, inputs):
+            return self(inputs)[:2]
+    teacher = CombatTeacher(search, torch.Generator().manual_seed(95), horizon)
+    records = [dict(candidates=[0], candidate_mean_scores=[3.], selected=0)]
+    actor, rollout = search.rng.get_state().clone(), teacher.rollout_rng.get_state().clone()
+    teacher.discard_probes(Policy(), [0], records)
+    probe = records[0]['potion_discard_probes'][0]
+    assert probe['potion_id'] == 7 and probe['discard_action'] == 1
+    assert probe['preview_trials'] == 16 and probe['selected_minus_discard'] == (2. if horizon == 'turn' else 3.)
+    assert search.steps[0] == 0 and search.turns[0] == 1
+    assert torch.equal(actor, search.rng.get_state()) and torch.equal(rollout, teacher.rollout_rng.get_state())
+    assert search.determinized[0][1] == list(range(16)) and len(search.available) == 32
+
+
+def test_potion_summary_counts_wins_and_each_bottle_probe():
+    from train.e4_teacher_pilot import summarize
+    rows = [dict(group='act1_elite', actions=[0], death=False, won=True, score=2.,
+        decision_seconds=1., potion_probe_seconds=.5, potion_uses=2, potions_remaining=1,
+        decision_timings=[dict(potion_discard_probes=[dict(potion_id=7, selected_minus_discard=.2),
+                                                   dict(potion_id=7, selected_minus_discard=.4)])]),
+        dict(group='act1_elite', actions=[0, 1], death=True, won=False, score=0.,
+        decision_seconds=2., potion_probe_seconds=0., potion_uses=0, potions_remaining=2,
+        decision_timings=[dict(potion_discard_probes=[])])]
+    summary = summarize(rows)['act1_elite']
+    assert summary['mean_potion_uses'] == 1 and summary['won_combats'] == 1
+    assert summary['mean_potions_remaining_when_won'] == 1 and summary['potion_probe_count'] == 2
+    assert summary['mean_selected_minus_discard'] == pytest.approx(.3)
+    assert summary['potion_probe_top10'][0]['potion_id'] == 7
+
+
 def test_native_teacher_selection_preserves_real_Game_History_all_RNG_and_policy():
     torch.set_num_threads(1)
     torch.manual_seed(94)
@@ -106,8 +149,12 @@ def test_native_teacher_selection_preserves_real_Game_History_all_RNG_and_policy
     search = RoomSearch(1, 32, device, torch.Generator().manual_seed(1729), scratch_slots=128, bosses_seen=511)
     path = Path(__file__).resolve().parents[1] / 'inventory/e4-c88-stage6-combat-exam.json.gz'
     with gzip.open(path, 'rt') as stream:
-        scene = json.load(stream)['groups']['act1_boss_guardian'][0]
-    load_roots(search, [scene])
+        scenes = json.load(stream)['groups']['act1_boss_guardian']
+    for scene in scenes:
+        load_roots(search, [scene])
+        if bool((search.arrays['candidate_kinds'][0] == 5).any()):
+            break
+    assert bool((search.arrays['candidate_kinds'][0] == 5).any()), 'Need a real held-potion examination root'
     policy = CombatPolicy(ModelConfig(16, 1, 2, 32)).eval().requires_grad_(False)
     before = search.batch.state_bytes(0)
     rng = search.rng.get_state().clone()
@@ -123,11 +170,16 @@ def test_native_teacher_selection_preserves_real_Game_History_all_RNG_and_policy
             assert all(s >= search.lanes for s in slots)
             original.determinize_slots(slots, seeds)
     search.batch = RecordedBatch()
-    actions, records = CombatTeacher(search, torch.Generator().manual_seed(94), 'turn').select(policy, [0])
+    teacher = CombatTeacher(search, torch.Generator().manual_seed(94), 'turn')
+    actions, records = teacher.select(policy, [0])
+    teacher.discard_probes(policy, [0], records)
+    assert records[0]['potion_discard_probes']
     assert search.batch.state_bytes(0) == before
     assert torch.equal(search.rng.get_state(), rng) and search.provenance[0] == provenance
     assert policy_hash(policy) == model and all(p.grad is None for p in policy.parameters())
-    assert len(calls) == 1 and calls[0][1] == list(range(16)) * len(records[0]['candidates'])
+    assert len(calls) == 1 + len(records[0]['potion_discard_probes'])
+    assert calls[0][1] == list(range(16)) * len(records[0]['candidates'])
+    assert all(seeds == list(range(16)) for _, seeds in calls[1:])
     assert actions[0] in records[0]['candidates'] and records[0]['preview_steps'] >= len(calls[0][0])
     assert len(search.available) == 128
 

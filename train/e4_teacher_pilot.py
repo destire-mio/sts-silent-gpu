@@ -20,6 +20,7 @@ def play_group(search, policy, scenes, mode):
                             'combat' if mode == 'T2' else 'turn')
     live = slots[:]
     decisions = {s: [] for s in slots}
+    potion_uses = dict.fromkeys(slots, 0)
     steps = dict.fromkeys(slots, 0)
     while live:
         search.clock()
@@ -31,6 +32,10 @@ def play_group(search, policy, scenes, mode):
                             batch_decisions=len(live), selected=a) for a in actions]
         else:
             actions, records = teacher.select(policy, live)
+            if not any(steps.values()):
+                teacher.discard_probes(policy, live, records)
+        for slot, action in zip(live, actions):
+            potion_uses[slot] += int(search.arrays['candidate_kinds'][slot, action]) == 4
         search.step(live, actions)
         for slot, record in zip(live, records):
             decisions[slot].append(record)
@@ -43,6 +48,12 @@ def play_group(search, policy, scenes, mode):
     for slot, row in zip(slots, rows):
         row['decision_timings'] = decisions[slot]
         row['decision_seconds'] = sum(r['seconds'] for r in decisions[slot])
+        row['potion_probe_seconds'] = sum(r.get('potion_probe_seconds', 0.) for r in decisions[slot])
+        row['potion_uses'] = potion_uses[slot]
+        entities = range(int(search.arrays['entity_counts'][slot]))
+        row['potions_remaining'] = sum(int(search.arrays['tags'][slot, 0, i]) == 7 and
+            int(search.arrays['tags'][slot, 1, i]) == 0 and int(search.arrays['ids'][slot, 0, i]) != 1
+            for i in entities)
     return rows
 
 
@@ -73,6 +84,19 @@ def summarize(rows):
                 death_rate=sum(row['death'] for row in selected) / len(selected),
                 mean_score=sum(row['score'] for row in selected) / len(selected),
                 decisions=count, decision_seconds=seconds, seconds_per_decision=seconds / count)
+            wins = [r for r in selected if r['won']]
+            probes = [p for r in selected for p in r['decision_timings'][0].get('potion_discard_probes', [])]
+            kinds = sorted({p['potion_id'] for p in probes},
+                           key=lambda k:(-sum(p['potion_id'] == k for p in probes), k))[:10]
+            groups[group].update(mean_potion_uses=sum(r['potion_uses'] for r in selected) / len(selected),
+                won_combats=len(wins), mean_potions_remaining_when_won=
+                    sum(r['potions_remaining'] for r in wins) / len(wins) if wins else None,
+                potion_probe_seconds=sum(r['potion_probe_seconds'] for r in selected),
+                potion_probe_count=len(probes), mean_selected_minus_discard=
+                    sum(p['selected_minus_discard'] for p in probes) / len(probes) if probes else None,
+                potion_probe_top10=[dict(potion_id=k, probes=sum(p['potion_id'] == k for p in probes),
+                    mean_selected_minus_discard=sum(p['selected_minus_discard'] for p in probes if p['potion_id'] == k) /
+                    sum(p['potion_id'] == k for p in probes)) for k in kinds])
     return groups
 
 

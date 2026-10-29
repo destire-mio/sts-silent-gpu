@@ -29,6 +29,43 @@ class CombatTeacher:
             legal = torch.where(mask)[0]
             order = torch.argsort(logit[legal], descending=True, stable=True)[:8]
             candidates.append(legal[order].cpu().tolist())
+        selected, records = self.evaluate(policy, parents, candidates)
+        elapsed = time.monotonic() - started
+        for record in records:
+            record.update(batch_seconds=elapsed, batch_decisions=len(parents), seconds=elapsed / len(parents))
+        return selected, records
+
+    @torch.no_grad()
+    def discard_probes(self, policy, parents, records):
+        search = self.search
+        inputs = network_inputs({k: search.arrays[k] for k in FIELDS}, search.device,
+                                torch.tensor(parents, device=search.device))
+        rng = self.rollout_rng.get_state().clone()
+        started = time.monotonic()
+        try:
+            for j, (parent, record) in enumerate(zip(parents, records)):
+                selected_mean = record['candidate_mean_scores'][record['candidates'].index(record['selected'])]
+                probes = []
+                for action in torch.where(inputs['candidate_mask'][j] &
+                                          (inputs['candidate_kinds'][j] == 5))[0].cpu().tolist():
+                    entity = int(inputs['candidate_refs'][j, 0, action]) - 1
+                    potion = int(inputs['ids'][j, 0, entity]) - 1
+                    self.rollout_rng.set_state(rng)
+                    _, trial = self.evaluate(policy, [parent], [[action]])
+                    mean = trial[0]['candidate_mean_scores'][0]
+                    probes.append(dict(potion_id=potion, discard_action=action, discard_mean_score=mean,
+                        selected_mean_score=selected_mean, selected_minus_discard=selected_mean - mean,
+                        preview_trials=trial[0]['preview_trials'], preview_steps=trial[0]['preview_steps']))
+                record['potion_discard_probes'] = probes
+        finally:
+            self.rollout_rng.set_state(rng)
+        elapsed = time.monotonic() - started
+        for record in records:
+            record['potion_probe_seconds'] = elapsed / len(parents)
+
+    @torch.no_grad()
+    def evaluate(self, policy, parents, candidates):
+        search = self.search
         sources, first, seeds, groups = [], [], [], []
         for parent, actions in zip(parents, candidates):
             begin = len(sources)
@@ -88,9 +125,6 @@ class CombatTeacher:
                     selected=actions[best], preview_steps=sum(steps[s] for s in trials),
                     preview_trials=len(trials), value_boundaries=sum(s in boundary for s in trials),
                     horizon=self.horizon))
-            elapsed = time.monotonic() - started
-            for record in records:
-                record.update(batch_seconds=elapsed, batch_decisions=len(parents), seconds=elapsed / len(parents))
             return selected, records
         finally:
             search.rng = actor_rng
