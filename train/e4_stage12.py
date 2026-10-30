@@ -307,7 +307,8 @@ def new_cursor(fragment, rng, world):
     return dict(fragment=fragment, indices=indices, counts=counts, epoch=0, start=0,
                 order=torch.randperm(sum(counts), generator=rng, device=device),
                 totals=torch.zeros(8, dtype=torch.float64, device=device),
-                finite=torch.ones((), dtype=torch.bool, device=device), optimizer_steps=0)
+                finite=torch.ones((), dtype=torch.bool, device=device), optimizer_steps=0,
+                optimizer_attempts=0, amp_skipped_steps=0)
 
 
 def local_minibatch(cursor, rank):
@@ -382,9 +383,18 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
     scaler.unscale_(optimizer)
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), .5, error_if_nonfinite=False)
     cursor["finite"] &= torch.isfinite(norm)
+    scale_before = scaler.get_scale()
     scaler.step(optimizer)
     scaler.update()
-    cursor["optimizer_steps"] += 1
+    scale_after = scaler.get_scale()
+    skipped = scale_after < scale_before
+    cursor["optimizer_attempts"] += 1
+    cursor["optimizer_steps"] += int(not skipped)
+    cursor["amp_skipped_steps"] += int(skipped)
+    if not bool(torch.isfinite(norm)):
+        print(json.dumps(dict(event="nonfinite_gradient", rank=rank,
+            gradient_norm=float(norm), scale_before=scale_before, scale_after=scale_after,
+            optimizer_step_skipped=skipped, optimizer_attempt=cursor["optimizer_attempts"])), flush=True)
     cursor["start"] += 32768
     if cursor["start"] >= sum(cursor["counts"]):
         cursor["epoch"] += 1
@@ -427,7 +437,8 @@ def finish_metrics(cursor):
     result = {name: values[i] / max(1, values[6]) for i, name in enumerate(names)}
     result.update(normalized_entropy=values[7] / max(1, values[6]),
                   finite=bool(finite) and all(math.isfinite(x) for x in values),
-                  samples=int(values[6]), optimizer_steps=cursor["optimizer_steps"])
+                  samples=int(values[6]), optimizer_steps=cursor["optimizer_steps"],
+                  optimizer_attempts=cursor["optimizer_attempts"], amp_skipped_steps=cursor["amp_skipped_steps"])
     return result
 
 
