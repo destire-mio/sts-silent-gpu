@@ -58,8 +58,10 @@ SPIRE_FN inline void shop_entities(Writer& w, const Game& g, int* options) {
     List<uint8_t, 14> choices{}; shop_choices(g, choices);
     for (int i = 0; i < choices.size; ++i) options[i] = stock[choices[i]];
 }
-SPIRE_FN inline void map_entities(Writer& w, const Game& g, int* options) {
-    int nodes[106]{};
+SPIRE_FN inline int boss_entity(Writer& w, const Game& g) {
+    return w.add(option(Control::Boss, 0, static_cast<int>(g.run.boss_key) + 1));
+}
+SPIRE_FN inline void map_entities(Writer& w, const Game& g, int* nodes) {
     for (int y = 0; y < 15; ++y) for (int x = 0; x < 7; ++x) {
         const auto& n = g.run.map[y][x];
         if (!n.edges) continue;
@@ -69,10 +71,7 @@ SPIRE_FN inline void map_entities(Writer& w, const Game& g, int* options) {
         t.values[5] = g.run.node_on_map && x == g.run.node_x && y == g.run.node_y;
         nodes[y * 7 + x] = w.add(t);
     }
-    Token boss = option(Control::Boss, 0, static_cast<int>(g.run.boss_key) + 1);
-    nodes[105] = w.add(boss);
-    List<uint8_t, 8> choices{}; map_choices(g, choices);
-    for (int i = 0; i < choices.size; ++i) options[i] = nodes[choices[i]];
+    nodes[105] = boss_entity(w, g);
 }
 SPIRE_FN inline Result encode(const Game& g, History& history, View view, ActionSet& actions) {
     actions.clear();
@@ -182,7 +181,13 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
     case Screen::BossReward:
         for (int i = 0; i < g.chest.relics.size; ++i) options[i] = w.add(relic_token(g.reward_objects[g.chest.relics[i]].relic, Zone::Offer, i + 1, false));
         break;
-    case Screen::Map: map_entities(w, g, options); break;
+    case Screen::Map: {
+        int nodes[106]{};
+        map_entities(w, g, nodes);
+        List<uint8_t, 8> choices{}; map_choices(g, choices);
+        for (int i = 0; i < choices.size; ++i) options[i] = nodes[choices[i]];
+        break;
+    }
     case Screen::Shop: shop_entities(w, g, options); break;
     case Screen::Event: event_entities(w, g, history, options); break;
     case Screen::Room:
@@ -215,6 +220,13 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
     default: break;
     }
     if (history.shown) w.add(history.card);
+    if (g.screen != Screen::Map) {
+        if (combat) boss_entity(w, g);
+        else {
+            int nodes[106]{};
+            map_entities(w, g, nodes);
+        }
+    }
     legal_actions(g, actions);
     if (actions.size > candidate_capacity) w.result.fault = static_cast<uint32_t>(Fault::Candidates);
     if (w.result.fault) { view.finish(0, 0, w.result.entities); actions.clear(); return {w.result.fault, 0, 0}; }

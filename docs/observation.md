@@ -10,7 +10,8 @@ bookkeeping are control-plane operations, never policy inputs.
 
 An observation includes the active decision screen and the free inspection views available
 to a human: top panel, owned deck, relic/potion tooltips and, during combat, pile views.
-Map contents are included on MAP only. Recurrent memory belongs to the caller and is built
+The current act's announced boss is included on every screen. Map nodes are included on MAP
+and on other screens outside combat. Recurrent memory belongs to the caller and is built
 from these observations and selected candidates, never a snapshot. Reset clears memory;
 training forks copy it. Engine-internal histories are not exported.
 
@@ -216,6 +217,17 @@ floor. Java constructs that description once, so later Fruit Juice use changes t
 max HP but not the button's text. Reset clears the sidecar and clone copies it.
 
 ## MAP
+
+The top-panel map button is available outside MAP, including during combat
+(`ui/panels/TopPanel.updateMapButtonLogic`). Opening it follows
+`screens/DungeonMapScreen.open/render` into `map/DungeonMap.render/renderBossIcon` and
+`map/MapRoomNode.render`, exposing the current act's announced boss and displayed nodes.
+The Boss token is included on every screen. MapNode tokens are included on MAP and on
+non-combat screens; combat uses the room's COMBAT phase, excluding DEATH and VICTORY,
+so combat card-selection overlays receive the Boss token without MapNode tokens.
+Outside MAP these inspection tokens are appended after the screen's entities and are not
+referenced by candidates. MAP retains its entity order, values and candidate references,
+with one Boss token after its MapNode tokens.
 
 | Allowed | Representation and exclusion | Java basis |
 | --- | --- | --- |
