@@ -22,6 +22,7 @@ def test_native_batched_solver_replays_the_chosen_sequence_exactly():
     exam_path = Path(__file__).resolve().parents[1] / 'inventory/e4-c88-stage6-combat-exam.json.gz'
     with gzip.open(exam_path, 'rt') as stream:
         scenes = json.load(stream)['groups']['act1_boss_guardian'][:2]
+    search.arrays['faults'] = search.arrays['faults'].view(torch.uint32)
     roots = load_roots(search, scenes)
     policy = CombatPolicy(ModelConfig(16, 1, 2, 32)).eval().requires_grad_(False)
     policy.value[2].weight.zero_()
