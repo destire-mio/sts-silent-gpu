@@ -212,3 +212,42 @@ def test_second_map_return_ends_one_episode_without_native_step(tmp_path):
         search.step([0], [action])
     assert search.batch.state_bytes(0) == before
     assert search.failed[0] == 'Second map return on the same floor'
+
+
+def test_amp_overflow_skips_adam_and_retains_nan_stop(tmp_path, capsys):
+    from train.e4_stage12 import finish_metrics, health_stop
+    torch.set_num_threads(1)
+    dist.init_process_group('gloo', init_method=(tmp_path / 'amp-gloo').as_uri(), rank=0, world_size=1)
+    try:
+        policy = CLSPolicy()
+        model = DistributedDataParallel(policy)
+        optimizer = torch.optim.Adam(model.parameters(), lr=2e-4, eps=1e-5)
+        rng = torch.Generator().manual_seed(51)
+        collector = NoSLCollector(NoSLSearch(2, torch.device('cpu'), 67), torch.Generator().manual_seed(31))
+        fragment = collector.collect(policy, length=2)
+        cursor = new_cursor(fragment, rng, 1)
+        scaler = torch.amp.GradScaler('cpu', init_scale=8., growth_interval=1)
+        advance_minibatch(model, optimizer, scaler, cursor, rng, 0, 1)
+        assert scaler.get_scale() == 16. and cursor['optimizer_steps'] == 1
+        assert cursor['optimizer_attempts'] == 1 and cursor['amp_skipped_steps'] == 0
+        before = deepcopy(optimizer.state_dict())
+        weights = deepcopy(policy.state_dict())
+        cursor = new_cursor(fragment, rng, 1)
+        hook = policy.cls.register_hook(lambda grad: grad * float('inf'))
+        advance_minibatch(model, optimizer, scaler, cursor, rng, 0, 1)
+        hook.remove()
+        assert scaler.get_scale() == 8.
+        row = finish_metrics(cursor)
+        assert row['optimizer_steps'] == 0 and row['optimizer_attempts'] == 1 and row['amp_skipped_steps'] == 1
+        assert not row['finite'] and health_stop({}, row, 0, 100) == 'NaN_or_Inf'
+        for name, value in weights.items():
+            torch.testing.assert_close(value, policy.state_dict()[name], rtol=0, atol=0)
+        for key in before['state']:
+            for name, value in before['state'][key].items():
+                torch.testing.assert_close(value, optimizer.state_dict()['state'][key][name], rtol=0, atol=0)
+        events = [json.loads(line) for line in capsys.readouterr().out.splitlines() if line.startswith('{')]
+        event = next(e for e in events if e.get('event') == 'nonfinite_gradient')
+        assert event['rank'] == 0 and event['optimizer_step_skipped']
+        assert event['scale_before'] == 16. and event['scale_after'] == 8.
+    finally:
+        dist.destroy_process_group()
