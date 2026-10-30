@@ -215,15 +215,15 @@ def summarize(rows):
 
 def value_calibration(predictions, returns):
     assert len(predictions) == len(returns) and predictions
-    bins = [[] for _ in range(10)]
-    for prediction, actual in zip(predictions, returns):
-        bins[min(9, int(prediction * 10))].append((prediction, actual))
+    ordered = sorted(zip(predictions, returns), key=lambda pair: pair[0])
+    bins = [ordered[i * len(ordered) // 10:(i + 1) * len(ordered) // 10] for i in range(10)]
     mean = statistics.mean(returns)
     variance = statistics.mean((y - mean) ** 2 for y in returns)
     errors = [y - p for p, y in zip(predictions, returns)]
     error_mean = statistics.mean(errors)
     error_variance = statistics.mean((e - error_mean) ** 2 for e in errors)
-    return dict(samples=len(predictions), bins=[dict(lower=i / 10, upper=(i + 1) / 10, samples=len(b),
+    return dict(samples=len(predictions), bins=[dict(quantile_lower=i / 10, quantile_upper=(i + 1) / 10,
+        prediction_min=b[0][0] if b else None, prediction_max=b[-1][0] if b else None, samples=len(b),
         mean_prediction=statistics.mean(p for p, _ in b) if b else None,
         mean_actual_remaining_reward=statistics.mean(y for _, y in b) if b else None)
         for i, b in enumerate(bins)], explained_variance=1 - error_variance / variance if variance else None)
@@ -241,7 +241,9 @@ def examination_calibration(scenes, rows, episodes):
         returns.append((round(episode['reward'] * MAX_REWARD) - earned) / MAX_REWARD)
     report = value_calibration(predictions, returns)
     report.update(prediction_scope='B2 run-value at the exact examination root',
-        actual_return_scope='Realized remaining reward in the existing B4145 N32 evaluation episode',
+        actual_return_scope='Realized remaining reward in the existing B4145 RL8/N32 evaluation episode',
+        approximate=True,
+        approximation_note='Approximate calibration: B2 predictions are compared with B4145 (RL8) realized rewards, not B2 continuations.',
         source_job_id=4145, additional_rollouts=0,
         S_counterfactual_full_run_returns_observed=False)
     return report

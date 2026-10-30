@@ -64,12 +64,16 @@ def test_native_batched_solver_replays_the_chosen_sequence_exactly():
     assert policy_hash(policy) == original_hash and all(p.grad is None for p in policy.parameters())
 
 
-def test_value_calibration_uses_realized_returns_and_retains_empty_bins():
-    report = value_calibration([.1, .3, .9, 1.], [.1, .3, .9, 1.])
-    assert report['samples'] == 4 and report['explained_variance'] == 1.
+def test_value_calibration_uses_deciles_for_concentrated_predictions_and_reports_ranges():
+    predictions = [.05 + i * .005 for i in reversed(range(20))]
+    report = value_calibration(predictions, predictions)
+    assert report['samples'] == 20 and report['explained_variance'] == 1.
     assert len(report['bins']) == 10
-    assert report['bins'][9]['samples'] == 2
-    assert report['bins'][0]['mean_actual_remaining_reward'] is None
+    assert all(b['samples'] == 2 for b in report['bins'])
+    assert report['bins'][0]['prediction_min'] == .05
+    assert report['bins'][-1]['prediction_max'] == pytest.approx(.145)
+    tied = value_calibration([.1] * 20, [0.] * 20)
+    assert all(b['samples'] == 2 and b['prediction_min'] == b['prediction_max'] == .1 for b in tied['bins'])
     assert value_calibration([.1, .9], [.5, .5])['explained_variance'] is None
 
 
@@ -92,6 +96,7 @@ def test_root_calibration_subtracts_already_earned_reward_from_real_evaluation()
     report = examination_calibration(scenes, rows, episodes)
     assert report['explained_variance'] == 1.
     assert report['additional_rollouts'] == 0 and report['source_job_id'] == 4145
+    assert report['approximate'] and 'not B2 continuations' in report['approximation_note']
 
 
 def test_evaluation_report_flags_lower_survivor_resources_and_retains_paired_coverage():
