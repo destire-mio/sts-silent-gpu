@@ -8,6 +8,7 @@ import math
 import os
 from pathlib import Path
 import signal
+import resource
 import statistics
 import time
 
@@ -18,7 +19,7 @@ from torch.nn.parallel import DistributedDataParallel
 from train.e4 import AllocationEnded, REACH
 from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
-    save_rank, restore_rank)
+    save_rank, restore_rank, health_stop)
 from train.e4_stage6.training_worker import move_tensors
 
 
@@ -69,7 +70,7 @@ def main():
     collector = NoSLCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
-                 stop_reason=None)
+                 stop_reason=None, high_kl_streak=0)
     cursor = None
     round_state = dict(ready=None, seconds=0., decisions_start=0)
     common = output / "model.pt"
@@ -100,7 +101,7 @@ def main():
     if common.exists() and state["precision"] == "encoder_fp16_heads_fp32":
         scaler.load_state_dict(saved["scaler"])
     state["world"] = world
-    if state["stop_reason"] == "allocation_end_or_yield":
+    if state["stop_reason"] in ('allocation_end_or_yield', 'entropy_below_half_initial', 'KL_above_0.1'):
         state["stop_reason"] = None
     stopped_by_signal = False
     def on_signal(*_):
@@ -124,10 +125,8 @@ def main():
     def checkpoint():
         state["checkpoint_serial"] += 1
         identity = (state["update"], state["checkpoint_serial"])
-        for owner in range(world):
-            if owner == rank:
-                save_rank(output / f"rank-{rank}.pt", collector, cursor, identity, ppo_rng, round_state)
-            dist.barrier()
+        save_rank(output / f"rank-{rank}.pt", collector, cursor, identity, ppo_rng, round_state)
+        dist.barrier()
         if rank == 0:
             temporary = output / "model.pt.tmp"
             torch.save(dict(model=move_tensors(policy.state_dict(), torch.device("cpu")),
@@ -198,6 +197,8 @@ def main():
                 search.entropy_sum.zero_()
                 search.entropy_count = 0
                 search.times = StageTimes()
+                search.fault_counts.clear()
+                collector.round_games = sum(seed is not None for seed in collector.seeds)
             interrupted = False
             if round_state["ready"] is None:
                 policy.eval()
@@ -214,7 +215,12 @@ def main():
             cursor = new_cursor(round_state["ready"], ppo_rng, world)
             round_state["ready"] = None
             if not sum(cursor["counts"]):
-                log(dict(event="no_valid_rows", update=state["update"]))
+                failed = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
+                dist.all_reduce(failed)
+                faults, games = failed.tolist()
+                state['stop_reason'] = health_stop(state, dict(kl=0., normalized_entropy=1., finite=True), faults, games)
+                log(dict(event="no_valid_rows", update=state["update"], episode_faults=faults,
+                         episode_cases=games, stop_reason=state['stop_reason']))
                 cursor = None
                 continue
             if state["initial_entropy"] is None:
@@ -259,19 +265,25 @@ def main():
         per_gpu = [float(n) / max(.001,float(elapsed)) for n in by_rank]
         state["update"] += 1
         state["training_seconds"] += float(elapsed)
-        if not row["finite"]:
-            state["stop_reason"] = "NaN_or_Inf"
-        elif row["kl"] > .1:
-            state["stop_reason"] = "KL_above_0.1"
-        elif row["entropy"] < .5 * state["initial_entropy"]:
-            state["stop_reason"] = "entropy_below_half_initial"
+        health = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
+        dist.all_reduce(health)
+        faults, games = health.tolist()
+        rss = torch.tensor(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024, device=device, dtype=torch.int64)
+        rss_by_rank = [torch.empty_like(rss) for _ in range(world)]
+        dist.all_gather(rss_by_rank, rss)
+        state['stop_reason'] = health_stop(state, row, faults, games)
+        if row['normalized_entropy'] < .1:
+            log(dict(event='low_normalized_entropy_warning', update=state['update'], normalized_entropy=row['normalized_entropy']))
+        if row['kl'] > .1:
+            log(dict(event='high_KL_warning', update=state['update'], kl=row['kl'], streak=state['high_kl_streak']))
         log(dict(event="update",update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
             mainline_decisions_global=int(sum(float(n)for n in by_rank)),decisions_per_second_per_gpu=per_gpu,
             decisions_per_second_global=sum(per_gpu),training_mean_floor=float(done[1]/done[0]) if float(done[0]) else None,
             training_act1_boss_pass_rate=float(done[2]/done[0]) if float(done[0]) else None,
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
             precision=state["precision"],microbatch=state["microbatch"],learning_rate=optimizer.param_groups[0]["lr"],
-            stop_reason=state["stop_reason"],**row))
+            stop_reason=state["stop_reason"],episode_faults=faults,episode_cases=games,
+            episode_fault_rate=faults/max(1,games),rss_peak_bytes_per_rank=[int(v) for v in rss_by_rank],**row))
         cursor = None
         collector.completed.clear()
         round_state = dict(ready=None,seconds=0.,decisions_start=collector.decisions)
@@ -280,7 +292,7 @@ def main():
                 state["next_evaluation"] += 7200.
             else:
                 state["stop_reason"] = "allocation_end_or_yield"
-        if time.monotonic() - last_checkpoint >= 600 and state["stop_reason"] is None:
+        if time.monotonic() - last_checkpoint >= 1800 and state["stop_reason"] is None:
             checkpoint()
             last_checkpoint = time.monotonic()
     checkpoint()

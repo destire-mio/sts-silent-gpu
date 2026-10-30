@@ -1,5 +1,6 @@
 """Stage12: from-scratch CLS policy and no-search PPO."""
 from contextlib import nullcontext, contextmanager
+from collections import Counter
 from copy import deepcopy
 import math
 import json
@@ -12,7 +13,8 @@ import torch
 from torch import nn
 import torch.distributed as dist
 
-from train.e4 import RoomSearch, SegmentCollector, PHASE, COMBAT_PHASE, FLOOR, SCREEN, SCREENS
+from train.e4 import (RoomSearch, SegmentCollector, PHASE, COMBAT_PHASE, FLOOR, SCREEN, SCREENS,
+    ACT, ROOM, BOSS_ROOM, DEATH, VICTORY, MAX_REWARD, ACTION_KINDS)
 from train.model import Policy, ModelConfig, network_inputs, distribution, packed_inputs, record_lengths
 from train.e4_stage6.training_worker import move_tensors
 
@@ -71,6 +73,31 @@ class NoSLSearch(RoomSearch):
         self.times = StageTimes()
         self.mainline_progress = {}
         self.last_policy_mask = None
+        self.failed = {}
+        self.fault_counts = Counter()
+
+    def record_fault(self, slot, reason, extra_action=None):
+        seed, path = self.provenance_record(slot)
+        parent = self.provenance[slot][1] if slot >= self.lanes else slot
+        if parent in self.failed:
+            return
+        self.failed[parent] = reason
+        self.fault_counts[reason] += 1
+        record = dict(event='episode_fault', seed=seed,
+                      candidates=path + [extra_action] if extra_action is not None else path,
+                      reason=reason, slot=parent, probe_slot=slot if slot >= self.lanes else None)
+        print(json.dumps(record), flush=True)
+        if self.evidence_directory is not None:
+            with (self.evidence_directory / f'episode-faults-{self.device.index}.jsonl').open('a') as stream:
+                stream.write(json.dumps(record) + '\n')
+
+    def check_rows(self, slots, faults, truncated, combat_context):
+        failed = set()
+        for slot, fault, cut in zip(slots, faults, truncated):
+            if fault or cut:
+                self.record_fault(slot, f'engine_fault:{fault}' if fault else 'search_truncation')
+                failed.add(slot)
+        return failed
 
     def clock(self):
         if time.monotonic() - self.last_heartbeat >= 60:
@@ -97,34 +124,52 @@ class NoSLSearch(RoomSearch):
                 self.mainline_progress.update(self.progress_for(slots))
             packed = self.arrays['candidate_mask'][slots]
             result = ((packed[..., None].long() >> torch.arange(8, device=self.device)) & 1).flatten(1).bool()
-            positions = [i for i, s in enumerate(slots) if self.mainline_progress[s][PHASE] != COMBAT_PHASE]
+            positions = [i for i, s in enumerate(slots) if s not in self.failed and self.mainline_progress[s][PHASE] != COMBAT_PHASE]
             if positions:
                 result[positions] = super().policy_masks([slots[i] for i in positions])
             return result
 
     def step(self, slots, choices, combat_context=None):
         with self.times.measure('engine_step'):
-            result = super().step(slots, choices, combat_context)
+            active = [(s, a) for s, a in zip(slots, choices) if s not in self.failed]
+            self.last_step_progress = {}
+            result = super().step([s for s, _ in active], [a for _, a in active], combat_context) if active else set()
             self.mainline_progress.clear()
             return result
 
     @torch.no_grad()
     def predict(self, model, slots):
         self.last_policy_mask = self.policy_masks(slots)
-        with self.times.measure('inference'):
-            index = torch.tensor(slots, dtype=torch.int64, device=self.device)
-            inputs = network_inputs(self.arrays, self.device, index)
-            inputs['candidate_mask'] &= self.last_policy_mask[:, :inputs['candidate_mask'].shape[1]]
-            logits, value = model(inputs)
-            policy, _ = distribution(logits.float(), inputs['candidate_mask'])
-            action = torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
-            rows = torch.stack((action.double(), value.double(), policy.log_prob(action).double()), dim=1).cpu().tolist()
-            self.entropy_sum += policy.entropy().double().sum()
-            self.entropy_count += len(slots)
-        return [int(row[0]) for row in rows], [row[1] for row in rows], [row[2] for row in rows]
+        choices, values, logs = [0] * len(slots), [0.] * len(slots), [0.] * len(slots)
+        positions = [i for i, slot in enumerate(slots) if slot not in self.failed]
+        if positions:
+            with self.times.measure('inference'):
+                index = torch.tensor([slots[i] for i in positions], dtype=torch.int64, device=self.device)
+                inputs = network_inputs(self.arrays, self.device, index)
+                inputs['candidate_mask'] &= self.last_policy_mask[positions, :inputs['candidate_mask'].shape[1]]
+                logits, value = model(inputs)
+                policy, _ = distribution(logits.float(), inputs['candidate_mask'])
+                action = torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
+                rows = torch.stack((action.double(), value.double(), policy.log_prob(action).double()), dim=1).cpu().tolist()
+                self.entropy_sum += policy.entropy().double().sum()
+                self.entropy_count += len(positions)
+            for i, row in zip(positions, rows):
+                choices[i], values[i], logs[i] = int(row[0]), row[1], row[2]
+        return choices, values, logs
+
 
 
 class NoSLCollector(SegmentCollector):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.round_games = 0
+
+    def reset(self, slots, seeds):
+        for slot in slots:
+            self.search.failed.pop(slot, None)
+        self.round_games += len(slots)
+        return super().reset(slots, seeds)
+
     def ready(self, slots, progress, last_step):
         return slots
 
@@ -134,8 +179,57 @@ class NoSLCollector(SegmentCollector):
         return (*self.search.predict(model, slots), [False] * len(slots))
 
     def advance(self, slots, actions, progress):
-        with self.search.times.measure("reward"):
-            return super().advance(slots, actions, progress)
+        with self.search.times.measure('reward'):
+            active = [(s, a) for s, a in zip(slots, actions) if s not in self.search.failed]
+            if active:
+                kinds = self.search.arrays['candidate_kinds'][[s for s, _ in active], [a for _, a in active]].cpu().tolist()
+                for (slot, _), kind in zip(active, kinds):
+                    self.tails[slot].append((SCREENS[progress[slot][SCREEN]], ACTION_KINDS[kind]))
+                self.search.step([s for s, _ in active], [a for _, a in active])
+            after = dict(progress)
+            after.update(self.search.last_step_progress if active else {})
+            rewards, terminal = [], []
+            for slot, action in zip(slots, actions):
+                failed = slot in self.search.failed
+                if not failed:
+                    self.paths[slot].append(action)
+                    self.decisions += 1
+                    same_floor = progress[slot][FLOOR] == after[slot][FLOOR]
+                    self.floor_steps[slot] = self.floor_steps[slot] + 1 if same_floor else 0
+                    self.noncombat_floor_steps[slot] = (self.noncombat_floor_steps[slot]
+                        + int(progress[slot][PHASE] != COMBAT_PHASE)) if same_floor else 0
+                    if (after[slot][ROOM] == BOSS_ROOM and after[slot][PHASE] == COMBAT_PHASE
+                            and (progress[slot][ROOM] != BOSS_ROOM or progress[slot][PHASE] != COMBAT_PHASE or not same_floor)):
+                        self.pre_boss_deck_sizes[slot].append(dict(seed=self.seeds[slot], act=after[slot][ACT],
+                            floor=after[slot][FLOOR], deck_size=self.search.frames([slot], after)[slot]['deck_size']))
+                limited = self.floor_steps[slot] > 3000 or self.noncombat_floor_steps[slot] > 200
+                stalled = failed or limited
+                reward = 0.
+                if not stalled:
+                    try:
+                        reward = self.rewards[slot].advance(progress[slot], after[slot])
+                    except AssertionError as error:
+                        self.search.record_fault(slot, 'reward_ledger: ' + str(error))
+                        stalled = True
+                end = stalled or after[slot][SCREEN] in (DEATH, VICTORY)
+                rewards.append(0. if stalled else reward)
+                terminal.append(end)
+                if stalled:
+                    self.stalled.add(slot)
+                if end:
+                    faulty = slot in self.search.failed
+                    frame = self.search.frame_cache.get(slot, {}) if faulty else self.search.frames([slot], after)[slot]
+                    self.completed.append(dict(seed=self.seeds[slot], bosses_seen=self.search.bosses_seen,
+                        candidates=self.paths[slot], reach=self.rewards[slot].reach.copy(),
+                        floor=progress[slot][FLOOR] if faulty else after[slot][FLOOR],
+                        stall_class=self.search.failed.get(slot, 'floor_step_limit' if limited else None),
+                        noncombat=dict(counts=dict(self.search.reward_history[slot].counts)),
+                        final_deck_size=frame.get('deck_size', 0),
+                        pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes[slot]),
+                        outcome='stalled' if stalled else 'victory' if after[slot][SCREEN] == VICTORY else 'death',
+                        reward=self.rewards[slot].total / MAX_REWARD))
+                    self.seeds[slot] = None
+            return rewards, terminal
 
     @torch.no_grad()
     def collect(self, model, length=64):
@@ -341,6 +435,8 @@ def collector_snapshot(collector):
     state = dict(collector.state())
     state["sampling_entropy"] = (collector.search.entropy_sum, collector.search.entropy_count)
     state["timings"] = dict(collector.search.times.seconds)
+    state['round_games'] = collector.round_games
+    state['episode_faults'] = (dict(collector.search.failed), dict(collector.search.fault_counts))
     if state["partial"] is not None:
         state["partial"] = dict(state["partial"], result=dict(state["partial"]["result"]))
         result = state["partial"]["result"]
@@ -357,6 +453,10 @@ def restore_collector(collector, state):
         data = torch.empty(state["partial"].pop("data_capacity"), dtype=torch.uint8, device=collector.search.device)
         data[:len(result["data"])] = result["data"].to(collector.search.device)
         result["data"] = data
+    collector.round_games = state.pop('round_games', collector.search.lanes)
+    failed, counts = state.pop('episode_faults', ({}, {}))
+    collector.search.failed = failed
+    collector.search.fault_counts = Counter(counts)
     collector.search.times.seconds = state.pop("timings")
     entropy_sum, entropy_count = state.pop("sampling_entropy")
     collector.restore(state)
@@ -384,3 +484,16 @@ def restore_rank(state, collector, device, ppo_rng):
         torch.cuda.set_rng_state(state["cuda_rng"], device)
     return move_tensors(state["cursor"], device), state["update"], move_tensors(state["round_state"], device)
 
+
+
+def health_stop(state, metrics, faults, games):
+    state['high_kl_streak'] = state.get('high_kl_streak', 0) + 1 if metrics['kl'] > .1 else 0
+    if not metrics['finite']:
+        return 'NaN_or_Inf'
+    if faults > .01 * max(1, games):
+        return 'episode_fault_rate_above_1_percent'
+    if metrics['normalized_entropy'] < .03:
+        return 'normalized_entropy_below_0.03'
+    if state['high_kl_streak'] >= 3:
+        return 'KL_above_0.1_for_3_updates'
+    return None
