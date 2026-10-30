@@ -233,6 +233,16 @@ class RoomSearch:
                             self.arrays["truncated"][slots].long()), dim=1).cpu().tolist()
         return self.check_rows(slots, [r[0] for r in rows], [r[1] for r in rows], combat_context)
 
+    def provenance_record(self, slot):
+        value = self.provenance[slot]
+        if len(value) == 2:
+            return value
+        seed, parent, action = value
+        return seed, self.provenance[parent][1] + [action]
+
+    def record_fault(self, slot, reason, extra_action=None):
+        raise AssertionError(reason)
+
     def check_rows(self, slots, faults, truncated, combat_context):
         capped = set()
         if combat_context is not None:
@@ -241,8 +251,8 @@ class RoomSearch:
             capped = {s for s, f in zip(slots, faults) if f == self.played_cards_capacity_fault}
         unexpected = [(s, f) for s, f in zip(slots, faults) if f and s not in capped]
         if unexpected and self.evidence_directory is not None:
-            evidence = [dict(slot=s, fault=f, seed=self.provenance[s][0],
-                             candidates=self.provenance[s][1]) for s, f in unexpected]
+            evidence = [dict(slot=s, fault=f, seed=self.provenance_record(s)[0],
+                             candidates=self.provenance_record(s)[1]) for s, f in unexpected]
             (self.evidence_directory / f"fault-device-{self.device.index}.json").write_text(json.dumps(evidence))
         assert not unexpected, f"E4 engine fault: {unexpected}"
         assert not any(truncated), "Unresolved search truncation"
@@ -406,8 +416,7 @@ class RoomSearch:
             selected[probes] = torch.tensor([a for _, a in group], dtype=torch.int32, device=self.device)
             active[probes] = 1
             for (s, a), p in zip(group, probes):
-                seed, path = self.provenance[s]
-                self.provenance[p] = (seed, path + [a])
+                self.provenance[p] = (self.provenance[s][0], s, a)
             self.batch.step_tensors(selected, active)
             self.check(probes)
             keys = self.loop_keys(probes)
@@ -450,6 +459,7 @@ class RoomSearch:
         else:
             tracked, frames_before = [], {}
         action_by_slot = dict(zip(slots, choices))
+        rejected = set()
         for s in tracked:
             frame = frames_before[s]
             if s < self.lanes and s in self.step0_fallback_slots:
@@ -461,20 +471,31 @@ class RoomSearch:
                     self.step0_fallback_records.append(record)
                     print(json.dumps(record), flush=True)
             self.step0_fallback_slots.discard(s)
-            self.reward_history[s].before_step(frame, action_by_slot[s], [True] * len(frame['actions']))
+            try:
+                self.reward_history[s].before_step(frame, action_by_slot[s], [True] * len(frame['actions']))
+            except AssertionError as error:
+                self.record_fault(s, 'reward_history: ' + str(error), action_by_slot[s])
+                rejected.add(s)
         if combat_context is None:
             returning = (before[:, SCREEN] == MAP) & (kinds == 7)
-            assert not bool((returning & self.map_returned[indices]).any()), "Second map return on the same floor"
+            invalid = returning & self.map_returned[indices]
+            if bool(invalid.any()):
+                for s in indices[invalid].cpu().tolist():
+                    self.record_fault(s, 'Second map return on the same floor', action_by_slot[s])
+                    rejected.add(s)
             self.map_returned[indices] |= returning
         selected = torch.zeros(self.size, dtype=torch.int32, device=self.device)
         active = torch.zeros(self.size, dtype=torch.uint8, device=self.device)
         selected[indices] = torch.tensor(choices, device=self.device, dtype=torch.int32)
         active[indices] = 1
+        if rejected:
+            active[list(rejected)] = 0
         self.batch.step_tensors(selected, active)
         self.batch.progress_tensors(self.progress_buffer)
         self.map_returned[indices] &= before[:, FLOOR] == self.progress_buffer.view(-1, 9)[indices, FLOOR]
         for s, a in zip(slots, choices):
-            self.provenance[s][1].append(a)
+            if s not in rejected:
+                self.provenance[s][1].append(a)
         after = self.progress_buffer.view(-1, 9)[indices]
         status = torch.stack((self.arrays["faults"].to(torch.int64)[indices],
                               self.arrays["truncated"][indices].long()), dim=1)
@@ -488,7 +509,7 @@ class RoomSearch:
         else:
             rows = torch.cat((after, status), dim=1).cpu().tolist()
             after_progress = {slot: row[:9] for slot, row in zip(slots, rows)}
-        capped = self.check_rows(slots, [row[-2] for row in rows], [row[-1] for row in rows], combat_context)
+        capped = self.check_rows(slots, [row[-2] for row in rows], [row[-1] for row in rows], combat_context) | rejected
         floors_before = [before_progress[slot][FLOOR] for slot in slots]
         floors_after = [after_progress[slot][FLOOR] for slot in slots]
         self.last_step_progress = after_progress
@@ -499,7 +520,11 @@ class RoomSearch:
         frames_after = self.frames(observed, after_progress)
         for s in observed:
             if s in frames_before:
-                self.reward_history[s].after_step(frames_before[s], frames_after[s], action_by_slot[s])
+                try:
+                    self.reward_history[s].after_step(frames_before[s], frames_after[s], action_by_slot[s])
+                except AssertionError as error:
+                    self.record_fault(s, 'reward_history: ' + str(error))
+                    capped.add(s)
             else:
                 self.reward_history[s].observe(frames_after[s])
         valid = [s for s in slots if s not in capped and (s in frames_before or after_progress[s][PHASE] != COMBAT_PHASE)]

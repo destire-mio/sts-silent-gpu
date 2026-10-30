@@ -8,7 +8,7 @@ import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
-from train.e4 import RoomSearch, AllocationEnded, COMBAT_PHASE, PHASE
+from train.e4 import RoomSearch, SegmentCollector, AllocationEnded, COMBAT_PHASE, PHASE
 from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, new_cursor,
     advance_minibatch, save_rank, restore_rank)
 from train.model import network_inputs, packed_inputs, distribution
@@ -16,7 +16,7 @@ from train.model import network_inputs, packed_inputs, distribution
 
 def observation():
     search = RoomSearch(2, 1, torch.device('cpu'), torch.Generator().manual_seed(42), scratch_slots=0)
-    collector = NoSLCollector(search, torch.Generator().manual_seed(31))
+    collector = SegmentCollector(search, torch.Generator().manual_seed(31))
     collector.fresh([0, 1])
     return network_inputs(search.arrays, search.device, torch.tensor([0, 1]))
 
@@ -127,7 +127,7 @@ def test_fast_masks_equal_original_per_slot():
         scene = json.load(stream)['groups']['act1_boss_guardian'][0]
     slots = [0, 1]
     for search in (old, fast):
-        collector = NoSLCollector(search, torch.Generator().manual_seed(31))
+        collector = SegmentCollector(search, torch.Generator().manual_seed(31))
         collector.reset(slots, [scene['seed'], 2000000001])
         search.batch.reset_to_many([0], [scene['seed']], [scene['prefix']])
         search.provenance[0] = (scene['seed'], scene['prefix'].copy())
@@ -143,3 +143,72 @@ def test_fast_masks_equal_original_per_slot():
         old.step(slots, choices)
         fast.step(slots, choices)
     assert [old.batch.state_bytes(s) for s in slots] == [fast.batch.state_bytes(s) for s in slots]
+
+
+def test_stage12_health_uses_normalized_entropy_and_three_kl_rounds():
+    from train.e4_stage12 import health_stop
+    state = {}
+    metrics = dict(finite=True, kl=.11, normalized_entropy=.09, entropy=.01)
+    assert health_stop(state, metrics, 1, 100) is None
+    assert health_stop(state, metrics, 0, 100) is None
+    assert health_stop(state, metrics, 0, 100) == 'KL_above_0.1_for_3_updates'
+    metrics['kl'] = 0.
+    assert health_stop(state, metrics, 0, 100) is None and state['high_kl_streak'] == 0
+    metrics['normalized_entropy'] = .029
+    assert health_stop(state, metrics, 0, 100) == 'normalized_entropy_below_0.03'
+    metrics['normalized_entropy'] = .5
+    assert health_stop(state, metrics, 2, 100) == 'episode_fault_rate_above_1_percent'
+    metrics['finite'] = False
+    assert health_stop(state, metrics, 0, 100) == 'NaN_or_Inf'
+
+
+def test_faults_end_only_the_affected_episode_and_preserve_probe_evidence(tmp_path):
+    search = NoSLSearch(3, torch.device('cpu'), 81)
+    search.evidence_directory = tmp_path
+    collector = NoSLCollector(search, torch.Generator().manual_seed(31))
+    collector.reset([0, 1, 2], [1000000000, 1000000001, 1000000002])
+    progress = search.progress_for([0, 1, 2])
+    probe = search.probe_slots[0]
+    search.provenance[probe] = (1000000000, 0, 1)
+    assert search.check_rows([probe], [17], [0], None) == {probe}
+    assert search.failed == {0:'engine_fault:17'}
+    search.record_fault(probe, 'second report of the same failed episode')
+    assert sum(search.fault_counts.values()) == 1
+    def duplicate_reward(before, after):
+        raise AssertionError('Duplicate floor reward')
+    collector.rewards[1].advance = duplicate_reward
+    policy = CLSPolicy().eval()
+    actions, _, _, _ = collector.choose(policy, [0, 1, 2], progress)
+    rewards, terminal = collector.advance([0, 1, 2], actions, progress)
+    assert rewards[:2] == [0., 0.] and terminal[:2] == [True, True]
+    assert collector.seeds[:2] == [None, None] and collector.seeds[2] is not None
+    assert collector.stalled == {0, 1} and sum(search.fault_counts.values()) == 2
+    records = [json.loads(line) for line in next(tmp_path.glob('episode-faults-*.jsonl')).read_text().splitlines()]
+    assert records[0]['seed'] == 1000000000 and records[0]['candidates'] == [1]
+    assert records[1]['reason'] == 'reward_ledger: Duplicate floor reward'
+    collector.reset([0, 1], [1000000003, 1000000004])
+    assert not search.failed
+
+
+def test_second_map_return_ends_one_episode_without_native_step(tmp_path):
+    from train.e4 import MAP, SCREEN
+    from train.model import SCREENS
+    search = NoSLSearch(1, torch.device('cpu'), 81)
+    search.evidence_directory = tmp_path
+    collector = NoSLCollector(search, torch.Generator().manual_seed(31))
+    collector.reset([0], [2000000001])
+    with torch.no_grad():
+        for _ in range(30):
+            progress = search.progress_for([0])
+            if progress[0][SCREEN] == MAP:
+                break
+            legal = search.policy_masks([0])[0].nonzero().flatten()
+            search.step([0], [int(legal[0])])
+        progress = search.progress_for([0])
+        assert progress[0][SCREEN] == MAP, SCREENS[progress[0][SCREEN]]
+        action = int((search.arrays['candidate_kinds'][0] == 7).nonzero()[0])
+        search.map_returned[0] = True
+        before = search.batch.state_bytes(0)
+        search.step([0], [action])
+    assert search.batch.state_bytes(0) == before
+    assert search.failed[0] == 'Second map return on the same floor'
