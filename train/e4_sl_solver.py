@@ -19,7 +19,7 @@ class CombatSolver:
     def progress(self, slots, actions, values=None, branched=None):
         self.search.batch.progress_tensors(self.progress_buffer)
         index = torch.tensor(slots, device=self.device, dtype=torch.int64)
-        columns = [actions[:, None], self.search.arrays['faults'][index, None],
+        columns = [actions[:, None], self.search.arrays['faults'].to(torch.int64)[index, None],
                    self.progress_buffer.view(-1, 9)[index]]
         if values is not None:
             columns.extend((values[:, None], branched[:, None]))
