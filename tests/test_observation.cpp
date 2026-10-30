@@ -505,6 +505,47 @@ static void reward_identity() {
     }
     require(linked == 2, "sapphire key/relic tradeoff is missing");
 }
+static void map_inspection() {
+    Game g = combat(), m = g;
+    open_map(m);
+    const auto map = observe(m);
+    int map_nodes = 0;
+    for (int i = 0; i < map.entities; ++i) map_nodes += map.tags[i] == static_cast<int>(obs::Kind::MapNode);
+    require(map_nodes > 0, "map inspection fixture lacks nodes");
+    for (int y : {-1, 14}) {
+        m.run.node_y = y;
+        const auto o = observe(m);
+        uint64_t hash = 14695981039346656037ull;
+        const auto* bytes = reinterpret_cast<const uint8_t*>(&o);
+        for (std::size_t i = 0; i < sizeof(o); ++i) hash = (hash ^ bytes[i]) * 1099511628211ull;
+        require(hash == (y == -1 ? 4501127649767006638ull : 3094081725561642706ull), "MAP observation bytes changed");
+    }
+    g.reward_cards.push_back(create_card(g, make_card(CardId::Strike_G)));
+    for (int frame = 0; frame < 3; ++frame) {
+        if (frame) g.screen = Screen::CardReward;
+        if (frame == 2) { g.room_phase = RoomPhase::Complete; g.room_in_combat = false; }
+        const auto o = observe(g);
+        int nodes = 0, bosses = 0, expected = map.entities - map_nodes - 1;
+        for (int i = 0; i < o.entities; ++i) {
+            const bool node = o.tags[i] == static_cast<int>(obs::Kind::MapNode);
+            const bool boss = o.tags[i] == static_cast<int>(obs::Kind::Option) && o.ids[i] == static_cast<int>(obs::Control::Boss);
+            if (!node && !boss) continue;
+            nodes += node; bosses += boss;
+            const int index = frame == 2 ? expected++ : map.entities - 1;
+            for (int row = 0; row < obs::tag_rows; ++row)
+                require(o.tags[row * obs::entity_capacity + i] == map.tags[row * obs::entity_capacity + index], "map inspection tag changed");
+            for (int row = 0; row < obs::id_rows; ++row)
+                require(o.ids[row * obs::entity_capacity + i] == map.ids[row * obs::entity_capacity + index], "map inspection id changed");
+            for (int row = 0; row < obs::value_rows; ++row)
+                require(o.values[row * obs::entity_capacity + i] == map.values[row * obs::entity_capacity + index], "map inspection value changed");
+            for (int row = 0; row < obs::candidate_rows; ++row) for (int c = 0; c < o.candidates; ++c)
+                require(o.candidate_refs[row * obs::candidate_capacity + c] != i + 1, "inspection token became a candidate");
+            if (boss) require(o.ids[3 * obs::entity_capacity + i] == static_cast<int>(g.run.boss_key) + 1, "announced boss id missing");
+        }
+        require(bosses == 1, "map inspection needs exactly one boss");
+        require(nodes == (frame == 2 ? map_nodes : 0), "map inspection node count changed");
+    }
+}
 static void traces() {
     std::ifstream input(SPIRE_DEEP_ACTIONS);
     require(input.good(), "missing trace action inputs");
@@ -538,7 +579,7 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37888);
-    selection_intents(); grid_prompt_text(); conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); uninitialized_card_numbers(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
+    map_inspection(); selection_intents(); grid_prompt_text(); conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); uninitialized_card_numbers(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);
 }
