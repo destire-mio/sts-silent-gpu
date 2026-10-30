@@ -128,9 +128,9 @@ class RewardLedger:
 
 
 class RoomSearch:
-    def __init__(self, lanes, trials, device, rng, *, scratch_slots=4096, inference_chunk=128, bosses_seen=0x1FF):
+    def __init__(self, lanes, trials, device, rng, *, scratch_slots=4096, inference_chunk=128, bosses_seen=0x1FF, probe_slots=128):
         self.lanes, self.trials, self.device, self.rng = lanes, trials, device, rng
-        self.size = lanes + scratch_slots + 128
+        self.size = lanes + scratch_slots + probe_slots
         self.bosses_seen = bosses_seen
         self.batch = make_batch(self.size, 2**63 - 1, device, bosses_seen=bosses_seen)
         self.arrays = views(self.batch, device)
@@ -305,8 +305,21 @@ class RoomSearch:
     def frames(self, slots, progress):
         missing = [s for s in slots if s not in self.frame_cache]
         if missing:
-            data = {name: self.arrays[name][missing].cpu().tolist() for name in
-                    ('tags', 'ids', 'values', 'candidate_kinds', 'candidate_refs', 'entity_counts', 'candidate_counts')}
+            counts = torch.stack((self.arrays['entity_counts'][missing].long(),
+                                  self.arrays['candidate_counts'][missing].long()), dim=1).cpu().tolist()
+            ne, nc = max(row[0] for row in counts), max(row[1] for row in counts)
+            fields = (('tags', 4, ne), ('ids', 4, ne), ('values', 6, ne),
+                      ('candidate_kinds', 1, nc), ('candidate_refs', 3, nc))
+            packed = torch.cat([self.arrays[name][missing][..., :width].long().reshape(len(missing), rows * width)
+                                for name, rows, width in fields], dim=1).cpu().tolist()
+            data = {name: [] for name, _, _ in fields}
+            data.update(entity_counts=[row[0] for row in counts], candidate_counts=[row[1] for row in counts])
+            for row in packed:
+                start = 0
+                for name, rows, width in fields:
+                    values = [row[start + r * width:start + (r + 1) * width] for r in range(rows)]
+                    data[name].append(values[0] if rows == 1 else values)
+                    start += rows * width
             for j, s in enumerate(missing):
                 tags, ids, values = data['tags'][j], data['ids'][j], data['values'][j]
                 entities = range(data['entity_counts'][j])
@@ -339,7 +352,7 @@ class RoomSearch:
         missing = [s for s in slots if s not in self.mask_cache]
         if missing:
             started = time.monotonic()
-            progress = self.progress()
+            progress = self.progress_for(missing)
             inputs = network_inputs({k: self.arrays[k] for k in views_fields}, self.device,
                                     torch.tensor(missing, device=self.device))
             legal = inputs["candidate_mask"] & ~(self.map_return_blocked(missing)[:, None]
@@ -363,29 +376,7 @@ class RoomSearch:
                 if progress[s][PHASE] != COMBAT_PHASE:
                     pairs.extend((s, a) for a, valid in enumerate(row) if valid)
             repeated = {s: [] for s in missing}
-            for begin in range(0, len(pairs), len(self.probe_slots)):
-                self.clock()
-                group = pairs[begin:begin + len(self.probe_slots)]
-                probes = self.probe_slots[:len(group)]
-                self.batch.clone_many([s for s, _ in group], probes)
-                selected = torch.zeros(self.size, dtype=torch.int32, device=self.device)
-                active = torch.zeros(self.size, dtype=torch.uint8, device=self.device)
-                selected[probes] = torch.tensor([a for _, a in group], dtype=torch.int32, device=self.device)
-                active[probes] = 1
-                for (s, a), p in zip(group, probes):
-                    seed, path = self.provenance[s]
-                    self.provenance[p] = (seed, path + [a])
-                self.batch.step_tensors(selected, active)
-                self.check(probes)
-                keys = self.loop_keys(probes)
-                self.batch.progress_tensors(self.progress_buffer)
-                floors = self.progress_buffer.view(-1, 9)[probes, FLOOR].cpu().tolist()
-                for (s, a), key, floor in zip(group, keys, floors):
-                    if floor == progress[s][FLOOR] and key in self.seen[s]:
-                        if (frames[s]["actions"][a][0] != 7 or progress[s][SCREEN] == MAP
-                                or key in self.skip_returns[s]
-                                or (progress[s][SCREEN] == 11 and self.shop_skip_used[s])):
-                            repeated[s].append(a)
+            self.probe_pairs(pairs, progress, frames, repeated)
             for s in missing:
                 row = allowed[s]
                 nonpotion = [a for a, valid in enumerate(row) if valid
@@ -403,6 +394,31 @@ class RoomSearch:
                 self.loop_metrics["repeat_check_decisions"] += sum(progress[s][PHASE] != COMBAT_PHASE for s in missing)
                 self.loop_metrics["repeat_check_candidates"] += len(pairs)
         return torch.tensor([self.mask_cache[s] for s in slots], dtype=torch.bool, device=self.device)
+
+    def probe_pairs(self, pairs, progress, frames, repeated):
+        for begin in range(0, len(pairs), len(self.probe_slots)):
+            self.clock()
+            group = pairs[begin:begin + len(self.probe_slots)]
+            probes = self.probe_slots[:len(group)]
+            self.batch.clone_many([s for s, _ in group], probes)
+            selected = torch.zeros(self.size, dtype=torch.int32, device=self.device)
+            active = torch.zeros(self.size, dtype=torch.uint8, device=self.device)
+            selected[probes] = torch.tensor([a for _, a in group], dtype=torch.int32, device=self.device)
+            active[probes] = 1
+            for (s, a), p in zip(group, probes):
+                seed, path = self.provenance[s]
+                self.provenance[p] = (seed, path + [a])
+            self.batch.step_tensors(selected, active)
+            self.check(probes)
+            keys = self.loop_keys(probes)
+            self.batch.progress_tensors(self.progress_buffer)
+            floors = self.progress_buffer.view(-1, 9)[probes, FLOOR].cpu().tolist()
+            for (s, a), key, floor in zip(group, keys, floors):
+                if floor == progress[s][FLOOR] and key in self.seen[s]:
+                    if (frames[s]["actions"][a][0] != 7 or progress[s][SCREEN] == MAP
+                            or key in self.skip_returns[s]
+                            or (progress[s][SCREEN] == 11 and self.shop_skip_used[s])):
+                        repeated[s].append(a)
 
     def map_return_blocked(self, slots):
         self.batch.progress_tensors(self.progress_buffer)
