@@ -149,7 +149,11 @@ def one_update(worker, deadline):
         while worker.state['updates'] == 0:
             result = worker.step(deadline)
             if result.get('action') == 'fragment_ready':
-                first_minibatch_ratios(worker)
+                if worker.device.type == 'cuda' and torch.cuda.get_device_capability(worker.device)[0] >= 8:
+                    first_minibatch_ratios(worker)
+                else:
+                    worker.binding['first_minibatch_ratios'] = dict(skipped=True,
+                        reason='BF16 disabled on this hardware; Claude104 does not require the ratio probe')
             if not result['performed_training']:
                 break
     finally:
@@ -162,6 +166,17 @@ def one_update(worker, deadline):
         baseline_labels_seconds=dict(combat_sl=131., learning=76., repeat_check=42., event_sl=17.),
         under_100_seconds=elapsed < 100 if worker.state['updates'] == 1 else None)
     return report
+
+
+def restore_B2_for_evaluation(policy, checkpoint_path, expected_hash):
+    frozen = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
+    assert frozen['evaluation_only']
+    policy.load_state_dict(frozen['model'], strict=True)
+    policy.forward = type(policy).forward.__get__(policy)
+    policy.eval().requires_grad_(False)
+    policy.zero_grad(set_to_none=True)
+    assert policy_hash(policy) == expected_hash
+    return expected_hash
 
 
 class CalibratedCollector(SegmentCollector):
@@ -189,7 +204,7 @@ class CalibratedCollector(SegmentCollector):
             self.calibration.append(dict(seed=episode['seed'], decisions=len(samples),
                 predicted_sum=sum(predicted), realized_remaining_sum=sum(target),
                 squared_error_sum=sum((p - t) ** 2 for p, t in zip(predicted, target)),
-                scope='Post-timing policy mainline value vs realized remaining shaped reward; completed games only'))
+                scope='Original B2 mainline value vs realized remaining shaped reward; completed games only'))
         if len(self.completed) // 8 != before // 8:
             self.save(self)
         return result
@@ -244,8 +259,7 @@ def main():
     del worker
     gc.collect()
     torch.cuda.empty_cache()
-    policy.eval().requires_grad_(False)
-    policy.zero_grad(set_to_none=True)
+    evaluation_hash = restore_B2_for_evaluation(policy, context['B2']['path'], context['B2']['policy_sha256'])
     search = RoomSearch(256, 32, device, torch.Generator(device=device).manual_seed(101 + rank),
                         scratch_slots=256 * 33, inference_chunk=1024, bosses_seen=511)
     search.deadline = deadline
@@ -264,9 +278,9 @@ def main():
         except AllocationEnded:
             pass
     save(collector)
-    assert after_hash == policy_hash(policy) and all(p.grad is None for p in policy.parameters())
+    assert evaluation_hash == policy_hash(policy) and all(p.grad is None for p in policy.parameters())
     atomic_json(output / f'rank-{rank}-evaluation.json', dict(complete=complete_eval,
-        policy_sha256=after_hash, parameter_updates=int(complete_update),
+        policy_sha256=evaluation_hash, parameter_updates=0, timing_parameter_updates=int(complete_update),
         loop_metrics=search.loop_metrics, capacity_metrics=search.capacity_metrics))
     dist.barrier()
     if rank == 0:
@@ -276,11 +290,12 @@ def main():
             calibration.extend(json.loads((output / f'rank-{r}-calibration.json').read_bytes()))
             timers.append(json.loads((output / f'rank-{r}-timing.json').read_bytes()))
             reports.append(json.loads((output / f'rank-{r}-evaluation.json').read_bytes()))
-        assert len({r['policy_sha256'] for r in reports}) == 1
+        assert {r['policy_sha256'] for r in reports} == {context['B2']['policy_sha256']}
         wall = max(r['measured_wall_seconds'] for r in timers)
         decisions = sum(r['decisions'] for r in calibration)
         atomic_json(output / 'summary.json', dict(runtime_commit=commit, timing_only=True,
             parameter_updates=int(complete_update), production_updates=0,
+            evaluation_policy_sha256=evaluation_hash, evaluation_uses_original_B2=True,
             learner_forward_dtype='bfloat16' if torch.cuda.get_device_capability(device)[0] >= 8 else 'float32',
             timing=dict(per_rank=timers, slowest_rank_seconds=wall,
                         baseline_job=4153, baseline_seconds=245., under_100_seconds=wall < 100),
@@ -289,7 +304,7 @@ def main():
                 mean_prediction=sum(r['predicted_sum'] for r in calibration) / decisions if decisions else None,
                 mean_realized_remaining=sum(r['realized_remaining_sum'] for r in calibration) / decisions if decisions else None,
                 MSE=sum(r['squared_error_sum'] for r in calibration) / decisions if decisions else None,
-                scope='Existing post-timing evaluation decisions, without additional GPU runs/forwards'),
+                scope='Original B2 evaluation decisions, without additional GPU runs/forwards'),
             allocation_node_seconds=None, settlement='Parent actual final Slurm GPU-seconds/8 pending'))
     dist.barrier()
     dist.destroy_process_group()
