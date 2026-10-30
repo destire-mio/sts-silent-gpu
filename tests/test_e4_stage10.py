@@ -20,6 +20,31 @@ def test_uniform_retention_does_not_force_the_adopted_trial():
     assert counts.min() > 180 and counts.max() < 340
 
 
+def test_copy_tape_records_only_the_uniformly_retained_trial_metadata():
+    from train.e4_stage6.copy_tape import CombatTape
+    rng = torch.Generator().manual_seed(1729)
+    selected = retain_trials(rng).tolist()
+    slots = list(range(100, 132))
+    context = {'copy_rows': {slots[i]: [] for i in selected}}
+    reads = []
+    class Search:
+        def policy_masks(self, indices):
+            reads.append(indices)
+            return torch.nn.functional.one_hot(torch.tensor(indices), 132).bool()
+    tape = CombatTape(rng)
+    tape.record(Search(), context, slots, list(range(32)),
+                [i / 32 for i in range(32)], [i / 64 for i in range(32)])
+    assert reads == [[slots[i] for i in range(32) if i in selected]]
+    assert sum(len(rows) for rows in context['copy_rows'].values()) == 8
+    for i in selected:
+        row, = context['copy_rows'][slots[i]]
+        assert row['action'] == i and row['log'] == i / 32 and row['value'] == i / 64
+        assert row['policy_mask'].nonzero().flatten().tolist() == [slots[i]]
+    tape.record(Search(), context, [s for s in slots if s not in context['copy_rows']],
+                [0] * 24, [0.] * 24, [0.] * 24)
+    assert len(reads) == 1
+
+
 def test_waiting_combat_preserves_observation_action_and_GAE_alignment(monkeypatch):
     class Search:
         device = torch.device('cpu')
@@ -96,10 +121,16 @@ def test_uniform_retained_replay_does_not_overwrite_the_adopted_native_copy(monk
     replay = search.tape.replay_retained
     def check(search, context, slots, selected, parent, winner):
         assert slots.index(winner) == 0 and 0 not in selected
+        assert context['retained_trials'][parent] == selected
+        assert set(context['copy_rows']) == {slots[i] for i in selected}
         original = search.batch.state_bytes(winner)
         replay(search, context, slots, selected, parent, winner)
         assert search.batch.state_bytes(winner) == original
     monkeypatch.setattr(search.tape, 'replay_retained', check)
     paths = search.combat(policy, roots)
+    expected_rng = torch.Generator().manual_seed(seed)
+    expected = retain_trials(expected_rng).tolist()
+    assert search.tape.groups[0]['selected_trials'] == expected
+    assert torch.equal(search.tape.rng.get_state(), expected_rng.get_state())
     assert paths[0] and len(search.tape.groups[0]['trials']) == 8
     assert not any(r['adopted'] for r in search.tape.groups[0]['trials'])

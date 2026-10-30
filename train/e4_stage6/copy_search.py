@@ -5,6 +5,7 @@ import torch
 
 from train.e4 import RoomSearch, SegmentCollector, AllocationEnded, COMBAT_PHASE, PHASE, SCREEN, DEATH, VICTORY, ACT, FLOOR, BATTLE_OVER, SMOKED, HP
 from train.e4_stage6.copy_tape import CombatTape
+from train.e4_stage6.combat import retain_trials
 
 
 class CopySearch(RoomSearch):
@@ -44,7 +45,10 @@ class CopySearch(RoomSearch):
             parents = sources[begin:begin + capacity]
             slots = self.take(len(parents) * self.trials)
             context = self.begin_search("combat", slots)
-            context["copy_rows"] = {s: [] for s in slots}
+            context["retained_trials"] = {parent: retain_trials(self.tape.rng).tolist() for parent in parents}
+            context["copy_rows"] = {slots[j * self.trials + i]: []
+                                    for j, parent in enumerate(parents)
+                                    for i in context["retained_trials"][parent]}
             if self.combat_diagnostics is not None:
                 starts = self.progress_for(parents)
                 context["starts"] = {p: (starts[p][ACT], starts[p][FLOOR], self.provenance[p][0]) for p in parents}
