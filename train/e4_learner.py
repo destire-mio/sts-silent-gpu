@@ -3,7 +3,7 @@ from contextlib import nullcontext
 import torch
 import torch.distributed as dist
 
-from .model import distribution, packed_inputs
+from .model import distribution, packed_inputs, record_lengths
 from .ppo import PPOConfig
 
 
@@ -12,7 +12,7 @@ def update_beta(beta, target, entropy):
 
 
 def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
-    config = PPOConfig(epochs=epochs, minibatch_size=8192, microbatch_size=32, gae_lambda=.99)
+    config = PPOConfig(epochs=epochs, minibatch_size=8192, microbatch_size=256, gae_lambda=.99)
     world = dist.get_world_size()
     count = len(fragment["actions"])
     device = fragment["actions"].device
@@ -44,13 +44,18 @@ def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
     for epoch in range(config.epochs):
         indices = torch.randperm(count, generator=rng, device=device)
         for selected in indices.split(per_rank):
+            entities, candidates = record_lengths(fragment["data"], fragment["offsets"], selected)
+            selected = selected[torch.argsort((entities // 16) * 129 + candidates, stable=True)]
             chunks = list(selected.split(config.microbatch_size))
+            finite = torch.ones((), dtype=torch.bool, device=device)
             optimizer.zero_grad(set_to_none=True)
             for i, chunk in enumerate(chunks):
                 with model.no_sync() if i + 1 < len(chunks) else nullcontext():
                     inputs = packed_inputs(fragment["data"], fragment["offsets"], chunk, device)
                     inputs["candidate_mask"] &= fragment["policy_mask"][chunk, :inputs["candidate_mask"].shape[1]]
-                    logits, value = model(inputs)
+                    with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=device.type == "cuda"):
+                        logits, value = model(inputs)
+                    logits, value = logits.float(), value.float()
                     policy, entropy = distribution(logits, inputs["candidate_mask"])
                     imitation_entropy = policy.entropy()
                     log_prob = policy.log_prob(fragment["actions"][chunk])
@@ -63,7 +68,7 @@ def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
                     loss = (policy_loss + config.value_coefficient * value_loss
                             - config.entropy_coefficient * entropy * ppo[chunk]
                             - imitation_beta * imitation_entropy * imitation[chunk]).mean()
-                    assert torch.isfinite(loss), "Non-finite E4 loss"
+                    finite &= torch.isfinite(loss)
                     (loss * len(chunk) / len(selected)).backward()
                     total += torch.stack((policy_loss.detach().double().sum(), value_loss.detach().double().sum(),
                                           fragment["imitation"][chunk].double().sum(), loss.detach().double() * len(chunk),
@@ -77,6 +82,7 @@ def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
                                           (imitation_entropy.detach() * imitation[chunk] * (epoch == 0)).double().sum(),
                                           (imitation[chunk] * (epoch == 0)).double().sum(),
                                           ((ratio - 1 - log_ratio).detach() * imitation[chunk]).double().sum()))
+            assert bool(finite), "Non-finite E4 minibatch loss"
             torch.nn.utils.clip_grad_norm_(model.parameters(), config.max_grad_norm, error_if_nonfinite=True)
             optimizer.step()
     dist.all_reduce(total)

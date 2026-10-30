@@ -35,7 +35,9 @@ def decision_metrics(episodes):
         shop_purchases=total('shop_purchases'), card_skipped=total('card_skipped'), card_reward_choices=choices,
         card_skip_rate=total('card_skipped')/choices if choices else None,
         out_of_combat_potion_discards=total('out_of_combat_potion_discards'),
-        out_of_combat_potion_discards_by_seed=[dict(seed=e['seed'],count=row.get('out_of_combat_potion_discards',0))
+        out_of_combat_potion_discards_with_repeat_blocks=total('out_of_combat_potion_discards_with_repeat_blocks'),
+        out_of_combat_potion_discards_by_seed=[dict(seed=e['seed'],count=row.get('out_of_combat_potion_discards',0),
+            with_repeat_blocks=row.get('out_of_combat_potion_discards_with_repeat_blocks',0))
                                              for e,row in zip(episodes,rows)],
         scope='Actual completed mainline trajectories; absent count keys are zero')
 
