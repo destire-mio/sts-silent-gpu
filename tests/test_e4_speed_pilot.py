@@ -5,7 +5,7 @@ import pytest
 import torch
 import torch.distributed as dist
 
-from tools.e4_speed_pilot import b2_worker, one_update, paired_summary, pilot_seeds
+from tools.e4_speed_pilot import b2_worker, one_update, paired_summary, pilot_seeds, restore_B2_for_evaluation
 from train.e4_stage6.combat import CombatPolicy
 from train.e4_stage6.evaluation_worker import policy_hash
 from train.e4_timing import forward_autocast, timing
@@ -113,3 +113,20 @@ def test_stage10_deadline_preserves_its_independent_1200_cap(tmp_path, monkeypat
     context['phase'] = 'claude97_stage9'
     with pytest.raises(KeyError):
         run.allocation_deadline(context, '4400', 8, 'source')
+
+
+def test_evaluation_reloads_original_B2_and_discards_the_timing_update(tmp_path):
+    policy = CombatPolicy(ModelConfig(16, 1, 2, 32))
+    original = policy_hash(policy)
+    path = tmp_path / 'B2.pt'
+    torch.save(dict(evaluation_only=True, model=policy.state_dict()), path)
+    with torch.no_grad():
+        next(policy.parameters()).add_(.1)
+    policy.forward = policy.encoder_bf16_forward
+    assert policy_hash(policy) != original
+    assert restore_B2_for_evaluation(policy, path, original) == original
+    assert policy.forward.__func__ is CombatPolicy.forward
+    assert policy_hash(policy) == original and not policy.training
+    assert all(not p.requires_grad and p.grad is None for p in policy.parameters())
+    with pytest.raises(AssertionError):
+        restore_B2_for_evaluation(policy, path, 'wrong B2 hash')
