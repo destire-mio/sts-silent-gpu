@@ -7,9 +7,10 @@ import torch.distributed as dist
 
 from tools.e4_speed_pilot import b2_worker, one_update, paired_summary, pilot_seeds, restore_B2_for_evaluation
 from train.e4_stage6.combat import CombatPolicy
+from train.e4_stage6.copy_optimizer import add_combat_head
 from train.e4_stage6.evaluation_worker import policy_hash
 from train.e4_timing import forward_autocast, timing
-from train.model import ModelConfig
+from train.model import ModelConfig, Policy
 
 
 def test_paired256_uses_existing_B2_cases_and_includes_both_shop_seeds():
@@ -35,8 +36,12 @@ def test_B2_factory_keeps_model_Adam_beta_and_discards_cached_data(tmp_path, mon
     torch.set_num_threads(1)
     dist.init_process_group('gloo', init_method=(tmp_path / 'group').as_uri(), rank=0, world_size=1)
     try:
-        policy = CombatPolicy(ModelConfig(16, 1, 2, 32))
-        optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4)
+        inherited = Policy(ModelConfig(16, 1, 2, 32))
+        inherited_optimizer = torch.optim.Adam(inherited.parameters(), lr=1e-4)
+        for p in inherited.parameters():
+            p.grad = torch.full_like(p, .1)
+        inherited_optimizer.step()
+        policy, optimizer = add_combat_head(inherited, inherited_optimizer)
         for p in policy.parameters():
             p.grad = torch.full_like(p, .1)
         optimizer.step()
@@ -54,6 +59,9 @@ def test_B2_factory_keeps_model_Adam_beta_and_discards_cached_data(tmp_path, mon
         assert worker.ready is worker.cursor is None and worker.state['updates'] == 0
         assert worker.state['beta'] == .0054 and worker.state['entropy_target'] == .6716
         assert worker.binding['source_update'] == 7 and worker.binding['source_world'] == 7
+        assert set(worker.binding['source_Adam_step_counts']) == {1, 2}
+        assert all(int(worker.optimizer.state[p]['step']) == (1 if name.startswith('combat_value.') else 2)
+                   for name, p in worker.model.module.named_parameters())
         for actual, saved in zip(worker.optimizer.state.values(), optimizer.state.values()):
             assert all(torch.equal(actual[k], v) for k, v in saved.items())
         assert source['ready'] == original['ready']
