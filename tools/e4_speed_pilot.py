@@ -1,5 +1,6 @@
 """One fresh B2 timing update and the paired Stage10 dev256 evaluation."""
 import argparse
+from collections import Counter
 from copy import deepcopy
 from datetime import timedelta
 import gc
@@ -70,8 +71,9 @@ def b2_worker(source, expected_policy_hash, device, runtime_commit, evidence, st
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4)
     optimizer.load_state_dict(deepcopy(source['optimizer']))
     assert all(g['lr'] == 1e-4 for g in optimizer.param_groups)
-    steps = {int(s['step']) for s in optimizer.state.values()}
-    assert len(steps) == 1 and next(iter(steps)) > 0
+    steps = Counter(int(s['step']) for s in optimizer.state.values())
+    assert len(optimizer.state) == sum(len(g['params']) for g in optimizer.param_groups)
+    assert steps and min(steps) > 0
     model = DistributedDataParallel(policy, device_ids=[device.index] if device.type == 'cuda' else None,
                                    broadcast_buffers=False)
     # New independent streams are explicit; no old collector or cached fragment is restored.
@@ -85,7 +87,7 @@ def b2_worker(source, expected_policy_hash, device, runtime_commit, evidence, st
     binding = dict(arm='B', rank=rank, world=world, bosses_seen=511, lanes=256, trials=32,
         epochs=4, runtime_commit=runtime_commit, config=source['binding']['config'],
         source_world=source['binding']['world'], source_rank=0, source_update=7,
-        source_Adam_step=next(iter(steps)), source_policy_sha256=expected_policy_hash,
+        source_Adam_step_counts=dict(sorted(steps.items())), source_policy_sha256=expected_policy_hash,
         initialization_seed=seed, initialization='B2 model/Adam/beta; fresh collector and RNG; old ready discarded',
         timing_only=True, allowed_updates=1)
     return TrainingWorker(model, optimizer, collector,
