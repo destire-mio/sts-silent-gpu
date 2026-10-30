@@ -88,6 +88,12 @@ def test_checkpoint_resume_partial_collection_and_optimizer(tmp_path):
         search.clock = clock
         path = tmp_path / 'rank.pt'
         save_rank(path, collector, cursor, (1, 1), rng, dict(ready=None, seconds=1.5, decisions_start=0))
+        search.evidence_directory = tmp_path
+        search.last_heartbeat -= 61
+        (tmp_path / 'stop-requested').touch()
+        with pytest.raises(AllocationEnded):
+            search.clock()
+        (tmp_path / 'stop-requested').unlink()
         common = deepcopy(dict(model=policy.state_dict(), optimizer=optimizer.state_dict()))
         expected = collector.collect(policy, length=2)
         expected_state = [search.batch.state_bytes(s) for s in range(2)]
