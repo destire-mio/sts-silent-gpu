@@ -18,8 +18,8 @@ class CombatTape:
             context['copy_rows'][slot].append(dict(
                 policy_mask=masks[j].clone(), action=actions[j], log=logs[j], value=values[j]))
 
-    def replay_retained(self, search, context, slots, selected, parent):
-        targets = [slot for i, slot in enumerate(slots) if i not in selected][:8]
+    def replay_retained(self, search, context, slots, selected, parent, winner):
+        targets = [slot for i, slot in enumerate(slots) if i not in selected and slot != winner][:8]
         sources = [slots[i] for i in selected]
         original_states = [search.batch.state_bytes(slot) for slot in sources]
         actor_rng = search.rng.get_state().clone()
@@ -53,8 +53,8 @@ class CombatTape:
         assert len(slots) == 32 and len(scores) == 32
         score = torch.tensor([scores[s] for s in slots], dtype=torch.float32)
         assert bool(torch.isfinite(score).all()) and bool(((score >= 0) & (score <= 1)).all())
-        selected = retain_trials(slots.index(winner), self.rng).tolist()
-        self.replay_retained(search, context, slots, selected, parent)
+        selected = retain_trials(self.rng).tolist()
+        self.replay_retained(search, context, slots, selected, parent, winner)
         mean = float(score.mean())
         trials = []
         for i in selected:

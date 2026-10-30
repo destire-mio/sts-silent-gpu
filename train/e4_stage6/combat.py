@@ -31,11 +31,8 @@ class CombatPolicy(Policy):
         return logits, value
 
 
-def retain_trials(adopted, rng):
-    assert 0 <= adopted < 32
-    others = torch.arange(32)
-    others = others[others != adopted]
-    return torch.cat((torch.tensor([adopted]), others[torch.randperm(31, generator=rng)[:7]]))
+def retain_trials(rng):
+    return torch.randperm(32, generator=rng)[:8]
 
 
 

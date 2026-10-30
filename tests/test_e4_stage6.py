@@ -118,8 +118,8 @@ def test_hot_source_keeps_512_step_Adam_independent_and_only_new_head_starts_fre
 
 def test_relative_actor_GAE_raw_critic_targets_selection_and_entropy_limits():
     rng = torch.Generator().manual_seed(1729)
-    selected = retain_trials(13, rng)
-    assert len(set(selected.tolist())) == 8 and 13 in selected
+    selected = retain_trials(rng)
+    assert len(set(selected.tolist())) == 8
     advantage, target = combat_gae(torch.full((4,), .4), .8, .5)
     torch.testing.assert_close(advantage, torch.tensor([.3 * .95**3, .3 * .95**2, .3 * .95, .3]))
     assert torch.equal(target, torch.full((4,), .8))

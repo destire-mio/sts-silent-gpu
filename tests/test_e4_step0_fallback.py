@@ -17,7 +17,7 @@ def search_at_campfire(monkeypatch, options):
     search.size, search.lanes = 4, 1
     search.rng = torch.Generator().manual_seed(1)
     search.contexts, search.probe_slots = [], [1, 2, 3]
-    search.mask_cache, search.frame_cache = {}, {}
+    search.mask_cache, search.frame_cache, search.repeat_blocked = {}, {}, {}
     search.step0_fallback_slots = set()
     search.step0_fallback, search.step0_fallback_records = Counter(), []
     search.provenance = {0: (123456789, [2, 1, 0])}
@@ -35,6 +35,8 @@ def search_at_campfire(monkeypatch, options):
         progress_tensors=lambda target: target.copy_(progress.flatten()), reset_to_many=Mock())
     search.arrays = {key: torch.empty(0) for key in e4.views_fields}
     search.arrays['candidate_kinds'] = torch.full((4, len(options)), 3)
+    search.arrays['faults'] = torch.zeros(4, dtype=torch.uint32)
+    search.arrays['truncated'] = torch.zeros(4, dtype=torch.bool)
     search.map_return_blocked = lambda slots: torch.zeros(len(slots), dtype=torch.bool)
     monkeypatch.setattr(e4, 'network_inputs', lambda *args: dict(
         candidate_mask=torch.ones(1, len(options), dtype=torch.bool),
@@ -167,3 +169,24 @@ def test_examination_restore_keeps_missing_screen_counter(monkeypatch):
     search.step([0], [0])
     assert search.step0_fallback == {'grid': 4, 'room': 1}
     assert saved['search']['step0_fallback'] == {'grid': 4}
+
+
+@pytest.mark.parametrize('kinds,expected,blocked', [([6, 5], [True, True], 0),
+                                                  ([6, 3, 5], [False, True, True], 1)])
+def test_potion_does_not_force_a_repeat_exit_and_discard_counts_actual_blocks(monkeypatch, kinds, expected, blocked):
+    search, frame = search_at_campfire(monkeypatch, [0] * len(kinds))
+    frame['actions'] = [(kind, None) for kind in kinds]
+    search.arrays['candidate_kinds'] = torch.tensor([kinds] * 4)
+    search.reward_history[0].mask = lambda frame, legal: (legal, None)
+    search.reward_history[0].before_step = Mock()
+    search.reward_history[0].after_step = Mock()
+    search.loop_keys = lambda slots: [100 if slot == 1 else 200 for slot in slots]
+    monkeypatch.setattr(e4, 'step0_mask', lambda frame, legal, opened: (legal, False))
+    monkeypatch.setattr(e4, 'network_inputs', lambda *args: dict(
+        candidate_mask=torch.ones(1, len(kinds), dtype=torch.bool),
+        candidate_kinds=torch.tensor([kinds])))
+    mask = search.policy_masks([0])[0, :len(kinds)]
+    assert mask.tolist() == expected
+    search.step([0], [len(kinds) - 1])
+    assert search.reward_history[0].counts['out_of_combat_potion_discards'] == 1
+    assert search.reward_history[0].counts['out_of_combat_potion_discards_with_repeat_blocks'] == blocked

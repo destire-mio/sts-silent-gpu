@@ -146,6 +146,7 @@ class RoomSearch:
         self.event_explored = set()
         self.training = False
         self.mask_cache = {}
+        self.repeat_blocked = {}
         self.step0_fallback_slots = set()
         self.step0_fallback = Counter()
         self.step0_fallback_records = []
@@ -197,8 +198,11 @@ class RoomSearch:
 
     def trace_step(self, context, slots, choices):
         self.batch.progress_tensors(self.progress_buffer)
-        screens = self.progress_buffer.view(-1, 9)[slots, SCREEN].cpu().tolist()
-        kinds = self.arrays["candidate_kinds"][slots, choices].cpu().tolist()
+        rows = torch.stack((self.progress_buffer.view(-1, 9)[slots, SCREEN],
+                            self.arrays["candidate_kinds"][slots, choices].long()), dim=1).cpu().tolist()
+        self.trace_rows(context, slots, choices, [r[0] for r in rows], [r[1] for r in rows])
+
+    def trace_rows(self, context, slots, choices, screens, kinds):
         for s, action, screen, kind in zip(slots, choices, screens, kinds):
             context["steps"][s] += 1
             context["total_steps"][s] += 1
@@ -220,8 +224,16 @@ class RoomSearch:
         self.batch.progress_tensors(self.progress_buffer)
         return self.progress_buffer.view(-1, 9).cpu().tolist()
 
+    def progress_for(self, slots):
+        self.batch.progress_tensors(self.progress_buffer)
+        return dict(zip(slots, self.progress_buffer.view(-1, 9)[slots].cpu().tolist()))
+
     def check(self, slots, combat_context=None):
-        faults = self.arrays["faults"].to(torch.int64)[slots].cpu().tolist()
+        rows = torch.stack((self.arrays["faults"].to(torch.int64)[slots],
+                            self.arrays["truncated"][slots].long()), dim=1).cpu().tolist()
+        return self.check_rows(slots, [r[0] for r in rows], [r[1] for r in rows], combat_context)
+
+    def check_rows(self, slots, faults, truncated, combat_context):
         capped = set()
         if combat_context is not None:
             assert combat_context["kind"] == "combat"
@@ -233,7 +245,7 @@ class RoomSearch:
                              candidates=self.provenance[s][1]) for s, f in unexpected]
             (self.evidence_directory / f"fault-device-{self.device.index}.json").write_text(json.dumps(evidence))
         assert not unexpected, f"E4 engine fault: {unexpected}"
-        assert not bool(self.arrays["truncated"][slots].any()), "Unresolved search truncation"
+        assert not any(truncated), "Unresolved search truncation"
         for s in sorted(capped):
             self.capacity_metrics["combat_played_cards_limit"] += 1
             record = dict(event="combat_played_cards_limit", device=self.device.index,
@@ -250,11 +262,12 @@ class RoomSearch:
         choices, values, logs = [], [], []
         if not self.contexts:
             self.actual_policy_logs = []
-        masks = self.policy_masks(slots)
+        masks = None if self.contexts and self.contexts[-1]["kind"] == "combat" else self.policy_masks(slots)
         offset = 0
         for group in torch.tensor(slots, device=self.device).split(self.inference_chunk):
             inputs = network_inputs({k: self.arrays[k] for k in views_fields}, self.device, group)
-            inputs["candidate_mask"] &= masks[offset:offset + len(group), :inputs["candidate_mask"].shape[1]]
+            if masks is not None:
+                inputs["candidate_mask"] &= masks[offset:offset + len(group), :inputs["candidate_mask"].shape[1]]
             offset += len(group)
             logits, value = model(inputs)
             policy, _ = distribution(logits, inputs["candidate_mask"])
@@ -265,9 +278,10 @@ class RoomSearch:
                 for slot, entropy in zip(group.cpu().tolist(), policy.entropy().cpu().tolist()):
                     context["entropy_sum"][slot] += entropy
                     context["entropy_count"][slot] += 1
-            choices.extend(action.cpu().tolist())
-            values.extend(value.cpu().tolist())
-            logs.extend(policy.log_prob(action).cpu().tolist())
+            rows = torch.stack((action.double(), value.double(), policy.log_prob(action).double()), dim=1).cpu().tolist()
+            choices.extend(int(row[0]) for row in rows)
+            values.extend(row[1] for row in rows)
+            logs.extend(row[2] for row in rows)
             if not self.contexts:
                 self.actual_policy_logs.extend(policy.logits.cpu().tolist())
         return choices, values, logs
@@ -285,6 +299,7 @@ class RoomSearch:
             self.shop_skip_used[s] = False
             self.shop_opened[s] = False
             self.mask_cache.pop(s, None)
+            self.repeat_blocked.pop(s, None)
             self.step0_fallback_slots.discard(s)
 
     def frames(self, slots, progress):
@@ -318,6 +333,9 @@ class RoomSearch:
     @torch.no_grad()
     @timing.measure('repeat_check')
     def policy_masks(self, slots):
+        if self.contexts and self.contexts[-1]["kind"] == "combat":
+            packed = self.arrays["candidate_mask"][slots]
+            return ((packed[..., None].long() >> torch.arange(8, device=self.device)) & 1).flatten(1).bool()
         missing = [s for s in slots if s not in self.mask_cache]
         if missing:
             started = time.monotonic()
@@ -370,7 +388,11 @@ class RoomSearch:
                             repeated[s].append(a)
             for s in missing:
                 row = allowed[s]
-                if repeated[s] and len(repeated[s]) == sum(row):
+                nonpotion = [a for a, valid in enumerate(row) if valid
+                    and (s not in frames or frames[s]["actions"][a][0] not in (4, 5))]
+                all_repeat = bool(repeated[s]) and all(a in repeated[s] for a in nonpotion)
+                self.repeat_blocked[s] = bool(repeated[s]) and not all_repeat
+                if all_repeat:
                     self.loop_metrics["all_candidates_repeat"] += 1
                 else:
                     for a in repeated[s]:
@@ -402,10 +424,15 @@ class RoomSearch:
         indices = torch.tensor(slots, device=self.device, dtype=torch.int64)
         self.batch.progress_tensors(self.progress_buffer)
         before = self.progress_buffer.view(-1, 9)[indices].clone()
-        before_progress = dict(zip(slots, before.cpu().tolist()))
-        kinds_before = self.arrays["candidate_kinds"][indices, choices].cpu().tolist()
-        tracked = [s for s in slots if before_progress[s][PHASE] != COMBAT_PHASE]
-        frames_before = self.frames(tracked, before_progress)
+        kinds = self.arrays["candidate_kinds"][indices, choices].long()
+        if combat_context is None:
+            rows = torch.cat((before, kinds[:, None]), dim=1).cpu().tolist()
+            before_progress = {slot: row[:9] for slot, row in zip(slots, rows)}
+            kinds_before = [row[9] for row in rows]
+            tracked = [slot for slot in slots if before_progress[slot][PHASE] != COMBAT_PHASE]
+            frames_before = self.frames(tracked, before_progress)
+        else:
+            tracked, frames_before = [], {}
         action_by_slot = dict(zip(slots, choices))
         for s in tracked:
             frame = frames_before[s]
@@ -419,9 +446,10 @@ class RoomSearch:
                     print(json.dumps(record), flush=True)
             self.step0_fallback_slots.discard(s)
             self.reward_history[s].before_step(frame, action_by_slot[s], [True] * len(frame['actions']))
-        returning = (before[:, SCREEN] == MAP) & (self.arrays["candidate_kinds"][indices, choices] == 7)
-        assert not bool((returning & self.map_returned[indices]).any()), "Second map return on the same floor"
-        self.map_returned[indices] |= returning
+        if combat_context is None:
+            returning = (before[:, SCREEN] == MAP) & (kinds == 7)
+            assert not bool((returning & self.map_returned[indices]).any()), "Second map return on the same floor"
+            self.map_returned[indices] |= returning
         selected = torch.zeros(self.size, dtype=torch.int32, device=self.device)
         active = torch.zeros(self.size, dtype=torch.uint8, device=self.device)
         selected[indices] = torch.tensor(choices, device=self.device, dtype=torch.int32)
@@ -431,10 +459,23 @@ class RoomSearch:
         self.map_returned[indices] &= before[:, FLOOR] == self.progress_buffer.view(-1, 9)[indices, FLOOR]
         for s, a in zip(slots, choices):
             self.provenance[s][1].append(a)
-        capped = self.check(slots, combat_context)
-        floors_before = before[:, FLOOR].cpu().tolist()
-        floors_after = self.progress_buffer.view(-1, 9)[indices, FLOOR].cpu().tolist()
-        after_progress = dict(zip(slots, self.progress_buffer.view(-1, 9)[indices].cpu().tolist()))
+        after = self.progress_buffer.view(-1, 9)[indices]
+        status = torch.stack((self.arrays["faults"].to(torch.int64)[indices],
+                              self.arrays["truncated"][indices].long()), dim=1)
+        if combat_context is not None:
+            rows = torch.cat((before, after, kinds[:, None], status), dim=1).cpu().tolist()
+            before_progress = {slot: row[:9] for slot, row in zip(slots, rows)}
+            after_progress = {slot: row[9:18] for slot, row in zip(slots, rows)}
+            kinds_before = [row[18] for row in rows]
+            self.trace_rows(combat_context, slots, choices,
+                            [before_progress[slot][SCREEN] for slot in slots], kinds_before)
+        else:
+            rows = torch.cat((after, status), dim=1).cpu().tolist()
+            after_progress = {slot: row[:9] for slot, row in zip(slots, rows)}
+        capped = self.check_rows(slots, [row[-2] for row in rows], [row[-1] for row in rows], combat_context)
+        floors_before = [before_progress[slot][FLOOR] for slot in slots]
+        floors_after = [after_progress[slot][FLOOR] for slot in slots]
+        self.last_step_progress = after_progress
         for s in slots:
             self.frame_cache.pop(s, None)
         observed = [s for s in slots if s not in capped and
@@ -445,13 +486,14 @@ class RoomSearch:
                 self.reward_history[s].after_step(frames_before[s], frames_after[s], action_by_slot[s])
             else:
                 self.reward_history[s].observe(frames_after[s])
-        valid = [s for s in slots if s not in capped]
+        valid = [s for s in slots if s not in capped and (s in frames_before or after_progress[s][PHASE] != COMBAT_PHASE)]
         keys = dict(zip(valid, self.loop_keys(valid))) if valid else {}
         for s, old, new, kind in zip(slots, floors_before, floors_after, kinds_before):
             if s in capped:
                 continue
             if before_progress[s][PHASE] != COMBAT_PHASE and kind == 5:
                 self.reward_history[s].counts["out_of_combat_potion_discards"] += 1
+                self.reward_history[s].counts["out_of_combat_potion_discards_with_repeat_blocks"] += int(self.repeat_blocked.get(s, False))
             if before_progress[s][SCREEN] == 6 and kind in (3, 7):
                 self.reward_history[s].counts["card_reward_choices"] += 1
                 if kind == 7:
@@ -484,8 +526,10 @@ class RoomSearch:
                     self.reward_history[s].counts['sapphire_key_selected'] += 1
                 if frame['screen'] == ROOM_SCREEN and frame['rest_options'][action_by_slot[s]] == 6:
                     self.reward_history[s].counts['ruby_key_selected'] += 1
-            self.seen[s].add(keys[s])
+            if s in keys:
+                self.seen[s].add(keys[s])
             self.mask_cache.pop(s, None)
+            self.repeat_blocked.pop(s, None)
         return capped
 
     def clone(self, sources, targets):
@@ -503,6 +547,7 @@ class RoomSearch:
             if s in self.step0_fallback_slots:
                 self.step0_fallback_slots.add(t)
             self.frame_cache.pop(t, None)
+            self.repeat_blocked[t] = self.repeat_blocked.get(s, False)
             if s in self.mask_cache:
                 self.mask_cache[t] = self.mask_cache[s].copy()
             else:
@@ -525,7 +570,7 @@ class RoomSearch:
             slots = self.take(len(parents) * self.trials)
             context = self.begin_search("combat", slots)
             if self.combat_diagnostics is not None:
-                starts = self.progress()
+                starts = self.progress_for(parents)
                 context["starts"] = {p: (starts[p][ACT], starts[p][FLOOR], self.provenance[p][0]) for p in parents}
                 context["entropy_sum"] = dict.fromkeys(slots, 0.)
                 context["entropy_count"] = dict.fromkeys(slots, 0)
@@ -535,16 +580,16 @@ class RoomSearch:
                 paths = {s: [] for s in slots}
                 capped = set()
                 live = slots[:]
+                progress = {}
                 while live:
                     context["live"] = live
                     self.clock()
                     choices, _, _ = self.predict(model, live)
-                    self.trace_step(context, live, choices)
                     capped.update(self.step(live, choices, context))
                     self.searched_decisions += len(live)
                     for s, a in zip(live, choices):
                         paths[s].append(a)
-                    progress = self.progress()
+                    progress.update(self.last_step_progress)
                     continuing = [s for s in live if s not in capped and progress[s][PHASE] == COMBAT_PHASE
                                   and progress[s][SCREEN] not in (DEATH, VICTORY)]
                     finished = set(live) - set(continuing) - capped
@@ -767,6 +812,7 @@ class SegmentCollector:
         self.search.step0_fallback_records = deepcopy(state.get("step0_fallback_records", []))
         self.search.step0_fallback_slots.clear()
         self.search.mask_cache.clear()
+        self.search.repeat_blocked.clear()
         self.search.frame_cache.clear()
         self.search.reward_history[:self.search.lanes] = deepcopy(state["reward_history"])
         if self.partial:
@@ -782,6 +828,13 @@ class SegmentCollector:
             self.search.batch.reset_to_many(slots, [self.seeds[i] for i in slots],
                                             [self.paths[i] for i in slots])
             self.search.check(slots)
+
+    def ready(self, slots, progress, last_step):
+        waiting = [slot for slot in slots if not self.pending[slot] and progress[slot][PHASE] == COMBAT_PHASE]
+        ready = [slot for slot in slots if slot not in waiting]
+        if len(waiting) >= 64 or last_step or not ready:
+            return slots
+        return ready
 
     @timing.measure('mainline')
     def choose(self, model, slots, progress):
@@ -829,7 +882,9 @@ class SegmentCollector:
             for (s, _), kind in zip(active, kinds):
                 self.tails[s].append((SCREENS[progress[s][SCREEN]], ACTION_KINDS[kind]))
             self.search.step([s for s, _ in active], [a for _, a in active])
-        after = self.search.progress()
+        after = dict(progress)
+        if active:
+            after.update(self.search.last_step_progress)
         reward, terminal = [], []
         for slot, action in zip(slots, actions):
             stalled = slot in self.stalled
@@ -885,40 +940,47 @@ class SegmentCollector:
     def collect(self, model, length=64):
         device, lanes = self.search.device, self.search.lanes
         slots = list(range(lanes))
-        index = torch.arange(lanes, device=device)
         if self.partial is None:
             result = dict(data=torch.empty(length * lanes * 32768, dtype=torch.uint8, device=device),
                           offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device),
-                          policy_mask=torch.empty((length, lanes, 128), dtype=torch.bool, device=device))
+                          policy_mask=torch.empty((length, lanes, 128), dtype=torch.bool, device=device),
+                          row_indices=torch.empty(length * lanes, dtype=torch.int64, device=device))
             for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat"):
                 dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid", "combat") else torch.float32
                 result[name] = torch.zeros((length, lanes), device=device, dtype=dtype)
-            self.partial = dict(result=result, next_step=0, length=length,
+            self.partial = dict(result=result, next_step=0, next_row=0, lane_steps=[0] * lanes, length=length,
                                 completed_before=len(self.completed))
         assert self.partial["length"] == length
         result = self.partial["result"]
-        for t in range(self.partial["next_step"], length):
+        while self.partial["next_row"] < length * lanes:
             self.search.clock()
-            fresh = [s for s in slots if self.seeds[s] is None]
+            active = [slot for slot in slots if self.partial["lane_steps"][slot] < length]
+            fresh = [slot for slot in active if self.seeds[slot] is None]
             if fresh:
                 self.fresh(fresh)
-            progress = self.search.progress()
-            actions, values, logs, imitation = self.choose(model, slots, progress)
-            result["policy_mask"][t] = self.search.policy_masks(slots)
-            row = t * lanes
-            store_inputs(self.search.batch, self.search.arrays, index, result["data"],
-                         result["offsets"][row:row + lanes + 1])
-            reward, terminal = self.advance(slots, actions, progress)
+            progress = self.search.progress_for(active)
+            selected = self.ready(active, progress, any(self.partial["lane_steps"][slot] == length - 1 for slot in active))
+            actions, values, logs, imitation = self.choose(model, selected, progress)
+            positions = torch.tensor([self.partial["lane_steps"][slot] * lanes + slot for slot in selected], device=device)
+            result["policy_mask"].view(-1, 128)[positions] = self.search.policy_masks(selected)
+            row = self.partial["next_row"]
+            store_inputs(self.search.batch, self.search.arrays, torch.tensor(selected, device=device), result["data"],
+                         result["offsets"][row:row + len(selected) + 1])
+            result["row_indices"][row:row + len(selected)] = positions
+            reward, terminal = self.advance(selected, actions, progress)
             for name, data in (("actions", actions), ("values", values), ("logs", logs),
                                ("rewards", reward), ("terminal", terminal), ("imitation", imitation),
-                               ("action_valid", [s not in self.stalled for s in slots]),
-                               ("combat", [progress[s][PHASE] == COMBAT_PHASE for s in slots])):
-                result[name][t] = torch.tensor(data, device=device)
-            self.partial["next_step"] = t + 1
+                               ("action_valid", [slot not in self.stalled for slot in selected]),
+                               ("combat", [progress[slot][PHASE] == COMBAT_PHASE for slot in selected])):
+                result[name].view(-1)[positions] = torch.tensor(data, device=device, dtype=result[name].dtype)
+            for slot in selected:
+                self.partial["lane_steps"][slot] += 1
+            self.partial["next_row"] += len(selected)
+            self.partial["next_step"] = min(self.partial["lane_steps"])
         live = [s for s in slots if self.seeds[s] is not None]
         bootstrap = torch.zeros(lanes, device=device)
         if live:
-            values = self.search.scores(model, live, self.search.progress())
+            values = self.search.scores(model, live, self.search.progress_for(live))
             bootstrap[live] = torch.tensor([values[s] for s in live], device=device)
         result["advantages"] = torch.zeros_like(result["values"])
         advantage = torch.zeros(lanes, device=device)
@@ -929,9 +991,10 @@ class SegmentCollector:
             result["advantages"][t] = advantage
             bootstrap = result["values"][t]
         result["returns"] = result["values"] + result["advantages"]
-        result["policy_mask"] = result["policy_mask"].reshape(-1, 128)
+        order = result.pop("row_indices")
+        result["policy_mask"] = result["policy_mask"].reshape(-1, 128)[order]
         for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat", "advantages", "returns"):
-            result[name] = result[name].flatten()
+            result[name] = result[name].flatten()[order]
         completed = self.completed[self.partial["completed_before"]:]
         self.last_stall_classes = dict(Counter(e["stall_class"] for e in completed if e["outcome"] == "stalled"))
         result["health"] = torch.tensor([len(completed), sum(e["floor"] for e in completed),
@@ -955,7 +1018,8 @@ class SegmentCollector:
             if count:
                 self.reset(free[:count], [waiting.popleft() for _ in range(count)])
             slots = [s for s, seed in enumerate(self.seeds) if seed is not None]
-            progress = self.search.progress()
+            progress = self.search.progress_for(slots)
+            slots = self.ready(slots, progress, False)
             choices, _, _, _ = self.choose(model, slots, progress)
             completed_before = len(self.completed)
             self.advance(slots, choices, progress)

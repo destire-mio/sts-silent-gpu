@@ -33,12 +33,13 @@ def test_combat_capacity_excludes_only_faulted_trial(tmp_path):
 
     def step(slots, choices, context):
         search.arrays['faults'][1] = search.played_cards_capacity_fault
+        search.last_step_progress = {s: progress[s] for s in slots}
         context['tail'][1] = deque([dict(screen='combat', candidate=0, action_kind='play')], maxlen=30)
         return search.check(slots, context)
 
     search.step = step
     assert search.combat(None, [0]) == {0: [0]}
-    search.scores.assert_called_once_with(None, [2], progress)
+    search.scores.assert_called_once_with(None, [2], {s: progress[s] for s in (1, 2)})
     assert search.clone.call_args.args == ([2], [0])
     assert search.capacity_metrics == dict(combat_played_cards_limit=1, combat_trials=2)
     evidence = json.loads((tmp_path / 'combat-played-cards-limit-0.jsonl').read_text())

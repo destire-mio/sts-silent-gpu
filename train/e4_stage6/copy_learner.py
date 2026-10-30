@@ -3,12 +3,12 @@ from contextlib import nullcontext
 import torch
 import torch.distributed as dist
 
-from train.model import distribution, packed_inputs
+from train.model import distribution, packed_inputs, record_lengths
 from train.e4_stage6.copy_tape import pack_trials
 
 
 MINIBATCH = 8192
-MICROBATCH = 32
+MICROBATCH = 256
 
 
 def validate_training_fragment(mainline, arm):
@@ -125,21 +125,27 @@ def advance_update(model, optimizer, cursor, rng, beta):
     global_count = present.sum().to(torch.float64)
     dist.all_reduce(global_count)
     assert int(global_count) > 0
+    entities, candidates = record_lengths(rows['data'], rows['offsets'], selected)
+    order = torch.argsort((entities // 16) * 129 + candidates, stable=True)
+    selected, present = selected[order], present[order]
     chunks = list(range(0, len(selected), MICROBATCH))
+    finite = torch.ones((), dtype=torch.bool, device=device)
     optimizer.zero_grad(set_to_none=True)
     for j, begin in enumerate(chunks):
         indices = selected[begin:begin + MICROBATCH]
         with model.no_sync() if j + 1 < len(chunks) else nullcontext():
             inputs = packed_inputs(rows['data'], rows['offsets'], indices, device)
             inputs['candidate_mask'] &= rows['policy_mask'][indices, :inputs['candidate_mask'].shape[1]]
-            if cursor['arm'] == 'A':
-                logits, run_value = model(inputs)
-                combat_value = run_value * 0.
-            else:
-                logits, run_value, combat_value = model(inputs)
+            with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=device.type == 'cuda'):
+                if cursor['arm'] == 'A':
+                    logits, run_value = model(inputs)
+                    combat_value = run_value * 0.
+                else:
+                    logits, run_value, combat_value = model(inputs)
+            logits, run_value, combat_value = logits.float(), run_value.float(), combat_value.float()
             loss, metrics = losses(logits, run_value, combat_value, inputs, rows,
                                    indices, present[begin:begin + MICROBATCH], beta)
-            assert bool(torch.isfinite(loss).all()), 'Non-finite stage6 loss'
+            finite &= torch.isfinite(loss).all()
             (loss.sum() * world / global_count).backward()
             cursor['total'] += torch.stack((metrics['actor'].detach().double().sum(),
                         metrics['run_value'].detach().double().sum(),
@@ -155,6 +161,7 @@ def advance_update(model, optimizer, cursor, rng, beta):
                         (metrics['normalized_entropy'].detach() * metrics['ppo']).double().sum(),
                         ((metrics['ratio'] - 1 - metrics['log_ratio']).detach() * metrics['ppo']).double().sum(),
                         (((metrics['ratio'] - 1).abs() > .2) * metrics['ppo']).double().sum()))
+    assert bool(finite), 'Non-finite stage6 minibatch loss'
     torch.nn.utils.clip_grad_norm_(model.parameters(), .5, error_if_nonfinite=True)
     optimizer.step()
     cursor['optimizer_steps'] += 1

@@ -9,18 +9,18 @@ from train.e4_stage6.copy_tape import CombatTape
 
 class CopySearch(RoomSearch):
     def __init__(self, lanes, device, rng, selection_rng, *, bosses_seen=511):
-        super().__init__(lanes, 32, device, rng, scratch_slots=lanes * 33, bosses_seen=bosses_seen)
+        super().__init__(lanes, 32, device, rng, scratch_slots=lanes * 33, inference_chunk=1024, bosses_seen=bosses_seen)
         self.tape = CombatTape(selection_rng)
 
     def predict(self, model, slots):
         combat_values = []
         def run_policy(inputs):
             logits, value, combat_value = model(inputs)
-            combat_values.extend(combat_value.detach().cpu().tolist())
+            combat_values.append(combat_value.detach())
             return logits, value
         actions, values, logs = super().predict(run_policy, slots)
         if self.contexts and self.contexts[-1]['kind'] == 'combat':
-            self.tape.record(self, self.contexts[-1], slots, actions, logs, combat_values)
+            self.tape.record(self, self.contexts[-1], slots, actions, logs, torch.cat(combat_values).cpu().tolist())
         return actions, values, logs
 
     def scores(self, model, slots, progress):
@@ -46,7 +46,7 @@ class CopySearch(RoomSearch):
             context = self.begin_search("combat", slots)
             context["copy_rows"] = {s: [] for s in slots}
             if self.combat_diagnostics is not None:
-                starts = self.progress()
+                starts = self.progress_for(parents)
                 context["starts"] = {p: (starts[p][ACT], starts[p][FLOOR], self.provenance[p][0]) for p in parents}
                 context["entropy_sum"] = dict.fromkeys(slots, 0.)
                 context["entropy_count"] = dict.fromkeys(slots, 0)
@@ -56,16 +56,16 @@ class CopySearch(RoomSearch):
                 paths = {s: [] for s in slots}
                 capped = set()
                 live = slots[:]
+                progress = {}
                 while live:
                     context["live"] = live
                     self.clock()
                     choices, _, _ = self.predict(model, live)
-                    self.trace_step(context, live, choices)
                     capped.update(self.step(live, choices, context))
                     self.searched_decisions += len(live)
                     for s, a in zip(live, choices):
                         paths[s].append(a)
-                    progress = self.progress()
+                    progress.update(self.last_step_progress)
                     continuing = [s for s in live if s not in capped and progress[s][PHASE] == COMBAT_PHASE
                                   and progress[s][SCREEN] not in (DEATH, VICTORY)]
                     finished = set(live) - set(continuing) - capped
