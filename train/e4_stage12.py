@@ -74,6 +74,9 @@ class NoSLSearch(RoomSearch):
 
     def clock(self):
         if time.monotonic() - self.last_heartbeat >= 60:
+            if self.evidence_directory is not None and (self.evidence_directory / 'stop-requested').exists():
+                from train.e4 import AllocationEnded
+                raise AllocationEnded()
             self.actual_lanes = [dict(lane=s, seed=self.provenance[s][0], steps=len(self.provenance[s][1]),
                                       floor=p[FLOOR], screen=SCREENS[p[SCREEN]])
                                  for s, p in self.mainline_progress.items()]
