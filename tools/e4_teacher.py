@@ -22,7 +22,7 @@ from train.e4_teacher_pilot import GROUPS, evaluate_scenes, summarize, paired_ro
 
 
 def allocation_deadline(context, job, world, commit):
-    assert context['format'] == 1 and context['phase'] == 'claude94_stage7'
+    assert context['format'] == 1 and context['phase'] in ('claude94_stage7', 'claude97_stage9')
     assert context['runtime_commit'] == commit and world in (7, 8)
     receipt, reserve, release, allocation = (context[k] for k in ('receipt', 'reservation', 'release', 'allocation'))
     assert all(str(r['job_id']) == job for r in (receipt, reserve, release, allocation))
@@ -39,7 +39,7 @@ def allocation_deadline(context, job, world, commit):
     assert path.read_text().strip() == 'Submitted batch job ' + job
     for record in (reserve['parent_ledger'], release['preflight'], allocation['scontrol']):
         assert file_digest(Path(record['path'])) == record['sha256']
-    budget = context['budgets']['claude94_stage7']
+    budget = context['budgets'][context['phase']]
     assert budget['cap_node_seconds'] == 3600
     charged, held = budget['charged_node_seconds'], budget['reserved_node_seconds']
     assert 0 <= charged and 0 <= held and charged + held <= 3600
