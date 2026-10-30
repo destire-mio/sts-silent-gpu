@@ -148,7 +148,8 @@ def test_fast_masks_equal_original_per_slot():
 def test_stage12_health_uses_normalized_entropy_and_three_kl_rounds():
     from train.e4_stage12 import health_stop
     state = {}
-    metrics = dict(finite=True, kl=.11, normalized_entropy=.09, entropy=.01)
+    metrics = dict(finite=True, kl=.11, normalized_entropy=.09, entropy=.01,
+                   amp_scale=8., amp_skipped_steps=0, optimizer_attempts=64)
     assert health_stop(state, metrics, 1, 100) is None
     assert health_stop(state, metrics, 0, 100) is None
     assert health_stop(state, metrics, 0, 100) == 'KL_above_0.1_for_3_updates'
@@ -214,7 +215,7 @@ def test_second_map_return_ends_one_episode_without_native_step(tmp_path):
     assert search.failed[0] == 'Second map return on the same floor'
 
 
-def test_amp_overflow_skips_adam_and_retains_nan_stop(tmp_path, capsys):
+def test_amp_overflow_skips_adam_without_stopping_healthy_parameters(tmp_path, capsys):
     from train.e4_stage12 import finish_metrics, health_stop
     torch.set_num_threads(1)
     dist.init_process_group('gloo', init_method=(tmp_path / 'amp-gloo').as_uri(), rank=0, world_size=1)
@@ -232,14 +233,13 @@ def test_amp_overflow_skips_adam_and_retains_nan_stop(tmp_path, capsys):
         assert cursor['optimizer_attempts'] == 1 and cursor['amp_skipped_steps'] == 0
         before = deepcopy(optimizer.state_dict())
         weights = deepcopy(policy.state_dict())
-        cursor = new_cursor(fragment, rng, 1)
         hook = policy.cls.register_hook(lambda grad: grad * float('inf'))
         advance_minibatch(model, optimizer, scaler, cursor, rng, 0, 1)
         hook.remove()
         assert scaler.get_scale() == 8.
-        row = finish_metrics(cursor)
-        assert row['optimizer_steps'] == 0 and row['optimizer_attempts'] == 1 and row['amp_skipped_steps'] == 1
-        assert not row['finite'] and health_stop({}, row, 0, 100) == 'NaN_or_Inf'
+        row = finish_metrics(cursor, model, scaler)
+        assert row['optimizer_steps'] == 1 and row['optimizer_attempts'] == 2 and row['amp_skipped_steps'] == 1
+        assert row['finite'] and health_stop({}, row, 0, 100) is None
         for name, value in weights.items():
             torch.testing.assert_close(value, policy.state_dict()[name], rtol=0, atol=0)
         for key in before['state']:
@@ -249,5 +249,16 @@ def test_amp_overflow_skips_adam_and_retains_nan_stop(tmp_path, capsys):
         event = next(e for e in events if e.get('event') == 'nonfinite_gradient')
         assert event['rank'] == 0 and event['optimizer_step_skipped']
         assert event['scale_before'] == 16. and event['scale_after'] == 8.
+        row['amp_scale'] = .5
+        assert health_stop({}, row, 0, 100) == 'AMP_scale_below_1'
+        row['amp_scale'] = 8.
+        row['amp_skipped_steps'] = 2
+        assert health_stop({}, row, 0, 100) == 'AMP_skipped_more_than_half'
+        cursor['finite'].fill_(False)
+        assert health_stop({}, finish_metrics(cursor, model, scaler), 0, 100) == 'NaN_or_Inf'
+        cursor['finite'].fill_(True)
+        with torch.no_grad():
+            policy.cls.fill_(float('nan'))
+        assert health_stop({}, finish_metrics(cursor, model, scaler), 0, 100) == 'NaN_or_Inf'
     finally:
         dist.destroy_process_group()

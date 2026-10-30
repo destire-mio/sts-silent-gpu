@@ -218,7 +218,8 @@ def main():
                 failed = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
                 dist.all_reduce(failed)
                 faults, games = failed.tolist()
-                state['stop_reason'] = health_stop(state, dict(kl=0., normalized_entropy=1., finite=True), faults, games)
+                state['stop_reason'] = health_stop(state, dict(kl=0., normalized_entropy=1., finite=True,
+                    amp_scale=scaler.get_scale(), amp_skipped_steps=0, optimizer_attempts=0), faults, games)
                 log(dict(event="no_valid_rows", update=state["update"], episode_faults=faults,
                          episode_cases=games, stop_reason=state['stop_reason']))
                 cursor = None
@@ -251,7 +252,7 @@ def main():
         round_state["seconds"] += time.monotonic() - started
         if state["stop_reason"] is not None:
             break
-        row = finish_metrics(cursor)
+        row = finish_metrics(cursor, model, scaler)
         elapsed = torch.tensor(round_state["seconds"], dtype=torch.float64, device=device)
         dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
         decisions = torch.tensor(collector.decisions - round_state["decisions_start"], device=device, dtype=torch.float64)

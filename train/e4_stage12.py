@@ -338,6 +338,10 @@ def precision_probe(model, cursor, rank):
         totals += torch.stack((ratio.abs().double().sum(), ((ratio.exp() - 1).abs() > .2).double().sum(),
                                ratio.new_tensor(len(indices), dtype=torch.float64)))
     dist.all_reduce(totals)
+    steps = torch.tensor([cursor["optimizer_steps"], -cursor["optimizer_attempts"],
+                          -cursor["amp_skipped_steps"], scaler.get_scale()], device=totals.device, dtype=torch.float64)
+    dist.all_reduce(steps, op=dist.ReduceOp.MIN)
+    applied, attempts, skipped, scale = steps.tolist()
     values = totals.tolist()
     mean, clipped = values[0] / max(1, values[2]), values[1] / max(1, values[2])
     model.encoder_fp16 = math.isfinite(mean) and mean <= .005 and clipped <= .01
@@ -382,7 +386,6 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
             scaler.scale(scalar).backward()
     scaler.unscale_(optimizer)
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), .5, error_if_nonfinite=False)
-    cursor["finite"] &= torch.isfinite(norm)
     scale_before = scaler.get_scale()
     scaler.step(optimizer)
     scaler.update()
@@ -427,18 +430,23 @@ def choose_microbatch(model, cursor):
     return 1024
 
 
-def finish_metrics(cursor):
+def finish_metrics(cursor, model, scaler):
     totals = cursor["totals"].clone()
     dist.all_reduce(totals)
-    finite = cursor["finite"].to(torch.int64)
+    parameters_finite = torch.stack([torch.isfinite(p).all() for p in model.parameters()]).all()
+    finite = (cursor["finite"] & parameters_finite).to(torch.int64)
     dist.all_reduce(finite, op=dist.ReduceOp.MIN)
+    steps = torch.tensor([cursor["optimizer_steps"], -cursor["optimizer_attempts"],
+                          -cursor["amp_skipped_steps"], scaler.get_scale()], device=totals.device, dtype=torch.float64)
+    dist.all_reduce(steps, op=dist.ReduceOp.MIN)
+    applied, attempts, skipped, scale = steps.tolist()
     values = totals.tolist()
     names = ("policy_loss", "value_loss", "entropy", "kl", "clip_fraction", "loss")
     result = {name: values[i] / max(1, values[6]) for i, name in enumerate(names)}
     result.update(normalized_entropy=values[7] / max(1, values[6]),
-                  finite=bool(finite) and all(math.isfinite(x) for x in values),
-                  samples=int(values[6]), optimizer_steps=cursor["optimizer_steps"],
-                  optimizer_attempts=cursor["optimizer_attempts"], amp_skipped_steps=cursor["amp_skipped_steps"])
+                  finite=bool(finite),
+                  samples=int(values[6]), optimizer_steps=int(applied), optimizer_attempts=int(-attempts),
+                  amp_skipped_steps=int(-skipped), amp_scale=scale)
     return result
 
 
@@ -501,6 +509,10 @@ def health_stop(state, metrics, faults, games):
     state['high_kl_streak'] = state.get('high_kl_streak', 0) + 1 if metrics['kl'] > .1 else 0
     if not metrics['finite']:
         return 'NaN_or_Inf'
+    if metrics['amp_scale'] < 1:
+        return 'AMP_scale_below_1'
+    if metrics['amp_skipped_steps'] > .5 * metrics['optimizer_attempts']:
+        return 'AMP_skipped_more_than_half'
     if faults > .01 * max(1, games):
         return 'episode_fault_rate_above_1_percent'
     if metrics['normalized_entropy'] < .03:
