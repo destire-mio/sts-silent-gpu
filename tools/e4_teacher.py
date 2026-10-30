@@ -22,7 +22,8 @@ from train.e4_teacher_pilot import GROUPS, evaluate_scenes, summarize, paired_ro
 
 
 def allocation_deadline(context, job, world, commit):
-    assert context['format'] == 1 and context['phase'] in ('claude94_stage7', 'claude97_stage9')
+    assert context['format'] == 1
+    cap = {'claude94_stage7': 3600, 'claude97_stage9': 3600, 'claude99_stage10': 1200}[context['phase']]
     assert context['runtime_commit'] == commit and world in (7, 8)
     receipt, reserve, release, allocation = (context[k] for k in ('receipt', 'reservation', 'release', 'allocation'))
     assert all(str(r['job_id']) == job for r in (receipt, reserve, release, allocation))
@@ -40,11 +41,11 @@ def allocation_deadline(context, job, world, commit):
     for record in (reserve['parent_ledger'], release['preflight'], allocation['scontrol']):
         assert file_digest(Path(record['path'])) == record['sha256']
     budget = context['budgets'][context['phase']]
-    assert budget['cap_node_seconds'] == 3600
+    assert budget['cap_node_seconds'] == cap
     charged, held = budget['charged_node_seconds'], budget['reserved_node_seconds']
-    assert 0 <= charged and 0 <= held and charged + held <= 3600
+    assert 0 <= charged and 0 <= held and charged + held <= cap
     assert reserve['node_seconds'] == world * wall / 8 <= held
-    available = 3600 - charged - (held - reserve['node_seconds'])
+    available = cap - charged - (held - reserve['node_seconds'])
     end = min(allocation['end_at'], allocation['start_at'] + available * 8 / world)
     return time.monotonic() + end - time.time() - 210
 

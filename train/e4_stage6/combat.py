@@ -4,6 +4,7 @@ import math
 import torch
 
 from train.model import Policy
+from train.e4_timing import forward_autocast
 
 
 class CombatPolicy(Policy):
@@ -25,6 +26,14 @@ class CombatPolicy(Policy):
         entities, pooled = self.encode(observation)
         return (self.action_logits(observation, entities, pooled),
                 self.value(pooled).squeeze(-1), self.combat_value(pooled).squeeze(-1))
+
+    def encoder_bf16_forward(self, observation):
+        with forward_autocast(next(self.parameters()).device):
+            entities, pooled = self.encode(observation)
+        with torch.autocast(device_type=pooled.device.type, enabled=False):
+            entities, pooled = entities.float(), pooled.float()
+            return (self.action_logits(observation, entities, pooled),
+                    self.value(pooled).squeeze(-1), self.combat_value(pooled).squeeze(-1))
 
     def run_policy(self, observation):
         logits, value, _ = self(observation)
