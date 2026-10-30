@@ -3,7 +3,7 @@ from copy import deepcopy
 import torch
 
 from train.model import store_inputs
-from train.e4_stage6.combat import combat_gae, retain_trials
+from train.e4_stage6.combat import combat_gae
 
 
 class CombatTape:
@@ -13,10 +13,13 @@ class CombatTape:
         self.native_replay_decisions = 0
 
     def record(self, search, context, slots, actions, logs, values):
-        masks = search.policy_masks(slots).cpu()
-        for j, slot in enumerate(slots):
-            context['copy_rows'][slot].append(dict(
-                policy_mask=masks[j].clone(), action=actions[j], log=logs[j], value=values[j]))
+        retained = [j for j, slot in enumerate(slots) if slot in context['copy_rows']]
+        if not retained:
+            return
+        masks = search.policy_masks([slots[j] for j in retained]).cpu()
+        for j, mask in zip(retained, masks):
+            context['copy_rows'][slots[j]].append(dict(
+                policy_mask=mask.clone(), action=actions[j], log=logs[j], value=values[j]))
 
     def replay_retained(self, search, context, slots, selected, parent, winner):
         targets = [slot for i, slot in enumerate(slots) if i not in selected and slot != winner][:8]
@@ -53,7 +56,7 @@ class CombatTape:
         assert len(slots) == 32 and len(scores) == 32
         score = torch.tensor([scores[s] for s in slots], dtype=torch.float32)
         assert bool(torch.isfinite(score).all()) and bool(((score >= 0) & (score <= 1)).all())
-        selected = retain_trials(self.rng).tolist()
+        selected = context['retained_trials'][parent]
         self.replay_retained(search, context, slots, selected, parent, winner)
         mean = float(score.mean())
         trials = []
