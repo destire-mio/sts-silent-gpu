@@ -5,7 +5,7 @@ import pytest
 import torch
 import torch.distributed as dist
 
-from tools.e4_speed_pilot import b2_worker, one_update, paired_summary, pilot_seeds, restore_B2_for_evaluation
+from tools.e4_speed_pilot import load_B2_initialization, b2_worker, one_update, paired_summary, pilot_seeds, restore_B2_for_evaluation
 from train.e4_stage6.combat import CombatPolicy
 from train.e4_stage6.copy_optimizer import add_combat_head
 from train.e4_stage6.evaluation_worker import policy_hash
@@ -30,6 +30,23 @@ def test_paired256_uses_existing_B2_cases_and_includes_both_shop_seeds():
         paired_summary(rows[:-1], baseline, complete=True)
     with pytest.raises(AssertionError):
         paired_summary(rows, baseline + baseline[:1], complete=True)
+
+
+def test_B2_initialization_releases_cached_rollouts_before_worker_allocation(monkeypatch):
+    import weakref
+    references = []
+    kept = dict(format=1, binding={'arm': 'B'}, state={'updates': 7}, cursor=None,
+                model={'weight': torch.ones(2)}, optimizer={'state': {}})
+    def load(path, *, map_location, weights_only):
+        assert path == 'B2-hot' and map_location == 'cpu' and not weights_only
+        cached = torch.ones(1024)
+        references.append(weakref.ref(cached))
+        return dict(kept, ready={'cached': cached}, collector={'cached': cached})
+    monkeypatch.setattr(torch, 'load', load)
+    source = load_B2_initialization('B2-hot')
+    assert set(source) == set(kept)
+    assert all(source[k] is kept[k] for k in kept)
+    assert references[0]() is None
 
 
 def test_B2_factory_keeps_model_Adam_beta_and_discards_cached_data(tmp_path, monkeypatch):

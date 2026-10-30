@@ -60,6 +60,13 @@ def paired_summary(episodes, baseline, *, complete):
         comparison='Paired existing frozen B2 full-run episodes; changed search RNG ordering is allowed.')
 
 
+def load_B2_initialization(path):
+    source = torch.load(path, map_location='cpu', weights_only=False)
+    source = {k: source[k] for k in ('format', 'binding', 'state', 'cursor', 'model', 'optimizer')}
+    gc.collect()
+    return source
+
+
 def b2_worker(source, expected_policy_hash, device, runtime_commit, evidence, stop_file):
     """Retain B2 model/Adam/beta; discard old biased ready data and collector/RNG."""
     rank, world = dist.get_rank(), dist.get_world_size()
@@ -74,6 +81,7 @@ def b2_worker(source, expected_policy_hash, device, runtime_commit, evidence, st
     steps = Counter(int(s['step']) for s in optimizer.state.values())
     assert len(optimizer.state) == sum(len(g['params']) for g in optimizer.param_groups)
     assert steps and min(steps) > 0
+    print(json.dumps(dict(event='stage10_setup', rank=rank, stage='B2_model_Adam_loaded')), flush=True)
     model = DistributedDataParallel(policy, device_ids=[device.index] if device.type == 'cuda' else None,
                                    broadcast_buffers=False)
     # New independent streams are explicit; no old collector or cached fragment is restored.
@@ -84,6 +92,7 @@ def b2_worker(source, expected_policy_hash, device, runtime_commit, evidence, st
     search.evidence_directory = evidence
     bind_parent_stop(search, stop_file)
     collector = CopyCollector(search, torch.Generator().manual_seed(seed + 300), rank=rank)
+    print(json.dumps(dict(event='stage10_setup', rank=rank, stage='fresh_collector_ready')), flush=True)
     binding = dict(arm='B', rank=rank, world=world, bosses_seen=511, lanes=256, trials=32,
         epochs=4, runtime_commit=runtime_commit, config=source['binding']['config'],
         source_world=source['binding']['world'], source_rank=0, source_update=7,
@@ -229,7 +238,8 @@ def main():
     torch.cuda.set_device(device)
     dist.init_process_group('nccl', timeout=timedelta(minutes=25))
     if rank == 0:
-        assert all(file_digest(Path(r['path'])) == r['sha256'] for r in context['inputs'])
+        assert all(file_digest(Path(context[name]['path'])) == context[name]['sha256']
+                   for name in ('B2', 'B2_hot', 'B2_episodes'))
     dist.barrier()
     inputs = {r['path']: r['sha256'] for r in context['inputs']}
     for name in ('B2', 'B2_hot', 'B2_episodes'):
@@ -240,14 +250,18 @@ def main():
     with gzip.open(context['B2_episodes']['path'], 'rt') as stream:
         baseline = json.load(stream)
     paired_summary([], baseline, complete=False)
-    source = torch.load(context['B2_hot']['path'], map_location='cpu', weights_only=False)
+    source = load_B2_initialization(context['B2_hot']['path'])
     assert source['binding']['config'] == frozen['config']
+    del frozen
+    gc.collect()
     output = Path(context['output']) / os.environ['SLURM_JOB_ID']
     if rank == 0:
         output.mkdir(parents=True, exist_ok=False)
     dist.barrier()
     worker = b2_worker(source, context['B2']['policy_sha256'], device, commit, output, Path(context['stop_file']))
-    del frozen, source
+    del source
+    gc.collect()
+    print(json.dumps(dict(event='stage10_setup', rank=rank, stage='timing_started')), flush=True)
     measured = one_update(worker, deadline)
     policy = worker.model.module
     after_hash = policy_hash(policy)
