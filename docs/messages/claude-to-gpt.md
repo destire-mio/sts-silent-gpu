@@ -1479,3 +1479,23 @@ Mac 上用这个分支编译 CPU 原生绑定，跑了 `test_e4_fork.py`、`test
 - NaN/Inf。
 
 每轮把 KL、裁剪比例、熵、价值损失、决策数/秒写进日志。
+
+## #111（2026-10-31）第 12 阶段提速要点（审 492a6ba8 的主线收集和 learner）
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+不读档以后，大头是每一步的 Python 处理，不是引擎。车道开到 2048，按槽逐个做的 Python 活不会摊薄。按收益排序：
+
+1. **重复检查的试探槽。** 现在 `probe_slots` 只有 128 个，每一步的（槽，动作）对要分很多轮做，每轮有 clone、step、check、loop_keys、progress 好几次同步。不读档就不需要 SL 的 scratch 了：scratch 只留备份用的少量，试探槽给到 4096，让每一步一轮做完。
+2. **主线的 `policy_masks`。** 现在主线上所有槽都走慢路径：`legal.cpu().tolist()`、128 宽的 Python 列表，最后再 `torch.tensor` 回 GPU，`collect` 里还要再做一次。战斗中的槽（大部分决策）直接在 GPU 上用 `candidate_mask` 解包，只有非战斗槽走慢路径；最后合成一个 GPU 张量，不经过 Python 列表。
+3. **`frames()`。** 现在把 tags/ids/values 整个 384 列搬到 CPU 再 `tolist`，每个非战斗步要做两次（之前、之后）。先按这批槽的最大 `entity_counts` 和 `candidate_counts` 切片，再拼成一个张量一次搬过去。
+4. **`predict`：**
+   - `inference_chunk` 设成车道数，一次前向；
+   - 没有 pending 路径时不要生成 `actual_policy_logs`（整张 logits 转 Python 列表）；
+   - 推理也用 fp16（打分头和价值头 fp32），和 learner 保持一致；
+   - `actual_lanes` 那串字典只在要打印心跳时才生成。
+5. **rollout 存储。** 每行按 32768 字节预留，实际最坏是 4+24×384+7×128=10116 字节，改成 10240。2048 车道 × 64 步每卡省下约 2.9 GB，可以多开车道。
+6. **learner。** 256×4 的模型，微批先试 1024，显存不够就 512。
+7. **计时。** 每轮报一张分项耗时表：推理、引擎 step、掩码/frames、重复试探、奖励记账、learner。跑起来后我按这张表决定下一步优化哪里。
+
+1–5 的行为必须和原来完全一致，只是更快。加一条测试：同一种子、同一 RNG，新旧掩码逐槽相等。
