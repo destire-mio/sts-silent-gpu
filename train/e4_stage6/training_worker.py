@@ -169,7 +169,7 @@ class TrainingWorker:
                 result=dict(collector['partial']['result'])))
             result = collector['partial']['result']
             partial_capacity = result['data'].numel()
-            rows = collector['partial']['next_step'] * search.lanes
+            rows = collector['partial']['next_row']
             result['data'] = result['data'][:int(result['offsets'][rows])]
         ready = self.ready
         if ready is not None:

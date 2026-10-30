@@ -351,3 +351,52 @@ def test_B_entropy_stop_is_immediate_and_survives_worker_restore(cpu_group, tmp_
     report = run_training_slice(restored, 100., time.monotonic()+30, tmp_path/'stop', 0.)
     assert report['reason'] == 'B_entropy_below_half_target' and not report['finished']
     assert all(torch.equal(value, restored.model.module.state_dict()[key]) for key,value in before.items())
+
+
+def test_partial_snapshot_restores_all_written_rows_when_lane_steps_differ(cpu_group):
+    collector = SyntheticCollector()
+    collector.search.lanes = 2
+    collector.seeds = [1500000000, 1500000001]
+    collector.paths = [[0], [0, 1]]
+    collector.partial = dict(next_step=1, next_row=3, lane_steps=[1, 2], length=3,
+        result=dict(data=torch.arange(60, dtype=torch.uint8), offsets=torch.arange(7) * 10))
+    original_state, original_restore = collector.state, collector.restore
+    def state():
+        return dict(original_state(), partial=deepcopy(collector.partial))
+    def restore(saved):
+        original_restore(saved)
+        collector.partial = saved['partial']
+    collector.state, collector.restore = state, restore
+    policy = DistributedDataParallel(CombatPolicy(ModelConfig(16, 1, 2, 32)))
+    worker = TrainingWorker(policy, torch.optim.Adam(policy.parameters(), lr=1e-4), collector,
+        torch.Generator().manual_seed(103), dict(arm='B', rank=0, world=1, bosses_seen=511), .0054, .6716)
+    before = collector.partial['result']['data'][:30].clone()
+    saved = worker.snapshot()
+    assert torch.equal(saved['collector']['partial']['result']['data'], before)
+    collector.partial['result']['data'].fill_(255)
+    worker.restore(saved)
+    restored = collector.partial['result']
+    assert restored['data'].numel() == 60
+    assert torch.equal(restored['data'][:int(restored['offsets'][3])], before)
+
+
+@pytest.mark.parametrize('noise', [0., .01])
+def test_pre_optimizer_ratio_measurement_uses_real_old_logprobs_and_threshold(cpu_group, noise):
+    from train.model import distribution
+    from tools.e4_speed_pilot import first_minibatch_ratios
+    model = DistributedDataParallel(CombatPolicy(ModelConfig(16, 1, 2, 32)))
+    cursor = begin_update(fragment(), torch.Generator().manual_seed(103), 4, 'B')
+    rows = cursor['rows']
+    with torch.no_grad():
+        inputs = packed_inputs(rows['data'], rows['offsets'], torch.arange(len(rows['actions'])), torch.device('cpu'))
+        inputs['candidate_mask'] &= rows['policy_mask'][:, :inputs['candidate_mask'].shape[1]]
+        logits, _, _ = model.module(inputs)
+        policy, _ = distribution(logits, inputs['candidate_mask'])
+        rows['logs'] = policy.log_prob(rows['actions']) + noise
+    worker = SimpleNamespace(cursor=cursor, device=torch.device('cpu'), model=model, binding={})
+    report = first_minibatch_ratios(worker)
+    assert report['initial']['mean_abs_log_ratio'] == pytest.approx(noise, abs=1e-6)
+    assert report['initial']['clip_fraction'] == 0
+    assert report['encoder_bf16_heads_fp32_correction'] == (noise > .005)
+    assert ('corrected' in report) == (noise > .005)
+    assert cursor['optimizer_steps'] == 0 and all(p.grad is None for p in model.parameters())

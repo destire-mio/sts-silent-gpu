@@ -3,6 +3,8 @@ from contextlib import nullcontext
 import torch
 import torch.distributed as dist
 
+from train.e4_timing import forward_autocast
+
 from .model import distribution, packed_inputs, record_lengths
 from .ppo import PPOConfig
 
@@ -53,7 +55,7 @@ def update(model, optimizer, fragment, rng, epochs, imitation_beta=0.):
                 with model.no_sync() if i + 1 < len(chunks) else nullcontext():
                     inputs = packed_inputs(fragment["data"], fragment["offsets"], chunk, device)
                     inputs["candidate_mask"] &= fragment["policy_mask"][chunk, :inputs["candidate_mask"].shape[1]]
-                    with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=device.type == "cuda"):
+                    with forward_autocast(device):
                         logits, value = model(inputs)
                     logits, value = logits.float(), value.float()
                     policy, entropy = distribution(logits, inputs["candidate_mask"])

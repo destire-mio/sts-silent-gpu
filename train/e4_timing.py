@@ -4,6 +4,12 @@ import time
 import torch
 
 
+def forward_autocast(device):
+    # Volta/V100 has no BF16 tensor cores; retain FP32 on that hardware.
+    enabled = device.type == 'cuda' and torch.cuda.get_device_capability(device)[0] >= 8
+    return torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=enabled)
+
+
 class LabelTimer:
     def __init__(self):
         self.enabled = False

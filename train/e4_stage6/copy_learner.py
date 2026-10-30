@@ -3,6 +3,8 @@ from contextlib import nullcontext
 import torch
 import torch.distributed as dist
 
+from train.e4_timing import forward_autocast
+
 from train.model import distribution, packed_inputs, record_lengths
 from train.e4_stage6.copy_tape import pack_trials
 
@@ -136,7 +138,7 @@ def advance_update(model, optimizer, cursor, rng, beta):
         with model.no_sync() if j + 1 < len(chunks) else nullcontext():
             inputs = packed_inputs(rows['data'], rows['offsets'], indices, device)
             inputs['candidate_mask'] &= rows['policy_mask'][indices, :inputs['candidate_mask'].shape[1]]
-            with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=device.type == 'cuda'):
+            with forward_autocast(device):
                 if cursor['arm'] == 'A':
                     logits, run_value = model(inputs)
                     combat_value = run_value * 0.
