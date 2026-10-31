@@ -19,6 +19,37 @@ from train.model import Policy, ModelConfig, network_inputs, distribution, packe
 from train.e4_stage6.training_worker import move_tensors
 
 
+DECISION_TYPES = ('combat', 'card_reward', 'map', 'shop', 'campfire', 'other')
+
+
+def decision_type(progress):
+    screen = SCREENS[progress[SCREEN]]
+    if screen == 'card_reward':
+        return 1
+    if screen == 'map':
+        return 2
+    if screen == 'shop' or (screen == 'grid' and progress[ROOM] == 3):
+        return 3
+    if screen in ('room', 'grid') and progress[ROOM] == 4:
+        return 4
+    return 0 if progress[PHASE] == COMBAT_PHASE else 5
+
+
+def decision_entropy_summary(totals):
+    sums, counts = totals.tolist()
+    return dict(entropy_by_decision_type={name:sums[i] / counts[i] if counts[i] else None
+                for i, name in enumerate(DECISION_TYPES)},
+                decision_counts_by_type={name:int(counts[i]) for i, name in enumerate(DECISION_TYPES)})
+
+
+def next_learning_rate(rate, kl):
+    if kl > .02:
+        rate /= 1.5
+    elif kl < .005:
+        rate *= 1.5
+    return min(2e-4, max(1e-5, rate))
+
+
 class CLSPolicy(Policy):
     def __init__(self):
         super().__init__(ModelConfig(width=256, layers=4, heads=4, feedforward=1024))
@@ -70,6 +101,7 @@ class NoSLSearch(RoomSearch):
                          scratch_slots=0, inference_chunk=lanes, bosses_seen=511, probe_slots=4096)
         self.entropy_sum = torch.zeros((), dtype=torch.float64, device=device)
         self.entropy_count = 0
+        self.decision_entropy = torch.zeros((2, len(DECISION_TYPES)), dtype=torch.float64, device=device)
         self.times = StageTimes()
         self.mainline_progress = {}
         self.last_policy_mask = None
@@ -148,11 +180,15 @@ class NoSLSearch(RoomSearch):
                 inputs = network_inputs(self.arrays, self.device, index)
                 inputs['candidate_mask'] &= self.last_policy_mask[positions, :inputs['candidate_mask'].shape[1]]
                 logits, value = model(inputs)
-                policy, _ = distribution(logits.float(), inputs['candidate_mask'])
+                policy, normalized_entropy = distribution(logits.float(), inputs['candidate_mask'])
                 action = torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
                 rows = torch.stack((action.double(), value.double(), policy.log_prob(action).double()), dim=1).cpu().tolist()
                 self.entropy_sum += policy.entropy().double().sum()
                 self.entropy_count += len(positions)
+                kinds = torch.tensor([decision_type(self.mainline_progress[slots[i]]) for i in positions],
+                                     dtype=torch.int64, device=self.device)
+                self.decision_entropy[0].scatter_add_(0, kinds, normalized_entropy.double())
+                self.decision_entropy[1].scatter_add_(0, kinds, torch.ones_like(normalized_entropy, dtype=torch.float64))
             for i, row in zip(positions, rows):
                 choices[i], values[i], logs[i] = int(row[0]), row[1], row[2]
         return choices, values, logs
@@ -449,6 +485,7 @@ def finish_metrics(cursor, model, scaler):
 def collector_snapshot(collector):
     state = dict(collector.state())
     state["sampling_entropy"] = (collector.search.entropy_sum, collector.search.entropy_count)
+    state["decision_entropy"] = collector.search.decision_entropy
     state["timings"] = dict(collector.search.times.seconds)
     state['round_games'] = collector.round_games
     state['episode_faults'] = (dict(collector.search.failed), dict(collector.search.fault_counts))
@@ -468,6 +505,8 @@ def restore_collector(collector, state):
         data = torch.empty(state["partial"].pop("data_capacity"), dtype=torch.uint8, device=collector.search.device)
         data[:len(result["data"])] = result["data"].to(collector.search.device)
         result["data"] = data
+    collector.search.decision_entropy = state.pop('decision_entropy',
+        torch.zeros_like(collector.search.decision_entropy)).to(collector.search.device)
     collector.round_games = state.pop('round_games', collector.search.lanes)
     failed, counts = state.pop('episode_faults', ({}, {}))
     collector.search.failed = failed

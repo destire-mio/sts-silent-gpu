@@ -34,7 +34,7 @@ def queue_snapshot():
         jobs.append({key: fields.get(key) for key in (
             'JobId', 'JobName', 'UserId', 'JobState', 'Reason', 'Dependency',
             'TimeLimit', 'StartTime', 'RunTime', 'NodeList', 'TresPerNode', 'TRES')})
-    raw_node = subprocess.check_output(['scontrol', 'show', 'node', 'gpu01', '-o', '-d'], text=True, timeout=60)
+    raw_node = subprocess.check_output(['scontrol', 'show', 'node', os.environ['STAGE12_NODE'], '-o', '-d'], text=True, timeout=60)
     fields = dict(token.split('=', 1) for token in raw_node.split() if '=' in token)
     node = {key: fields.get(key) for key in ('NodeName', 'State', 'Gres', 'GresUsed', 'CfgTRES', 'AllocTRES')}
     if any(value is None for value in node.values()):
@@ -47,7 +47,7 @@ def queue_snapshot():
             blockers.append(job.get('JobId'))
     return dict(checked_at=datetime.now().astimezone().isoformat(), jobs=jobs, node=node,
                 blocking_job_ids=blockers,
-                source='scontrol show jobs -o; scontrol show node gpu01 -o -d')
+                source='scontrol show jobs -o; scontrol show node $STAGE12_NODE -o -d')
 
 
 def waiting(rank, output, version):
