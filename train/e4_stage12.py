@@ -338,10 +338,6 @@ def precision_probe(model, cursor, rank):
         totals += torch.stack((ratio.abs().double().sum(), ((ratio.exp() - 1).abs() > .2).double().sum(),
                                ratio.new_tensor(len(indices), dtype=torch.float64)))
     dist.all_reduce(totals)
-    steps = torch.tensor([cursor["optimizer_steps"], -cursor["optimizer_attempts"],
-                          -cursor["amp_skipped_steps"], scaler.get_scale()], device=totals.device, dtype=torch.float64)
-    dist.all_reduce(steps, op=dist.ReduceOp.MIN)
-    applied, attempts, skipped, scale = steps.tolist()
     values = totals.tolist()
     mean, clipped = values[0] / max(1, values[2]), values[1] / max(1, values[2])
     model.encoder_fp16 = math.isfinite(mean) and mean <= .005 and clipped <= .01
