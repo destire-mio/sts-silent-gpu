@@ -21,6 +21,7 @@ from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
     save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary)
 from train.e4_stage6.training_worker import move_tensors
+from train.e4_midstart import MidstartCollector
 
 
 def write_json(path, value):
@@ -71,10 +72,10 @@ def main():
     model = DistributedDataParallel(policy, device_ids=[local], broadcast_buffers=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
-    search = NoSLSearch(2048, device, 20261031 + rank)
+    search = NoSLSearch(2048, device, 20261031 + rank, storage_slots=512)
     search.deadline = deadline
     search.evidence_directory = output
-    collector = NoSLCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
+    collector = MidstartCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4)
@@ -271,8 +272,11 @@ def main():
         decisions = torch.tensor(collector.decisions - round_state["decisions_start"], device=device, dtype=torch.float64)
         by_rank = [torch.empty_like(decisions) for _ in range(world)]
         dist.all_gather(by_rank, decisions)
-        done = torch.tensor([len(collector.completed),sum(e["floor"] for e in collector.completed),
-                            sum(e["reach"]["act1_boss"] for e in collector.completed)],device=device,dtype=torch.float64)
+        fresh_done = [e for e in collector.completed if e.get("start_kind", "fresh") == "fresh"]
+        middle_done = [e for e in collector.completed if e.get("start_kind", "fresh") != "fresh"]
+        done = torch.tensor([len(fresh_done),sum(e["floor"] for e in fresh_done),
+                            sum(e["reach"]["act1_boss"] for e in fresh_done),
+                            len(middle_done),sum(e["floor"] for e in middle_done)],device=device,dtype=torch.float64)
         dist.all_reduce(done)
         parts = torch.tensor(list(search.times.seconds.values()),device=device,dtype=torch.float64)
         dist.all_reduce(parts, op=dist.ReduceOp.MAX)
@@ -298,6 +302,9 @@ def main():
             mainline_decisions_global=int(sum(float(n)for n in by_rank)),decisions_per_second_per_gpu=per_gpu,
             decisions_per_second_global=sum(per_gpu),training_mean_floor=float(done[1]/done[0]) if float(done[0]) else None,
             training_act1_boss_pass_rate=float(done[2]/done[0]) if float(done[0]) else None,
+            training_fresh_completed=int(done[0]),training_midstart_completed=int(done[3]),
+            training_midstart_mean_floor=float(done[4]/done[3]) if float(done[3]) else None,
+            midstart_pool_sizes=[len(p) for p in collector.pools],
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
             precision=state["precision"],microbatch=state["microbatch"],learning_rate=optimizer.param_groups[0]["lr"],
             next_learning_rate=state["learning_rate"],**state["decision_entropy_metrics"],

@@ -96,9 +96,9 @@ class StageTimes:
 
 
 class NoSLSearch(RoomSearch):
-    def __init__(self, lanes, device, seed):
+    def __init__(self, lanes, device, seed, *, storage_slots=0):
         super().__init__(lanes, 1, device, torch.Generator(device=device).manual_seed(seed),
-                         scratch_slots=0, inference_chunk=lanes, bosses_seen=511, probe_slots=4096)
+                         scratch_slots=storage_slots, inference_chunk=lanes, bosses_seen=511, probe_slots=4096)
         self.entropy_sum = torch.zeros((), dtype=torch.float64, device=device)
         self.entropy_count = 0
         self.decision_entropy = torch.zeros((2, len(DECISION_TYPES)), dtype=torch.float64, device=device)
