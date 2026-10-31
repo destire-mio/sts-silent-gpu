@@ -19,7 +19,7 @@ from torch.nn.parallel import DistributedDataParallel
 from train.e4 import AllocationEnded, REACH
 from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
-    save_rank, restore_rank, health_stop)
+    save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary)
 from train.e4_stage6.training_worker import move_tensors
 
 
@@ -45,6 +45,13 @@ def paired_summary(episodes, baseline):
                 paired_cases=len(deltas))
 
 
+def save_dev_weights(policy, output, training_seconds):
+    path = output / f"dev-{int(training_seconds // 7200) * 2}.pt"
+    if not path.exists():
+        torch.save(move_tensors(policy.state_dict(), torch.device("cpu")), path)
+    return path.name
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
@@ -62,7 +69,7 @@ def main():
     torch.manual_seed(20261031)
     policy = CLSPolicy().to(device)
     model = DistributedDataParallel(policy, device_ids=[local], broadcast_buffers=False)
-    optimizer = torch.optim.Adam(model.parameters(), lr=2e-4, eps=1e-5)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
     search = NoSLSearch(2048, device, 20261031 + rank)
     search.deadline = deadline
@@ -70,7 +77,7 @@ def main():
     collector = NoSLCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
-                 stop_reason=None, high_kl_streak=0)
+                 stop_reason=None, high_kl_streak=0, learning_rate=1e-4)
     cursor = None
     round_state = dict(ready=None, seconds=0., decisions_start=0)
     common = output / "model.pt"
@@ -170,6 +177,9 @@ def main():
             if baseline.exists():
                 with gzip.open(baseline, "rt") as stream:
                     row["paired_baseline"] = paired_summary(all_episodes, json.load(stream))
+            if bool(flag):
+                row["model_snapshot"] = save_dev_weights(policy, output, state["training_seconds"])
+            row.update(state.get("decision_entropy_metrics", {}))
             write_json(output / f"evaluation-{state['update']}.json", row)
             log(row)
         dist.barrier()
@@ -198,6 +208,7 @@ def main():
                 round_state = dict(ready=None, seconds=0., decisions_start=collector.decisions)
                 search.entropy_sum.zero_()
                 search.entropy_count = 0
+                search.decision_entropy.zero_()
                 search.times = StageTimes()
                 search.fault_counts.clear()
                 collector.round_games = sum(seed is not None for seed in collector.seeds)
@@ -241,7 +252,7 @@ def main():
                 log(dict(event="microbatch", value=state["microbatch"]))
         model.train()
         for group in optimizer.param_groups:
-            group["lr"] = 2e-4 * min(1., (state["update"] + 1) / 20)
+            group["lr"] = state["learning_rate"]
         while cursor["epoch"] < 2:
             if stopping():
                 state["stop_reason"] = "allocation_end_or_yield"
@@ -275,6 +286,10 @@ def main():
         rss_by_rank = [torch.empty_like(rss) for _ in range(world)]
         dist.all_gather(rss_by_rank, rss)
         state['stop_reason'] = health_stop(state, row, faults, games)
+        state["learning_rate"] = next_learning_rate(state["learning_rate"], row["kl"])
+        entropies = search.decision_entropy.clone()
+        dist.all_reduce(entropies)
+        state["decision_entropy_metrics"] = decision_entropy_summary(entropies)
         if row['normalized_entropy'] < .1:
             log(dict(event='low_normalized_entropy_warning', update=state['update'], normalized_entropy=row['normalized_entropy']))
         if row['kl'] > .1:
@@ -285,6 +300,7 @@ def main():
             training_act1_boss_pass_rate=float(done[2]/done[0]) if float(done[0]) else None,
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
             precision=state["precision"],microbatch=state["microbatch"],learning_rate=optimizer.param_groups[0]["lr"],
+            next_learning_rate=state["learning_rate"],**state["decision_entropy_metrics"],
             stop_reason=state["stop_reason"],episode_faults=faults,episode_cases=games,
             episode_fault_rate=faults/max(1,games),rss_peak_bytes_per_rank=[int(v) for v in rss_by_rank],**row))
         cursor = None

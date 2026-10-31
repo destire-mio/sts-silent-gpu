@@ -86,6 +86,7 @@ def test_checkpoint_resume_partial_collection_and_optimizer(tmp_path):
         with pytest.raises(AllocationEnded):
             collector.collect(policy, length=2)
         search.clock = clock
+        saved_decision_entropy = search.decision_entropy.clone()
         path = tmp_path / 'rank.pt'
         save_rank(path, collector, cursor, (1, 1), rng, dict(ready=None, seconds=1.5, decisions_start=0))
         search.evidence_directory = tmp_path
@@ -106,6 +107,7 @@ def test_checkpoint_resume_partial_collection_and_optimizer(tmp_path):
         resumed_rng = torch.Generator()
         restored_cursor, identity, round_state = restore_rank(torch.load(path, weights_only=False), resumed, torch.device('cpu'), resumed_rng)
         assert identity == (1, 1) and round_state['seconds'] == 1.5
+        torch.testing.assert_close(saved_decision_entropy, resumed_search.decision_entropy, rtol=0, atol=0)
         assert restored_cursor['epoch'] == cursor['epoch']
         for key in optimizer.state_dict()['state']:
             for name, value in optimizer.state_dict()['state'][key].items():
@@ -262,3 +264,48 @@ def test_amp_overflow_skips_adam_without_stopping_healthy_parameters(tmp_path, c
         assert health_stop({}, finish_metrics(cursor, model, scaler), 0, 100) == 'NaN_or_Inf'
     finally:
         dist.destroy_process_group()
+
+
+
+@pytest.mark.parametrize("rate,kl,expected", [
+    (1e-4, .021, 1e-4 / 1.5), (1e-4, .004, 1.5e-4),
+    (1e-4, .02, 1e-4), (1e-4, .005, 1e-4),
+    (1e-5, .03, 1e-5), (2e-4, .001, 2e-4)])
+def test_kl_adaptive_learning_rate(rate, kl, expected):
+    from train.e4_stage12 import next_learning_rate
+    assert next_learning_rate(rate, kl) == pytest.approx(expected)
+
+
+def test_dev_snapshot_contains_only_weights_and_is_not_overwritten(tmp_path):
+    from tools.e4_stage12 import save_dev_weights
+    model = torch.nn.Linear(2, 1)
+    before = deepcopy(model.state_dict())
+    name = save_dev_weights(model, tmp_path, 14 * 3600 + 20)
+    assert name == "dev-14.pt"
+    raw = (tmp_path / name).read_bytes()
+    with torch.no_grad():
+        model.weight.add_(1)
+    assert save_dev_weights(model, tmp_path, 14 * 3600 + 30) == name
+    assert (tmp_path / name).read_bytes() == raw
+    saved = torch.load(tmp_path / name, weights_only=True)
+    assert saved.keys() == before.keys()
+    for key in before:
+        torch.testing.assert_close(saved[key], before[key], rtol=0, atol=0)
+
+
+def test_decision_entropy_categories_and_counts():
+    from train.e4 import SCREEN, ROOM
+    from train.model import SCREENS
+    from train.e4_stage12 import decision_type, decision_entropy_summary, DECISION_TYPES
+    cases = [('combat', 0, 1), ('card_reward', 0, 2), ('map', 4, 2),
+             ('shop', 3, 2), ('room', 4, 2), ('event', 6, 0)]
+    for expected, (screen, room, phase) in enumerate(cases):
+        progress = [0] * 9
+        progress[SCREEN], progress[ROOM], progress[PHASE] = SCREENS.index(screen), room, phase
+        assert decision_type(progress) == expected
+    totals = torch.tensor([[.5, .9, 0, .6, .4, 0], [2, 3, 0, 2, 1, 0]], dtype=torch.float64)
+    summary = decision_entropy_summary(totals)
+    assert summary['entropy_by_decision_type']['combat'] == .25
+    assert summary['entropy_by_decision_type']['card_reward'] == pytest.approx(.3)
+    assert summary['entropy_by_decision_type']['map'] is None
+    assert set(summary['decision_counts_by_type']) == set(DECISION_TYPES)

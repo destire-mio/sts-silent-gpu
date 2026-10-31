@@ -6,7 +6,7 @@ from tools.e4_continue import waiting
 
 
 def test_queue_reason_policy_and_query_failures(tmp_path):
-    node = ('NodeName=gpu01 State=MIXED Gres=gpu:V100:8 GresUsed=gpu:V100:1(IDX:0) '
+    node = ('NodeName=test_node State=MIXED Gres=gpu:V100:8 GresUsed=gpu:V100:1(IDX:0) '
             'CfgTRES=cpu=56,mem=128027M AllocTRES=cpu=2,mem=4G')
     reasons = ('Resources', 'Priority', 'JobArrayTaskLimit', 'Dependency',
                'DependencyNeverSatisfied', 'BeginTime', 'JobHeldUser', 'JobHeldAdmin',
@@ -15,13 +15,13 @@ def test_queue_reason_policy_and_query_failures(tmp_path):
     cases = [('PENDING', reason, 'other', reason in ('Resources', 'Priority'))
              for reason in reasons]
     cases += [('RUNNING', 'Resources', 'other', False),
-              ('PENDING', 'Resources', 'zhuyouwei', False),
-              ('PENDING', 'Priority', 'zhuyouwei', False)]
+              ('PENDING', 'Resources', 'test_user', False),
+              ('PENDING', 'Priority', 'test_user', False)]
     for version, (state, reason, user, expected) in enumerate(cases):
         job = (f'JobId=3684 JobName=other UserId={user}(1013) JobState={state} Reason={reason} '
                'Dependency=(null) TimeLimit=1-00:00:00 StartTime=Unknown RunTime=00:00:00 '
-               'NodeList=gpu01 TresPerNode=gres:gpu:V100:1 TRES=cpu=1,mem=2G,node=1')
-        with patch.dict('os.environ', USER='zhuyouwei'), \
+               'NodeList=test_node TresPerNode=gres:gpu:V100:1 TRES=cpu=1,mem=2G,node=1')
+        with patch.dict('os.environ', USER='test_user', STAGE12_NODE='test_node'), \
                 patch('tools.e4_continue.subprocess.check_output', side_effect=[job, node]), \
                 patch('tools.e4_continue.dist.broadcast_object_list') as broadcast:
             assert waiting(0, tmp_path, version) is expected
@@ -31,11 +31,11 @@ def test_queue_reason_policy_and_query_failures(tmp_path):
         assert (tmp_path / f'queue-yield-{version}.json').exists() is expected
     for version, outputs in enumerate((
             [subprocess.CalledProcessError(1, ['scontrol', 'show', 'jobs', '-o'])],
-            [job, subprocess.CalledProcessError(1, ['scontrol', 'show', 'node', 'gpu01', '-o', '-d'])],
+            [job, subprocess.CalledProcessError(1, ['scontrol', 'show', 'node', 'test_node', '-o', '-d'])],
             [subprocess.TimeoutExpired(['scontrol', 'show', 'jobs', '-o'], 60)],
             ['JobId=1'],
-            [job, 'NodeName=gpu01']), start=100):
-        with patch.dict('os.environ', USER='zhuyouwei'), \
+            [job, 'NodeName=test_node']), start=100):
+        with patch.dict('os.environ', USER='test_user', STAGE12_NODE='test_node'), \
                 patch('tools.e4_continue.subprocess.check_output', side_effect=outputs), \
                 patch('tools.e4_continue.dist.broadcast_object_list') as broadcast:
             assert waiting(0, tmp_path, version) is True
