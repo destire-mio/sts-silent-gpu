@@ -137,6 +137,8 @@ def main():
         dist.barrier()
 
     def evaluate():
+        gc.collect()
+        torch.cuda.empty_cache()
         evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank)
         evaluator_search.deadline = deadline
         evaluator_search.evidence_directory = output
