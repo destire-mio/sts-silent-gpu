@@ -197,8 +197,8 @@ def main():
             if bool(flag) and not label:
                 if state.get('distillation_updates') == 80 and not state.get('distillation_evaluated'):
                     name = 'distillation-80.pt'
-                    assert not (output / name).exists()
-                    torch.save(move_tensors(policy.state_dict(), torch.device('cpu')), output / name)
+                    if not (output / name).exists():
+                        torch.save(move_tensors(policy.state_dict(), torch.device('cpu')), output / name)
                     row['model_snapshot'] = name
                 else:
                     row["model_snapshot"] = save_dev_weights(policy, output, state["training_seconds"])
@@ -367,12 +367,15 @@ def main():
         round_state = dict(ready=None,seconds=0.,decisions_start=collector.decisions)
         distillation_finished = distilling and state['distillation_updates'] == 80
         if distillation_finished and state['stop_reason'] is None:
+            checkpoint()
             if evaluate():
                 state['distillation_evaluated'] = True
                 state['learning_rate'] = 1e-4
                 state['high_kl_streak'] = 0
                 del teacher
                 teacher = None
+                if state['training_seconds'] >= state['next_evaluation']:
+                    state['next_evaluation'] += 7200.
                 checkpoint()
                 log(dict(event='distillation_complete', update=state['update'], rounds=80, PPO_learning_rate=1e-4))
             else:

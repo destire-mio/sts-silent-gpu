@@ -20,7 +20,7 @@ def prepare(source, output, teacher, width, small_seconds):
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4, eps=1e-5)
     state = dict(update=0, training_seconds=old['state']['training_seconds'], initial_entropy=None,
         next_evaluation=old['state']['next_evaluation'], precision='encoder_fp16_heads_fp32',
-        microbatch=None, checkpoint_serial=old['state']['checkpoint_serial']+1, world=8,
+        microbatch=512, checkpoint_serial=old['state']['checkpoint_serial']+1, world=8,
         stop_reason=None, high_kl_streak=0, learning_rate=1e-4, model_config=asdict(config),
         teacher_path=str(teacher), distillation_updates=0, distillation_evaluated=False,
         entropy_coefficient=.005, small_round_seconds=small_seconds,
