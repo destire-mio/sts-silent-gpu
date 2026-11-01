@@ -38,7 +38,15 @@ def test_large_student_learning_and_partial_cursor_resume(tmp_path):
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
         scaler = torch.amp.GradScaler('cuda', enabled=False)
         before = student.cls.detach().clone()
+        order=[]
+        def teacher_first(module, inputs, output):
+            assert not torch.is_grad_enabled()
+            order.append('teacher')
+        teacher_hook=teacher.register_forward_hook(teacher_first)
+        student_hook=model.register_forward_hook(lambda *args:order.append('student'))
         advance_minibatch(model, optimizer, scaler, cursor, rng, 0, 1, teacher=teacher)
+        assert order==['teacher','student']
+        teacher_hook.remove();student_hook.remove()
         assert cursor['epoch'] == 1 and cursor['optimizer_steps'] == 1
         assert not torch.equal(before, student.cls)
         assert all(p.grad is None for p in teacher.parameters())

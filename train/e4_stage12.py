@@ -417,6 +417,9 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
             if len(ids):
                 inputs = packed_inputs(f["data"], f["offsets"], ids, ids.device)
                 inputs["candidate_mask"] &= f["policy_mask"][ids, :inputs["candidate_mask"].shape[1]]
+                if teacher is not None:
+                    with torch.no_grad():
+                        teacher_logits, teacher_value = teacher(inputs)
                 logits, value = model(inputs)
                 policy, normalized_entropy = distribution(logits.float(), inputs["candidate_mask"])
                 log_ratio = policy.log_prob(f["actions"][ids]) - f["logs"][ids]
@@ -427,8 +430,6 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 if teacher is None:
                     loss = actor + .5 * value_loss - entropy_coefficient * normalized_entropy
                 else:
-                    with torch.no_grad():
-                        teacher_logits, teacher_value = teacher(inputs)
                     actor, value_loss = distillation_terms(logits, value, teacher_logits, teacher_value, inputs['candidate_mask'])
                     loss = actor + .5 * value_loss
                 scalar = loss.sum() * world / max(1, global_count)
