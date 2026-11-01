@@ -26,6 +26,8 @@ from train.e4_stage6.training_worker import move_tensors
 from train.e4_midstart import MidstartCollector
 from train.e4_learner_profile import TwoMicrobatchProfile
 from train.e4_checkpoint import load_matching_rank
+from train.e4_value_diagnostics import explained_variance, nonforced_entropy, value_coefficient
+from train.e4_evaluation_ledger import EvaluationLedgerCollector, value_correlations
 
 
 def write_json(path, value):
@@ -173,7 +175,7 @@ def main():
         evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank, greedy=True)
         evaluator_search.deadline = deadline
         evaluator_search.evidence_directory = output
-        evaluator = NoSLCollector(evaluator_search, torch.Generator().manual_seed(101 + rank), rank=rank)
+        evaluator = EvaluationLedgerCollector(evaluator_search, torch.Generator().manual_seed(101 + rank), rank=rank)
         evaluated.eval()
         complete = True
         try:
@@ -185,6 +187,8 @@ def main():
         filename = output / f"{prefix}-{state['update']}-rank-{rank}.json.gz"
         with gzip.open(filename, "wt") as stream:
             json.dump(episodes, stream)
+        ledger_filename = output / f"{prefix}-{state['update']}-ledger-rank-{rank}.json.gz"
+        with gzip.open(ledger_filename,"wt") as stream:json.dump([e["act2_ledger"] for e in evaluator.completed],stream)
         flag = torch.tensor(int(complete), device=device)
         dist.all_reduce(flag, op=dist.ReduceOp.MIN)
         dist.barrier()
@@ -215,6 +219,12 @@ def main():
                     row['model_snapshot'] = name
                 else:
                     row["model_snapshot"] = save_dev_weights(policy, output, state["training_seconds"])
+            ledger = []
+            for owner in range(world):
+                with gzip.open(output/f"{prefix}-{state['update']}-ledger-rank-{owner}.json.gz","rt") as stream:ledger.extend(json.load(stream))
+            ledger_name=f"{prefix}-{state['update']}-act2-ledger.json"
+            write_json(output/ledger_name,dict(episodes=ledger,stalled_games=sum(e["stalled"] for e in ledger)))
+            row.update(value_spearman=value_correlations(ledger),act2_ledger_file=ledger_name)
             row.update(state.get("decision_entropy_metrics", {}))
             write_json(output / f"{prefix}-{state['update']}.json", row)
             log(row)
@@ -267,6 +277,7 @@ def main():
                 search.entropy_sum.zero_()
                 search.entropy_count = 0
                 search.decision_entropy.zero_()
+                search.decision_nonforced.zero_()
                 search.times = StageTimes()
                 search.fault_counts.clear()
                 collector.round_games = sum(seed is not None for seed in collector.seeds)
@@ -286,6 +297,18 @@ def main():
             if teacher is not None and state['distillation_updates'] < distillation_target:
                 policy.eval()
                 student_log_baseline(policy, round_state['ready'])
+            if not state.get("value_rollout_diagnostic_complete"):
+                types = round_state["ready"].get("decision_types")
+                valid_types = torch.tensor(int(types is not None and bool((types >= 0).all())),device=device)
+                dist.all_reduce(valid_types,op=dist.ReduceOp.MIN)
+                if bool(valid_types):
+                    ev = explained_variance(round_state["ready"])
+                    entropy = search.decision_nonforced.clone()
+                    dist.all_reduce(entropy)
+                    report = dict(event="value_rollout_diagnostic",update=state["update"]+1,explained_variance=ev,nonforced_entropy=nonforced_entropy(entropy,["combat","card_reward","map","shop","campfire","other"]))
+                    log(report)
+                    if rank == 0:write_json(output/"claude132-rollout-diagnostic.json",report)
+                    state["value_rollout_diagnostic_complete"] = True
             cursor = new_cursor(round_state["ready"], ppo_rng, world)
             round_state["ready"] = None
             if not sum(cursor["counts"]):
@@ -322,7 +345,9 @@ def main():
                 advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
                     teacher=teacher if teacher is not None and state['distillation_updates'] < distillation_target else None,
                     entropy_coefficient=state.get('entropy_coefficient', .01),
-                    learner_profile=learner_profile)
+                    learner_profile=learner_profile,value_state=state,diagnostic_log=log)
+                if rank == 0 and not (output/"claude133-gradient-diagnostic.json").exists():
+                    write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
         sync_started = time.perf_counter()
         torch.cuda.synchronize(device)
         search.times.seconds["learner"] += time.perf_counter() - sync_started
@@ -344,6 +369,9 @@ def main():
         parts = torch.tensor(list(search.times.seconds.values()),device=device,dtype=torch.float64)
         dist.all_reduce(parts, op=dist.ReduceOp.MAX)
         per_gpu = [float(n) / max(.001,float(elapsed)) for n in by_rank]
+        row["value_loss_coefficient"] = value_coefficient(state)
+        if "value_calibration" in state:
+            state["value_calibration"]["completed_updates"] += 1
         state["update"] += 1
         state["training_seconds"] += float(elapsed)
         health = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)

@@ -1,9 +1,11 @@
 """Evaluation-only, paired determinized combat previews."""
+from copy import deepcopy
 import math
 import statistics
 import torch
 from train.e4 import COMBAT_PHASE, PHASE, SCREEN, DEATH, VICTORY, HP
 from train.e4_stage12 import NoSLSearch
+from train.e4_evaluation_ledger import RUNIC_DOME
 from train.model import network_inputs
 
 
@@ -39,7 +41,10 @@ class CombatLookahead:
             argmax = ordered[0]
             actions.append(argmax)
             reports.append(dict(preview_steps=0, candidates=ordered, selected=argmax))
-            if len(legal) == 1 or float(logits[i].softmax(-1)[argmax]) >= .9:
+            owned_dome = ((search.arrays['tags'][source,0] == 6) & (search.arrays['tags'][source,1] == 0) & (search.arrays['ids'][source,0] == RUNIC_DOME)).any()
+            if bool(owned_dome):
+                reports[-1]['skipped'] = 'Runic Dome'
+            if bool(owned_dome) or len(legal) == 1 or float(logits[i].softmax(-1)[argmax]) >= .9:
                 continue
             paired = torch.randint(2**63 - 1, (8,), generator=self.rng).tolist()
             begin = len(sources)
@@ -57,7 +62,13 @@ class CombatLookahead:
         search.batch.determinize_slots(slots, seeds)
         search.batch.combat_turns_tensors(self.turns)
         initial_turns = dict(zip(slots, [int(self.turns[source]) for source in sources]))
+        ledgers = {s:deepcopy(search.reward_ledgers[source]) for s,source in zip(slots,sources)}
+        rewards = dict.fromkeys(slots,0.)
+        before = search.progress_for(slots)
         search.batch.step_slots(slots, first)
+        search.clock()
+        after = search.progress_for(slots)
+        for s in slots:rewards[s] += ledgers[s].advance(before[s],after[s])
         steps = dict.fromkeys(slots, 1)
         live = slots.copy()
         limit = 64 if self.depth == 'turn' else 256
@@ -71,17 +82,21 @@ class CombatLookahead:
             if live:
                 preview = self.masked_inputs(live)
                 preview_logits = policy(preview)[0].masked_fill(~preview['candidate_mask'], -torch.inf)
+                before = progress
                 search.batch.step_slots(live, preview_logits.argmax(-1).tolist())
+                search.clock()
+                after = search.progress_for(live)
+                for s in live:rewards[s] += ledgers[s].advance(before[s],after[s])
                 for slot in live:
                     steps[slot] += 1
         assert not bool(search.arrays['faults'][slots].any())
         assert not bool(search.arrays['truncated'][slots].any())
         progress = search.progress_for(slots)
-        alive = [s for s in slots if progress[s][SCREEN] != DEATH and progress[s][HP] > 0]
+        alive = [s for s in slots if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
         values = dict(zip(alive, policy(self.inputs(alive))[1].tolist())) if alive else {}
         for i, begin, end, paired in groups:
             trials = slots[begin:end]
-            scores = [values.get(s, 0.) for s in trials]
+            scores = [rewards[s] + values.get(s, 0.) for s in trials]
             samples = [scores[j:j + 8] for j in range(0, len(scores), 8)]
             means = [statistics.mean(group) for group in samples]
             best = max(range(len(samples)), key=means.__getitem__)
