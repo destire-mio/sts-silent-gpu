@@ -6,6 +6,7 @@ from pathlib import Path
 import torch
 from train.e4_stage12 import CLSPolicy
 from train.model import ModelConfig
+from train.e4_value_diagnostics import value_coefficient
 
 
 def prepare(source, output, teacher, width, small_seconds):
@@ -27,6 +28,7 @@ def prepare(source, output, teacher, width, small_seconds):
         source_checkpoint=str(source/'model.pt'), source_update=old['state']['update'])
     if width == 512:
         assert source != output
+        state['value_calibration'] = dict(target=value_coefficient(old['state']),completed_updates=20)
         assert old['state']['model_config'] == dict(width=384,layers=6,heads=6,feedforward=1536)
         evaluations = [json.loads(p.read_text()) for p in source.glob('evaluation-*.json')]
         eligible = [e for e in evaluations if e.get('complete') and e.get('selection') == 'argmax'

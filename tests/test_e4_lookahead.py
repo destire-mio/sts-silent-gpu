@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import torch
 import spire
-from train.e4 import RoomSearch
+from train.e4 import RoomSearch, RewardLedger, PHASE, COMBAT_PHASE, SCREEN, BATTLE_OVER, HP
 from train.e4_stage6.examination import load_roots
 from train.e4_stage12 import CLSPolicy, NoSLSearch
 from train.e4_lookahead import CombatLookahead
@@ -20,6 +20,7 @@ def setup():
         scene = json.load(stream)['groups']['act1_boss_guardian'][0]
     load_roots(search, [scene, scene])
     policy = CLSPolicy(ModelConfig(16,1,2,32)).eval()
+    search.reward_ledgers = [RewardLedger(),RewardLedger()]
     return search, policy
 
 
@@ -83,6 +84,16 @@ def test_single_action_and_confident_policy_skip_preview(monkeypatch):
             return torch.tensor([[10.,0.]]), torch.zeros(1)
     assert preview.select(Confident(), [0])[1][0]['preview_steps'] == 0
 
+    from train.e4_evaluation_ledger import RUNIC_DOME
+    search,policy = setup()
+    search.arrays = dict(search.arrays)
+    for key in ['tags','ids']:search.arrays[key] = search.arrays[key].clone()
+    search.arrays['tags'][0,0,0] = 6
+    search.arrays['tags'][0,1,0] = 0
+    search.arrays['ids'][0,0,0] = RUNIC_DOME
+    _,reports = CombatLookahead(search).select(policy,[0])
+    assert reports[0]['preview_steps'] == 0 and reports[0]['skipped'] == 'Runic Dome'
+
 
 def test_paired_k_has_identical_hidden_state_across_candidates():
     search, policy = setup()
@@ -100,3 +111,32 @@ def test_paired_k_has_identical_hidden_state_across_candidates():
     assert len(recorded) == sum(8 * len(r['candidates']) for r in reports)
     for group in range(1, len(report['candidates'])):
         assert recorded[:8] == recorded[group*8:group*8+8]
+
+
+def test_boss_kill_preview_includes_reward_and_preserves_source_ledger(monkeypatch):
+    import pytest
+    search,policy = setup()
+    before = search.progress_for([0,1])
+    original = deepcopy(search.reward_ledgers)
+    done = set()
+    batch = search.batch
+    class BossKill:
+        def __getattr__(self,name):return getattr(batch,name)
+        def step_slots(self,slots,actions):done.update(slots)
+    search.batch = BossKill()
+    def progress(slots):
+        result = {}
+        for slot in slots:
+            p = list(before[0])
+            if slot in done:
+                p[PHASE],p[SCREEN],p[BATTLE_OVER],p[HP] = COMBAT_PHASE+1,7,1,70
+            result[slot] = p
+        return result
+    monkeypatch.setattr(search,'progress_for',progress)
+    class ZeroValue:
+        def __call__(self,inputs):
+            return torch.zeros_like(inputs['candidate_mask'],dtype=torch.float32),torch.zeros(len(inputs['candidate_mask']))
+    _,reports = CombatLookahead(search).select(ZeroValue(),[0])
+    assert reports[0]['mean_scores']
+    assert all(score == pytest.approx(5/156) for score in reports[0]['mean_scores'])
+    assert search.reward_ledgers == original

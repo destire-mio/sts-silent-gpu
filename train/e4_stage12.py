@@ -18,6 +18,7 @@ from train.e4 import (RoomSearch, SegmentCollector, PHASE, COMBAT_PHASE, FLOOR, 
 from train.model import Policy, ModelConfig, network_inputs, distribution, packed_inputs, record_lengths
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_checkpoint import write_rank_checkpoint
+from train.e4_value_diagnostics import gradient_measurement, value_coefficient
 
 
 DECISION_TYPES = ('combat', 'card_reward', 'map', 'shop', 'campfire', 'other')
@@ -105,6 +106,7 @@ class NoSLSearch(RoomSearch):
         self.entropy_sum = torch.zeros((), dtype=torch.float64, device=device)
         self.entropy_count = 0
         self.decision_entropy = torch.zeros((2, len(DECISION_TYPES)), dtype=torch.float64, device=device)
+        self.decision_nonforced = torch.zeros((3, len(DECISION_TYPES)), dtype=torch.float64, device=device)
         self.times = StageTimes()
         self.mainline_progress = {}
         self.last_policy_mask = None
@@ -192,6 +194,10 @@ class NoSLSearch(RoomSearch):
                                      dtype=torch.int64, device=self.device)
                 self.decision_entropy[0].scatter_add_(0, kinds, normalized_entropy.double())
                 self.decision_entropy[1].scatter_add_(0, kinds, torch.ones_like(normalized_entropy, dtype=torch.float64))
+                nonforced = inputs["candidate_mask"].sum(-1) > 1
+                self.decision_nonforced[0].scatter_add_(0, kinds, normalized_entropy.double() * nonforced)
+                self.decision_nonforced[1].scatter_add_(0, kinds, nonforced.double())
+                self.decision_nonforced[2].scatter_add_(0, kinds, (~nonforced).double())
             for i, row in zip(positions, rows):
                 choices[i], values[i], logs[i] = int(row[0]), row[1], row[2]
         return choices, values, logs
@@ -202,6 +208,7 @@ class NoSLCollector(SegmentCollector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.round_games = 0
+        self.search.reward_ledgers = self.rewards
 
     def reset(self, slots, seeds):
         for slot in slots:
@@ -278,6 +285,7 @@ class NoSLCollector(SegmentCollector):
             capacity = 10240
             result = dict(data=torch.empty(length * lanes * capacity, dtype=torch.uint8, device=device),
                           offsets=torch.zeros(length * lanes + 1, dtype=torch.int64, device=device),
+                          decision_types=torch.zeros(length * lanes, dtype=torch.int64, device=device),
                           policy_mask=torch.empty((length, lanes, 128), dtype=torch.bool, device=device))
             for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat"):
                 dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid", "combat") else torch.float32
@@ -293,6 +301,9 @@ class NoSLCollector(SegmentCollector):
             progress = self.search.progress_for(slots)
             actions, values, logs, imitation = self.choose(model, slots, progress)
             result["policy_mask"][tick] = self.search.last_policy_mask
+            if "decision_types" not in result:
+                result["decision_types"] = torch.full((length * lanes,), -1, dtype=torch.int64, device=device)
+            result["decision_types"][tick * lanes:(tick+1)*lanes] = torch.tensor([decision_type(progress[s]) for s in slots],device=device)
             row = tick * lanes
             index = torch.tensor(slots, dtype=torch.int64, device=device)
             lengths = (4 + 24 * self.search.arrays["entity_counts"][index].long()
@@ -403,7 +414,7 @@ def precision_probe(model, cursor, rank):
 
 
 def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
-                      teacher=None, entropy_coefficient=.01, learner_profile=None):
+                      teacher=None, entropy_coefficient=.01, learner_profile=None, value_state=None, diagnostic_log=None):
     f = cursor["fragment"]
     selected, global_count = local_minibatch(cursor, rank)
     chunks = list(selected.split(microbatch))
@@ -411,6 +422,20 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
     dist.all_reduce(count, op=dist.ReduceOp.MAX)
     optimizer.zero_grad(set_to_none=True)
     steps = int(count)
+    if value_state is not None and "value_calibration" not in value_state:
+        calibration = torch.zeros(4,device=selected.device,dtype=torch.float64)
+        if rank == 0:
+            ids = selected[:microbatch]
+            assert len(ids) > 0
+            inputs = packed_inputs(f["data"],f["offsets"],ids,ids.device)
+            inputs["candidate_mask"] &= f["policy_mask"][ids,:inputs["candidate_mask"].shape[1]]
+            with model.no_sync():
+                measured=gradient_measurement(model.module,inputs,f["actions"][ids],f["logs"][ids],f["advantages"][ids],f["returns"][ids],scale=scaler.get_scale())
+            calibration[:] = torch.tensor([measured[k] for k in ["actor_encoder_norm","weighted_value_encoder_norm","ratio","target"]],device=ids.device,dtype=torch.float64)
+        dist.broadcast(calibration,src=0)
+        value_state["value_calibration"] = dict(zip(["actor_encoder_norm","weighted_value_encoder_norm","ratio","target"],calibration.tolist()))
+        value_state["value_calibration"].update(measured_value_coefficient=.5,completed_updates=0)
+        if rank == 0:diagnostic_log(dict(event="value_gradient_calibration",**value_state["value_calibration"]))
     for i in range(steps):
         if learner_profile is not None:
             learner_profile.before_microbatch()
@@ -433,10 +458,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                                        ratio.clamp(.8, 1.2) * f["advantages"][ids])
                 value_loss = (value - f["returns"][ids]).square()
                 if teacher is None:
-                    loss = actor + .5 * value_loss - entropy_coefficient * normalized_entropy
+                    loss = actor + (value_coefficient(value_state) if value_state is not None else .5) * value_loss - entropy_coefficient * normalized_entropy
                 else:
                     actor, value_loss = distillation_terms(logits, value, teacher_logits, teacher_value, inputs['candidate_mask'])
-                    loss = actor + .5 * value_loss
+                    loss = actor + (value_coefficient(value_state) if value_state is not None else .5) * value_loss
                 scalar = loss.sum() * world / max(1, global_count)
                 cursor["finite"] &= torch.isfinite(loss).all()
                 cursor["totals"] += torch.stack((actor.detach().double().sum(), value_loss.detach().double().sum(),
@@ -453,6 +478,11 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
             learner_profile.after_microbatch()
     scaler.unscale_(optimizer)
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), .5, error_if_nonfinite=False)
+    stats = cursor.setdefault("gradient_stats", [0.,0.,0.,0.])
+    stats[0] += float(norm)
+    stats[1] = max(stats[1], float(norm))
+    stats[2] += int(float(norm) > .5)
+    stats[3] += 1
     scale_before = scaler.get_scale()
     scaler.step(optimizer)
     scaler.update()
@@ -514,6 +544,11 @@ def finish_metrics(cursor, model, scaler):
                   finite=bool(finite),
                   samples=int(values[6]), optimizer_steps=int(applied), optimizer_attempts=int(-attempts),
                   amp_skipped_steps=int(-skipped), amp_scale=scale)
+    stats = torch.tensor(cursor.get("gradient_stats",[0.,0.,0.,0.]),device=totals.device,dtype=torch.float64)
+    maximum = stats[1].clone()
+    dist.all_reduce(stats)
+    dist.all_reduce(maximum,op=dist.ReduceOp.MAX)
+    result.update(gradient_norm_before_clip_mean=float(stats[0]/stats[3]) if float(stats[3]) else None,gradient_norm_before_clip_max=float(maximum),gradient_clipped_fraction=float(stats[2]/stats[3]) if float(stats[3]) else None)
     return result
 
 
@@ -521,6 +556,7 @@ def collector_snapshot(collector):
     state = dict(collector.state())
     state["sampling_entropy"] = (collector.search.entropy_sum, collector.search.entropy_count)
     state["decision_entropy"] = collector.search.decision_entropy
+    state["decision_nonforced"] = collector.search.decision_nonforced
     state["timings"] = dict(collector.search.times.seconds)
     state['round_games'] = collector.round_games
     state['episode_faults'] = (dict(collector.search.failed), dict(collector.search.fault_counts))
@@ -542,6 +578,7 @@ def restore_collector(collector, state):
         result["data"] = data
     collector.search.decision_entropy = state.pop('decision_entropy',
         torch.zeros_like(collector.search.decision_entropy)).to(collector.search.device)
+    collector.search.decision_nonforced = state.pop('decision_nonforced', torch.zeros_like(collector.search.decision_nonforced)).to(collector.search.device)
     collector.round_games = state.pop('round_games', collector.search.lanes)
     failed, counts = state.pop('episode_faults', ({}, {}))
     collector.search.failed = failed
@@ -549,6 +586,7 @@ def restore_collector(collector, state):
     collector.search.times.seconds = state.pop("timings")
     entropy_sum, entropy_count = state.pop("sampling_entropy")
     collector.restore(state)
+    collector.search.reward_ledgers = collector.rewards
     collector.search.entropy_sum = entropy_sum.to(collector.search.device)
     collector.search.entropy_count = entropy_count
 
