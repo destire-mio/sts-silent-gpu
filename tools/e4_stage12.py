@@ -1,5 +1,6 @@
 """Run Stage12 no-search PPO, saving rank collection state on yield."""
 import argparse
+from dataclasses import asdict
 from copy import deepcopy
 import gc
 import gzip
@@ -19,7 +20,8 @@ from torch.nn.parallel import DistributedDataParallel
 from train.e4 import AllocationEnded, REACH
 from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
-    save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary)
+    save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline)
+from train.model import ModelConfig
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_midstart import MidstartCollector
 
@@ -68,7 +70,10 @@ def main():
     stop_file = output / "stop-requested"
     deadline = time.monotonic() + args.deadline - time.time() - 180
     torch.manual_seed(20261031)
-    policy = CLSPolicy().to(device)
+    common = output / "model.pt"
+    saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
+    config = ModelConfig(**saved['state']['model_config']) if saved and 'model_config' in saved['state'] else ModelConfig(256,4,4,1024)
+    policy = CLSPolicy(config).to(device)
     model = DistributedDataParallel(policy, device_ids=[local], broadcast_buffers=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
@@ -81,9 +86,7 @@ def main():
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4)
     cursor = None
     round_state = dict(ready=None, seconds=0., decisions_start=0)
-    common = output / "model.pt"
     if common.exists():
-        saved = torch.load(common, map_location="cpu", weights_only=False)
         policy.load_state_dict(saved["model"])
         optimizer.load_state_dict(saved["optimizer"])
         state.update(saved["state"])
@@ -111,6 +114,12 @@ def main():
     state["world"] = world
     if state["stop_reason"] in ('allocation_end_or_yield', 'entropy_below_half_initial', 'KL_above_0.1'):
         state["stop_reason"] = None
+    teacher = None
+    if state.get('teacher_path'):
+        teacher = CLSPolicy().to(device)
+        teacher.load_state_dict(torch.load(state['teacher_path'], map_location='cpu', weights_only=True))
+        teacher.encoder_fp16 = True
+        teacher.eval().requires_grad_(False)
     stopped_by_signal = False
     def on_signal(*_):
         nonlocal stopped_by_signal
@@ -144,21 +153,23 @@ def main():
             log(dict(event="checkpoint", update=state["update"], reason=state["stop_reason"]))
         dist.barrier()
 
-    def evaluate():
+    def evaluate(evaluated=None, label=None):
+        evaluated = evaluated or policy
         gc.collect()
         torch.cuda.empty_cache()
-        evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank)
+        evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank, greedy=True)
         evaluator_search.deadline = deadline
         evaluator_search.evidence_directory = output
         evaluator = NoSLCollector(evaluator_search, torch.Generator().manual_seed(101 + rank), rank=rank)
-        policy.eval()
+        evaluated.eval()
         complete = True
         try:
-            evaluator.evaluate(policy, list(range(2000000000, 2000001024))[rank::world])
+            evaluator.evaluate(evaluated, list(range(2000000000, 2000001024))[rank::world])
         except AllocationEnded:
             complete = False
         episodes = [{k:e[k] for k in ("seed","floor","reach","outcome","reward")} for e in evaluator.completed]
-        filename = output / f"evaluation-{state['update']}-rank-{rank}.json.gz"
+        prefix = label or "evaluation"
+        filename = output / f"{prefix}-{state['update']}-rank-{rank}.json.gz"
         with gzip.open(filename, "wt") as stream:
             json.dump(episodes, stream)
         flag = torch.tensor(int(complete), device=device)
@@ -167,10 +178,15 @@ def main():
         if rank == 0:
             all_episodes = []
             for owner in range(world):
-                with gzip.open(output / f"evaluation-{state['update']}-rank-{owner}.json.gz", "rt") as stream:
+                with gzip.open(output / f"{prefix}-{state['update']}-rank-{owner}.json.gz", "rt") as stream:
                     all_episodes.extend(json.load(stream))
-            row = dict(event="evaluation", update=state["update"], complete=bool(flag),
+            row = dict(event="teacher_evaluation" if label else "evaluation", selection="argmax", phase="distillation" if state.get("teacher_path") and not state.get("distillation_evaluated") else "PPO", update=state["update"], complete=bool(flag),
                        training_seconds=state["training_seconds"], no_SL=True, **metrics(all_episodes))
+            if state.get("teacher_path"):
+                row["paired_baseline_model"] = "dev-16.pt argmax"
+            if label:
+                row["evaluated_model"] = "dev-16.pt"
+                row["evaluated_model_training_hours"] = 16
             baseline = output / "baseline.json.gz"
             if state["update"] == 0 and bool(flag):
                 with gzip.open(baseline, "wt") as stream:
@@ -178,10 +194,16 @@ def main():
             if baseline.exists():
                 with gzip.open(baseline, "rt") as stream:
                     row["paired_baseline"] = paired_summary(all_episodes, json.load(stream))
-            if bool(flag):
-                row["model_snapshot"] = save_dev_weights(policy, output, state["training_seconds"])
+            if bool(flag) and not label:
+                if state.get('distillation_updates') == 80 and not state.get('distillation_evaluated'):
+                    name = 'distillation-80.pt'
+                    assert not (output / name).exists()
+                    torch.save(move_tensors(policy.state_dict(), torch.device('cpu')), output / name)
+                    row['model_snapshot'] = name
+                else:
+                    row["model_snapshot"] = save_dev_weights(policy, output, state["training_seconds"])
             row.update(state.get("decision_entropy_metrics", {}))
-            write_json(output / f"evaluation-{state['update']}.json", row)
+            write_json(output / f"{prefix}-{state['update']}.json", row)
             log(row)
         dist.barrier()
         del evaluator, evaluator_search
@@ -191,12 +213,28 @@ def main():
 
     log(dict(event="start", world=world, lanes_per_gpu=2048, length=64, global_minibatch=32768,
              epochs=2, model_parameters=sum(p.numel() for p in policy.parameters()),
-             model=dict(width=256,layers=4,heads=4,feedforward=1024,pooling="CLS"),
+             model=dict(**asdict(config),pooling="CLS"), teacher=state.get("teacher_path"), distillation_updates=state.get("distillation_updates"),
              no_SL=True, from_scratch=not common.exists()))
     last_checkpoint = time.monotonic()
     if not common.exists():
         checkpoint()
-    if state["update"] == 0 and not (output / "baseline.json.gz").exists():
+    teacher_baseline = output / 'teacher-dev16-argmax-0.json'
+    if teacher is not None and (not teacher_baseline.exists() or not json.loads(teacher_baseline.read_text())['complete']):
+        if not evaluate(teacher, 'teacher-dev16-argmax'):
+            state['stop_reason'] = 'allocation_end_or_yield'
+    if teacher is not None and state['distillation_updates'] == 80 and not state.get('distillation_evaluated') and state['stop_reason'] is None:
+        if evaluate():
+            state['distillation_evaluated'] = True
+            state['learning_rate'] = 1e-4
+            state['high_kl_streak'] = 0
+            checkpoint()
+        else:
+            state['stop_reason'] = 'allocation_end_or_yield'
+    if teacher is not None and state.get('distillation_evaluated'):
+        del teacher
+        teacher = None
+    del saved
+    if teacher is None and state["update"] == 0 and not (output / "baseline.json.gz").exists():
         if not evaluate():
             state["stop_reason"] = "allocation_end_or_yield"
     while state["stop_reason"] is None:
@@ -217,7 +255,7 @@ def main():
             if round_state["ready"] is None:
                 policy.eval()
                 try:
-                    round_state["ready"] = collector.collect(policy, length=64)
+                    round_state["ready"] = collector.collect(teacher if teacher is not None and state["distillation_updates"] < 80 else policy, length=64)
                 except AllocationEnded:
                     interrupted = True
             interrupted = torch.tensor(int(interrupted), device=device)
@@ -226,6 +264,9 @@ def main():
                 round_state["seconds"] += time.monotonic() - started
                 state["stop_reason"] = "allocation_end_or_yield"
                 break
+            if teacher is not None and state['distillation_updates'] < 80:
+                policy.eval()
+                student_log_baseline(policy, round_state['ready'])
             cursor = new_cursor(round_state["ready"], ppo_rng, world)
             round_state["ready"] = None
             if not sum(cursor["counts"]):
@@ -259,7 +300,9 @@ def main():
                 state["stop_reason"] = "allocation_end_or_yield"
                 break
             with search.times.measure("learner"):
-                advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"])
+                advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
+                    teacher=teacher if teacher is not None and state['distillation_updates'] < 80 else None,
+                    entropy_coefficient=state.get('entropy_coefficient', .01))
         sync_started = time.perf_counter()
         torch.cuda.synchronize(device)
         search.times.seconds["learner"] += time.perf_counter() - sync_started
@@ -290,7 +333,11 @@ def main():
         rss_by_rank = [torch.empty_like(rss) for _ in range(world)]
         dist.all_gather(rss_by_rank, rss)
         state['stop_reason'] = health_stop(state, row, faults, games)
-        state["learning_rate"] = next_learning_rate(state["learning_rate"], row["kl"])
+        distilling = teacher is not None and state['distillation_updates'] < 80
+        if distilling:
+            state['distillation_updates'] += 1
+        else:
+            state["learning_rate"] = next_learning_rate(state["learning_rate"], row["kl"])
         entropies = search.decision_entropy.clone()
         dist.all_reduce(entropies)
         state["decision_entropy_metrics"] = decision_entropy_summary(entropies)
@@ -298,21 +345,38 @@ def main():
             log(dict(event='low_normalized_entropy_warning', update=state['update'], normalized_entropy=row['normalized_entropy']))
         if row['kl'] > .1:
             log(dict(event='high_KL_warning', update=state['update'], kl=row['kl'], streak=state['high_kl_streak']))
-        log(dict(event="update",update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
+        log(dict(event="update",phase="distillation" if distilling else "PPO",distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
             mainline_decisions_global=int(sum(float(n)for n in by_rank)),decisions_per_second_per_gpu=per_gpu,
             decisions_per_second_global=sum(per_gpu),training_mean_floor=float(done[1]/done[0]) if float(done[0]) else None,
             training_act1_boss_pass_rate=float(done[2]/done[0]) if float(done[0]) else None,
             training_fresh_completed=int(done[0]),training_midstart_completed=int(done[3]),
             training_midstart_mean_floor=float(done[4]/done[3]) if float(done[3]) else None,
             midstart_pool_sizes=[len(p) for p in collector.pools],
+            cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated(device),cuda_peak_reserved_bytes=torch.cuda.max_memory_reserved(device),
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
             precision=state["precision"],microbatch=state["microbatch"],learning_rate=optimizer.param_groups[0]["lr"],
             next_learning_rate=state["learning_rate"],**state["decision_entropy_metrics"],
             stop_reason=state["stop_reason"],episode_faults=faults,episode_cases=games,
             episode_fault_rate=faults/max(1,games),rss_peak_bytes_per_rank=[int(v) for v in rss_by_rank],**row))
+        if state.get('model_config', {}).get('width') == 384 and state.get('distillation_updates') == 1 and float(elapsed) > 4 * state['small_round_seconds'] and state['stop_reason'] is None:
+            state['architecture_retry_width'] = 320
+            state['stop_reason'] = 'allocation_end_or_yield'
+            log(dict(event='architecture_retry_required', measured_seconds=float(elapsed), small_seconds=state['small_round_seconds'], next_width=320, reason='more_than_four_times_small_model'))
         cursor = None
         collector.completed.clear()
         round_state = dict(ready=None,seconds=0.,decisions_start=collector.decisions)
+        distillation_finished = distilling and state['distillation_updates'] == 80
+        if distillation_finished and state['stop_reason'] is None:
+            if evaluate():
+                state['distillation_evaluated'] = True
+                state['learning_rate'] = 1e-4
+                state['high_kl_streak'] = 0
+                del teacher
+                teacher = None
+                checkpoint()
+                log(dict(event='distillation_complete', update=state['update'], rounds=80, PPO_learning_rate=1e-4))
+            else:
+                state['stop_reason'] = 'allocation_end_or_yield'
         if state["training_seconds"] >= state["next_evaluation"] and state["stop_reason"] is None:
             if evaluate():
                 state["next_evaluation"] += 7200.
