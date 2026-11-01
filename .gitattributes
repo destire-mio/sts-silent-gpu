@@ -1,1 +1,3 @@
 core/*/catalog.def merge=union
+*.md text eol=lf
+*.py text eol=lf
