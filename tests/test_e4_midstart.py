@@ -7,7 +7,7 @@ from train.e4_midstart import MidstartCollector
 
 def make():
     torch.set_num_threads(1)
-    search = NoSLSearch(2, torch.device('cpu'), 101, storage_slots=512)
+    search = NoSLSearch(2, torch.device('cpu'), 101, storage_slots=768)
     collector = MidstartCollector(search, torch.Generator().manual_seed(33))
     collector.fresh([0, 1])
     return collector
@@ -72,28 +72,56 @@ def test_warmup_and_restart_mix(monkeypatch):
     calls = Counter()
     monkeypatch.setattr(NoSLCollector, 'fresh', lambda self, slots: calls.update({'fresh':len(slots)}))
     monkeypatch.setattr(c, 'restart', lambda pool, slot: calls.update({pool:1}))
-    c.pools = [[{}] * 32, [{}] * 31]
+    c.pools = [[{}] * 32, [{}] * 31, []]
     c.fresh(list(range(10000)))
     assert calls == {'fresh':10000}
     calls.clear()
-    c.pools = [[{}] * 32, [{}] * 32]
+    c.pools = [[{}] * 32, [{}] * 32, []]
     c.fresh(list(range(10000)))
     assert sum(calls.values()) == 10000
     assert 4800 < calls['fresh'] < 5200
     assert 3800 < calls[1] < 4200
     assert 800 < calls[0] < 1200
+    calls.clear()
+    c.pools[2] = [{}] * 32
+    c.fresh(list(range(10000)))
+    assert 4800 < calls['fresh'] < 5200 and 800 < calls[0] < 1200
+    assert 2300 < calls[1] < 2700 and 1300 < calls[2] < 1700
 
 def test_pool_capacity_and_old_checkpoint_migration():
     c = make()
     old = NoSLCollector(NoSLSearch(2, torch.device('cpu'), 1), torch.Generator().manual_seed(5))
     old.fresh([0, 1])
     restore_collector(c, collector_snapshot(old))
-    assert c.pools == [[], []]
+    assert c.pools == [[], [], []]
     assert [c.search.batch.state_bytes(s) for s in [0, 1]] == [old.search.batch.state_bytes(s) for s in [0, 1]]
     for _ in range(260):
         c.retain(0, 0)
     assert len(c.pools[0]) == 256 and c.pools[1] == []
-    assert c.search.probe_slots[0] == c.search.lanes + 512
+    assert c.search.probe_slots[0] == c.search.lanes + 768
+
+
+def test_two_pool_resume_and_first_act2_boss_capture(monkeypatch):
+    c = make()
+    saved = collector_snapshot(c)
+    saved['midstart']['pools'] = saved['midstart']['pools'][:2]
+    saved['midstart']['captured'] = [row[:2] for row in saved['midstart']['captured']]
+    before = [c.search.batch.state_bytes(s) for s in [0,1]]
+    resumed = make()
+    restore_collector(resumed, saved)
+    assert resumed.pools == [[],[],[]]
+    assert before == [resumed.search.batch.state_bytes(s) for s in [0,1]]
+    captured = []
+    def retain(pool, slot):
+        captured.append((pool,slot))
+        resumed.captured[slot][pool] = True
+    monkeypatch.setattr(resumed, 'retain', retain)
+    monkeypatch.setattr(NoSLCollector, 'choose', lambda self,model,slots,progress:None)
+    resumed.captured[0] = [True,True,False]
+    progress = {0:[33,2,COMBAT_PHASE,BOSS_ROOM,0,0,0,0,50]}
+    resumed.choose(None,[0],progress)
+    resumed.choose(None,[0],progress)
+    assert captured == [(2,0)]
 
 
 def test_faulted_episode_never_enters_pool(monkeypatch):
