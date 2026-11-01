@@ -25,6 +25,7 @@ from train.model import ModelConfig
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_midstart import MidstartCollector
 from train.e4_learner_profile import TwoMicrobatchProfile
+from train.e4_checkpoint import load_matching_rank
 
 
 def write_json(path, value):
@@ -86,6 +87,8 @@ def main():
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4)
     cursor = None
+    rank_path = output / f"rank-{rank}.pt"
+    committed_rank_path = None
     round_state = dict(ready=None, seconds=0., decisions_start=0)
     if common.exists():
         policy.load_state_dict(saved["model"])
@@ -93,12 +96,16 @@ def main():
         state.update(saved["state"])
         policy.encoder_fp16 = state["precision"] == "encoder_fp16_heads_fp32"
         ppo_rng.set_state(saved["ppo_rng"])
-        rank_path = output / f"rank-{rank}.pt"
         for owner in range(world):
-            if owner == rank and rank_path.exists():
-                candidate = torch.load(rank_path, map_location="cpu", weights_only=False)
-                if candidate["update"] == (state["update"], state["checkpoint_serial"]):
+            if owner == rank:
+                candidate, committed_rank_path = load_matching_rank(
+                    rank_path, (state["update"], state["checkpoint_serial"]),
+                    lambda path: torch.load(path, map_location="cpu", weights_only=False))
+                if candidate is not None:
                     cursor, _, round_state = restore_rank(candidate, collector, device, ppo_rng)
+                    if committed_rank_path != rank_path:
+                        print(json.dumps(dict(event="resumed_previous_rank_checkpoint", rank=rank,
+                            update=state["update"], serial=state["checkpoint_serial"])), flush=True)
                 else:
                     print(json.dumps(dict(event="resume_fresh_collector", rank=rank, reason="rank checkpoint differs from shared checkpoint")), flush=True)
                 del candidate
@@ -141,9 +148,11 @@ def main():
         return bool(flag)
 
     def checkpoint():
+        nonlocal committed_rank_path
         state["checkpoint_serial"] += 1
         identity = (state["update"], state["checkpoint_serial"])
-        save_rank(output / f"rank-{rank}.pt", collector, cursor, identity, ppo_rng, round_state)
+        save_rank(rank_path, collector, cursor, identity, ppo_rng, round_state,
+                  committed_path=committed_rank_path)
         dist.barrier()
         if rank == 0:
             temporary = output / "model.pt.tmp"
@@ -153,6 +162,7 @@ def main():
             temporary.replace(common)
             log(dict(event="checkpoint", update=state["update"], reason=state["stop_reason"]))
         dist.barrier()
+        committed_rank_path = rank_path
 
     def evaluate(evaluated=None, label=None):
         evaluated = evaluated or policy

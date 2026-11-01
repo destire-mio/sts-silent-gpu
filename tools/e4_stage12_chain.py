@@ -151,13 +151,19 @@ def checkpoint_state(state):
             '--small-seconds', str(checkpoint['state']['small_round_seconds'])],
             cwd=state['repository'], env=environment, stdin=subprocess.DEVNULL)
         checkpoint = torch.load(path, map_location='cpu', weights_only=False)
-    rank = torch.load(path.parent / 'rank-0.pt', map_location='cpu', weights_only=False)
-    cursor = rank['cursor']
+    import runpy
+    loader = runpy.run_path(str(Path(state['repository']) / 'train/e4_checkpoint.py'))['load_matching_rank']
+    rank, rank_path = loader(path.parent / 'rank-0.pt',
+        (checkpoint['state']['update'], checkpoint['state']['checkpoint_serial']),
+        lambda candidate: torch.load(candidate, map_location='cpu', weights_only=False))
+    cursor = rank['cursor'] if rank is not None else None
     steps = [int(item['step']) for item in checkpoint['optimizer']['state'].values() if 'step' in item]
     return dict(state=checkpoint['state'], optimizer_steps=steps[0] if steps else 0,
                 partial_steps=cursor['optimizer_steps'] if cursor is not None else 0,
                 partial_attempts=cursor['optimizer_attempts'] if cursor is not None else 0,
-                partial_skips=cursor['amp_skipped_steps'] if cursor is not None else 0)
+                partial_skips=cursor['amp_skipped_steps'] if cursor is not None else 0,
+                rank_checkpoint_match=rank is not None,
+                rank_checkpoint_path=str(rank_path) if rank_path is not None else None)
 
 
 def watch(root, trigger):
