@@ -402,7 +402,7 @@ def precision_probe(model, cursor, rank):
 
 
 def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
-                      teacher=None, entropy_coefficient=.01):
+                      teacher=None, entropy_coefficient=.01, learner_profile=None):
     f = cursor["fragment"]
     selected, global_count = local_minibatch(cursor, rank)
     chunks = list(selected.split(microbatch))
@@ -411,12 +411,16 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
     optimizer.zero_grad(set_to_none=True)
     steps = int(count)
     for i in range(steps):
+        if learner_profile is not None:
+            learner_profile.before_microbatch()
         ids = chunks[i] if i < len(chunks) else selected[:0]
         sync = model.no_sync() if i + 1 < steps else nullcontext()
         with sync:
             if len(ids):
                 inputs = packed_inputs(f["data"], f["offsets"], ids, ids.device)
                 inputs["candidate_mask"] &= f["policy_mask"][ids, :inputs["candidate_mask"].shape[1]]
+                if learner_profile is not None:
+                    learner_profile.observe(inputs["entity_mask"])
                 if teacher is not None:
                     with torch.no_grad():
                         teacher_logits, teacher_value = teacher(inputs)
@@ -444,6 +448,8 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 logits, value = model(empty_inputs(cursor["order"].device))
                 scalar = (logits.sum() + value.sum()) * 0.
             scaler.scale(scalar).backward()
+        if learner_profile is not None:
+            learner_profile.after_microbatch()
     scaler.unscale_(optimizer)
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), .5, error_if_nonfinite=False)
     scale_before = scaler.get_scale()

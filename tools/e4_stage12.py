@@ -24,6 +24,7 @@ from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
 from train.model import ModelConfig
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_midstart import MidstartCollector
+from train.e4_learner_profile import TwoMicrobatchProfile
 
 
 def write_json(path, value):
@@ -215,6 +216,11 @@ def main():
              epochs=2, model_parameters=sum(p.numel() for p in policy.parameters()),
              model=dict(**asdict(config),pooling="CLS"), teacher=state.get("teacher_path"), distillation_updates=state.get("distillation_updates"),
              no_SL=True, from_scratch=not common.exists()))
+    profile_path = output / "claude127-learner-profile.json"
+    learner_profile = (TwoMicrobatchProfile(profile_path, state["update"] + 1, log)
+                       if rank == 0 and common.exists() and not profile_path.exists() else None)
+    log(dict(event="midstart_policy", fresh=.5, act1_boss=.1, act2=.4,
+             minimum_pool_size=32, capacity_per_pool=256))
     last_checkpoint = time.monotonic()
     if not common.exists():
         checkpoint()
@@ -302,7 +308,8 @@ def main():
             with search.times.measure("learner"):
                 advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
                     teacher=teacher if teacher is not None and state['distillation_updates'] < 80 else None,
-                    entropy_coefficient=state.get('entropy_coefficient', .01))
+                    entropy_coefficient=state.get('entropy_coefficient', .01),
+                    learner_profile=learner_profile)
         sync_started = time.perf_counter()
         torch.cuda.synchronize(device)
         search.times.seconds["learner"] += time.perf_counter() - sync_started

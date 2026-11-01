@@ -79,8 +79,8 @@ def test_warmup_and_restart_mix(monkeypatch):
     c.pools = [[{}] * 32, [{}] * 32]
     c.fresh(list(range(10000)))
     assert sum(calls.values()) == 10000
-    assert 6800 < calls['fresh'] < 7200
-    assert 1800 < calls[1] < 2200
+    assert 4800 < calls['fresh'] < 5200
+    assert 3800 < calls[1] < 4200
     assert 800 < calls[0] < 1200
 
 def test_pool_capacity_and_old_checkpoint_migration():

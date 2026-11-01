@@ -69,12 +69,12 @@ class MidstartCollector(NoSLCollector):
         if min(map(len, self.pools)) < 32:
             return super().fresh(slots)
         choices = torch.randint(10, (len(slots),), generator=self.seed_rng).tolist()
-        new = [slot for slot, choice in zip(slots, choices) if choice >= 3]
+        new = [slot for slot, choice in zip(slots, choices) if choice >= 5]
         if new:
             super().fresh(new)
         for slot, choice in zip(slots, choices):
-            if choice < 3:
-                self.restart(1 if choice < 2 else 0, slot)
+            if choice < 5:
+                self.restart(1 if choice < 4 else 0, slot)
 
     def choose(self, model, slots, progress):
         randomized = [s for s in slots if self.pending_randomization[s] is not None
