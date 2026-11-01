@@ -15,6 +15,7 @@ def main():
     parser.add_argument('--device', default='cpu')
     parser.add_argument('--seed-start', type=int, default=2000000000)
     parser.add_argument('--episodes', type=int, default=1024)
+    parser.add_argument('--lanes', type=int, default=128)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     torch.set_num_threads(1)
@@ -22,7 +23,7 @@ def main():
     policy = CLSPolicy(ModelConfig(384, 6, 6, 1536)).to(device).eval()
     policy.load_state_dict(torch.load(args.model, map_location=device, weights_only=True), strict=True)
     policy.encoder_fp16 = device.type == 'cuda'
-    search = LookaheadSearch(1, device, 130, args.depth)
+    search = LookaheadSearch(args.lanes, device, 130, args.depth)
     collector = NoSLCollector(search, torch.Generator().manual_seed(130))
     episodes = collector.evaluate(policy, list(range(args.seed_start, args.seed_start + args.episodes)))
     args.output.write_text(json.dumps(dict(depth=args.depth, episodes=episodes,
