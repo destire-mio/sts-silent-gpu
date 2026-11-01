@@ -17,6 +17,7 @@ from train.e4 import (RoomSearch, SegmentCollector, PHASE, COMBAT_PHASE, FLOOR, 
     ACT, ROOM, BOSS_ROOM, DEATH, VICTORY, MAX_REWARD, ACTION_KINDS)
 from train.model import Policy, ModelConfig, network_inputs, distribution, packed_inputs, record_lengths
 from train.e4_stage6.training_worker import move_tensors
+from train.e4_checkpoint import write_rank_checkpoint
 
 
 DECISION_TYPES = ('combat', 'card_reward', 'map', 'shop', 'campfire', 'other')
@@ -552,14 +553,12 @@ def restore_collector(collector, state):
     collector.search.entropy_count = entropy_count
 
 
-def save_rank(path, collector, cursor, update, ppo_rng, round_state):
+def save_rank(path, collector, cursor, update, ppo_rng, round_state, committed_path=None):
     state = dict(update=update, round_state=move_tensors(round_state, torch.device("cpu")), collector=collector_snapshot(collector),
                  cursor=move_tensors(cursor, torch.device("cpu")), ppo_rng=ppo_rng.get_state(),
                  torch_rng=torch.get_rng_state(), python_rng=random.getstate(), numpy_rng=np.random.get_state(),
                  cuda_rng=torch.cuda.get_rng_state(collector.search.device) if collector.search.device.type == "cuda" else None)
-    temporary = Path(str(path) + ".tmp")
-    torch.save(state, temporary)
-    temporary.replace(path)
+    write_rank_checkpoint(path, state, torch.save, committed_path)
 
 
 def restore_rank(state, collector, device, ppo_rng):
