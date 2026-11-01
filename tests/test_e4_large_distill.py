@@ -96,6 +96,7 @@ def test_student_initialization_retains_collectors_and_zero_adam(tmp_path):
     assert report['collectors']==8 and saved['optimizer']['state']=={}
     assert saved['state']['model_config']==dict(width=384,layers=6,heads=6,feedforward=1536)
     assert saved['state']['training_seconds']==98000. and saved['state']['distillation_updates']==0
+    assert saved['state']['microbatch']==512
     for rank in range(8):
         item=torch.load(output/f'rank-{rank}.pt',weights_only=False)
         assert item['update']==(0,60) and item['cursor'] is None and item['collector']['partial'] is None
