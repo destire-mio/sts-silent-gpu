@@ -131,11 +131,30 @@ def enqueue(root, parent):
 def checkpoint_state(state):
     import torch
     path = Path(state['training_root']) / 'training/model.pt'
+    transition = state.get('pending_training_transition')
+    if not path.exists() and transition:
+        environment = dict(os.environ, OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1',
+                           PYTHONPATH=state['build'] + ':' + state['repository'])
+        subprocess.check_call([sys.executable, '-m', 'tools.e4_large_prepare',
+            '--source', transition['source_training'], '--output', str(path.parent),
+            '--teacher', transition['teacher_path'], '--width', '384',
+            '--small-seconds', str(transition['small_round_seconds'])],
+            cwd=state['repository'], env=environment, stdin=subprocess.DEVNULL)
     checkpoint = torch.load(path, map_location='cpu', weights_only=False)
+    if checkpoint['state'].get('architecture_retry_width') == 320:
+        environment = dict(os.environ, OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1',
+                           PYTHONPATH=state['build'] + ':' + state['repository'])
+        (path.parent / 'training.jsonl').rename(path.parent / 'training-width384.jsonl')
+        subprocess.check_call([sys.executable, '-m', 'tools.e4_large_prepare',
+            '--source', str(path.parent), '--output', str(path.parent),
+            '--teacher', checkpoint['state']['teacher_path'], '--width', '320',
+            '--small-seconds', str(checkpoint['state']['small_round_seconds'])],
+            cwd=state['repository'], env=environment, stdin=subprocess.DEVNULL)
+        checkpoint = torch.load(path, map_location='cpu', weights_only=False)
     rank = torch.load(path.parent / 'rank-0.pt', map_location='cpu', weights_only=False)
     cursor = rank['cursor']
     steps = [int(item['step']) for item in checkpoint['optimizer']['state'].values() if 'step' in item]
-    return dict(state=checkpoint['state'], optimizer_steps=steps[0],
+    return dict(state=checkpoint['state'], optimizer_steps=steps[0] if steps else 0,
                 partial_steps=cursor['optimizer_steps'] if cursor is not None else 0,
                 partial_attempts=cursor['optimizer_attempts'] if cursor is not None else 0,
                 partial_skips=cursor['amp_skipped_steps'] if cursor is not None else 0)
@@ -164,6 +183,7 @@ def run(root):
     with locked(root) as state:
         settle(root, state)
         state['jobs'][identity]['state'] = 'RUNNING'
+        state['jobs'][identity].update(runtime_source=state['source_commit'], runtime_repository=state['repository'], training_root=state['training_root'])
         checkpoint = checkpoint_state(state)
         state['jobs'][identity]['resume'] = checkpoint
         reason = checkpoint['state']['stop_reason']
@@ -188,7 +208,7 @@ def run(root):
         worker = subprocess.Popen([str(Path(sys.executable).parent / 'torchrun'), '--standalone',
             '--nproc_per_node=' + str(state['jobs'][identity]['world']), '-m', 'tools.e4_stage12',
             '--output', str(output), '--deadline', str(deadline)], cwd=state['repository'],
-            env=environment, stdout=stream, stderr=subprocess.STDOUT)
+            env=environment, stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.STDOUT)
         while worker.poll() is None:
             with locked(root) as current:
                 due = time.time() >= current['next_resource_check_at']

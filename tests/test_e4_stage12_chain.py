@@ -16,7 +16,7 @@ class ChainTests(unittest.TestCase):
         (self.root / 'training').mkdir()
         self.state = dict(limit_node_seconds=29399, charged_node_seconds=14400,
             request=dict(world=8, cpus=9, memory_mib=21649), training_root=str(self.root),
-            repository='/repo', next_resource_check_at=time.time() + 630, resource_triggers=[],
+            repository='/repo', source_commit='test-source', next_resource_check_at=time.time() + 630, resource_triggers=[],
             resources=dict(finished_at=time.time(), pending=[]),
             jobs={'10': dict(world=8, wall_seconds=14400, state='RUNNING', settled=False)})
         (self.root / 'state.json').write_text(json.dumps(self.state))

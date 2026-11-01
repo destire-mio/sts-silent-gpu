@@ -51,9 +51,10 @@ def next_learning_rate(rate, kl):
 
 
 class CLSPolicy(Policy):
-    def __init__(self):
-        super().__init__(ModelConfig(width=256, layers=4, heads=4, feedforward=1024))
-        self.cls = nn.Parameter(torch.zeros(1, 1, 256))
+    def __init__(self, config=None):
+        config = config or ModelConfig(width=256, layers=4, heads=4, feedforward=1024)
+        super().__init__(config)
+        self.cls = nn.Parameter(torch.zeros(1, 1, config.width))
         nn.init.normal_(self.cls, std=.02)
         self.encoder_fp16 = False
 
@@ -96,9 +97,10 @@ class StageTimes:
 
 
 class NoSLSearch(RoomSearch):
-    def __init__(self, lanes, device, seed, *, storage_slots=0):
+    def __init__(self, lanes, device, seed, *, storage_slots=0, greedy=False):
         super().__init__(lanes, 1, device, torch.Generator(device=device).manual_seed(seed),
                          scratch_slots=storage_slots, inference_chunk=lanes, bosses_seen=511, probe_slots=4096)
+        self.greedy = greedy
         self.entropy_sum = torch.zeros((), dtype=torch.float64, device=device)
         self.entropy_count = 0
         self.decision_entropy = torch.zeros((2, len(DECISION_TYPES)), dtype=torch.float64, device=device)
@@ -181,7 +183,7 @@ class NoSLSearch(RoomSearch):
                 inputs['candidate_mask'] &= self.last_policy_mask[positions, :inputs['candidate_mask'].shape[1]]
                 logits, value = model(inputs)
                 policy, normalized_entropy = distribution(logits.float(), inputs['candidate_mask'])
-                action = torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
+                action = policy.probs.argmax(dim=1) if self.greedy else torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
                 rows = torch.stack((action.double(), value.double(), policy.log_prob(action).double()), dim=1).cpu().tolist()
                 self.entropy_sum += policy.entropy().double().sum()
                 self.entropy_count += len(positions)
@@ -327,6 +329,24 @@ class NoSLCollector(SegmentCollector):
         return result
 
 
+def distillation_terms(logits, value, teacher_logits, teacher_value, legal):
+    teacher_log = teacher_logits.float().log_softmax(-1).masked_fill(~legal, 0.)
+    student_log = logits.float().log_softmax(-1).masked_fill(~legal, 0.)
+    probability = teacher_log.exp().masked_fill(~legal, 0.)
+    return (probability * (teacher_log - student_log)).sum(-1), (value - teacher_value).square()
+
+
+@torch.no_grad()
+def student_log_baseline(student, fragment, microbatch=1024):
+    indices = fragment['action_valid'].nonzero().flatten()
+    for ids in indices.split(microbatch):
+        inputs = packed_inputs(fragment['data'], fragment['offsets'], ids, ids.device)
+        inputs['candidate_mask'] &= fragment['policy_mask'][ids, :inputs['candidate_mask'].shape[1]]
+        logits, _ = student(inputs)
+        policy, _ = distribution(logits.float(), inputs['candidate_mask'])
+        fragment['logs'][ids] = policy.log_prob(fragment['actions'][ids])
+
+
 def new_cursor(fragment, rng, world):
     device = fragment["actions"].device
     indices = fragment["action_valid"].nonzero().flatten()
@@ -381,7 +401,8 @@ def precision_probe(model, cursor, rank):
                 precision="encoder_fp16_heads_fp32" if model.encoder_fp16 else "fp32")
 
 
-def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024):
+def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
+                      teacher=None, entropy_coefficient=.01):
     f = cursor["fragment"]
     selected, global_count = local_minibatch(cursor, rank)
     chunks = list(selected.split(microbatch))
@@ -403,7 +424,13 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 actor = -torch.minimum(ratio * f["advantages"][ids],
                                        ratio.clamp(.8, 1.2) * f["advantages"][ids])
                 value_loss = (value - f["returns"][ids]).square()
-                loss = actor + .5 * value_loss - .01 * normalized_entropy
+                if teacher is None:
+                    loss = actor + .5 * value_loss - entropy_coefficient * normalized_entropy
+                else:
+                    with torch.no_grad():
+                        teacher_logits, teacher_value = teacher(inputs)
+                    actor, value_loss = distillation_terms(logits, value, teacher_logits, teacher_value, inputs['candidate_mask'])
+                    loss = actor + .5 * value_loss
                 scalar = loss.sum() * world / max(1, global_count)
                 cursor["finite"] &= torch.isfinite(loss).all()
                 cursor["totals"] += torch.stack((actor.detach().double().sum(), value_loss.detach().double().sum(),
