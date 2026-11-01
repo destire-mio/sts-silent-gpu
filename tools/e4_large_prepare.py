@@ -14,7 +14,7 @@ def prepare(source, output, teacher, width, small_seconds):
     output.mkdir(parents=True, exist_ok=True)
     if output != source:
         assert not (output/'model.pt').exists()
-    config = ModelConfig(width,6,6 if width == 384 else 5,4*width)
+    config = ModelConfig(512,8,8,2048) if width == 512 else ModelConfig(width,6,6 if width == 384 else 5,4*width)
     torch.manual_seed(20261101)
     policy = CLSPolicy(config)
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4, eps=1e-5)
@@ -25,6 +25,19 @@ def prepare(source, output, teacher, width, small_seconds):
         teacher_path=str(teacher), distillation_updates=0, distillation_evaluated=False,
         entropy_coefficient=.005, small_round_seconds=small_seconds,
         source_checkpoint=str(source/'model.pt'), source_update=old['state']['update'])
+    if width == 512:
+        assert source != output
+        assert old['state']['model_config'] == dict(width=384,layers=6,heads=6,feedforward=1536)
+        evaluations = [json.loads(p.read_text()) for p in source.glob('evaluation-*.json')]
+        eligible = [e for e in evaluations if e.get('complete') and e.get('selection') == 'argmax'
+                    and e.get('model_snapshot', '').startswith('dev-')]
+        best = max(eligible, key=lambda e:(e['mean_floor'], e['training_seconds']))
+        teacher = source / best['model_snapshot']
+        teacher_policy = CLSPolicy(ModelConfig(384,6,6,1536))
+        teacher_policy.load_state_dict(torch.load(teacher,map_location='cpu',weights_only=True),strict=True)
+        state.update(teacher_model_config=dict(width=384,layers=6,heads=6,feedforward=1536),
+                     teacher_path=str(teacher),teacher_label='teacher-best384-argmax',
+                     teacher_evaluated_model=teacher.name,distillation_target=40)
     identity = (0,state['checkpoint_serial'])
     for rank in range(8):
         record = torch.load(source/f'rank-{rank}.pt', map_location='cpu', weights_only=False)
@@ -52,7 +65,7 @@ def main():
     parser.add_argument('--source',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--teacher',type=Path,required=True)
-    parser.add_argument('--width',type=int,choices=(384,320),default=384)
+    parser.add_argument('--width',type=int,choices=(384,320,512),default=384)
     parser.add_argument('--small-seconds',type=float,required=True)
     args=parser.parse_args()
     torch.set_num_threads(1)
