@@ -2,6 +2,8 @@
 from collections import deque
 from copy import deepcopy
 import math
+import gc
+import json
 import time
 import torch
 import torch.distributed as dist
@@ -12,7 +14,45 @@ from train.e4_lookahead import CombatLookahead, LookaheadSearch
 from train.model import packed_inputs
 
 BETA = .5
-MAX_LANES = 32
+MAX_LANES = 512
+
+
+def memory_limited_lanes(requested, active, capacity, current_used, previous_peak,
+                         device_total, native_per_lane, working_per_lane):
+    """Conservative growth projection; do not consume the allocation's final 64 MiB."""
+    limit = min(int(previous_peak * 1.25), max(0, device_total - 64 * 1024**2))
+    allowed = active
+    for candidate in range(active + 1, min(MAX_LANES, requested) + 1):
+        projected = (current_used + max(0,candidate-capacity)*native_per_lane
+                     + (candidate-active)*working_per_lane)
+        if projected > limit:
+            break
+        allowed = candidate
+    return min(requested, allowed), limit
+
+
+def gpu_memory(device):
+    if device.type != 'cuda':
+        return None
+    free, total = torch.cuda.mem_get_info(device)
+    used = total-free
+    external = max(0,used-torch.cuda.memory_reserved(device))
+    return dict(used=used,total=total,
+        peak=max(used,torch.cuda.max_memory_reserved(device)+external),
+        allocated=torch.cuda.memory_allocated(device),
+        allocated_peak=torch.cuda.max_memory_allocated(device))
+
+
+def enlarged_collector_state(saved, blank):
+    """Extend only lane-indexed state, preserving every existing live game and RNG."""
+    state = deepcopy(saved)
+    for key in ('seeds','paths','floor_steps','noncombat_floor_steps','tails',
+                'map_returned','pending','rewards','pre_boss_deck_sizes','reward_history'):
+        state[key] = deepcopy(saved[key]) + deepcopy(blank[key][len(saved[key]):])
+    for key in ('starts','captured','randomizations','pending_randomization','starting_rewards'):
+        state['midstart'][key] = (deepcopy(saved['midstart'][key])
+                                 + deepcopy(blank['midstart'][key][len(saved['midstart'][key]):]))
+    return state
 
 
 class ExpertBudgetEnded(Exception):
@@ -34,9 +74,9 @@ def ce_scalar(logits, legal, actions, world, total_samples, minibatches):
 
 
 class ExpertSearch(LookaheadSearch):
-    def __init__(self, device, seed):
-        NoSLSearch.__init__(self, MAX_LANES, device, seed,
-                            storage_slots=MAX_LANES * 32, greedy=True, probe_slots=128)
+    def __init__(self, device, seed, lanes=1):
+        NoSLSearch.__init__(self, lanes, device, seed,
+                            storage_slots=lanes * 32, greedy=True, probe_slots=128)
         self.lookahead = CombatLookahead(self, seed, depth='combat')
         self.preview_steps = self.mainline_decisions = self.preview_decisions = self.overrides = 0
         self.labels = {}
@@ -125,11 +165,21 @@ class ExpertIteration:
     def __init__(self, source_collector, output, deadline, rank, saved=None):
         device = source_collector.search.device
         self.device = device
-        self.search = ExpertSearch(device, 20261380 + rank)
+        self.source_collector, self.output, self.deadline, self.rank = source_collector, output, deadline, rank
+        self.capacity = len(saved['collector']['seeds']) if saved is not None else 1
+        memory_before = gpu_memory(device)
+        self.search = ExpertSearch(device, 20261380 + rank, self.capacity)
         self.search.deadline, self.search.evidence_directory = deadline, output
         self.collector = ExpertCollector(self.search,
             torch.Generator().manual_seed(20262380 + rank), rank=rank,
             source_collector=source_collector)
+        memory_after = gpu_memory(device)
+        self.memory = {}
+        if memory_before is not None:
+            native = max(1,memory_after['used']-memory_before['used'])
+            self.memory = dict(previous_peak=memory_before['peak'],
+                native_per_lane=math.ceil(native*33/(33*self.capacity+128)),
+                working_per_lane=math.ceil(max(64*1024**2,memory_before['allocated_peak']-memory_before['allocated'])*64/2048))
         self.lanes = 1
         self.base_seconds = None
         self.round = None
@@ -140,21 +190,65 @@ class ExpertIteration:
             self.lanes, self.base_seconds = saved['lanes'], saved['base_seconds']
             self.round = saved['round']
             self.setup_seconds = saved.get('setup_seconds', 0.)
+            self.memory = saved.get('memory',self.memory)
             if self.round:
                 for row in self.round['records']:
                     for key in ('data', 'mask'):
                         row[key] = row[key].to(device)
+
+    def prepare_lanes(self):
+        requested = self.lanes
+        measured = gpu_memory(self.device)
+        active = self.memory.get('last_active', 1)
+        safe = requested
+        if measured is not None:
+            safe, limit = memory_limited_lanes(requested, active, self.capacity,
+                measured['used'], self.memory['previous_peak'], measured['total'],
+                self.memory['native_per_lane'],self.memory['working_per_lane'])
+            self.memory['last_limit'] = limit
+        if dist.is_initialized():
+            common = torch.tensor(safe,dtype=torch.int64,device=self.device)
+            dist.all_reduce(common,op=dist.ReduceOp.MIN)
+            safe = int(common)
+        if safe < requested:
+            print(json.dumps(dict(event='expert_lane_memory_limit',rank=self.rank,
+                requested_lanes=requested,retained_lanes=safe,
+                previous_peak_bytes=self.memory.get('previous_peak'),
+                growth_limit_bytes=self.memory.get('last_limit'),
+                reason='projected native storage plus preview working memory exceeds previous peak +25% or device headroom')),flush=True)
+        self.lanes = safe
+        if safe <= self.capacity:
+            return
+        started = time.monotonic()
+        saved = self.state()
+        source = self.source_collector
+        del self.collector, self.search
+        gc.collect()
+        if self.device.type == 'cuda':
+            torch.cuda.empty_cache()
+        self.search = ExpertSearch(self.device,20261380+self.rank,safe)
+        self.search.deadline, self.search.evidence_directory = self.deadline,self.output
+        self.collector = ExpertCollector(self.search,
+            torch.Generator().manual_seed(20262380+self.rank),rank=self.rank,
+            source_collector=source)
+        blank = collector_snapshot(self.collector)
+        restore_collector(self.collector,enlarged_collector_state(saved['collector'],blank))
+        self.search.lookahead.rng.set_state(saved['preview_rng'].cpu())
+        self.capacity = safe
+        self.setup_seconds += time.monotonic()-started
 
     def state(self):
         from train.e4_stage6.training_worker import move_tensors
         return dict(collector=collector_snapshot(self.collector),
             preview_rng=self.search.lookahead.rng.get_state(), lanes=self.lanes,
             base_seconds=self.base_seconds,
-            round=move_tensors(self.round, torch.device('cpu')), setup_seconds=self.setup_seconds)
+            round=move_tensors(self.round, torch.device('cpu')), setup_seconds=self.setup_seconds,
+            capacity=self.capacity, memory=deepcopy(self.memory))
 
     @torch.no_grad()
     def collect(self, policy, update, ppo_collection_seconds):
         if self.round is None:
+            self.prepare_lanes()
             self.round = dict(update=update, ticks=0, records=[], seconds=0.,
                               agreement=0, preview_steps=0, done=False, lanes=self.lanes)
             self.collector.completed.clear()
@@ -229,14 +323,21 @@ class ExpertIteration:
         extra = float(times[0])
         base = max(.001, round_seconds - extra)
         used_lanes = self.round['lanes']
+        self.memory['last_active'] = used_lanes
         self.lanes = next_lane_count(used_lanes, extra, base)
         self.base_seconds = base
+        measured_memory = gpu_memory(self.device)
+        if measured_memory is not None:
+            self.memory['previous_peak'] = measured_memory['peak']
         row = dict(expert_samples=int(values[0]), expert_beta=BETA,
             expert_ce=float(values[4]/values[5]) if float(values[5]) else None,
             expert_argmax_agreement=float(values[1]/values[0]) if float(values[0]) else None,
             expert_completed=int(values[2]),
             expert_mean_floor=float(values[3]/values[2]) if float(values[2]) else None,
             expert_lanes=used_lanes, expert_next_lanes=self.lanes,
+            expert_storage_lanes=self.capacity, expert_max_lanes=MAX_LANES,
+            expert_gpu_peak_bytes=self.memory.get('previous_peak'),
+            expert_memory_growth_limit_bytes=self.memory.get('last_limit'),
             expert_extra_seconds=extra, expert_setup_seconds=self.setup_seconds,
             expert_collection_seconds=float(times[1]),
             expert_ce_seconds=float(times[2]), expert_base_seconds=base,
