@@ -124,6 +124,9 @@ class EvaluationLedgerCollector(NoSLCollector):
         terminal_slots = [s for s,end in zip(slots,result[1]) if end]
         for episode,slot in zip(self.completed[count:],terminal_slots):
             record = self.records[slot]
+            if episode['reach']['act3_second_boss']:
+                episode['outcome'] = 'act3_win'
+                record.pop('death',None)
             record.update(final_floor=episode['floor'],outcome=episode['outcome'],stalled=episode['outcome']=='stalled')
             for key in ['elite_floors','combat_floors','room_entry_hp','encounter']:record.pop(key)
             episode['act2_ledger'] = record
