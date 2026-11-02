@@ -327,8 +327,7 @@ class ExpertIteration:
         self.lanes = next_lane_count(used_lanes, extra, base)
         self.base_seconds = base
         measured_memory = gpu_memory(self.device)
-        if measured_memory is not None:
-            self.memory['previous_peak'] = measured_memory['peak']
+        # previous_peak is the pre-expert pure-PPO anchor, preserved by checkpoints.
         row = dict(expert_samples=int(values[0]), expert_beta=BETA,
             expert_ce=float(values[4]/values[5]) if float(values[5]) else None,
             expert_argmax_agreement=float(values[1]/values[0]) if float(values[0]) else None,
@@ -336,7 +335,8 @@ class ExpertIteration:
             expert_mean_floor=float(values[3]/values[2]) if float(values[2]) else None,
             expert_lanes=used_lanes, expert_next_lanes=self.lanes,
             expert_storage_lanes=self.capacity, expert_max_lanes=MAX_LANES,
-            expert_gpu_peak_bytes=self.memory.get('previous_peak'),
+            expert_gpu_peak_bytes=measured_memory['peak'] if measured_memory is not None else None,
+            expert_memory_anchor_peak_bytes=self.memory.get('previous_peak'),
             expert_memory_growth_limit_bytes=self.memory.get('last_limit'),
             expert_extra_seconds=extra, expert_setup_seconds=self.setup_seconds,
             expert_collection_seconds=float(times[1]),
