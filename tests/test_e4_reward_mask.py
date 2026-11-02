@@ -141,23 +141,26 @@ def test_native_card_reward_skip_returns_once_per_floor():
     assert search.skip_returns[0] == set() and search.reward_history[0].counts == {}
 
 
-def test_stage0_masks_free_relics_keys_and_shop_entry():
+def test_stage0_allows_keys_and_keeps_relic_shop_rules():
     from train.e4 import step0_mask
 
     frame = dict(screen=7, room=0, rewards=[(4, 8, 0), (6, 0, 0), (1, 0, 0)],
                  actions=[(3, 0), (3, 1), (3, 2), (6, None)], rest_options=[None] * 4)
     for room in (0, 1, 2, 5, 6):
-        assert step0_mask(dict(frame, room=room), [True] * 4, False)[0] == [True, False, False, False]
+        assert step0_mask(dict(frame, room=room), [True] * 4, False)[0] == [True] * 4
+    assert step0_mask(frame, [True, False, True, True], False)[0] == [True, False, False, False]
+    no_key = dict(frame,rewards=[(4,8,0),(1,0,0)],actions=[(3,0),(3,1),(6,None)])
+    assert step0_mask(no_key, [True] * 3, False)[0] == [True,False,False]
     frame['actions'] = [(3, 1), (3, 2), (6, None)]
     frame['rest_options'] = [None] * 3
-    assert step0_mask(frame, [True] * 3, False)[0] == [False, True, True]
+    assert step0_mask(frame, [True] * 3, False)[0] == [True] * 3
     assert step0_mask(frame, [False, False, True], False)[0] == [False, False, True]
     boss = dict(frame, screen=12, room=9, actions=[(3, None)] * 3 + [(7, None)],
                 rest_options=[None] * 4)
     assert step0_mask(boss, [True] * 4, False)[0] == [True] * 4
     rest = dict(frame, screen=10, room=4, actions=[(3, None)] * 3 + [(6, None)],
                 rest_options=[1, 2, 6, None])
-    assert step0_mask(rest, [True] * 4, False)[0] == [True, True, False, True]
+    assert step0_mask(rest, [True] * 4, False)[0] == [True] * 4
     shop = dict(frame, screen=10, room=3, actions=[(3, None), (5, None), (6, None)],
                 rest_options=[None] * 3)
     assert step0_mask(shop, [True] * 3, False)[0] == [True, True, False]

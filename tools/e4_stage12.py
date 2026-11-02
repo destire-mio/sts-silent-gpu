@@ -41,7 +41,12 @@ def metrics(episodes):
     return dict(episodes=count, mean_floor=statistics.mean(e["floor"] for e in episodes) if count else None,
         boss_pass_rates={name:sum(e["reach"][name] for e in episodes) / count if count else None
                          for name in ("act1_boss", "act2_boss", "act3_first_boss")},
-        victories=sum(e["reach"]["act3_second_boss"] for e in episodes))
+        victories=sum(e["reach"]["act3_second_boss"] for e in episodes),
+        key_counts={name:sum(e["keys"][name] for e in episodes) for name in ("ruby","emerald","sapphire")},
+        all_three_keys=sum(all(e["keys"].values()) for e in episodes),
+        act4_entries=sum(e["reach"]["act4"] for e in episodes),
+        shield_spear_wins=sum(e["reach"]["shield_spear"] for e in episodes),
+        heart_wins=sum(e["reach"]["heart"] for e in episodes))
 
 
 def paired_summary(episodes, baseline):
@@ -182,7 +187,7 @@ def main():
             evaluator.evaluate(evaluated, list(range(2000000000, 2000001024))[rank::world])
         except AllocationEnded:
             complete = False
-        episodes = [{k:e[k] for k in ("seed","floor","reach","outcome","reward")} for e in evaluator.completed]
+        episodes = [{k:e[k] for k in ("seed","floor","reach","keys","outcome","reward")} for e in evaluator.completed]
         prefix = label or "evaluation"
         filename = output / f"{prefix}-{state['update']}-rank-{rank}.json.gz"
         with gzip.open(filename, "wt") as stream:

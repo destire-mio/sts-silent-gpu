@@ -47,13 +47,11 @@ def combat_diagnostics_summary(rows):
 def step0_mask(frame, legal, shop_opened):
     masked = legal.copy()
     for a, (kind, reward) in enumerate(frame['actions']):
-        if (kind == 3 and ((frame['screen'] == 7 and reward is not None
-                           and frame['rewards'][reward][0] == 6)
-                          or (frame['screen'] == ROOM_SCREEN and frame['rest_options'][a] == 6))):
-            masked[a] = False
         if (frame['screen'] == ROOM_SCREEN and frame['room'] == 3 and not shop_opened and kind == 6):
             masked[a] = False
-    if frame['screen'] == 7:
+    if frame['screen'] == 7 and not any(
+            masked[a] and kind == 3 and reward is not None and frame['rewards'][reward][0] == 6
+            for a, (kind, reward) in enumerate(frame['actions'])):
         for a, (kind, reward) in enumerate(frame['actions']):
             if masked[a] and kind == 3 and reward is not None and frame['rewards'][reward][0] == 4:
                 return [i == a for i in range(len(masked))], False
