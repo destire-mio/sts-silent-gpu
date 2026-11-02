@@ -28,6 +28,7 @@ from train.e4_learner_profile import TwoMicrobatchProfile
 from train.e4_checkpoint import load_matching_rank
 from train.e4_value_diagnostics import explained_variance, nonforced_entropy, value_coefficient
 from train.e4_evaluation_ledger import EvaluationLedgerCollector, value_correlations
+from train.e4_lookahead_window import lookahead60_window
 
 
 def write_json(path, value):
@@ -237,6 +238,9 @@ def main():
         del evaluator, evaluator_search
         gc.collect()
         torch.cuda.empty_cache()
+        if bool(flag) and not label:
+            if not lookahead60_window(output,config,device,rank,world,deadline):
+                state['stop_reason'] = 'allocation_end_or_yield'
         return bool(flag)
 
     log(dict(event="start", world=world, lanes_per_gpu=2048, length=64, global_minibatch=32768,
@@ -271,6 +275,8 @@ def main():
     if teacher is None and state["update"] == 0 and not (output / "baseline.json.gz").exists():
         if not evaluate():
             state["stop_reason"] = "allocation_end_or_yield"
+    if state['stop_reason'] is None and not lookahead60_window(output,config,device,rank,world,deadline):
+        state['stop_reason'] = 'allocation_end_or_yield'
     while state["stop_reason"] is None:
         if stopping():
             state["stop_reason"] = "allocation_end_or_yield"

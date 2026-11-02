@@ -116,9 +116,13 @@ class LookaheadSearch(NoSLSearch):
         super().__init__(lanes, device, seed, storage_slots=lanes * 32, greedy=True)
         self.lookahead = CombatLookahead(self, seed, depth)
         self.preview_steps = 0
+        self.mainline_decisions = 0
+        self.preview_decisions = 0
+        self.overrides = 0
 
     def predict(self, model, slots):
         actions, values, logs = super().predict(model, slots)
+        self.mainline_decisions += len(slots)
         progress = self.progress_for(slots)
         positions = [i for i, slot in enumerate(slots)
                      if slot not in self.failed and progress[slot][PHASE] == COMBAT_PHASE]
@@ -127,4 +131,6 @@ class LookaheadSearch(NoSLSearch):
             for i, action in zip(positions, selected):
                 actions[i] = action
             self.preview_steps += sum(report['preview_steps'] for report in reports)
+            self.preview_decisions += sum(report['preview_steps'] > 0 for report in reports)
+            self.overrides += sum(report['selected'] != report['candidates'][0] for report in reports)
         return actions, values, logs
