@@ -29,6 +29,8 @@ from train.e4_checkpoint import load_matching_rank
 from train.e4_value_diagnostics import explained_variance, nonforced_entropy, value_coefficient
 from train.e4_evaluation_ledger import EvaluationLedgerCollector, value_correlations
 from train.e4_lookahead_window import lookahead60_window
+from train.e4_expert_iteration import ExpertIteration, attach_expert
+from train.e4_expert_window import periodic_combat_window, due_combat_comparison
 
 
 def write_json(path, value):
@@ -95,6 +97,8 @@ def main():
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4)
     cursor = None
+    expert = None
+    expert_saved = None
     rank_path = output / f"rank-{rank}.pt"
     committed_rank_path = None
     round_state = dict(ready=None, seconds=0., decisions_start=0)
@@ -110,6 +114,7 @@ def main():
                     rank_path, (state["update"], state["checkpoint_serial"]),
                     lambda path: torch.load(path, map_location="cpu", weights_only=False))
                 if candidate is not None:
+                    expert_saved = candidate.get("expert")
                     cursor, _, round_state = restore_rank(candidate, collector, device, ppo_rng)
                     if committed_rank_path != rank_path:
                         print(json.dumps(dict(event="resumed_previous_rank_checkpoint", rank=rank,
@@ -162,7 +167,8 @@ def main():
         state["checkpoint_serial"] += 1
         identity = (state["update"], state["checkpoint_serial"])
         save_rank(rank_path, collector, cursor, identity, ppo_rng, round_state,
-                  committed_path=committed_rank_path)
+                  committed_path=committed_rank_path,
+                  expert_state=expert.state() if expert is not None else expert_saved)
         dist.barrier()
         if rank == 0:
             temporary = output / "model.pt.tmp"
@@ -241,6 +247,10 @@ def main():
         if bool(flag) and not label:
             if not lookahead60_window(output,config,device,rank,world,deadline):
                 state['stop_reason'] = 'allocation_end_or_yield'
+        if bool(flag) and not label and due_combat_comparison(state['training_seconds']):
+            write_json(output/f'expert-pending-{rank}.json',dict(hour=int(state['training_seconds']//7200)*2))
+            if not periodic_combat_window(output, config, device, rank, world, deadline):
+                state['stop_reason'] = 'allocation_end_or_yield'
         return bool(flag)
 
     log(dict(event="start", world=world, lanes_per_gpu=2048, length=64, global_minibatch=32768,
@@ -277,6 +287,16 @@ def main():
             state["stop_reason"] = "allocation_end_or_yield"
     if state['stop_reason'] is None and not lookahead60_window(output,config,device,rank,world,deadline):
         state['stop_reason'] = 'allocation_end_or_yield'
+    if state["stop_reason"] is None and not periodic_combat_window(output,config,device,rank,world,deadline):
+        state["stop_reason"] = "allocation_end_or_yield"
+    if expert_saved is not None:
+        restore_expert_started = time.monotonic()
+        with torch.random.fork_rng(devices=[device.index]):
+            expert = ExpertIteration(collector, output, deadline, rank, expert_saved)
+        restore_expert_seconds = time.monotonic()-restore_expert_started
+        expert.setup_seconds += restore_expert_seconds
+        round_state["seconds"] += restore_expert_seconds
+        expert_saved = None
     while state["stop_reason"] is None:
         if stopping():
             state["stop_reason"] = "allocation_end_or_yield"
@@ -320,7 +340,26 @@ def main():
                     log(report)
                     if rank == 0:write_json(output/"claude132-rollout-diagnostic.json",report)
                     state["value_rollout_diagnostic_complete"] = True
+            if expert is None:
+                expert_setup_started = time.monotonic()
+                with torch.random.fork_rng(devices=[device.index]):
+                    expert = ExpertIteration(collector, output, deadline, rank, expert_saved)
+                expert.setup_seconds += time.monotonic()-expert_setup_started
+                expert_saved = None
+            expert_interrupted = False
+            try:
+                with torch.random.fork_rng(devices=[device.index]):
+                    expert.collect(policy, state["update"]+1, time.monotonic()-started)
+            except AllocationEnded:
+                expert_interrupted = True
+            expert_flag = torch.tensor(int(expert_interrupted), device=device)
+            dist.all_reduce(expert_flag, op=dist.ReduceOp.MAX)
+            if bool(expert_flag):
+                round_state["seconds"] += time.monotonic()-started
+                state["stop_reason"] = "allocation_end_or_yield"
+                break
             cursor = new_cursor(round_state["ready"], ppo_rng, world)
+            attach_expert(cursor, expert.fragment(), world)
             round_state["ready"] = None
             if not sum(cursor["counts"]):
                 failed = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
@@ -368,6 +407,8 @@ def main():
         row = finish_metrics(cursor, model, scaler)
         elapsed = torch.tensor(round_state["seconds"], dtype=torch.float64, device=device)
         dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
+        if expert is not None and cursor.get("expert") is not None:
+            row.update(expert.finish(cursor, float(elapsed), log))
         decisions = torch.tensor(collector.decisions - round_state["decisions_start"], device=device, dtype=torch.float64)
         by_rank = [torch.empty_like(decisions) for _ in range(world)]
         dist.all_gather(by_rank, decisions)

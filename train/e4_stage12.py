@@ -99,9 +99,9 @@ class StageTimes:
 
 
 class NoSLSearch(RoomSearch):
-    def __init__(self, lanes, device, seed, *, storage_slots=0, greedy=False):
+    def __init__(self, lanes, device, seed, *, storage_slots=0, greedy=False, probe_slots=4096):
         super().__init__(lanes, 1, device, torch.Generator(device=device).manual_seed(seed),
-                         scratch_slots=storage_slots, inference_chunk=lanes, bosses_seen=511, probe_slots=4096)
+                         scratch_slots=storage_slots, inference_chunk=lanes, bosses_seen=511, probe_slots=probe_slots)
         self.greedy = greedy
         self.entropy_sum = torch.zeros((), dtype=torch.float64, device=device)
         self.entropy_count = 0
@@ -436,6 +436,9 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         value_state["value_calibration"] = dict(zip(["actor_encoder_norm","weighted_value_encoder_norm","ratio","target"],calibration.tolist()))
         value_state["value_calibration"].update(measured_value_coefficient=.5,completed_updates=0)
         if rank == 0:diagnostic_log(dict(event="value_gradient_calibration",**value_state["value_calibration"]))
+    if cursor.get("expert_total"):
+        from train.e4_expert_iteration import expert_backward
+        expert_backward(model, scaler, cursor, rank, world, microbatch)
     for i in range(steps):
         if learner_profile is not None:
             learner_profile.before_microbatch()
@@ -591,8 +594,8 @@ def restore_collector(collector, state):
     collector.search.entropy_count = entropy_count
 
 
-def save_rank(path, collector, cursor, update, ppo_rng, round_state, committed_path=None):
-    state = dict(update=update, round_state=move_tensors(round_state, torch.device("cpu")), collector=collector_snapshot(collector),
+def save_rank(path, collector, cursor, update, ppo_rng, round_state, committed_path=None, expert_state=None):
+    state = dict(update=update, expert=expert_state, round_state=move_tensors(round_state, torch.device("cpu")), collector=collector_snapshot(collector),
                  cursor=move_tensors(cursor, torch.device("cpu")), ppo_rng=ppo_rng.get_state(),
                  torch_rng=torch.get_rng_state(), python_rng=random.getstate(), numpy_rng=np.random.get_state(),
                  cuda_rng=torch.cuda.get_rng_state(collector.search.device) if collector.search.device.type == "cuda" else None)

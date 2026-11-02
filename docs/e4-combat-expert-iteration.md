@@ -1,0 +1,17 @@
+# Combat expert iteration
+
+Claude #138 authorizes this change at the next natural resume. The current allocation continues without modification. Preparation and CPU regressions do not establish GPU performance.
+
+PPO retains 2,048 lanes per device, the same 64-step rollout, global minibatch 32,768, two epochs, model, calibrated value coefficient, rewards, entropy, and optimizer. A separate native batch runs combat experts. Its starts use the existing PPO pool entries read-only, with the same 45/10/20/15/10 proportions and existing warmup/fallback rules. Expert live games, paths, hidden-state randomizations, preview RNG, unfinished round, and labels are saved alongside the original rank checkpoint.
+
+Only decisions with actual preview steps produce labels. Skipped decisions, including one legal action, high confidence, and Runic Dome, produce no expert label. The label is the action actually selected by the unchanged combat lookahead. Expert states never enter PPO advantages, actor loss, value loss, entropy statistics, or the standard million-row diagnostics.
+
+The learner accumulates beta=0.5 times CE into the same Adam steps before the existing PPO backward and gradient clipping. Expert rows are partitioned across that epoch's PPO minibatches. Scaling uses the global number of expert labels and number of minibatches: averaging the minibatch objectives recovers exactly beta times mean CE over the actual labels, including uneven rank counts. Partial learner cursors retain their expert partition and statistics.
+
+The first natural GPU round starts with one active expert lane. Actual setup, expert collection and CE wall are logged separately from the measured normal round wall. Subsequent lane counts are selected from that measurement, bounded to 1–32. A collection deadline of 20% of the previous measured normal round leaves headroom toward the approximately 30% total overhead target. A preview interrupted by that local work budget commits no action or label and returns its scratch slots. The original allocation deadline and yield request still propagate. The target is checked from actual round logs; no GPU timing is asserted during preparation.
+
+Every fourth ordinary two-hour exam also schedules a separate fresh argmax/combat comparison on seeds 2000000000–2000000255 from that exam's retained checkpoint. Ordinary argmax 1,024 remains independent. Complete seeds are not rerun after a natural resume. Separate evaluation policies and fork_rng protect training state. Early finishers wait on small file receipts while other ranks play, avoiding an outstanding NCCL collective across long independent combat games. Per-rank timers are persisted during play; interrupted crash prefixes are explicitly marked as lower bounds. Combat retains the one-hour work cap.
+
+The dev-60 experiment is closed and is never repeated by this change. The two previously observed argmax differences at seeds 2000000120 and 2000000157 remain recorded without further investigation, as requested. This change does not authorize 512 training.
+
+Preparation validation: 10 focused Linux CPU checks passed in 4.09 seconds, including native expert snapshot/replay and preservation of the source collector. A separate new two-rank CPU Gloo check passed in 6.05 seconds with one rank holding no expert labels; its combined update matched the global objective. These are 11 distinct new checks. No new GPU test or manual job was started. Real lane calibration and throughput acceptance remain pending the natural resume.
