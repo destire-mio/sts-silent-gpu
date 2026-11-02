@@ -9,6 +9,12 @@ from train.e4_evaluation_ledger import RUNIC_DOME
 from train.model import network_inputs
 
 
+def preview_faults_present(flags, slots):
+    # Native fault flags are uint32; CUDA advanced indexing needs int32.
+    # Reinterpret the same four bytes, preserving every nonzero fault bit.
+    return bool(flags.view(torch.int32)[slots].any())
+
+
 class CombatLookahead:
     def __init__(self, search, seed=130, depth='turn'):
         assert depth in ('turn', 'combat')
@@ -89,7 +95,7 @@ class CombatLookahead:
                 for s in live:rewards[s] += ledgers[s].advance(before[s],after[s])
                 for slot in live:
                     steps[slot] += 1
-        assert not bool(search.arrays['faults'][slots].any())
+        assert not preview_faults_present(search.arrays['faults'], slots)
         assert not bool(search.arrays['truncated'][slots].any())
         progress = search.progress_for(slots)
         alive = [s for s in slots if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
