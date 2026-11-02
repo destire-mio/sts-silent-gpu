@@ -1,4 +1,4 @@
-"""Training-only starts from retained Act1 Boss, Act2 and Act2 Boss states."""
+"""Training-only starts from retained Act1 Boss, Act2, Act2 Boss and Act3 states."""
 from collections import deque
 from copy import deepcopy
 import torch
@@ -8,9 +8,9 @@ from train.e4_stage12 import NoSLCollector
 class MidstartCollector(NoSLCollector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.pools = [[], [], []]
+        self.pools = [[], [], [], []]
         self.starts = ['fresh'] * self.search.lanes
-        self.captured = [[False, False, False] for _ in self.starts]
+        self.captured = [[False, False, False, False] for _ in self.starts]
         self.randomizations = [[] for _ in self.starts]
         self.pending_randomization = [None] * self.search.lanes
         self.starting_rewards = [0] * self.search.lanes
@@ -19,7 +19,7 @@ class MidstartCollector(NoSLCollector):
         super().reset(slots, seeds)
         for slot in slots:
             self.starts[slot] = 'fresh'
-            self.captured[slot] = [False, False, False]
+            self.captured[slot] = [False, False, False, False]
             self.randomizations[slot] = []
             self.pending_randomization[slot] = None
             self.starting_rewards[slot] = 0
@@ -61,7 +61,7 @@ class MidstartCollector(NoSLCollector):
         self.captured[slot] = entry['captured'].copy()
         self.randomizations[slot] = deepcopy(entry['randomizations'])
         self.pending_randomization[slot] = int(torch.randint(2**63 - 1, (), generator=self.seed_rng))
-        self.starts[slot] = ('act1_boss', 'act2', 'act2_boss')[pool]
+        self.starts[slot] = ('act1_boss', 'act2', 'act2_boss', 'act3')[pool]
         self.starting_rewards[slot] = self.rewards[slot].total
         self.round_games += 1
 
@@ -69,12 +69,14 @@ class MidstartCollector(NoSLCollector):
         if min(map(len, self.pools[:2])) < 32:
             return super().fresh(slots)
         choices = torch.randint(100, (len(slots),), generator=self.seed_rng).tolist()
-        new = [slot for slot, choice in zip(slots, choices) if choice < 50]
+        new = [slot for slot, choice in zip(slots, choices) if choice < 45]
         if new:
             super().fresh(new)
         for slot, choice in zip(slots, choices):
-            if choice >= 50:
-                pool = 0 if choice < 60 else 1 if choice < 85 or len(self.pools[2]) < 32 else 2
+            if choice >= 45:
+                pool = 0 if choice < 55 else 1 if choice < 75 else 2 if choice < 90 else 3
+                if len(self.pools[pool]) < 32:
+                    pool = 1
                 self.restart(pool, slot)
 
     def choose(self, model, slots, progress):
@@ -99,6 +101,8 @@ class MidstartCollector(NoSLCollector):
                 self.retain(1, slot)
             if not self.captured[slot][2] and p[ACT] == 2 and p[ROOM] == BOSS_ROOM and p[PHASE] == COMBAT_PHASE:
                 self.retain(2, slot)
+            if not self.captured[slot][3] and p[ACT] == 3:
+                self.retain(3, slot)
         return super().choose(model, slots, progress)
 
     def advance(self, slots, actions, progress):
@@ -145,17 +149,17 @@ class MidstartCollector(NoSLCollector):
             slots = [s for s, seed in enumerate(self.seeds) if seed is not None]
             for slot, p in self.search.progress_for(slots).items():
                 self.captured[slot] = [p[ACT] > 1 or p[FLOOR] >= 16, p[ACT] >= 2,
-                                       p[ACT] > 2 or (p[ACT] == 2 and p[ROOM] == BOSS_ROOM)]
+                                       p[ACT] > 2 or (p[ACT] == 2 and p[ROOM] == BOSS_ROOM), p[ACT] >= 3]
             return
         saved = state['midstart']
         self.pools = deepcopy(saved['pools'])
         self.starts = saved['starts'].copy()
         self.captured = deepcopy(saved['captured'])
-        migrating = len(self.pools) == 2
-        if migrating:
+        old_pool_count = len(self.pools)
+        for _ in range(old_pool_count, 4):
             self.pools.append([])
             self.captured = [row + [False] for row in self.captured]
-            for pool in self.pools[:2]:
+            for pool in self.pools[:old_pool_count]:
                 for entry in pool:
                     entry['captured'].append(False)
         self.randomizations = deepcopy(saved['randomizations'])
@@ -184,6 +188,8 @@ class MidstartCollector(NoSLCollector):
                 self.search.reward_history[slot] = deepcopy(entry['reward_history'])
                 self.search.map_returned[slot] = entry['map_returned']
         self.replay(pool_slots, pool_entries)
-        if migrating:
+        if old_pool_count < 4:
             for slot, p in self.search.progress_for(slots).items():
-                self.captured[slot][2] = p[ACT] > 2 or (p[ACT] == 2 and p[ROOM] == BOSS_ROOM)
+                if old_pool_count == 2:
+                    self.captured[slot][2] = p[ACT] > 2 or (p[ACT] == 2 and p[ROOM] == BOSS_ROOM)
+                self.captured[slot][3] = p[ACT] >= 3
