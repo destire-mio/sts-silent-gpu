@@ -41,7 +41,7 @@ def metrics(episodes):
     return dict(episodes=count, mean_floor=statistics.mean(e["floor"] for e in episodes) if count else None,
         boss_pass_rates={name:sum(e["reach"][name] for e in episodes) / count if count else None
                          for name in ("act1_boss", "act2_boss", "act3_first_boss")},
-        victories=sum(e["outcome"] == "victory" for e in episodes))
+        victories=sum(e["reach"]["act3_second_boss"] for e in episodes))
 
 
 def paired_summary(episodes, baseline):
