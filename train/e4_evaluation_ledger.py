@@ -3,7 +3,7 @@ from pathlib import Path
 import math
 import re
 import torch
-from train.e4 import ACT, FLOOR, PHASE, ROOM, SCREEN, HP, COMBAT_PHASE, BOSS_ROOM, ELITE_ROOM, DEATH
+from train.e4 import ACT, FLOOR, PHASE, ROOM, SCREEN, HP, KEYS, COMBAT_PHASE, BOSS_ROOM, ELITE_ROOM, DEATH
 from train.e4_stage12 import NoSLCollector
 
 
@@ -124,7 +124,11 @@ class EvaluationLedgerCollector(NoSLCollector):
         terminal_slots = [s for s,end in zip(slots,result[1]) if end]
         for episode,slot in zip(self.completed[count:],terminal_slots):
             record = self.records[slot]
-            if episode['reach']['act3_second_boss']:
+            episode['keys'] = {name:bool(after[slot][KEYS] & bit)
+                               for name,bit in [('ruby',1),('emerald',2),('sapphire',4)]}
+            record['keys'] = episode['keys'].copy()
+            record['reach'] = episode['reach'].copy()
+            if episode['reach']['act3_second_boss'] and not episode['reach']['heart']:
                 episode['outcome'] = 'act3_win'
                 record.pop('death',None)
             record.update(final_floor=episode['floor'],outcome=episode['outcome'],stalled=episode['outcome']=='stalled')
