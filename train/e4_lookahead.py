@@ -126,6 +126,15 @@ class LookaheadSearch(NoSLSearch):
         self.preview_decisions = 0
         self.overrides = 0
 
+    def clock(self):
+        # Preview cache slots have no mainline provenance; heartbeat only lists lanes.
+        progress = self.mainline_progress
+        self.mainline_progress = {s:p for s,p in progress.items() if s < self.lanes}
+        try:
+            return super().clock()
+        finally:
+            self.mainline_progress = progress
+
     def predict(self, model, slots):
         actions, values, logs = super().predict(model, slots)
         self.mainline_decisions += len(slots)
