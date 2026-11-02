@@ -81,7 +81,7 @@ def main():
     model = DistributedDataParallel(policy, device_ids=[local], broadcast_buffers=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
-    search = NoSLSearch(2048, device, 20261031 + rank, storage_slots=768)
+    search = NoSLSearch(2048, device, 20261031 + rank, storage_slots=1024)
     search.deadline = deadline
     search.evidence_directory = output
     collector = MidstartCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
