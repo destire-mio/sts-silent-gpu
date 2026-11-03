@@ -12,6 +12,7 @@ struct ShuffleAll : ActionHooks {
             relic_onShuffle(g, i);
     }
     static SPIRE_FN void execute(Game& g, Effect& e) {
+        forget_draw_positions(g);
         if (!e.payload.state.ShuffleAll.shuffled) {
             Effect a{};
             a.kind = EffectKind::PutOnDeck;
@@ -25,6 +26,7 @@ struct ShuffleAll : ActionHooks {
         for (int i = 0; i < g.discard.size; ++i) {
             mark_card_move(g, g.discard[i]);
             g.draw.push_back(g.discard[i]);
+            g.cards[g.discard[i]].draw_position_known = false;
             ++e.payload.state.ShuffleAll.count;
         }
         g.discard.clear();

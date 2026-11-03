@@ -15,9 +15,10 @@ def test_finish_never_ratchets_pre_expert_peak(monkeypatch):
     obj.collector = SimpleNamespace(completed=[])
     obj.memory = dict(previous_peak=1000,native_per_lane=10,working_per_lane=20,last_limit=1250)
     obj.lanes = obj.capacity = 1
+    obj.throughput = None
     for peak in (100000,200000,400000):
         measured['peak'] = peak
-        obj.round = dict(records=[],agreement=0,seconds=1.,lanes=1)
+        obj.round = dict(records=[],agreement=0,seconds=1.,lanes=1,ticks=64)
         row = obj.finish({'expert_ce_seconds':0.,'expert_ce_stats':[0.,0.]},100.,None)
         assert obj.memory['previous_peak'] == 1000
         assert row['expert_memory_anchor_peak_bytes'] == 1000

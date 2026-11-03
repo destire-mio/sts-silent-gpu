@@ -117,7 +117,7 @@ class TrainingTests(unittest.TestCase):
     def test_compact_append_gather_and_capacity(self):
         batch = spire.TrainingBatch(4, 2, 30, list(range(1000000000, 1000000100)))
         slots = np.arange(4, dtype=np.int32)
-        data = np.full(20000, 165, dtype=np.uint8)
+        data = np.full(30000, 165, dtype=np.uint8)
         offsets = np.full(13, 999, dtype=np.uint64)
         offsets[0] = 3
         fields = ("tags", "ids", "values", "candidate_kinds", "candidate_refs", "entity_mask", "candidate_mask",

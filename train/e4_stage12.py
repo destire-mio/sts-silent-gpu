@@ -606,6 +606,20 @@ def save_rank(path, collector, cursor, update, ppo_rng, round_state, committed_p
     write_rank_checkpoint(path, state, torch.save, committed_path)
 
 
+def restart_collector_observation(saved, fresh):
+    state = deepcopy(fresh)
+    for key in ('seed_rng', 'search_rng', 'decisions'):
+        state[key] = saved[key]
+    state['midstart']['pools'] = deepcopy(saved['midstart']['pools'])
+    return state
+
+
+def restart_rank_observation(state, collector):
+    fresh = restart_collector_observation(state['collector'], collector_snapshot(collector))
+    return dict(state, collector=fresh, cursor=None,
+                round_state=dict(ready=None, seconds=0., decisions_start=fresh['decisions']))
+
+
 def restore_rank(state, collector, device, ppo_rng):
     restore_collector(collector, state["collector"])
     ppo_rng.set_state(state["ppo_rng"])

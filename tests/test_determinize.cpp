@@ -86,4 +86,33 @@ static void frozen_eye_and_noncombat() {
     determinize(g, 42);
     require(std::memcmp(&outside, &g, sizeof(Game)) == 0, "noncombat state changed");
 }
-int main() { hidden_state(); frozen_eye_and_noncombat(); }
+static void setup_known_top() {
+    Game root = combat();
+    root.cards[root.hand[0]] = make_card(CardId::Setup);
+    step(root, {ActionKind::Play, 0});
+    require(root.screen == Screen::Discard, "Setup did not open selection");
+    const int known = root.hand[0];
+    step(root, {ActionKind::Choose, 0});
+    step(root, {ActionKind::Proceed});
+    require(root.screen == Screen::Combat && root.draw[root.draw.size - 1] == known &&
+        root.cards[known].draw_position_known, "Setup did not remember its chosen top card");
+    const auto before = observe(root);
+    bool shuffled = false;
+    for (uint64_t seed = 0; seed < 100; ++seed) {
+        Game g = root;
+        determinize(g, seed);
+        require(g.draw[g.draw.size - 1] == known, "determinize moved known Setup top");
+        const auto after = observe(g);
+        require(std::memcmp(&before, &after, sizeof(before)) == 0, "known-position observation changed");
+        unchanged_except_hidden(root, g);
+        shuffled |= std::memcmp(root.draw.values, g.draw.values, root.draw.size - 1) != 0;
+    }
+    require(shuffled, "unknown draw cards were frozen with Setup top");
+    const int bottom = root.hand[0];
+    move_to_bottom_of_deck(root, bottom);
+    for (uint64_t seed = 0; seed < 100; ++seed) {
+        Game g = root; determinize(g, seed);
+        require(g.draw[0] == bottom && g.draw[g.draw.size - 1] == known, "known bottom/top moved");
+    }
+}
+int main() { hidden_state(); frozen_eye_and_noncombat(); setup_known_top(); }

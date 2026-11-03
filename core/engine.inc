@@ -22,7 +22,14 @@ SPIRE_FN inline bool potion_can_discard_base(const Game& g, int) {
 SPIRE_FN inline bool potion_can_use_base(const Game& g, int slot) {
     return potion_canDiscard(g, slot) && g.room_in_combat && !monsters_basically_dead(g) && !g.manager.turn_has_ended;
 }
+SPIRE_FN inline void forget_draw_positions(Game& g) {
+    for (int i = 0; i < g.draw.size; ++i) g.cards[g.draw[i]].draw_position_known = false;
+}
 SPIRE_FN inline void insert_random_card(Game& g, Pile& pile, int card) {
+    if (&pile == &g.draw) {
+        forget_draw_positions(g);
+        g.cards[card].draw_position_known = false;
+    }
     if (pile.empty()) pile.push_back(card);
     else pile.insert(g.rng.card_random.random(pile.size - 1), card);
 }
@@ -131,6 +138,7 @@ SPIRE_FN inline void move_to_bottom_of_deck(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.hand, card);
     g.draw.insert(0, card);
+    g.cards[card].draw_position_known = true;
     mark_card_move(g, card);
 }
 SPIRE_FN inline void upgrade_created_card(Game& g, int card) {
@@ -252,12 +260,14 @@ SPIRE_FN inline void exhaust_from_pile(Game& g, int card, PileId pile) {
     card_triggerOnExhaust(g, card);
     remove_queued_card(g, card);
     card_resetAttributes(g, card);
+    if (pile == PileId::Draw) forget_draw_positions(g);
     remove_from_pile(get_pile(g, pile), card);
     g.exhaust.push_back(card);
     on_draw_or_discard(g);
 }
 SPIRE_FN inline void draw_pile_to_discard(Game& g, int card) {
     remove_queued_card(g, card);
+    forget_draw_positions(g);
     remove_from_pile(g.draw, card);
     mark_card_move(g, card);
     card_onMoveToDiscard(g, card);
@@ -268,6 +278,7 @@ SPIRE_FN inline void hand_to_deck(Game& g, int card) {
     remove_queued_card(g, card);
     remove_from_pile(g.hand, card);
     g.draw.push_back(card);
+    g.cards[card].draw_position_known = true;
     mark_card_move(g, card);
 }
 SPIRE_FN inline void add_card_queue_item(Game& g, const CardQueueItem& item, bool immediate) {
@@ -576,6 +587,7 @@ SPIRE_FN inline void draw_cards(Game& g, Effect& effect) {
         card_triggerWhenDrawn(g, card);
         g.hand.push_back(card);
         g.draw.pop_back();
+        g.cards[card].draw_position_known = false;
         Powers& powers = g.player.creature.powers;
         for (int j = 0; j < powers.size; ++j) power_onCardDraw(g, powers.at(g.power_objects, j), player_target, card);
         for (int j = 0; j < g.run.relics.size; ++j) relic_onCardDraw(g, j, card);
@@ -1790,7 +1802,14 @@ SPIRE_FN inline void determinize(Game& g, uint64_t seed) {
     g.unseeded.reset(seeds.next_bits64());
     if (!has_relic(g, RelicId::FrozenEye)) {
         JavaRandom draw_rng(seeds.next_bits64());
-        shuffle_java(g.draw.values, g.draw.size, draw_rng);
+        uint8_t hidden[card_capacity];
+        int count = 0;
+        for (int i = 0; i < g.draw.size; ++i)
+            if (!g.cards[g.draw[i]].draw_position_known) hidden[count++] = g.draw[i];
+        shuffle_java(hidden, count, draw_rng);
+        int next = 0;
+        for (int i = 0; i < g.draw.size; ++i)
+            if (!g.cards[g.draw[i]].draw_position_known) g.draw[i] = hidden[next++];
     }
 }
 }

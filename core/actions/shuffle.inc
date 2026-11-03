@@ -13,11 +13,13 @@ struct Shuffle : ActionHooks {
     }
     SPIRE_FN static void execute(Game& g, Effect& e) {
         e.payload.state.Shuffle.shuffled = true;
+        forget_draw_positions(g);
         shuffle(g.discard.values, g.discard.size, g.rng.shuffle);
         for (int i = 0; i < g.discard.size; ++i) {
             ++e.payload.state.Shuffle.count;
             mark_card_move(g, g.discard[i]);
             g.draw.push_back(g.discard[i]);
+            g.cards[g.discard[i]].draw_position_known = false;
         }
         g.discard.clear();
     }

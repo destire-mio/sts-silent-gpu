@@ -15,7 +15,7 @@ constexpr int candidate_bytes = 1 + 2 * candidate_rows;
 enum class Kind : int { Screen = 1, Player, Card, Monster, Power, Relic, Potion, Orb, Stance, MapNode, Option, Reward };
 enum class Zone : int { None, Master, Hand, Draw, Discard, Exhaust, Selected, Grid, Offer, Shop, Event, History };
 enum class Fault : uint32_t { None, Entities = 0xe0000001, Candidates, NoDecision, InvalidCandidate, SeedsExhausted, NumericRange, StorageCapacity };
-enum class Control : int { Bowl = 1, Purge, OpenChest, Merchant, Campfire, EventButton, Spin, CardBack, Boss };
+enum class Control : int { Bowl = 1, Purge, OpenChest, Merchant, Campfire, EventButton, Spin, CardBack, Boss, PlayedCards };
 
 struct Token {
     int32_t ids[6];
@@ -125,6 +125,8 @@ struct Writer {
         case Kind::Monster:
             for (int i = 0; i < 4; ++i) values[i] = v[i];
             values[4] = v[7]; values[5] = v[8]; flags = bit(v[4], 0); auxiliary = v[6];
+            if (v[9] < 0 || v[9] > 6) result.fault = static_cast<uint32_t>(Fault::NumericRange);
+            else flags |= v[9] << 1;
             break;
         case Kind::Power:
             flags = bit(v[0], 0); values[0] = v[1]; values[1] = v[2]; values[2] = v[3];
@@ -140,7 +142,7 @@ struct Writer {
             for (int i = 0; i < 4; ++i) values[i] = v[i];
             values[4] = v[9]; values[5] = v[10];
             break;
-        case Kind::Player: for (int i = 0; i < 5; ++i) values[i] = v[i]; break;
+        case Kind::Player: for (int i = 0; i < value_rows; ++i) values[i] = v[i]; break;
         case Kind::Orb: case Kind::Reward: values[0] = v[0]; values[1] = v[1]; break;
         case Kind::Stance: break;
         }

@@ -17,10 +17,12 @@ import torch
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
+from train import OBSERVATION_VERSION
 from train.e4 import AllocationEnded, REACH
 from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
-    save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline)
+    save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline,
+    restart_rank_observation)
 from train.model import ModelConfig
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_midstart import MidstartCollector
@@ -95,7 +97,8 @@ def main():
     collector = MidstartCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
-                 stop_reason=None, high_kl_streak=0, learning_rate=1e-4)
+                 stop_reason=None, high_kl_streak=0, learning_rate=1e-4,
+                 observation_version=OBSERVATION_VERSION)
     cursor = None
     expert = None
     expert_saved = None
@@ -106,6 +109,9 @@ def main():
         policy.load_state_dict(saved["model"])
         optimizer.load_state_dict(saved["optimizer"])
         state.update(saved["state"])
+        previous_observation = saved['state'].get('observation_version', 13)
+        assert previous_observation in (13, OBSERVATION_VERSION)
+        state['observation_version'] = OBSERVATION_VERSION
         policy.encoder_fp16 = state["precision"] == "encoder_fp16_heads_fp32"
         ppo_rng.set_state(saved["ppo_rng"])
         for owner in range(world):
@@ -114,6 +120,14 @@ def main():
                     rank_path, (state["update"], state["checkpoint_serial"]),
                     lambda path: torch.load(path, map_location="cpu", weights_only=False))
                 if candidate is not None:
+                    if previous_observation != OBSERVATION_VERSION:
+                        partial_steps = candidate['cursor']['optimizer_steps'] if candidate['cursor'] else 0
+                        candidate = restart_rank_observation(candidate, collector)
+                        print(json.dumps(dict(event='observation_transition', rank=rank,
+                            previous_version=previous_observation, observation_version=OBSERVATION_VERSION,
+                            retained_partial_optimizer_steps=partial_steps,
+                            live_collector_and_cursor_discarded=True,
+                            pool_sizes=[len(p) for p in candidate['collector']['midstart']['pools']])), flush=True)
                     expert_saved = candidate.get("expert")
                     cursor, _, round_state = restore_rank(candidate, collector, device, ppo_rng)
                     if committed_rank_path != rank_path:
@@ -210,7 +224,8 @@ def main():
                 with gzip.open(output / f"{prefix}-{state['update']}-rank-{owner}.json.gz", "rt") as stream:
                     all_episodes.extend(json.load(stream))
             row = dict(event="teacher_evaluation" if label else "evaluation", selection="argmax", phase="distillation" if state.get("teacher_path") and not state.get("distillation_evaluated") else "PPO", update=state["update"], complete=bool(flag),
-                       training_seconds=state["training_seconds"], no_SL=True, **metrics(all_episodes))
+                       training_seconds=state["training_seconds"], no_SL=True,
+                       observation_version=state['observation_version'], **metrics(all_episodes))
             if state.get("teacher_path"):
                 row["paired_baseline_model"] = state.get("teacher_evaluated_model", "dev-16.pt") + " argmax"
             if label:
@@ -256,7 +271,7 @@ def main():
     log(dict(event="start", world=world, lanes_per_gpu=2048, length=64, global_minibatch=32768,
              epochs=2, model_parameters=sum(p.numel() for p in policy.parameters()),
              model=dict(**asdict(config),pooling="CLS"), teacher=state.get("teacher_path"), distillation_updates=state.get("distillation_updates"),
-             no_SL=True, from_scratch=not common.exists()))
+             no_SL=True, from_scratch=not common.exists(), observation_version=state['observation_version']))
     profile_path = output / "claude127-learner-profile.json"
     learner_profile = (TwoMicrobatchProfile(profile_path, state["update"] + 1, log)
                        if rank == 0 and common.exists() and not profile_path.exists() else None)
@@ -455,7 +470,7 @@ def main():
             cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated(device),cuda_peak_reserved_bytes=torch.cuda.max_memory_reserved(device),
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
             precision=state["precision"],microbatch=state["microbatch"],learning_rate=optimizer.param_groups[0]["lr"],
-            next_learning_rate=state["learning_rate"],**state["decision_entropy_metrics"],
+            next_learning_rate=state["learning_rate"],observation_version=state['observation_version'],**state["decision_entropy_metrics"],
             stop_reason=state["stop_reason"],episode_faults=faults,episode_cases=games,
             episode_fault_rate=faults/max(1,games),rss_peak_bytes_per_rank=[int(v) for v in rss_by_rank],**row))
         if state.get('model_config', {}).get('width') == 384 and state.get('distillation_updates') == 1 and float(elapsed) > 4 * state['small_round_seconds'] and state['stop_reason'] is None:

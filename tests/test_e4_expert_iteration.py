@@ -135,10 +135,11 @@ def test_source_pool_ratio_and_late_pool_warmup_are_preserved(monkeypatch):
 
 
 def test_lane_calibration_uses_measured_extra_and_stays_bounded():
-    assert expert.next_lane_count(1,2,100) == 10
-    assert expert.next_lane_count(10,40,100) == 5
-    assert expert.next_lane_count(1,50,100) == 1
-    assert expert.next_lane_count(32,.01,100) == 512
+    measured = dict(ticks=64, samples_per_second=10., previous=None)
+    assert expert.next_lane_count(1,2,100,**measured) == 2
+    assert expert.next_lane_count(10,40,100,**measured) == 5
+    assert expert.next_lane_count(1,50,100,**measured) == 1
+    assert expert.next_lane_count(256,.01,100,**measured) == 512
 
 
 def test_every_fourth_exam_and_exact_seed_set():

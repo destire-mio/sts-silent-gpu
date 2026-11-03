@@ -23,6 +23,7 @@ struct Omniscience : ActionHooks {
         for (int i = 0; i < g.selected_cards.size; ++i) {
             const int card = g.selected_cards[i];
             g.cards[card].exhaust = true;
+            forget_draw_positions(g);
             remove_from_pile(g.draw, card);
             add_bottom(g, units::actions::NewQueueCard::construct_random(card, true, false, true));
             for (int j = 0; j < e.extra - 1; ++j) {

@@ -12,7 +12,7 @@ def test_expert_ceiling_is_512_and_calibration_still_starts_at_one(tmp_path):
                               torch.Generator().manual_seed(12),rank=0)
     expert = ex.ExpertIteration(source,tmp_path,float('inf'),0)
     assert ex.MAX_LANES == 512
-    assert ex.next_lane_count(32,.01,100) == 512
+    assert ex.next_lane_count(256,.01,100,ticks=64,samples_per_second=10.,previous=None) == 512
     assert expert.lanes == expert.capacity == expert.search.lanes == 1
     assert len(expert.search.available) == 32
     assert expert.search.size == 1+32+128

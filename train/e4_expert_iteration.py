@@ -7,8 +7,9 @@ import json
 import time
 import torch
 import torch.distributed as dist
+from train import OBSERVATION_VERSION
 from train.e4 import AllocationEnded, PHASE, COMBAT_PHASE
-from train.e4_stage12 import NoSLSearch, collector_snapshot, restore_collector
+from train.e4_stage12 import NoSLSearch, collector_snapshot, restore_collector, restart_collector_observation
 from train.e4_midstart import MidstartCollector
 from train.e4_lookahead import CombatLookahead, LookaheadSearch
 from train.model import packed_inputs
@@ -59,11 +60,16 @@ class ExpertBudgetEnded(Exception):
     pass
 
 
-def next_lane_count(lanes, extra_seconds, base_seconds):
-    """Use measured collection+CE time; retain headroom for changing combat cost."""
-    if base_seconds <= 0 or extra_seconds <= 0:
-        return max(1, min(MAX_LANES, lanes))
-    return max(1, min(MAX_LANES, math.floor(lanes * .20 * base_seconds / extra_seconds)))
+def next_lane_count(lanes, extra_seconds, base_seconds, *, ticks, samples_per_second, previous):
+    if extra_seconds / base_seconds > .30:
+        requested = lanes // 2
+    elif ticks == 64 or previous is None or samples_per_second >= 1.2 * previous['samples_per_second']:
+        requested = lanes * 2
+    elif samples_per_second < previous['samples_per_second']:
+        requested = previous['lanes']
+    else:
+        requested = lanes
+    return max(1, min(MAX_LANES, requested))
 
 
 def ce_scalar(logits, legal, actions, world, total_samples, minibatches):
@@ -184,13 +190,20 @@ class ExpertIteration:
         self.base_seconds = None
         self.round = None
         self.setup_seconds = 0.
+        self.throughput = None
         if saved is not None:
-            restore_collector(self.collector, saved['collector'])
+            previous_observation = saved.get('observation_version', 13)
+            assert previous_observation in (13, OBSERVATION_VERSION)
+            migrating = previous_observation != OBSERVATION_VERSION
+            collector_state = (restart_collector_observation(saved['collector'], collector_snapshot(self.collector))
+                               if migrating else saved['collector'])
+            restore_collector(self.collector, collector_state)
             self.search.lookahead.rng.set_state(saved['preview_rng'].cpu())
             self.lanes, self.base_seconds = saved['lanes'], saved['base_seconds']
-            self.round = saved['round']
-            self.setup_seconds = saved.get('setup_seconds', 0.)
+            self.round = None if migrating else saved['round']
+            self.setup_seconds = 0. if migrating else saved.get('setup_seconds', 0.)
             self.memory = saved.get('memory',self.memory)
+            self.throughput = None if migrating else saved.get('throughput')
             if self.round:
                 for row in self.round['records']:
                     for key in ('data', 'mask'):
@@ -243,7 +256,8 @@ class ExpertIteration:
             preview_rng=self.search.lookahead.rng.get_state(), lanes=self.lanes,
             base_seconds=self.base_seconds,
             round=move_tensors(self.round, torch.device('cpu')), setup_seconds=self.setup_seconds,
-            capacity=self.capacity, memory=deepcopy(self.memory))
+            capacity=self.capacity, memory=deepcopy(self.memory),
+            observation_version=OBSERVATION_VERSION, throughput=deepcopy(self.throughput))
 
     @torch.no_grad()
     def collect(self, policy, update, ppo_collection_seconds):
@@ -318,13 +332,17 @@ class ExpertIteration:
             *cursor.get('expert_ce_stats', [0., 0.])], dtype=torch.float64, device=self.device)
         dist.all_reduce(values)
         times = torch.tensor([extra, self.round['seconds'],
-            cursor.get('expert_ce_seconds',0.)], dtype=torch.float64, device=self.device)
+            cursor.get('expert_ce_seconds',0.), -self.round['ticks']], dtype=torch.float64, device=self.device)
         dist.all_reduce(times, op=dist.ReduceOp.MAX)
         extra = float(times[0])
         base = max(.001, round_seconds - extra)
         used_lanes = self.round['lanes']
         self.memory['last_active'] = used_lanes
-        self.lanes = next_lane_count(used_lanes, extra, base)
+        ticks = int(-times[3])
+        samples_per_second = float(values[0]) / max(.001, float(times[1]))
+        self.lanes = next_lane_count(used_lanes, extra, base, ticks=ticks,
+            samples_per_second=samples_per_second, previous=self.throughput)
+        self.throughput = dict(lanes=used_lanes, samples_per_second=samples_per_second)
         self.base_seconds = base
         measured_memory = gpu_memory(self.device)
         # previous_peak is the pre-expert pure-PPO anchor, preserved by checkpoints.
@@ -334,6 +352,7 @@ class ExpertIteration:
             expert_completed=int(values[2]),
             expert_mean_floor=float(values[3]/values[2]) if float(values[2]) else None,
             expert_lanes=used_lanes, expert_next_lanes=self.lanes,
+            expert_ticks=ticks, expert_samples_per_second=samples_per_second,
             expert_storage_lanes=self.capacity, expert_max_lanes=MAX_LANES,
             expert_gpu_peak_bytes=measured_memory['peak'] if measured_memory is not None else None,
             expert_memory_anchor_peak_bytes=self.memory.get('previous_peak'),

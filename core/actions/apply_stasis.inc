@@ -39,6 +39,7 @@ struct ApplyStasisAction : ActionHooks {
             }
             card = candidates[g.rng.card_random.random(candidates.size - 1)];
         }
+        if (&pile == &g.draw) forget_draw_positions(g);
         for (int i = 0; i < pile.size; ++i) if (pile[i] == card) { pile.erase(i); break; }
         e.payload.state.ApplyStasisAction.card = card;
         g.limbo.insert(0, card);

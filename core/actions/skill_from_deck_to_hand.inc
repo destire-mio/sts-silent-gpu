@@ -28,6 +28,7 @@ struct SkillFromDeckToHand : ActionHooks {
                 const int card = g.grid_cards[0];
                 if (g.hand.size == hand_limit) draw_pile_to_discard(g, card);
                 else {
+                    forget_draw_positions(g);
                     remove_from_pile(g.draw, card);
                     g.hand.push_back(card);
                     refresh_hand(g);
@@ -44,7 +45,7 @@ struct SkillFromDeckToHand : ActionHooks {
             for (int i = 0; i < g.selected_cards.size; ++i) {
                 const int card = g.selected_cards[i];
                 if (g.hand.size == hand_limit) draw_pile_to_discard(g, card);
-                else { remove_from_pile(g.draw, card); g.hand.push_back(card); }
+                else { forget_draw_positions(g); remove_from_pile(g.draw, card); g.hand.push_back(card); }
                 refresh_hand(g);
                 for (int j = 0; j < g.hand.size; ++j) card_applyPowers(g, g.hand[j]);
             }

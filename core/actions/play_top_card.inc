@@ -25,6 +25,7 @@ struct PlayTopCardAction : ActionHooks {
             return;
         }
         const int card = g.draw.pop_back();
+        g.cards[card].draw_position_known = false;
         // PlayTopCardAction.update removes the card's Soul before applying powers.
         g.pending_card_moves[card / 64] &= ~(uint64_t{1} << (card % 64));
         g.cards[card].exhaust_on_use_once = e.payload.state.PlayTopCardAction.exhaust_cards;
