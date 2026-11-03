@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from hashlib import sha256
 import json
 from unittest.mock import patch
@@ -6,7 +5,8 @@ from unittest.mock import patch
 import pytest
 import torch
 
-from tools.e4_weight_edit import ACTION_KINDS, edit_kind_row, write_edit
+from tools.e4_weight_edit import ACTION_KINDS, BLOCKS, MODEL_CONFIG, edit_block, edit_kind_row, write_edit
+from train.e4_stage12 import CLSPolicy
 from train.model import ModelConfig, Policy
 
 
@@ -32,12 +32,12 @@ def observation():
 def test_edit_changes_only_target_logits_and_preserves_value(action_kind, strength):
     torch.set_num_threads(1)
     torch.manual_seed(611)
-    policy = Policy(ModelConfig()).eval()
+    policy = CLSPolicy(ModelConfig(width=32, layers=2, heads=4, feedforward=64)).eval()
     before = {name: tensor.clone() for name, tensor in policy.state_dict().items()}
     with patch('torch.Tensor.backward', side_effect=AssertionError('No backward allowed')), \
             patch('torch.autograd.grad', side_effect=AssertionError('No gradients allowed')):
         edited, evidence = edit_kind_row(policy.state_dict(), action_kind, strength)
-    modified = Policy(policy.config).eval()
+    modified = CLSPolicy(policy.config).eval()
     modified.load_state_dict(edited, strict=True)
     row = ACTION_KINDS.index(action_kind) + 1
     delta = edited['kind.weight'] != before['kind.weight']
@@ -56,36 +56,77 @@ def test_edit_changes_only_target_logits_and_preserves_value(action_kind, streng
     assert torch.isneginf(changed_logits[~inputs['candidate_mask']]).all()
 
 
-def test_saved_artifact_is_audited_evaluation_only_and_does_not_overwrite(tmp_path):
+@pytest.mark.parametrize('block', BLOCKS)
+def test_block_edit_preserves_encoder_value_and_other_weight_columns(block):
+    torch.set_num_threads(1)
+    torch.manual_seed(42)
+    policy = CLSPolicy(ModelConfig(width=32, layers=2, heads=4, feedforward=64)).eval()
+    before = {key: value.clone() for key, value in policy.state_dict().items()}
+    edited, evidence = edit_block(before, block, 1.1)
+    width = policy.config.width
+    changed = edited['score.0.weight'] != before['score.0.weight']
+    expected = torch.zeros_like(changed)
+    expected[:, BLOCKS[block] * width:(BLOCKS[block] + 1) * width] = True
+    assert torch.equal(changed, expected)
+    assert evidence['changed_scalars'] == width * width
+    assert all(torch.equal(value, edited[key]) for key, value in before.items() if key != 'score.0.weight')
+    modified = CLSPolicy(policy.config).eval()
+    modified.load_state_dict(edited, strict=True)
+    inputs = observation()
+    with torch.no_grad():
+        a, av = policy(inputs)
+        b, bv = modified(inputs)
+    assert torch.equal(av, bv)
+    assert (a[inputs['candidate_mask']] != b[inputs['candidate_mask']]).any()
+    assert torch.isneginf(b[~inputs['candidate_mask']]).all()
+    assert all(torch.equal(value, policy.state_dict()[key]) for key, value in before.items())
+
+
+def test_saved_raw_64h_artifact_is_audited_and_does_not_overwrite(tmp_path):
     torch.set_num_threads(1)
     torch.manual_seed(31)
-    config = ModelConfig(width=32, layers=1, heads=4, feedforward=64)
-    policy = Policy(config)
+    policy = CLSPolicy(MODEL_CONFIG)
     checkpoint, output, manifest = [tmp_path / name for name in ('parent.pt', 'edited.pt', 'manifest.json')]
-    source = dict(model=policy.state_dict(), config=dict(model=asdict(config)), engine_commit='abc123',
-                  optimizer=dict(step=7), rng_states=[torch.get_rng_state()], update=7, curriculum=dict(band='k32'))
+    source = policy.state_dict()
     torch.save(source, checkpoint)
     parent_bytes = checkpoint.read_bytes()
-    result = write_edit(checkpoint, output, manifest, 'potion_use', 2.)
-    saved = torch.load(output, map_location='cpu', weights_only=False)
-    loaded = Policy(config)
-    loaded.load_state_dict(saved['model'], strict=True)
-    assert saved['evaluation_only'] is True and saved['artifact_type'] == 'weight_edit_evaluation'
+    result = write_edit(checkpoint, output, manifest, block='context', scale=.9)
+    saved = torch.load(output, map_location='cpu', weights_only=True)
+    loaded = CLSPolicy(MODEL_CONFIG)
+    loaded.load_state_dict(saved, strict=True)
+    assert result['evaluation_only'] is True and result['raw_state_dict'] is True
+    assert all(isinstance(value, torch.Tensor) for value in saved.values())
+    assert 'cls' in saved and sum(value.numel() for value in saved.values()) == 12435074
     assert not {'optimizer', 'rng_states', 'update', 'curriculum', 'policy_version'} & saved.keys()
-    assert saved['config'] == source['config'] and saved['engine_commit'] == source['engine_commit']
     assert checkpoint.read_bytes() == parent_bytes
     assert result == json.loads(manifest.read_text(encoding='utf-8'))
     assert result['parent_checkpoint_sha256'] == sha256(parent_bytes).hexdigest()
     assert result['output_sha256'] == sha256(output.read_bytes()).hexdigest()
     assert result['strict_reload_verified'] and result['parent_file_unchanged']
     assert result['gradients_computed'] == result['optimizer_steps'] == 0
-    assert result['edit']['changed_scalars'] == config.width
+    assert result['edit']['changed_scalars'] == MODEL_CONFIG.width ** 2
     for name, row in result['edit']['tensor_evidence'].items():
-        assert (row['before_sha256'] == row['after_sha256']) == (name != 'kind.weight')
+        assert (row['before_sha256'] == row['after_sha256']) == (name != 'score.0.weight')
     output_bytes, manifest_bytes = output.read_bytes(), manifest.read_bytes()
     with pytest.raises(AssertionError):
-        write_edit(checkpoint, output, manifest, 'potion_use', 3.)
+        write_edit(checkpoint, output, manifest, action_kind='potion_use', strength=.5)
     with pytest.raises(AssertionError):
-        write_edit(checkpoint, checkpoint, tmp_path / 'other.json', 'potion_use', 3.)
+        write_edit(checkpoint, checkpoint, tmp_path / 'other.json', action_kind='potion_use', strength=.5)
     assert output.read_bytes() == output_bytes and manifest.read_bytes() == manifest_bytes
     assert checkpoint.read_bytes() == parent_bytes
+
+
+@pytest.mark.parametrize('kind', ['wrapped_e3', 'raw_e3', 'wrong_cls_shape'])
+def test_writer_rejects_e3_and_wrong_cls_architecture(tmp_path, kind):
+    torch.set_num_threads(1)
+    config = ModelConfig(width=32, layers=1, heads=4, feedforward=64)
+    source = (CLSPolicy(config) if kind == 'wrong_cls_shape' else Policy(config)).state_dict()
+    if kind == 'wrapped_e3':
+        source = dict(model=source, config=dict(model=dict(width=32, layers=1, heads=4, feedforward=64)))
+    checkpoint, output, manifest = [tmp_path / name for name in ('wrong.pt', 'edited.pt', 'manifest.json')]
+    torch.save(source, checkpoint)
+    original = checkpoint.read_bytes()
+    with pytest.raises((AssertionError, RuntimeError)):
+        write_edit(checkpoint, output, manifest, action_kind='potion_use', strength=.5)
+    assert checkpoint.read_bytes() == original
+    assert not output.exists() and not manifest.exists()
