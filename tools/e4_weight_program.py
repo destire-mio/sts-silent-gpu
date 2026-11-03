@@ -32,10 +32,11 @@ def program_head(state, context_scale, priors):
     return edited
 
 
-def write_program(checkpoint, output, manifest, context_scale, priors):
+def write_program(checkpoint, output, manifest, context_scale, priors, *, expected_sha256):
     checkpoint, output, manifest = [Path(p).resolve() for p in (checkpoint, output, manifest)]
     assert len({checkpoint, output, manifest}) == 3 and not output.exists() and not manifest.exists()
     parent_hash = sha256(checkpoint.read_bytes()).hexdigest()
+    assert parent_hash == expected_sha256, 'Checkpoint SHA256 differs from the requested parent model'
     source = torch.load(checkpoint, map_location='cpu', weights_only=True)
     assert isinstance(source, dict) and 'cls' in source
     assert all(isinstance(value, torch.Tensor) for value in source.values())
@@ -74,13 +75,15 @@ def parse_prior(text):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--checkpoint', type=Path, required=True)
+    parser.add_argument('--expected-sha256', required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--manifest', type=Path, required=True)
     parser.add_argument('--context-scale', type=float, required=True)
     parser.add_argument('--prior', type=parse_prior, action='append', default=[])
     args = parser.parse_args()
     torch.set_num_threads(1)
-    result = write_program(args.checkpoint, args.output, args.manifest, args.context_scale, args.prior)
+    result = write_program(args.checkpoint, args.output, args.manifest, args.context_scale, args.prior,
+                           expected_sha256=args.expected_sha256)
     print(json.dumps({key: result[key] for key in ('output', 'output_sha256', 'changed_scalars')}))
 
 

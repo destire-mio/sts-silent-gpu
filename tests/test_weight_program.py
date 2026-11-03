@@ -1,6 +1,7 @@
 from hashlib import sha256
 from unittest.mock import patch
 
+import pytest
 import torch
 
 from tools.e4_weight_program import program_head, write_program
@@ -53,7 +54,12 @@ def test_saved_program_preserves_raw_cls_parent(tmp_path):
     parent, output, manifest = [tmp_path / name for name in ('parent.pt', 'program.pt', 'manifest.json')]
     torch.save(CLSPolicy(MODEL_CONFIG).state_dict(), parent)
     identity = sha256(parent.read_bytes()).hexdigest()
-    result = write_program(parent, output, manifest, 1.5, [(3, 'end_turn', -.5)])
+    with patch('torch.load', side_effect=AssertionError('Must not deserialize the wrong parent')):
+        with pytest.raises(AssertionError, match='SHA256'):
+            write_program(parent, output, manifest, 1.5, [(3, 'end_turn', -.5)], expected_sha256='0' * 64)
+    assert not output.exists() and not manifest.exists()
+    assert sha256(parent.read_bytes()).hexdigest() == identity
+    result = write_program(parent, output, manifest, 1.5, [(3, 'end_turn', -.5)], expected_sha256=identity)
     saved = torch.load(output, weights_only=True)
     CLSPolicy(MODEL_CONFIG).load_state_dict(saved, strict=True)
     assert result['evaluation_only'] and result['raw_state_dict'] and 'cls' in saved

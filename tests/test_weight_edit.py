@@ -90,7 +90,13 @@ def test_saved_raw_64h_artifact_is_audited_and_does_not_overwrite(tmp_path):
     source = policy.state_dict()
     torch.save(source, checkpoint)
     parent_bytes = checkpoint.read_bytes()
-    result = write_edit(checkpoint, output, manifest, block='context', scale=.9)
+    identity = sha256(parent_bytes).hexdigest()
+    with patch('torch.load', side_effect=AssertionError('Must not deserialize the wrong parent')):
+        with pytest.raises(AssertionError, match='SHA256'):
+            write_edit(checkpoint, output, manifest, expected_sha256='0' * 64, block='context', scale=.9)
+    assert not output.exists() and not manifest.exists()
+    assert checkpoint.read_bytes() == parent_bytes
+    result = write_edit(checkpoint, output, manifest, expected_sha256=identity, block='context', scale=.9)
     saved = torch.load(output, map_location='cpu', weights_only=True)
     loaded = CLSPolicy(MODEL_CONFIG)
     loaded.load_state_dict(saved, strict=True)
@@ -109,9 +115,10 @@ def test_saved_raw_64h_artifact_is_audited_and_does_not_overwrite(tmp_path):
         assert (row['before_sha256'] == row['after_sha256']) == (name != 'score.0.weight')
     output_bytes, manifest_bytes = output.read_bytes(), manifest.read_bytes()
     with pytest.raises(AssertionError):
-        write_edit(checkpoint, output, manifest, action_kind='potion_use', strength=.5)
+        write_edit(checkpoint, output, manifest, expected_sha256=identity, action_kind='potion_use', strength=.5)
     with pytest.raises(AssertionError):
-        write_edit(checkpoint, checkpoint, tmp_path / 'other.json', action_kind='potion_use', strength=.5)
+        write_edit(checkpoint, checkpoint, tmp_path / 'other.json', expected_sha256=identity,
+                   action_kind='potion_use', strength=.5)
     assert output.read_bytes() == output_bytes and manifest.read_bytes() == manifest_bytes
     assert checkpoint.read_bytes() == parent_bytes
 
@@ -127,6 +134,7 @@ def test_writer_rejects_e3_and_wrong_cls_architecture(tmp_path, kind):
     torch.save(source, checkpoint)
     original = checkpoint.read_bytes()
     with pytest.raises((AssertionError, RuntimeError)):
-        write_edit(checkpoint, output, manifest, action_kind='potion_use', strength=.5)
+        write_edit(checkpoint, output, manifest, expected_sha256=sha256(original).hexdigest(),
+                   action_kind='potion_use', strength=.5)
     assert checkpoint.read_bytes() == original
     assert not output.exists() and not manifest.exists()
