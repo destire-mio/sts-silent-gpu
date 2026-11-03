@@ -12,15 +12,45 @@ from train.e4_lookahead_window import (ArgmaxSearch, WindowCollector, COUNTERS,
                                       summary, write_json, window_stop_requested)
 
 
+COMPARISON_EPISODES = 128
+
+
 def due_combat_comparison(training_seconds):
     return int(training_seconds // 7200) > 0 and int(training_seconds // 7200) % 4 == 0
 
 
 def complete_seed_set(rows, owner=None):
-    wanted = list(range(2000000000, 2000000256))
+    wanted = list(range(2000000000, 2000000000 + COMPARISON_EPISODES))
     if owner is not None:
         wanted = wanted[owner::8]
     return sorted(e['seed'] for e in rows) == wanted
+
+
+def paired_completed_summary(baseline, combat):
+    assert complete_seed_set(baseline)
+    previous = {row['seed']: row for row in baseline}
+    current = {row['seed']: row for row in combat}
+    assert len(current) == len(combat) and current.keys() <= previous.keys()
+    seeds = sorted(previous.keys() & current.keys())
+    result = dict(episodes=len(seeds), excluded_seeds=sorted(previous.keys()-current.keys()), modes={})
+    if not seeds:
+        return result
+    matched = [previous[seed] for seed in seeds]
+    for name, source in (('argmax', previous), ('combat', current)):
+        rows = [source[seed] for seed in seeds]
+        if len(seeds) > 1:
+            result['modes'][name] = summary(rows, matched)
+        else:
+            # A single completed pair has a mean difference but no sample SE.
+            row = rows[0]
+            result['modes'][name] = dict(episodes=1, mean_floor=row['floor'],
+                act1_boss=int(row['reach']['act1_boss']),
+                act2_boss=int(row['reach']['act2_boss']),
+                act3_first_boss=int(row['reach']['act3_first_boss']),
+                victories=int(row['reach']['act3_second_boss']),
+                heart_wins=int(row['reach']['heart']),
+                paired_mean_delta=row['floor']-matched[0]['floor'], paired_SE=None)
+    return result
 
 
 def wait_files(paths):
@@ -64,7 +94,7 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
             saved = json.loads(path.read_text()) if path.exists() else dict(episodes=[], counters=dict.fromkeys(COUNTERS,0))
             assert saved.get('checkpoint_sha256', sha) == sha
             seen = {e['seed'] for e in saved['episodes']}
-            seeds = list(range(2000000000,2000000256))[rank::world]
+            seeds = list(range(2000000000,2000000000 + COMPARISON_EPISODES))[rank::world]
             assert len(seen) == len(saved['episodes']) and seen <= set(seeds)
             pending = [seed for seed in seeds if seed not in seen]
             started = time.monotonic()
@@ -157,7 +187,10 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
             baseline = sum((json.loads((directory/f'argmax-rank-{owner}.json').read_text())['episodes']
                             for owner in range(world)),[])
             assert complete_seed_set(baseline)
-            report = dict(checkpoint=checkpoint.name, checkpoint_sha256=sha, episodes=256,
+            combat_rows = sum((json.loads((directory/f'combat-rank-{owner}.json').read_text())['episodes']
+                               for owner in range(world)),[])
+            report = dict(checkpoint=checkpoint.name, checkpoint_sha256=sha, episodes=COMPARISON_EPISODES,
+                paired_completed=paired_completed_summary(baseline, combat_rows),
                 evaluation_only=True,parameter_updates=0,modes={})
             for mode in ('argmax','combat'):
                 status = json.loads((directory/f'{mode}.json').read_text())

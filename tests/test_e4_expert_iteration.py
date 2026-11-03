@@ -146,7 +146,7 @@ def test_every_fourth_exam_and_exact_seed_set():
     assert due_combat_comparison(64*3600+1)
     assert not due_combat_comparison(66*3600+1)
     assert due_combat_comparison(72*3600+1)
-    rows = [dict(seed=i) for i in range(2000000000,2000000256)]
+    rows = [dict(seed=i) for i in range(2000000000,2000000128)]
     assert complete_seed_set(rows)
     rows[-1] = rows[0]
     assert not complete_seed_set(rows)

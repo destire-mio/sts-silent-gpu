@@ -28,3 +28,14 @@ Counters were independently summed from durable receipts. They describe persiste
 The report records evaluation_only=true and parameter_updates=0. The prepared evaluator uses a separate policy with gradients disabled and forked RNG restoration. This documents that execution path and does not claim an independent before/after hash of every rank's training tensors. Raw report SHA-256: 280f8d63265039e52f90e4d5080d92c003f618352a88c810f58482342ceff30a. The original report and 16 receipts remain retained; an existing report makes future startup skip this window, including the capped unfinished seed.
 
 After the capped report was written, ordinary PPO resumed and the separately authorized expert iteration began. This dev-64 comparison contains no expert-training effect measurement. Its first ordinary post-expert examination remains pending. The earlier dev-60 dedicated argmax/ordinary-first-256 discrepancy on two seeds remains unresolved and is not chased or rerun. The ordinary 64h 1024-game examination remains separately documented in [the 64h report](e4-evaluation-64h.md).
+
+### Matched completed-seed supplement (#142)
+
+Per the subsequent authorization, this table excludes seed 2000000221 from **both** modes and independently recomputes the remaining 255 matched games. No game was rerun, no timer was reset, and the original capped report is unchanged. This is a completed-seed subset, not the full 256-game comparison. Selection by completion can bias the comparison; these fixed-dev numbers do not establish unseen-seed generalization or a causal training effect.
+
+| Mode, same 255 seeds | Mean floor | Act1Boss /255 | Act2Boss /255 | First Act3Boss /255 | Act3 wins /255 | Heart wins /255 | Paired floor delta vs argmax | Paired SE |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Argmax | 30.08235294117647 | 208 | 49 | 9 | 2 | 0 | 0 | 0 |
+| Combat | 34.88235294117647 | 233 | 81 | 27 | 6 | 0 | 4.8 | 0.6861833680849498 |
+
+Future eight-hour comparison boundaries request the first 128 seeds, 2000000000–2000000127, with the same one-hour combat cap. If incomplete, their report identifies excluded seeds and pairs both modes on the same completed subset. Ordinary 1024-game examinations, expert-training settings and the current running job are unchanged; this takes effect at the next natural resume.
