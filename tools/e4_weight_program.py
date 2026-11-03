@@ -7,8 +7,8 @@ from pathlib import Path
 import torch
 from torch.nn import functional as F
 
-from tools.e4_weight_edit import ACTION_KINDS, tensor_hash
-from train.model import ModelConfig, Policy
+from tools.e4_weight_edit import ACTION_KINDS, MODEL_CONFIG, tensor_hash
+from train.e4_stage12 import CLSPolicy
 
 
 @torch.no_grad()
@@ -37,24 +37,26 @@ def write_program(checkpoint, output, manifest, context_scale, priors):
     assert len({checkpoint, output, manifest}) == 3 and not output.exists() and not manifest.exists()
     parent_hash = sha256(checkpoint.read_bytes()).hexdigest()
     source = torch.load(checkpoint, map_location='cpu', weights_only=True)
-    policy = Policy(ModelConfig(**source['config']['model']))
-    policy.load_state_dict(source['model'], strict=True)
-    edited = program_head(source['model'], context_scale, priors)
+    assert isinstance(source, dict) and 'cls' in source
+    assert all(isinstance(value, torch.Tensor) for value in source.values())
+    policy = CLSPolicy(MODEL_CONFIG)
+    policy.load_state_dict(source, strict=True)
+    edited = program_head(source, context_scale, priors)
     policy.load_state_dict(edited, strict=True)
     evidence = dict(context_scale=context_scale, priors=priors,
         interpretation='Each selected scoring unit is replaced by a fixed kind detector. '
                        'Its original contribution is removed; this does not add contextual understanding.',
         parent_sha256=parent_hash, gradients=0, optimizer_steps=0,
-        changed_scalars=sum(int((v != edited[k]).sum()) for k, v in source['model'].items()),
+        model_class='CLSPolicy', raw_state_dict=True, evaluation_only=True,
+        changed_scalars=sum(int((v != edited[k]).sum()) for k, v in source.items()),
         total_scalars=sum(v.numel() for v in edited.values()),
         tensors={k: dict(before_sha256=tensor_hash(v), after_sha256=tensor_hash(edited[k]),
-                        changed_scalars=int((v != edited[k]).sum())) for k, v in source['model'].items()})
+                        changed_scalars=int((v != edited[k]).sum())) for k, v in source.items()})
     with output.open('xb') as stream:
-        torch.save(dict(model=edited, config=source['config'], engine_commit=source['engine_commit'],
-                        evaluation_only=True, weight_program=evidence), stream)
+        torch.save(edited, stream)
     reloaded = torch.load(output, map_location='cpu', weights_only=True)
-    policy.load_state_dict(reloaded['model'], strict=True)
-    assert all(torch.equal(v, reloaded['model'][k]) for k, v in edited.items())
+    policy.load_state_dict(reloaded, strict=True)
+    assert all(torch.equal(v, reloaded[k]) for k, v in edited.items())
     assert sha256(checkpoint.read_bytes()).hexdigest() == parent_hash
     evidence.update(output=str(output), output_sha256=sha256(output.read_bytes()).hexdigest(),
                     source_unchanged=True, strict_reload_verified=True)
