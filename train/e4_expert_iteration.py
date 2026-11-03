@@ -18,28 +18,18 @@ BETA = .5
 MAX_LANES = 512
 
 
-def memory_limited_lanes(requested, active, capacity, current_used, previous_peak,
-                         device_total, native_per_lane, working_per_lane):
-    """Conservative growth projection; do not consume the allocation's final 64 MiB."""
-    limit = min(int(previous_peak * 1.25), max(0, device_total - 64 * 1024**2))
-    allowed = active
-    for candidate in range(active + 1, min(MAX_LANES, requested) + 1):
-        projected = (current_used + max(0,candidate-capacity)*native_per_lane
-                     + (candidate-active)*working_per_lane)
-        if projected > limit:
-            break
-        allowed = candidate
-    return min(requested, allowed), limit
+def memory_limited_lanes(requested, ppo_peak, device_total, per_lane):
+    """Allocated PPO bytes plus the estimated complete expert-lane footprint."""
+    limit = max(0, device_total - 1536 * 1024**2)
+    allowed = max(1, (limit - ppo_peak) // max(1, per_lane))
+    return max(1, min(MAX_LANES, requested, allowed)), limit
 
 
 def gpu_memory(device):
     if device.type != 'cuda':
         return None
-    free, total = torch.cuda.mem_get_info(device)
-    used = total-free
-    external = max(0,used-torch.cuda.memory_reserved(device))
-    return dict(used=used,total=total,
-        peak=max(used,torch.cuda.max_memory_reserved(device)+external),
+    _, total = torch.cuda.mem_get_info(device)
+    return dict(total=total, peak=torch.cuda.max_memory_allocated(device),
         allocated=torch.cuda.memory_allocated(device),
         allocated_peak=torch.cuda.max_memory_allocated(device))
 
@@ -182,7 +172,7 @@ class ExpertIteration:
         memory_after = gpu_memory(device)
         self.memory = {}
         if memory_before is not None:
-            native = max(1,memory_after['used']-memory_before['used'])
+            native = max(1,memory_after['allocated']-memory_before['allocated'])
             self.memory = dict(previous_peak=memory_before['peak'],
                 native_per_lane=math.ceil(native*33/(33*self.capacity+128)),
                 working_per_lane=math.ceil(max(64*1024**2,memory_before['allocated_peak']-memory_before['allocated'])*64/2048))
@@ -209,16 +199,32 @@ class ExpertIteration:
                     for key in ('data', 'mask'):
                         row[key] = row[key].to(device)
 
+    def begin_ppo_round(self):
+        self.memory['previous_ppo_allocated_peak'] = self.memory.get('ppo_allocated_peak', 0)
+        self.memory['ppo_allocated_peak'] = 0
+        if self.device.type == 'cuda':
+            torch.cuda.reset_peak_memory_stats(self.device)
+
+    def record_ppo_peak(self):
+        measured = gpu_memory(self.device)
+        if measured is not None:
+            self.memory['ppo_allocated_peak'] = max(self.memory.get('ppo_allocated_peak', 0), measured['allocated_peak'])
+
     def prepare_lanes(self):
         requested = self.lanes
         measured = gpu_memory(self.device)
-        active = self.memory.get('last_active', 1)
         safe = requested
         if measured is not None:
-            safe, limit = memory_limited_lanes(requested, active, self.capacity,
-                measured['used'], self.memory['previous_peak'], measured['total'],
-                self.memory['native_per_lane'],self.memory['working_per_lane'])
+            # Collection precedes this round's learner; include the last measured
+            # PPO learner peak as well as this round's PPO collection peak.
+            ppo_peak = max(self.memory.get('ppo_allocated_peak', 0),
+                           self.memory.get('previous_ppo_allocated_peak', 0))
+            per_lane = max(self.memory['native_per_lane'] + self.memory['working_per_lane'],
+                           self.memory.get('measured_per_lane', 0))
+            safe, limit = memory_limited_lanes(requested, ppo_peak, measured['total'], per_lane)
             self.memory['last_limit'] = limit
+            self.memory['projection_base'] = ppo_peak
+            self.memory['lane_cost'] = per_lane
         if dist.is_initialized():
             common = torch.tensor(safe,dtype=torch.int64,device=self.device)
             dist.all_reduce(common,op=dist.ReduceOp.MIN)
@@ -228,7 +234,8 @@ class ExpertIteration:
                 requested_lanes=requested,retained_lanes=safe,
                 previous_peak_bytes=self.memory.get('previous_peak'),
                 growth_limit_bytes=self.memory.get('last_limit'),
-                reason='projected native storage plus preview working memory exceeds previous peak +25% or device headroom')),flush=True)
+                projected_allocated_bytes=self.memory['projection_base'] + requested*self.memory['lane_cost'],
+                reason='allocated PPO peak plus expert lanes exceeds total minus 1.5 GiB')),flush=True)
         self.lanes = safe
         if safe <= self.capacity:
             return
@@ -239,16 +246,82 @@ class ExpertIteration:
         gc.collect()
         if self.device.type == 'cuda':
             torch.cuda.empty_cache()
-        self.search = ExpertSearch(self.device,20261380+self.rank,safe)
+        try:
+            self._restore_capacity(safe, saved, source, growing=True)
+        except torch.cuda.OutOfMemoryError:
+            # Recover the previously fitting geometry before reporting the OOM
+            # to every rank. The PPO collector and optimizer are untouched.
+            self.__dict__.pop('collector', None)
+            self.__dict__.pop('search', None)
+            gc.collect()
+            torch.cuda.empty_cache()
+            self._restore_capacity(self.capacity, saved, source, growing=False)
+            raise
+        self.capacity = safe
+        self.setup_seconds += time.monotonic()-started
+
+    def _restore_capacity(self, capacity, saved, source, *, growing):
+        self.search = ExpertSearch(self.device,20261380+self.rank,capacity)
         self.search.deadline, self.search.evidence_directory = self.deadline,self.output
         self.collector = ExpertCollector(self.search,
             torch.Generator().manual_seed(20262380+self.rank),rank=self.rank,
             source_collector=source)
-        blank = collector_snapshot(self.collector)
-        restore_collector(self.collector,enlarged_collector_state(saved['collector'],blank))
+        state = (enlarged_collector_state(saved['collector'],collector_snapshot(self.collector))
+                 if growing else saved['collector'])
+        restore_collector(self.collector,state)
         self.search.lookahead.rng.set_state(saved['preview_rng'].cpu())
-        self.capacity = safe
-        self.setup_seconds += time.monotonic()-started
+
+    def discard_oom(self, stage):
+        current = self.round
+        used = current['lanes'] if current is not None else self.lanes
+        self.lanes = max(1, used // 2)
+        if current is not None:
+            current.update(records=[], agreement=0, preview_steps=0, done=True,
+                           oom_stage=stage)
+        self.search.labels = {}
+        self.search.frame_cache.clear()
+        self.search.mask_cache.clear()
+        self.collector.completed.clear()
+        self.throughput = None
+        if self.device.type == 'cuda':
+            torch.cuda.empty_cache()
+        print(json.dumps(dict(event='expert_oom_recovered', rank=self.rank,
+            stage=stage, discarded_round_samples=True, previous_lanes=used,
+            next_lanes=self.lanes, PPO_continues=True)), flush=True)
+
+    def collect_and_fragment(self, policy, update, ppo_collection_seconds):
+        self.record_ppo_peak()
+        before = gpu_memory(self.device)
+        if before is not None:
+            torch.cuda.reset_peak_memory_stats(self.device)
+        flag = torch.zeros((),dtype=torch.int64,device=self.device)
+        fragment = None
+        try:
+            self.collect(policy, update, ppo_collection_seconds)
+            fragment = self.fragment()
+        except torch.cuda.OutOfMemoryError:
+            flag.fill_(1)
+        # AllocationEnded must still reach the caller's original yield protocol;
+        # all ranks participate in that protocol before this OOM collective.
+        except AllocationEnded:
+            flag.fill_(2)
+        dist.all_reduce(flag,op=dist.ReduceOp.MAX)
+        if int(flag) == 2:
+            raise AllocationEnded()
+        if bool(flag):
+            fragment = None
+            if self.round is None:
+                self.round = dict(update=update,ticks=0,records=[],seconds=0.,
+                                  agreement=0,preview_steps=0,done=True,lanes=self.lanes)
+            self.discard_oom('collection')
+            fragment = self.fragment()
+        after = gpu_memory(self.device)
+        if before is not None:
+            increment = max(0,after['allocated_peak']-before['allocated'])
+            self.memory['measured_per_lane'] = math.ceil(increment / self.round['lanes'])
+            self.memory['collection_allocated_peak'] = after['allocated_peak']
+            torch.cuda.reset_peak_memory_stats(self.device)
+        return fragment
 
     def state(self):
         from train.e4_stage6.training_worker import move_tensors
@@ -340,9 +413,11 @@ class ExpertIteration:
         self.memory['last_active'] = used_lanes
         ticks = int(-times[3])
         samples_per_second = float(values[0]) / max(.001, float(times[1]))
-        self.lanes = next_lane_count(used_lanes, extra, base, ticks=ticks,
-            samples_per_second=samples_per_second, previous=self.throughput)
-        self.throughput = dict(lanes=used_lanes, samples_per_second=samples_per_second)
+        oom_stage = self.round.get('oom_stage')
+        if not oom_stage:
+            self.lanes = next_lane_count(used_lanes, extra, base, ticks=ticks,
+                samples_per_second=samples_per_second, previous=self.throughput)
+            self.throughput = dict(lanes=used_lanes, samples_per_second=samples_per_second)
         self.base_seconds = base
         measured_memory = gpu_memory(self.device)
         # previous_peak is the pre-expert pure-PPO anchor, preserved by checkpoints.
@@ -354,9 +429,16 @@ class ExpertIteration:
             expert_lanes=used_lanes, expert_next_lanes=self.lanes,
             expert_ticks=ticks, expert_samples_per_second=samples_per_second,
             expert_storage_lanes=self.capacity, expert_max_lanes=MAX_LANES,
-            expert_gpu_peak_bytes=measured_memory['peak'] if measured_memory is not None else None,
+            expert_gpu_peak_bytes=max(measured_memory['allocated_peak'],
+                self.memory.get('collection_allocated_peak',0),
+                cursor.get('expert_ce_allocated_peak',0)) if measured_memory is not None else None,
             expert_memory_anchor_peak_bytes=self.memory.get('previous_peak'),
             expert_memory_growth_limit_bytes=self.memory.get('last_limit'),
+            expert_ppo_allocated_peak_bytes=self.memory.get('projection_base'),
+            expert_projected_allocated_bytes=self.memory.get('projection_base',0)+used_lanes*self.memory.get('lane_cost',0),
+            expert_collection_allocated_peak_bytes=self.memory.get('collection_allocated_peak'),
+            expert_measured_bytes_per_lane=self.memory.get('measured_per_lane'),
+            expert_oom_stage=oom_stage,
             expert_extra_seconds=extra, expert_setup_seconds=self.setup_seconds,
             expert_collection_seconds=float(times[1]),
             expert_ce_seconds=float(times[2]), expert_base_seconds=base,
@@ -379,7 +461,7 @@ def attach_expert(cursor, fragment, world):
     cursor['expert_ce_seconds'] = 0.
 
 
-def expert_backward(model, scaler, cursor, rank, world, microbatch):
+def _expert_backward(model, scaler, cursor, rank, world, microbatch):
     """Accumulate CE in the same Adam step before the existing PPO backward/sync."""
     if not cursor.get('expert_total'):
         return
@@ -404,3 +486,43 @@ def expert_backward(model, scaler, cursor, rank, world, microbatch):
     if cursor['order'].device.type == 'cuda':
         torch.cuda.synchronize(cursor['order'].device)
     cursor['expert_ce_seconds'] += time.monotonic() - started
+
+
+def expert_backward(model, scaler, cursor, rank, world, microbatch, oom_callback=None):
+    if not cursor.get('expert_total'):
+        return
+    device = cursor['order'].device
+    flag = torch.zeros((),dtype=torch.int64,device=device)
+    statistics_before = cursor['expert_ce_stats'].copy()
+    finite_before = cursor['finite'].clone()
+    cpu_rng = torch.get_rng_state()
+    cuda_rng = torch.cuda.get_rng_state(device) if device.type == 'cuda' else None
+    started = time.monotonic()
+    seconds_before = cursor.get('expert_ce_seconds',0.)
+    try:
+        _expert_backward(model, scaler, cursor, rank, world, microbatch)
+    except torch.cuda.OutOfMemoryError:
+        flag.fill_(1)
+    cursor['expert_ce_seconds'] = seconds_before + time.monotonic()-started
+    if device.type == 'cuda':
+        cursor['expert_ce_allocated_peak'] = max(cursor.get('expert_ce_allocated_peak',0),
+                                                torch.cuda.max_memory_allocated(device))
+    dist.all_reduce(flag,op=dist.ReduceOp.MAX)
+    if bool(flag):
+        # No Adam step has occurred for this minibatch. Discard every rank's
+        # partial CE gradients; the original PPO backward/clip/Adam follows.
+        model.zero_grad(set_to_none=True)
+        cursor['expert_ce_stats'] = statistics_before
+        cursor['finite'] = finite_before
+        cursor['expert_total'] = 0
+        cursor['expert'] = None
+        cursor['expert_oom_stage'] = 'CE'
+        torch.set_rng_state(cpu_rng)
+        if cuda_rng is not None:
+            torch.cuda.set_rng_state(cuda_rng,device)
+        if oom_callback is not None:
+            oom_callback('CE')
+        if device.type == 'cuda':
+            torch.cuda.empty_cache()
+    if device.type == 'cuda':
+        torch.cuda.reset_peak_memory_stats(device)

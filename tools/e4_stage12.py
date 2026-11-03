@@ -320,6 +320,10 @@ def main():
         if cursor is None:
             if collector.partial is None and round_state["ready"] is None:
                 round_state = dict(ready=None, seconds=0., decisions_start=collector.decisions)
+                if expert is not None:
+                    expert.begin_ppo_round()
+                else:
+                    torch.cuda.reset_peak_memory_stats(device)
                 search.entropy_sum.zero_()
                 search.entropy_count = 0
                 search.decision_entropy.zero_()
@@ -364,7 +368,7 @@ def main():
             expert_interrupted = False
             try:
                 with torch.random.fork_rng(devices=[device.index]):
-                    expert.collect(policy, state["update"]+1, time.monotonic()-started)
+                    expert_fragment = expert.collect_and_fragment(policy, state["update"]+1, time.monotonic()-started)
             except AllocationEnded:
                 expert_interrupted = True
             expert_flag = torch.tensor(int(expert_interrupted), device=device)
@@ -374,7 +378,8 @@ def main():
                 state["stop_reason"] = "allocation_end_or_yield"
                 break
             cursor = new_cursor(round_state["ready"], ppo_rng, world)
-            attach_expert(cursor, expert.fragment(), world)
+            attach_expert(cursor, expert_fragment, world)
+            del expert_fragment
             round_state["ready"] = None
             if not sum(cursor["counts"]):
                 failed = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
@@ -410,7 +415,10 @@ def main():
                 advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
                     teacher=teacher if teacher is not None and state['distillation_updates'] < distillation_target else None,
                     entropy_coefficient=state.get('entropy_coefficient', .01),
-                    learner_profile=learner_profile,value_state=state,diagnostic_log=log)
+                    learner_profile=learner_profile,value_state=state,diagnostic_log=log,
+                    expert_oom_callback=expert.discard_oom if expert is not None else None)
+                if expert is not None:
+                    expert.record_ppo_peak()
                 if rank == 0 and not (output/"claude133-gradient-diagnostic.json").exists():
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
         sync_started = time.perf_counter()
@@ -422,7 +430,7 @@ def main():
         row = finish_metrics(cursor, model, scaler)
         elapsed = torch.tensor(round_state["seconds"], dtype=torch.float64, device=device)
         dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
-        if expert is not None and cursor.get("expert") is not None:
+        if expert is not None and expert.round is not None:
             row.update(expert.finish(cursor, float(elapsed), log))
         decisions = torch.tensor(collector.decisions - round_state["decisions_start"], device=device, dtype=torch.float64)
         by_rank = [torch.empty_like(decisions) for _ in range(world)]

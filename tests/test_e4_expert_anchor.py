@@ -8,7 +8,7 @@ from train import e4_expert_iteration as ex
 def test_finish_never_ratchets_pre_expert_peak(monkeypatch):
     monkeypatch.setattr(ex.dist,'all_reduce',lambda *a,**k:None)
     measured = {'peak':100000}
-    monkeypatch.setattr(ex,'gpu_memory',lambda device:dict(measured))
+    monkeypatch.setattr(ex,'gpu_memory',lambda device:dict(measured,allocated_peak=measured['peak']))
     obj = object.__new__(ex.ExpertIteration)
     obj.device = torch.device('cpu')
     obj.setup_seconds = 0.
@@ -38,7 +38,6 @@ def test_native_checkpoint_restores_fixed_anchor_and_later_measurements_do_not_r
     restored = ex.ExpertIteration(source,tmp_path,float('inf'),0,saved)
     assert restored.memory == expected
     assert restored.state()['memory']['previous_peak'] == 123456
-    # Higher current usage cannot change the fixed growth ceiling.
-    _,limit = ex.memory_limited_lanes(512,1,1,999999,restored.memory['previous_peak'],
-                                     10**12,100,200)
-    assert limit == 154320
+    # The historical anchor is retained, but #144 no longer uses it as a gate.
+    _,limit = ex.memory_limited_lanes(512,999999,10**12,300)
+    assert limit == 10**12-1536*1024**2

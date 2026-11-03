@@ -418,7 +418,8 @@ def precision_probe(model, cursor, rank):
 
 
 def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
-                      teacher=None, entropy_coefficient=.01, learner_profile=None, value_state=None, diagnostic_log=None):
+                      teacher=None, entropy_coefficient=.01, learner_profile=None, value_state=None, diagnostic_log=None,
+                      expert_oom_callback=None):
     f = cursor["fragment"]
     selected, global_count = local_minibatch(cursor, rank)
     chunks = list(selected.split(microbatch))
@@ -442,7 +443,7 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         if rank == 0:diagnostic_log(dict(event="value_gradient_calibration",**value_state["value_calibration"]))
     if cursor.get("expert_total"):
         from train.e4_expert_iteration import expert_backward
-        expert_backward(model, scaler, cursor, rank, world, microbatch)
+        expert_backward(model, scaler, cursor, rank, world, microbatch, expert_oom_callback)
     for i in range(steps):
         if learner_profile is not None:
             learner_profile.before_microbatch()

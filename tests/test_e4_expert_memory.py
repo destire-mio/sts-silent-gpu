@@ -18,21 +18,20 @@ def test_expert_ceiling_is_512_and_calibration_still_starts_at_one(tmp_path):
     assert expert.search.size == 1+32+128
 
 
-def test_memory_projection_stops_before_previous_peak_plus_25_percent():
-    allowed,limit = ex.memory_limited_lanes(512,1,1,1000,1000,10**12,10,20)
-    assert limit == 1250 and allowed == 9
-    assert 1000+(allowed-1)*30 <= limit
-    assert 1000+allowed*30 > limit
-    allowed,_ = ex.memory_limited_lanes(512,1,1,1250,1000,10**12,10,20)
+def test_memory_projection_stops_before_allocated_byte_headroom():
+    allowed,limit = ex.memory_limited_lanes(512,1000,1536*1024**2+1250,30)
+    assert limit == 1250 and allowed == 8
+    assert 1000+allowed*30 <= limit
+    assert 1000+(allowed+1)*30 > limit
+    allowed,_ = ex.memory_limited_lanes(512,1250,1536*1024**2+1250,30)
     assert allowed == 1
 
 
-def test_existing_capacity_and_physical_headroom_are_counted():
-    # Existing native storage is not allocated a second time.
-    allowed,_ = ex.memory_limited_lanes(20,1,8,1000,1000,10**12,100,20)
+def test_lane_estimate_and_physical_headroom_are_counted():
+    allowed,_ = ex.memory_limited_lanes(20,1000,1536*1024**2+2000,120)
     assert allowed == 8
-    _,limit = ex.memory_limited_lanes(512,1,1,1,10**12,1024**3,1,1)
-    assert limit == 1024**3-64*1024**2
+    _,limit = ex.memory_limited_lanes(512,1,2*1024**3,1)
+    assert limit == 512*1024**2
 
 
 def test_native_capacity_growth_preserves_live_game_preview_rng_and_ppo(tmp_path):
