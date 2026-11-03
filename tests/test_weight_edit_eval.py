@@ -46,3 +46,20 @@ def test_receipt_keeps_stalls_faults_and_unfinished_runs_separate_from_deaths():
     assert result['summary']['act3_wins'] == 1 and result['summary']['heart_wins'] == 0
     with pytest.raises(AssertionError, match='Incomplete'):
         evaluation_receipt([row], seeds, True)
+
+
+@pytest.mark.parametrize('stall_class', ['engine_fault:123', 'floor_step_limit'])
+def test_act3_relabeling_does_not_hide_later_fault_or_stall(stall_class):
+    reach = dict.fromkeys(('act1_boss', 'act2_boss', 'act3_first_boss', 'act3_second_boss',
+                          'act4', 'shield_spear', 'heart'), False)
+    reach['act3_second_boss'] = True
+    row = dict(seed=2000000000, floor=51, outcome='act3_win', reach=reach,
+               keys=dict.fromkeys(('ruby', 'emerald', 'sapphire'), False), stall_class=stall_class)
+    result = evaluation_receipt([row], [row['seed']], True)
+    summary = result['summary']
+    assert summary['outcomes'] == {'act3_win': 1}
+    assert summary['act3_wins'] == 1 and summary['heart_wins'] == 0
+    assert summary['unresolved_stalls'] == summary['anomalous_episodes'] == 1
+    assert summary['stall_classes'] == {stall_class: 1}
+    assert summary['anomaly_outcomes'] == {'act3_win': 1}
+    assert result['episodes'][0] == row

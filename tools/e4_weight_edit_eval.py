@@ -67,12 +67,15 @@ def evaluation_receipt(episodes, seeds, complete):
     assert not complete or set(actual) == set(seeds), 'Incomplete evaluation cannot be reported complete'
     assert all(row['outcome'] in ('death', 'victory', 'act3_win', 'stalled') for row in rows)
     count = len(rows)
+    anomalies = [row for row in rows if row['stall_class'] is not None]
     return dict(complete=complete, requested_seeds=seeds,
         unfinished_seeds=[seed for seed in seeds if seed not in set(actual)], episodes=rows,
         summary=dict(episodes=count, mean_floor=statistics.mean(row['floor'] for row in rows) if count else None,
             outcomes=dict(Counter(row['outcome'] for row in rows)),
-            unresolved_stalls=sum(row['outcome'] == 'stalled' for row in rows),
-            stall_classes=dict(Counter(row['stall_class'] for row in rows if row['outcome'] == 'stalled')),
+            unresolved_stalls=sum(row['outcome'] == 'stalled' or row['stall_class'] is not None for row in rows),
+            anomalous_episodes=len(anomalies),
+            anomaly_outcomes=dict(Counter(row['outcome'] for row in anomalies)),
+            stall_classes=dict(Counter(row['stall_class'] for row in anomalies)),
             boss_counts={key: sum(row['reach'][key] for row in rows)
                          for key in ('act1_boss', 'act2_boss', 'act3_first_boss')},
             act3_wins=sum(row['reach']['act3_second_boss'] for row in rows),
