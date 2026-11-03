@@ -94,9 +94,10 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
     }
     w.add(screen);
     const bool combat = g.room_phase == RoomPhase::Combat && g.screen != Screen::Death && g.screen != Screen::Victory;
+    record_combat(history, g, combat);
     Token player = token(Kind::Player, 1);
     player.values[0] = g.player.creature.hp; player.values[1] = g.player.creature.max_hp; player.values[2] = g.run.gold;
-    if (combat) { player.values[3] = g.player.creature.block; player.values[4] = g.player.energy; }
+    if (combat) { player.values[3] = g.player.creature.block; player.values[4] = g.player.energy; player.values[5] = g.turn; }
     const int player_id = w.add(player);
     for (int i = 0; i < g.run.master_deck.size; ++i) w.add(card_token(g, g.run.master_deck[i], Zone::Master, i + 1, false));
     for (int i = 0; i < g.run.relics.size; ++i) w.add(relic_token(g.run.relics[i], Zone::None, i + 1, true));
@@ -124,6 +125,7 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
             // AbstractCreature.renderHealthText shows Dead instead of HP/max HP at zero health.
             if (c.hp > 0) t.values[1] = c.max_hp;
             t.values[3] = static_cast<int>(c.draw_x); t.values[4] = c.flip_horizontal;
+            if (m.id == MonsterId::Hexaghost && !c.dying && !c.half_dead) t.values[9] = m.state.Hexaghost.orbActiveCount;
             // AbstractRoom.render keeps monsters behind overlays; GameActionManager flashes intents only in monster turns.
             const bool player_selection = !g.manager.turn_has_ended &&
                 (g.screen == Screen::Discard || g.screen == Screen::Grid || g.screen == Screen::CardReward);
@@ -134,6 +136,9 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
                 if (m.intent == Intent::Attack || m.intent == Intent::AttackBuff || m.intent == Intent::AttackDebuff || m.intent == Intent::AttackDefend) {
                     t.values[7] = m.intent_damage; t.values[8] = m.intent_multi ? m.intent_hits : 1;
                 }
+                history.intents[g.monster_order[i]][0] = {
+                    static_cast<int16_t>(t.values[7]), static_cast<int16_t>(t.values[8]), static_cast<uint8_t>(t.values[6]),
+                    static_cast<int16_t>(static_cast<int>(m.id) + 1)};
             }
             monsters[i] = w.add(t);
             if (!c.dying && !c.half_dead) powers(w, g, c, monsters[i]);
@@ -226,6 +231,30 @@ SPIRE_FN inline Result encode(const Game& g, History& history, View view, Action
             int nodes[106]{};
             map_entities(w, g, nodes);
         }
+    }
+    if (combat) for (int i = 0; i < g.monster_order.size; ++i) {
+        const auto& m = g.monsters[g.monster_order[i]];
+        if (!monsters[i] || m.creature.dying || m.creature.half_dead || m.creature.escaped) continue;
+        for (int back = 1; back <= 2; ++back) {
+            const auto& intent = history.intents[g.monster_order[i]][back];
+            if (!intent.kind || intent.monster != static_cast<int>(m.id) + 1) continue;
+            Token t = token(Kind::Monster, static_cast<int>(m.id) + 1, Zone::History, back, monsters[i]);
+            t.values[6] = intent.kind; t.values[7] = intent.damage; t.values[8] = intent.hits;
+            w.add(t);
+        }
+    }
+    if (combat) {
+        Token played = token(Kind::Option, static_cast<int>(Control::PlayedCards), Zone::History, 0, player_id);
+        const auto& cards = g.manager.played_cards;
+        for (int i = cards.turn_start; i < cards.size; ++i) {
+            switch (card_data(g.cards[cards.values[i]].id).type) {
+            case CardType::Attack: ++played.values[0]; break;
+            case CardType::Skill: ++played.values[1]; break;
+            case CardType::Power: ++played.values[2]; break;
+            default: break;
+            }
+        }
+        w.add(played);
     }
     legal_actions(g, actions);
     if (actions.size > candidate_capacity) w.result.fault = static_cast<uint32_t>(Fault::Candidates);

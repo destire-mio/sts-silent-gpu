@@ -42,14 +42,14 @@ struct Card {
     bool is_flipped : 1;
     bool priced : 1;
     bool master_reference : 1;
-    uint8_t padding : 1;
+    bool draw_position_known : 1;
     CardState state{};
     SPIRE_FN SPIRE_INLINE constexpr Card()
         : id(CardId::Strike_G), multi_damage_count(0), upgraded_cost(false), target(CardTarget::Enemy), ignore_energy_on_use(false), exhaust(false), ethereal(false), retain(false),
           self_retain(false), innate(false), free_to_play_once(false), exhaust_on_use_once(false),
           dont_trigger_on_use_card(false), in_autoplay(false), purge_on_use(false),
           shuffle_back_into_draw_pile(false), return_to_hand(false),
-          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), priced(false), master_reference(false), padding(0) {}
+          bottle_flame(false), bottle_lightning(false), bottle_tornado(false), is_flipped(false), priced(false), master_reference(false), draw_position_known(false) {}
 };
 struct CardArena {
     Card values[card_capacity]{};

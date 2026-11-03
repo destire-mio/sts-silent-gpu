@@ -9,6 +9,7 @@ struct AttackFromDeckToHand : ActionHooks {
     static SPIRE_FN constexpr ActionData data() { return {false, "CARD_MANIPULATION"}; }
     SPIRE_STATE(AttackFromDeckToHand, bool selecting;)
     SPIRE_FN static void move_card(Game& g, int card) {
+        forget_draw_positions(g);
         for (int i = 0; i < g.draw.size; ++i)
             if (g.draw[i] == card) { g.draw.erase(i); break; }
         if (g.hand.size == hand_limit) {

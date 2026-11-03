@@ -30,6 +30,7 @@ struct DrawPileToHand : ActionHooks {
             shuffle(candidates.values, candidates.size, g.rng.shuffle);
             const int card = candidates.erase(0);
             if (g.hand.size == hand_limit) { draw_pile_to_discard(g, card); continue; }
+            forget_draw_positions(g);
             remove_from_pile(g.draw, card);
             g.hand.push_back(card);
             refresh_hand(g);

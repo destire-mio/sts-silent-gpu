@@ -9,6 +9,7 @@ struct DiscardPileToTopOfDeck : ActionHooks {
     static SPIRE_FN void move(Game& g, int card) {
         remove_from_pile(g.discard, card);
         g.draw.push_back(card);
+        g.cards[card].draw_position_known = true;
         mark_card_move(g, card);
     }
     static SPIRE_FN void execute(Game& g, Effect& e) {

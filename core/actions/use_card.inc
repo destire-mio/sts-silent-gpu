@@ -80,9 +80,12 @@ struct UseCard : ActionHooks {
                 remove_queued_card(g, e.card);
                 card_resetAttributes(g, e.card);
                 g.draw.push_back(e.card);
+                card.draw_position_known = true;
             } else if (card.shuffle_back_into_draw_pile) {
                 remove_queued_card(g, e.card);
                 card_resetAttributes(g, e.card);
+                forget_draw_positions(g);
+                card.draw_position_known = false;
                 if (g.draw.empty()) g.draw.push_back(e.card);
                 else g.draw.insert(g.rng.card_random.random(g.draw.size - 1), e.card);
             } else if (card.return_to_hand) {

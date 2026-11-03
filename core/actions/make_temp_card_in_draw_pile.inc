@@ -13,9 +13,15 @@ struct MakeTempCardInDrawPile : ActionHooks {
             const int card = copy_card(g, e.card);
             upgrade_created_card(g, card);
             mark_card_move(g, card);
-            if (e.payload.state.MakeTempCardInDrawPile.to_bottom) g.draw.insert(0, card);
+            if (e.payload.state.MakeTempCardInDrawPile.to_bottom) {
+                g.draw.insert(0, card);
+                g.cards[card].draw_position_known = true;
+            }
             else if (e.payload.state.MakeTempCardInDrawPile.random_spot) insert_random_card(g, g.draw, card);
-            else g.draw.push_back(card);
+            else {
+                g.draw.push_back(card);
+                g.cards[card].draw_position_known = true;
+            }
         }
     }
 };

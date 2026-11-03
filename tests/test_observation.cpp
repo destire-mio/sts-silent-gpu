@@ -56,6 +56,133 @@ static Game combat(bool dome = false) {
     start_combat(g, setup);
     return g;
 }
+static void combat_turn() {
+    Game g = combat();
+    require(observe(g).values[5 * obs::entity_capacity + 1] == 1, "first combat turn missing");
+    step(g, {ActionKind::EndTurn});
+    require(observe(g).values[5 * obs::entity_capacity + 1] == 2, "combat turn did not advance");
+    open_hand_selection(g, 1);
+    require(observe(g).values[5 * obs::entity_capacity + 1] == 2, "selection lost combat turn");
+    g.room_phase = RoomPhase::Complete;
+    require(observe(g).values[5 * obs::entity_capacity + 1] == 0, "combat turn escaped combat");
+}
+static int history_entity(const obs::Observation& o, obs::Kind kind, int position = 0) {
+    for (int i = 0; i < o.entities; ++i)
+        if (o.tags[i] == static_cast<int>(kind) && o.tags[obs::entity_capacity + i] == static_cast<int>(obs::Zone::History) &&
+            o.ids[2 * obs::entity_capacity + i] == position) return i;
+    return -1;
+}
+static void previous_intents() {
+    Game g = combat();
+    obs::History history;
+    observe_recorded(g, history);
+    auto& m = g.monsters[g.monster_order[0]];
+    m.intent = Intent::AttackBuff; m.intent_damage = 11; m.intent_multi = true; m.intent_hits = 3;
+    observe_recorded(g, history);
+    step(g, {ActionKind::EndTurn});
+    const auto o = observe_recorded(g, history);
+    const int previous = history_entity(o, obs::Kind::Monster, 1);
+    require(previous >= 0 && o.tags[3 * obs::entity_capacity + previous] == static_cast<int>(Intent::AttackBuff) + 1 &&
+        o.values[4 * obs::entity_capacity + previous] == 11 && o.values[5 * obs::entity_capacity + previous] == 3,
+        "last displayed intent did not survive the monster turn");
+    const int owner = o.ids[obs::entity_capacity + previous] - 1;
+    require(owner >= 0 && o.tags[owner] == static_cast<int>(obs::Kind::Monster) &&
+        o.tags[obs::entity_capacity + owner] == static_cast<int>(obs::Zone::None), "intent history owner missing");
+    require(history_entity(observe(g), obs::Kind::Monster, 1) < 0, "unseen intent inferred from engine history");
+    const auto copied = observe(g, history);
+    require(std::memcmp(&o, &copied, sizeof(o)) == 0, "repeated/copied intent history changed");
+    step(g, {ActionKind::EndTurn});
+    const auto next = observe_recorded(g, history);
+    const int older = history_entity(next, obs::Kind::Monster, 2);
+    require(older >= 0 && next.values[4 * obs::entity_capacity + older] == 11 &&
+        next.values[5 * obs::entity_capacity + older] == 3, "second previous intent missing");
+    const int vault = g.hand.size;
+    g.hand.push_back(create_card(g, make_card(CardId::Vault)));
+    g.player.energy = 3;
+    step(g, {ActionKind::Play, vault});
+    const auto skipped = observe_recorded(g, history);
+    const int unchanged = history_entity(skipped, obs::Kind::Monster, 2);
+    require(g.turn == 4 && unchanged >= 0 && skipped.values[4 * obs::entity_capacity + unchanged] == 11,
+        "Vault invented a monster turn in intent memory");
+    Game hidden = combat(true); obs::History dome_history;
+    observe_recorded(hidden, dome_history); step(hidden, {ActionKind::EndTurn});
+    require(history_entity(observe_recorded(hidden, dome_history), obs::Kind::Monster, 1) < 0, "Dome leaked past intent");
+    g = combat();
+    require(history_entity(observe_recorded(g, history), obs::Kind::Monster, 1) < 0, "intent history crossed combats");
+}
+static void played_types() {
+    Game g = combat(); g.hand.clear(); g.player.energy = 6;
+    for (auto id : {CardId::Strike_G, CardId::Defend_G, CardId::Footwork}) g.hand.push_back(create_card(g, make_card(id)));
+    for (int i = 0; i < 3; ++i) step(g, {ActionKind::Play, 0, i == 0 ? 0 : -1});
+    const auto o = observe(g);
+    const int played = history_entity(o, obs::Kind::Option);
+    require(played >= 0 && o.ids[played] == static_cast<int>(obs::Control::PlayedCards), "played counts missing");
+    for (int row = 0; row < 3; ++row) require(o.values[row * obs::entity_capacity + played] == 1, "played type count wrong");
+    apply_power(g, player_target, player_target, PowerId::Duplication, 1);
+    g.hand.push_back(create_card(g, make_card(CardId::Strike_G)));
+    step(g, {ActionKind::Play, 0, 0});
+    const auto repeated = observe(g);
+    const int repeated_counts = history_entity(repeated, obs::Kind::Option);
+    require(repeated_counts >= 0 && repeated.values[repeated_counts] == 3, "displayed automatic copy missing from count");
+    step(g, {ActionKind::EndTurn});
+    const auto next = observe(g);
+    const int reset = history_entity(next, obs::Kind::Option);
+    require(reset >= 0, "new turn lost played counts");
+    for (int row = 0; row < 3; ++row) require(next.values[row * obs::entity_capacity + reset] == 0, "played count crossed turns");
+}
+static void hexaghost_orbs() {
+    Game g; reset(g, 123); CombatSetup setup;
+    setup.encounter = EncounterId::Hexaghost; setup.deck = g.run.master_deck;
+    start_combat(g, setup);
+    for (int count : {0, 6, 0, 1, 2, 3, 4, 5, 6}) {
+        const auto o = observe(g);
+        int found = 0;
+        for (int i = 0; i < o.entities; ++i) if (o.tags[i] == static_cast<int>(obs::Kind::Monster)) {
+            require((o.tags[2 * obs::entity_capacity + i] >> 1) == count, "Hexaghost displayed orb count wrong");
+            ++found;
+        }
+        require(found == 1, "Hexaghost fixture lacks monster");
+        g.player.creature.hp = g.player.creature.max_hp;
+        step(g, {ActionKind::EndTurn});
+    }
+}
+static void known_draw_positions() {
+    Game g = combat();
+    g.cards[g.draw[0]] = make_card(CardId::Strike_G, 1);
+    g.cards[g.draw[1]] = make_card(CardId::Strike_G);
+    g.cards[g.draw[2]] = make_card(CardId::Strike_G);
+    const auto unknown = observe(g);
+    g.cards[g.draw[1]].draw_position_known = true;
+    auto annotated = observe(g);
+    for (int i = 0; i < annotated.entities; ++i)
+        if (annotated.tags[obs::entity_capacity + i] == static_cast<int>(obs::Zone::Draw))
+            annotated.ids[2 * obs::entity_capacity + i] = 0;
+    require(!std::memcmp(&unknown, &annotated, sizeof(unknown)), "position annotation changed unrelated bytes");
+    forget_draw_positions(g);
+    const int top = g.hand[0], bottom = g.hand[1];
+    hand_to_deck(g, top); move_to_bottom_of_deck(g, bottom);
+    const auto o = observe(g);
+    int known = 0;
+    for (int i = 0; i < o.entities; ++i) if (o.tags[obs::entity_capacity + i] == static_cast<int>(obs::Zone::Draw)) {
+        const int position = o.ids[2 * obs::entity_capacity + i];
+        if (!position) continue;
+        ++known;
+        const int card = position == 1 ? top : bottom;
+        require(position == 1 || position == g.draw.size, "unknown draw position leaked");
+        require(o.ids[i] == static_cast<int>(g.cards[card].id) + 1, "known draw card face wrong");
+    }
+    require(known == 2, "known top/bottom positions missing");
+    Effect draw = units::actions::Draw::construct(1, false);
+    add_bottom(g, draw); run_until_decision(g);
+    require(!g.cards[top].draw_position_known && g.cards[bottom].draw_position_known, "drawing did not expire only drawn knowledge");
+    const int added = create_card(g, make_card(CardId::Dazed));
+    insert_random_card(g, g.draw, added);
+    for (int i = 0; i < g.draw.size; ++i) require(!g.cards[g.draw[i]].draw_position_known, "random insertion retained positions");
+    const int returned = g.hand[0]; hand_to_deck(g, returned);
+    Effect shuffle{}; shuffle.kind = EffectKind::Shuffle;
+    add_bottom(g, shuffle); run_until_decision(g);
+    for (int i = 0; i < g.draw.size; ++i) require(!g.cards[g.draw[i]].draw_position_known, "shuffle retained positions");
+}
 static void draw_and_identity() {
     Game a = combat(), b = a;
     int other = 1;
@@ -579,6 +706,9 @@ static void overflow() {
 }
 int main() {
     static_assert(sizeof(Game) == 37888);
+    combat_turn();
+    previous_intents(); played_types(); hexaghost_orbs();
+    known_draw_positions();
     map_inspection(); selection_intents(); grid_prompt_text(); conditional_card_description(); identical_selection_text(); dead_health_label(); match_current_screen(); adventurer_previous_clue(); combat_bottle_identity(); combat_card_values(); uninitialized_card_numbers(); draw_and_identity(); pile_sorting_matches_tokens(); dome(); discard_damage(); event_secrets(); private_counters(); unopened_content_and_prices(); screen_local_state(); reward_identity(); traces(); overflow();
     for (int i = 0; i < 13; ++i) std::printf("screen=%d hidden_pairs=%d positive_controls=%d\n", i, pairs[i], positive_screens[i]);
     std::printf("visible_positive_controls=%d\n", positives);

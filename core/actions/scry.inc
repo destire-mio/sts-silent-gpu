@@ -20,8 +20,10 @@ struct Scry : ActionHooks {
                 return;
             g.grid_cards.clear();
             const int count = e.amount == -1 ? g.draw.size : min(e.amount, g.draw.size);
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i) {
                 g.grid_cards.push_back(g.draw[g.draw.size - i - 1]);
+                g.cards[g.draw[g.draw.size - i - 1]].draw_position_known = true;
+            }
             open_grid_selection(g, PileId::Grid, e.amount, false);
             g.grid_can_cancel = true;
             g.selection_any_number = true;

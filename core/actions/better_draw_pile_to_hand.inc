@@ -10,6 +10,7 @@ struct BetterDrawPileToHand : ActionHooks {
         if (g.hand.size == hand_limit)
             draw_pile_to_discard(g, card);
         else {
+            forget_draw_positions(g);
             remove_from_pile(g.draw, card);
             g.hand.push_back(card);
             card_applyPowers(g, card);

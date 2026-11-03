@@ -34,6 +34,7 @@ struct Codex : ActionHooks {
                 if (type != CardType::Curse && type != CardType::Status && has_power(g, g.player.creature, PowerId::MasterReality))
                     card_upgrade(card);
                 const int index = create_card(g, card);
+                forget_draw_positions(g);
                 if (g.draw.empty()) g.draw.push_back(index);
                 else g.draw.insert(g.rng.card_random.random(g.draw.size - 1), index);
                 // ShowCardAndAddToDrawPileEffect.update starts a Soul, including during hand selection.

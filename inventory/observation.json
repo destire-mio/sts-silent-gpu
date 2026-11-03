@@ -1,5 +1,5 @@
 {
-  "protocol_version": 13,
+  "protocol_version": 14,
   "base_commit": "66b07979ad07c0a7e2b67ef2db72492857852754",
   "protocol": "docs/observation.md",
   "capacities": {
@@ -261,7 +261,65 @@
       ],
       "rule": "Emit base damage/block when the live cache is -1, matching AbstractCard field initialization:105-113 and renderDynamicVariable:1775-1806; preserve other live caches, discard damage and exhaust stat-copy rules.",
       "test": "tests/test_observation.cpp:uninitialized_card_numbers,combat_card_values,discard_damage"
+    },
+    {
+      "version": 14,
+      "fields": [
+        "Player.values[5]",
+        "Monster History entities",
+        "PlayedCards Option History entity",
+        "Hexaghost Monster.flags[1:3]",
+        "known Draw Card position"
+      ],
+      "rule": "Remember displayed combat turn, two observed enemy intents and played card type counts; show Hexaghost fires; track revealed draw positions in one Card padding bit and preserve them during determinize. Preserve existing feature rows and unrelated bytes.",
+      "test": "tests/test_observation.cpp:combat_turn,previous_intents,played_types,hexaghost_orbs,known_draw_positions; tests/test_determinize.cpp:setup_known_top"
     }
   ],
-  "measurements_protocol_version": 2
+  "measurements_protocol_version": 2,
+  "combat_memory_validation": {
+    "protocol_version": 14,
+    "traces": 904,
+    "decisions": 20980,
+    "corpus": "tests/traces/*.jsonl.gz",
+    "combat_run_terminal_zero_difference": true,
+    "game_bytes": 37888,
+    "card_bytes": 40,
+    "history_bytes_before": 104,
+    "history_bytes": 1268,
+    "max_entities": 106,
+    "max_candidates": 31,
+    "max_entities_by_screen": {
+      "COMBAT": 106,
+      "HAND_SELECT": 55,
+      "COMBAT_REWARD": 92,
+      "DEATH": 90,
+      "EVENT": 88,
+      "MAP": 86,
+      "ROOM": 86,
+      "GRID": 97,
+      "CARD_REWARD": 88,
+      "SHOP": 97,
+      "BOSS_REWARD": 83,
+      "VICTORY": 21
+    },
+    "model_shape": {
+      "tag_rows": 4,
+      "id_rows": 4,
+      "value_rows": 6,
+      "max_kind": 12,
+      "max_zone": 11,
+      "id_vocabularies": [
+        512,
+        385,
+        385,
+        512
+      ]
+    },
+    "tests": [
+      "test_observation",
+      "test_observation_storage",
+      "test_determinize (Setup top and bottom fixed across 100 seeds; unknown cards shuffle; Frozen Eye unchanged)"
+    ],
+    "command": "tools/check_observation.py tests/traces --output build/observation-audit.json"
+  }
 }

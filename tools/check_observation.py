@@ -25,6 +25,7 @@ class Audit:
         self.events = Counter()
         self.rooms = Counter()
         self.peaks = Counter()
+        self.entities_by_screen = Counter()
         self.decisions = 0
         self.entity_counts = Counter()
         self.candidate_counts = Counter()
@@ -37,6 +38,11 @@ class Audit:
         assert fault == 0, fault
         count, choices = int(entities.sum()), int(mask.sum())
         self.boundaries[SCREENS[int(ids[0, 0]) - 1]] += 1
+        screen = SCREENS[int(ids[0, 0]) - 1]
+        self.entities_by_screen[screen] = max(self.entities_by_screen[screen], count)
+        assert tags[0, :count].max() <= 12 and tags[1, :count].max() <= 11
+        for row, capacity in enumerate((512, 385, 385, 512)):
+            assert (ids[row, :count] >= 0).all() and (ids[row, :count] < capacity).all()
         assert choices == len(legal)
         assert (entities[:count] == 1).all() and (entities[count:] == 0).all()
         assert (mask[:choices] == 1).all() and (mask[choices:] == 0).all()
@@ -141,6 +147,7 @@ def main():
     report = dict(traces=len(results), decisions=audit.decisions, screens=audit.screens,
                   boundaries=audit.boundaries,
                   events=audit.events, rooms=audit.rooms, peaks=audit.peaks,
+                  max_entities_by_screen=audit.entities_by_screen,
                   gaps=[name for name in SCREENS if name not in audit.boundaries],
                   game_bytes=spire.game_bytes, observation_bytes=spire.observation_bytes,
                   distributions={name: distribution(histogram) for name, histogram in

@@ -3,12 +3,42 @@
 #include "obs/card_variables.hpp"
 
 namespace spire::obs {
+struct SeenIntent {
+    int16_t damage = 0, hits = 0;
+    uint8_t kind = 0;
+    int16_t monster = 0;  // MonsterId + 1; a slot reused by a new spawn drops the old memory.
+};
 struct History {
     Token card{};
     bool shown = false;
     int adventurer_floor = -1, adventurer_clue = 0;
     int rest_floor = -1, rest_heal = 0, rest_bonus = 0;
+    int combat_floor = -1, combat_turn = 0, combat_play_start = 0;
+    SeenIntent intents[monster_capacity][3]{};
 };
+SPIRE_FN inline void record_combat(History& history, const Game& g, bool combat) {
+    if (!combat || history.combat_floor != g.run.floor || g.turn < history.combat_turn) {
+        for (auto& monster : history.intents) for (auto& intent : monster) intent = {};
+        history.combat_floor = combat ? g.run.floor : -1;
+        history.combat_turn = combat ? g.turn : 0;
+        history.combat_play_start = combat ? g.manager.played_cards.turn_start : 0;
+    }
+    if (combat && g.turn != history.combat_turn) {
+        bool skipped = false;
+        const auto& played = g.manager.played_cards;
+        for (int i = history.combat_play_start; i < played.turn_start; ++i)
+            skipped |= g.cards[played.values[i]].id == CardId::Vault;
+        for (auto& monster : history.intents) {
+            if (!skipped || g.turn != history.combat_turn + 1) {
+                monster[2] = g.turn == history.combat_turn + 1 ? monster[1] : SeenIntent{};
+                monster[1] = g.turn == history.combat_turn + 1 ? monster[0] : SeenIntent{};
+            }
+            monster[0] = {};
+        }
+        history.combat_turn = g.turn;
+        history.combat_play_start = played.turn_start;
+    }
+}
 SPIRE_FN inline Token card_token(const Game& g, const Card& c, Zone zone, int position, bool live) {
     Token t = token(Kind::Card, static_cast<int>(c.id) + 1, zone, position);
     const auto& d = card_data(c.id);
@@ -67,20 +97,27 @@ SPIRE_FN inline void pile(Writer& w, const Game& g, const Pile& cards, Zone zone
     for (int i = 0; i < cards.size; ++i) {
         const int index = !unordered && (zone == Zone::Draw || zone == Zone::Exhaust) ? cards.size - i - 1 : i;
         const Card& c = g.cards[cards[index]];
-        Token t = card_token(g, c, zone, unordered ? 0 : i + 1, !copy);
+        const int position = unordered ? (zone == Zone::Draw && c.draw_position_known ? cards.size - index : 0) : i + 1;
+        Token t = card_token(g, c, zone, unordered ? 0 : position, !copy);
         if (unordered) {
             int at = i;
             while (at > 0) {
-                const auto& previous = g.cards[sorted[at - 1]];
+                const int previous_index = sorted[at - 1];
+                const auto& previous = g.cards[cards[previous_index]];
+                const int previous_position = zone == Zone::Draw && previous.draw_position_known ? cards.size - previous_index : 0;
+                const Token previous_token = card_token(g, previous, zone, 0, !copy);
                 if (c.id > previous.id || (c.id == previous.id &&
-                    !less(t, card_token(g, previous, zone, 0, !copy)))) break;
+                    !less(t, previous_token) && (less(previous_token, t) || position >= previous_position))) break;
                 sorted[at] = sorted[at - 1]; --at;
             }
-            sorted[at] = cards[index];
+            sorted[at] = index;
         } else w.add(t);
     }
-    if (unordered) for (int i = 0; i < cards.size; ++i)
-        w.add(card_token(g, g.cards[sorted[i]], zone, 0, !copy));
+    if (unordered) for (int i = 0; i < cards.size; ++i) {
+        const auto& card = g.cards[cards[sorted[i]]];
+        const int position = zone == Zone::Draw && card.draw_position_known ? cards.size - sorted[i] : 0;
+        w.add(card_token(g, card, zone, position, !copy));
+    }
 }
 SPIRE_FN inline void powers(Writer& w, const Game& g, const Creature& c, int owner) {
     int position = 0;

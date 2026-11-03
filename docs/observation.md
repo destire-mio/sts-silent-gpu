@@ -1,6 +1,6 @@
 # E0 visible observation protocol
 
-Version 13 targets the pinned Java build in `design.md`. The source root is the read-only
+Version 14 targets the pinned Java build in `design.md`. The source root is the read-only
 `java_source_root` in `inventory/deep-neow.json`; paths below are relative to
 `com/megacrit/cardcrawl/`. This protocol is separate from the oracle snapshot. Unlisted
 fields are denied, including seeds, RNG words/counters, object identities, allocation slots,
@@ -13,7 +13,9 @@ to a human: top panel, owned deck, relic/potion tooltips and, during combat, pil
 The current act's announced boss is included on every screen. Map nodes are included on MAP
 and on other screens outside combat. Recurrent memory belongs to the caller and is built
 from these observations and selected candidates, never a snapshot. Reset clears memory;
-training forks copy it. Engine-internal histories are not exported.
+training forks copy it. Engine-internal histories are not exported, except for the three
+counts of already displayed card plays specified below. Displayed Vault plays also identify
+a skipped monster turn when advancing intent memory; their card identities are not exported.
 
 ## Numeric contract
 
@@ -40,13 +42,15 @@ bit first: bit `i % 8` of byte `i / 8` is one exactly when slot i is valid. Zero
 padding. Every count and mask is derived from the same emitted prefix. Consumers can
 unpack with `np.unpackbits(mask, axis=-1, bitorder="little")`.
 
-E0 reserves 384 entity tokens and 128 candidates. The measured maxima over the 841 committed
-and 133 local deep traces are 285 and 51; `inventory/observation.json` identifies the corpus
-and per-kind peaks. These are execution budgets with headroom, not Java game limits.
+E0 reserves 384 entity tokens and 128 candidates. The protocol 2 baseline measured maxima
+over 841 committed and 133 local deep traces are 285 and 51; `inventory/observation.json`
+identifies that corpus and its per-kind peaks. Protocol 14's 904 committed traces measure
+106 entities and 31 candidates; its per-screen entity peaks are recorded separately in the
+same inventory. These are execution budgets with headroom, not Java game limits.
 Seven network arrays occupy 10,176 bytes per decision (24 bytes/entity, 7 bytes/candidate,
 64 mask bytes). Two int32 counts bring the padded observation to 10,184 bytes, versus
 36,352 array bytes in version 1. The displayed-label sidecar and episode bookkeeping are
-outside these arrays and outside the unchanged 37,872-byte `Game`.
+outside these arrays and outside the unchanged 37,888-byte `Game`.
 
 Device callers own one `obs::History` and a zero-initialized `obs::Observation` beside each
 game. Clear history on reset, call `obs::record_action(history, game, action)` before each
@@ -56,10 +60,11 @@ counts across subsequent calls, including game resets and forks. The encoder ove
 valid rows, clears only the previously used tail, and regenerates the used mask bytes.
 Faults clear the previous and partially written prefixes. It never clears all capacities
 per decision. Pile sorting initializes only populated scratch tokens, retains the version 1
-public-tuple ordering and never introduces a hidden tie-breaker. Legal actions are enumerated
+public-tuple ordering and breaks otherwise identical draw-card ties by remembered position.
+It never introduces a hidden tie-breaker. Legal actions are enumerated
 once, shared by candidate encoding and the next step. Encoding reads `Game` without mutation;
 it records displayed labels in history. The sidecar is caller-owned memory: it may retain
-facts the player saw earlier in the same event, never facts that were not displayed.
+facts the player saw earlier in the same event or combat, never facts that were not displayed.
 Copy history with a training fork and root cache; replay actions rebuilds it.
 
 ## Common entities
@@ -67,7 +72,7 @@ Copy history with a training fork and root cache; replay actions rebuilds it.
 | Entity | Allowed values | Java display basis |
 | --- | --- | --- |
 | Screen | active screen ID; act, floor, ascension, ruby/emerald/sapphire keys | `ui/panels/TopPanel.render`, `helpers/Key` rendering; active screen's `render` |
-| Player | HP, max HP, gold; block/energy only in combat | `core/AbstractCreature.renderHealth`, `characters/AbstractPlayer.render`, `ui/panels/EnergyPanel.render`, `TopPanel.render` |
+| Player | HP, max HP, gold; block/energy/turn only in combat | `core/AbstractCreature.renderHealth`, `characters/AbstractPlayer.render`, `ui/panels/EnergyPanel.render`, `TopPanel.render`; `vfx/PlayerTurnEffect` constructor:42 and `render:94`, plus `vfx/combat/BattleStartEffect` constructor:79 and `render:173`, render `GameActionManager.turn` in the turn banner |
 | Master cards | card ID, upgrades, rendered cost and card description numbers; deck order | `screens/MasterDeckViewScreen.open/render`, `cards/AbstractCard.renderEnergy/renderDescription/getCost` |
 | Relics | acquisition order, counter only if >= 0 (presence bit), grayscale and used-up tooltip | `relics/AbstractRelic.renderInTopPanel/renderCounter/usedUp`; the six unit-specific grayscale mappings follow their Java callbacks; no private counters |
 | Potions | slot, ID, displayed potency | `ui/panels/TopPanel.renderPotions`, each potion's `initializeData/getPotency`; empty slots retained |
@@ -104,10 +109,13 @@ which otherwise identical combat copy the player is inspecting. Free attack/one-
 | Allowed | Representation and exclusion | Java basis |
 | --- | --- | --- |
 | Hand | ordered visible cards; candidate subject points to the chosen card | `AbstractPlayer.renderHand`, `AbstractCard.render` |
-| Draw pile | multiset sorted by the complete emitted public card tuple; position zero, duplicates retained; with Frozen Eye preserve displayed order | `screens/DrawPileViewScreen.open:218-229`; no hidden tie-breaking key |
+| Draw pile | multiset sorted by the existing public card tuple, then remembered position for identical faces; unknown position zero, remembered position counted from top starting at 1; duplicates retained; with Frozen Eye preserve displayed order | `screens/DrawPileViewScreen.open:218-229`; movement/reveal render paths below; no hidden tie-breaking key |
 | Discard / exhaust | discard display order; exhaust multiset unless Frozen Eye | `DiscardPileViewScreen.open/hideCards`, `ExhaustPileViewScreen.open:209-221` |
 | Monsters | visible living/dying/half-dead creatures, compact public order, HP/block, max HP only above zero HP, screen x and facing | `monsters/AbstractMonster.render`, `AbstractCreature.renderHealth` |
 | Intents | displayed icon; damage and multiplicity only for ATTACK variants; all three absent under Runic Dome, dying/escaping creatures, or noncombat room | `AbstractMonster.render:735`, `renderDamageRange`, `renderTip:244`; pending move, base damage and move history denied |
+| Previous intents | last observed intent before each of the preceding two monster turns; History Monster tokens, owner points to the current monster, position 1 or 2; only intent/damage/hits populated | same `AbstractMonster.render/renderDamageRange` path; recorded from earlier observations, never move IDs or AI history |
+| Played cards | attacks, skills, powers played in the current turn, including displayed automatic/repeated plays | `characters/AbstractPlayer.renderHand:1773-1780` renders cardInUse/limbo; `actions/utility/UseCardAction.update:90-103` displays powers through ShowCardAction; `GameActionManager.getNextAction:210-237` identifies completed plays |
+| Hexaghost fires | activated orb count, packed in Monster flag bits 1-3; facing remains bit 0 | `monsters/exordium/Hexaghost.changeState:258-282`, `update:304-305` call `HexaghostOrb.activate/deactivate/update`; activated `HexaghostOrb.update:61-88` emits large green GhostlyFireEffect, inactive emits small blue GhostlyWeakFireEffect; their `render:62-66` / `render:59-63` run through `AbstractDungeon.render:2163-2165` |
 | Powers | ID, owner, order, amount only when >0 or negative with canGoNegative; tooltip additions below | `powers/AbstractPower.renderAmount:184-195`; unlisted private counters and object IDs denied |
 | Orbs / stance | slot, type, passive/evoke numbers, visible stance | `orbs/*Orb.renderText/updateDescription`, `stances/*Stance.updateDescription`, `AbstractPlayer.render` |
 
@@ -129,6 +137,39 @@ queues IntentFlash only in the monster-turn branch (lines 296–303), and recrea
 player-turn selections (lines 338–354). Thus `!turn_has_ended` identifies the supported overlay
 case using existing state. Selections after turn end remain omitted because per-monster intent
 alpha/target is absent. Runic Dome and pending moves remain hidden in every screen.
+
+Intent memory keeps the latest displayed tuple within a turn, so a visible reroll or damage
+change replaces the earlier display. Vault's `cards/purple/Vault.use` queues SkipEnemiesTurnAction;
+its displayed play preserves the preceding monster-turn memories instead of advancing them.
+Repeated encoding and forks preserve memory. Missing turn
+observations are not reconstructed; leaving combat, a changed floor or a restarted turn
+clears it. Monster allocation slots are private sidecar keys, never token IDs or positions;
+newly summoned monsters cannot inherit another creature's remembered intent. History tokens
+are appended after existing entities, so current candidate references retain their meaning.
+The played-card Option (catalog ID `Control::PlayedCards`, zone History, owner Player) stores
+only the three type counts in numeric rows 0-2. Card references, order and per-card history
+remain private. Counts follow Java's successful-play bookkeeping and reset each player turn.
+
+Known draw positions use one existing Card padding bit, without changing Card or Game size.
+`History` grows from 104 to 1,268 bytes; `Game` remains 37,888 and `Card` remains 40 bytes.
+`actions/unique/SetupAction.update:37,51`, `actions/common/PutOnDeckAction.update:39-55`
+and `actions/unique/DiscardPileToTopOfDeckAction.update:38-52` move displayed cards to the
+top. `actions/unique/ForethoughtAction.update:39,57` moves displayed cards to the bottom.
+`CardGroup.moveToDeck/moveToBottomOfDeck:875-884` call Souls; `Soul.onToDeck:105-124`
+and `onToBottomOfDeck:126` place the card, while `Soul.render:327-330` renders its face.
+Rebound follows `actions/utility/UseCardAction.update:114-117` through the same path.
+`vfx/cardManip/ShowCardAndAddToDrawPileEffect` constructors:42-48,68-74 and `render:129-132`
+also show a generated card placed at a fixed end; random placements give no position.
+Scry's ordered `actions/utility/ScryAction.update` grid reveals the inspected top positions.
+
+Drawing or playing the top card clears its bit; fixed-end insertions update remembered
+indices through the pile's new size. Every shuffle and random insertion clears draw-position
+knowledge. Searching/removing cards from the pile also clears it: the sorted inspection
+view cannot identify an otherwise identical copy's hidden source position. This conservative
+rule also drops remaining Scry positions after a discard selection. New combat copies and
+reclaimed/reused card slots start without knowledge. `determinize` holds marked cards at
+their current indices and applies the existing Java shuffle only to unmarked cards. Frozen
+Eye retains its complete displayed order and its existing determinize behavior.
 
 ## HAND_SELECT (engine Discard)
 
@@ -291,9 +332,9 @@ numeric amounts/coordinates are unshifted. A card cost of -1 means X; -2 means n
 | Kind | int16 numeric rows (0–5) | Flag bits (low to high) | Auxiliary byte |
 | --- | --- | --- | --- |
 | Screen | act, floor, ascension, event page, requested count (0 at confirmation), selected count | ruby, emerald, sapphire, any-number, can-pick-zero (HAND_SELECT), confirmation | selection prompt |
-| Player | HP, max HP, gold, block, energy, 0 | 0 | 0 |
+| Player | HP, max HP, gold, block, energy, combat turn | 0 | 0 |
 | Card | upgrades, printed cost, zone-specific damage, block, magic, shop price | description D/B/M in bits 0–2; bottle flame/lightning/tornado in 3–5 (master/noncombat grid only); grid selected/confirmation target in 6–7 | Match attempts remaining |
-| Monster | HP, max HP (zero when HP is zero), block, screen x, shown damage, shown hits | facing | shown intent + 1 (0 hidden) |
+| Monster | HP, max HP (zero when HP is zero), block, screen x, shown damage, shown hits; History uses only shown damage/hits | facing in bit 0; Hexaghost activated fires in bits 1-3 | shown intent + 1 (0 hidden) |
 | Power | shown amount, whitelisted tooltip number, referenced card upgrade suffix, 0, 0, 0 | amount-visible | 0 |
 | Relic | shown counter, shop price, 0, 0, 0, 0 | counter-visible, grayscale, used-up tooltip | 0 |
 | Potion | owned potency, shop price, 0, 0, 0, 0 | 0 | 0 |
@@ -301,7 +342,7 @@ numeric amounts/coordinates are unshifted. A card cost of -1 means X; -2 means n
 | Stance | all zero | 0 | 0 |
 | MapNode | x, y, destination-column bitset, 0, 0, 0; map row 14 reaches boss, Act 4 row 2 reaches Heart | emerald, taken, current | 0 |
 | Reward | displayed gold, linked reward entity, 0, 0, 0, 0; variant = offered relic/potion ID + 1 | 0 | 0 |
-| Option | control-specific: purge 0 price; campfire 0 disabled, 1 rest heal, 2 Regal Pillow bonus; chest 0 open, 1 size; event 0 disabled, 1–3 whitelisted parameters, 4 page; Match back 5 attempts | 0 | 0 |
+| Option | control-specific: purge 0 price; campfire 0 disabled, 1 rest heal, 2 Regal Pillow bonus; chest 0 open, 1 size; event 0 disabled, 1–3 whitelisted parameters, 4 page; Match back 5 attempts; PlayedCards 0 attacks, 1 skills, 2 powers | 0 | 0 |
 
 Screen variant is event ID + 1 on EVENT and room kind + 1 on ROOM. Event option variant is
 event ID + 1; campfire variant is option kind + 1; boss variant is announced encounter ID + 1.
