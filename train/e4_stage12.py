@@ -11,6 +11,7 @@ import random
 import numpy as np
 import torch
 from torch import nn
+from torch.utils.checkpoint import checkpoint
 import torch.distributed as dist
 
 from train.e4 import (RoomSearch, SegmentCollector, PHASE, COMBAT_PHASE, FLOOR, SCREEN, SCREENS,
@@ -75,7 +76,10 @@ class CLSPolicy(Policy):
             entities = torch.cat((self.cls.expand(len(entities), -1, -1), entities), dim=1)
             mask = torch.cat((torch.ones(len(mask), 1, dtype=torch.bool, device=device), mask), dim=1)
             for layer in self.encoder:
-                entities = layer(entities, src_key_padding_mask=~mask)
+                if self.training and torch.is_grad_enabled():
+                    entities = checkpoint(layer, entities, src_key_padding_mask=~mask, use_reentrant=False)
+                else:
+                    entities = layer(entities, src_key_padding_mask=~mask)
         return entities[:, 1:].float(), entities[:, 0].float()
 
 
