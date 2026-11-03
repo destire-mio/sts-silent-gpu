@@ -1,149 +1,139 @@
-"""Local paired combat probe for a frozen Policy checkpoint; no training or search."""
+"""Evaluate frozen raw CLS weights with the established Stage12 full-run policy."""
 import argparse
 from collections import Counter
-import hashlib
+from hashlib import sha256
 import json
 from pathlib import Path
+import statistics
 import subprocess
 import time
 
-import numpy as np
 import torch
+from torch import nn
 
-from train.model import FIELDS, ModelConfig, Policy, network_inputs
+from train import OBSERVATION_VERSION
+from train.e4 import AllocationEnded
+from train.e4_evaluation_ledger import EvaluationLedgerCollector
+from train.e4_stage12 import CLSPolicy, NoSLSearch
+from train.model import ModelConfig
+
+
+MODEL_CONFIG = dict(width=384, layers=6, heads=6, feedforward=1536)
+PARAMETER_COUNT = 12435074
+ROOT = Path(__file__).resolve().parents[1]
+SOURCES = ('train/model.py', 'train/e4.py', 'train/e4_rewards.py', 'train/e4_stage12.py',
+           'train/e4_evaluation_ledger.py', 'tools/e4_weight_edit_eval.py')
 
 
 def digest(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return sha256(Path(path).read_bytes()).hexdigest()
 
 
-def load_policy(path):
-    checkpoint = torch.load(path, map_location="cpu", weights_only=True)
-    model = Policy(ModelConfig(**checkpoint["config"]["model"])).eval()
-    model.load_state_dict(checkpoint["model"], strict=True)
-    return model
+def read_state_dict(checkpoint, expected_sha256):
+    assert digest(checkpoint) == expected_sha256, 'Checkpoint SHA256 differs from the requested model'
+    state = torch.load(checkpoint, map_location='cpu', weights_only=True)
+    assert isinstance(state, dict) and 'cls' in state, 'Expected a raw CLS state_dict'
+    assert all(isinstance(value, torch.Tensor) for value in state.values()), 'Expected only model tensors'
+    assert all(torch.isfinite(value).all() for value in state.values()), 'Nonfinite model weights'
+    return state
 
 
-def remaining_potions(game):
-    state = game.snapshot()
-    player = state["objects"][state["player"]["ref"]]["fields"]
-    potions = [state["objects"][p["ref"]]["fields"] for p in player["AbstractPlayer.potions"]]
-    return sum(p["AbstractPotion.ID"] != "Potion Slot" for p in potions)
+def load_policy(checkpoint, expected_sha256):
+    state = read_state_dict(checkpoint, expected_sha256)
+    policy = CLSPolicy(ModelConfig(**MODEL_CONFIG)).eval()
+    policy.load_state_dict(state, strict=True)
+    assert sum(value.numel() for value in policy.parameters()) == PARAMETER_COUNT
+    policy.encoder_fp16 = True
+    return policy
 
 
-@torch.inference_mode()
-def run(model, cases, cap, trace_limit):
-    import spire
+class CPUEnvironmentPolicy(nn.Module):
+    def __init__(self, policy):
+        super().__init__()
+        self.policy = policy
 
-    results, observations = [], []
-    for begin in range(0, len(cases), 16):
-        group = cases[begin:begin + 16]
-        games = [spire.start_combat(c["seed"], c["scenario"]) for c in group]
-        rows = [dict(case=c["id"], seed=c["seed"], steps=0, actions=[],
-                     action_counts=Counter(), ended_with_play_available=0) for c in group]
-        live = list(range(len(games)))
-        while live:
-            raw = [games[i].observation() for i in live]
-            assert all(r[-1] == 0 for r in raw)
-            arrays = {name: np.stack([r[j] for r in raw]) for j, name in enumerate(FIELDS)}
-            inputs = network_inputs(arrays, torch.device("cpu"), list(range(len(live))))
-            logits, values = model(inputs)
-            assert torch.isfinite(logits[inputs["candidate_mask"]]).all() and torch.isfinite(values).all()
-            if len(observations) < trace_limit:
-                observations.append({k: v.clone() for k, v in inputs.items()})
-            actions = logits.argmax(-1).tolist()
-            following = []
-            for index, (slot, choice) in enumerate(zip(live, actions)):
-                game, row = games[slot], rows[slot]
-                legal = game.legal_actions()
-                assert len(legal) == int(inputs["candidate_mask"][index].sum())
-                action = legal[choice]
-                before = game.search_state()
-                row["action_counts"][action["type"]] += 1
-                row["ended_with_play_available"] += int(action["type"] == "end_turn" and any(a["type"] == "play" for a in legal))
-                row["actions"].append(dict(step=row["steps"], action=action, hp=before["hp"],
-                                           energy=before["energy"], turn=before["turn"]))
-                game.step(action)
-                row["steps"] += 1
-                after = game.search_state()
-                assert game.fault == 0
-                if after["dead"] or not after["combat"]:
-                    row["outcome"] = "death" if after["dead"] else "combat_end"
-                elif row["steps"] >= cap:
-                    row["outcome"] = "capped"
-                else:
-                    following.append(slot)
-                if "outcome" in row:
-                    row.update(hp=after["hp"], turns=after["turn"], unused_potions=remaining_potions(game))
-            live = following
-        results.extend(rows)
-        print(json.dumps(dict(completed=len(results), total=len(cases))), flush=True)
-    return results, observations
+    def forward(self, observation):
+        logits, values = self.policy({name: value.to('cuda') for name, value in observation.items()})
+        logits, values = logits.cpu(), values.cpu()
+        assert torch.isfinite(logits[observation['candidate_mask']]).all() and torch.isfinite(values).all()
+        return logits, values
 
 
-def summarize(rows):
-    counts = Counter(r["outcome"] for r in rows)
-    return dict(cases=len(rows), seed_families=len({r["seed"] for r in rows}), outcomes=dict(counts),
-                mean_hp=sum(r["hp"] for r in rows) / len(rows),
-                potion_uses=sum(r["action_counts"].get("potion_use", 0) for r in rows),
-                potion_discards=sum(r["action_counts"].get("potion_discard", 0) for r in rows),
-                unused_potions_on_death=sum(r["unused_potions"] for r in rows if r["outcome"] == "death"),
-                decisions=sum(r["steps"] for r in rows))
-
-
-def compare(reference, current):
-    for key in ("cases_sha256", "decision_cap", "selection", "engine_sha256"):
-        assert reference[key] == current[key], key
-    old = {r["case"]: r for r in reference["episodes"]}
-    new = {r["case"]: r for r in current["episodes"]}
-    assert old.keys() == new.keys()
-    counts = Counter()
-    deltas = []
-    for key, a in old.items():
-        b = new[key]
-        if "capped" in (a["outcome"], b["outcome"]):
-            counts["capped_pairs"] += 1
-        else:
-            aw, bw = a["outcome"] == "combat_end", b["outcome"] == "combat_end"
-            counts["candidate_only_win" if bw and not aw else "reference_only_win" if aw and not bw else "both_win" if aw else "both_death"] += 1
-        deltas.append(b["hp"] - a["hp"])
-    return dict(counts=counts, mean_hp_delta=sum(deltas) / len(deltas))
+def evaluation_receipt(episodes, seeds, complete):
+    rows = sorted(episodes, key=lambda row: row['seed'])
+    actual = [row['seed'] for row in rows]
+    assert len(set(seeds)) == len(seeds) and len(set(actual)) == len(actual)
+    assert set(actual) <= set(seeds)
+    assert not complete or set(actual) == set(seeds), 'Incomplete evaluation cannot be reported complete'
+    assert all(row['outcome'] in ('death', 'victory', 'act3_win', 'stalled') for row in rows)
+    count = len(rows)
+    return dict(complete=complete, requested_seeds=seeds,
+        unfinished_seeds=[seed for seed in seeds if seed not in set(actual)], episodes=rows,
+        summary=dict(episodes=count, mean_floor=statistics.mean(row['floor'] for row in rows) if count else None,
+            outcomes=dict(Counter(row['outcome'] for row in rows)),
+            unresolved_stalls=sum(row['outcome'] == 'stalled' for row in rows),
+            stall_classes=dict(Counter(row['stall_class'] for row in rows if row['outcome'] == 'stalled')),
+            boss_counts={key: sum(row['reach'][key] for row in rows)
+                         for key in ('act1_boss', 'act2_boss', 'act3_first_boss')},
+            act3_wins=sum(row['reach']['act3_second_boss'] for row in rows),
+            heart_wins=sum(row['reach']['heart'] for row in rows),
+            act4_entries=sum(row['reach']['act4'] for row in rows),
+            shield_spear_wins=sum(row['reach']['shield_spear'] for row in rows),
+            key_counts={key: sum(row['keys'][key] for row in rows) for key in ('ruby', 'emerald', 'sapphire')}))
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--checkpoint", type=Path, required=True)
-    parser.add_argument("--cases", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--reference", type=Path)
-    parser.add_argument("--trace-inputs", type=Path)
-    parser.add_argument("--decision-cap", type=int, default=300)
+    parser.add_argument('--checkpoint', type=Path, required=True)
+    parser.add_argument('--expected-sha256', required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--first-seed', type=int, required=True)
+    parser.add_argument('--episodes', type=int, default=128)
+    parser.add_argument('--lanes', type=int, default=128)
+    parser.add_argument('--seconds', type=float, default=900.)
     args = parser.parse_args()
+    assert not args.output.exists()
+    assert args.episodes > 0 and 0 < args.lanes <= 128 and args.seconds > 0
+    assert OBSERVATION_VERSION == 13 and torch.cuda.is_available()
     import spire
 
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
-    checkpoint_hash = digest(args.checkpoint)
-    cases = json.loads(args.cases.read_text())["cases"]
-    assert cases and len({c["id"] for c in cases}) == len(cases) and args.decision_cap > 0
-    model = load_policy(args.checkpoint)
-    start = time.perf_counter()
-    rows, observations = run(model, cases, args.decision_cap, 32 if args.trace_inputs else 0)
-    result = dict(checkpoint=str(args.checkpoint), checkpoint_sha256=checkpoint_hash,
-                  cases_sha256=digest(args.cases), engine_path=spire.__file__, engine_sha256=digest(spire.__file__),
-                  code_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-                  selection="argmax", decision_cap=args.decision_cap, summary=summarize(rows),
-                  elapsed_seconds=time.perf_counter() - start, episodes=rows)
-    if args.reference:
-        result["paired"] = compare(json.loads(args.reference.read_text()), result)
-    assert digest(args.checkpoint) == checkpoint_hash
-    with args.output.open("x", encoding="utf-8") as stream:
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+    policy = load_policy(args.checkpoint, args.expected_sha256).to('cuda')
+    search = NoSLSearch(args.lanes, torch.device('cpu'), 101, greedy=True)
+    collector = EvaluationLedgerCollector(search, torch.Generator().manual_seed(101), rank=0)
+    seeds = list(range(args.first_seed, args.first_seed + args.episodes))
+    source_hashes = {name: digest(ROOT / name) for name in SOURCES}
+    torch.cuda.reset_peak_memory_stats()
+    started = time.perf_counter()
+    search.deadline = time.monotonic() + args.seconds
+    complete = True
+    try:
+        collector.evaluate(CPUEnvironmentPolicy(policy).eval(), seeds)
+    except AllocationEnded:
+        complete = False
+    elapsed = time.perf_counter() - started
+    result = evaluation_receipt(collector.completed, seeds, complete)
+    result.update(checkpoint=str(args.checkpoint.resolve()), checkpoint_sha256=args.expected_sha256,
+        model_config=MODEL_CONFIG, parameter_count=PARAMETER_COUNT, observation_version=OBSERVATION_VERSION,
+        selection='argmax', precision='encoder_fp16_heads_fp32', lanes=args.lanes,
+        masks='Unmodified NoSLSearch: engine-legal combat; established noncombat reward, step0, map-return and repeat-probe masks',
+        stall_limits=dict(same_floor_steps=3000, noncombat_floor_steps=200, comparison='strictly greater than'),
+        outcome_rule='EvaluationLedgerCollector labels Act3 second-boss reach without Heart as act3_win; this does not establish post-Act3 survival',
+        elapsed_seconds=elapsed, decisions=collector.decisions, decisions_per_second=collector.decisions / elapsed,
+        peak_gpu_bytes=torch.cuda.max_memory_allocated(), loop_metrics=search.loop_metrics,
+        fault_counts=dict(search.fault_counts), source_sha256=source_hashes,
+        code_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+        environment=dict(torch_version=str(torch.__version__), cuda_version=torch.version.cuda,
+            gpu=torch.cuda.get_device_name(), native_engine_path=spire.__file__, native_engine_sha256=digest(spire.__file__)))
+    assert digest(args.checkpoint) == args.expected_sha256
+    assert all(digest(ROOT / name) == identity for name, identity in source_hashes.items())
+    with args.output.open('x', encoding='utf-8') as stream:
         json.dump(result, stream, indent=2)
-    if args.trace_inputs:
-        with args.trace_inputs.open("xb") as stream:
-            torch.save(observations, stream)
-    print(json.dumps({k: v for k, v in result.items() if k != "episodes"}), flush=True)
+    print(json.dumps({key: result[key] for key in ('complete', 'summary', 'elapsed_seconds', 'decisions_per_second')}))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
