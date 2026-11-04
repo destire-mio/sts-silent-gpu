@@ -219,8 +219,11 @@ class ExpertIteration:
             # PPO learner peak as well as this round's PPO collection peak.
             ppo_peak = max(self.memory.get('ppo_allocated_peak', 0),
                            self.memory.get('previous_ppo_allocated_peak', 0))
-            per_lane = max(self.memory['native_per_lane'] + self.memory['working_per_lane'],
-                           self.memory.get('measured_per_lane', 0))
+            recent = self.memory.get('measured_lane_history', [])
+            if not recent and 'measured_per_lane' in self.memory:
+                recent = [self.memory['measured_per_lane']]
+            per_lane = (math.ceil(1.5 * max(recent)) if recent
+                        else self.memory['native_per_lane'] + self.memory['working_per_lane'])
             safe, limit = memory_limited_lanes(requested, ppo_peak, measured['total'], per_lane)
             self.memory['last_limit'] = limit
             self.memory['projection_base'] = ppo_peak
@@ -318,7 +321,12 @@ class ExpertIteration:
         after = gpu_memory(self.device)
         if before is not None:
             increment = max(0,after['allocated_peak']-before['allocated'])
-            self.memory['measured_per_lane'] = math.ceil(increment / self.round['lanes'])
+            recent = self.memory.get('measured_lane_history', [])
+            if not recent and 'measured_per_lane' in self.memory:
+                recent = [self.memory['measured_per_lane']]
+            measured = math.ceil(increment / self.round['lanes'])
+            self.memory['measured_per_lane'] = measured
+            self.memory['measured_lane_history'] = (recent + [measured])[-3:]
             self.memory['collection_allocated_peak'] = after['allocated_peak']
             torch.cuda.reset_peak_memory_stats(self.device)
         return fragment

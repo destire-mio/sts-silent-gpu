@@ -48,7 +48,7 @@ def test_gate_keeps_all_rank_minimum_and_recent_measured_lane_cost(monkeypatch):
     obj = shell(8)
     obj.memory = dict(ppo_allocated_peak=5*GiB,previous_ppo_allocated_peak=4*GiB,
                       native_per_lane=GiB//4,working_per_lane=GiB//4,
-                      measured_per_lane=GiB,previous_peak=16*GiB)
+                      previous_peak=16*GiB)
     monkeypatch.setattr(ex,'gpu_memory',lambda d:dict(total=16*GiB))
     monkeypatch.setattr(ex.dist,'is_initialized',lambda:True)
     def reduce_min(flag,op):
@@ -56,16 +56,20 @@ def test_gate_keeps_all_rank_minimum_and_recent_measured_lane_cost(monkeypatch):
         flag.fill_(3)
     monkeypatch.setattr(ex.dist,'all_reduce',reduce_min)
     obj.prepare_lanes()
-    assert obj.lanes == 3 and obj.memory['lane_cost'] == GiB
+    assert obj.lanes == 3 and obj.memory['lane_cost'] == GiB//2
     assert obj.memory['projection_base'] == 5*GiB
     assert obj.memory['previous_peak'] == 16*GiB # Historical metadata only.
     obj.memory['measured_per_lane'] = GiB//8
     obj.prepare_lanes()
-    assert obj.memory['lane_cost'] == GiB//2 # Recent measurement, not lifetime max.
+    assert obj.memory['lane_cost'] == 3*GiB//16
+    obj.memory['measured_lane_history'] = [GiB//4, GiB//16, GiB//8]
+    obj.prepare_lanes()
+    assert obj.memory['lane_cost'] == 3*GiB//8
 
 
 def test_collection_peak_increment_is_per_lane_and_reset_before_ppo(monkeypatch):
     obj = shell()
+    obj.memory['measured_lane_history'] = [400, 300, 250]
     readings = iter([dict(allocated_peak=2000),dict(allocated=1000),
                      dict(allocated_peak=1800)])
     monkeypatch.setattr(ex,'gpu_memory',lambda d:next(readings))
@@ -74,6 +78,7 @@ def test_collection_peak_increment_is_per_lane_and_reset_before_ppo(monkeypatch)
     monkeypatch.setattr(ex.dist,'all_reduce',lambda *a,**k:None)
     obj.collect_and_fragment(None,1,10.)
     assert obj.memory['measured_per_lane'] == 200
+    assert obj.memory['measured_lane_history'] == [300, 250, 200]
     assert obj.memory['collection_allocated_peak'] == 1800
     assert obj.memory['ppo_allocated_peak'] == 2000
     assert len(resets) == 2
