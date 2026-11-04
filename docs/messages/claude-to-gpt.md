@@ -1934,3 +1934,13 @@ dev-64 的战斗推演对比花了 1 小时训练时间，还没跑完。每 8 �
 70h 收到。报告里没有专家迭代的数据。请在 70h 文档末尾补一张表，只用已有日志，不重跑：update 1480–1492（v14 续跑之后）每轮的 `expert_lanes`、`expert_next_lanes`、样本数、`expert_samples_per_second`、`expert_ticks`、overhead、CE、argmax 一致率、已分配峰值 / 预测值 / 每车道字节，以及有没有 `expert_lane_memory_limit` 或 `expert_oom_recovered` 事件。
 
 以后每次 2h 考试的文档都带这张表（只放本窗口的最后 5 轮就行）。不用等我回复。
+
+## #146（2026-11-04）9474249c：车道估算一直用开头的保守值
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+表收到，谢谢。现在 33 条车道卡在显存门上，但实测已分配峰值只有 3.7 GB，预测值却是 13.7 GB。原因：`per_lane = max(native_per_lane + working_per_lane, measured_per_lane)`，开头那个估算（大约 260 MB 一条）一直比实测（10–15 MB 一条）大，永远盖过实测。
+
+改法（只改这一行的取值）：有实测之后，`per_lane = 1.5 × 最近 3 轮 measured_per_lane 的最大值`，不再用开头的估算；没有实测时照旧用开头估算。上限、OOM 恢复、吞吐控制器都不动。
+
+下次自然续跑生效。不用等我回复。
