@@ -124,8 +124,9 @@ def enqueue(root, parent):
             return None
         request = state['request']
         dependency = 'afterany:' + parent
-        receipt = command('sbatch', '--no-requeue', '--dependency=' + dependency,
-            '--begin=now+11minutes', '--nodes=1', '--ntasks=1',
+        begin = ['--begin=now+11minutes'] if state['resources']['world'] == 0 else []
+        receipt = command('sbatch', '--no-requeue', '--dependency=' + dependency, *begin,
+            '--nodes=1', '--ntasks=1',
             '--partition=' + os.environ['STAGE12_PARTITION'],
             '--nodelist=' + os.environ['STAGE12_NODE'],
             f"--gres=gpu:V100:{world}", f"--cpus-per-task={request['cpus']}",

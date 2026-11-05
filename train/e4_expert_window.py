@@ -103,6 +103,7 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
             old = json.loads(mode_path.read_text()) if mode_path.exists() else dict(seconds=0., complete=False)
             if old.get('complete') or old.get('skipped'):
                 continue
+            mode_started = time.monotonic()
             for owner in range(rank, 8, world):
                 path = directory/f'{mode}-rank-{owner}.json'
                 saved = json.loads(path.read_text()) if path.exists() else dict(episodes=[], counters=dict.fromkeys(COUNTERS,0))
@@ -141,7 +142,7 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
                         policy.encoder_fp16 = True
                         policy.eval().requires_grad_(False)
                         search = ArgmaxSearch(32,device) if mode == 'argmax' else LookaheadSearch(32,device,130,depth='combat')
-                        search.deadline = min(deadline,started+max(0.,3600-old['seconds'])) if mode == 'combat' else deadline
+                        search.deadline = min(deadline,mode_started+max(0.,3600-old['seconds'])) if mode == 'combat' else deadline
                         search.evidence_directory = directory
                         for name in COUNTERS:
                             setattr(search,name,saved['counters'][name])
