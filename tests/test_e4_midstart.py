@@ -1,5 +1,7 @@
 from copy import deepcopy
 from collections import Counter
+import json
+import pytest
 import torch
 from train.e4 import ACT, FLOOR, PHASE, ROOM, COMBAT_PHASE, BOSS_ROOM, MAX_REWARD
 from train.e4_stage12 import CLSPolicy, NoSLSearch, NoSLCollector, collector_snapshot, restore_collector
@@ -49,6 +51,63 @@ def test_pool_clone_and_randomized_checkpoint_resume():
         collector.advance([1], choices, p)
     assert c.search.batch.state_bytes(1) == resumed.search.batch.state_bytes(1)
     assert c.rewards[1] == resumed.rewards[1]
+
+
+@pytest.mark.parametrize('probe_fault', [False, True])
+def test_midstart_fault_record_replays_randomized_state_after_resume(tmp_path, capsys, probe_fault):
+    def collector():
+        search = NoSLSearch(2, torch.device('cpu'), 101, storage_slots=1024, probe_slots=2)
+        result = MidstartCollector(search, torch.Generator().manual_seed(33))
+        result.fresh([0, 1])
+        return result
+
+    torch.set_num_threads(1)
+    torch.manual_seed(8)
+    model = CLSPolicy().eval()
+    c = collector()
+    combat(c, model)
+    c.retain(0, 0)
+    c.restart(0, 1)
+    progress = c.search.progress_for([1])
+    actions, _, _, _ = c.choose(model, [1], progress)
+    c.advance([1], actions, progress)
+    saved = collector_snapshot(c)
+    resumed = collector()
+    restore_collector(resumed, deepcopy(saved))
+    assert c.search.batch.state_bytes(1) == resumed.search.batch.state_bytes(1)
+    progress = resumed.search.progress_for([1])
+    actions, _, _, _ = resumed.choose(model, [1], progress)
+    action = actions[0]
+    search = resumed.search
+    search.evidence_directory = tmp_path
+    rng = search.rng.get_state().clone()
+    seed_rng = resumed.seed_rng.get_state().clone()
+    if probe_fault:
+        slot = search.probe_slots[0]
+        search.clone([1], [slot])
+        search.provenance[slot] = (resumed.seeds[1], 1, action)
+        search.batch.step_slots([slot], [action])
+        expected = search.batch.state_bytes(slot)
+        search.record_fault(slot, 'engine_fault:17')
+    else:
+        search.batch.step_slots([1], [action])
+        expected = search.batch.state_bytes(1)
+        search.record_fault(1, 'engine_fault:17', action)
+    records = [json.loads(line) for line in next(tmp_path.glob('episode-faults-*.jsonl')).read_text().splitlines()]
+    record = records[0]
+    assert json.loads(capsys.readouterr().out.splitlines()[-1]) == record
+    assert record['start_kind'] == 'act1_boss'
+    assert record['randomizations'] == [list(event) for event in resumed.randomizations[1]]
+    assert record['randomizations'] and record['candidates'] == resumed.paths[1] + [action]
+    assert record['slot'] == 1 and record['probe_slot'] == (slot if probe_fault else None)
+    assert torch.equal(rng, search.rng.get_state())
+    assert torch.equal(seed_rng, resumed.seed_rng.get_state())
+    resumed.replay([0], [dict(seed=record['seed'], path=record['candidates'], randomizations=record['randomizations'])])
+    assert search.batch.state_bytes(0) == expected
+    resumed.reset([1], [12345])
+    search.record_fault(1, 'engine_fault:18')
+    fresh_record = json.loads(capsys.readouterr().out.splitlines()[-1])
+    assert fresh_record['start_kind'] == 'fresh' and fresh_record['randomizations'] == []
 
 def test_pool_reward_prefix_and_native_state_stay_frozen():
     c = make()

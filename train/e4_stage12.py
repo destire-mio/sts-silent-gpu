@@ -116,6 +116,7 @@ class NoSLSearch(RoomSearch):
         self.last_policy_mask = None
         self.failed = {}
         self.fault_counts = Counter()
+        self.midstart_collector = None
 
     def record_fault(self, slot, reason, extra_action=None):
         seed, path = self.provenance_record(slot)
@@ -127,6 +128,9 @@ class NoSLSearch(RoomSearch):
         record = dict(event='episode_fault', seed=seed,
                       candidates=path + [extra_action] if extra_action is not None else path,
                       reason=reason, slot=parent, probe_slot=slot if slot >= self.lanes else None)
+        if self.midstart_collector is not None:
+            record['randomizations'] = deepcopy(self.midstart_collector.randomizations[parent])
+            record['start_kind'] = self.midstart_collector.starts[parent]
         print(json.dumps(record), flush=True)
         if self.evidence_directory is not None:
             with (self.evidence_directory / f'episode-faults-{self.device.index}.jsonl').open('a') as stream:

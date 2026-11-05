@@ -14,6 +14,7 @@ class MidstartCollector(NoSLCollector):
         self.randomizations = [[] for _ in self.starts]
         self.pending_randomization = [None] * self.search.lanes
         self.starting_rewards = [0] * self.search.lanes
+        self.search.midstart_collector = self
 
     def reset(self, slots, seeds):
         super().reset(slots, seeds)
