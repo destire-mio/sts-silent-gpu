@@ -42,6 +42,10 @@ class TinyPolicy(torch.nn.Module):
     def no_sync(self):
         return nullcontext()
 
+    @property
+    def module(self):
+        return self
+
 
 def test_adam_step_combines_ce_without_expert_ppo_or_value(monkeypatch):
     monkeypatch.setattr(learner.dist, 'all_reduce', lambda *a, **k: None)
@@ -229,12 +233,14 @@ def test_native_expert_round_snapshot_restores_without_ppo_mutation(tmp_path,mon
     assert torch.equal(source.seed_rng.get_state(),before['seed_rng'])
 
 
-def _ddp_expert_worker(rank, init_file, output):
+def _ddp_expert_worker(rank, init_file, output, steps=1):
+    from datetime import timedelta
     import torch.distributed as dist
     from torch.nn.parallel import DistributedDataParallel
     from train import e4_expert_iteration as ex
     from train import e4_stage12 as le
-    dist.init_process_group('gloo',init_method='file://'+init_file,rank=rank,world_size=2)
+    dist.init_process_group('gloo',init_method='file://'+init_file,rank=rank,world_size=2,
+                           timeout=timedelta(seconds=20))
     torch.set_num_threads(1)
     torch.manual_seed(31)
     policy = TinyPolicy()
@@ -262,14 +268,25 @@ def _ddp_expert_worker(rank, init_file, output):
     le.packed_inputs = ex.packed_inputs = packed
     le.local_minibatch = lambda c,r:(torch.arange(7),14)
     optimizer = torch.optim.SGD(model.parameters(),lr=.1)
-    le.advance_minibatch(model,optimizer,torch.amp.GradScaler('cpu',enabled=False),cursor,
-        torch.Generator(),rank,2,3,entropy_coefficient=.005,
-        value_state={'value_calibration':{'completed_updates':20,'target':.5,
-                                         'measured_value_coefficient':.5}})
+    for _ in range(steps):
+        le.advance_minibatch(model,optimizer,torch.amp.GradScaler('cpu',enabled=False),cursor,
+            torch.Generator(),rank,2,3,entropy_coefficient=.005,
+            value_state={'value_calibration':{'completed_updates':20,'target':.5,
+                                             'measured_value_coefficient':.5}})
     torch.save(dict(weights=policy.state_dict(),normal=normal,actions=actions,old=old,
                     returns=returns,advantages=advantages,labels=labels,targets=targets),
                output+f'/worker-{rank}.pt')
     dist.destroy_process_group()
+
+
+def test_two_ddp_steps_with_zero_label_rank_keep_collectives_aligned(tmp_path):
+    import torch.multiprocessing as mp
+    mp.start_processes(_ddp_expert_worker,args=(str(tmp_path/'rendezvous'),str(tmp_path),2),
+                       nprocs=2,join=True,start_method='fork')
+    rows = [torch.load(tmp_path/f'worker-{i}.pt',weights_only=False) for i in range(2)]
+    for key, value in rows[0]['weights'].items():
+        assert torch.isfinite(value).all()
+        assert torch.allclose(value, rows[1]['weights'][key], atol=3e-7)
 
 
 def test_real_ddp_zero_label_rank_matches_global_combined_objective(tmp_path):

@@ -496,7 +496,8 @@ def _expert_backward(model, scaler, cursor, rank, world, microbatch):
                 continue
             inputs = packed_inputs(fragment['data'], fragment['offsets'], subset, cursor['order'].device)
             inputs['candidate_mask'] &= fragment['policy_mask'][subset, :inputs['candidate_mask'].shape[1]]
-            logits, values = model(inputs)
+            # Uneven CE batches must not enter DDP forward's bucket-rebuild collectives.
+            logits, values = model.module(inputs)
             scalar, ce = ce_scalar(logits, inputs['candidate_mask'], fragment['actions'][subset],
                                     world, cursor['expert_total'], minibatches)
             cursor['finite'] &= torch.isfinite(ce).all()
