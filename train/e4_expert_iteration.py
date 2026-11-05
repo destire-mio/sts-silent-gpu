@@ -14,7 +14,7 @@ from train.e4_midstart import MidstartCollector
 from train.e4_lookahead import CombatLookahead, LookaheadSearch
 from train.model import packed_inputs
 
-BETA = .5
+CE_GRAD_NORM_CAP = .25
 MAX_LANES = 512
 
 
@@ -63,10 +63,16 @@ def next_lane_count(lanes, extra_seconds, base_seconds, *, ticks, samples_per_se
 
 
 def ce_scalar(logits, legal, actions, world, total_samples, minibatches):
-    """One epoch's minibatch-average gradient is beta times the global label mean."""
+    """Global label mean before the independent gradient-norm cap."""
     masked = logits.float().masked_fill(~legal, -torch.inf)
     ce = torch.nn.functional.cross_entropy(masked, actions, reduction='none')
-    return ce.sum() * (BETA * world * minibatches / max(1, total_samples)), ce
+    return ce.sum() * (world * minibatches / max(1, total_samples)), ce
+
+
+def override_label(report):
+    return (report['preview_steps'] > 0
+            and report['selected'] != report['candidates'][0]
+            and report['paired_mean'] > report['paired_SE'])
 
 
 class ExpertSearch(LookaheadSearch):
@@ -95,7 +101,7 @@ class ExpertSearch(LookaheadSearch):
                 chosen, reports = self.lookahead.select(model, [slots[i] for i in positions])
                 for i, action, report in zip(positions, chosen, reports):
                     actions[i] = action
-                    if report['preview_steps'] > 0:
+                    if override_label(report):
                         self.labels[slots[i]] = dict(action=action,
                             agreement=action == report['candidates'][0],
                             preview_steps=report['preview_steps'])
@@ -429,7 +435,13 @@ class ExpertIteration:
         self.base_seconds = base
         measured_memory = gpu_memory(self.device)
         # previous_peak is the pre-expert pure-PPO anchor, preserved by checkpoints.
-        row = dict(expert_samples=int(values[0]), expert_beta=BETA,
+        gradients = cursor.get('expert_gradient_stats', [0., 0., 0., 0.])
+        row = dict(expert_samples=int(values[0]), expert_beta=None,
+            expert_version=2, expert_collection=True,
+            expert_ce_grad_norm=gradients[0]/gradients[3] if gradients[3] else None,
+            expert_ppo_grad_norm=gradients[1]/gradients[3] if gradients[3] else None,
+            expert_ce_scale=gradients[2]/gradients[3] if gradients[3] else None,
+            expert_ce_gradient_cap=CE_GRAD_NORM_CAP,
             expert_ce=float(values[4]/values[5]) if float(values[5]) else None,
             expert_argmax_agreement=float(values[1]/values[0]) if float(values[0]) else None,
             expert_completed=int(values[2]),
@@ -470,7 +482,7 @@ def attach_expert(cursor, fragment, world):
 
 
 def _expert_backward(model, scaler, cursor, rank, world, microbatch):
-    """Accumulate CE in the same Adam step before the existing PPO backward/sync."""
+    """Compute local CE without DDP sync; keep it separate from PPO."""
     if not cursor.get('expert_total'):
         return
     fragment = cursor['expert']
@@ -507,8 +519,12 @@ def expert_backward(model, scaler, cursor, rank, world, microbatch, oom_callback
     cuda_rng = torch.cuda.get_rng_state(device) if device.type == 'cuda' else None
     started = time.monotonic()
     seconds_before = cursor.get('expert_ce_seconds',0.)
+    gradients = None
     try:
         _expert_backward(model, scaler, cursor, rank, world, microbatch)
+        gradients = torch.cat([p.grad.detach().reshape(-1) if p.grad is not None
+                               else torch.zeros_like(p).reshape(-1)
+                               for p in model.parameters()])
     except torch.cuda.OutOfMemoryError:
         flag.fill_(1)
     cursor['expert_ce_seconds'] = seconds_before + time.monotonic()-started
@@ -520,6 +536,7 @@ def expert_backward(model, scaler, cursor, rank, world, microbatch, oom_callback
         # No Adam step has occurred for this minibatch. Discard every rank's
         # partial CE gradients; the original PPO backward/clip/Adam follows.
         model.zero_grad(set_to_none=True)
+        gradients = None
         cursor['expert_ce_stats'] = statistics_before
         cursor['finite'] = finite_before
         cursor['expert_total'] = 0
@@ -534,3 +551,30 @@ def expert_backward(model, scaler, cursor, rank, world, microbatch, oom_callback
             torch.cuda.empty_cache()
     if device.type == 'cuda':
         torch.cuda.reset_peak_memory_stats(device)
+    model.zero_grad(set_to_none=True)
+    return gradients
+
+
+def add_capped_expert_gradients(model, gradients, scaler, cursor, world):
+    """PPO is already DDP-averaged; average CE and cap before AMP unscale."""
+    parameters = list(model.parameters())
+    ppo = torch.linalg.vector_norm(torch.stack([p.grad.norm() for p in parameters]))
+    ce = ppo.new_zeros(())
+    factor = ppo.new_ones(())
+    if gradients is not None:
+        dist.all_reduce(gradients)
+        gradients.div_(world)
+        ce = gradients.norm()
+        if bool(ce > 0):
+            factor = torch.minimum(factor, CE_GRAD_NORM_CAP * ppo / ce)
+        gradients.mul_(factor)
+        offset = 0
+        for p in parameters:
+            end = offset + p.numel()
+            p.grad.add_(gradients[offset:end].view_as(p))
+            offset = end
+    stats = cursor.setdefault('expert_gradient_stats', [0., 0., 0., 0.])
+    stats[0] += float(ce) / scaler.get_scale()
+    stats[1] += float(ppo) / scaler.get_scale()
+    stats[2] += float(factor)
+    stats[3] += 1

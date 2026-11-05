@@ -21,7 +21,7 @@ def test_global_ce_mean_uneven_ranks_and_minibatches():
     reference = torch.autograd.grad(expected, weights)[0]
     result = torch.zeros_like(weights)
     # DDP averages rank gradients; averaging the K Adam minibatch objectives
-    # must recover beta * mean over every actual expert sample, with no padding.
+    # must recover the global mean over every actual expert sample, with no padding.
     for ids in (torch.arange(0,2), torch.arange(2,11), torch.arange(0)):
         for k in range(4):
             subset = ids[k::4]
@@ -85,7 +85,14 @@ def test_adam_step_combines_ce_without_expert_ppo_or_value(monkeypatch):
     normal_loss = (actor+c*(value-returns).square()-.005*entropy).mean()
     ce,_ = expert.ce_scalar(reference(dict(features=labels))[0],
                             torch.ones(5,3,dtype=torch.bool),target,1,5,1)
-    (normal_loss+ce).backward()
+    ce.backward()
+    ce_grads = [p.grad.clone() if p.grad is not None else torch.zeros_like(p) for p in reference.parameters()]
+    reference.zero_grad(set_to_none=True)
+    normal_loss.backward()
+    norm_ppo = torch.linalg.vector_norm(torch.stack([p.grad.norm() for p in reference.parameters()]))
+    norm_ce = torch.linalg.vector_norm(torch.stack([g.norm() for g in ce_grads]))
+    factor = min(1., float(.25*norm_ppo/norm_ce))
+    for p,g in zip(reference.parameters(),ce_grads): p.grad.add_(g,alpha=factor)
     torch.nn.utils.clip_grad_norm_(reference.parameters(),.5)
     with torch.no_grad():
         for parameter in reference.parameters():
@@ -106,7 +113,7 @@ def test_preview_labels_exclude_all_skipped_and_return_scratch_on_yield(monkeypa
     # PHASE index is part of the native progress contract.
     search.progress_for = lambda slots:{s:[expert.COMBAT_PHASE]*9 for s in slots}
     reports = [dict(preview_steps=0,candidates=[0],selected=0),
-               dict(preview_steps=12,candidates=[0,1],selected=1),
+               dict(preview_steps=12,candidates=[0,1],selected=1,paired_mean=2.,paired_SE=1.),
                dict(preview_steps=0,candidates=[0,1],selected=0,skipped='Runic Dome')]
     search.lookahead = SimpleNamespace(select=lambda m,s:([0,1,0],reports))
     search.predict(None,[0,1,2])
@@ -281,7 +288,14 @@ def test_real_ddp_zero_label_rank_matches_global_combined_objective(tmp_path):
         losses.append((actor+.5*(value-r['returns']).square()-.005*entropy).mean())
     ce,_ = expert.ce_scalar(model(dict(features=rows[1]['labels']))[0],
         torch.ones(5,3,dtype=torch.bool),rows[1]['targets'],1,5,1)
-    ((losses[0]+losses[1])/2+ce).backward()
+    ce.backward()
+    ce_grads = [p.grad.clone() if p.grad is not None else torch.zeros_like(p) for p in model.parameters()]
+    model.zero_grad(set_to_none=True)
+    ((losses[0]+losses[1])/2).backward()
+    norm_ppo = torch.linalg.vector_norm(torch.stack([p.grad.norm() for p in model.parameters()]))
+    norm_ce = torch.linalg.vector_norm(torch.stack([g.norm() for g in ce_grads]))
+    factor = min(1., float(.25*norm_ppo/norm_ce))
+    for p,g in zip(model.parameters(),ce_grads): p.grad.add_(g,alpha=factor)
     torch.nn.utils.clip_grad_norm_(model.parameters(),.5)
     with torch.no_grad():
         for p in model.parameters():p -= .1*p.grad

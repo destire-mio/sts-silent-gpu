@@ -441,9 +441,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         value_state["value_calibration"] = dict(zip(["actor_encoder_norm","weighted_value_encoder_norm","ratio","target"],calibration.tolist()))
         value_state["value_calibration"].update(measured_value_coefficient=.5,completed_updates=0)
         if rank == 0:diagnostic_log(dict(event="value_gradient_calibration",**value_state["value_calibration"]))
+    ce_gradients = None
     if cursor.get("expert_total"):
         from train.e4_expert_iteration import expert_backward
-        expert_backward(model, scaler, cursor, rank, world, microbatch, expert_oom_callback)
+        ce_gradients = expert_backward(model, scaler, cursor, rank, world, microbatch, expert_oom_callback)
     for i in range(steps):
         if learner_profile is not None:
             learner_profile.before_microbatch()
@@ -484,6 +485,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
             scaler.scale(scalar).backward()
         if learner_profile is not None:
             learner_profile.after_microbatch()
+    if 'expert_total' in cursor:
+        from train.e4_expert_iteration import add_capped_expert_gradients
+        add_capped_expert_gradients(model, ce_gradients, scaler, cursor, world)
+        del ce_gradients
     scaler.unscale_(optimizer)
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), .5, error_if_nonfinite=False)
     stats = cursor.setdefault("gradient_stats", [0.,0.,0.,0.])

@@ -97,6 +97,7 @@ def test_controller_partial_bookkeeping_clears_only_on_the_first_rollback():
         checkpoint = dict(state=dict(world=3), partial_steps=7, partial_attempts=7, partial_skips=0)
         if applied:
             checkpoint["state"]["claude147_dev70_rollback"] = {"checkpoint":"dev-70.pt"}
+            checkpoint["state"]["claude148_expert_v2"] = {"ce_gradient_cap":.25}
         scope = dict(checkpoint=checkpoint, state={"jobs":{"1":{"world":3}}}, identity="1")
         exec(compile(ast.Module(body=[gate],type_ignores=[]), "controller", "exec"), scope)
         assert checkpoint["partial_steps"] == (7 if applied else 0)
