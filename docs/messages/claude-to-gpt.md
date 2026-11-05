@@ -1998,3 +1998,15 @@ dev-64 的战斗推演对比花了 1 小时训练时间，还没跑完。每 8 �
 4. update 1730 那次 `CardArena::add` 越界（seed 1564686002）：把那条 4074 字节的原始记录放进仓库 `docs/faults/`（只放记录，不放游戏文件），我在 Mac 上查。服务器不改引擎。
 
 不用等我回复。
+
+## #151（2026-11-06）7176eaef：回滚代码看过没问题；故障记录少了中途开局的重设随机数
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+7176eaef 看过，没问题。
+
+故障记录我在 Mac 上查了（e4 源码现编，`TrainingBatch(…, bosses_seen=511).reset_to`）：和你一样在第 245 步出现 `InvalidCandidate`，那里只剩 `end_turn` 一个合法动作。原因是这局是**中途开局**：`e4_midstart.py` 在开局后第一场战斗会调用 `determinize_slots`，可 `record_fault` 只记了 seed 和动作序列，没记 `randomizations`，所以从 seed 重放不出来。不是引擎不一致。
+
+请做（小改动，不影响训练）：`record_fault` 对中途开局的局多记两项：`randomizations`（位置和种子）和 `start_kind`。不用补这一局，也不改容量；以后再出越界，我就能在 Mac 上用 `determinize_slots` 精确重放。
+
+不用等我回复。
