@@ -133,9 +133,59 @@ For the current last five rounds, 1757–1761, the mean of the recorded combat-e
 
 ## 128-seed combat-preview comparison
 
-The ordinary 1,024-game audit above is complete. The separate natural `claude138-dev80` comparison is **still in progress** at this publication. Its argmax side has completed all **128** seeds, with reported physical-worker mode time **39.129040293977596 seconds**; the combat side had **5/128 completed seeds** at the last small-receipt check. This progress snapshot is not the final completed-intersection result.
+The natural comparison has ended under the shared **3600-second combat-mode cap**. Argmax completed **128/128** seeds; combat completed **122/128**, with status `combat_one_hour_cap`. All outcomes below were independently audited from the existing receipts. Completed seeds were not rerun.
 
-The comparison must use the same retained dev-80 SHA, the first 128 fixed seeds, eight logical shards scheduled over the actual GPU workers, and the shared 3600-second mode cap. Final timing must sum serial shard times within each physical worker before taking the parallel maximum; completed seeds must not be rerun. The report will be supplemented only after the natural comparison receipt is complete.
+Both modes loaded the retained dev-80 checkpoint, SHA-256 `dd67f35c7d85de59d1ccd8a26dde187a0013b97f8dfaa6ec3094fa68c6cefea5`. The comparison used the first 128 fixed seeds, `2000000000..2000000127`, split into eight logical shards over the actual GPU workers. It performed no parameter updates. The later dev-78 training rollback did not change this evaluation checkpoint.
+
+The paired result uses the **122-seed completed intersection**:
+
+| Metric | Argmax, matched 122 | Combat preview, matched 122 |
+|---|---:|---:|
+| Mean floor | 27.450819672131146 | 30.24590163934426 |
+| Act 1 boss reached | 95 | 103 |
+| Act 2 boss reached | 15 | 19 |
+| Act 3 first boss reached | 1 | 4 |
+| Act 3 victories | 0 | 0 |
+| Heart wins | 0 | 0 |
+
+The paired mean floor difference is **+2.7950819672131146**, with paired SE **0.8207393810668202**. The six excluded, unfinished combat seeds are `2000000014, 2000000022, 2000000046, 2000000094, 2000000110, 2000000126`. These time-censored exclusions make this a result conditional on completed pairs; it does not establish a gain over all 128 seeds or an effect of expert-v2 training.
+
+For context, argmax over all 128 seeds had mean floor **28.1328125**, Act 1/2/3-first-boss counts **100/19/4**, and zero Act 3 or Heart victories. Its complete-set mean must not be substituted for the matched 122-seed baseline. All 128 argmax and 122 completed combat episodes ended in death; there were no stalled outcomes or progression/key contradictions among those completed episodes. Argmax/combat collected ruby/emerald/sapphire keys in **3/22/4** and **2/21/4** completed episodes, respectively; neither reached Act 4, Shield/Spear or the Heart.
+
+### Physical-worker timing
+
+Argmax used **39.129040293977596 seconds**. Combat used **3600.342690088786 seconds** across the natural windows. Both totals include initialization. For each window, serial logical-shard times were summed within each physical worker, the maximum worker sum was taken, and those window maxima were added. Taking a maximum over the eight logical shards would be incorrect.
+
+| Combat natural window | Physical GPUs | Maximum physical-worker serial sum, seconds |
+|---|---:|---:|
+| 1 | 5 | 201.99315792194102 |
+| 2 | 6 | 514.1281365589821 |
+| 3 | 7 | 502.2379268720397 |
+| 4 | 6 | 502.7986266039661 |
+| 5 | 5 | 520.9844725389848 |
+| 6 | 4 | 524.6688684679684 |
+| 7 | 3 | 833.1503582429141 |
+| 8 | 3 | 0.3811428819899447 |
+
+All timer prefixes are final and have `failed=false`; the short final window is included. The combat result is capped and has `complete=false`, while the final comparison report exists. It is not a 128-game combat completion or a training-job failure. These mode times are diagnostics; allocation cost remains the original controller's single Slurm settlement.
+
+### Preview and override counters
+
+| Counter | Argmax | Combat preview |
+|---|---:|---:|
+| Mainline decisions | 65940 | 176421 |
+| Preview decisions | 0 | 74557 |
+| Overrides | 0 | 13001 |
+| Preview engine steps | 0 | 48365305 |
+| Preview decisions / mainline decisions | 0 | 0.42260841963258344 |
+| Overrides / mainline decisions | 0 | 0.07369304107787622 |
+| Overrides / preview decisions | 0 | 0.1743766514210604 |
+
+Counters cover **all attempted work**, including unfinished prefixes and natural-window retries, whereas the outcome comparison covers only the completed intersection. They must not be described as counters restricted to the 122 paired games.
+
+Independent supplemental audit: **91 source/receipt files** checked, including unique seed ownership, checkpoint identity, completed intersection and exclusions, outcome/progression consistency, counters, final window receipts, physical-worker mapping and serial timing, and agreement with the natural report. Audit artifact SHA-256: `0508e11a162b7d8639242e0dcc27b35ab0eb61452717c8b5ae74c2e0e19c6a81`. The ordinary 1,024-game audit above was not repeated.
+
+After the comparison ended, the retained-clock dev-78 rollback branch resumed pure PPO. Its first new completed update, **1762 / 288277.9648657319 training seconds**, used **3 GPUs**, **393216 = 3 × 2048 × 64** student decisions and **24 applied optimizer steps**, with finite parameters, **0 AMP skips**, `expert_beta=0`, `expert_samples=0`, and `expert_collection=false`. The one-time rollback marker had already been verified in a natural checkpoint; these observations close the requested startup/finite-update/checkpoint acceptance. They do not certify future fault-free operation.
 
 Next ordinary evaluation: **82h = 295200 seconds**, with the learning-rate window strictly greater than **288169.9435521559**. No evaluation games were rerun for this audit.
 
