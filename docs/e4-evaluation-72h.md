@@ -53,7 +53,30 @@ No memory-limit or expert OOM recovery event was recorded in these five rounds. 
 
 ## Supplemental first-128-seed comparison
 
-The natural 72h hook is running independent argmax and combat lookahead evaluations of the same `dev-72.pt` on seeds 2000000000–2000000127. Eight logical receipt shards are assigned across the three physical GPUs. Completed seeds are not rerun, and serial shards share the one-hour combat cap. The paired comparison will use the completed-seed intersection. At publication, the argmax mode has completed and combat is still in progress; no final combat score, intersection result, or exact combat wall time is claimed here.
+The natural 72h comparison completed all **128** games in both modes, on the same retained `dev-72.pt` (SHA-256 `09c2a451c1308874c09d7ef5a9755657821e1e1dd8918d5b8e4d04126af6c4e6`). The fixed seeds were 2000000000–2000000127, with eight logical receipt shards assigned across **three physical V100 GPUs**. The completed-seed intersection contains all 128 seeds, with no exclusions or replay of completed games. All results below were independently recomputed from the sixteen small result receipts.
+
+| Metric | Independent argmax | Combat lookahead |
+| --- | ---: | ---: |
+| Completed games | 128 | 128 |
+| Mean floor | 25.890625 | 31.101563 |
+| Act 1 boss passed | 88 | 108 |
+| Act 2 boss passed | 19 | 29 |
+| First Act 3 boss passed | 5 | 9 |
+| Act 3 wins | 0 | 1 |
+| Heart wins | 0 | 0 |
+| Ruby / emerald / sapphire keys | 1 / 19 / 1 | 1 / 19 / 0 |
+| All three keys / Act 4 entries | 0 / 0 | 0 / 0 |
+| Measured mode wall, seconds | 50.236239 | 2016.201492 |
+| Mainline decisions | 62777 | 75546 |
+| Decisions with previews | 0 | 19965 |
+| Preview engine steps | 0 | 14561134 |
+| Action overrides | 0 | 4199 |
+
+The paired floor difference for combat versus its dedicated argmax baseline was **+5.2109375** (SE **0.8511696116**). This measures the inference-time lookahead difference on this checkpoint and fixed seed set; it does not measure a training improvement or establish performance on other seeds. Both modes recorded no Shield and Spear or Heart win, and independent key/Act 4 consistency checks found no contradiction.
+
+For combat, preview decisions were **26.427607%** of mainline decisions. Overrides were **5.558203%** of mainline decisions and **21.031806%** of preview decisions. Preview engine steps are separate from mainline decisions and are not added to PPO sample counts.
+
+Timing includes each shard's initialization. Each physical worker ran its assigned logical shards serially; the audit summed those shard times per worker and took the maximum across workers. Argmax worker totals were 50.236239, 48.037264 and 34.065812 seconds; combat totals were 2016.201492, 1941.726975 and 953.264114 seconds. There was one natural window, and all sixteen final timer receipts were complete and non-failed, so these are complete measured mode times, not crash-prefix lower bounds. These times exclude the ordinary 1,024-game evaluation and are not the full Slurm allocation wall time. The comparison performed zero parameter updates, and its allocation time is not charged a second time.
 
 ## Next natural resume requested in Claude #147
 
