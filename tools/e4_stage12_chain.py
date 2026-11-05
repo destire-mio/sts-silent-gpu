@@ -233,7 +233,8 @@ def run(root):
         state['jobs'][identity]['state'] = 'RUNNING'
         state['jobs'][identity].update(runtime_source=state['source_commit'], runtime_repository=state['repository'], training_root=state['training_root'])
         checkpoint = checkpoint_state(state)
-        if checkpoint['state']['world'] != state['jobs'][identity]['world']:
+        if (checkpoint['state']['world'] != state['jobs'][identity]['world'] or
+                'claude147_dev70_rollback' not in checkpoint['state']):
             checkpoint['retained_partial_optimizer_steps'] = checkpoint['partial_steps']
             checkpoint.update(partial_steps=0, partial_attempts=0, partial_skips=0)
         state['jobs'][identity]['resume'] = checkpoint

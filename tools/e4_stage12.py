@@ -31,7 +31,6 @@ from train.e4_checkpoint import load_matching_rank
 from train.e4_value_diagnostics import explained_variance, nonforced_entropy, value_coefficient
 from train.e4_evaluation_ledger import EvaluationLedgerCollector, value_correlations
 from train.e4_lookahead_window import lookahead60_window
-from train.e4_expert_iteration import ExpertIteration, attach_expert
 from train.e4_expert_window import periodic_combat_window, due_combat_comparison
 
 
@@ -69,6 +68,15 @@ def save_dev_weights(policy, output, training_seconds):
     return path.name
 
 
+def rollback_dev70(policy, state, output):
+    if "claude147_dev70_rollback" in state:
+        return False
+    policy.load_state_dict(torch.load(output / "dev-70.pt", map_location="cpu", weights_only=True), strict=True)
+    state["claude147_dev70_rollback"] = dict(
+        checkpoint="dev-70.pt", update=state["update"], training_seconds=state["training_seconds"])
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
@@ -100,7 +108,6 @@ def main():
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4,
                  observation_version=OBSERVATION_VERSION)
     cursor = None
-    expert = None
     expert_saved = None
     rank_path = output / f"rank-{rank}.pt"
     committed_rank_path = None
@@ -147,6 +154,18 @@ def main():
                                   retained_partial_optimizer_steps=retained_partial_steps,
                                   unfinished_learner="restart collection, retain model and optimizer")), flush=True)
         print(json.dumps(dict(event="resumed", rank=rank, update=state["update"])), flush=True)
+    if rollback_dev70(policy, state, output):
+        retained_partial_steps = cursor['optimizer_steps'] if cursor is not None else 0
+        cursor = None
+        collector.partial = None
+        round_state["ready"] = None
+        print(json.dumps(dict(event="claude147_dev70_rollback", rank=rank, world=world,
+            update=state["update"], training_seconds=state["training_seconds"],
+            retained_partial_optimizer_steps=retained_partial_steps,
+            model_checkpoint="dev-70.pt", expert_beta=0., expert_collection=False,
+            optimizer_clock_pools_rng_preserved=True)), flush=True)
+    if expert_saved is not None:
+        expert_saved["round"] = None
     scaler = torch.amp.GradScaler("cuda", enabled=policy.encoder_fp16)
     if common.exists() and state["precision"] == "encoder_fp16_heads_fp32":
         scaler.load_state_dict(saved["scaler"])
@@ -186,7 +205,7 @@ def main():
         identity = (state["update"], state["checkpoint_serial"])
         save_rank(rank_path, collector, cursor, identity, ppo_rng, round_state,
                   committed_path=committed_rank_path,
-                  expert_state=expert.state() if expert is not None else expert_saved)
+                  expert_state=expert_saved)
         dist.barrier()
         if rank == 0:
             temporary = output / "model.pt.tmp"
@@ -228,6 +247,7 @@ def main():
                 with gzip.open(output / f"{prefix}-{state['update']}-rank-{owner}.json.gz", "rt") as stream:
                     all_episodes.extend(json.load(stream))
             row = dict(event="teacher_evaluation" if label else "evaluation", selection="argmax", phase="distillation" if state.get("teacher_path") and not state.get("distillation_evaluated") else "PPO", update=state["update"], complete=bool(flag),
+                training_branch="dev70_rollback_pure_PPO", world=world, rollback_checkpoint="dev-70.pt",
                        training_seconds=state["training_seconds"], no_SL=True,
                        observation_version=state['observation_version'], **metrics(all_episodes))
             if state.get("teacher_path"):
@@ -308,14 +328,6 @@ def main():
         state['stop_reason'] = 'allocation_end_or_yield'
     if state["stop_reason"] is None and not periodic_combat_window(output,config,device,rank,world,deadline):
         state["stop_reason"] = "allocation_end_or_yield"
-    if expert_saved is not None:
-        restore_expert_started = time.monotonic()
-        with torch.random.fork_rng(devices=[device.index]):
-            expert = ExpertIteration(collector, output, deadline, rank, expert_saved)
-        restore_expert_seconds = time.monotonic()-restore_expert_started
-        expert.setup_seconds += restore_expert_seconds
-        round_state["seconds"] += restore_expert_seconds
-        expert_saved = None
     while state["stop_reason"] is None:
         if stopping():
             state["stop_reason"] = "allocation_end_or_yield"
@@ -324,10 +336,7 @@ def main():
         if cursor is None:
             if collector.partial is None and round_state["ready"] is None:
                 round_state = dict(ready=None, seconds=0., decisions_start=collector.decisions)
-                if expert is not None:
-                    expert.begin_ppo_round()
-                else:
-                    torch.cuda.reset_peak_memory_stats(device)
+                torch.cuda.reset_peak_memory_stats(device)
                 search.entropy_sum.zero_()
                 search.entropy_count = 0
                 search.decision_entropy.zero_()
@@ -363,27 +372,7 @@ def main():
                     log(report)
                     if rank == 0:write_json(output/"claude132-rollout-diagnostic.json",report)
                     state["value_rollout_diagnostic_complete"] = True
-            if expert is None:
-                expert_setup_started = time.monotonic()
-                with torch.random.fork_rng(devices=[device.index]):
-                    expert = ExpertIteration(collector, output, deadline, rank, expert_saved)
-                expert.setup_seconds += time.monotonic()-expert_setup_started
-                expert_saved = None
-            expert_interrupted = False
-            try:
-                with torch.random.fork_rng(devices=[device.index]):
-                    expert_fragment = expert.collect_and_fragment(policy, state["update"]+1, time.monotonic()-started)
-            except AllocationEnded:
-                expert_interrupted = True
-            expert_flag = torch.tensor(int(expert_interrupted), device=device)
-            dist.all_reduce(expert_flag, op=dist.ReduceOp.MAX)
-            if bool(expert_flag):
-                round_state["seconds"] += time.monotonic()-started
-                state["stop_reason"] = "allocation_end_or_yield"
-                break
             cursor = new_cursor(round_state["ready"], ppo_rng, world)
-            attach_expert(cursor, expert_fragment, world)
-            del expert_fragment
             round_state["ready"] = None
             if not sum(cursor["counts"]):
                 failed = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
@@ -419,10 +408,7 @@ def main():
                 advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
                     teacher=teacher if teacher is not None and state['distillation_updates'] < distillation_target else None,
                     entropy_coefficient=state.get('entropy_coefficient', .01),
-                    learner_profile=learner_profile,value_state=state,diagnostic_log=log,
-                    expert_oom_callback=expert.discard_oom if expert is not None else None)
-                if expert is not None:
-                    expert.record_ppo_peak()
+                    learner_profile=learner_profile,value_state=state,diagnostic_log=log)
                 if rank == 0 and not (output/"claude133-gradient-diagnostic.json").exists():
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
         sync_started = time.perf_counter()
@@ -434,8 +420,9 @@ def main():
         row = finish_metrics(cursor, model, scaler)
         elapsed = torch.tensor(round_state["seconds"], dtype=torch.float64, device=device)
         dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
-        if expert is not None and expert.round is not None:
-            row.update(expert.finish(cursor, float(elapsed), log))
+        row.update(expert_beta=0., expert_samples=0, expert_collection=False,
+                   training_branch="dev70_rollback_pure_PPO", world=world,
+                   rollback_checkpoint="dev-70.pt")
         decisions = torch.tensor(collector.decisions - round_state["decisions_start"], device=device, dtype=torch.float64)
         by_rank = [torch.empty_like(decisions) for _ in range(world)]
         dist.all_gather(by_rank, decisions)
