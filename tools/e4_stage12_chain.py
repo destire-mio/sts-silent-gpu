@@ -39,11 +39,12 @@ def locked(root):
         yield json.loads((root / 'state.json').read_text())
 
 
-def available_wall(state):
+def available_wall(state, world=None, identity=None):
     unfinished = sum(job['wall_seconds'] * job['world'] / 8
-                     for job in state['jobs'].values() if not job.get('settled'))
+                     for key, job in state['jobs'].items()
+                     if not job.get('settled') and key != identity)
     remaining = state['limit_node_seconds'] - state['charged_node_seconds'] - unfinished
-    return min(14400, int(remaining * 8 / state['request']['world']) // 60 * 60)
+    return min(14400, int(remaining * 8 / (world or state['request']['world'])) // 60 * 60)
 
 
 def settle(root, state):
@@ -75,6 +76,10 @@ def settle(root, state):
                               charged_node_seconds=charge))
 
 
+def gpu_count(tres):
+    return int(dict(part.split('=', 1) for part in tres.split(',') if '=' in part).get('gres/gpu', 0))
+
+
 def snapshot(root, state, trigger):
     if time.time() < state['next_resource_check_at'] or trigger in state['resource_triggers']:
         return state.get('resources'), False
@@ -83,11 +88,22 @@ def snapshot(root, state, trigger):
     state['next_resource_check_at'] = time.time() + 630
     save(root, state, dict(event='resource_query_claim', trigger=trigger))
     jobs = command('scontrol', 'show', 'jobs', '-o')
-    pending = [fields(line) for line in jobs.splitlines() if line.startswith('JobId=')]
-    pending = [job for job in pending if job.get('JobState') == 'PENDING'
+    rows = [fields(line) for line in jobs.splitlines() if line.startswith('JobId=')]
+    pending = [job for job in rows if job.get('JobState') == 'PENDING'
                and job['UserId'].split('(')[0] != os.environ['USER']
+               and job['Partition'] == os.environ['STAGE12_PARTITION']
                and job.get('Reason') in ('Resources', 'Priority')]
-    result = dict(all_jobs_original=jobs, pending=pending, finished_at=time.time())
+    node = fields(command('scontrol', 'show', 'node', os.environ['STAGE12_NODE'], '-o'))
+    ours = sum(gpu_count(job['TRES']) for job in rows
+               if job.get('JobState') in ('RUNNING', 'COMPLETING')
+               and job['JobId'] in state['jobs']
+               and job['UserId'].split('(')[0] == os.environ['USER']
+               and job['NodeList'] == os.environ['STAGE12_NODE'])
+    free = gpu_count(node['CfgTRES']) - gpu_count(node['AllocTRES'])
+    target = max(0, min(state['request']['world'], free + ours -
+                       sum(gpu_count(job['TRES']) for job in pending)))
+    result = dict(all_jobs_original=jobs, pending=pending, node=node,
+                  world=target, finished_at=time.time())
     state['resources'] = result
     state['next_resource_check_at'] = time.time() + 630
     save(root, state, dict(event='resource_query_completed', trigger=trigger, pending=pending))
@@ -101,27 +117,27 @@ def enqueue(root, parent):
                     if job.get('parent_job') == int(parent) and not job.get('settled')]
         if children:
             return int(children[0])
-        wall = available_wall(state)
+        world = max(1, state['resources']['world'])
+        wall = available_wall(state, world)
         if state.get('halted') or wall < 60:
             save(root, state, dict(event='no_successor', reason='health_stop_or_budget_exhausted'))
             return None
         request = state['request']
-        waiting = [job['JobId'] for job in state.get('resources', {}).get('pending', [])]
-        dependency = 'afterany:' + ':'.join([parent] + waiting)
+        dependency = 'afterany:' + parent
         receipt = command('sbatch', '--no-requeue', '--dependency=' + dependency,
             '--begin=now+11minutes', '--nodes=1', '--ntasks=1',
             '--partition=' + os.environ['STAGE12_PARTITION'],
             '--nodelist=' + os.environ['STAGE12_NODE'],
-            f"--gres=gpu:V100:{request['world']}", f"--cpus-per-task={request['cpus']}",
+            f"--gres=gpu:V100:{world}", f"--cpus-per-task={request['cpus']}",
             f"--mem={request['memory_mib']}M",
             f'--time={wall // 3600:02}:{wall % 3600 // 60:02}:00',
             '--job-name=spire-e4-stage12-chain',
-            '--export=ALL,STAGE12_WORLD=' + str(request['world']) + ',STAGE12_PARENT=' + parent,
+            '--export=ALL,STAGE12_WORLD=' + str(world) + ',STAGE12_PARENT=' + parent,
             '--chdir=' + state['repository'], '--output=' + str(root / 'chain-%j.log'),
             '--signal=B:USR1@240', str(root / 'stage12-chain.sbatch'))
         identity = re.search(r'Submitted batch job ([0-9]+)', receipt)[1]
         state['jobs'][identity] = dict(job_id=int(identity), parent_job=int(parent), state='PENDING',
-            world=request['world'], wall_seconds=wall, memory_mib=request['memory_mib'],
+            world=world, wall_seconds=wall, memory_mib=request['memory_mib'],
             cpus=request['cpus'], dependency=dependency, receipt_original=receipt,
             submitted_at=time.time(), settled=False)
         save(root, state, dict(event='successor_submitted', job_id=int(identity), parent_job=int(parent)))
@@ -170,17 +186,42 @@ def watch(root, trigger):
     with locked(root) as state:
         settle(root, state)
         resources, queried = snapshot(root, state, trigger)
-        if resources and resources['pending']:
-            (Path(state['training_root']) / 'training/stop-requested').touch()
-            for identity, job in state['jobs'].items():
-                if job.get('settled') or job['state'] != 'PENDING':
-                    continue
-                dependency = 'afterany:' + ':'.join([str(job['parent_job'])] +
-                    [other['JobId'] for other in resources['pending']])
-                if dependency != job['dependency']:
-                    command('scontrol', 'update', 'JobId=' + identity, 'Dependency=' + dependency)
-                    job['dependency'] = dependency
-            save(root, state, dict(event='yield_requested', pending=resources['pending']))
+        if not queried or not resources or 'world' not in resources:
+            return dict(state=state, queried=queried)
+        target = resources['world']
+        scheduler = {job['JobId']: job for job in
+                     (fields(line) for line in resources['all_jobs_original'].splitlines()
+                      if line.startswith('JobId='))}
+        for identity, job in state['jobs'].items():
+            current = scheduler.get(identity)
+            if job.get('settled') or current is None:
+                continue
+            if current['Reason'].startswith('JobHeld') or current.get('Priority') == '0':
+                continue
+            if current['JobState'] == 'RUNNING' and job['world'] != target:
+                (Path(state['training_root']) / 'training/stop-requested').touch()
+                save(root, state, dict(event='resize_requested', job_id=int(identity),
+                                      previous_world=job['world'], world=target))
+            if current['JobState'] != 'PENDING':
+                continue
+            world = max(1, target)
+            wall = min(job['wall_seconds'], available_wall(state, world, identity))
+            if wall < 60:
+                continue
+            parent = str(job['parent_job'])
+            dependency = ('afterany:' + parent if parent in scheduler and
+                          scheduler[parent]['JobState'] not in TERMINAL else '')
+            actual_dependency = current.get('Dependency', '(null)')
+            if job['world'] == world and actual_dependency in (dependency, '(null)' if not dependency else dependency):
+                continue
+            command('scontrol', 'update', 'JobId=' + identity,
+                    f'Gres=gpu:V100:{world}', 'Dependency=' + dependency,
+                    f'TimeLimit={wall // 60}')
+            receipt = fields(command('scontrol', 'show', 'job', identity, '-o'))
+            assert gpu_count(receipt['TRES']) == world
+            job.update(world=world, wall_seconds=wall, dependency=dependency)
+            save(root, state, dict(event='pending_resized', job_id=int(identity),
+                                  world=world, wall_seconds=wall, receipt_original=receipt))
         return dict(state=state, queried=queried)
 
 
@@ -191,6 +232,9 @@ def run(root):
         state['jobs'][identity]['state'] = 'RUNNING'
         state['jobs'][identity].update(runtime_source=state['source_commit'], runtime_repository=state['repository'], training_root=state['training_root'])
         checkpoint = checkpoint_state(state)
+        if checkpoint['state']['world'] != state['jobs'][identity]['world']:
+            checkpoint['retained_partial_optimizer_steps'] = checkpoint['partial_steps']
+            checkpoint.update(partial_steps=0, partial_attempts=0, partial_skips=0)
         state['jobs'][identity]['resume'] = checkpoint
         reason = checkpoint['state']['stop_reason']
         if reason not in (None, 'allocation_end_or_yield'):
@@ -201,7 +245,7 @@ def run(root):
     result = watch(root, 'start-' + identity)
     enqueue(root, identity)
     state = result['state']
-    if state['resources']['pending']:
+    if state['resources']['world'] < state['jobs'][identity]['world']:
         return 0
     output = Path(state['training_root']) / 'training'
     (output / 'stop-requested').unlink(missing_ok=True)

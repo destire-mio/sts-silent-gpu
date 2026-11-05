@@ -138,9 +138,13 @@ def main():
                 del candidate
             dist.barrier()
         if state["world"] != world:
+            retained_partial_steps = cursor['optimizer_steps'] if cursor is not None else 0
             cursor = None
             round_state["ready"] = None
+            if expert_saved is not None:
+                expert_saved['round'] = None
             print(json.dumps(dict(event="resume_world_changed", previous=state["world"], current=world,
+                                  retained_partial_optimizer_steps=retained_partial_steps,
                                   unfinished_learner="restart collection, retain model and optimizer")), flush=True)
         print(json.dumps(dict(event="resumed", rank=rank, update=state["update"])), flush=True)
     scaler = torch.amp.GradScaler("cuda", enabled=policy.encoder_fp16)

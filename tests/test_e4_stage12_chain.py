@@ -17,7 +17,7 @@ class ChainTests(unittest.TestCase):
         self.state = dict(limit_node_seconds=29399, charged_node_seconds=14400,
             request=dict(world=8, cpus=9, memory_mib=21649), training_root=str(self.root),
             repository='/repo', source_commit='test-source', next_resource_check_at=time.time() + 630, resource_triggers=[],
-            resources=dict(finished_at=time.time(), pending=[]),
+            resources=dict(finished_at=time.time(), pending=[], world=8, all_jobs_original=''),
             jobs={'10': dict(world=8, wall_seconds=14400, state='RUNNING', settled=False)})
         (self.root / 'state.json').write_text(json.dumps(self.state))
         self.environment = patch.dict(os.environ, USER='tester',
@@ -64,7 +64,7 @@ class ChainTests(unittest.TestCase):
         self.state['jobs']['11'] = dict(world=8, wall_seconds=14400, state='PENDING', settled=False)
         self.state['jobs']['10'].update(settled=True)
         (self.root / 'state.json').write_text(json.dumps(self.state))
-        checkpoint = dict(state=dict(stop_reason='NaN_or_Inf'), optimizer_steps=123,
+        checkpoint = dict(state=dict(stop_reason='NaN_or_Inf', world=8), optimizer_steps=123,
                           partial_steps=0, partial_attempts=0, partial_skips=0)
         with patch.dict(os.environ, SLURM_JOB_ID='11'), \
              patch.object(chain, 'command', return_value='11|RUNNING|0:0|0||\n'), \
@@ -77,22 +77,30 @@ class ChainTests(unittest.TestCase):
         self.assertTrue(saved['halted'])
         self.assertEqual(saved['jobs']['11']['resume']['state']['stop_reason'], 'NaN_or_Inf')
 
-    def test_yield_waits_for_other_users(self):
+    def test_resize_yields_only_until_the_smaller_allocation(self):
         self.state['jobs']['11'] = dict(parent_job=10, world=8, wall_seconds=14400,
-            dependency='afterany:10', state='PENDING', settled=False)
-        self.state['resources']['pending'] = [dict(JobId='42', Reason='Resources')]
+            dependency='afterany:10:42', state='PENDING', settled=False)
+        self.state['limit_node_seconds'] = 100000
+        resources = dict(world=7, pending=[dict(JobId='42')],
+            all_jobs_original='JobId=10 JobState=RUNNING Reason=None Priority=1\n'
+                              'JobId=11 JobState=PENDING Reason=Dependency Priority=1 Dependency=afterany:10:42\n')
         (self.root / 'state.json').write_text(json.dumps(self.state))
         calls = []
         def command(*args, **_):
             calls.append(args)
             if args[0] == 'sacct':
                 return args[2] + ('|RUNNING|0:0|0||\n' if args[2] == '10' else '|PENDING|0:0|0||\n')
-            self.assertEqual(args, ('scontrol', 'update', 'JobId=11', 'Dependency=afterany:10:42'))
+            if args[1:3] == ('show', 'job'):
+                return 'JobId=11 JobState=PENDING TRES=gres/gpu=7'
+            self.assertIn('Gres=gpu:V100:7', args)
+            self.assertIn('Dependency=afterany:10', args)
             return ''
-        with patch.object(chain, 'command', command):
-            result = chain.watch(self.root, 'heartbeat-test')
-        self.assertFalse(result['queried'])
+        with patch.object(chain, 'command', command), \
+             patch.object(chain, 'snapshot', return_value=(resources, True)):
+            chain.watch(self.root, 'heartbeat-test')
         self.assertTrue((self.root / 'training/stop-requested').exists())
+        saved = json.loads((self.root / 'state.json').read_text())
+        self.assertEqual(saved['jobs']['11']['world'], 7)
         self.assertFalse(any(args[0] == 'sbatch' for args in calls))
 
 
