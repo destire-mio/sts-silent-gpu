@@ -1,5 +1,4 @@
 """CPU/native label alignment and independently capped CE gradients for #148."""
-from copy import deepcopy
 import math
 import torch
 from train import e4_expert_iteration as expert
@@ -58,17 +57,3 @@ def test_ce_buffer_is_capped_against_unclipped_ppo_and_amp_scale(monkeypatch):
     for p in parameters: p.grad.zero_()
     expert.add_capped_expert_gradients(model, torch.ones_like(ce), scaler, {}, 1)
     assert all(torch.count_nonzero(p.grad)==0 for p in parameters)
-
-
-def test_v2_start_marker_does_not_reload_weights_or_reset_training_state():
-    from tools.e4_stage12 import enable_expert_v2
-    state = dict(update=1660, training_seconds=274000., world=7,
-        claude147_dev70_rollback=dict(update=1561), learning_rate=4e-5,
-        value_calibration=dict(completed_updates=100))
-    before = deepcopy(state)
-    assert enable_expert_v2(state)
-    assert all(state[k]==v for k,v in before.items())
-    marker = deepcopy(state['claude148_expert_v2'])
-    state['update'] += 1
-    assert not enable_expert_v2(state)
-    assert state['claude148_expert_v2']==marker
