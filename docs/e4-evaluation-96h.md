@@ -2,7 +2,7 @@
 
 The retained **dev-96** snapshot completed its ordinary **1,024-game argmax** exam at update **2251**, training time **345695.23689094814 seconds**, on **7 V100 GPUs**. Mean floor was **30.6142578125**, with **10 Act3 second-boss flags** and **0 Heart wins**. Against dev-94 the paired difference was **+0.2080078125**, SE **0.37887817048727923**; against dev-70 it was **+1.2646484375**, SE **0.4080041929303037**. These fixed-seed comparisons establish no causal effect of the learning-rate cap, engine changes, rollback, removing CE or GPU count.
 
-This report closes the ordinary exam. The separate96h128-seed argmax/combat/card supplement was still running at the coordination read and is not finalized here. Its card protocol note is **card 已用整局随机化（#157）**. Completed seeds are not rerun; each mode retains its shared3600-second cap and natural censoring rules.
+Both the ordinary exam and the separate96h128-seed argmax/combat/card supplement are now naturally FINAL, independently audited and CLOSED. The supplement below uses **card 已用整局随机化（#157）**; historical88 card results remain invalid. No seed was rerun for this audit.
 
 ## Protocol and model identity
 
@@ -132,4 +132,72 @@ CPU-only audit of existing retained files: **exit0 /3.607215642929077 seconds**.
 
 Ordinary96 audit/extraction/publication is CLOSED. Next ordinary exam is98h (352800s), with the next LR window strictly after345695.23689094814. Last real counter remains2192/242/Adam121975;2251/Adam125278 is derived until a real later canonical resume confirms it. No new96 partial has been added. Keep all94/92/90 and older partials excluded from later windows.
 
-The96h128-seed supplement remains OPEN pending natural FINAL, with argmax/combat/card and **card 已用整局随机化（#157）**. Each mode retains its shared3600s cap; report completed intersections and exclusions, without treating censored games as gains or rerunning seeds. Historical88 card remains invalid, **作废：推演未随机化，偷看真实未来**. No old closed audit or seed is repeated.
+## 96h supplement: naturally FINAL, audit and publication CLOSED
+
+All three modes completed **128/128** fixed seeds **2000000000..2000000127**, using the same retained `dev-96.pt` SHA-256 **53bebb9f05ae21b64c9d538e2740a933a1cfc565d18a69defba7d852c05878dc**. This is evaluation only, with **0 parameter updates**. The actual natural window used source **05fec51c18406c31a566d69db0424916ff546e79**, c167 runtime/newbuild, **7 physical V100 GPUs** and8 logical shards. **card 已用整局随机化（#157）**.
+
+Combat uses the existing combat-preview protocol. Card is only eligible at card_reward with more than1 legal choice and argmax probability below0.9; at most5 candidates including skip, the same8 determinized seeds paired across candidates, ordinary argmax after cloning with the original mask, and no combat search or recursive previews. Stop at3 combats, death, the current act boss or1024 steps, whichever occurs first. Score ledger reward plus leaf V (death0), overriding only when the paired mean exceeds its SE. This audit reads the final artifacts; it does not replay or revalidate the closed engine build.
+
+| Mode | Completed | Mean floor | Act1 boss | Act2 boss | Act3 first | Act3 second flag | Heart | Seconds |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| argmax | 128 | 29.7109375 | 107 | 22 | 4 | 1 | 0 | 42.531152408977505 |
+| combat | 128 | 33.7890625 | 113 | 43 | 13 | 2 | 0 | 1993.1237143329927 |
+| card | 128 | 30.40625 | 111 | 21 | 4 | 1 | 0 | 355.17059641401283 |
+
+Each mode has an independent shared **3600-second cap**; all finished below their caps, `complete=true`, `timing_complete=true`, `skipped=null`. No missing seeds, time censoring or later reruns occur in this cohort. Against argmax, the combat completed intersection is128 with **+4.078125 floor, paired SE0.9262686404953789**; the card completed intersection is128 with **+0.6953125, paired SE0.5121023752483386**. Excluded seeds for each comparison: **[]**. The three-mode common intersection is also128, excluded **[]**, and yields exactly the same two paired estimates. On that common intersection, card minus combat is **−3.3828125, paired SE0.8101017827071031**.
+
+These are paired observations on this fixed128-seed cohort, not proof of an LR, engine, GPU-count or search causal effect, or of generalization to all seeds. Historical88 card remains **作废：推演未随机化，偷看真实未来**; its old gains are not evidence for this comparison.
+
+### Actual counters and preview coverage
+
+| Mode | Mainline decisions | Previews | Overrides | Preview steps | Card-reward decisions |
+| --- | --- | --- | --- | --- | --- |
+| argmax | 71708 | 0 | 0 | 0 | N/A |
+| combat | 82932 | 36865 | 5991 | 25868353 | N/A |
+| card | 73622 | 505 | 136 | 1850447 | 1941 |
+
+Counters are sums of the8 retained shard counters and include all attempted work across natural windows, including any incomplete prefixes; they are not reconstructed from averages. Combat preview/mainline is **0.4445208122317079**, override/mainline **0.07223990739400955**, override/preview **0.16251186762511868**. Card preview/mainline is **0.006859362690500122**, override/mainline **0.001847273912689142**, override/preview **0.2693069306930693**; eligible previews divided by all card-reward decisions is **505/1941 = 0.26017516743946417**. The latter denominator includes ineligible card decisions. Argmax preview and override counts are0.
+
+The retained directory contains55 final files and **0 individual per-preview reports**. Its505 card previews are an aggregate count. The numerator of per-preview paired SE=0 is unknown, so **SE=0 proportion: N/A (unknown/505)**. The cross-game floor SE0.5121023752483386 cannot substitute for per-preview SE.
+
+### Timing reconstruction
+
+One natural window, `1793987996165401917`, is present. Logical shard ownership is `seeds[logical_rank::8]`; physical assignment is `logical_rank % 7`. Physical worker0 runs logical shards0 and7 serially. For every mode/window the audit sums serial shard wall times per physical worker, takes the parallel maximum, then sums natural windows. It includes initialization, and does not sum all GPUs as if they were serial.
+
+| Physical worker | Argmax seconds | Combat seconds | Card seconds |
+| --- | --- | --- | --- |
+| 0 | 42.531152408977505 | 1993.1237143329927 | 355.17059641401283 |
+| 1 | 25.642145271995105 | 1314.8911424450343 | 235.3809386510402 |
+| 2 | 28.62216992501635 | 1183.3452122749877 | 163.73402088397415 |
+| 3 | 19.635042183974292 | 677.5311211919761 | 211.36570786999073 |
+| 4 | 24.12606279598549 | 1062.556478642975 | 284.3563615769963 |
+| 5 | 16.68844113900559 | 997.3387419209466 | 188.63613245100714 |
+| 6 | 23.973731068952475 | 1147.559032123012 | 200.08847606397467 |
+
+The maxima are exactly42.531152408977505,1993.1237143329927 and355.17059641401283 seconds, respectively. All24 window receipts,3 ready receipts,3 mode statuses,24 episode/counter shard files and the aggregate report agree. No failed/non-final timer prefixes occur in this final window; the general timer caveat remains that crash-prefix timers are lower bounds, not exact total wall.
+
+### Outcome and key audit
+
+| Mode | Ruby | Emerald | Sapphire | All three | Act4 entry | Shield/Spear | death / act3_win / stalled |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| argmax | 3 | 18 | 6 | 0 | 0 | 0 | 127 / 1 / 0 |
+| combat | 8 | 24 | 9 | 1 | 0 | 0 | 126 / 2 / 0 |
+| card | 5 | 19 | 4 | 0 | 0 | 0 | 127 / 1 / 0 |
+
+All384 records have unique integer seeds within their owned shard, finite rewards, integer nonnegative floors, valid key/reach booleans and **0 hierarchy contradictions**. The existing collector's `act3_win` label and second-boss flag are not full-game wins or exhaustive post-Act3 deaths. Heart wins are0 in all modes.
+
+### Independent audit and provenance
+
+Exactly **one CPU audit process**, **0.29946470260620117 seconds**, exit0, empty stderr. It verifies the55 final files, all3×128 episode rows, shard ownership, model hash, counters/fractions, per-worker timing, pair intersections, key/reach hierarchy and file-hash stability. Ordinary96's closed strict-finite model audit is not repeated; this supplement only hashes the retained model for identity. No GPU allocation, seed replay, engine change, forced save, collector clear or large rank read was performed.
+
+- Raw supplement directory: `c124-run/training/claude138-dev96`.
+- Natural `report.json`:4877 bytes, SHA-256 `08da2162022501d51bce8df8b38d60515b73bfc671012dd03153943366e939c0`.
+- Audit: `c172-preparation/supplement96.audit.original.json`, **26787 bytes**, SHA-256 `922dc7ad89b8243957e852162b3cf5ef92b298fc0c53a61396b2aee4089c315c`; full55-file manifest retained there.
+- Script: `c172-preparation/audit-supplement96.py`, SHA-256 `40859e039e75141cfa9d422d040e6a84d7aa00a3556c4cb5ee63f91d3d4164a0`.
+- Exact original audit bytes, execution receipt and summary retained locally and remotely. A metadata transport parse failed before this audit process; no audit was launched by that read and the actual audit process count is1.
+
+### Later persistence cross-check, without redoing ordinary96
+
+The successor5339's actual small canonical resume is checkpoint **2255 / serial247 / training346190.6022306062 / previous world7 / Adam125502**, rank match true, retained partial0, new cursor0, now8 GPUs. Bounded small-log reads explicitly verified2252,2253,2254,2255 as7-GPU finite56-step/0-AMP/fault0 updates,224 applied steps total. Therefore **125502 −224 =125278** cross-confirms the96 endpoint counter previously derived at2251; it is still not a direct saved2251 Adam read. Subtracting the audited96 complete3247 also cross-confirms94 anchor122031. No duplicate periodic-save steps or new partial are added. The98h window starts strictly after345695.23689094814; its observed four updates are not an extrapolation to the full98h window.
+
+Both96 ordinary and supplement are CLOSED. Next ordinary threshold98h352800; next8h supplement104h374400. Completed96/94/92/90 and older audits and seeds are not repeated.
