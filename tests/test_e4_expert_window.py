@@ -57,8 +57,8 @@ def test_card_pairs_only_completed_intersection_even_if_baseline_is_capped():
     assert 2000000000 in result['excluded_seeds'] and 2000000002 in result['excluded_seeds']
 
 
-@pytest.mark.parametrize('hour,card_enabled', [(80, False), (88, True), (96, True), (104, True)])
-def test_window_uses_run_randomized_card_from96h(tmp_path, monkeypatch, hour, card_enabled):
+@pytest.mark.parametrize('hour,card_enabled', [(80, False), (88, True), (96, True), (104, False), (112, False)])
+def test_window_keeps_card_at96h_and_disables_it_from104h(tmp_path, monkeypatch, hour, card_enabled):
     from contextlib import nullcontext
     from types import SimpleNamespace
     import hashlib
@@ -113,7 +113,7 @@ def test_window_uses_run_randomized_card_from96h(tmp_path, monkeypatch, hour, ca
     report = json.loads((directory/'report.json').read_text())
     assert set(report['modes']) == ({'argmax','combat','card'} if card_enabled else {'argmax','combat'})
     assert report['checkpoint_sha256'] == hashlib.sha256(b'fixed-exam-weights').hexdigest()
-    assert report.get('card_randomization') == ('card 已用整局随机化（#157）' if hour >= 96 else None)
+    assert report.get('card_randomization') == ('card 已用整局随机化（#157）' if card_enabled and hour >= 96 else None)
     assert loads == [f'dev-{hour}.pt']*(24 if card_enabled else 16) and report['parameter_updates'] == 0
     if not card_enabled:
         assert not list(directory.glob('card*'))

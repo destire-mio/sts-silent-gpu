@@ -98,7 +98,7 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
     dist.broadcast(token, src=0)
     token = int(token)
     sha = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
-    modes = ('argmax', 'combat', 'card') if hour >= 88 else ('argmax', 'combat')
+    modes = ('argmax', 'combat', 'card') if 88 <= hour < 104 else ('argmax', 'combat')
     with torch.random.fork_rng(devices=[device.index]):
         for mode in modes:
             counters = COUNTERS + ('card_reward_decisions',) if mode == 'card' else COUNTERS
@@ -210,7 +210,7 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
             report = dict(checkpoint=checkpoint.name, checkpoint_sha256=sha, episodes=COMPARISON_EPISODES,
                 paired_completed=paired_completed_summary(baseline, combat_rows),
                 evaluation_only=True,parameter_updates=0,modes={})
-            if hour >= 96:
+            if 'card' in modes and hour >= 96:
                 report['card_randomization'] = 'card 已用整局随机化（#157）'
             completed = {}
             for mode in modes:
