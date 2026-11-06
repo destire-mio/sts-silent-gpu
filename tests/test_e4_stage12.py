@@ -268,9 +268,11 @@ def test_amp_overflow_skips_adam_without_stopping_healthy_parameters(tmp_path, c
 
 
 @pytest.mark.parametrize("rate,kl,expected", [
-    (1e-4, .021, 1e-4 / 1.5), (1e-4, .004, 1.5e-4),
-    (1e-4, .02, 1e-4), (1e-4, .005, 1e-4),
-    (1e-5, .03, 1e-5), (2e-4, .001, 2e-4)])
+    (3e-5, .021, 3e-5 / 1.5), (2e-5, .004, 3e-5),
+    (3e-5, .02, 3e-5), (3e-5, .005, 3e-5),
+    (1e-5, .03, 1e-5), (2e-4, .001, 4.444444444444445e-5),
+    (4.444444444444445e-5, .004, 4.444444444444445e-5),
+    (6.666666666666667e-5, .01, 4.444444444444445e-5)])
 def test_kl_adaptive_learning_rate(rate, kl, expected):
     from train.e4_stage12 import next_learning_rate
     assert next_learning_rate(rate, kl) == pytest.approx(expected)

@@ -25,6 +25,7 @@ from train.e4_value_diagnostics import gradient_measurement, value_coefficient
 
 
 DECISION_TYPES = ('combat', 'card_reward', 'map', 'shop', 'campfire', 'other')
+MAX_LEARNING_RATE = 4.444444444444445e-5
 
 
 def decision_type(progress):
@@ -52,7 +53,7 @@ def next_learning_rate(rate, kl):
         rate /= 1.5
     elif kl < .005:
         rate *= 1.5
-    return min(2e-4, max(1e-5, rate))
+    return min(MAX_LEARNING_RATE, max(1e-5, rate))
 
 
 class CLSPolicy(Policy):
