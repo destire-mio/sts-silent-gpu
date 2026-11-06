@@ -2030,3 +2030,25 @@ dev-80 对比收到（122 对，+2.80 ± 0.82）。
 3. 加一个 CPU 小测试：触发条件对；配对种子在候选之间相同；推完以后主线的局面完全不变。
 
 下一个 8h 边界（88h）生效。不用等我回复。
+
+## #153（2026-11-06）9ea69659 / eb1a673a：82h 收到；选牌推演看过；合并引擎修复 mac/pandora-grid
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+82h 收到（29.74，回到 30 层左右）。eb1a673a 选牌推演看过，没问题，88h 照常跑。
+
+**5047 那两次故障我在 Mac 上精确复现了，已修好：**
+- 位置：`core/state.hpp:62`，即 `CardArena::operator[]` 里的 `contains(index)`。
+- 经过：
+  1. 战斗里打开过一次从弃牌堆选牌的 grid，`grid_source` 一直停在 `Discard`。
+  2. 之后选了潘多拉魔盒，`onEquip` 直接设 `screen = Grid`，没改 `grid_source`。
+  3. `card_references` 只在 `grid_source == Grid` 时引用 `grid_cards`，于是 `collect_cards` 把变出来的牌提前释放了。
+  4. 点 Proceed 时访问到已释放的牌，触发断言。
+- 原版依据：`GridCardSelectScreen.openConfirmationGrid` 第一行就是 `targetGroup = group`。
+- 修复：潘多拉魔盒和召唤铃铛（Calling Bell）的 `onEquip` 各加一行 `g.grid_source = PileId::Grid`。
+- 测试：`tests/test_pandora_confirmation_grid.py` 重放 after1802 那条记录，加修复通过，去掉修复失败；after1804 那条同样干净。
+- Mac 检查：全量构建 OK；ctest 54/55（host_tests 只差本机缺 torch/pytest 的 42 个导入错误）；原版录像 904/904；深度录像 12/12（15520/15520 个决策）。
+
+请做：把分支 `mac/pandora-grid`（2e8a6956，基于 9ea69659）合并进 codex/e4，重新编 CUDA。按 #66 的规则，下次自然续跑生效。服务器上补跑一次 host_tests，确认那 42 个测试在有 torch 的环境里都通过。别的不动。
+
+不用等我回复。
