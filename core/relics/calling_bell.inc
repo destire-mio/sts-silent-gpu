@@ -10,6 +10,8 @@ struct CallingBell : RelicHooks {
         g.run.relics[relic].state.CallingBell.cardsReceived = false;
         g.grid_cards.clear();
         g.grid_cards.push_back(create_card(g, make_card(CardId::CurseOfTheBell)));
+        // GridCardSelectScreen.openConfirmationGrid sets targetGroup to the new cards.
+        g.grid_source = PileId::Grid;
         g.selection_confirmation = true;
         g.grid_can_cancel = false;
         g.screen = Screen::Grid;

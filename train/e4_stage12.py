@@ -7,6 +7,8 @@ import json
 import time
 from pathlib import Path
 import random
+import subprocess
+import xml.etree.ElementTree as ET
 
 import numpy as np
 import torch
@@ -628,6 +630,25 @@ def restart_rank_observation(state, collector):
     fresh = restart_collector_observation(state['collector'], collector_snapshot(collector))
     return dict(state, collector=fresh, cursor=None,
                 round_state=dict(ready=None, seconds=0., decisions_start=fresh['decisions']))
+
+
+def restart_rank_engine(state, collector):
+    fresh = collector_snapshot(collector)
+    for key in ('seed_rng', 'search_rng', 'decisions'):
+        fresh[key] = state['collector'][key]
+    return dict(state, collector=fresh, cursor=None,
+                round_state=dict(ready=None, seconds=0., decisions_start=fresh['decisions']))
+
+
+def pandora_cuda_gates(build, receipt):
+    names = ('test_cuda_dispatch', 'test_cuda_effect_fields', 'test_cuda_faults',
+             'test_cuda_parity', 'test_cuda_root_cache')
+    subprocess.run(['ctest', '--test-dir', str(build), '-R', '^(' + '|'.join(names) + ')$',
+                    '--parallel', '1', '--output-on-failure', '--output-junit', str(receipt)], check=True)
+    cases = list(ET.parse(receipt).getroot().iter('testcase'))
+    assert len(cases) == len(names) and {case.attrib['name'] for case in cases} == set(names)
+    assert all(case.find('skipped') is None and case.find('failure') is None
+               and case.find('error') is None and case.attrib.get('status') == 'run' for case in cases)
 
 
 def restore_rank(state, collector, device, ppo_rng):

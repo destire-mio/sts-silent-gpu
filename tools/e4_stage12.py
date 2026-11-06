@@ -22,7 +22,7 @@ from train.e4 import AllocationEnded, REACH
 from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
     save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline,
-    restart_rank_observation)
+    restart_rank_observation, restart_rank_engine, pandora_cuda_gates)
 from train.model import ModelConfig
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_midstart import MidstartCollector
@@ -94,6 +94,13 @@ def main():
     torch.manual_seed(20261031)
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
+    engine_transition = saved is not None and 'claude153_pandora_grid' not in saved['state']
+    if engine_transition:
+        if rank == 0:
+            import spire_gpu
+            pandora_cuda_gates(Path(spire_gpu.__file__).parent,
+                output / f"engine153-gates-{os.environ['SLURM_JOB_ID']}.xml")
+        dist.barrier()
     config = ModelConfig(**saved['state']['model_config']) if saved and 'model_config' in saved['state'] else ModelConfig(256,4,4,1024)
     policy = CLSPolicy(config).to(device)
     model = DistributedDataParallel(policy, device_ids=[local], broadcast_buffers=False)
@@ -127,7 +134,14 @@ def main():
                     rank_path, (state["update"], state["checkpoint_serial"]),
                     lambda path: torch.load(path, map_location="cpu", weights_only=False))
                 if candidate is not None:
-                    if previous_observation != OBSERVATION_VERSION:
+                    if engine_transition:
+                        partial_steps = candidate['cursor']['optimizer_steps'] if candidate['cursor'] else 0
+                        candidate = restart_rank_engine(candidate, collector)
+                        print(json.dumps(dict(event='engine153_collector_restart', rank=rank,
+                            update=state['update'], retained_partial_optimizer_steps=partial_steps,
+                            live_collector_cursor_and_four_pools_discarded=True,
+                            seed_rng_preserved=True)), flush=True)
+                    elif previous_observation != OBSERVATION_VERSION:
                         partial_steps = candidate['cursor']['optimizer_steps'] if candidate['cursor'] else 0
                         candidate = restart_rank_observation(candidate, collector)
                         print(json.dumps(dict(event='observation_transition', rank=rank,
@@ -154,6 +168,10 @@ def main():
                                   retained_partial_optimizer_steps=retained_partial_steps,
                                   unfinished_learner="restart collection, retain model and optimizer")), flush=True)
         print(json.dumps(dict(event="resumed", rank=rank, update=state["update"])), flush=True)
+    if engine_transition:
+        state['claude153_pandora_grid'] = dict(update=state['update'],
+            training_seconds=state['training_seconds'], engine_fix='2e8a69569e4a2144b3c94a3d480bcdc5d8867d17',
+            fresh_collector=True, four_pools_discarded=True, cuda_five_gates_passed=True)
     if rollback_dev78(policy, state, output):
         retained_partial_steps = cursor['optimizer_steps'] if cursor is not None else 0
         cursor = None
