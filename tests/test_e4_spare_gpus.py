@@ -89,9 +89,10 @@ def test_serial_combat_shards_share_the_remaining_one_hour_budget():
     assignment = next(node for node in ast.walk(tree) if isinstance(node, ast.Assign)
                       and any(ast.unparse(target) == 'search.deadline' for target in node.targets))
     value = compile(ast.Expression(assignment.value), '<combat-deadline>', 'eval')
-    clock = dict(mode='combat', deadline=10000., mode_started=100., old=dict(seconds=3500.))
-    assert eval(value, dict(clock, started=100.)) == 200.
-    assert eval(value, dict(clock, started=180.)) == 200.
+    for mode in ('argmax','combat','card'):
+        clock = dict(mode=mode, deadline=10000., mode_started=100., old=dict(seconds=3500.))
+        assert eval(value, dict(clock, started=100.)) == 200.
+        assert eval(value, dict(clock, started=180.)) == 200.
 
 
 def test_world_change_drops_old_global_cursor_and_expert_round_once():

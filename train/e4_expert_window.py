@@ -1,4 +1,4 @@
-"""Periodic paired argmax/combat exams, isolated from training and long NCCL waits."""
+"""Periodic paired argmax/combat/card exams, isolated from training and long NCCL waits."""
 import hashlib
 import json
 import time
@@ -7,7 +7,7 @@ import torch
 import torch.distributed as dist
 from train.e4 import AllocationEnded
 from train.e4_stage12 import CLSPolicy
-from train.e4_lookahead import LookaheadSearch
+from train.e4_lookahead import LookaheadSearch, CardLookaheadSearch
 from train.e4_lookahead_window import (ArgmaxSearch, WindowCollector, COUNTERS,
                                       summary, write_json, window_stop_requested)
 
@@ -26,17 +26,18 @@ def complete_seed_set(rows, owner=None):
     return sorted(e['seed'] for e in rows) == wanted
 
 
-def paired_completed_summary(baseline, combat):
-    assert complete_seed_set(baseline)
+def paired_completed_summary(baseline, combat, mode='combat'):
     previous = {row['seed']: row for row in baseline}
     current = {row['seed']: row for row in combat}
-    assert len(current) == len(combat) and current.keys() <= previous.keys()
+    wanted = set(range(2000000000, 2000000000 + COMPARISON_EPISODES))
+    assert len(previous) == len(baseline) and previous.keys() <= wanted
+    assert len(current) == len(combat) and current.keys() <= wanted
     seeds = sorted(previous.keys() & current.keys())
-    result = dict(episodes=len(seeds), excluded_seeds=sorted(previous.keys()-current.keys()), modes={})
+    result = dict(episodes=len(seeds), excluded_seeds=sorted(wanted-set(seeds)), modes={})
     if not seeds:
         return result
     matched = [previous[seed] for seed in seeds]
-    for name, source in (('argmax', previous), ('combat', current)):
+    for name, source in (('argmax', previous), (mode, current)):
         rows = [source[seed] for seed in seeds]
         if len(seeds) > 1:
             result['modes'][name] = summary(rows, matched)
@@ -97,8 +98,10 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
     dist.broadcast(token, src=0)
     token = int(token)
     sha = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    modes = ('argmax', 'combat', 'card') if hour >= 88 else ('argmax', 'combat')
     with torch.random.fork_rng(devices=[device.index]):
-        for mode in ('argmax', 'combat'):
+        for mode in modes:
+            counters = COUNTERS + ('card_reward_decisions',) if mode == 'card' else COUNTERS
             mode_path = directory/f'{mode}.json'
             old = json.loads(mode_path.read_text()) if mode_path.exists() else dict(seconds=0., complete=False)
             if old.get('complete') or old.get('skipped'):
@@ -106,7 +109,7 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
             mode_started = time.monotonic()
             for owner in range(rank, 8, world):
                 path = directory/f'{mode}-rank-{owner}.json'
-                saved = json.loads(path.read_text()) if path.exists() else dict(episodes=[], counters=dict.fromkeys(COUNTERS,0))
+                saved = json.loads(path.read_text()) if path.exists() else dict(episodes=[], counters=dict.fromkeys(counters,0))
                 assert saved.get('checkpoint_sha256', sha) == sha
                 seen = {e['seed'] for e in saved['episodes']}
                 seeds = list(range(2000000000,2000000000 + COMPARISON_EPISODES))[owner::8]
@@ -126,10 +129,10 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
                     elapsed = time.monotonic()-started
                     record = dict(episodes=episodes,
                         counters=saved['counters'] if search is None else
-                            {name:getattr(search,name) for name in COUNTERS},
+                            {name:getattr(search,name) for name in counters},
                         checkpoint_sha256=sha, windows=dict(previous_windows))
                     record['windows'][str(token)] = dict(seconds=elapsed, final=final, failed=failed, worker_rank=rank)
-                    if search is not None and mode == 'combat':
+                    if search is not None and mode != 'argmax':
                         record['preview_rng'] = search.lookahead.rng.get_state().tolist()
                     elif 'preview_rng' in saved:
                         record['preview_rng'] = saved['preview_rng']
@@ -141,12 +144,14 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
                         policy.load_state_dict(torch.load(checkpoint,map_location=device,weights_only=True),strict=True)
                         policy.encoder_fp16 = True
                         policy.eval().requires_grad_(False)
-                        search = ArgmaxSearch(32,device) if mode == 'argmax' else LookaheadSearch(32,device,130,depth='combat')
-                        search.deadline = min(deadline,mode_started+max(0.,3600-old['seconds'])) if mode == 'combat' else deadline
+                        search = (ArgmaxSearch(32,device) if mode == 'argmax' else
+                                  CardLookaheadSearch(32,device,130) if mode == 'card' else
+                                  LookaheadSearch(32,device,130,depth='combat'))
+                        search.deadline = min(deadline,mode_started+max(0.,3600-old['seconds']))
                         search.evidence_directory = directory
-                        for name in COUNTERS:
+                        for name in counters:
                             setattr(search,name,saved['counters'][name])
-                        if mode == 'combat' and 'preview_rng' in saved:
+                        if mode != 'argmax' and 'preview_rng' in saved:
                             search.lookahead.rng.set_state(torch.tensor(saved['preview_rng'],dtype=torch.uint8))
                         collector = WindowCollector(search,torch.Generator().manual_seed(130),rank=owner)
                         collector.persist = persist
@@ -189,7 +194,7 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
                 row = dict(complete=full, seconds=seconds, timing_complete=timing_complete,
                     timing_scope='sum of maximum per-rank mode wall per natural window, including initialization',
                     timer_failure_scope='non-final crash prefixes are durable lower bounds, not exact total wall',
-                    skipped='combat_one_hour_cap' if mode=='combat' and not full and seconds>=3600 else None)
+                    skipped=f'{mode}_one_hour_cap' if not full and seconds>=3600 else None)
                 write_json(mode_path,row)
                 write_json(directory/f'{mode}-ready-{token}.json',row)
             ready = directory/f'{mode}-ready-{token}.json'
@@ -200,24 +205,38 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
         if rank == 0:
             baseline = sum((json.loads((directory/f'argmax-rank-{owner}.json').read_text())['episodes']
                             for owner in range(8)),[])
-            assert complete_seed_set(baseline)
             combat_rows = sum((json.loads((directory/f'combat-rank-{owner}.json').read_text())['episodes']
                                for owner in range(8)),[])
             report = dict(checkpoint=checkpoint.name, checkpoint_sha256=sha, episodes=COMPARISON_EPISODES,
                 paired_completed=paired_completed_summary(baseline, combat_rows),
                 evaluation_only=True,parameter_updates=0,modes={})
-            for mode in ('argmax','combat'):
+            completed = {}
+            for mode in modes:
                 status = json.loads((directory/f'{mode}.json').read_text())
+                records = [json.loads((directory/f'{mode}-rank-{owner}.json').read_text()) for owner in range(8)]
+                rows = sum((r['episodes'] for r in records),[])
+                completed[mode] = rows
                 if status['complete']:
-                    records = [json.loads((directory/f'{mode}-rank-{owner}.json').read_text()) for owner in range(8)]
-                    rows = sum((r['episodes'] for r in records),[])
                     assert complete_seed_set(rows)
-                    counts = {name:sum(r['counters'][name] for r in records) for name in COUNTERS}
-                    status.update(summary(rows,baseline), counters=counts,
-                        preview_decision_fraction=counts['preview_decisions']/max(1,counts['mainline_decisions']),
-                        override_fraction=counts['overrides']/max(1,counts['mainline_decisions']),
-                        override_fraction_of_previews=counts['overrides']/max(1,counts['preview_decisions']))
+                counters = COUNTERS + ('card_reward_decisions',) if mode == 'card' else COUNTERS
+                counts = {name:sum(r['counters'][name] for r in records) for name in counters}
+                status.update(completed_episodes=len(rows), counters=counts,
+                    preview_decision_fraction=counts['preview_decisions']/max(1,counts['mainline_decisions']),
+                    override_fraction=counts['overrides']/max(1,counts['mainline_decisions']),
+                    override_fraction_of_previews=counts['overrides']/max(1,counts['preview_decisions']))
+                matched = paired_completed_summary(baseline, rows, mode)
+                if matched['episodes']:
+                    status.update(matched['modes'][mode])
                 report['modes'][mode] = status
+            report['paired_completed_by_mode'] = {
+                mode:paired_completed_summary(baseline, completed[mode], mode) for mode in modes[1:]}
+            common = set.intersection(*({row['seed'] for row in completed[mode]} for mode in modes))
+            report['common_completed'] = dict(episodes=len(common),
+                excluded_seeds=sorted(set(range(2000000000,2000000000+COMPARISON_EPISODES))-common),
+                modes={mode:paired_completed_summary(
+                    [row for row in baseline if row['seed'] in common],
+                    [row for row in completed[mode] if row['seed'] in common], mode)['modes']
+                    for mode in modes[1:]})
             write_json(directory/'report.json',report)
         wait_files([directory/'report.json'])
     return True
