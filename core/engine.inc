@@ -1789,8 +1789,37 @@ SPIRE_FN inline void step(Game& g, Action action) {
         else prune_detached_master_cards(g);
     }
 }
-SPIRE_FN inline void determinize(Game& g, uint64_t seed) {
-    if (!g.room_in_combat) return;
+// Fought encounters leave from the front, so only the tail of each list is still hidden.
+template<class Encounters> SPIRE_FN inline void keep_fresh_tail(Encounters& fresh, const Encounters& old) {
+    if (fresh.size < old.size) { fresh = old; return; }
+    const int skip = fresh.size - old.size;
+    for (int i = 0; i < old.size; ++i) fresh.values[i] = fresh.values[i + skip];
+    fresh.size = old.size;
+}
+SPIRE_FN inline void resample_run(Game& g, RandomXS128& seeds) {
+    // Per-floor streams and event rolls derive from run.seed (reseed_floor, event_room).
+    g.run.seed = seeds.next_bits64();
+    g.rng.monster.reset(seeds.next_bits64());
+    g.rng.event.reset(seeds.next_bits64());
+    g.rng.merchant.reset(seeds.next_bits64());
+    g.rng.treasure.reset(seeds.next_bits64());
+    g.rng.relic.reset(seeds.next_bits64());
+    for (auto& pool : g.run.relic_pools) shuffle(pool.values, pool.size, g.rng.relic);
+    const auto monsters = g.run.monster_list;
+    const auto elites = g.run.elite_list;
+    const auto bosses = g.run.boss_list;
+    generate_encounters(g);
+    keep_fresh_tail(g.run.monster_list, monsters);
+    keep_fresh_tail(g.run.elite_list, elites);
+    g.run.boss_list = bosses;
+    // Outside the boss room boss_list[0] is the boss shown on the map; the rest are unseen.
+    const int shown = g.room_kind == RoomKind::Boss ? 0 : 1;
+    if (g.run.boss_list.size > shown + 1)
+        shuffle(g.run.boss_list.values + shown, g.run.boss_list.size - shown, g.rng.monster);
+}
+// run=true also resamples information hidden outside the current combat, for previews that cross rooms.
+SPIRE_FN inline void determinize(Game& g, uint64_t seed, bool run = false) {
+    if (!g.room_in_combat && !run) return;
     RandomXS128 seeds(seed);
     g.rng.ai.reset(seeds.next_bits64());
     g.rng.shuffle.reset(seeds.next_bits64());
@@ -1811,5 +1840,6 @@ SPIRE_FN inline void determinize(Game& g, uint64_t seed) {
         for (int i = 0; i < g.draw.size; ++i)
             if (!g.cards[g.draw[i]].draw_position_known) g.draw[i] = hidden[next++];
     }
+    if (run) resample_run(g, seeds);
 }
 }

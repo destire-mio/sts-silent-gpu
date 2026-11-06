@@ -104,7 +104,7 @@ void TrainingBatch::step_slots(const std::vector<int32_t>& slots, const std::vec
 void TrainingBatch::reset_to(int slot, int64_t seed, const std::vector<int32_t>& candidates) {
     reset_to_many({slot}, {seed}, {candidates});
 }
-void TrainingBatch::determinize_slots(const std::vector<int32_t>& slots, const std::vector<uint64_t>& seeds) {
+void TrainingBatch::determinize_slots(const std::vector<int32_t>& slots, const std::vector<uint64_t>& seeds, bool run) {
     SPIRE_ASSERT(slots.size() == seeds.size());
     if (slots.empty()) return;
     for (std::size_t j = 0; j < slots.size(); ++j) {
@@ -113,7 +113,7 @@ void TrainingBatch::determinize_slots(const std::vector<int32_t>& slots, const s
     }
     Buffer<int32_t> ds(slots.size()); ds.upload(slots.data());
     Buffer<uint64_t> seeds_device(seeds.size()); seeds_device.upload(seeds.data());
-    spire_training_determinize<<<(slots.size() + 31) / 32, 32>>>(state(), ds.data, seeds_device.data, slots.size());
+    spire_training_determinize<<<(slots.size() + 31) / 32, 32>>>(state(), ds.data, seeds_device.data, slots.size(), run);
     check(cudaGetLastError()); check(cudaDeviceSynchronize());
 }
 void TrainingBatch::reset_to_many(const std::vector<int32_t>& slots, const std::vector<int64_t>& seeds,
