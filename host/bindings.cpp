@@ -401,7 +401,7 @@ PYBIND11_MODULE(spire, module) {
             batch.step(selected.data());
         }, "candidate_indices"_a.noconvert())
         .def("step_slots", &TrainingBatch::step_slots, "slots"_a, "candidate_indices"_a, py::call_guard<py::gil_scoped_release>())
-        .def("determinize_slots", &TrainingBatch::determinize_slots, "slots"_a, "seeds"_a, py::call_guard<py::gil_scoped_release>())
+        .def("determinize_slots", &TrainingBatch::determinize_slots, "slots"_a, "seeds"_a, "run"_a = false, py::call_guard<py::gil_scoped_release>())
         .def("reset_to", &TrainingBatch::reset_to, "slot"_a, "seed"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("reset_to_many", &TrainingBatch::reset_to_many, "slots"_a, "seeds"_a, "candidates"_a, py::call_guard<py::gil_scoped_release>())
         .def("clone", &TrainingBatch::clone, "source"_a, "target"_a, py::call_guard<py::gil_scoped_release>())

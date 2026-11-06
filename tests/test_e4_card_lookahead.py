@@ -39,8 +39,9 @@ def test_native_card_preview_is_paired_includes_skip_and_preserves_mainline():
     class Recorded:
         def __getattr__(self, name):
             return getattr(batch, name)
-        def determinize_slots(self, slots, seeds):
-            batch.determinize_slots(slots, seeds)
+        def determinize_slots(self, slots, seeds, run=False):
+            assert run
+            batch.determinize_slots(slots, seeds, run)
             paired.extend((seed,batch.state_bytes(slot)) for seed,slot in zip(seeds,slots))
     search.batch = Recorded()
     native = batch.state_bytes(0)
@@ -125,7 +126,7 @@ def test_card_rollout_stops_at_three_combats_boss_death_or1024_steps():
                 progress[slot] = progress[source].copy()
                 steps[slot] = 0
         search.clone = clone
-        search.batch = SimpleNamespace(determinize_slots=lambda slots,seeds:None)
+        search.batch = SimpleNamespace(determinize_slots=lambda slots,seeds,run:None)
         def step(slots, actions):
             for s in slots:
                 steps[s] += 1

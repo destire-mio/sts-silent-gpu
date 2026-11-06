@@ -21,7 +21,7 @@ extern "C" __global__ void spire_training_clone_many(spire::cuda::TrainingState,
 extern "C" __global__ void spire_training_loop_keys(spire::cuda::TrainingState, const int64_t*, int64_t*, int);
 extern "C" __global__ void spire_training_progress(spire::cuda::TrainingState, int64_t*);
 extern "C" __global__ void spire_training_combat_turns(spire::cuda::TrainingState, int64_t*);
-extern "C" __global__ void spire_training_determinize(spire::cuda::TrainingState, const int32_t*, const uint64_t*, int);
+extern "C" __global__ void spire_training_determinize(spire::cuda::TrainingState, const int32_t*, const uint64_t*, int, bool);
 
 extern "C" __global__ void spire_training_select(spire::cuda::TrainingState, const uint8_t*);
 extern "C" __global__ void spire_training_refill(spire::cuda::TrainingState, const int64_t*, const int64_t*,

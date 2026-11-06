@@ -115,4 +115,34 @@ static void setup_known_top() {
         require(g.draw[0] == bottom && g.draw[g.draw.size - 1] == known, "known bottom/top moved");
     }
 }
-int main() { hidden_state(); frozen_eye_and_noncombat(); setup_known_top(); }
+template<class Values> static bool same_items(Values a, Values b) {
+    std::sort(a.values, a.values + a.size); std::sort(b.values, b.values + b.size);
+    return std::memcmp(&a, &b, sizeof(Values)) == 0;
+}
+static void run_hidden_state() {
+    RunProfile seen; seen.bosses_seen = 511;
+    Game root; reset(root, 123, seen); root.run.monster_list.erase(0);
+    require(!root.room_in_combat && root.run.boss_list.size == 3, "fixture is not an act start outside combat");
+    Game a = root, b = root, c = root;
+    determinize(a, 42, true); determinize(b, 42, true); determinize(c, 43, true);
+    const auto before = observe(root), after = observe(a);
+    require(std::memcmp(&before, &after, sizeof(before)) == 0, "run determinize changed the observation");
+    require(std::memcmp(&a, &b, sizeof(Game)) == 0, "same seed did not reproduce full state");
+    require(a.run.seed != root.run.seed && a.run.seed != c.run.seed, "floor seed retained its original future");
+    require(a.run.monster_list.size == root.run.monster_list.size && a.run.elite_list.size == root.run.elite_list.size,
+            "encounter lists changed length");
+    require(a.run.boss_list[0] == root.run.boss_list[0], "shown boss changed");
+    require(same_items(a.run.boss_list, root.run.boss_list), "boss candidates changed");
+    bool encounters = false, relics = false;
+    for (uint64_t seed = 1; seed <= 8; ++seed) {
+        Game g = root; determinize(g, seed, true);
+        encounters |= std::memcmp(&g.run.monster_list, &root.run.monster_list, sizeof(g.run.monster_list)) != 0;
+        encounters |= std::memcmp(&g.run.elite_list, &root.run.elite_list, sizeof(g.run.elite_list)) != 0;
+        for (int p = 0; p < 5; ++p) {
+            relics |= std::memcmp(&g.run.relic_pools[p], &root.run.relic_pools[p], sizeof(g.run.relic_pools[p])) != 0;
+            require(same_items(g.run.relic_pools[p], root.run.relic_pools[p]), "relic pool contents changed");
+        }
+    }
+    require(encounters && relics, "run determinize did not change hidden encounters or relic order");
+}
+int main() { hidden_state(); frozen_eye_and_noncombat(); setup_known_top(); run_hidden_state(); }

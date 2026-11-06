@@ -186,7 +186,7 @@ class CardRewardLookahead(CombatLookahead):
         assert all(source < search.lanes for source in parents)
         assert all(slot >= search.lanes for slot in slots)
         search.clone(sources, slots)
-        search.batch.determinize_slots(slots, seeds)
+        search.batch.determinize_slots(slots, seeds, True)
         ledgers = {s:deepcopy(search.reward_ledgers[source]) for s,source in zip(slots,sources)}
         initial_acts = {s:progress[source][ACT] for s,source in zip(slots,sources)}
         rewards, steps, combats = (dict.fromkeys(slots, value) for value in (0., 0, 0))
