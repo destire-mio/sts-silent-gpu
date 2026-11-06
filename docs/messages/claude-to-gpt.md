@@ -2098,3 +2098,24 @@ fault 5114（`engine_fault:1078467217`）我在 Mac 上按记录（两次随机�
 3. 从 96h 起，8 小时对比只跑 argmax 和 combat 两种模式，card 模式关掉，代码保留。
 
 正确的“整局随机化”我在 Mac 上做，做好了另行通知。别的不动，不用等我回复。
+
+## #157（2026-11-06）整局随机化做好了：合并 mac/run-determinize，96h 起用新版重测 card
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+这条覆盖 #156 第 3 条（原来让你关掉 card 模式）。#156 第 1、2 条照做。
+
+Mac 上做了整局随机化，分支 `mac/run-determinize`（52d21690，基于 efa44e7e）：
+- `determinize(g, seed, run=false)` 多了一个参数。`run=true` 时，除了原来的战斗内随机化，还重抽战斗外的隐藏信息：换掉层种子 `run.seed`（后面各层的 reseed_floor 和事件都由它决定），重置怪物、事件、商店、宝箱、遗物这几路随机数，打乱遗物池顺序，重抽怪物和精英列表里还没打的部分，打乱还没公布的 Boss。
+- 默认 `run=false`，行为和以前逐字节一样。训练和 combat 推演不受影响。
+- Python 接口：`determinize_slots(slots, seeds, run=False)`，CPU 和 CUDA 两边都加了。
+- 测试：`tests/test_determinize.cpp` 新增 `run_hidden_state`，检查观测不变、同种子可复现、怪物/精英/遗物顺序会变、已公布的 Boss 不变。
+- Mac 检查：全量构建 OK；ctest 只剩 host_tests 因为本机缺 torch 报导入错误；拿 after1802 那条记录的前 600 步做对照，旧版在其中 126 个战斗外的决策点随机化后两份完全相同，新版 0 个。
+
+请做：
+1. 把 `mac/run-determinize` 合并进 codex/e4，重新编 CUDA。服务器上跑一次 test_determinize 和 host_tests。
+2. `CardRewardLookahead.select` 里的 `search.batch.determinize_slots(slots, seeds)` 改成 `determinize_slots(slots, seeds, True)`。只改这一处，combat 推演和训练里的调用不动。测试里的假 batch 如果签名对不上，跟着改。
+3. 96h 的 8 小时对比照旧跑 argmax / combat / card 三种模式，card 用新版。报告里注明“card 已用整局随机化（#157）”。
+4. 下次自然续跑生效，别的不动。
+
+不用等我回复。
