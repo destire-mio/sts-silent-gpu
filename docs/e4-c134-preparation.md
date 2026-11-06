@@ -1,5 +1,29 @@
 # Act3-start pool preparation for Claude134
 
+## Claude160: prepare 768×12; do not switch
+
+下次大模型为宽768、12层、12头、前馈3072；512专用分支已移除。
+`tools/e4_large_prepare.py --width 768` 只在指定的隔离输出目录初始化学生。
+rank 数来自一致检查点的 `state.world`（1–8），只处理对应 rank 文件，不复制目录中残留的旧 rank。
+教师按完成的 argmax dev 平均层数选择最好的384×6，严格加载；蒸馏目标40轮。
+价值系数沿用512方案：保留旧模型已校准目标，completed_updates=20，不重新跑旧验收。
+
+当前只做代码、合成检查点的CPU测试和显存组件估算，不读取当前大rank、不生成实际训练学生、
+不绑定大模型源、不申请GPU。CPU基准的显存估算给出输入形状和FP32模型/梯度/Adam、
+激活检查点及单层工作区；16GiB是保守容量参考。它不等于实测GPU峰值，
+也不覆盖原生车道、rollout、缓存、教师及CUDA工作区，长输入须另核算。
+
+以后切换步骤（此处不执行）：
+
+1. 先从实际自然后继日志确认 #159 生效 update。此后的常规考试连续三次不涨时，
+   由Claude决定切换时机；不把 #159 之前的考试算入，不自动触发。
+2. 等当前作业自然保存结束，保留一致的model及state.world个rank原始备份和费用记录。
+   在隔离目录运行 `python -m tools.e4_large_prepare --source BACKUP --output STUDENT --teacher BEST384 --width 768 --small-seconds LAST_SMALL_ROUND_SECONDS`。
+3. 核对准备回执、教师dev成绩/strict load、rank身份、保留的池/RNG/训练时钟和40轮蒸馏目标。
+   新学生与Adam从零开始，旧小模型及未完成learner留在备份；价值校准目标沿用旧模型。
+4. 获得当时的切换授权后才通过原控制器、原锁绑定自然续跑；保留原资源/费用/评估规则。
+   显存估算不是GPU验收；切换时按实际输入和原有分配核对显存与microbatch，禁止额外GPU试跑。
+
 ## Claude159: whole-run randomization on restart
 
 中途开局已用整局随机化（#159）：克隆池存档后，首次 choose 即调用

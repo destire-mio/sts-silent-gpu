@@ -84,8 +84,8 @@ def test_student_initialization_retains_collectors_and_zero_adam(tmp_path):
     model=CLSPolicy()
     torch.save(dict(model=model.state_dict(),optimizer={},scaler={'scale':16384.},
         state=dict(update=1900,checkpoint_serial=59,training_seconds=98000.,next_evaluation=100800.,
-                   stop_reason='allocation_end_or_yield'),ppo_rng=torch.Generator().get_state()),source/'model.pt')
-    for rank in range(8):
+                   stop_reason='allocation_end_or_yield',world=3),ppo_rng=torch.Generator().get_state()),source/'model.pt')
+    for rank in range(3):
         torch.save(dict(update=(1900,59),cursor={'optimizer_steps':5},
             collector=dict(partial={'unfinished':True},completed=[1],decisions=300,
                 midstart=dict(pools=[['boss'],['act2']]),rewards=['ledger'],seed_rng=rank),
@@ -93,11 +93,11 @@ def test_student_initialization_retains_collectors_and_zero_adam(tmp_path):
     output=tmp_path/'large'
     report=prepare(source,output,source/'dev-16.pt',384,53.5)
     saved=torch.load(output/'model.pt',weights_only=False)
-    assert report['collectors']==8 and saved['optimizer']['state']=={}
+    assert report['collectors']==3 and saved['optimizer']['state']=={}
     assert saved['state']['model_config']==dict(width=384,layers=6,heads=6,feedforward=1536)
     assert saved['state']['training_seconds']==98000. and saved['state']['distillation_updates']==0
     assert saved['state']['microbatch']==512
-    for rank in range(8):
+    for rank in range(3):
         item=torch.load(output/f'rank-{rank}.pt',weights_only=False)
         assert item['update']==(0,60) and item['cursor'] is None and item['collector']['partial'] is None
         assert item['collector']['midstart']['pools']==[['boss'],['act2']] and item['collector']['rewards']==['ledger']
@@ -105,5 +105,51 @@ def test_student_initialization_retains_collectors_and_zero_adam(tmp_path):
     from tools.e4_stage12_chain import checkpoint_state
     parent=tmp_path/'large-parent';parent.mkdir()
     output.rename(parent/'training')
-    resume=checkpoint_state(dict(training_root=str(parent)))
+    from pathlib import Path
+    resume=checkpoint_state(dict(training_root=str(parent), repository=str(Path(__file__).resolve().parents[1])))
     assert resume['optimizer_steps']==0 and resume['partial_steps']==0
+
+
+def test_768_student_best_teacher_elastic_ranks_strict_forward_backward(tmp_path):
+    import json
+    from tools.e4_large_prepare import prepare
+    torch.set_num_threads(1)
+    source = tmp_path/'small'; source.mkdir()
+    config = dict(width=384, layers=6, heads=6, feedforward=1536)
+    teacher = CLSPolicy(ModelConfig(**config))
+    torch.save(teacher.state_dict(), source/'dev-96.pt')
+    torch.save(teacher.state_dict(), source/'dev-94.pt')
+    for hour, score in [(94, 30.4), (96, 30.6)]:
+        (source/f'evaluation-{hour}.json').write_text(json.dumps(dict(complete=True,
+            selection='argmax', model_snapshot=f'dev-{hour}.pt', mean_floor=score,
+            training_seconds=hour*3600)))
+    torch.save(dict(model=teacher.state_dict(), optimizer={}, scaler={},
+        state=dict(update=2251, checkpoint_serial=247, world=2, training_seconds=345695.,
+                   next_evaluation=352800., stop_reason='allocation_end_or_yield',
+                   model_config=config, value_calibration=dict(target=.125, completed_updates=20)),
+        ppo_rng=torch.Generator().get_state()), source/'model.pt')
+    for rank in range(2):
+        torch.save(dict(update=(2251,247), cursor={}, collector=dict(partial={}, completed=[],
+            decisions=100, midstart=dict(pools=[['frozen']]), seed_rng=rank), round_state={}),
+            source/f'rank-{rank}.pt')
+    torch.save(dict(stale=True), source/'rank-7.pt')
+    output = tmp_path/'large'
+    report = prepare(source, output, source/'dev-94.pt', 768, 128.)
+    assert report['collectors'] == 2 and not (output/'rank-7.pt').exists()
+    saved = torch.load(output/'model.pt', weights_only=False)
+    state = saved['state']
+    assert state['world'] == 2 and state['distillation_target'] == 40
+    assert state['teacher_path'] == str(source/'dev-96.pt')
+    assert state['value_calibration'] == dict(target=.125, completed_updates=20)
+    assert state['model_config'] == dict(width=768, layers=12, heads=12, feedforward=3072)
+    student = CLSPolicy(ModelConfig(**state['model_config']))
+    student.load_state_dict(saved['model'], strict=True)
+    assert 80_000_000 < report['parameters'] < 100_000_000
+    inputs = dict(tags=torch.zeros(2,4,8,dtype=torch.long), ids=torch.zeros(2,4,8,dtype=torch.long),
+        values=torch.ones(2,6,8), entity_mask=torch.ones(2,8,dtype=torch.bool),
+        candidate_kinds=torch.ones(2,3,dtype=torch.long), candidate_refs=torch.ones(2,3,3,dtype=torch.long),
+        candidate_mask=torch.ones(2,3,dtype=torch.bool))
+    logits, value = student(inputs)
+    (logits.square().mean() + value.square().mean()).backward()
+    assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in student.parameters())
+    assert torch.load(source/'rank-0.pt', weights_only=False)['cursor'] == {}
