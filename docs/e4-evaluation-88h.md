@@ -1,4 +1,6 @@
-# E4 88h evaluation — pure PPO, 学习率封顶 4.44e-5
+# E4 88h evaluation â pure PPO, å­¦ä¹ çå°é¡¶ 4.44e-5
+
+> **#156 correction â card ä½åºï¼æ¨æ¼æªéæºåï¼å·ççå®æªæ¥ã** The card rows and raw counts below are retained for audit only. Their +3.3046875 headline delta, common-subset comparisons and card-versus-combat difference are **not valid evidence of policy improvement**. Ordinary argmax and combat results are not invalidated by this correction. From96h onward the scheduled eight-hour comparison runs argmax and combat only; the historical card implementation is retained.
 
 The retained **dev-88** weights completed the ordinary **1,024-game argmax** exam at update **2012**, training time **316912.1883957208 seconds**, on **6 V100 GPUs**. Mean floor was **29.8779296875**, with **13 Act 3 second-boss flags** and **0 Heart wins**. The paired difference versus dev-86 was **+1.1259765625**, SE **0.4090527484265429**; versus dev-70 it was **+0.5283203125**, SE **0.4190249489348029**.
 
@@ -9,7 +11,7 @@ The exam used the Pandora grid fix and the learning-rate cap. The training windo
 - Seeds: **2000000000..2000001023**, all 1,024 unique; exact ownership `seeds[rank::6]`.
 - Ordinary argmax, no SL/search, observation version **14**. The separate 128-seed supplement is described below.
 - Actual source: `48903cb3b689cddcda14f1b3b46874a1af0da49c`, `c162-preparation/runtime`; build `/home/zhuyouwei/spire-build-e4-c153-pandora`.
-- Learning-rate metadata: `learning_rate_cap=4.444444444444445e-5`, **学习率封顶 4.44e-5**. Public cap commit: `45f358ddcfb23b0bae4e6ac5a51a312fd2e3ce6f`.
+- Learning-rate metadata: `learning_rate_cap=4.444444444444445e-5`, **å­¦ä¹ çå°é¡¶ 4.44e-5**. Public cap commit: `45f358ddcfb23b0bae4e6ac5a51a312fd2e3ce6f`.
 - Snapshot: `dev-88.pt`, **49762853 bytes**, SHA-256 `d12f4ad874a2bc0de7559aa76a3c1ed7525067622f19f8a94124f2c833abd13f`.
 - Independent CPU strict load: CLS **384 / 6 layers / 6 heads / 1536 feedforward**, **12,435,074 parameters**, all tensors finite.
 
@@ -54,44 +56,44 @@ The strict learning-rate window is **(309609.7414498508, 316912.1883957208]**. A
 
 | Retained job | GPUs | Source | LR phase | Complete updates | Rows | Complete-row steps | AMP skips |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 5103 | 3 | 5ac291b | pre-cap 6.666666666666667e-5 | 1952–1991 | 40 | 960 | 0 |
-| 5112 | 4 | 48903cb | capped 4.444444444444445e-5 | 1992–1995 | 4 | 128 | 0 |
-| 5113 | 5 | 48903cb | capped 4.444444444444445e-5 | 1996–1998 | 3 | 120 | 0 |
-| 5114 | 6 | 48903cb | capped 4.444444444444445e-5 | 1999–2001 | 3 | 144 | 0 |
-| 5115 | 5 | 48903cb | capped 4.444444444444445e-5 | 2002–2004 | 3 | 120 | 0 |
-| 5116 | 7 | 48903cb | capped 4.444444444444445e-5 | 2005–2007 | 3 | 168 | 0 |
-| 5117 | 6 | 48903cb | capped 4.444444444444445e-5 | 2008–2012 | 5 | 240 | 0 |
+| 5103 | 3 | 5ac291b | pre-cap 6.666666666666667e-5 | 1952â1991 | 40 | 960 | 0 |
+| 5112 | 4 | 48903cb | capped 4.444444444444445e-5 | 1992â1995 | 4 | 128 | 0 |
+| 5113 | 5 | 48903cb | capped 4.444444444444445e-5 | 1996â1998 | 3 | 120 | 0 |
+| 5114 | 6 | 48903cb | capped 4.444444444444445e-5 | 1999â2001 | 3 | 144 | 0 |
+| 5115 | 5 | 48903cb | capped 4.444444444444445e-5 | 2002â2004 | 3 | 120 | 0 |
+| 5116 | 7 | 48903cb | capped 4.444444444444445e-5 | 2005â2007 | 3 | 168 | 0 |
+| 5117 | 6 | 48903cb | capped 4.444444444444445e-5 | 2008â2012 | 5 | 240 | 0 |
 
-Updates **1952–1991** remained at **6.666666666666667e-5**. The new source began at **1992**, with current and next LR **4.444444444444445e-5** through2012. The old segment is not described as capped. KL>.02 division by1.5 and the lower bound1e-5 remain unchanged. There were **0 lower-bound touches**. KL ranged **0.0058187438349556935..0.012449484183708087**, ending at **0.008444850111367364**.
+Updates **1952â1991** remained at **6.666666666666667e-5**. The new source began at **1992**, with current and next LR **4.444444444444445e-5** through2012. The old segment is not described as capped. KL>.02 division by1.5 and the lower bound1e-5 remain unchanged. There were **0 lower-bound touches**. KL ranged **0.0058187438349556935..0.012449484183708087**, ending at **0.008444850111367364**.
 
 There are **1880 complete-row applied optimizer steps**, plus **53 already-applied partial steps once**: **10 + 3 + 14 + 26 = 1933 total applied steps**, with **0 AMP skips**.
 
 | Checkpoint / serial | World transition | Verified Adam at resume | Delta | Complete steps in delta | Applied partial once |
 | --- | --- | --- | --- | --- | --- |
-| 1991 / 215 | 3→4 | 114196 | 970 from86 anchor113226 | 960 | 10 |
-| 1995 / 216 | 4→5 | 114324 | 128 | 128 | 0 |
-| 1998 / 217 | 5→6 | 114447 | 123 | 120 | 3 |
-| 2001 / 218 | 6→5 | 114605 | 158 | 144 | 14 |
-| 2004 / 219 | 5→7 | 114751 | 146 | 120 | 26 |
-| 2007 / 220 | 7→6 | 114919 | 168 | 168 | 0 |
+| 1991 / 215 | 3â4 | 114196 | 970 from86 anchor113226 | 960 | 10 |
+| 1995 / 216 | 4â5 | 114324 | 128 | 128 | 0 |
+| 1998 / 217 | 5â6 | 114447 | 123 | 120 | 3 |
+| 2001 / 218 | 6â5 | 114605 | 158 | 144 | 14 |
+| 2004 / 219 | 5â7 | 114751 | 146 | 120 | 26 |
+| 2007 / 220 | 7â6 | 114919 | 168 | 168 | 0 |
 
-The first resume also cross-checks Adam114196−112554 =1642 =68 complete three-GPU updates1924–1991 (1632 steps) +10 partial; only40 of those updates lie in this88h window. Through2007, **1693 =1640 complete +53 partial** is directly verified by successor resume counters. Five subsequent six-GPU rows2008–2012 contribute240 complete steps, implying Adam **115159** at the evaluated update. This final counter is not claimed to be read or persisted.
+The first resume also cross-checks Adam114196â112554 =1642 =68 complete three-GPU updates1924â1991 (1632 steps) +10 partial; only40 of those updates lie in this88h window. Through2007, **1693 =1640 complete +53 partial** is directly verified by successor resume counters. Five subsequent six-GPU rows2008â2012 contribute240 complete steps, implying Adam **115159** at the evaluated update. This final counter is not claimed to be read or persisted.
 
 The new partial identities **1991/215:10, 1998/217:3, 2001/218:14, 2004/219:26** are counted once globally. Old86 partials1/21/24/38,84 partial22,82 partial7 and older3/30/16/49 remain in their earlier windows. They must not be added here or again at90h. Retained lineage, not maximum clocks among duplicate IDs or repeated rank/job logs, selects the rows. Old5050/5052 orphans stay excluded.
 
-Nominal student decisions are **30,801,920 = Σ(N × 2048 × 64)**; valid-mainline decisions are **30,801,919**. The one-action difference is from the new fault below. Decision-type counts count attempted actions, including that invalid fault action; valid-mainline excludes it. Update2012 has **786432 =6 ×2048 ×64**: combat599772, card_reward19756, map36550, shop10621, campfire18712, other101021.
+Nominal student decisions are **30,801,920 = Î£(N Ã 2048 Ã 64)**; valid-mainline decisions are **30,801,919**. The one-action difference is from the new fault below. Decision-type counts count attempted actions, including that invalid fault action; valid-mainline excludes it. Update2012 has **786432 =6 Ã2048 Ã64**: combat599772, card_reward19756, map36550, shop10621, campfire18712, other101021.
 
 ## Newly retained training episode fault
 
-Job **5114**, after update **1998** and before1999, recorded seed **1180012898**, reason **`engine_fault:1078467217`**, parent slot **1837**, probe slot **null**, start kind **`act2_boss`**, with **1468 candidate actions**. This occurred on actual source489/c162 with the Pandora build. At the ordinary audit its cause was not established. Subsequently, main #155 reported a Mac replay at action1467 with the original two randomizations, locating `CardArena::add`'s `index < card_capacity` assertion at `core/state.hpp:71` (capacity221) during a long floor50 Boss fight. The future report label is **牌库容量上限** (card arena capacity limit). This is the reported Mac diagnosis, not a new server replay; per #155 the record is retained, training continues and the engine is unchanged. It does not identify a recurrence of the older `contains(index)` defect.
+Job **5114**, after update **1998** and before1999, recorded seed **1180012898**, reason **`engine_fault:1078467217`**, parent slot **1837**, probe slot **null**, start kind **`act2_boss`**, with **1468 candidate actions**. This occurred on actual source489/c162 with the Pandora build. At the ordinary audit its cause was not established. Subsequently, main #155 reported a Mac replay at action1467 with the original two randomizations, locating `CardArena::add`'s `index < card_capacity` assertion at `core/state.hpp:71` (capacity221) during a long floor50 Boss fight. The future report label is **çåºå®¹éä¸é** (card arena capacity limit). This is the reported Mac diagnosis, not a new server replay; per #155 the record is retained, training continues and the engine is unchanged. It does not identify a recurrence of the older `contains(index)` defect.
 
 The exact **4669-byte** original line, including its final LF and original decimal randomizations, is published as [the raw fault record](faults/episode-fault5114-seed1180012898-after1998.json), SHA-256 `3123ad6392322f6a46f885661fb615b75e6253884d10c59464384a5e6ba71262`. Randomizations are **(265, 1638528552638067993)** and **(573, 7787870625558990862)**; they were preserved as original decimal bytes without a JavaScript Number round trip.
 
-Update1999 remained finite with48 applied steps,0 AMP skips,786431 valid actions versus786432 nominal, and episode_faults1. Later rows, including2000–2012, report fault0. The fault is not a win or a terminal job failure; the invalid action is excluded from valid mainline. Earlier valid actions may still have affected learning. No replay, speculative engine patch, worker interruption or forced save was performed. This single-window observation is not a long-term fault-free guarantee.
+Update1999 remained finite with48 applied steps,0 AMP skips,786431 valid actions versus786432 nominal, and episode_faults1. Later rows, including2000â2012, report fault0. The fault is not a win or a terminal job failure; the invalid action is excluded from valid mainline. Earlier valid actions may still have affected learning. No replay, speculative engine patch, worker interruption or forced save was performed. This single-window observation is not a long-term fault-free guarantee.
 
 ## Last five expert-round fields
 
-Updates **2008–2012** all use6 GPUs and explicitly log `expert_beta=0`, `expert_samples=0`, `expert_collection=false`. **N/A means an absent measurement while the expert subsystem is paused, not a measured zero.**
+Updates **2008â2012** all use6 GPUs and explicitly log `expert_beta=0`, `expert_samples=0`, `expert_collection=false`. **N/A means an absent measurement while the expert subsystem is paused, not a measured zero.**
 
 | Update | GPUs | L | Next L | Samples | Samples/s | Ticks | Overhead | CE | Argmax agreement | Allocated peak | Projected allocated | Measured bytes/lane | Memory limit | OOM recovered |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -127,11 +129,11 @@ RSS peaks increased over parts of this short window. These samples do not establ
 
 Independent CPU audit of existing retained files: **exit0 / 3.0790271759033203 seconds**. Full audit SHA-256 `621c79241a83f8da62d0bfd55b149f3cfe26cb494ea34b66794c1153607c7436`; script SHA-256 `72a36c66470b98b6635a353777d457c81ac7fae4029d57f0e5fa4f1754821858`. It checked the model, twelve shards, consolidated ledger, natural report, retained own-job trajectory, source/LR split, KL, partial identities and final five expert intervals. An initial audit assumption equating attempted-type counts with valid counts failed on1999; the corrected audit preserves and independently reconciles the one invalid fault action. The failed attempt receipt is retained. No existing result was changed, and no GPU tests or evaluation reruns were performed.
 
-## 88h 128-seed argmax / combat / card supplement — FINAL
+## 88h 128-seed argmax / combat / card supplement â FINAL
 
 All three modes reached a natural final state on the same retained `dev-88.pt` weights, SHA-256 `d12f4ad874a2bc0de7559aa76a3c1ed7525067622f19f8a94124f2c833abd13f`. Fixed seeds are **2000000000..2000000127**, with eight logical owners `seeds[owner::8]`. This is evaluation-only; the natural report records **0 parameter updates**. The ordinary1,024-game audit above was not repeated.
 
-**Card completed128/128**, mean floor **33.1328125**, paired delta versus argmax **+3.3046875**, SE **0.9173898613433766**. **Combat is FINAL at the shared one-hour cap**, with125/128 completed, `complete=false`, `skipped=combat_one_hour_cap`; its125-pair delta is **+1.688**, SE **0.9642256461919033**. The missing three combat seeds are final exclusions and will not be rerun.
+**Card: ä½åºï¼æ¨æ¼æªéæºåï¼å·ççå®æªæ¥ã** Its historical128/128 completion, raw mean33.1328125 and raw delta+3.3046875 (game-level paired SE0.9173898613433766) are retained as invalidated observations, not valid performance results. **Combat is FINAL at the shared one-hour cap**, with125/128 completed, `complete=false`, `skipped=combat_one_hour_cap`; its125-pair delta is **+1.688**, SE **0.9642256461919033**. The missing three combat seeds are final exclusions and will not be rerun.
 
 These are fixed-seed comparisons for this snapshot. Combat's time-censored completed subset does not establish a full128-seed benefit. The two headline deltas use different intersections and should be compared using the common125-seed table below. No causal effect of the learning-rate cap or training changes is established.
 
@@ -141,7 +143,7 @@ These are fixed-seed comparisons for this snapshot. Combat's time-censored compl
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | argmax | 128 | complete | 49.60093411401613 | 29.828125 | 106 | 26 | 11 | 3 | 0 |
 | combat | 125 | FINAL: one-hour cap | 3600.34521674196 | 31.152 | 100 | 29 | 12 | 3 | 0 |
-| card | 128 | complete | 435.64784919202793 | 33.1328125 | 111 | 40 | 15 | 6 | 0 |
+| card **ä½åº** | 128 | complete | 435.64784919202793 | 33.1328125 | 111 | 40 | 15 | 6 | 0 |
 
 For combat, the mean and progress counts refer to its125 completed episodes; all128 argmax and card episodes are included in their respective rows. Results retain the collector's `act3_win` label: argmax125death/3act3_win; combat122death/3act3_win; card122death/6act3_win, with0stalled and0Heart wins in each mode. These labels are not full-game victories or an exhaustive count of post-Act3 deaths.
 
@@ -149,14 +151,14 @@ For combat, the mean and progress counts refer to its125 completed episodes; all
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | argmax | 6 | 24 | 10 | 1 | 0 | 0 | 0 |
 | combat | 10 | 27 | 11 | 3 | 0 | 0 | 0 |
-| card | 8 | 27 | 13 | 2 | 0 | 0 | 0 |
+| card **ä½åº** | 8 | 27 | 13 | 2 | 0 | 0 | 0 |
 
 ### Each mode versus argmax on its completed intersection
 
 | Comparison | Pairs | Argmax mean | Mode mean | Paired delta | Paired SE | Excluded seeds |
 | --- | --- | --- | --- | --- | --- | --- |
 | combat vs argmax | 125 | 29.464 | 31.152 | +1.688 | 0.9642256461919033 | 2000000006, 2000000007, 2000000063 |
-| card vs argmax | 128 | 29.828125 | 33.1328125 | +3.3046875 | 0.9173898613433766 | none |
+| card **ä½åº** vs argmax | 128 | 29.828125 | 33.1328125 | +3.3046875 | 0.9173898613433766 | none |
 
 Combat excludes **2000000006, 2000000007, 2000000063** because the shared mode wall cap was reached. These are outcome-dependent time-censoring exclusions, not zero-score games or evidence of improvement. The full128 argmax mean29.828125 must not be used as the baseline for the125 combat results; the matching baseline is **29.464**. Completed seeds are unique within their proper logical owner in every mode.
 
@@ -168,9 +170,9 @@ The common intersection contains **125 seeds**, excluding the same three combat-
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | argmax | 29.464 | 103 | 24 | 9 | 1 | 0 | 0 | 0 |
 | combat | 31.152 | 100 | 29 | 12 | 3 | 0 | +1.688 | 0.9642256461919033 |
-| card | 32.704 | 108 | 37 | 13 | 5 | 0 | +3.24 | 0.9299601101400063 |
+| card **ä½åº** | 32.704 | 108 | 37 | 13 | 5 | 0 | +3.24 | 0.9299601101400063 |
 
-On these same125 seeds, direct card-minus-combat mean floor difference is **+1.552**, SE **1.0651945755921626**. This additional comparison is independently calculated from the retained per-seed rows, with the same censoring limitation.
+The retained raw card-minus-combat difference on125 seeds is +1.552 (game-level paired SE1.0651945755921626), but **this comparison is also invalid under#156**. It is displayed only to identify and retract the earlier card-derived comparison, not as a performance conclusion.
 
 ### Attempted-work counters
 
@@ -178,7 +180,7 @@ On these same125 seeds, direct card-minus-combat mean floor difference is **+1.5
 | --- | --- | --- | --- | --- | --- |
 | argmax | 74978 | 0 | 0 | 0 | N/A |
 | combat | 155219 | 66191 | 10697 | 44297709 | N/A |
-| card | 84973 | 527 | 275 | 1925458 | 2188 |
+| card **ä½åº** | 84973 | 527 | 275 | 1925458 | 2188 |
 
 These counters include all attempted work, including unfinished prefixes across natural windows; they are not restricted to the completed-pair subset. Card recorded **2188 card-reward decisions**, **527 previews**, **275 overrides**, and **1,925,458 preview steps**.
 
@@ -186,9 +188,9 @@ These counters include all attempted work, including unfinished prefixes across 
 | --- | --- | --- | --- |
 | argmax | 0 | 0 | 0 |
 | combat | 0.4264361965996431 | 0.0689155322479851 | 0.1616080736051729 |
-| card | 0.006201970037541337 | 0.003236322125851741 | 0.5218216318785579 |
+| card **ä½åº** | 0.006201970037541337 | 0.003236322125851741 | 0.5218216318785579 |
 
-Card previews follow the existing #152 evaluation-only path: card_reward with>1 legal choice and argmax probability<.9; at most5 candidates including skip; the same8 determinize seeds paired; cloned ordinary argmax under the original mask, without combat or recursive preview. Each rollout stops at3 combats, death, the current-act boss, or1024 steps, whichever comes first. Selection compares ledger plus leafV (death0), and overrides only when paired mean advantage>SE. The counters above are actual natural GPU exam observations; no extra GPU tests or comparison runs were started.
+The intended #152 card preview protocol was: card_reward with>1 legal choice and argmax probability<.9; at most5 candidates including skip; the same8 determinize seeds paired; cloned ordinary argmax under the original mask, without combat or recursive preview. Each rollout stops at3 combats, death, the current-act boss, or1024 steps, whichever comes first. Selection compares ledger plus leafV (death0), and overrides only when paired mean advantage>SE. The counters above describe the historical GPU run. Under#156, the card previews did not actually randomize future trajectories at the reward screen, so the historical card exam is invalid despite those completed counts. No extra GPU tests or comparison runs were started.
 
 ### Shared mode caps and physical-worker timing
 
@@ -202,9 +204,23 @@ Each mode has its own shared3600-second cap across logical shards and natural al
 | combat | 1793949978386812615 | 4 | `0:492.3537177990074; 1:492.3600944649661; 2:492.2744837239734; 3:492.28857174306177` | 492.3600944649661 | 1290.0173786359373 |
 | combat | 1793950581330879653 | 3 | `0:2309.930779530958; 1:2309.9139404530288; 2:1801.7685125719872` | 2309.930779530958 | 3599.948158166895 |
 | combat | 1793953000284294511 | 3 | `0:0.3970585750648752; 1:0.3884934380184859; 2:0.00017614499665796757` | 0.3970585750648752 | 3600.34521674196 |
-| card | 1793953000284294511 | 3 | `0:411.0866125440225; 1:435.64784919202793; 2:183.01111790299183` | 435.64784919202793 | 435.64784919202793 |
+| card **ä½åº** | 1793953000284294511 | 3 | `0:411.0866125440225; 1:435.64784919202793; 2:183.01111790299183` | 435.64784919202793 | 435.64784919202793 |
 
 All final timer receipts are present and final, with no failed prefix; `timing_complete=true` for every mode. Combat used actual worlds **6,5,4,3,3** and ended at **3600.34521674196 seconds**. Its preceding window ended at3599.948158166895 seconds, which was below the cap and was not prematurely marked final. The final natural window consumed the remaining allowance and produced the cap-final status. Card then naturally completed in the existing3-GPU allocation at **435.64784919202793 seconds**. A capped mode is final even though `complete=false`; the missing seeds are neither waited on nor retried.
+
+### #156 invalidation and retained preview-SE request
+
+Main instruction [#156](https://github.com/destire-mio/sts-silent-gpu/blob/556e2f7b8c0d2d31ad8e5d354872126e14de86c8/docs/messages/claude-to-gpt.md) invalidates card mode: `determinize` in `core/engine.inc` returns immediately outside combat. Card reward selection occurs after `room_in_combat` is cleared. The cloned previews therefore preserve the real run seed, and later `reseed_floor(g.run.seed, floor)` follows the real future. Calling the API eight times does not create eight randomized futures in this state. The label for the card results is **ä½åºï¼æ¨æ¼æªéæºåï¼å·ççå®æªæ¥**. The engine and the existing combat configuration are unchanged; proper whole-run randomization is awaiting separate Mac work.
+
+The requested proportion of card previews with `paired_SE ==0` is **N/A: not computable from the retained files**. The recorded preview counter is **527**, but **0 individual card preview report records were retained**. A CPU-only recursive scan covered all91 files in `claude138-dev88` and the five related own-job logs5117/5130/5143/5150/5157 (96 files total). It found no persisted object with the card preview report's `candidates`, `preview_steps`, `depth=card` and `paired_SE` fields. Thus preview-report coverage is0/527; the numerator with SE0 is unknown, not measured0 and not inferred527.
+
+The `paired_SE=0.9173898613433766` in the natural card mode summary is the SE of **128 completed games' floor differences**. It is not the SE of the eight trials within each card preview. Likewise, argmax's summary SE0 is a self-comparison and cannot answer the preview-level question.
+
+Source inspection explains the retention gap: `CardRewardLookahead.select` creates per-preview reports in memory and returns them; `CardLookaheadSearch.predict` aggregates only preview/override/step counters. The periodic writer persists episodes, counters, snapshot hash, windows and preview RNG state, without the individual reports. The request explicitly prohibits a new GPU run; no replay was used to reconstruct missing values, and no100% statistic is fabricated.
+
+The retained-file scan is `c166-preparation/card156-retained-record-scan.original.json`, SHA-256 `8d1fcca484effc2a521fd10d3873733b673c583a16d5fe34d4bb42e2595e09fe`. The original91 supplement files and prior publications are preserved. This narrow correction does not repeat the closed ordinary88 or supplement performance audit.
+
+Scheduled mode selection now keeps the historical88h path for inspection but selects **argmax and combat only at96h and later**. The card classes remain in the code. CPU window tests cover88h,96h and104h; no card policy is constructed or card artifact written for the96h/104h cases. The change is bound only for future natural workers, with no signal, forced save, checkpoint rewrite, engine rebuild or new GPU evaluation. Actual96h behavior remains to be observed in its natural future run.
 
 ### Supplement audit and closure
 
@@ -216,6 +232,6 @@ The first audit attempt reused an older allowed-outcome list and stopped on the 
 - Full independent audit: `c165-preparation/supplement88.audit.original.json`, SHA-256 `ad3be1760244aca0f0ae941a673e43c147df296d849ff74e5f5db0a339be279f`.
 - Audit script SHA-256: `0d13a686abb0185ba1c7a35935db900e0d97cc7571c29ed735df597bd4f268c0`; local summary/script and local/remote publication receipts are retained.
 
-**Ordinary88 and this128-seed supplement are now CLOSED.** No completed seed or capped combat exclusion is to be rerun. Natural training resumed afterward; update2013 was observed finite3GPU/24steps/0AMP/beta0/samples0/collectionfalse/student393216/fault0/current and nextLR4.444444444444445e-5. This is an observed complete row, not a claim that2013's Adam/collector was saved.
+**The ordinary88 audit and historical supplement audit are CLOSED; card performance conclusions are INVALIDATED by#156.** No completed seed or capped combat exclusion is to be rerun. Natural training resumed afterward; update2013 was observed finite3GPU/24steps/0AMP/beta0/samples0/collectionfalse/student393216/fault0/current and nextLR4.444444444444445e-5. This is an observed complete row, not a claim that2013's Adam/collector was saved.
 
-Next ordinary evaluation: **90h =324000 seconds**, strict LR window greater than **316912.1883957208**. The2012 training anchor Adam115159 has since been confirmed by canonical natural resumes (serials221–224), with no extra optimizer steps from repeated2012 saves. The88h partials **10 /3 /14 /26, total53, are already accounted and must not be added again at90h**. Next eight-hour supplement: **96h =345600 seconds**.
+Next ordinary evaluation: **90h =324000 seconds**, strict LR window greater than **316912.1883957208**. The2012 training anchor Adam115159 has since been confirmed by canonical natural resumes (serials221â224), with no extra optimizer steps from repeated2012 saves. The88h partials **10 /3 /14 /26, total53, are already accounted and must not be added again at90h**. Next eight-hour supplement: **96h =345600 seconds, argmax/combat only**; card is disabled pending a separately authorized randomization fix.

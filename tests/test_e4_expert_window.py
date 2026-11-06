@@ -57,15 +57,16 @@ def test_card_pairs_only_completed_intersection_even_if_baseline_is_capped():
     assert 2000000000 in result['excluded_seeds'] and 2000000002 in result['excluded_seeds']
 
 
-def test_88h_window_emits_three_modes_capped_card_and_shared_checkpoint(tmp_path, monkeypatch):
+@pytest.mark.parametrize('hour,card_enabled', [(88, True), (96, False), (104, False)])
+def test_window_keeps_historical_card_but_disables_it_from96h(tmp_path, monkeypatch, hour, card_enabled):
     from contextlib import nullcontext
     from types import SimpleNamespace
     import hashlib
     import json
     import torch
     import train.e4_expert_window as window
-    (tmp_path/'expert-pending-0.json').write_text(json.dumps(dict(hour=88)))
-    (tmp_path/'dev-88.pt').write_bytes(b'fixed-exam-weights')
+    (tmp_path/'expert-pending-0.json').write_text(json.dumps(dict(hour=hour)))
+    (tmp_path/f'dev-{hour}.pt').write_bytes(b'fixed-exam-weights')
     monkeypatch.setattr(window.dist,'broadcast',lambda tensor,src:None)
     monkeypatch.setattr(torch.cuda,'synchronize',lambda device:None)
     monkeypatch.setattr(torch.cuda,'empty_cache',lambda:None)
@@ -108,11 +109,17 @@ def test_88h_window_emits_three_modes_capped_card_and_shared_checkpoint(tmp_path
     clock = iter(range(0,1000000,1000))
     monkeypatch.setattr(window.time,'monotonic',lambda:float(next(clock)))
     assert window.periodic_combat_window(tmp_path,None,torch.device('cpu'),0,1,float('inf'))
-    directory = tmp_path/'claude138-dev88'
+    directory = tmp_path/f'claude138-dev{hour}'
     report = json.loads((directory/'report.json').read_text())
-    assert set(report['modes']) == {'argmax','combat','card'}
+    assert set(report['modes']) == ({'argmax','combat','card'} if card_enabled else {'argmax','combat'})
     assert report['checkpoint_sha256'] == hashlib.sha256(b'fixed-exam-weights').hexdigest()
-    assert loads == ['dev-88.pt']*24 and report['parameter_updates'] == 0
+    assert loads == [f'dev-{hour}.pt']*(24 if card_enabled else 16) and report['parameter_updates'] == 0
+    if not card_enabled:
+        assert not list(directory.glob('card*'))
+        assert set(report['paired_completed_by_mode']) == {'combat'}
+        assert set(report['common_completed']['modes']) == {'combat'}
+        assert report['common_completed']['episodes'] == 128
+        return
     card = report['modes']['card']
     assert not card['complete'] and card['skipped'] == 'card_one_hour_cap'
     assert card['completed_episodes'] == 8

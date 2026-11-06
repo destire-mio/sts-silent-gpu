@@ -98,7 +98,8 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
     dist.broadcast(token, src=0)
     token = int(token)
     sha = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
-    modes = ('argmax', 'combat', 'card') if hour >= 88 else ('argmax', 'combat')
+    # #156: reward-screen determinization is a no-op; keep historical card code only.
+    modes = ('argmax', 'combat', 'card') if 88 <= hour < 96 else ('argmax', 'combat')
     with torch.random.fork_rng(devices=[device.index]):
         for mode in modes:
             counters = COUNTERS + ('card_reward_decisions',) if mode == 'card' else COUNTERS
