@@ -36,6 +36,7 @@ def test_pool_clone_and_randomized_checkpoint_resume():
     p = c.search.progress_for([1])
     actions, _, _, _ = c.choose(model, [1], p)
     assert len(c.randomizations[1]) == 1
+    assert c.randomizations[1][0][2] is True
     assert c.search.batch.state_bytes(1) != original
     c.advance([1], actions, p)
     saved = collector_snapshot(c)
@@ -247,3 +248,43 @@ def test_faulted_episode_never_enters_pool(monkeypatch):
     monkeypatch.setattr(NoSLCollector, 'choose', lambda self, model, slots, progress: ([0], [0.], [0.], [False]))
     c.choose(None, [0], {0:[17, 2, 1, 0, 0, 0, 0, 0, 1]})
     assert captured == []
+
+
+def test_restart_randomizes_before_combat_and_changes_next_floor(monkeypatch):
+    c = make()
+    assert c.search.progress_for([0])[0][PHASE] != COMBAT_PHASE
+    c.retain(1, 0)
+    frozen = c.search.batch.state_bytes(c.search.lanes + 256)
+    c.restart(1, 0)
+    c.restart(1, 1)
+    assert c.pending_randomization[0] != c.pending_randomization[1]
+    monkeypatch.setattr(NoSLCollector, 'choose', lambda *args: None)
+    progress = c.search.progress_for([0, 1])
+    c.choose(None, [0, 1], progress)
+    assert all(events[-1][2] is True for events in c.randomizations)
+    assert c.pending_randomization == [None, None]
+    floor = {s: progress[s][FLOOR] for s in (0, 1)}
+    for _ in range(100):
+        active = [s for s in (0, 1) if progress[s][FLOOR] == floor[s]]
+        if not active:
+            break
+        c.search.step(active, [0] * len(active))
+        assert not c.search.failed
+        progress = c.search.progress_for([0, 1])
+    assert all(progress[s][FLOOR] > floor[s] for s in (0, 1))
+    assert c.search.batch.state_bytes(0) != c.search.batch.state_bytes(1)
+    assert c.search.batch.state_bytes(c.search.lanes + 256) == frozen
+
+
+@pytest.mark.parametrize('events', [[(0, 111)], [(0, 111, True)],
+                                  [(0, 111), (0, 222, True)]])
+def test_pair_and_triple_randomization_replay(events):
+    c = make()
+    seed = 12345
+    c.search.batch.reset_to_many([0], [seed], [[]])
+    for event in events:
+        c.search.batch.determinize_slots([0], [event[1]], event[2] if len(event) == 3 else False)
+    c.search.batch.step_slots([0], [0])
+    expected = c.search.batch.state_bytes(0)
+    c.replay([1], [dict(seed=seed, path=[0], randomizations=events)])
+    assert c.search.batch.state_bytes(1) == expected

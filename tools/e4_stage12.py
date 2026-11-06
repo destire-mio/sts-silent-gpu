@@ -487,6 +487,7 @@ def main():
             training_fresh_completed=int(done[0]),training_midstart_completed=int(done[3]),
             training_midstart_mean_floor=float(done[4]/done[3]) if float(done[3]) else None,
             midstart_pool_sizes=[len(p) for p in collector.pools],
+            midstart_randomization='whole_run_159',
             cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated(device),cuda_peak_reserved_bytes=torch.cuda.max_memory_reserved(device),
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
             precision=state["precision"],microbatch=state["microbatch"],learning_rate=optimizer.param_groups[0]["lr"],

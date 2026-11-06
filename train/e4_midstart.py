@@ -82,12 +82,12 @@ class MidstartCollector(NoSLCollector):
 
     def choose(self, model, slots, progress):
         randomized = [s for s in slots if self.pending_randomization[s] is not None
-                      and s not in self.search.failed and progress[s][PHASE] == COMBAT_PHASE]
+                      and s not in self.search.failed]
         if randomized:
             seeds = [self.pending_randomization[s] for s in randomized]
-            self.search.batch.determinize_slots(randomized, seeds)
+            self.search.batch.determinize_slots(randomized, seeds, True)
             for slot, seed in zip(randomized, seeds):
-                self.randomizations[slot].append((len(self.paths[slot]), seed))
+                self.randomizations[slot].append((len(self.paths[slot]), seed, True))
                 self.pending_randomization[slot] = None
                 self.search.frame_cache.pop(slot, None)
                 self.search.mask_cache.pop(slot, None)
@@ -133,8 +133,15 @@ class MidstartCollector(NoSLCollector):
         events = [deque(e['randomizations']) for e in entries]
         while True:
             indices = [j for j, queue in enumerate(events) if queue and queue[0][0] == positions[j]]
-            if indices:
-                self.search.batch.determinize_slots([slots[j] for j in indices], [events[j].popleft()[1] for j in indices])
+            while indices:
+                current = [(j, events[j].popleft()) for j in indices]
+                for run in (False, True):
+                    group = [(j, event) for j, event in current
+                             if (event[2] if len(event) == 3 else False) == run]
+                    if group:
+                        self.search.batch.determinize_slots([slots[j] for j, _ in group],
+                            [event[1] for _, event in group], run)
+                indices = [j for j, queue in enumerate(events) if queue and queue[0][0] == positions[j]]
             active = [j for j, e in enumerate(entries) if positions[j] < len(e['path'])]
             if not active:
                 break
