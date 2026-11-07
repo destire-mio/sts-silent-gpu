@@ -1,5 +1,18 @@
 # Act3-start pool preparation for Claude134
 
+## Claude163: prepare pre-LN for the 768×12 student
+
+仅768宽的新学生改为每层 `norm_first=True`，编码器末尾的可学习LayerNorm同时
+归一化CLS和实体，再送入价值头和动作头。准备回执记录
+`encoder_normalization=pre_LN_with_final_LayerNorm`；模型配置和权重键据此核对。
+384×6老师仍是原post-LN，权重键和参数量不变；旧384检查点继续strict load。
+当前只准备、只运行合成CPU检查，不生成live学生、不切换、不占GPU。
+
+切换后的前几轮，在已有训练分配且显存够用的前提下，分别运行几轮逐层重算和
+不重算或少重算，记录各轮耗时、实际输入/microbatch及显存峰值，保留更快且显存
+可承受的设置。此比较只在获准切换后进行，本次不运行、不新增GPU验收或分配。
+切换时机仍由Claude按#159生效后的常规考试决定，不自动触发。
+
 ## Claude160: prepare 768×12; do not switch
 
 下次大模型为宽768、12层、12头、前馈3072；512专用分支已移除。

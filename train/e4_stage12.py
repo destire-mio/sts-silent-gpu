@@ -63,6 +63,10 @@ class CLSPolicy(Policy):
         self.cls = nn.Parameter(torch.zeros(1, 1, config.width))
         nn.init.normal_(self.cls, std=.02)
         self.encoder_fp16 = False
+        if config.width == 768:
+            for layer in self.encoder:
+                layer.norm_first = True
+            self.encoder_norm = nn.LayerNorm(config.width)
 
     def encode(self, observation):
         mask = observation["entity_mask"]
@@ -83,6 +87,8 @@ class CLSPolicy(Policy):
                     entities = checkpoint(layer, entities, src_key_padding_mask=~mask, use_reentrant=False)
                 else:
                     entities = layer(entities, src_key_padding_mask=~mask)
+            if self.config.width == 768:
+                entities = self.encoder_norm(entities)
         return entities[:, 1:].float(), entities[:, 0].float()
 
 

@@ -139,17 +139,59 @@ def test_768_student_best_teacher_elastic_ranks_strict_forward_backward(tmp_path
     saved = torch.load(output/'model.pt', weights_only=False)
     state = saved['state']
     assert state['world'] == 2 and state['distillation_target'] == 40
+    assert state['encoder_normalization'] == 'pre_LN_with_final_LayerNorm'
     assert state['teacher_path'] == str(source/'dev-96.pt')
     assert state['value_calibration'] == dict(target=.125, completed_updates=20)
     assert state['model_config'] == dict(width=768, layers=12, heads=12, feedforward=3072)
     student = CLSPolicy(ModelConfig(**state['model_config']))
     student.load_state_dict(saved['model'], strict=True)
-    assert 80_000_000 < report['parameters'] < 100_000_000
+    assert all(layer.norm_first for layer in student.encoder)
+    assert isinstance(student.encoder_norm, torch.nn.LayerNorm)
+    assert report['parameters'] == 90_402_050
     inputs = dict(tags=torch.zeros(2,4,8,dtype=torch.long), ids=torch.zeros(2,4,8,dtype=torch.long),
         values=torch.ones(2,6,8), entity_mask=torch.ones(2,8,dtype=torch.bool),
         candidate_kinds=torch.ones(2,3,dtype=torch.long), candidate_refs=torch.ones(2,3,3,dtype=torch.long),
         candidate_mask=torch.ones(2,3,dtype=torch.bool))
+    normalized, score_inputs, value_inputs = [], [], []
+    hooks = [student.encoder_norm.register_forward_hook(
+                 lambda module, args, result: normalized.append(result.detach())),
+             student.score[0].register_forward_pre_hook(
+                 lambda module, args: score_inputs.append(args[0].detach())),
+             student.value[0].register_forward_pre_hook(
+                 lambda module, args: value_inputs.append(args[0].detach()))]
     logits, value = student(inputs)
+    for hook in hooks:
+        hook.remove()
+    assert torch.isfinite(logits).all() and torch.isfinite(value).all()
+    torch.testing.assert_close(value_inputs[0], normalized[0][:, 0])
+    torch.testing.assert_close(score_inputs[0][:, :, -768:],
+                               normalized[0][:, :1].expand(-1, 3, -1))
+    torch.testing.assert_close(score_inputs[0][:, :, :768],
+                               normalized[0][:, 1:2].expand(-1, 3, -1))
     (logits.square().mean() + value.square().mean()).backward()
     assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in student.parameters())
     assert torch.load(source/'rank-0.pt', weights_only=False)['cursor'] == {}
+
+
+def test_384_post_ln_checkpoint_strict_load(tmp_path):
+    torch.set_num_threads(1)
+    config = ModelConfig(384, 6, 6, 1536)
+    teacher = CLSPolicy(config).eval()
+    assert not any(layer.norm_first for layer in teacher.encoder)
+    assert not hasattr(teacher, 'encoder_norm')
+    assert sum(p.numel() for p in teacher.parameters()) == 12_435_074
+    path = tmp_path/'legacy-384.pt'
+    torch.save(teacher.state_dict(), path)
+    restored = CLSPolicy(config).eval()
+    restored.load_state_dict(torch.load(path, weights_only=True), strict=True)
+    inputs = dict(tags=torch.zeros(2,4,8,dtype=torch.long),
+        ids=torch.zeros(2,4,8,dtype=torch.long), values=torch.ones(2,6,8),
+        entity_mask=torch.ones(2,8,dtype=torch.bool),
+        candidate_kinds=torch.ones(2,3,dtype=torch.long),
+        candidate_refs=torch.ones(2,3,3,dtype=torch.long),
+        candidate_mask=torch.ones(2,3,dtype=torch.bool))
+    with torch.no_grad():
+        expected = teacher(inputs)
+        actual = restored(inputs)
+    for before, after in zip(expected, actual):
+        torch.testing.assert_close(before, after, rtol=0, atol=0)

@@ -30,6 +30,7 @@ def prepare(source, output, teacher, width, small_seconds):
         source_checkpoint=str(source/'model.pt'), source_update=old['state']['update'])
     if width == 768:
         assert source != output
+        state['encoder_normalization'] = 'pre_LN_with_final_LayerNorm'
         state['value_calibration'] = dict(target=value_coefficient(old['state']),completed_updates=20)
         assert old['state']['model_config'] == dict(width=384,layers=6,heads=6,feedforward=1536)
         evaluations = [json.loads(p.read_text()) for p in source.glob('evaluation-*.json')]
