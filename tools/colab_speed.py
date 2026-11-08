@@ -27,12 +27,7 @@ DTYPES = {"fp16": torch.float16, "bf16": torch.bfloat16}
 class SpeedPolicy(CLSPolicy):
     def __init__(self, config, dtype):
         super().__init__(config)
-        self.encoder_dtype = dtype
-
-    def encode(self, observation):
-        device = observation["entity_mask"].device
-        with torch.autocast(device.type, dtype=self.encoder_dtype, enabled=device.type == "cuda"):
-            return super().encode(observation)
+        self.encoder_dtype_override = dtype
 
 
 def learn(policy, optimizer, scaler, fragment, config, rng):

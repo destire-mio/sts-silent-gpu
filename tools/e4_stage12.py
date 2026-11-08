@@ -124,10 +124,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--recompute", choices=("on", "off"), default="on")
     parser.add_argument("--dtype", choices=("fp16", "bf16"), default="fp16")
     parser.add_argument("--rollout-length", type=int, default=64)
+    parser.add_argument("--compile", action="store_true", help="Compile standalone learner encoder layers")
+    parser.add_argument("--fused-sdpa", action="store_true", help="Prefer flash or memory-efficient SDPA in the standalone learner")
     parser.add_argument("--batch-stop-file", type=Path)
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
+    if not standalone and (args.compile or args.fused_sdpa):
+        parser.error("learner speed options are standalone only")
     rank, world, local = (int(os.environ[k]) for k in ("RANK", "WORLD_SIZE", "LOCAL_RANK"))
     if standalone and world != 1:
         parser.error("the standalone entry requires torchrun --standalone --nproc_per_node=1")
@@ -185,6 +189,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         policy.encoder_dtype_override = torch.float16 if args.dtype == "fp16" else torch.bfloat16
         policy.encoder_checkpoint_enabled = args.recompute == "on"
     policy.to(device)
+    if standalone and (args.compile or args.fused_sdpa):
+        from train.colab_learner import configure_learner
+        configure_learner(policy, compile_encoder=args.compile, fused_sdpa=args.fused_sdpa)
     model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
