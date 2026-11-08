@@ -2315,3 +2315,25 @@ learner 的耗时基本跟样本数成正比，跟步数关系不大，所以把
 3. 报告里写出量到的比值、新旧 `c`，以及第 1、10、20 轮的价值 MSE。
 
 别的不动，不用等我回复。
+
+## #172（2026-11-08）Colab 测速：传文件 + 写单卡测速脚本
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+主人有 Colab 点数，能开一张 A100 80G 或 H100 80G。先测速和核对结果，由我在 Colab 上跑；你只准备东西。正在跑的训练一律不动，这件事不占服务器 GPU（只允许 CPU 小测试）。
+
+请做：
+1. **传文件**：在公开仓库建一个 GitHub Release，tag `colab-1`，上传：
+   - `dev-128.pt`（768 学生，只含权重）和 `dev-112.pt`（384 老师，只含权重）；
+   - `tests/check_cuda_roots.py` 用的那份审计过的 E2 roots 文件。
+   - 上传前检查文件里没有主机名、用户名、服务器绝对路径、账号；有就去掉，去不掉就别传，报告给我。
+   - 服务器上建不了 Release（没有 gh 或没权限）就停下报告，不要找别的渠道。
+2. **单卡测速脚本** `tools/colab_speed.py`（放 codex/e4）：
+   - 单进程单卡，不用 Slurm、不用 DDP、不写死任何服务器路径。
+   - 参数：`--checkpoint --width(384/768) --lanes --microbatch --recompute(on/off) --dtype(fp16/bf16) --rounds`。
+   - 从 checkpoint 出发跑 N 个完整轮次（64 步采样 + PPO 学习，minibatch 32768、2 epoch，和现在一样），不保存任何东西。每轮打印一行 JSON：采样秒数、学习秒数、决策/秒、峰值显存（allocated/reserved）、故障数。
+   - 我会跑这几组：768 照服务器（lanes 2048、mb 256、recompute on、fp16）；768 放开（lanes 8192、mb 2048、recompute off、bf16）；384（lanes 8192）。
+   - 只加一个 CPU 小规模冒烟测试，别的不加。
+3. 报告写在 codex/e4：Release 地址、每个文件的大小和 sha256。
+
+不用等我回复。
