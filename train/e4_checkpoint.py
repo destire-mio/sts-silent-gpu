@@ -1,5 +1,6 @@
 """Keep the committed rank generation readable across an interrupted save."""
 import os
+import shutil
 from pathlib import Path
 
 
@@ -18,7 +19,7 @@ def load_matching_rank(path, identity, load):
     return None, None
 
 
-def write_rank_checkpoint(path, state, save, committed_path=None):
+def write_rank_checkpoint(path, state, save, committed_path=None, *, retain_by_copy=False):
     path = Path(path)
     temporary = Path(str(path) + ".tmp")
     previous = previous_rank_path(path)
@@ -29,6 +30,9 @@ def write_rank_checkpoint(path, state, save, committed_path=None):
         if committed_path != previous:
             retained = Path(str(previous) + ".tmp")
             retained.unlink(missing_ok=True)
-            os.link(committed_path, retained)
+            if retain_by_copy:
+                shutil.copyfile(committed_path, retained)
+            else:
+                os.link(committed_path, retained)
             retained.replace(previous)
     temporary.replace(path)

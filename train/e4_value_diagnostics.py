@@ -7,7 +7,7 @@ from train.model import distribution
 
 def encoder_parameters(policy):
     return [p for name,p in policy.named_parameters()
-            if name == 'cls' or name.startswith(('numbers.', 'tags.', 'ids.', 'input_norm.', 'encoder.'))]
+            if name == 'cls' or name.startswith(('numbers.', 'tags.', 'ids.', 'input_norm.', 'encoder.', 'encoder_norm.'))]
 
 
 def gradient_measurement(policy, inputs, actions, old_logs, advantages, returns, scale=1.):
@@ -31,8 +31,30 @@ def value_coefficient(state):
     calibration = state.get('value_calibration')
     if calibration is None:
         return .5
+    if 'start_coefficient' in calibration:
+        start = calibration['start_coefficient']
+        completed = calibration['completed_updates']
+        if completed >= 19:
+            return calibration['target']
+        return start + (calibration['target'] - start) * completed / 19
     fraction = min(20, calibration['completed_updates']) / 20
     return .5 + (calibration['target'] - .5) * fraction
+
+
+def record_ppo_calibration_round(state, row):
+    report = state.get('claude171_value_calibration')
+    if report is None:
+        return None
+    round_number = state['value_calibration']['completed_updates']
+    if round_number not in (1, 10, 20):
+        return None
+    measurement = dict(ppo_round=round_number, update=state['update'],
+                       training_seconds=state['training_seconds'],
+                       coefficient=row['value_loss_coefficient'], value_mse=row['value_loss'])
+    report['milestones'][str(round_number)] = measurement
+    if round_number == 20:
+        return dict(event='claude171_value_calibration_complete', **report)
+    return dict(event='claude171_value_calibration_milestone', **measurement)
 
 
 def explained_variance(fragment):

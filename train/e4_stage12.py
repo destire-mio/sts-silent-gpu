@@ -63,6 +63,9 @@ class CLSPolicy(Policy):
         self.cls = nn.Parameter(torch.zeros(1, 1, config.width))
         nn.init.normal_(self.cls, std=.02)
         self.encoder_fp16 = False
+        self.encoder_dtype_override = None
+        self.encoder_checkpoint_enabled = True
+        self.encoder_checkpoint_all = True
         if config.width == 768:
             for layer in self.encoder:
                 layer.norm_first = True
@@ -71,8 +74,9 @@ class CLSPolicy(Policy):
     def encode(self, observation):
         mask = observation["entity_mask"]
         device = mask.device
-        with torch.autocast(device_type=device.type, dtype=torch.float16,
-                            enabled=self.encoder_fp16 and device.type == "cuda"):
+        dtype = self.encoder_dtype_override or torch.float16
+        with torch.autocast(device_type=device.type, dtype=dtype,
+                            enabled=device.type == "cuda" and (self.encoder_fp16 or self.encoder_dtype_override is not None)):
             values = observation["values"].transpose(1, 2)
             entities = self.numbers(values.sign() * values.abs().log1p())
             for row, embedding in enumerate(self.tags):
@@ -82,8 +86,9 @@ class CLSPolicy(Policy):
             entities = self.input_norm(entities)
             entities = torch.cat((self.cls.expand(len(entities), -1, -1), entities), dim=1)
             mask = torch.cat((torch.ones(len(mask), 1, dtype=torch.bool, device=device), mask), dim=1)
-            for layer in self.encoder:
-                if self.training and torch.is_grad_enabled():
+            for index, layer in enumerate(self.encoder, 1):
+                if (self.encoder_checkpoint_enabled and self.training and torch.is_grad_enabled()
+                        and (self.encoder_checkpoint_all or index % 6)):
                     entities = checkpoint(layer, entities, src_key_padding_mask=~mask, use_reentrant=False)
                 else:
                     entities = layer(entities, src_key_padding_mask=~mask)
@@ -295,7 +300,7 @@ class NoSLCollector(SegmentCollector):
             return rewards, terminal
 
     @torch.no_grad()
-    def collect(self, model, length=64):
+    def collect(self, model, length=64, *, after_step=None):
         device, lanes = self.search.device, self.search.lanes
         slots = list(range(lanes))
         if self.partial is None:
@@ -335,6 +340,8 @@ class NoSLCollector(SegmentCollector):
                 result[name][tick] = torch.as_tensor(value, device=device, dtype=result[name].dtype)
             self.partial["next_step"] = tick + 1
             self.partial["next_row"] = (tick + 1) * lanes
+            if after_step is not None:
+                after_step()
         live = [s for s in slots if self.seeds[s] is not None]
         bootstrap = torch.zeros(lanes, device=device)
         if live:
@@ -376,7 +383,26 @@ def student_log_baseline(student, fragment, microbatch=1024):
         fragment['logs'][ids] = policy.log_prob(fragment['actions'][ids])
 
 
-def new_cursor(fragment, rng, world):
+PPO_GLOBAL_MINIBATCH = 32768
+DISTILLATION_GLOBAL_MINIBATCH = 4096
+
+
+def minibatch_order(counts, rng, device, global_minibatch):
+    order = torch.randperm(sum(counts), generator=rng, device=device)
+    if global_minibatch == DISTILLATION_GLOBAL_MINIBATCH:
+        # Keep the shuffled order within each rank while giving each rank its own quota.
+        ends = torch.tensor(counts, device=device).cumsum(0)
+        owners = torch.bucketize(order, ends, right=True)
+        order = order[torch.argsort(owners, stable=True)]
+    return order
+
+
+def distillation_rank_quotas(world):
+    quota, remainder = divmod(DISTILLATION_GLOBAL_MINIBATCH, world)
+    return [quota + (rank < remainder) for rank in range(world)]
+
+
+def new_cursor(fragment, rng, world, *, global_minibatch=PPO_GLOBAL_MINIBATCH):
     device = fragment["actions"].device
     indices = fragment["action_valid"].nonzero().flatten()
     count = torch.tensor(len(indices), device=device, dtype=torch.int64)
@@ -390,22 +416,36 @@ def new_cursor(fragment, rng, world):
     std = (moments[1] / moments[2].clamp_min(1) - mean.square()).clamp_min(0).sqrt()
     fragment["advantages"] = ((fragment["advantages"] - mean) / (std + 1e-8)).float()
     return dict(fragment=fragment, indices=indices, counts=counts, epoch=0, start=0,
-                order=torch.randperm(sum(counts), generator=rng, device=device),
+                global_minibatch=global_minibatch,
+                order=minibatch_order(counts, rng, device, global_minibatch),
                 totals=torch.zeros(8, dtype=torch.float64, device=device),
                 finite=torch.ones((), dtype=torch.bool, device=device), optimizer_steps=0,
                 optimizer_attempts=0, amp_skipped_steps=0)
 
 
 def local_minibatch(cursor, rank):
-    ids = cursor["order"][cursor["start"]:cursor["start"] + 32768]
-    offset = sum(cursor["counts"][:rank])
-    owned = ids[(ids >= offset) & (ids < offset + cursor["counts"][rank])] - offset
+    size = cursor.get("global_minibatch", PPO_GLOBAL_MINIBATCH)
+    counts = cursor["counts"]
+    order = cursor["order"]
+    offset = sum(counts[:rank])
+    if size == DISTILLATION_GLOBAL_MINIBATCH:
+        quotas = distillation_rank_quotas(len(counts))
+        batch = cursor["start"] // size
+        start = min(counts[rank], batch * quotas[rank])
+        end = min(counts[rank], start + quotas[rank])
+        owned = order[offset + start:offset + end] - offset
+        global_count = sum(max(0, min(quota, count - batch * quota))
+                           for count, quota in zip(counts, quotas))
+    else:
+        ids = order[cursor["start"]:cursor["start"] + size]
+        owned = ids[(ids >= offset) & (ids < offset + counts[rank])] - offset
+        global_count = len(ids)
     selected = cursor["indices"][owned]
     f = cursor["fragment"]
     if len(selected):
         entities, candidates = record_lengths(f["data"], f["offsets"], selected)
         selected = selected[torch.argsort((entities // 16) * 129 + candidates, stable=True)]
-    return selected, len(ids)
+    return selected, global_count
 
 
 @torch.no_grad()
@@ -440,7 +480,8 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
     dist.all_reduce(count, op=dist.ReduceOp.MAX)
     optimizer.zero_grad(set_to_none=True)
     steps = int(count)
-    if value_state is not None and "value_calibration" not in value_state:
+    recalibrate_ppo = teacher is None and value_state is not None and value_state.get("claude171_value_calibration_pending")
+    if value_state is not None and ("value_calibration" not in value_state or recalibrate_ppo):
         calibration = torch.zeros(4,device=selected.device,dtype=torch.float64)
         if rank == 0:
             ids = selected[:microbatch]
@@ -451,9 +492,21 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 measured=gradient_measurement(model.module,inputs,f["actions"][ids],f["logs"][ids],f["advantages"][ids],f["returns"][ids],scale=scaler.get_scale())
             calibration[:] = torch.tensor([measured[k] for k in ["actor_encoder_norm","weighted_value_encoder_norm","ratio","target"]],device=ids.device,dtype=torch.float64)
         dist.broadcast(calibration,src=0)
-        value_state["value_calibration"] = dict(zip(["actor_encoder_norm","weighted_value_encoder_norm","ratio","target"],calibration.tolist()))
-        value_state["value_calibration"].update(measured_value_coefficient=.5,completed_updates=0)
-        if rank == 0:diagnostic_log(dict(event="value_gradient_calibration",**value_state["value_calibration"]))
+        measured = dict(zip(["actor_encoder_norm", "weighted_value_encoder_norm", "ratio", "target"],
+                            calibration.tolist()))
+        measured.update(measured_value_coefficient=.5, completed_updates=0)
+        if recalibrate_ppo:
+            previous = value_coefficient(value_state)
+            measured["start_coefficient"] = previous
+            report = dict(start_update=value_state["update"] + 1, old_coefficient=previous,
+                          new_coefficient=measured["target"], ratio=measured["ratio"], milestones={})
+            value_state["claude171_value_calibration"] = report
+            value_state.pop("claude171_value_calibration_pending")
+            if rank == 0:
+                diagnostic_log(dict(event="claude171_value_recalibrated", **report))
+        elif rank == 0:
+            diagnostic_log(dict(event="value_gradient_calibration", **measured))
+        value_state["value_calibration"] = measured
     ce_gradients = None
     if cursor.get("expert_total"):
         from train.e4_expert_iteration import expert_backward
@@ -521,12 +574,24 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         print(json.dumps(dict(event="nonfinite_gradient", rank=rank,
             gradient_norm=float(norm), scale_before=scale_before, scale_after=scale_after,
             optimizer_step_skipped=skipped, optimizer_attempt=cursor["optimizer_attempts"])), flush=True)
-    cursor["start"] += 32768
-    if cursor["start"] >= sum(cursor["counts"]):
+    advance_cursor(cursor, rng)
+
+
+def advance_cursor(cursor, rng):
+    size = cursor.get("global_minibatch", PPO_GLOBAL_MINIBATCH)
+    counts = cursor["counts"]
+    cursor["start"] += size
+    if size == DISTILLATION_GLOBAL_MINIBATCH:
+        quotas = distillation_rank_quotas(len(counts))
+        batches = max((count + quota - 1) // quota for count, quota in zip(counts, quotas))
+        epoch_end = batches * size
+    else:
+        epoch_end = sum(counts)
+    if cursor["start"] >= epoch_end:
         cursor["epoch"] += 1
         cursor["start"] = 0
         if cursor["epoch"] < 2:
-            cursor["order"] = torch.randperm(sum(cursor["counts"]), generator=rng, device=cursor["order"].device)
+            cursor["order"] = minibatch_order(counts, rng, cursor["order"].device, size)
 
 
 def choose_microbatch(model, cursor):
@@ -617,12 +682,13 @@ def restore_collector(collector, state):
     collector.search.entropy_count = entropy_count
 
 
-def save_rank(path, collector, cursor, update, ppo_rng, round_state, committed_path=None, expert_state=None):
+def save_rank(path, collector, cursor, update, ppo_rng, round_state, committed_path=None, expert_state=None,
+              *, retain_by_copy=False):
     state = dict(update=update, expert=expert_state, round_state=move_tensors(round_state, torch.device("cpu")), collector=collector_snapshot(collector),
                  cursor=move_tensors(cursor, torch.device("cpu")), ppo_rng=ppo_rng.get_state(),
                  torch_rng=torch.get_rng_state(), python_rng=random.getstate(), numpy_rng=np.random.get_state(),
                  cuda_rng=torch.cuda.get_rng_state(collector.search.device) if collector.search.device.type == "cuda" else None)
-    write_rank_checkpoint(path, state, torch.save, committed_path)
+    write_rank_checkpoint(path, state, torch.save, committed_path, retain_by_copy=retain_by_copy)
 
 
 def restart_collector_observation(saved, fresh):

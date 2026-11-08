@@ -22,16 +22,52 @@ from train.e4 import AllocationEnded, REACH
 from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
     save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline,
-    restart_rank_observation, restart_rank_engine, pandora_cuda_gates, MAX_LEARNING_RATE)
+    restart_rank_observation, restart_rank_engine, pandora_cuda_gates, MAX_LEARNING_RATE,
+    DISTILLATION_GLOBAL_MINIBATCH, PPO_GLOBAL_MINIBATCH)
 from train.model import ModelConfig
+from train.rollout import synchronize
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_midstart import MidstartCollector
 from train.e4_learner_profile import TwoMicrobatchProfile
+from train.e4_recompute import TRIAL_ROUNDS, prepare_round, finish_round
 from train.e4_checkpoint import load_matching_rank
-from train.e4_value_diagnostics import explained_variance, nonforced_entropy, value_coefficient
+from train.e4_value_diagnostics import (explained_variance, nonforced_entropy, value_coefficient,
+                                        record_ppo_calibration_round)
 from train.e4_evaluation_ledger import EvaluationLedgerCollector, value_correlations
 from train.e4_lookahead_window import lookahead60_window
-from train.e4_expert_window import periodic_combat_window, due_combat_comparison
+from train.e4_expert_window import due_combat_comparison, run_combat_supplements
+
+
+DISTILLATION_LEARNING_RATE = 1.5e-4
+DISTILLATION_PASS_FLOOR = 30.96
+DISTILLATION_REPORT_ROUND = 150
+
+
+def scored_distillation(state):
+    return (state.get("model_config", {}).get("width") == 768
+            and bool(state.get("teacher_path")) and not state.get("distillation_evaluated"))
+
+
+def new_round_minibatch(state):
+    return DISTILLATION_GLOBAL_MINIBATCH if scored_distillation(state) else PPO_GLOBAL_MINIBATCH
+
+
+def apply_resume_learning_rate(state):
+    state["learning_rate"] = (DISTILLATION_LEARNING_RATE if scored_distillation(state)
+                              else min(state["learning_rate"], MAX_LEARNING_RATE))
+
+
+def passing_distillation_score(row):
+    if (row["event"] == "evaluation" and row["selection"] == "argmax"
+            and row["complete"] and row["episodes"] == 1024
+            and row["phase"] == "distillation" and row["mean_floor"] >= DISTILLATION_PASS_FLOOR):
+        return row["mean_floor"]
+    return None
+
+
+def distillation_limit_due(state):
+    return (scored_distillation(state) and state["distillation_updates"] >= DISTILLATION_REPORT_ROUND
+            and not state.get("claude166_round_limit_reported") and state["stop_reason"] is None)
 
 
 def write_json(path, value):
@@ -77,36 +113,82 @@ def rollback_dev78(policy, state, output):
     return True
 
 
-def main():
+def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--deadline", type=float, required=True)
-    args = parser.parse_args()
+    parser.add_argument("--deadline", type=float)
+    parser.add_argument("--init", type=Path)
+    parser.add_argument("--teacher", type=Path)
+    parser.add_argument("--lanes", type=int, default=2048)
+    parser.add_argument("--microbatch", type=int, default=256)
+    parser.add_argument("--recompute", choices=("on", "off"), default="on")
+    parser.add_argument("--dtype", choices=("fp16", "bf16"), default="fp16")
+    parser.add_argument("--rollout-length", type=int, default=64)
+    parser.add_argument("--batch-stop-file", type=Path)
+    args = parser.parse_args(argv)
+    slurm_job = os.environ.get("SLURM_JOB_ID")
+    standalone = slurm_job is None
     rank, world, local = (int(os.environ[k]) for k in ("RANK", "WORLD_SIZE", "LOCAL_RANK"))
+    if standalone and world != 1:
+        parser.error("the standalone entry requires torchrun --standalone --nproc_per_node=1")
+    if not standalone and args.deadline is None:
+        parser.error("--deadline is required under Slurm")
+    if min(args.lanes, args.microbatch, args.rollout_length) < 1:
+        parser.error("lanes, microbatch and rollout length must be positive")
     torch.set_num_threads(1)
-    device = torch.device("cuda", local)
-    torch.cuda.set_device(device)
-    dist.init_process_group("nccl", device_id=device)
+    cuda = device_type == "cuda"
+    device = torch.device("cuda", local) if cuda else torch.device("cpu")
+    if cuda:
+        torch.cuda.set_device(device)
+        dist.init_process_group("nccl", device_id=device)
+    else:
+        dist.init_process_group("gloo")
     output = args.output
     output.mkdir(parents=True, exist_ok=True)
     stop_file = output / "stop-requested"
-    deadline = time.monotonic() + args.deadline - time.time() - 180
+    deadline = (time.monotonic() + args.deadline - time.time() - 180
+                if args.deadline is not None else float("inf"))
     torch.manual_seed(20261031)
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
-    engine_transition = saved is not None and 'claude153_pandora_grid' not in saved['state']
+    engine_transition = not standalone and saved is not None and 'claude153_pandora_grid' not in saved['state']
     if engine_transition:
         if rank == 0:
             import spire_gpu
             pandora_cuda_gates(Path(spire_gpu.__file__).parent,
-                output / f"engine153-gates-{os.environ['SLURM_JOB_ID']}.xml")
+                output / f"engine153-gates-{(slurm_job or 'standalone')}.xml")
         dist.barrier()
-    config = ModelConfig(**saved['state']['model_config']) if saved and 'model_config' in saved['state'] else ModelConfig(256,4,4,1024)
-    policy = CLSPolicy(config).to(device)
-    model = DistributedDataParallel(policy, device_ids=[local], broadcast_buffers=False)
+    initial_weights = None
+    settings = dict(lanes=args.lanes, rollout_length=args.rollout_length, microbatch=args.microbatch,
+                    recompute=args.recompute, dtype=args.dtype)
+    if saved and "model_config" in saved["state"]:
+        config = ModelConfig(**saved["state"]["model_config"])
+        if standalone and saved["state"].get("standalone_settings") != settings:
+            parser.error("standalone resume requires the same lane, rollout, precision and learner settings")
+    elif standalone:
+        if args.init is None:
+            parser.error("--init is required for a fresh standalone run")
+        initial_weights = torch.load(args.init, map_location="cpu", weights_only=True)
+        width = initial_weights["cls"].shape[-1]
+        if width not in (384, 768):
+            parser.error("--init must contain 384- or 768-wide Stage12 weights")
+        config = ModelConfig(width, width // 64, width // 64, width * 4)
+        if args.teacher is not None and width != 768:
+            parser.error("--teacher is for 768-wide distillation")
+    else:
+        config = ModelConfig(256, 4, 4, 1024)
+    policy = CLSPolicy(config)
+    if initial_weights is not None:
+        policy.load_state_dict(initial_weights, strict=True)
+        del initial_weights
+    if standalone:
+        policy.encoder_dtype_override = torch.float16 if args.dtype == "fp16" else torch.bfloat16
+        policy.encoder_checkpoint_enabled = args.recompute == "on"
+    policy.to(device)
+    model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
-    search = NoSLSearch(2048, device, 20261031 + rank, storage_slots=1024)
+    search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024)
     search.deadline = deadline
     search.evidence_directory = output
     collector = MidstartCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
@@ -114,6 +196,16 @@ def main():
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4,
                  observation_version=OBSERVATION_VERSION)
+    if standalone and saved is None:
+        state.update(model_config=asdict(config), standalone_settings=settings,
+                     precision=f"encoder_{args.dtype}_heads_fp32", microbatch=args.microbatch)
+        if args.teacher is not None:
+            state.update(teacher_path=str(args.teacher.resolve()), teacher_model_config=asdict(ModelConfig(384, 6, 6, 1536)),
+                         teacher_evaluated_model="dev-112.pt", teacher_label="teacher-dev112-argmax",
+                         distillation_updates=0, learning_rate=DISTILLATION_LEARNING_RATE,
+                         claude168_defer_supplement=True)
+        elif config.width == 768:
+            state.update(learning_rate=MAX_LEARNING_RATE, claude171_value_calibration_pending=True)
     cursor = None
     expert_saved = None
     rank_path = output / f"rank-{rank}.pt"
@@ -123,7 +215,7 @@ def main():
         policy.load_state_dict(saved["model"])
         optimizer.load_state_dict(saved["optimizer"])
         state.update(saved["state"])
-        state["learning_rate"] = min(state["learning_rate"], MAX_LEARNING_RATE)
+        apply_resume_learning_rate(state)
         previous_observation = saved['state'].get('observation_version', 13)
         assert previous_observation in (13, OBSERVATION_VERSION)
         state['observation_version'] = OBSERVATION_VERSION
@@ -173,7 +265,7 @@ def main():
         state['claude153_pandora_grid'] = dict(update=state['update'],
             training_seconds=state['training_seconds'], engine_fix='2e8a69569e4a2144b3c94a3d480bcdc5d8867d17',
             fresh_collector=True, four_pools_discarded=True, cuda_five_gates_passed=True)
-    if rollback_dev78(policy, state, output):
+    if not standalone and rollback_dev78(policy, state, output):
         retained_partial_steps = cursor['optimizer_steps'] if cursor is not None else 0
         cursor = None
         collector.partial = None
@@ -185,19 +277,32 @@ def main():
             optimizer_clock_pools_rng_preserved=True)), flush=True)
     if expert_saved is not None:
         expert_saved["round"] = None
-    scaler = torch.amp.GradScaler("cuda", enabled=policy.encoder_fp16)
-    if common.exists() and state["precision"] == "encoder_fp16_heads_fp32":
+    fp16 = args.dtype == "fp16" if standalone else policy.encoder_fp16
+    scaler = torch.amp.GradScaler(device.type, enabled=cuda and fp16)
+    if common.exists() and scaler.is_enabled():
         scaler.load_state_dict(saved["scaler"])
     state["world"] = world
     if state["stop_reason"] in ('allocation_end_or_yield', 'entropy_below_half_initial', 'KL_above_0.1'):
         state["stop_reason"] = None
     teacher = None
-    distillation_target = state.get('distillation_target', 80)
+    training_branch = "claude165_768" if config.width == 768 else "dev78_rollback_pure_PPO"
+    rollback_checkpoint = "dev-112.pt" if config.width == 768 else "dev-78.pt"
+    if "claude165_dev112_rollback" in state:
+        training_branch = "claude165_dev112_rollback"
+        rollback_checkpoint = "dev-112.pt"
+    score_guided = scored_distillation(state)
+    distillation_target = None if score_guided else state.get('distillation_target', 80)
+    if score_guided:
+        state.pop("distillation_target", None)
+        state["claude166_distillation"] = dict(learning_rate=DISTILLATION_LEARNING_RATE,
+            pass_mean_floor=DISTILLATION_PASS_FLOOR, report_round=DISTILLATION_REPORT_ROUND)
     if state.get('teacher_path'):
         teacher_config = state.get('teacher_model_config')
         teacher = CLSPolicy(ModelConfig(**teacher_config) if teacher_config else None).to(device)
         teacher.load_state_dict(torch.load(state['teacher_path'], map_location='cpu', weights_only=True))
-        teacher.encoder_fp16 = True
+        teacher.encoder_fp16 = not standalone
+        if standalone:
+            teacher.encoder_dtype_override = policy.encoder_dtype_override
         teacher.eval().requires_grad_(False)
     stopped_by_signal = False
     def on_signal(*_):
@@ -213,7 +318,9 @@ def main():
                 stream.write(json.dumps(row, allow_nan=True) + "\n")
 
     def stopping():
-        flag = torch.tensor(int(stopped_by_signal or stop_file.exists() or time.monotonic() >= deadline),
+        batch_stopping = args.batch_stop_file is not None and args.batch_stop_file.exists()
+        update_limit = stop_after_update is not None and state["update"] >= stop_after_update
+        flag = torch.tensor(int(stopped_by_signal or stop_file.exists() or batch_stopping or update_limit or time.monotonic() >= deadline),
                             dtype=torch.int32, device=device)
         dist.all_reduce(flag, op=dist.ReduceOp.MAX)
         return bool(flag)
@@ -224,7 +331,7 @@ def main():
         identity = (state["update"], state["checkpoint_serial"])
         save_rank(rank_path, collector, cursor, identity, ppo_rng, round_state,
                   committed_path=committed_rank_path,
-                  expert_state=expert_saved)
+                  expert_state=expert_saved, retain_by_copy=standalone)
         dist.barrier()
         if rank == 0:
             temporary = output / "model.pt.tmp"
@@ -260,21 +367,30 @@ def main():
         flag = torch.tensor(int(complete), device=device)
         dist.all_reduce(flag, op=dist.ReduceOp.MIN)
         dist.barrier()
+        track_score = score_guided and not state.get("distillation_evaluated") and not label
+        if track_score:
+            score = torch.full((), float("-inf"), dtype=torch.float64, device=device)
         if rank == 0:
             all_episodes = []
             for owner in range(world):
                 with gzip.open(output / f"{prefix}-{state['update']}-rank-{owner}.json.gz", "rt") as stream:
                     all_episodes.extend(json.load(stream))
             row = dict(event="teacher_evaluation" if label else "evaluation", selection="argmax", phase="distillation" if state.get("teacher_path") and not state.get("distillation_evaluated") else "PPO", update=state["update"], complete=bool(flag),
-                training_branch="dev78_rollback_pure_PPO", world=world, rollback_checkpoint="dev-78.pt",
+                training_branch=training_branch, world=world, rollback_checkpoint=rollback_checkpoint,
                        training_seconds=state["training_seconds"], no_SL=True,
                        learning_rate_cap=MAX_LEARNING_RATE, learning_rate_note="学习率封顶 4.44e-5",
                        observation_version=state['observation_version'], **metrics(all_episodes))
+            if track_score:
+                row.update(distillation_learning_rate=DISTILLATION_LEARNING_RATE,
+                           distillation_pass_mean_floor=DISTILLATION_PASS_FLOOR)
+                mean_floor = passing_distillation_score(row)
+                if mean_floor is not None:
+                    score.fill_(mean_floor)
             if state.get("teacher_path"):
                 row["paired_baseline_model"] = state.get("teacher_evaluated_model", "dev-16.pt") + " argmax"
             if label:
                 row["evaluated_model"] = state.get("teacher_evaluated_model", "dev-16.pt")
-                row["evaluated_model_training_hours"] = 16
+                row["evaluated_model_training_hours"] = int(Path(row["evaluated_model"]).stem.split("-")[-1])
             baseline = output / "baseline.json.gz"
             if state["update"] == 0 and bool(flag):
                 with gzip.open(baseline, "wt") as stream:
@@ -283,7 +399,8 @@ def main():
                 with gzip.open(baseline, "rt") as stream:
                     row["paired_baseline"] = paired_summary(all_episodes, json.load(stream))
             if bool(flag) and not label:
-                if state.get('distillation_updates') == distillation_target and not state.get('distillation_evaluated'):
+                if (not score_guided and state.get('distillation_updates') == distillation_target
+                        and not state.get('distillation_evaluated')):
                     name = f'distillation-{distillation_target}.pt'
                     if not (output / name).exists():
                         torch.save(move_tensors(policy.state_dict(), torch.device('cpu')), output / name)
@@ -299,6 +416,10 @@ def main():
             row.update(state.get("decision_entropy_metrics", {}))
             write_json(output / f"{prefix}-{state['update']}.json", row)
             log(row)
+        if track_score:
+            dist.broadcast(score, src=0)
+            if bool(score >= DISTILLATION_PASS_FLOOR):
+                state["claude166_passing_mean_floor"] = float(score)
         dist.barrier()
         del evaluator, evaluator_search
         gc.collect()
@@ -307,18 +428,72 @@ def main():
             if not lookahead60_window(output,config,device,rank,world,deadline):
                 state['stop_reason'] = 'allocation_end_or_yield'
         if bool(flag) and not label and due_combat_comparison(state['training_seconds']):
-            write_json(output/f'expert-pending-{rank}.json',dict(hour=int(state['training_seconds']//7200)*2))
-            if not periodic_combat_window(output, config, device, rank, world, deadline):
+            hour = int(state['training_seconds'] // 7200) * 2
+            if state.get("claude168_defer_supplement"):
+                if rank == 0:
+                    write_json(output/f'expert-deferred-{hour}.json',
+                               dict(hour=hour, model_config=asdict(config)))
+                dist.barrier()
+            else:
+                write_json(output/f'expert-pending-{rank}.json', dict(hour=hour))
+            if not combat_supplements():
                 state['stop_reason'] = 'allocation_end_or_yield'
         return bool(flag)
 
-    log(dict(event="start", world=world, lanes_per_gpu=2048, length=64, global_minibatch=32768,
+    def combat_supplements():
+        paused = state.get("claude168_defer_supplement") and scored_distillation(state)
+        return run_combat_supplements(output, config, device, rank, world, deadline,
+                                      paused=paused)
+
+    def regular_evaluation():
+        nonlocal teacher
+        if not evaluate():
+            state["stop_reason"] = "allocation_end_or_yield"
+            return
+        state["next_evaluation"] += 7200.
+        if score_guided and "claude166_passing_mean_floor" in state and teacher is not None:
+            state["distillation_evaluated"] = True
+            state["claude171_value_calibration_pending"] = True
+            state["learning_rate"] = MAX_LEARNING_RATE
+            state["high_kl_streak"] = 0
+            teacher = None
+            checkpoint()
+            log(dict(event="distillation_complete", update=state["update"],
+                     rounds=state["distillation_updates"], training_seconds=state["training_seconds"],
+                     world=world, mean_floor=state["claude166_passing_mean_floor"],
+                     pass_mean_floor=DISTILLATION_PASS_FLOOR, PPO_learning_rate=MAX_LEARNING_RATE))
+            if state.get("claude168_defer_supplement") and not combat_supplements():
+                state["stop_reason"] = "allocation_end_or_yield"
+
+    def report_distillation_limit():
+        if distillation_limit_due(state):
+            state["claude166_round_limit_reported"] = True
+            log(dict(event="distillation_round_limit", update=state["update"],
+                     rounds=state["distillation_updates"], training_seconds=state["training_seconds"],
+                     pass_mean_floor=DISTILLATION_PASS_FLOOR, continues_distillation=True))
+
+    startup_minibatch = (cursor.get("global_minibatch", PPO_GLOBAL_MINIBATCH)
+                         if cursor is not None else new_round_minibatch(state))
+    log(dict(event="start", world=world, lanes_per_gpu=args.lanes, length=args.rollout_length, global_minibatch=startup_minibatch,
              epochs=2, model_parameters=sum(p.numel() for p in policy.parameters()),
              model=dict(**asdict(config),pooling="CLS"), teacher=state.get("teacher_path"), distillation_updates=state.get("distillation_updates"),
              no_SL=True, from_scratch=not common.exists(), observation_version=state['observation_version']))
+    if state.get("claude167_retry"):
+        log(dict(event="claude167_retry_active", update=state["update"], world=world,
+                 training_seconds=state["training_seconds"], microbatch=state["microbatch"],
+                 allocator=os.environ.get("PYTORCH_CUDA_ALLOC_CONF"), encoder_recompute="full"))
+    if state.get("claude168_defer_supplement") and score_guided:
+        log(dict(event="claude168_supplement_paused", update=state["update"],
+                 training_seconds=state["training_seconds"], world=world))
+    if score_guided:
+        log(dict(event="claude166_distillation_active", update=state["update"],
+                 training_seconds=state["training_seconds"], world=world,
+                 retained_partial_optimizer_steps=cursor["optimizer_steps"] if cursor is not None else 0,
+                 next_new_round_global_minibatch=DISTILLATION_GLOBAL_MINIBATCH,
+                 **state["claude166_distillation"]))
     profile_path = output / "claude127-learner-profile.json"
     learner_profile = (TwoMicrobatchProfile(profile_path, state["update"] + 1, log)
-                       if rank == 0 and common.exists() and not profile_path.exists() else None)
+                       if rank == 0 and cuda and common.exists() and not profile_path.exists() else None)
     log(dict(event="midstart_policy", fresh=.5, act1_boss=.1, act2=.25, act2_boss=.15,
              minimum_pool_size=32, capacity_per_pool=256))
     last_checkpoint = time.monotonic()
@@ -329,12 +504,19 @@ def main():
     if teacher is not None and (not teacher_baseline.exists() or not json.loads(teacher_baseline.read_text())['complete']):
         if not evaluate(teacher, teacher_label):
             state['stop_reason'] = 'allocation_end_or_yield'
-    if teacher is not None and state['distillation_updates'] == distillation_target and not state.get('distillation_evaluated') and state['stop_reason'] is None:
+    if (not score_guided and teacher is not None and state['distillation_updates'] == distillation_target
+            and not state.get('distillation_evaluated') and state['stop_reason'] is None):
         if evaluate():
             state['distillation_evaluated'] = True
-            state['learning_rate'] = 1e-4
+            state['learning_rate'] = MAX_LEARNING_RATE if config.width == 768 else 1e-4
             state['high_kl_streak'] = 0
+            if config.width == 768 and state['training_seconds'] >= state['next_evaluation']:
+                state['next_evaluation'] += 7200.
             checkpoint()
+            if config.width == 768:
+                log(dict(event='distillation_complete', update=state['update'], rounds=distillation_target,
+                         training_seconds=state["training_seconds"], world=world,
+                         PPO_learning_rate=state['learning_rate']))
         else:
             state['stop_reason'] = 'allocation_end_or_yield'
     if teacher is not None and state.get('distillation_evaluated'):
@@ -346,17 +528,33 @@ def main():
             state["stop_reason"] = "allocation_end_or_yield"
     if state['stop_reason'] is None and not lookahead60_window(output,config,device,rank,world,deadline):
         state['stop_reason'] = 'allocation_end_or_yield'
-    if state["stop_reason"] is None and not periodic_combat_window(output,config,device,rank,world,deadline):
+    if state["stop_reason"] is None and not combat_supplements():
         state["stop_reason"] = "allocation_end_or_yield"
+    if (score_guided and cursor is None and state["stop_reason"] is None
+            and state["training_seconds"] >= state["next_evaluation"]):
+        regular_evaluation()
+    report_distillation_limit()
+    resumed_learner = cursor is not None
     while state["stop_reason"] is None:
         if stopping():
             state["stop_reason"] = "allocation_end_or_yield"
             break
         started = time.monotonic()
+
+        def checkpoint_if_due():
+            nonlocal last_checkpoint, started
+            now = time.monotonic()
+            if now - last_checkpoint >= 1800:
+                round_state["seconds"] += now - started
+                checkpoint()
+                last_checkpoint = started = time.monotonic()
+
+        distilling = teacher is not None and (score_guided or state["distillation_updates"] < distillation_target)
         if cursor is None:
             if collector.partial is None and round_state["ready"] is None:
                 round_state = dict(ready=None, seconds=0., decisions_start=collector.decisions)
-                torch.cuda.reset_peak_memory_stats(device)
+                if cuda:
+                    torch.cuda.reset_peak_memory_stats(device)
                 search.entropy_sum.zero_()
                 search.entropy_count = 0
                 search.decision_entropy.zero_()
@@ -368,7 +566,8 @@ def main():
             if round_state["ready"] is None:
                 policy.eval()
                 try:
-                    round_state["ready"] = collector.collect(teacher if teacher is not None and state["distillation_updates"] < distillation_target else policy, length=64)
+                    round_state["ready"] = collector.collect(teacher if distilling else policy, length=args.rollout_length,
+                        after_step=checkpoint_if_due if standalone else None)
                 except AllocationEnded:
                     interrupted = True
             interrupted = torch.tensor(int(interrupted), device=device)
@@ -377,7 +576,7 @@ def main():
                 round_state["seconds"] += time.monotonic() - started
                 state["stop_reason"] = "allocation_end_or_yield"
                 break
-            if teacher is not None and state['distillation_updates'] < distillation_target:
+            if distilling:
                 policy.eval()
                 student_log_baseline(policy, round_state['ready'])
             if not state.get("value_rollout_diagnostic_complete"):
@@ -392,7 +591,8 @@ def main():
                     log(report)
                     if rank == 0:write_json(output/"claude132-rollout-diagnostic.json",report)
                     state["value_rollout_diagnostic_complete"] = True
-            cursor = new_cursor(round_state["ready"], ppo_rng, world)
+            cursor = new_cursor(round_state["ready"], ppo_rng, world,
+                                global_minibatch=new_round_minibatch(state))
             round_state["ready"] = None
             if not sum(cursor["counts"]):
                 failed = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
@@ -418,6 +618,10 @@ def main():
                 state["microbatch"] = choose_microbatch(model, cursor)
                 log(dict(event="microbatch", value=state["microbatch"]))
         model.train()
+        recompute = None
+        if config.width == 768 and not standalone:
+            recompute = prepare_round(policy, cursor, state, world, resumed_learner)
+        resumed_learner = False
         for group in optimizer.param_groups:
             group["lr"] = state["learning_rate"]
         while cursor["epoch"] < 2:
@@ -426,13 +630,15 @@ def main():
                 break
             with search.times.measure("learner"):
                 advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
-                    teacher=teacher if teacher is not None and state['distillation_updates'] < distillation_target else None,
+                    teacher=teacher if distilling else None,
                     entropy_coefficient=state.get('entropy_coefficient', .01),
                     learner_profile=learner_profile,value_state=state,diagnostic_log=log)
                 if rank == 0 and not (output/"claude133-gradient-diagnostic.json").exists():
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
+            if standalone:
+                checkpoint_if_due()
         sync_started = time.perf_counter()
-        torch.cuda.synchronize(device)
+        synchronize(device)
         search.times.seconds["learner"] += time.perf_counter() - sync_started
         round_state["seconds"] += time.monotonic() - started
         if state["stop_reason"] is not None:
@@ -441,8 +647,8 @@ def main():
         elapsed = torch.tensor(round_state["seconds"], dtype=torch.float64, device=device)
         dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
         row.update(expert_beta=0., expert_samples=0, expert_collection=False,
-                   training_branch="dev78_rollback_pure_PPO", world=world,
-                   rollback_checkpoint="dev-78.pt")
+                   training_branch=training_branch, world=world,
+                   rollback_checkpoint=rollback_checkpoint)
         decisions = torch.tensor(collector.decisions - round_state["decisions_start"], device=device, dtype=torch.float64)
         by_rank = [torch.empty_like(decisions) for _ in range(world)]
         dist.all_gather(by_rank, decisions)
@@ -456,10 +662,19 @@ def main():
         dist.all_reduce(parts, op=dist.ReduceOp.MAX)
         per_gpu = [float(n) / max(.001,float(elapsed)) for n in by_rank]
         row["value_loss_coefficient"] = value_coefficient(state)
+        if recompute is not None:
+            recompute = finish_round(recompute, device, float(parts[-1]), float(elapsed))
+            if state["update"] < TRIAL_ROUNDS:
+                state.setdefault("claude165_recompute", []).append(recompute)
+            row["encoder_recompute"] = recompute
         if "value_calibration" in state:
             state["value_calibration"]["completed_updates"] += 1
         state["update"] += 1
         state["training_seconds"] += float(elapsed)
+        if not distilling:
+            calibration_event = record_ppo_calibration_round(state, row)
+            if calibration_event is not None:
+                log(calibration_event)
         health = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
         dist.all_reduce(health)
         faults, games = health.tolist()
@@ -467,9 +682,11 @@ def main():
         rss_by_rank = [torch.empty_like(rss) for _ in range(world)]
         dist.all_gather(rss_by_rank, rss)
         state['stop_reason'] = health_stop(state, row, faults, games)
-        distilling = teacher is not None and state['distillation_updates'] < distillation_target
         if distilling:
             state['distillation_updates'] += 1
+            if score_guided:
+                # finish_metrics already averages these losses over valid examples on all ranks.
+                row.update(distillation_kl=row["policy_loss"], distillation_value_mse=row["value_loss"])
         else:
             state["learning_rate"] = next_learning_rate(state["learning_rate"], row["kl"])
         entropies = search.decision_entropy.clone()
@@ -488,9 +705,12 @@ def main():
             training_midstart_mean_floor=float(done[4]/done[3]) if float(done[3]) else None,
             midstart_pool_sizes=[len(p) for p in collector.pools],
             midstart_randomization='whole_run_159',
-            cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated(device),cuda_peak_reserved_bytes=torch.cuda.max_memory_reserved(device),
+            cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated(device) if cuda else 0,
+            cuda_peak_reserved_bytes=torch.cuda.max_memory_reserved(device) if cuda else 0,
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
-            precision=state["precision"],microbatch=state["microbatch"],learning_rate=optimizer.param_groups[0]["lr"],
+            precision=state["precision"],microbatch=state["microbatch"],
+            global_minibatch=cursor.get("global_minibatch", PPO_GLOBAL_MINIBATCH),
+            learning_rate=optimizer.param_groups[0]["lr"],
             next_learning_rate=state["learning_rate"],observation_version=state['observation_version'],**state["decision_entropy_metrics"],
             stop_reason=state["stop_reason"],episode_faults=faults,episode_cases=games,
             episode_fault_rate=faults/max(1,games),rss_peak_bytes_per_rank=[int(v) for v in rss_by_rank],**row))
@@ -501,26 +721,29 @@ def main():
         cursor = None
         collector.completed.clear()
         round_state = dict(ready=None,seconds=0.,decisions_start=collector.decisions)
-        distillation_finished = distilling and state['distillation_updates'] == distillation_target
+        distillation_finished = distilling and not score_guided and state['distillation_updates'] == distillation_target
         if distillation_finished and state['stop_reason'] is None:
             checkpoint()
             if evaluate():
                 state['distillation_evaluated'] = True
-                state['learning_rate'] = 1e-4
+                state['learning_rate'] = MAX_LEARNING_RATE if config.width == 768 else 1e-4
                 state['high_kl_streak'] = 0
                 del teacher
                 teacher = None
                 if state['training_seconds'] >= state['next_evaluation']:
                     state['next_evaluation'] += 7200.
                 checkpoint()
-                log(dict(event='distillation_complete', update=state['update'], rounds=distillation_target, PPO_learning_rate=1e-4))
+                log(dict(event='distillation_complete', update=state['update'], rounds=distillation_target,
+                         training_seconds=state["training_seconds"], world=world,
+                         PPO_learning_rate=state['learning_rate']))
             else:
                 state['stop_reason'] = 'allocation_end_or_yield'
         if state["training_seconds"] >= state["next_evaluation"] and state["stop_reason"] is None:
-            if evaluate():
-                state["next_evaluation"] += 7200.
-            else:
-                state["stop_reason"] = "allocation_end_or_yield"
+            if standalone:
+                checkpoint()
+                last_checkpoint = time.monotonic()
+            regular_evaluation()
+        report_distillation_limit()
         if time.monotonic() - last_checkpoint >= 1800 and state["stop_reason"] is None:
             checkpoint()
             last_checkpoint = time.monotonic()

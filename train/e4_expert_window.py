@@ -74,9 +74,10 @@ def wait_files(paths):
         time.sleep(.2)
 
 
-def periodic_combat_window(output, config, device, rank, world, deadline):
+def periodic_combat_window(output, config, device, rank, world, deadline, *, pending_path=None):
     output = Path(output)
-    pending_path = output/'expert-pending-0.json'
+    if pending_path is None:
+        pending_path = output/'expert-pending-0.json'
     hour = -1
     if rank == 0 and pending_path.exists():
         hour = json.loads(pending_path.read_text())['hour']
@@ -93,6 +94,9 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
         return True
     if window_stop_requested(output, deadline):
         return False
+    checkpoint_config = json.loads(pending_path.read_text()).get('model_config')
+    if checkpoint_config is not None:
+        config = type(config)(**checkpoint_config)
     # All ranks enter this short broadcast together, before any independent games.
     token = torch.tensor(time.time_ns() if rank == 0 else 0, dtype=torch.int64, device=device)
     dist.broadcast(token, src=0)
@@ -241,4 +245,18 @@ def periodic_combat_window(output, config, device, rank, world, deadline):
                     for mode in modes[1:]})
             write_json(directory/'report.json',report)
         wait_files([directory/'report.json'])
+    return True
+
+
+def run_combat_supplements(output, config, device, rank, world, deadline, *, paused=False):
+    if paused:
+        return True
+    if not periodic_combat_window(output, config, device, rank, world, deadline):
+        return False
+    queued = sorted(Path(output).glob('expert-deferred-*.json'),
+                    key=lambda path: int(path.stem.rsplit('-', 1)[1]))
+    for pending_path in queued:
+        if not periodic_combat_window(output, config, device, rank, world, deadline,
+                                      pending_path=pending_path):
+            return False
     return True
