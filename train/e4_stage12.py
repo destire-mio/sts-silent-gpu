@@ -548,11 +548,14 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
             measured.update(measured_value_coefficient=.5, completed_updates=0)
             if recalibrate_ppo:
                 previous = value_coefficient(value_state)
-                measured["start_coefficient"] = previous
+                start_coefficient = measured["target"] if value_state.get("claude186_control") else previous
+                measured["start_coefficient"] = start_coefficient
                 report = dict(start_update=value_state["update"] + 1, old_coefficient=previous,
                               new_coefficient=measured["target"], ratio=measured["ratio"], milestones={},
                               measurement_rank=owner, actor_encoder_norm=measured["actor_encoder_norm"],
                               weighted_value_encoder_norm=measured["weighted_value_encoder_norm"])
+                if value_state.get("claude186_control"):
+                    report["applied_start_coefficient"] = start_coefficient
                 value_state["claude171_value_calibration"] = report
                 value_state.pop("claude171_value_calibration_pending")
                 value_state.pop("claude171_deferred_logged", None)

@@ -190,6 +190,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if standalone and saved else {}
+    control = saved["state"].get("claude186_control") if saved and not standalone else None
+    if control is not None and (args.lanes, args.rollout_length) != (control["lanes"], control["rollout_length"]):
+        parser.error("the Slurm control requires its original lane count and rollout length")
     saved_reward = saved_state.get("standalone_reward_scheme", "current")
     reward_scheme = args.reward_scheme or saved_reward
     saved_warmup = saved_state.get("standalone_value_warmup", {}).get("updates", 0)
@@ -205,13 +208,16 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         from train.e4 import MilestoneRewardLedger
         collector_options["reward_ledger_type"] = MilestoneRewardLedger
     ema_decay = args.ema_decay if args.ema_decay is not None else saved_state.get("standalone_ema_decay", 0.)
+    if control is not None:
+        ema_decay = control["ema_decay"]
     arena_fraction = (args.arena_fraction if args.arena_fraction is not None
                       else saved_state.get("standalone_arena_fraction", 0.))
     if not arena_fraction and saved_state.get("standalone_arena_fraction"):
         parser.error("an arena checkpoint requires a positive arena fraction to resume its live segments")
     if arena_fraction and (args.teacher is not None or scored_distillation(saved_state)):
         parser.error("arena practice requires standalone PPO")
-    engine_transition = not standalone and saved is not None and 'claude153_pandora_grid' not in saved['state']
+    engine_transition = (not standalone and control is None and saved is not None
+                         and "claude153_pandora_grid" not in saved["state"])
     if engine_transition:
         if rank == 0:
             import spire_gpu
@@ -319,7 +325,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         assert previous_observation in (13, OBSERVATION_VERSION)
         state['observation_version'] = OBSERVATION_VERSION
         policy.encoder_fp16 = state["precision"] == "encoder_fp16_heads_fp32"
-        ppo_rng.set_state(saved["ppo_rng"])
+        if control is None or state["checkpoint_serial"] != 0:
+            ppo_rng.set_state(saved["ppo_rng"])
         for owner in range(world):
             if owner == rank:
                 candidate, committed_rank_path = load_matching_rank(
@@ -364,7 +371,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         state['claude153_pandora_grid'] = dict(update=state['update'],
             training_seconds=state['training_seconds'], engine_fix='2e8a69569e4a2144b3c94a3d480bcdc5d8867d17',
             fresh_collector=True, four_pools_discarded=True, cuda_five_gates_passed=True)
-    if not standalone and rollback_dev78(policy, state, output):
+    if not standalone and control is None and rollback_dev78(policy, state, output):
         retained_partial_steps = cursor['optimizer_steps'] if cursor is not None else 0
         cursor = None
         collector.partial = None
@@ -386,7 +393,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if ema_decay:
         from train.e4_stage12_ema import ExponentialWeights
         ema = ExponentialWeights(policy, ema_decay, saved.get("ema_weights") if saved else None)
-        state["standalone_ema_decay"] = ema_decay
+        if standalone:
+            state["standalone_ema_decay"] = ema_decay
     else:
         state.pop("standalone_ema_decay", None)
     if arena_fraction:
@@ -406,7 +414,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         state["claude171_value_calibration_pending"] = True
     fp16 = args.dtype == "fp16" if standalone else policy.encoder_fp16
     scaler = torch.amp.GradScaler(device.type, enabled=cuda and fp16)
-    if common.exists() and scaler.is_enabled():
+    bootstrap = control is not None and state["checkpoint_serial"] == 0
+    if common.exists() and scaler.is_enabled() and not bootstrap:
         scaler.load_state_dict(saved["scaler"])
     state["world"] = world
     if state["stop_reason"] in ('allocation_end_or_yield', 'entropy_below_half_initial', 'KL_above_0.1'):
@@ -414,6 +423,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     teacher = None
     training_branch = "claude165_768" if config.width == 768 else "dev78_rollback_pure_PPO"
     rollback_checkpoint = "dev-112.pt" if config.width == 768 else "dev-78.pt"
+    if control is not None:
+        training_branch = "claude186_384_current_ppo"
+        rollback_checkpoint = None
     if "claude165_dev112_rollback" in state:
         training_branch = "claude165_dev112_rollback"
         rollback_checkpoint = "dev-112.pt"
@@ -514,6 +526,16 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                        observation_version=state['observation_version'], **metrics(all_episodes))
             if reward_scheme != "current":
                 row["reward_scheme"] = reward_scheme
+            if control is not None:
+                row.update(reward_scheme=reward_scheme, init_checkpoint=control["init_checkpoint"],
+                           cumulative_training_decisions=control["cumulative_decisions"])
+                if ema_run and bool(flag):
+                    path = output / f"dev-{int(state['training_seconds'] // 7200) * 2}-ema.pt"
+                    if not path.exists():
+                        temporary = path.with_suffix(".pt.tmp")
+                        torch.save(move_tensors(ema.weights, torch.device("cpu")), temporary)
+                        temporary.replace(path)
+                    row["model_snapshot"] = path.name
             if ema is not None and not label:
                 row["weight_source"] = "ema" if ema_run else "raw"
                 row["ema_decay"] = ema_decay
@@ -561,10 +583,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         del evaluator, evaluator_search
         gc.collect()
         torch.cuda.empty_cache()
-        if bool(flag) and primary:
+        if bool(flag) and primary and control is None:
             if not lookahead60_window(output,config,device,rank,world,deadline):
                 state['stop_reason'] = 'allocation_end_or_yield'
-        if bool(flag) and primary and due_combat_comparison(state['training_seconds']):
+        if bool(flag) and primary and control is None and due_combat_comparison(state['training_seconds']):
             hour = int(state['training_seconds'] // 7200) * 2
             if state.get("claude168_defer_supplement"):
                 if rank == 0:
@@ -578,9 +600,17 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         return bool(flag)
 
     def evaluate_training():
-        if not evaluate():
-            return False
-        return ema is None or evaluate(ema, ema_run=True)
+        if control is None:
+            return evaluate() and (ema is None or evaluate(ema, ema_run=True))
+        for weight_source, evaluated in (("raw", policy), ("ema", ema)):
+            is_ema = weight_source == "ema"
+            prefix = "evaluation-ema" if is_ema else "evaluation"
+            result = output / f"{prefix}-{state['update']}.json"
+            if result.is_file() and json.loads(result.read_text())["complete"]:
+                continue
+            if not evaluate(evaluated, ema_run=is_ema):
+                return False
+        return True
 
     def combat_supplements():
         paused = state.get("claude168_defer_supplement") and scored_distillation(state)
@@ -593,6 +623,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             state["stop_reason"] = "allocation_end_or_yield"
             return
         state["next_evaluation"] += 7200.
+        if control is not None:
+            checkpoint()
+            if due_combat_comparison(state["training_seconds"]):
+                hour = int(state["training_seconds"] // 7200) * 2
+                write_json(output / f"expert-pending-{rank}.json", dict(hour=hour))
+                if not combat_supplements():
+                    state["stop_reason"] = "allocation_end_or_yield"
         if score_guided and "claude166_passing_mean_floor" in state and teacher is not None:
             state["distillation_evaluated"] = True
             state["claude171_value_calibration_pending"] = True
@@ -620,6 +657,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
              epochs=2, model_parameters=sum(p.numel() for p in policy.parameters()),
              model=dict(**asdict(config),pooling="CLS"), teacher=state.get("teacher_path"), distillation_updates=state.get("distillation_updates"),
              no_SL=True, from_scratch=not common.exists(), observation_version=state['observation_version']))
+    if control is not None:
+        log(dict(event="claude186_control_active", update=state["update"], world=world,
+                 reward_scheme=reward_scheme, warmup_updates=warmup_updates, auxiliary_heads=bool(auxiliary_weights),
+                 arena_fraction=arena_fraction, training_seconds=state["training_seconds"],
+                 learning_rate=state["learning_rate"], next_evaluation=state["next_evaluation"], **control))
     if state.get("claude167_retry"):
         log(dict(event="claude167_retry_active", update=state["update"], world=world,
                  training_seconds=state["training_seconds"], microbatch=state["microbatch"],
@@ -639,7 +681,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     log(dict(event="midstart_policy", fresh=.5, act1_boss=.1, act2=.25, act2_boss=.15,
              minimum_pool_size=32, capacity_per_pool=256))
     last_checkpoint = time.monotonic()
-    if not common.exists():
+    if bootstrap or not common.exists():
         checkpoint()
     teacher_label = state.get('teacher_label', 'teacher-dev16-argmax')
     teacher_baseline = output / f'{teacher_label}-0.json'
@@ -665,14 +707,19 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         del teacher
         teacher = None
     del saved
-    if teacher is None and state["update"] == 0 and not (output / "baseline.json.gz").exists():
+    initial_evaluation_due = not (output / "baseline.json.gz").exists()
+    if control is not None:
+        initial_evaluation_due |= not (output / "evaluation-ema-0.json").is_file()
+        if not initial_evaluation_due:
+            initial_evaluation_due = not json.loads((output / "evaluation-ema-0.json").read_text())["complete"]
+    if teacher is None and state["update"] == 0 and initial_evaluation_due:
         if not evaluate_training():
             state["stop_reason"] = "allocation_end_or_yield"
     if state['stop_reason'] is None and not lookahead60_window(output,config,device,rank,world,deadline):
         state['stop_reason'] = 'allocation_end_or_yield'
     if state["stop_reason"] is None and not combat_supplements():
         state["stop_reason"] = "allocation_end_or_yield"
-    if (score_guided and cursor is None and state["stop_reason"] is None
+    if ((score_guided or control is not None) and cursor is None and state["stop_reason"] is None
             and state["training_seconds"] >= state["next_evaluation"]):
         regular_evaluation()
     report_distillation_limit()
@@ -817,6 +864,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         parts = torch.tensor(list(search.times.seconds.values()),device=device,dtype=torch.float64)
         dist.all_reduce(parts, op=dist.ReduceOp.MAX)
         per_gpu = [float(n) / max(.001,float(elapsed)) for n in by_rank]
+        global_decisions = int(sum(float(n) for n in by_rank))
+        peaks = [torch.cuda.max_memory_allocated(device), torch.cuda.max_memory_reserved(device)] if cuda else [0, 0]
+        if control is not None:
+            control["cumulative_decisions"] += global_decisions
+            row["cumulative_training_decisions"] = control["cumulative_decisions"]
+            global_peaks = torch.tensor(peaks, dtype=torch.int64, device=device)
+            dist.all_reduce(global_peaks, op=dist.ReduceOp.MAX)
+            peaks = global_peaks.tolist()
         row["value_loss_coefficient"] = 1. if warming else value_coefficient(state)
         if reward_scheme != "current":
             row["reward_scheme"] = reward_scheme
@@ -862,15 +917,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             log(dict(event='high_KL_warning', update=state['update'], kl=row['kl'], streak=state['high_kl_streak']))
         phase = "value_warmup" if warming else "distillation" if distilling else "PPO"
         log(dict(event="update",phase=phase,distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
-            mainline_decisions_global=int(sum(float(n)for n in by_rank)),decisions_per_second_per_gpu=per_gpu,
+            mainline_decisions_global=global_decisions,decisions_per_second_per_gpu=per_gpu,
             decisions_per_second_global=sum(per_gpu),training_mean_floor=float(done[1]/done[0]) if float(done[0]) else None,
             training_act1_boss_pass_rate=float(done[2]/done[0]) if float(done[0]) else None,
             training_fresh_completed=int(done[0]),training_midstart_completed=int(done[3]),
             training_midstart_mean_floor=float(done[4]/done[3]) if float(done[3]) else None,
             midstart_pool_sizes=[len(p) for p in collector.pools],
             midstart_randomization='whole_run_159',
-            cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated(device) if cuda else 0,
-            cuda_peak_reserved_bytes=torch.cuda.max_memory_reserved(device) if cuda else 0,
+            cuda_peak_allocated_bytes=peaks[0],cuda_peak_reserved_bytes=peaks[1],
             timing_seconds=dict(zip(search.times.seconds,parts.tolist())),initial_entropy=state["initial_entropy"],
             precision=state["precision"],microbatch=state["microbatch"],
             global_minibatch=cursor.get("global_minibatch", PPO_GLOBAL_MINIBATCH),
@@ -910,7 +964,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             else:
                 state['stop_reason'] = 'allocation_end_or_yield'
         if state["training_seconds"] >= state["next_evaluation"] and state["stop_reason"] is None:
-            if standalone:
+            if standalone or control is not None:
                 checkpoint()
                 last_checkpoint = time.monotonic()
             regular_evaluation()
