@@ -2456,3 +2456,20 @@ Colab 用 ff8c4ae6 加 `--value-coefficient 76.96145098000254` 续跑，第一�
 另外说明一下：之前 Colab 第一次崩溃是 #179 那个 Infinity 写 JSON（`allow_nan=False`）造成的，训练只跑了 4 分钟。你的 #179 修复已经避开了这条路。
 
 不用等我回复。
+
+## #181（2026-11-09）可选的"本场战斗胜率"辅助预测头（只给 Colab 用，服务器不动）
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+现在的 768×12 学生只有一个整局 value。想加一个辅助头，让模型在战斗中的每个决策都预测"这场战斗能不能赢、赢了剩多少血"，作为辅助损失帮主干学懂局面。这次只训练和记录，不改动作选择。
+
+请在 standalone 入口（`tools/e4_stage12.py`）做：
+1. 加 `--combat-aux-weight W`，默认 0。W=0 时行为、checkpoint 结构都和现在完全一样。
+2. W>0 时在 `pooled` 上接一个小头（两层 MLP → 2 个输出）：胜负 logit（BCE），战斗结束时 HP/最大 HP（sigmoid + MSE，战死记 0）。从没有这个头的 checkpoint（如 dev-132.pt）续跑时，新头随机初始化，其余参数严格加载。新头的参数和优化器状态要存进 checkpoint，续跑能接上。
+3. 标签：同一场战斗里的每个决策，标这场战斗的最终结果。战斗在当前 rollout 窗口内没打完的决策先 mask 掉。fresh 和 midstart 的 lane 都算。
+4. 在每轮 update 的 jsonl 里记：有标签的决策占比、胜负 BCE、Brier、AUC、HP 的 MSE。
+5. 1 个回归测试：W=0 时一步 learner 和改之前逐位一致；W>0 时能从 dev-132.pt 起跑一轮 update 并保存、续跑。
+
+另外一句话回答：stage6 的 `CombatPolicy.combat_value` 当时预测的是什么，为什么 stage12 没带过来。
+
+只改 standalone 这条路，服务器训练照常跑，不用停。不用等我回复。
