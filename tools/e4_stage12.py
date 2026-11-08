@@ -119,6 +119,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--deadline", type=float)
     parser.add_argument("--init", type=Path)
     parser.add_argument("--teacher", type=Path)
+    parser.add_argument("--value-coefficient", type=float, help="Persist a fixed standalone value loss coefficient")
     parser.add_argument("--lanes", type=int, default=2048)
     parser.add_argument("--microbatch", type=int, default=256)
     parser.add_argument("--recompute", choices=("on", "off"), default="on")
@@ -130,6 +131,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
+    if args.value_coefficient is not None:
+        if not standalone:
+            parser.error("--value-coefficient is standalone only")
+        if not math.isfinite(args.value_coefficient) or args.value_coefficient < 0:
+            parser.error("--value-coefficient must be finite and nonnegative")
     if not standalone and (args.compile or args.fused_sdpa):
         parser.error("learner speed options are standalone only")
     rank, world, local = (int(os.environ[k]) for k in ("RANK", "WORLD_SIZE", "LOCAL_RANK"))
@@ -284,6 +290,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             optimizer_clock_pools_rng_preserved=True)), flush=True)
     if expert_saved is not None:
         expert_saved["round"] = None
+    if standalone and args.value_coefficient is not None:
+        state["standalone_value_coefficient"] = args.value_coefficient
+    previous_calibration = state.get("claude171_value_calibration")
+    if previous_calibration and not math.isfinite(previous_calibration["ratio"]):
+        state["claude171_value_calibration_pending"] = True
     fp16 = args.dtype == "fp16" if standalone else policy.encoder_fp16
     scaler = torch.amp.GradScaler(device.type, enabled=cuda and fp16)
     if common.exists() and scaler.is_enabled():

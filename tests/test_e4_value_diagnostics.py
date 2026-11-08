@@ -1,3 +1,4 @@
+from copy import deepcopy
 import math
 import pytest
 import torch
@@ -46,6 +47,18 @@ def test_calibration_preserves_gradients_and_ddp_optimizer(tmp_path):
         row=finish_metrics(cursor,model,scaler)
         assert len(logs)==1 and row['optimizer_steps']==2 and row['finite']
         assert math.isfinite(row['gradient_norm_before_clip_max']) and 0 <= row['gradient_clipped_fraction'] <= 1
+        state.update(update=40, claude171_value_calibration_pending=True)
+        inherited = value_coefficient(state)
+        cursor = new_cursor(fragment, rng, 1)
+        advance_minibatch(model, optimizer, scaler, cursor, rng, 0, 1, microbatch=2,
+                          value_state=state, diagnostic_log=logs.append)
+        assert logs[-1]['event'] == 'claude171_value_recalibrated'
+        assert logs[-1]['start_update'] == 41 and logs[-1]['old_coefficient'] == inherited
+        assert value_coefficient(state) == inherited
+        assert 'claude171_value_calibration_pending' not in state
+        advance_minibatch(model, optimizer, scaler, cursor, rng, 0, 1, microbatch=2,
+                          value_state=state, diagnostic_log=logs.append)
+        assert len(logs) == 2
         fragment.update(returns=torch.tensor([0.,1.,2.,3.]),values=torch.tensor([0.,1.,2.,3.]),action_valid=torch.ones(4,dtype=torch.bool),decision_types=torch.tensor([0,0,1,1]))
         ev=explained_variance(fragment)
         assert ev[0]['explained_variance']==1. and ev[1]['samples']==2 and ev[3]['explained_variance'] is None
@@ -77,3 +90,69 @@ def test_visible_evaluation_ledger_and_tied_spearman():
     assert spearman([(1.,1),(1.,2)]) is None
     result=value_correlations([dict(act1_boss_value=.2,final_floor=10),dict(act1_boss_value=.8,final_floor=20)])
     assert result['act1_boss_value']==dict(cases=2,spearman=1.)
+
+
+def test_768_ppo_ramp_hits_target_in_round_20_and_preserves_milestones():
+    from train.e4_value_diagnostics import record_ppo_calibration_round
+
+    state = dict(update=100, training_seconds=1000,
+                 value_calibration=dict(start_coefficient=181., target=29., completed_updates=0),
+                 claude171_value_calibration=dict(start_update=101, old_coefficient=181.,
+                                                 new_coefficient=29., ratio=.25/29, milestones={}))
+    events = []
+    for round_number in range(1, 23):
+        row = dict(value_loss_coefficient=value_coefficient(state), value_loss=round_number / 100.)
+        state['update'] += 1
+        state['value_calibration']['completed_updates'] += 1
+        event = record_ppo_calibration_round(state, row)
+        if event is not None:
+            events.append(event)
+        if round_number == 10:
+            state = deepcopy(state)
+    report = events[-1]
+    assert report['event'] == 'claude171_value_calibration_complete'
+    assert len(events) == 3 and set(report['milestones']) == {'1', '10', '20'}
+    for key, expected in [('1', 181.), ('10', 109.), ('20', 29.)]:
+        milestone = report['milestones'][key]
+        assert milestone['coefficient'] == expected
+        assert milestone['value_mse'] == int(key) / 100.
+    assert value_coefficient(state) == 29.
+
+
+
+def test_768_calibration_retries_forced_rows_and_keeps_manual_override(tmp_path):
+    torch.set_num_threads(1)
+    torch.manual_seed(179)
+    dist.init_process_group("gloo", init_method=(tmp_path / "gloo179").as_uri(), rank=0, world_size=1)
+    try:
+        policy = CLSPolicy(ModelConfig(16, 1, 2, 32))
+        model = DistributedDataParallel(policy)
+        device = torch.device("cpu")
+        collector = NoSLCollector(NoSLSearch(2, device, 133), torch.Generator().manual_seed(133))
+        fragment = collector.collect(policy, length=2)
+        forced = dict(fragment, policy_mask=torch.zeros_like(fragment["policy_mask"]),
+                      logs=torch.zeros_like(fragment["logs"]))
+        forced["policy_mask"].scatter_(1, fragment["actions"][:, None], True)
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.)
+        scaler = torch.amp.GradScaler("cpu", enabled=False)
+        rng = torch.Generator().manual_seed(179)
+        state = dict(update=62, claude171_value_calibration_pending=True)
+        logs = []
+        advance_minibatch(model, optimizer, scaler, new_cursor(forced, rng, 1), rng, 0, 1, microbatch=2,
+                          value_state=state, diagnostic_log=logs.append)
+        assert logs[-1]["event"] == "claude171_value_calibration_deferred"
+        assert state["claude171_value_calibration_pending"]
+        assert "value_calibration" not in state
+        advance_minibatch(model, optimizer, scaler, new_cursor(fragment, rng, 1), rng, 0, 1, microbatch=2,
+                          value_state=state, diagnostic_log=logs.append)
+        assert logs[-1]["event"] == "claude171_value_recalibrated"
+        assert logs[-1]["actor_encoder_norm"] > 0 and math.isfinite(logs[-1]["ratio"])
+        assert "claude171_value_calibration_pending" not in state
+        state["standalone_value_coefficient"] = 181.
+        state["claude171_value_calibration_pending"] = True
+        advance_minibatch(model, optimizer, scaler, new_cursor(dict(fragment), rng, 1), rng, 0, 1, microbatch=2,
+                          value_state=state, diagnostic_log=logs.append)
+        assert value_coefficient(state) == 181.
+        assert len(logs) == 2
+    finally:
+        dist.destroy_process_group()

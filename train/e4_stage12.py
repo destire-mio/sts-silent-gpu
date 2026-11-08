@@ -480,33 +480,57 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
     dist.all_reduce(count, op=dist.ReduceOp.MAX)
     optimizer.zero_grad(set_to_none=True)
     steps = int(count)
+    manual = value_state is not None and value_state.get("standalone_value_coefficient") is not None
     recalibrate_ppo = teacher is None and value_state is not None and value_state.get("claude171_value_calibration_pending")
-    if value_state is not None and ("value_calibration" not in value_state or recalibrate_ppo):
-        calibration = torch.zeros(4,device=selected.device,dtype=torch.float64)
-        if rank == 0:
-            ids = selected[:microbatch]
-            assert len(ids) > 0
-            inputs = packed_inputs(f["data"],f["offsets"],ids,ids.device)
-            inputs["candidate_mask"] &= f["policy_mask"][ids,:inputs["candidate_mask"].shape[1]]
-            with model.no_sync():
-                measured=gradient_measurement(model.module,inputs,f["actions"][ids],f["logs"][ids],f["advantages"][ids],f["returns"][ids],scale=scaler.get_scale())
-            calibration[:] = torch.tensor([measured[k] for k in ["actor_encoder_norm","weighted_value_encoder_norm","ratio","target"]],device=ids.device,dtype=torch.float64)
-        dist.broadcast(calibration,src=0)
-        measured = dict(zip(["actor_encoder_norm", "weighted_value_encoder_norm", "ratio", "target"],
-                            calibration.tolist()))
-        measured.update(measured_value_coefficient=.5, completed_updates=0)
+    if value_state is not None and not manual and ("value_calibration" not in value_state or recalibrate_ppo):
+        calibration = torch.zeros(4, device=selected.device, dtype=torch.float64)
+        owner = 0
+        ids = selected[:microbatch]
         if recalibrate_ppo:
-            previous = value_coefficient(value_state)
-            measured["start_coefficient"] = previous
-            report = dict(start_update=value_state["update"] + 1, old_coefficient=previous,
-                          new_coefficient=measured["target"], ratio=measured["ratio"], milestones={})
-            value_state["claude171_value_calibration"] = report
-            value_state.pop("claude171_value_calibration_pending")
-            if rank == 0:
-                diagnostic_log(dict(event="claude171_value_recalibrated", **report))
-        elif rank == 0:
-            diagnostic_log(dict(event="value_gradient_calibration", **measured))
-        value_state["value_calibration"] = measured
+            eligible = (f["policy_mask"][selected].sum(dim=1) > 1) & (f["advantages"][selected] != 0)
+            ids = selected[eligible][:microbatch]
+            candidate_rank = torch.tensor(rank if len(ids) else world, device=selected.device)
+            dist.all_reduce(candidate_rank, op=dist.ReduceOp.MIN)
+            owner = int(candidate_rank)
+        if rank == owner:
+            assert len(ids) > 0
+            inputs = packed_inputs(f["data"], f["offsets"], ids, ids.device)
+            inputs["candidate_mask"] &= f["policy_mask"][ids, :inputs["candidate_mask"].shape[1]]
+            with model.no_sync():
+                measured = gradient_measurement(
+                    model.module, inputs, f["actions"][ids], f["logs"][ids], f["advantages"][ids],
+                    f["returns"][ids], scale=scaler.get_scale(), nonforced_only=bool(recalibrate_ppo))
+            if measured is not None:
+                calibration[:] = torch.tensor(
+                    [measured[k] for k in ("actor_encoder_norm", "weighted_value_encoder_norm", "ratio", "target")],
+                    device=ids.device, dtype=torch.float64)
+        if owner < world:
+            dist.broadcast(calibration, src=owner)
+        measured = dict(zip(("actor_encoder_norm", "weighted_value_encoder_norm", "ratio", "target"),
+                            calibration.tolist()))
+        if recalibrate_ppo and (not bool(torch.isfinite(calibration).all()) or measured["actor_encoder_norm"] <= 0):
+            if rank == 0 and not value_state.get("claude171_deferred_logged"):
+                diagnostic_log(dict(event="claude171_value_calibration_deferred",
+                                    update=value_state["update"], informative_rank=owner if owner < world else None,
+                                    actor_encoder_norm=measured["actor_encoder_norm"] if bool(torch.isfinite(calibration[0])) else None))
+            value_state["claude171_deferred_logged"] = True
+        else:
+            measured.update(measured_value_coefficient=.5, completed_updates=0)
+            if recalibrate_ppo:
+                previous = value_coefficient(value_state)
+                measured["start_coefficient"] = previous
+                report = dict(start_update=value_state["update"] + 1, old_coefficient=previous,
+                              new_coefficient=measured["target"], ratio=measured["ratio"], milestones={},
+                              measurement_rank=owner, actor_encoder_norm=measured["actor_encoder_norm"],
+                              weighted_value_encoder_norm=measured["weighted_value_encoder_norm"])
+                value_state["claude171_value_calibration"] = report
+                value_state.pop("claude171_value_calibration_pending")
+                value_state.pop("claude171_deferred_logged", None)
+                if rank == 0:
+                    diagnostic_log(dict(event="claude171_value_recalibrated", **report))
+            elif rank == 0:
+                diagnostic_log(dict(event="value_gradient_calibration", **measured))
+            value_state["value_calibration"] = measured
     ce_gradients = None
     if cursor.get("expert_total"):
         from train.e4_expert_iteration import expert_backward

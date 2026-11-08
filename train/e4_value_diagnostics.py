@@ -10,7 +10,13 @@ def encoder_parameters(policy):
             if name == 'cls' or name.startswith(('numbers.', 'tags.', 'ids.', 'input_norm.', 'encoder.', 'encoder_norm.'))]
 
 
-def gradient_measurement(policy, inputs, actions, old_logs, advantages, returns, scale=1.):
+def gradient_measurement(policy, inputs, actions, old_logs, advantages, returns, scale=1., *, nonforced_only=False):
+    if nonforced_only:
+        usable = (inputs["candidate_mask"].sum(dim=1) > 1) & (advantages != 0)
+        if not bool(usable.any()):
+            return None
+        inputs = {name: value[usable] for name, value in inputs.items()}
+        actions, old_logs, advantages, returns = (x[usable] for x in (actions, old_logs, advantages, returns))
     logits, value = policy(inputs)
     probability, _ = distribution(logits.float(), inputs['candidate_mask'])
     ratio = (probability.log_prob(actions) - old_logs).exp()
@@ -28,6 +34,9 @@ def gradient_measurement(policy, inputs, actions, old_logs, advantages, returns,
 
 
 def value_coefficient(state):
+    manual = state.get('standalone_value_coefficient')
+    if manual is not None:
+        return manual
     calibration = state.get('value_calibration')
     if calibration is None:
         return .5
@@ -43,7 +52,8 @@ def value_coefficient(state):
 
 def record_ppo_calibration_round(state, row):
     report = state.get('claude171_value_calibration')
-    if report is None:
+    if (report is None or state.get('standalone_value_coefficient') is not None
+            or state.get('claude171_value_calibration_pending')):
         return None
     round_number = state['value_calibration']['completed_updates']
     if round_number not in (1, 10, 20):
