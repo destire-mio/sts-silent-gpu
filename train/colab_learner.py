@@ -11,6 +11,10 @@ def configure_learner(policy, *, compile_encoder=False, fused_sdpa=False):
     fallbacks = set()
     if not (compile_encoder or fused_sdpa):
         return fallbacks
+    if compile_encoder:
+        from torch._functorch import config
+        # Value calibration differentiates the same forward graph twice.
+        config.donated_buffer = False
 
     def learner_forward(layer, eager, optimized):
         @wraps(eager)
