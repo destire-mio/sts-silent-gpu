@@ -1,5 +1,6 @@
 """Evaluation-only, paired determinized combat previews."""
 from copy import deepcopy
+import json
 import math
 import statistics
 import torch
@@ -34,6 +35,29 @@ class CombatLookahead:
         inputs = self.inputs(slots)
         inputs['candidate_mask'] &= mask[:, :inputs['candidate_mask'].shape[1]]
         return inputs
+
+    def record_preview_fault(self, parent, slot, seed, actions, fault, entities):
+        search = self.search
+        directory = search.evidence_directory
+        if directory is None:
+            return
+        path = directory / 'combat-preview-first-fault.json'
+        try:
+            stream = path.open('x', encoding='utf-8')
+        except FileExistsError:
+            return
+        with stream:
+            episode_seed, prefix = search.provenance_record(parent)
+            collector = search.midstart_collector
+            randomizations = list(collector.randomizations[parent]) if collector is not None else []
+            randomizations.append((len(prefix), seed, False))
+            record = dict(event='episode_fault', seed=episode_seed, candidates=prefix + actions,
+                          reason=f'engine_fault:{fault}' if fault else 'empty_preview_entities',
+                          slot=parent, probe_slot=slot, randomizations=randomizations,
+                          start_kind=collector.starts[parent] if collector is not None else 'fresh',
+                          scope='combat_preview', fault=fault, entity_count=entities)
+            json.dump(record, stream)
+            stream.write('\n')
 
     @torch.no_grad()
     def select(self, policy, parents):
@@ -71,38 +95,63 @@ class CombatLookahead:
         initial_turns = dict(zip(slots, [int(self.turns[source]) for source in sources]))
         ledgers = {s:deepcopy(search.reward_ledgers[source]) for s,source in zip(slots,sources)}
         rewards = dict.fromkeys(slots,0.)
-        before = search.progress_for(slots)
-        search.batch.step_slots(slots, first)
-        search.clock()
-        after = search.progress_for(slots)
-        for s in slots:rewards[s] += ledgers[s].advance(before[s],after[s])
-        steps = dict.fromkeys(slots, 1)
-        live = slots.copy()
+        history = {slot: [] for slot in slots}
+        origin = dict(zip(slots, zip(sources, seeds)))
+        failed = set()
+
+        def healthy(active):
+            if not active:
+                return []
+            flags = search.arrays['faults'].view(torch.int32)[active]
+            counts = search.arrays['entity_counts'][active]
+            rows = torch.stack((flags, counts), dim=1).cpu().tolist()
+            valid = []
+            for slot, (fault, entities) in zip(active, rows):
+                if not fault and entities:
+                    valid.append(slot)
+                    continue
+                parent, seed = origin[slot]
+                self.record_preview_fault(parent, slot, seed, history[slot],
+                                          fault & 0xFFFFFFFF, entities)
+                failed.add(slot)
+            return valid
+
+        def step(active, choices, before):
+            for slot, action in zip(active, choices):
+                history[slot].append(action)
+            search.batch.step_slots(active, choices)
+            valid = healthy(active)
+            search.clock()
+            after = search.progress_for(valid)
+            for slot in valid:
+                rewards[slot] += ledgers[slot].advance(before[slot], after[slot])
+            return valid
+
+        # Cloning and determinizing do not populate the preview observation buffers.
+        live = step(slots, first, search.progress_for(slots))
         limit = 64 if self.depth == 'turn' else 256
         while live:
             search.clock()
             progress = search.progress_for(live)
             search.batch.combat_turns_tensors(self.turns)
             live = [s for s in live if progress[s][PHASE] == COMBAT_PHASE
-                    and progress[s][SCREEN] not in (DEATH, VICTORY) and steps[s] < limit
+                    and progress[s][SCREEN] not in (DEATH, VICTORY) and len(history[s]) < limit
                     and (self.depth == 'combat' or int(self.turns[s]) == initial_turns[s])]
             if live:
                 preview = self.masked_inputs(live)
                 preview_logits = policy(preview)[0].masked_fill(~preview['candidate_mask'], -torch.inf)
-                before = progress
-                search.batch.step_slots(live, preview_logits.argmax(-1).tolist())
-                search.clock()
-                after = search.progress_for(live)
-                for s in live:rewards[s] += ledgers[s].advance(before[s],after[s])
-                for slot in live:
-                    steps[slot] += 1
-        assert not preview_faults_present(search.arrays['faults'], slots)
-        assert not bool(search.arrays['truncated'][slots].any())
-        progress = search.progress_for(slots)
-        alive = [s for s in slots if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
+                live = step(live, preview_logits.argmax(-1).tolist(), progress)
+        valid = [s for s in slots if s not in failed]
+        assert not bool(search.arrays['truncated'][valid].any())
+        progress = search.progress_for(valid)
+        alive = [s for s in valid if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
         values = dict(zip(alive, policy(self.inputs(alive))[1].tolist())) if alive else {}
         for i, begin, end, paired in groups:
             trials = slots[begin:end]
+            preview_steps = sum(len(history[s]) for s in trials)
+            if failed.intersection(trials):
+                reports[i].update(preview_steps=preview_steps, skipped='combat preview fault')
+                continue
             scores = [rewards[s] + values.get(s, 0.) for s in trials]
             samples = [scores[j:j + 8] for j in range(0, len(scores), 8)]
             means = [statistics.mean(group) for group in samples]
@@ -113,7 +162,7 @@ class CombatLookahead:
             actions[i] = ordered[best] if statistics.mean(differences) > margin else ordered[0]
             reports[i].update(selected=actions[i], seeds=paired, mean_scores=means,
                 paired_mean=statistics.mean(differences), paired_SE=margin,
-                preview_steps=sum(steps[s] for s in trials), depth=self.depth)
+                preview_steps=preview_steps, depth=self.depth)
         search.available.extend(slots)
         return actions, reports
 

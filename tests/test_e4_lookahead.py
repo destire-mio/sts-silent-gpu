@@ -1,6 +1,7 @@
 from copy import deepcopy
 import gzip
 import json
+import pytest
 from pathlib import Path
 import torch
 import spire
@@ -140,3 +141,83 @@ def test_boss_kill_preview_includes_reward_and_preserves_source_ledger(monkeypat
     assert reports[0]['mean_scores']
     assert all(score == pytest.approx(5/156) for score in reports[0]['mean_scores'])
     assert search.reward_ledgers == original
+
+
+@pytest.mark.parametrize('fault', [0, 852769260])
+def test_combat_preview_mid_step_fault_keeps_argmax_and_records_replay(tmp_path, monkeypatch, fault):
+    search, _ = setup()
+    search.evidence_directory = tmp_path
+    batch = search.batch
+    source_seed, prefix = search.provenance_record(0)
+    preview = CombatLookahead(search, depth='combat')
+    origin = {}
+    taken = {}
+    calls = []
+    hit = []
+
+    class Batch:
+        def __getattr__(self, name):
+            return getattr(batch, name)
+
+        def determinize_slots(self, slots, seeds):
+            batch.determinize_slots(slots, seeds)
+            origin.update(zip(slots, seeds))
+
+        def step_slots(self, slots, actions):
+            calls.append(list(slots))
+            if len(calls) == 1:
+                search.arrays['entity_counts'][slots] = 10
+                search.arrays['faults'].view(torch.int32)[slots] = 0
+            for slot, action in zip(slots, actions):
+                taken.setdefault(slot, []).append(action)
+            if len(calls) == 2:
+                hit.append(slots[0])
+                search.arrays['faults'][slots[0]] = fault
+                if not fault:
+                    search.arrays['entity_counts'][slots[0]] = 0
+
+    search.batch = Batch()
+    search.arrays = dict(search.arrays)
+    for key in ('faults', 'entity_counts'):
+        search.arrays[key] = search.arrays[key].clone()
+    initial_progress = search.progress_for([0])[0]
+    initial_progress[PHASE], initial_progress[SCREEN], initial_progress[HP] = COMBAT_PHASE, 0, 70
+
+    def progress(slots):
+        results = {slot: initial_progress.copy() for slot in slots}
+        if len(calls) >= 3:
+            for row in results.values():
+                row[PHASE] = COMBAT_PHASE + 1
+        return results
+
+    monkeypatch.setattr(search, 'progress_for', progress)
+    def inputs(slots):
+        assert not set(hit).intersection(slots)
+        return dict(candidate_mask=torch.ones(len(slots), 2, dtype=torch.bool))
+
+    monkeypatch.setattr(preview, 'masked_inputs', inputs)
+    monkeypatch.setattr(preview, 'inputs', inputs)
+
+    class Policy:
+        def __call__(self, inputs):
+            n = len(inputs['candidate_mask'])
+            return torch.tensor([[0., 1.]]).repeat(n, 1), torch.full((n,), 3.)
+
+    available = search.available.copy()
+    chosen, reports = preview.select(Policy(), [0])
+    assert chosen == [1] and reports[0]['skipped'] == 'combat preview fault'
+    assert search.available == available and not search.failed
+    slot = hit[0]
+    assert slot not in calls[2]
+    path = tmp_path / 'combat-preview-first-fault.json'
+    raw = path.read_bytes()
+    row = json.loads(raw)
+    assert row['event'] == 'episode_fault' and row['scope'] == 'combat_preview'
+    assert row['seed'] == source_seed and row['fault'] == fault
+    assert (row['entity_count'] > 0) == bool(fault)
+    assert row['reason'] == (f'engine_fault:{fault}' if fault else 'empty_preview_entities')
+    assert row['candidates'] == prefix + taken[slot]
+    assert len(taken[slot]) == 2
+    assert row['randomizations'] == [[len(prefix), origin[slot], False]]
+    preview.record_preview_fault(0, slot, 2, [], 1, 0)
+    assert path.read_bytes() == raw
