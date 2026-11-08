@@ -133,6 +133,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--compile", action="store_true", help="Compile standalone learner encoder layers")
     parser.add_argument("--fused-sdpa", action="store_true", help="Prefer flash or memory-efficient SDPA in the standalone learner")
     parser.add_argument("--batch-stop-file", type=Path)
+    parser.add_argument("--ema-decay", type=float, help="Standalone policy EMA decay (default 0)")
+    parser.add_argument("--arena-fraction", type=float, help="Standalone practice lane fraction (default 0)")
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
@@ -147,6 +149,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             parser.error(f"--{name}-aux-weight is standalone only")
         if weight is not None and (not math.isfinite(weight) or weight < 0):
             parser.error(f"--{name}-aux-weight must be finite and nonnegative")
+    for flag, value, maximum_inclusive in (("--ema-decay", args.ema_decay, False),
+                                            ("--arena-fraction", args.arena_fraction, True)):
+        if value is not None:
+            if not standalone:
+                parser.error(f"{flag} is standalone only")
+            if not math.isfinite(value) or value < 0 or value > 1 or (value == 1 and not maximum_inclusive):
+                parser.error(f"{flag} must be finite and in [0, {'1]' if maximum_inclusive else '1)'}")
     if not standalone and (args.compile or args.fused_sdpa):
         parser.error("learner speed options are standalone only")
     rank, world, local = (int(os.environ[k]) for k in ("RANK", "WORLD_SIZE", "LOCAL_RANK"))
@@ -172,6 +181,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     torch.manual_seed(20261031)
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
+    saved_state = saved["state"] if standalone and saved else {}
+    ema_decay = args.ema_decay if args.ema_decay is not None else saved_state.get("standalone_ema_decay", 0.)
+    arena_fraction = (args.arena_fraction if args.arena_fraction is not None
+                      else saved_state.get("standalone_arena_fraction", 0.))
+    if not arena_fraction and saved_state.get("standalone_arena_fraction"):
+        parser.error("an arena checkpoint requires a positive arena fraction to resume its live segments")
+    if arena_fraction and (args.teacher is not None or scored_distillation(saved_state)):
+        parser.error("arena practice requires standalone PPO")
     engine_transition = not standalone and saved is not None and 'claude153_pandora_grid' not in saved['state']
     if engine_transition:
         if rank == 0:
@@ -241,10 +258,16 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False)
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
-    search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024)
+    seed_rng = torch.Generator().manual_seed(20261131 + rank)
+    if arena_fraction:
+        from train.e4_stage12_arena import ArenaCollector, POOL_SLOTS
+        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024 + POOL_SLOTS)
+        collector = ArenaCollector(search, seed_rng, rank=rank, fraction=arena_fraction)
+    else:
+        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024)
+        collector = MidstartCollector(search, seed_rng, rank=rank)
     search.deadline = deadline
     search.evidence_directory = output
-    collector = MidstartCollector(search, torch.Generator().manual_seed(20261131 + rank), rank=rank)
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4,
@@ -337,6 +360,15 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         state["standalone_auxiliary_weights"] = auxiliary_weights
         if "global" in auxiliary_weights and not hasattr(collector, "auxiliary_fresh"):
             collector.auxiliary_fresh = dict(pending={}, started=[], finished=[])
+    ema = None
+    if ema_decay:
+        from train.e4_stage12_ema import ExponentialWeights
+        ema = ExponentialWeights(policy, ema_decay, saved.get("ema_weights") if saved else None)
+        state["standalone_ema_decay"] = ema_decay
+    else:
+        state.pop("standalone_ema_decay", None)
+    if arena_fraction:
+        state["standalone_arena_fraction"] = arena_fraction
     previous_calibration = state.get("claude171_value_calibration")
     if previous_calibration and not math.isfinite(previous_calibration["ratio"]):
         state["claude171_value_calibration_pending"] = True
@@ -398,16 +430,20 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         dist.barrier()
         if rank == 0:
             temporary = output / "model.pt.tmp"
-            torch.save(dict(model=move_tensors(policy.state_dict(), torch.device("cpu")),
+            contents = dict(model=move_tensors(policy.state_dict(), torch.device("cpu")),
                             optimizer=move_tensors(optimizer.state_dict(), torch.device("cpu")),
-                            scaler=scaler.state_dict(), state=deepcopy(state), ppo_rng=ppo_rng.get_state()), temporary)
+                            scaler=scaler.state_dict(), state=deepcopy(state), ppo_rng=ppo_rng.get_state())
+            if ema is not None:
+                contents["ema_weights"] = move_tensors(ema.weights, torch.device("cpu"))
+            torch.save(contents, temporary)
             temporary.replace(common)
             log(dict(event="checkpoint", update=state["update"], reason=state["stop_reason"]))
         dist.barrier()
         committed_rank_path = rank_path
 
-    def evaluate(evaluated=None, label=None):
+    def evaluate(evaluated=None, label=None, *, ema_run=False):
         evaluated = evaluated or policy
+        primary = not label and not ema_run
         gc.collect()
         torch.cuda.empty_cache()
         evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank, greedy=True)
@@ -421,7 +457,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         except AllocationEnded:
             complete = False
         episodes = [{k:e[k] for k in ("seed","floor","reach","keys","outcome","reward")} for e in evaluator.completed]
-        prefix = label or "evaluation"
+        prefix = label or ("evaluation-ema" if ema_run else "evaluation")
         filename = output / f"{prefix}-{state['update']}-rank-{rank}.json.gz"
         with gzip.open(filename, "wt") as stream:
             json.dump(episodes, stream)
@@ -430,7 +466,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         flag = torch.tensor(int(complete), device=device)
         dist.all_reduce(flag, op=dist.ReduceOp.MIN)
         dist.barrier()
-        track_score = score_guided and not state.get("distillation_evaluated") and not label
+        track_score = score_guided and not state.get("distillation_evaluated") and primary
         if track_score:
             score = torch.full((), float("-inf"), dtype=torch.float64, device=device)
         if rank == 0:
@@ -443,6 +479,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                        training_seconds=state["training_seconds"], no_SL=True,
                        learning_rate_cap=MAX_LEARNING_RATE, learning_rate_note="学习率封顶 4.44e-5",
                        observation_version=state['observation_version'], **metrics(all_episodes))
+            if ema is not None and not label:
+                row["weight_source"] = "ema" if ema_run else "raw"
+                row["ema_decay"] = ema_decay
             if track_score:
                 row.update(distillation_learning_rate=DISTILLATION_LEARNING_RATE,
                            distillation_pass_mean_floor=DISTILLATION_PASS_FLOOR)
@@ -455,13 +494,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 row["evaluated_model"] = state.get("teacher_evaluated_model", "dev-16.pt")
                 row["evaluated_model_training_hours"] = int(Path(row["evaluated_model"]).stem.split("-")[-1])
             baseline = output / "baseline.json.gz"
-            if state["update"] == 0 and bool(flag):
+            if state["update"] == 0 and bool(flag) and not ema_run:
                 with gzip.open(baseline, "wt") as stream:
                     json.dump(all_episodes, stream)
             if baseline.exists():
                 with gzip.open(baseline, "rt") as stream:
                     row["paired_baseline"] = paired_summary(all_episodes, json.load(stream))
-            if bool(flag) and not label:
+            if bool(flag) and primary:
                 if (not score_guided and state.get('distillation_updates') == distillation_target
                         and not state.get('distillation_evaluated')):
                     name = f'distillation-{distillation_target}.pt'
@@ -487,10 +526,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         del evaluator, evaluator_search
         gc.collect()
         torch.cuda.empty_cache()
-        if bool(flag) and not label:
+        if bool(flag) and primary:
             if not lookahead60_window(output,config,device,rank,world,deadline):
                 state['stop_reason'] = 'allocation_end_or_yield'
-        if bool(flag) and not label and due_combat_comparison(state['training_seconds']):
+        if bool(flag) and primary and due_combat_comparison(state['training_seconds']):
             hour = int(state['training_seconds'] // 7200) * 2
             if state.get("claude168_defer_supplement"):
                 if rank == 0:
@@ -503,6 +542,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 state['stop_reason'] = 'allocation_end_or_yield'
         return bool(flag)
 
+    def evaluate_training():
+        if not evaluate():
+            return False
+        return ema is None or evaluate(ema, ema_run=True)
+
     def combat_supplements():
         paused = state.get("claude168_defer_supplement") and scored_distillation(state)
         return run_combat_supplements(output, config, device, rank, world, deadline,
@@ -510,7 +554,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
 
     def regular_evaluation():
         nonlocal teacher
-        if not evaluate():
+        if not evaluate_training():
             state["stop_reason"] = "allocation_end_or_yield"
             return
         state["next_evaluation"] += 7200.
@@ -569,7 +613,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             state['stop_reason'] = 'allocation_end_or_yield'
     if (not score_guided and teacher is not None and state['distillation_updates'] == distillation_target
             and not state.get('distillation_evaluated') and state['stop_reason'] is None):
-        if evaluate():
+        if evaluate_training():
             state['distillation_evaluated'] = True
             state['learning_rate'] = MAX_LEARNING_RATE if config.width == 768 else 1e-4
             state['high_kl_streak'] = 0
@@ -587,7 +631,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         teacher = None
     del saved
     if teacher is None and state["update"] == 0 and not (output / "baseline.json.gz").exists():
-        if not evaluate():
+        if not evaluate_training():
             state["stop_reason"] = "allocation_end_or_yield"
     if state['stop_reason'] is None and not lookahead60_window(output,config,device,rank,world,deadline):
         state['stop_reason'] = 'allocation_end_or_yield'
@@ -692,11 +736,15 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 state["stop_reason"] = "allocation_end_or_yield"
                 break
             with search.times.measure("learner"):
+                if ema is not None:
+                    previous_steps = cursor["optimizer_steps"]
                 advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
                     teacher=teacher if distilling else None,
                     entropy_coefficient=state.get('entropy_coefficient', .01),
                     learner_profile=learner_profile,value_state=state,diagnostic_log=log,
                     auxiliary_weights=auxiliary_weights)
+                if ema is not None and cursor["optimizer_steps"] > previous_steps:
+                    ema.update()
                 if rank == 0 and "value_calibration" in state and not (output/"claude133-gradient-diagnostic.json").exists():
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
             if standalone:
@@ -710,6 +758,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         row = finish_metrics(cursor, model, scaler)
         if "auxiliary_metrics" in cursor["fragment"]:
             row["auxiliary"] = cursor["fragment"]["auxiliary_metrics"]
+        if arena_fraction:
+            row["arena"] = collector.take_arena_metrics()
         elapsed = torch.tensor(round_state["seconds"], dtype=torch.float64, device=device)
         dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
         row.update(expert_beta=0., expert_samples=0, expert_collection=False,
@@ -790,7 +840,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         distillation_finished = distilling and not score_guided and state['distillation_updates'] == distillation_target
         if distillation_finished and state['stop_reason'] is None:
             checkpoint()
-            if evaluate():
+            if evaluate_training():
                 state['distillation_evaluated'] = True
                 state['learning_rate'] = MAX_LEARNING_RATE if config.width == 768 else 1e-4
                 state['high_kl_streak'] = 0

@@ -324,6 +324,7 @@ class NoSLCollector(SegmentCollector):
         if auxiliary:
             from train.e4_stage12_auxiliary import record_decision, record_outcome, finish_rollout
         result = self.partial["result"]
+        after_transition = getattr(self, "after_transition", None)
         for tick in range(self.partial["next_step"], length):
             self.search.clock()
             fresh = [s for s in slots if self.seeds[s] is None]
@@ -345,6 +346,8 @@ class NoSLCollector(SegmentCollector):
             result["offsets"][row + 1:row + lanes + 1] = result["offsets"][row] + lengths.cumsum(0)
             self.search.batch.store_tensors(index, result["data"], result["offsets"][row:row + lanes + 1])
             reward, terminal = self.advance(slots, actions, progress)
+            if after_transition is not None:
+                after_transition(model, slots, progress, reward, terminal, auxiliary)
             if auxiliary:
                 record_outcome(auxiliary, self, slots, progress, terminal, tick)
             for name, value in (("actions", actions), ("values", values), ("logs", logs), ("rewards", reward),

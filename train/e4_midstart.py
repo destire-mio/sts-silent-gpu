@@ -31,7 +31,14 @@ class MidstartCollector(NoSLCollector):
         target = self.search.lanes + pool * 256 + position
         self.captured[slot][pool] = True
         self.search.clone([slot], [target])
-        entry = dict(seed=self.seeds[slot], path=self.paths[slot].copy(),
+        entry = self.pool_entry(slot, target)
+        if position == len(entries):
+            entries.append(entry)
+        else:
+            entries[position] = entry
+
+    def pool_entry(self, slot, target):
+        return dict(seed=self.seeds[slot], path=self.paths[slot].copy(),
             reward=deepcopy(self.rewards[slot]), floor_steps=self.floor_steps[slot],
             noncombat_floor_steps=self.noncombat_floor_steps[slot], tails=list(self.tails[slot]),
             pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes[slot]),
@@ -40,15 +47,15 @@ class MidstartCollector(NoSLCollector):
             shop_skip_used=self.search.shop_skip_used[target], shop_opened=self.search.shop_opened[target],
             reward_history=deepcopy(self.search.reward_history[target]),
             map_returned=bool(self.search.map_returned[target]))
-        if position == len(entries):
-            entries.append(entry)
-        else:
-            entries[position] = entry
 
     def restart(self, pool, slot):
         position = int(torch.randint(len(self.pools[pool]), (), generator=self.seed_rng))
         entry = self.pools[pool][position]
         source = self.search.lanes + pool * 256 + position
+        kind = ('act1_boss', 'act2', 'act2_boss', 'act3')[pool]
+        self.start_from_entry(entry, source, slot, kind)
+
+    def start_from_entry(self, entry, source, slot, kind):
         self.search.failed.pop(slot, None)
         self.search.clone([source], [slot])
         self.seeds[slot] = entry['seed']
@@ -62,7 +69,7 @@ class MidstartCollector(NoSLCollector):
         self.captured[slot] = entry['captured'].copy()
         self.randomizations[slot] = deepcopy(entry['randomizations'])
         self.pending_randomization[slot] = int(torch.randint(2**63 - 1, (), generator=self.seed_rng))
-        self.starts[slot] = ('act1_boss', 'act2', 'act2_boss', 'act3')[pool]
+        self.starts[slot] = kind
         self.starting_rewards[slot] = self.rewards[slot].total
         self.round_games += 1
 
@@ -92,6 +99,10 @@ class MidstartCollector(NoSLCollector):
                 self.search.frame_cache.pop(slot, None)
                 self.search.mask_cache.pop(slot, None)
             self.search.check(randomized)
+        self.capture_starts(slots, progress)
+        return super().choose(model, slots, progress)
+
+    def capture_starts(self, slots, progress):
         for slot in slots:
             if slot in self.search.failed:
                 continue
@@ -104,7 +115,6 @@ class MidstartCollector(NoSLCollector):
                 self.retain(2, slot)
             if not self.captured[slot][3] and p[ACT] == 3:
                 self.retain(3, slot)
-        return super().choose(model, slots, progress)
 
     def advance(self, slots, actions, progress):
         count = len(self.completed)
@@ -188,16 +198,19 @@ class MidstartCollector(NoSLCollector):
             for position, entry in enumerate(entries):
                 slot = self.search.lanes + pool * 256 + position
                 pool_slots.append(slot); pool_entries.append(entry)
-                self.search.provenance[slot] = (entry['seed'], entry['path'].copy())
-                self.search.seen[slot] = deepcopy(entry['seen'])
-                self.search.skip_returns[slot] = deepcopy(entry['skip_returns'])
-                self.search.shop_skip_used[slot] = entry['shop_skip_used']
-                self.search.shop_opened[slot] = entry['shop_opened']
-                self.search.reward_history[slot] = deepcopy(entry['reward_history'])
-                self.search.map_returned[slot] = entry['map_returned']
+                self.restore_pool_metadata(slot, entry)
         self.replay(pool_slots, pool_entries)
         if old_pool_count < 4:
             for slot, p in self.search.progress_for(slots).items():
                 if old_pool_count == 2:
                     self.captured[slot][2] = p[ACT] > 2 or (p[ACT] == 2 and p[ROOM] == BOSS_ROOM)
                 self.captured[slot][3] = p[ACT] >= 3
+
+    def restore_pool_metadata(self, slot, entry):
+        self.search.provenance[slot] = (entry['seed'], entry['path'].copy())
+        self.search.seen[slot] = deepcopy(entry['seen'])
+        self.search.skip_returns[slot] = deepcopy(entry['skip_returns'])
+        self.search.shop_skip_used[slot] = entry['shop_skip_used']
+        self.search.shop_opened[slot] = entry['shop_opened']
+        self.search.reward_history[slot] = deepcopy(entry['reward_history'])
+        self.search.map_returned[slot] = entry['map_returned']

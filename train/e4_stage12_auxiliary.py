@@ -127,6 +127,15 @@ def record_outcome(storage, collector, slots, progress, terminal, tick):
                 device=search.device)
             global_rows["outcome"][tick, valid] = torch.tensor(
                 [hits + [after[slot][FLOOR] / 55.] for slot, hits in zip(valid, reached)], device=search.device)
+        open_ends = getattr(collector, "arena_end_targets", {})
+        if open_ends:
+            soft = global_rows.setdefault("soft", torch.zeros_like(global_rows["resolved"]))
+            for slot, prediction in open_ends.items():
+                reached = torch.tensor([bool(collector.rewards[slot].reach[key]) for key in MILESTONES]
+                                       + [False], device=search.device)
+                soft[tick, slot] = ~reached
+                global_rows["outcome"][tick, slot] = torch.where(
+                    reached, global_rows["outcome"][tick, slot], prediction)
         fresh = collector.auxiliary_fresh
         for slot in sorted(ends):
             prediction = fresh["pending"].pop(slot, None)
@@ -144,12 +153,13 @@ def lambda_targets(rows, endpoint, live):
     next_prediction = target = endpoint.detach()
     continuation = live
     hard = torch.zeros_like(live)
+    soft = rows.get("soft")
     for tick in reversed(range(len(logits))):
         resolved = rows["resolved"][tick]
         target = torch.where(resolved, rows["outcome"][tick],
                              torch.where(hard, target, (1 - GAE_LAMBDA) * next_prediction + GAE_LAMBDA * target))
         continuation = (resolved | continuation) & eligible[tick]
-        hard = (resolved | hard) & continuation
+        hard = ((resolved | hard) if soft is None else torch.where(resolved, ~soft[tick], hard)) & continuation
         targets[tick], valid[tick], observed[tick] = target, continuation, hard
         next_prediction = logits[tick].sigmoid()
     return targets, valid, observed
