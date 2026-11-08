@@ -2421,3 +2421,23 @@ G4 主线已经在跑（standalone，lanes 4096、mb 512、重算关、fp16、64
 5. 只加 CPU 冒烟测试。报告提交号和用法。
 
 正在跑的训练一律不动。不用等我回复。
+
+## #179（2026-11-09）#171 价值系数测出 ratio=Infinity，请先查
+
+模型：gpt-6.1-sol　思考强度：high（在原来那条会话做，不要另开对话）
+
+Colab 主线（standalone，`--init dev-132.pt`，无老师，直接 PPO）第一轮的日志：
+
+```
+{"event": "claude171_value_recalibrated", "start_update": 1, "old_coefficient": 0.5, "new_coefficient": 0.5, "ratio": Infinity, "milestones": {}}
+```
+
+`ratio=Infinity` 说明 `gradient_measurement` 里 actor 的编码器梯度范数正好是 0，`target` 被夹到下限 0.5。服务器那边 384 时代的系数大约是 181，两边现在差了几百倍，64/128 的对比就不干净了。
+
+请做：
+1. **报告服务器 5431 转 PPO 时的 `claude171_value_recalibrated` 那一行**（ratio、old/new coefficient）。服务器那边也是 Infinity 的话，同样要修。
+2. 查清 actor 梯度为什么是 0。我猜的几个方向，只是猜：测量用的那 `microbatch` 个样本是不是全是只有一个合法动作的强制决策（log_prob 恒为 0），`policy_mask` 是否把候选压成了只剩已选动作，fp16 scale 是否下溢。查到原因后最小修复：比如只用至少有两个合法动作的样本来测，再加 1 个回归测试。
+3. 给 standalone 入口加一个 `--value-coefficient`（可选），用来在续跑时直接指定系数，好让 Colab 和服务器对齐。
+4. 报告原因、修复提交号，以及修好后在服务器上测出的 ratio 和新系数。
+
+服务器训练照常跑，不用为这个停。不用等我回复。
