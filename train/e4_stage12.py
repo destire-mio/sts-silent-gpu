@@ -56,6 +56,9 @@ def next_learning_rate(rate, kl):
     return min(MAX_LEARNING_RATE, max(1e-5, rate))
 
 
+GAE_LAMBDA = .995
+
+
 class CLSPolicy(Policy):
     def __init__(self, config=None):
         config = config or ModelConfig(width=256, layers=4, heads=4, feedforward=1024)
@@ -300,7 +303,7 @@ class NoSLCollector(SegmentCollector):
             return rewards, terminal
 
     @torch.no_grad()
-    def collect(self, model, length=64, *, after_step=None):
+    def collect(self, model, length=64, *, after_step=None, auxiliary_weights=None):
         device, lanes = self.search.device, self.search.lanes
         slots = list(range(lanes))
         if self.partial is None:
@@ -314,6 +317,12 @@ class NoSLCollector(SegmentCollector):
                 result[name] = torch.zeros((length, lanes), dtype=dtype, device=device)
             self.partial = dict(result=result, next_step=0, next_row=0, length=length,
                                 completed_before=len(self.completed))
+            if auxiliary_weights:
+                from train.e4_stage12_auxiliary import rollout_storage
+                self.partial["auxiliary"] = rollout_storage(auxiliary_weights, length, lanes, device)
+        auxiliary = self.partial.get("auxiliary")
+        if auxiliary:
+            from train.e4_stage12_auxiliary import record_decision, record_outcome, finish_rollout
         result = self.partial["result"]
         for tick in range(self.partial["next_step"], length):
             self.search.clock()
@@ -321,7 +330,10 @@ class NoSLCollector(SegmentCollector):
             if fresh:
                 self.fresh(fresh)
             progress = self.search.progress_for(slots)
-            actions, values, logs, imitation = self.choose(model, slots, progress)
+            if auxiliary:
+                actions, values, logs, imitation = record_decision(auxiliary, self, model, slots, progress, tick)
+            else:
+                actions, values, logs, imitation = self.choose(model, slots, progress)
             result["policy_mask"][tick] = self.search.last_policy_mask
             if "decision_types" not in result:
                 result["decision_types"] = torch.full((length * lanes,), -1, dtype=torch.int64, device=device)
@@ -333,6 +345,8 @@ class NoSLCollector(SegmentCollector):
             result["offsets"][row + 1:row + lanes + 1] = result["offsets"][row] + lengths.cumsum(0)
             self.search.batch.store_tensors(index, result["data"], result["offsets"][row:row + lanes + 1])
             reward, terminal = self.advance(slots, actions, progress)
+            if auxiliary:
+                record_outcome(auxiliary, self, slots, progress, terminal, tick)
             for name, value in (("actions", actions), ("values", values), ("logs", logs), ("rewards", reward),
                                 ("terminal", terminal), ("imitation", imitation),
                                 ("action_valid", [s not in self.stalled for s in slots]),
@@ -344,7 +358,11 @@ class NoSLCollector(SegmentCollector):
                 after_step()
         live = [s for s in slots if self.seeds[s] is not None]
         bootstrap = torch.zeros(lanes, device=device)
-        if live:
+        if auxiliary:
+            progress = self.search.progress_for(live) if live else {}
+            result["auxiliary"], result["auxiliary_metrics"] = finish_rollout(
+                auxiliary, self, model, live, progress, bootstrap)
+        elif live:
             scores = self.search.scores(model, live, self.search.progress_for(live))
             bootstrap[live] = torch.tensor([scores[s] for s in live], device=device)
         advantages = torch.zeros_like(result["values"])
@@ -352,7 +370,7 @@ class NoSLCollector(SegmentCollector):
         for tick in reversed(range(length)):
             continuing = ~result["terminal"][tick]
             delta = result["rewards"][tick] + bootstrap * continuing - result["values"][tick]
-            carry = delta + .995 * continuing * carry
+            carry = delta + GAE_LAMBDA * continuing * carry
             advantages[tick] = carry
             bootstrap = result["values"][tick]
         result["returns"] = result["values"] + advantages
@@ -472,8 +490,11 @@ def precision_probe(model, cursor, rank):
 
 def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
                       teacher=None, entropy_coefficient=.01, learner_profile=None, value_state=None, diagnostic_log=None,
-                      expert_oom_callback=None):
+                      expert_oom_callback=None, auxiliary_weights=None):
     f = cursor["fragment"]
+    auxiliary = f.get("auxiliary") if auxiliary_weights else None
+    if auxiliary:
+        from train.e4_stage12_auxiliary import auxiliary_loss
     selected, global_count = local_minibatch(cursor, rank)
     chunks = list(selected.split(microbatch))
     count = torch.tensor(len(chunks), device=cursor["order"].device)
@@ -549,7 +570,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 if teacher is not None:
                     with torch.no_grad():
                         teacher_logits, teacher_value = teacher(inputs)
-                logits, value = model(inputs)
+                if auxiliary:
+                    logits, value, predictions = model(inputs, auxiliary=True)
+                else:
+                    logits, value = model(inputs)
                 policy, normalized_entropy = distribution(logits.float(), inputs["candidate_mask"])
                 log_ratio = policy.log_prob(f["actions"][ids]) - f["logs"][ids]
                 ratio = log_ratio.exp()
@@ -561,6 +585,8 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 else:
                     actor, value_loss = distillation_terms(logits, value, teacher_logits, teacher_value, inputs['candidate_mask'])
                     loss = actor + (value_coefficient(value_state) if value_state is not None else .5) * value_loss
+                if auxiliary:
+                    loss = loss + auxiliary_loss(predictions, auxiliary, ids, auxiliary_weights)
                 scalar = loss.sum() * world / max(1, global_count)
                 cursor["finite"] &= torch.isfinite(loss).all()
                 cursor["totals"] += torch.stack((actor.detach().double().sum(), value_loss.detach().double().sum(),
@@ -675,6 +701,8 @@ def collector_snapshot(collector):
     state["timings"] = dict(collector.search.times.seconds)
     state['round_games'] = collector.round_games
     state['episode_faults'] = (dict(collector.search.failed), dict(collector.search.fault_counts))
+    if hasattr(collector, "auxiliary_fresh"):
+        state["auxiliary_fresh"] = collector.auxiliary_fresh
     if state["partial"] is not None:
         state["partial"] = dict(state["partial"], result=dict(state["partial"]["result"]))
         result = state["partial"]["result"]
@@ -700,6 +728,11 @@ def restore_collector(collector, state):
     collector.search.fault_counts = Counter(counts)
     collector.search.times.seconds = state.pop("timings")
     entropy_sum, entropy_count = state.pop("sampling_entropy")
+    fresh = state.pop("auxiliary_fresh", None)
+    if fresh is not None:
+        collector.auxiliary_fresh = fresh
+    if state["partial"] is not None and "auxiliary" in state["partial"]:
+        state["partial"]["auxiliary"] = move_tensors(state["partial"]["auxiliary"], collector.search.device)
     collector.restore(state)
     collector.search.reward_ledgers = collector.rewards
     collector.search.entropy_sum = entropy_sum.to(collector.search.device)

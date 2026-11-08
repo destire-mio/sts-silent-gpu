@@ -100,7 +100,10 @@ def paired_summary(episodes, baseline):
 def save_dev_weights(policy, output, training_seconds):
     path = output / f"dev-{int(training_seconds // 7200) * 2}.pt"
     if not path.exists():
-        torch.save(move_tensors(policy.state_dict(), torch.device("cpu")), path)
+        weights = policy.state_dict()
+        if hasattr(policy, "auxiliary_heads"):
+            weights = {key: value for key, value in weights.items() if not key.startswith("auxiliary_heads.")}
+        torch.save(move_tensors(weights, torch.device("cpu")), path)
     return path.name
 
 
@@ -120,6 +123,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--init", type=Path)
     parser.add_argument("--teacher", type=Path)
     parser.add_argument("--value-coefficient", type=float, help="Persist a fixed standalone value loss coefficient")
+    parser.add_argument("--combat-aux-weight", type=float, help="Combat prediction loss weight (default 0)")
+    parser.add_argument("--global-aux-weight", type=float, help="Global prediction loss weight (default 0)")
     parser.add_argument("--lanes", type=int, default=2048)
     parser.add_argument("--microbatch", type=int, default=256)
     parser.add_argument("--recompute", choices=("on", "off"), default="on")
@@ -136,6 +141,12 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             parser.error("--value-coefficient is standalone only")
         if not math.isfinite(args.value_coefficient) or args.value_coefficient < 0:
             parser.error("--value-coefficient must be finite and nonnegative")
+    requested_auxiliary = {"combat": args.combat_aux_weight, "global": args.global_aux_weight}
+    for name, weight in requested_auxiliary.items():
+        if weight is not None and not standalone:
+            parser.error(f"--{name}-aux-weight is standalone only")
+        if weight is not None and (not math.isfinite(weight) or weight < 0):
+            parser.error(f"--{name}-aux-weight must be finite and nonnegative")
     if not standalone and (args.compile or args.fused_sdpa):
         parser.error("learner speed options are standalone only")
     rank, world, local = (int(os.environ[k]) for k in ("RANK", "WORLD_SIZE", "LOCAL_RANK"))
@@ -187,19 +198,48 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             parser.error("--teacher is for 768-wide distillation")
     else:
         config = ModelConfig(256, 4, 4, 1024)
-    policy = CLSPolicy(config)
+    saved_auxiliary = saved["state"].get("standalone_auxiliary_weights", {}) if standalone and saved else {}
+    auxiliary_weights = {}
+    for name, weight in requested_auxiliary.items():
+        weight = saved_auxiliary.get(name, 0.) if weight is None else weight
+        if weight:
+            auxiliary_weights[name] = weight
+    if saved_auxiliary and auxiliary_weights.keys() != saved_auxiliary.keys():
+        parser.error("auxiliary resume requires the same enabled heads")
+    if auxiliary_weights:
+        if args.teacher is not None or (saved and scored_distillation(saved["state"])):
+            parser.error("auxiliary heads require standalone PPO")
+        from train.e4_stage12_auxiliary import AuxiliaryPolicy
+        policy = AuxiliaryPolicy(config)
+    else:
+        policy = CLSPolicy(config)
     if initial_weights is not None:
         policy.load_state_dict(initial_weights, strict=True)
         del initial_weights
     if standalone:
         policy.encoder_dtype_override = torch.float16 if args.dtype == "fp16" else torch.bfloat16
         policy.encoder_checkpoint_enabled = args.recompute == "on"
+    if auxiliary_weights:
+        if saved and not saved_auxiliary:
+            policy.load_state_dict(saved["model"], strict=True)
+        policy.install_auxiliary_heads(auxiliary_weights)
     policy.to(device)
     if standalone and (args.compile or args.fused_sdpa):
         from train.colab_learner import configure_learner
         configure_learner(policy, compile_encoder=args.compile, fused_sdpa=args.fused_sdpa)
-    model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False)
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
+    if auxiliary_weights:
+        # A legacy partial learner may still finish without auxiliary targets.
+        model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False,
+                                        find_unused_parameters=True)
+        trunk_parameters = [parameter for name, parameter in policy.named_parameters()
+                            if not name.startswith("auxiliary_heads.")]
+        optimizer = torch.optim.Adam(trunk_parameters, lr=1e-4, eps=1e-5)
+        if saved and not saved_auxiliary:
+            optimizer.load_state_dict(saved["optimizer"])
+        optimizer.add_param_group({"params": policy.auxiliary_heads.parameters()})
+    else:
+        model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False)
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
     search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024)
     search.deadline = deadline
@@ -225,8 +265,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     committed_rank_path = None
     round_state = dict(ready=None, seconds=0., decisions_start=0)
     if common.exists():
-        policy.load_state_dict(saved["model"])
-        optimizer.load_state_dict(saved["optimizer"])
+        if not auxiliary_weights or saved_auxiliary:
+            policy.load_state_dict(saved["model"], strict=True)
+            optimizer.load_state_dict(saved["optimizer"])
         state.update(saved["state"])
         apply_resume_learning_rate(state)
         previous_observation = saved['state'].get('observation_version', 13)
@@ -292,6 +333,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         expert_saved["round"] = None
     if standalone and args.value_coefficient is not None:
         state["standalone_value_coefficient"] = args.value_coefficient
+    if auxiliary_weights:
+        state["standalone_auxiliary_weights"] = auxiliary_weights
+        if "global" in auxiliary_weights and not hasattr(collector, "auxiliary_fresh"):
+            collector.auxiliary_fresh = dict(pending={}, started=[], finished=[])
     previous_calibration = state.get("claude171_value_calibration")
     if previous_calibration and not math.isfinite(previous_calibration["ratio"]):
         state["claude171_value_calibration_pending"] = True
@@ -585,7 +630,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 policy.eval()
                 try:
                     round_state["ready"] = collector.collect(teacher if distilling else policy, length=args.rollout_length,
-                        after_step=checkpoint_if_due if standalone else None)
+                        after_step=checkpoint_if_due if standalone else None, auxiliary_weights=auxiliary_weights)
                 except AllocationEnded:
                     interrupted = True
             interrupted = torch.tensor(int(interrupted), device=device)
@@ -650,7 +695,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
                     teacher=teacher if distilling else None,
                     entropy_coefficient=state.get('entropy_coefficient', .01),
-                    learner_profile=learner_profile,value_state=state,diagnostic_log=log)
+                    learner_profile=learner_profile,value_state=state,diagnostic_log=log,
+                    auxiliary_weights=auxiliary_weights)
                 if rank == 0 and "value_calibration" in state and not (output/"claude133-gradient-diagnostic.json").exists():
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
             if standalone:
@@ -662,6 +708,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if state["stop_reason"] is not None:
             break
         row = finish_metrics(cursor, model, scaler)
+        if "auxiliary_metrics" in cursor["fragment"]:
+            row["auxiliary"] = cursor["fragment"]["auxiliary_metrics"]
         elapsed = torch.tensor(round_state["seconds"], dtype=torch.float64, device=device)
         dist.all_reduce(elapsed, op=dist.ReduceOp.MAX)
         row.update(expert_beta=0., expert_samples=0, expert_collection=False,
