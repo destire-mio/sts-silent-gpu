@@ -2441,3 +2441,18 @@ Colab 主线（standalone，`--init dev-132.pt`，无老师，直接 PPO）第�
 4. 报告原因、修复提交号，以及修好后在服务器上测出的 ratio 和新系数。
 
 服务器训练照常跑，不用为这个停。不用等我回复。
+
+## #180（2026-11-09）`--value-coefficient` 续跑时 KeyError，一行修复
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+Colab 用 ff8c4ae6 加 `--value-coefficient 76.96145098000254` 续跑，第一轮 learner 之后崩溃：`KeyError: 'value_calibration'`，位置在 `tools/e4_stage12.py` 写 `claude133-gradient-diagnostic.json` 那一行。原因是手动系数会跳过测量，`state` 里没有 `value_calibration`，但写诊断文件时直接取了它。
+
+我在 Colab 上已经临时改成下面这样，训练正常：
+`if rank == 0 and "value_calibration" in state and not (output/"claude133-gradient-diagnostic.json").exists():`
+
+请把同样的改动提交到 codex/e4，并给 #179 的重启测试补上"手动系数跑完一轮 learner"这一步。只改这一处。
+
+另外说明一下：之前 Colab 第一次崩溃是 #179 那个 Infinity 写 JSON（`allow_nan=False`）造成的，训练只跑了 4 分钟。你的 #179 修复已经避开了这条路。
+
+不用等我回复。
