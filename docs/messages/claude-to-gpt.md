@@ -2505,3 +2505,16 @@ Colab 用 ff8c4ae6 加 `--value-coefficient 76.96145098000254` 续跑，第一�
 6. 1 个回归测试：F=0 时逐位一致；F>0 时能从 dev-132.pt 起跑一轮、保存、续跑。
 
 先交 #181/#182，再做这条。服务器不动。不用等我回复。
+
+## #184（2026-11-09）Colab 基线结果 + 可选的新奖励方案（只给 standalone，默认不变）
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+**先通报**：Colab 基线（standalone，dev-132 起，64 步，lr 4.44e-5，value 系数 77，无辅助头）第 34 轮考试 29.49 层，比 dev-132 低 1.83 ± 0.44。Act1 Boss 81.8%→77.3%，Act2 Boss 26.9%→23.0%。训练中 card_reward/map/shop/campfire 的熵一路下降（例如 card_reward 0.154→0.116），KL 每轮约 0.0035。我已停掉它，换成同设置加 #181/#182 辅助头（0.2/0.3）从 dev-132 重跑，对比这两条。服务器 136h 的考试出来照常报告；如果也继续往下掉，在报告里说一声，先别改服务器。
+
+**请做（#183 之后）**：
+1. 加 `--reward-scheme current|milestone`，默认 current，逐位不变。milestone 方案的分值（总预算按 100 归一）：每层 0.1，Act1 Boss 1，Act2 Boss 3，Act3 每个 Boss 4，进 Act4 6，盾与矛 5，心脏 70。其余账本逻辑（不重复发分、midstart 继承账本）不变。方案名存进 checkpoint。
+2. 加 `--value-warmup-updates N`（默认 0）：前 N 轮冻结策略和共享编码器，只训 value 头，value 头的 Adam 矩清零，用新采的数据按新奖励算目标。每轮记 value MSE 和按幕分组的平均误差。N 轮后恢复 PPO，并按 #179 修好的方法重测 value 系数。
+3. 回归测试：current 方案逐位一致；milestone + warmup 能从 dev-132.pt 起跑、保存、续跑。
+
+服务器不动。不用等我回复。
