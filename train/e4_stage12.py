@@ -17,7 +17,7 @@ from torch.utils.checkpoint import checkpoint
 import torch.distributed as dist
 
 from train.e4 import (RoomSearch, SegmentCollector, PHASE, COMBAT_PHASE, FLOOR, SCREEN, SCREENS,
-    ACT, ROOM, BOSS_ROOM, DEATH, VICTORY, MAX_REWARD, ACTION_KINDS)
+    ACT, ROOM, BOSS_ROOM, DEATH, VICTORY, ACTION_KINDS)
 from train.model import Policy, ModelConfig, network_inputs, distribution, packed_inputs, record_lengths
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_checkpoint import write_rank_checkpoint
@@ -298,12 +298,12 @@ class NoSLCollector(SegmentCollector):
                         final_deck_size=frame.get('deck_size', 0),
                         pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes[slot]),
                         outcome='stalled' if stalled else 'victory' if after[slot][SCREEN] == VICTORY else 'death',
-                        reward=self.rewards[slot].total / MAX_REWARD))
+                        reward=self.rewards[slot].total / self.rewards[slot].reward_budget))
                     self.seeds[slot] = None
             return rewards, terminal
 
     @torch.no_grad()
-    def collect(self, model, length=64, *, after_step=None, auxiliary_weights=None):
+    def collect(self, model, length=64, *, after_step=None, auxiliary_weights=None, track_value_acts=False):
         device, lanes = self.search.device, self.search.lanes
         slots = list(range(lanes))
         if self.partial is None:
@@ -315,6 +315,8 @@ class NoSLCollector(SegmentCollector):
             for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat"):
                 dtype = torch.int64 if name == "actions" else torch.bool if name in ("terminal", "imitation", "action_valid", "combat") else torch.float32
                 result[name] = torch.zeros((length, lanes), dtype=dtype, device=device)
+            if track_value_acts:
+                result["value_acts"] = torch.zeros((length, lanes), dtype=torch.int64, device=device)
             self.partial = dict(result=result, next_step=0, next_row=0, length=length,
                                 completed_before=len(self.completed))
             if auxiliary_weights:
@@ -335,6 +337,8 @@ class NoSLCollector(SegmentCollector):
                 actions, values, logs, imitation = record_decision(auxiliary, self, model, slots, progress, tick)
             else:
                 actions, values, logs, imitation = self.choose(model, slots, progress)
+            if "value_acts" in result:
+                result["value_acts"][tick] = torch.tensor([progress[slot][ACT] for slot in slots], device=device)
             result["policy_mask"][tick] = self.search.last_policy_mask
             if "decision_types" not in result:
                 result["decision_types"] = torch.full((length * lanes,), -1, dtype=torch.int64, device=device)
@@ -381,6 +385,8 @@ class NoSLCollector(SegmentCollector):
         result["policy_mask"] = result["policy_mask"].flatten(0, 1)
         for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat", "advantages", "returns"):
             result[name] = result[name].flatten()
+        if "value_acts" in result:
+            result["value_acts"] = result["value_acts"].flatten()
         result["data"] = result["data"][:int(result["offsets"][-1])].clone()
         self.partial = None
         return result
@@ -608,6 +614,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         from train.e4_expert_iteration import add_capped_expert_gradients
         add_capped_expert_gradients(model, ce_gradients, scaler, cursor, world)
         del ce_gradients
+    finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank)
+
+
+def finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank):
     scaler.unscale_(optimizer)
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), .5, error_if_nonfinite=False)
     stats = cursor.setdefault("gradient_stats", [0.,0.,0.,0.])

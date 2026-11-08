@@ -133,6 +133,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--compile", action="store_true", help="Compile standalone learner encoder layers")
     parser.add_argument("--fused-sdpa", action="store_true", help="Prefer flash or memory-efficient SDPA in the standalone learner")
     parser.add_argument("--batch-stop-file", type=Path)
+    parser.add_argument("--reward-scheme", choices=("current", "milestone"),
+                        help="Standalone reward ledger (default current)")
+    parser.add_argument("--value-warmup-updates", type=int,
+                        help="Standalone value-only updates before PPO (default 0)")
     parser.add_argument("--ema-decay", type=float, help="Standalone policy EMA decay (default 0)")
     parser.add_argument("--arena-fraction", type=float, help="Standalone practice lane fraction (default 0)")
     args = parser.parse_args(argv)
@@ -156,6 +160,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 parser.error(f"{flag} is standalone only")
             if not math.isfinite(value) or value < 0 or value > 1 or (value == 1 and not maximum_inclusive):
                 parser.error(f"{flag} must be finite and in [0, {'1]' if maximum_inclusive else '1)'}")
+    if not standalone and (args.reward_scheme is not None or args.value_warmup_updates is not None):
+        parser.error("reward scheme and value warmup are standalone only")
+    if args.value_warmup_updates is not None and args.value_warmup_updates < 0:
+        parser.error("--value-warmup-updates must be nonnegative")
     if not standalone and (args.compile or args.fused_sdpa):
         parser.error("learner speed options are standalone only")
     rank, world, local = (int(os.environ[k]) for k in ("RANK", "WORLD_SIZE", "LOCAL_RANK"))
@@ -182,6 +190,20 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if standalone and saved else {}
+    saved_reward = saved_state.get("standalone_reward_scheme", "current")
+    reward_scheme = args.reward_scheme or saved_reward
+    saved_warmup = saved_state.get("standalone_value_warmup", {}).get("updates", 0)
+    warmup_updates = args.value_warmup_updates if args.value_warmup_updates is not None else saved_warmup
+    if standalone and saved and (reward_scheme != saved_reward or warmup_updates != saved_warmup):
+        parser.error("resume requires the checkpoint reward scheme and warmup length")
+    if warmup_updates and args.value_coefficient is not None:
+        parser.error("value warmup remeasures the PPO coefficient; omit --value-coefficient")
+    if (reward_scheme == "milestone" or warmup_updates) and (args.teacher is not None or scored_distillation(saved_state)):
+        parser.error("milestone rewards and value warmup require standalone PPO")
+    collector_options = {}
+    if reward_scheme == "milestone":
+        from train.e4 import MilestoneRewardLedger
+        collector_options["reward_ledger_type"] = MilestoneRewardLedger
     ema_decay = args.ema_decay if args.ema_decay is not None else saved_state.get("standalone_ema_decay", 0.)
     arena_fraction = (args.arena_fraction if args.arena_fraction is not None
                       else saved_state.get("standalone_arena_fraction", 0.))
@@ -262,10 +284,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if arena_fraction:
         from train.e4_stage12_arena import ArenaCollector, POOL_SLOTS
         search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024 + POOL_SLOTS)
-        collector = ArenaCollector(search, seed_rng, rank=rank, fraction=arena_fraction)
+        collector = ArenaCollector(search, seed_rng, rank=rank, fraction=arena_fraction, **collector_options)
     else:
         search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024)
-        collector = MidstartCollector(search, seed_rng, rank=rank)
+        collector = MidstartCollector(search, seed_rng, rank=rank, **collector_options)
     search.deadline = deadline
     search.evidence_directory = output
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
@@ -369,6 +391,16 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         state.pop("standalone_ema_decay", None)
     if arena_fraction:
         state["standalone_arena_fraction"] = arena_fraction
+    if reward_scheme != "current":
+        state["standalone_reward_scheme"] = reward_scheme
+    warmup = None
+    if warmup_updates:
+        from train.e4_stage12_value_warmup import advance_value_minibatch, warmup_act_metrics
+        warmup = state.get("standalone_value_warmup")
+        if warmup is None:
+            warmup = state["standalone_value_warmup"] = dict(updates=warmup_updates, completed=0)
+            for parameter in policy.value.parameters():
+                optimizer.state.pop(parameter, None)
     previous_calibration = state.get("claude171_value_calibration")
     if previous_calibration and not math.isfinite(previous_calibration["ratio"]):
         state["claude171_value_calibration_pending"] = True
@@ -449,7 +481,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank, greedy=True)
         evaluator_search.deadline = deadline
         evaluator_search.evidence_directory = output
-        evaluator = EvaluationLedgerCollector(evaluator_search, torch.Generator().manual_seed(101 + rank), rank=rank)
+        evaluator = EvaluationLedgerCollector(evaluator_search, torch.Generator().manual_seed(101 + rank),
+                                              rank=rank, **collector_options)
         evaluated.eval()
         complete = True
         try:
@@ -479,6 +512,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                        training_seconds=state["training_seconds"], no_SL=True,
                        learning_rate_cap=MAX_LEARNING_RATE, learning_rate_note="学习率封顶 4.44e-5",
                        observation_version=state['observation_version'], **metrics(all_episodes))
+            if reward_scheme != "current":
+                row["reward_scheme"] = reward_scheme
             if ema is not None and not label:
                 row["weight_source"] = "ema" if ema_run else "raw"
                 row["ema_decay"] = ema_decay
@@ -657,6 +692,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 last_checkpoint = started = time.monotonic()
 
         distilling = teacher is not None and (score_guided or state["distillation_updates"] < distillation_target)
+        warming = warmup is not None and warmup["completed"] < warmup["updates"]
         if cursor is None:
             if collector.partial is None and round_state["ready"] is None:
                 round_state = dict(ready=None, seconds=0., decisions_start=collector.decisions)
@@ -674,7 +710,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 policy.eval()
                 try:
                     round_state["ready"] = collector.collect(teacher if distilling else policy, length=args.rollout_length,
-                        after_step=checkpoint_if_due if standalone else None, auxiliary_weights=auxiliary_weights)
+                        after_step=checkpoint_if_due if standalone else None,
+                        auxiliary_weights=None if warming else auxiliary_weights, track_value_acts=warming)
                 except AllocationEnded:
                     interrupted = True
             interrupted = torch.tensor(int(interrupted), device=device)
@@ -724,7 +761,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 model.train()
                 state["microbatch"] = choose_microbatch(model, cursor)
                 log(dict(event="microbatch", value=state["microbatch"]))
-        model.train()
+        model.train(not warming)
         recompute = None
         if config.width == 768 and not standalone:
             recompute = prepare_round(policy, cursor, state, world, resumed_learner)
@@ -738,11 +775,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             with search.times.measure("learner"):
                 if ema is not None:
                     previous_steps = cursor["optimizer_steps"]
-                advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
-                    teacher=teacher if distilling else None,
-                    entropy_coefficient=state.get('entropy_coefficient', .01),
-                    learner_profile=learner_profile,value_state=state,diagnostic_log=log,
-                    auxiliary_weights=auxiliary_weights)
+                if warming:
+                    advance_value_minibatch(policy, optimizer, scaler, cursor, ppo_rng, state["microbatch"])
+                else:
+                    advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
+                        teacher=teacher if distilling else None,
+                        entropy_coefficient=state.get('entropy_coefficient', .01),
+                        learner_profile=learner_profile,value_state=state,diagnostic_log=log,
+                        auxiliary_weights=auxiliary_weights)
                 if ema is not None and cursor["optimizer_steps"] > previous_steps:
                     ema.update()
                 if rank == 0 and "value_calibration" in state and not (output/"claude133-gradient-diagnostic.json").exists():
@@ -777,17 +817,24 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         parts = torch.tensor(list(search.times.seconds.values()),device=device,dtype=torch.float64)
         dist.all_reduce(parts, op=dist.ReduceOp.MAX)
         per_gpu = [float(n) / max(.001,float(elapsed)) for n in by_rank]
-        row["value_loss_coefficient"] = value_coefficient(state)
+        row["value_loss_coefficient"] = 1. if warming else value_coefficient(state)
+        if reward_scheme != "current":
+            row["reward_scheme"] = reward_scheme
+        if warming:
+            row["value_warmup"] = dict(round=warmup["completed"] + 1, target=warmup["updates"],
+                                       by_act=warmup_act_metrics(cursor))
+            entropy_sum, entropy_count = search.decision_entropy.sum(dim=1).tolist()
+            row["normalized_entropy"] = entropy_sum / max(1., entropy_count)
         if recompute is not None:
             recompute = finish_round(recompute, device, float(parts[-1]), float(elapsed))
             if state["update"] < TRIAL_ROUNDS:
                 state.setdefault("claude165_recompute", []).append(recompute)
             row["encoder_recompute"] = recompute
-        if "value_calibration" in state:
+        if not warming and "value_calibration" in state:
             state["value_calibration"]["completed_updates"] += 1
         state["update"] += 1
         state["training_seconds"] += float(elapsed)
-        if not distilling:
+        if not distilling and not warming:
             calibration_event = record_ppo_calibration_round(state, row)
             if calibration_event is not None:
                 log(calibration_event)
@@ -803,7 +850,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             if score_guided:
                 # finish_metrics already averages these losses over valid examples on all ranks.
                 row.update(distillation_kl=row["policy_loss"], distillation_value_mse=row["value_loss"])
-        else:
+        elif not warming:
             state["learning_rate"] = next_learning_rate(state["learning_rate"], row["kl"])
         entropies = search.decision_entropy.clone()
         dist.all_reduce(entropies)
@@ -813,7 +860,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             log(dict(event='low_normalized_entropy_warning', update=state['update'], normalized_entropy=row['normalized_entropy']))
         if row['kl'] > .1:
             log(dict(event='high_KL_warning', update=state['update'], kl=row['kl'], streak=state['high_kl_streak']))
-        log(dict(event="update",phase="distillation" if distilling else "PPO",distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
+        phase = "value_warmup" if warming else "distillation" if distilling else "PPO"
+        log(dict(event="update",phase=phase,distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
             mainline_decisions_global=int(sum(float(n)for n in by_rank)),decisions_per_second_per_gpu=per_gpu,
             decisions_per_second_global=sum(per_gpu),training_mean_floor=float(done[1]/done[0]) if float(done[0]) else None,
             training_act1_boss_pass_rate=float(done[2]/done[0]) if float(done[0]) else None,
@@ -837,6 +885,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         cursor = None
         collector.completed.clear()
         round_state = dict(ready=None,seconds=0.,decisions_start=collector.decisions)
+        if warming:
+            warmup["completed"] += 1
+            if warmup["completed"] == warmup["updates"]:
+                state["claude171_value_calibration_pending"] = True
+                checkpoint()
+                log(dict(event="value_warmup_complete", update=state["update"],
+                         rounds=warmup["completed"], remeasure_value_coefficient=True))
         distillation_finished = distilling and not score_guided and state['distillation_updates'] == distillation_target
         if distillation_finished and state['stop_reason'] is None:
             checkpoint()

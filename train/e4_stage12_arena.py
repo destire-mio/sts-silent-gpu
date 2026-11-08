@@ -21,8 +21,8 @@ def battle_identity(progress):
 
 
 class ArenaCollector(MidstartCollector):
-    def __init__(self, search, seed_rng, *, rank, fraction):
-        super().__init__(search, seed_rng, rank=rank)
+    def __init__(self, search, seed_rng, *, rank, fraction, **collector_options):
+        super().__init__(search, seed_rng, rank=rank, **collector_options)
         self.arena_lanes = max(1, round(search.lanes * fraction))
         self.arena_pools = {category: [] for category in CATEGORIES.values()}
         self.arena_positions = dict.fromkeys(self.arena_pools, 0)

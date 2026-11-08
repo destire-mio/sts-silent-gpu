@@ -2,7 +2,7 @@
 from collections import deque
 from copy import deepcopy
 import torch
-from train.e4 import ACT, FLOOR, PHASE, ROOM, BOSS_ROOM, COMBAT_PHASE, MAX_REWARD
+from train.e4 import ACT, FLOOR, PHASE, ROOM, BOSS_ROOM, COMBAT_PHASE
 from train.e4_stage12 import NoSLCollector
 
 class MidstartCollector(NoSLCollector):
@@ -123,7 +123,8 @@ class MidstartCollector(NoSLCollector):
         ended = [s for s, terminal in zip(slots, result[1]) if terminal]
         for episode, slot in zip(self.completed[count:], ended):
             episode['start_kind'] = self.starts[slot]
-            episode['reward_since_start'] = (self.rewards[slot].total - self.starting_rewards[slot]) / MAX_REWARD
+            episode['reward_since_start'] = (
+                self.rewards[slot].total - self.starting_rewards[slot]) / self.rewards[slot].reward_budget
         return result
 
     def state(self):

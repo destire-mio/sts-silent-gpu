@@ -85,6 +85,12 @@ class RewardLedger:
     bosses: set = field(default_factory=set)
     reach: dict = field(default_factory=lambda: dict.fromkeys(REACH, False))
     total: int = 0
+    reward_budget = MAX_REWARD
+    floor_points = 1
+    boss_points = (5, 5, 5)
+    act4_points = 10
+    shield_spear_points = 10
+    heart_points = 50
 
     def advance(self, before, after):
         reward = 0
@@ -92,10 +98,10 @@ class RewardLedger:
             for floor in range(before[FLOOR] + 1, after[FLOOR] + 1):
                 assert floor not in self.floors, "Duplicate floor reward"
                 self.floors.add(floor)
-                reward += 1
+                reward += self.floor_points
         if after[ACT] == 4 and not self.reach["act4"]:
             self.reach["act4"] = True
-            reward += 10
+            reward += self.act4_points
         won = (before[PHASE] == COMBAT_PHASE and after[PHASE] != COMBAT_PHASE
                and after[BATTLE_OVER] and not after[SMOKED] and after[HP] > 0)
         if won and before[ROOM] == BOSS_ROOM:
@@ -105,24 +111,33 @@ class RewardLedger:
             act = before[ACT]
             if act < 3:
                 self.reach[f"act{act}_boss"] = True
-                reward += 5
+                reward += self.boss_points[act - 1]
             elif act == 3:
                 count = sum(a == 3 for a, _ in self.bosses)
                 assert count in (1, 2)
                 self.reach["act3_first_boss" if count == 1 else "act3_second_boss"] = True
-                reward += 5
+                reward += self.boss_points[2]
             else:
                 self.reach["heart"] = True
-                reward += 50
+                reward += self.heart_points
         if (won and before[ACT] == 4 and before[ROOM] == ELITE_ROOM
                 and not self.reach["shield_spear"]):
             self.reach["shield_spear"] = True
-            reward += 10
+            reward += self.shield_spear_points
         if after[ACT] == 3 and self.reach["act3_second_boss"] and after[KEYS] == 7:
             self.reach["act3_three_keys"] = True
         self.total += reward
-        assert self.total <= MAX_REWARD
-        return reward / MAX_REWARD
+        assert self.total <= self.reward_budget
+        return reward / self.reward_budget
+
+
+class MilestoneRewardLedger(RewardLedger):
+    reward_budget = 100
+    floor_points = .1
+    boss_points = (1, 3, 4)
+    act4_points = 6
+    shield_spear_points = 5
+    heart_points = 70
 
 
 class RoomSearch:
@@ -774,7 +789,8 @@ class RoomSearch:
 
 
 class SegmentCollector:
-    def __init__(self, search, seed_rng, *, rank=0):
+    def __init__(self, search, seed_rng, *, rank=0, reward_ledger_type=RewardLedger):
+        self.reward_ledger_type = reward_ledger_type
         self.search, self.seed_rng, self.rank = search, seed_rng, rank
         self.seeds = [None] * search.lanes
         self.paths = [[] for _ in self.seeds]
@@ -783,7 +799,7 @@ class SegmentCollector:
         self.tails = [deque(maxlen=10) for _ in self.seeds]
         self.last_stall_classes = {}
         self.pending = [deque() for _ in self.seeds]
-        self.rewards = [RewardLedger() for _ in self.seeds]
+        self.rewards = [self.reward_ledger_type() for _ in self.seeds]
         self.pre_boss_deck_sizes = [[] for _ in self.seeds]
         self.completed = []
         self.decisions = 0
@@ -808,7 +824,7 @@ class SegmentCollector:
             self.noncombat_floor_steps[slot] = 0
             self.tails[slot].clear()
             self.pending[slot].clear()
-            self.rewards[slot] = RewardLedger()
+            self.rewards[slot] = self.reward_ledger_type()
             self.pre_boss_deck_sizes[slot] = []
 
     def fresh(self, slots):
@@ -971,7 +987,7 @@ class SegmentCollector:
                     final_deck_size=self.search.frames([slot], after)[slot]["deck_size"],
                     pre_boss_deck_sizes=deepcopy(self.pre_boss_deck_sizes[slot]),
                     outcome="stalled" if stalled else "victory" if after[slot][SCREEN] == VICTORY else "death",
-                    reward=self.rewards[slot].total / MAX_REWARD))
+                    reward=self.rewards[slot].total / self.rewards[slot].reward_budget))
                 self.seeds[slot] = None
         return reward, terminal
 
