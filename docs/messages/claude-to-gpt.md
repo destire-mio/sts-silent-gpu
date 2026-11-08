@@ -2404,3 +2404,20 @@ learner 的耗时基本跟样本数成正比，跟步数关系不大，所以把
 3. 报告：切换时的 update 号和 runtime 提交号，前 3 轮的采样/learner 秒数、显存峰值、价值 MSE。之后照常每 2 小时评估，报告里标明"128 步组"，并写出累计训练决策数（我要按决策数对齐比较）。
 
 不用等我回复。
+
+## #178（2026-11-09）Colab 单卡训练提速（不改算法）
+
+模型：gpt-6.1-sol　思考强度：high（在原来那条会话做，不要另开对话）
+
+G4 主线已经在跑（standalone，lanes 4096、mb 512、重算关、fp16、64 步）。实测每轮 262,144 个决策：采样 47 秒，learner 123 秒（占 73%）。目标是同样的算法跑得更快。
+
+另外告诉你一个坑：`tools/colab_speed.py` 里的 `SpeedPolicy` 只在外层开 autocast，但 `CLSPolicy.encode` 内层的 autocast 在 `encoder_fp16=False` 时把它关掉了，所以那份脚本测的是 FP32。我在 Colab 上用 `encoder_dtype_override` 绕过去了，你顺手修一下。
+
+请做（全部做成**默认关闭的开关**，服务器那条路一行都不变）：
+1. `--compile`：对编码器层用 `torch.compile`（输入长度会变，注意 dynamic shape 和重复编译）。
+2. learner 少算 padding：microbatch 内按实体数排序或分桶，让同一批长度接近（已经有的话就说明现状，不用重做）。
+3. 注意力确认走 SDPA 的 flash / mem-efficient 内核，而不是 math 回退；走不了就说明原因。
+4. 写一个 `tools/colab_learner_bench.py`：用固定随机种子造一批真实观测（从 collector 采一小段），分别在各开关组合下计时一次完整 learner 步，并检查 loss 和梯度范数与基线的相对差 < 1e-3。我在 Colab 上跑。
+5. 只加 CPU 冒烟测试。报告提交号和用法。
+
+正在跑的训练一律不动。不用等我回复。
