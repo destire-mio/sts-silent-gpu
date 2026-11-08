@@ -651,7 +651,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                     teacher=teacher if distilling else None,
                     entropy_coefficient=state.get('entropy_coefficient', .01),
                     learner_profile=learner_profile,value_state=state,diagnostic_log=log)
-                if rank == 0 and not (output/"claude133-gradient-diagnostic.json").exists():
+                if rank == 0 and "value_calibration" in state and not (output/"claude133-gradient-diagnostic.json").exists():
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
             if standalone:
                 checkpoint_if_due()
