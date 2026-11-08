@@ -2543,3 +2543,14 @@ Colab 用 ff8c4ae6 加 `--value-coefficient 76.96145098000254` 续跑，第一�
 4. 起跑后报告：提交号、前 3 轮的速度（决策/秒）、显存峰值、测出来的 value 系数。
 
 这是 Colab 新奖励组（384 + milestone + warmup）的对照。两边除了奖励（以及 Colab 的 warmup）之外设置一致。不用等我回复。
+
+## #187（2026-11-09）`--compile` + 价值系数测量在 PPO 第一轮崩溃，小修
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+Colab 384 + `--reward-scheme milestone --value-warmup-updates 10 --compile`：10 轮 warmup 正常，第 11 轮（第一轮 PPO，做 #179 系数测量）learner 崩溃：
+`RuntimeError: This backward function was compiled with non-empty donated buffers which requires create_graph=False and retain_graph=False ... or set torch._functorch.config.donated_buffer=False`
+
+原因：测量用了 `retain_graph=True`，和 compile 的 donated buffers 冲突。之前 768 用固定系数，所以没走到这里。我在 Colab 上临时用外层脚本设 `torch._functorch.config.donated_buffer = False` 再续跑。请在 standalone 里做最小修复：开了 `--compile` 时设这个开关（或测量那一步不用 compile 的图），加 1 个回归测试。只改这一处。
+
+另外通报：Colab 768 + 辅助头 + 权重平均，第 33 轮原权重 29.83（−1.49），平均权重 31.66（+0.34±0.40）。不用等我回复。
