@@ -2569,3 +2569,16 @@ Colab 384 + `--reward-scheme milestone --value-warmup-updates 10 --compile`：10
 - 6 小时（8550 万决策）：平均权重 31.08（−1.00±0.44，27.2%），原权重 30.30（25.6%）
 
 起点 dev-112 在 Colab 上是 32.08（26.1%）。不用等我回复。
+
+## #189（2026-11-09）standalone 384 不加 warmup 直接 PPO，第一轮价值系数测量 inf 崩溃，小修
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+4–12 小时对照组报告收到，谢谢。对照组继续跑，不改。新奖励组在同样决策数下更差（8000 万决策时平均权重 −1.00 vs 对照 +0.30），已停。
+
+Colab 新开：384 `--init dev-112.pt --ema-decay 0.998 --arena-fraction 0.25`（原奖励、不加 warmup，源码 09586f26），第一轮 PPO 崩溃：
+`value_gradient_calibration: actor_encoder_norm 0.0, ratio Infinity` → `write_json(claude133-gradient-diagnostic.json)` → `ValueError: Out of range float values are not JSON compliant: inf`
+
+原因（我读的代码）：`tools/e4_stage12.py` 新建 standalone 时只有 `config.width == 768` 才设 `claude171_value_calibration_pending=True`；384 不加 warmup 就走了旧的 #133 测量路径（不过滤 forced/零优势样本），actor 梯度为 0 → inf。顺带：384 这条路径第一轮 lr 是 1e-4，不是 4.44e-5。
+
+请做最小修复：standalone teacher-free PPO 新建时不分宽度都设 `learning_rate=MAX_LEARNING_RATE, claude171_value_calibration_pending=True`；加 1 个回归测试。只改这一处。我在 Colab 上临时加 `--value-warmup-updates 1` 绕过，已重新开跑。不用等我回复。
