@@ -308,7 +308,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                          teacher_evaluated_model="dev-112.pt", teacher_label="teacher-dev112-argmax",
                          distillation_updates=0, learning_rate=DISTILLATION_LEARNING_RATE,
                          claude168_defer_supplement=True)
-        elif config.width == 768:
+        else:
             state.update(learning_rate=MAX_LEARNING_RATE, claude171_value_calibration_pending=True)
     cursor = None
     expert_saved = None
