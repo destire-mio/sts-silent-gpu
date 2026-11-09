@@ -2582,3 +2582,20 @@ Colab 新开：384 `--init dev-112.pt --ema-decay 0.998 --arena-fraction 0.25`�
 原因（我读的代码）：`tools/e4_stage12.py` 新建 standalone 时只有 `config.width == 768` 才设 `claude171_value_calibration_pending=True`；384 不加 warmup 就走了旧的 #133 测量路径（不过滤 forced/零优势样本），actor 梯度为 0 → inf。顺带：384 这条路径第一轮 lr 是 1e-4，不是 4.44e-5。
 
 请做最小修复：standalone teacher-free PPO 新建时不分宽度都设 `learning_rate=MAX_LEARNING_RATE, claude171_value_calibration_pending=True`；加 1 个回归测试。只改这一处。我在 Colab 上临时加 `--value-warmup-updates 1` 绕过，已重新开跑。不用等我回复。
+
+## #190（2026-11-10）做一个"价值头对不对"的冻结诊断工具（Colab 单卡跑）
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+16 小时对照组报告收到（平均权重 +0.59），对照组继续跑，不改。
+
+独立复盘发现两件事，先通报：
+1. dev-112 这条线当年用熵系数 β=.005（`tools/e4_large_prepare.py:29`），standalone/对照组的 state 里没有这个字段，入口默认 .01（`tools/e4_stage12.py:830`），而且重建了 Adam。所以"原奖励对照"其实改了优化条件。我在 Colab 上跑 β=.005 一臂（外层包装改，不动仓库），和服务器对照组按相同决策数比。这件事你不用改代码。
+2. 没人验证过价值头对整局剩余回报的预测准不准（EV≈0.55 是自举目标）。
+
+请做（只加一个新工具 + 1 个 CPU 冒烟测试，不改训练代码）：`tools/e4_value_truth.py`，standalone 单卡，G4 上总时长 ≤3 小时，输入 1–3 个 checkpoint（dev-112、对照组 dev-16 原权重、dev-16-ema）：
+- (a) 同一套 1024 考试种子，**采样**策略考试一次（现有的是 argmax），报告平均层数、过第二幕比例，和 argmax 配对比较。
+- (b) 用 dev-112 跑新开局，在几个固定节点（第一幕 boss 前、进第二幕、第二幕 boss 前、进第三幕）各存 32 个状态，共 128 个；每个状态用 `determinize(run=True)` 重抽隐藏随机性，开 16 条独立未来，用被测 checkpoint 的**采样**策略一条命打到终局，按原奖励（/156）算完整剩余回报。报告：每个节点 V(s) 的均值 vs 16 条未来的平均回报（带 SE）、偏差、相关系数；再按决策类型（选牌/选路/篝火/战斗）在这些未来里抽样，给出 V 和实际剩余回报的偏差。
+- 输出一个 json + 一页 md 摘要。只报数字，不下结论。
+
+做完报告提交号和 G4 上的命令行。不用等我回复。
