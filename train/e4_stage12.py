@@ -228,10 +228,19 @@ class NoSLSearch(RoomSearch):
                     self.mask_last_chance_keys(slots, positions, result)
             return result
 
+    def defer_key_last_chance_on_resume(self, slots):
+        # None marks an Act 3 episode whose previous map choices were not tracked.
+        if slots:
+            for slot, progress in self.progress_for(slots).items():
+                if progress[ACT] == 3:
+                    self.key_last_chance[slot] = None
+
     def mask_last_chance_keys(self, slots, positions, mask):
         eligible = []
         for i in positions:
             slot = slots[i]
+            if slot in self.key_last_chance and self.key_last_chance[slot] is None:
+                continue
             progress = self.mainline_progress[slot]
             if progress[ACT] == 3 and (progress[SCREEN] == MAP
                     or (progress[SCREEN] == ROOM_SCREEN and progress[ROOM] == REST and not progress[KEYS] & RUBY)
@@ -277,8 +286,9 @@ class NoSLSearch(RoomSearch):
         if self.key_last_chance is not None:
             for source, target in zip(sources, targets):
                 if target < self.size - len(self.probe_slots):
-                    if source in self.key_last_chance:
-                        self.key_last_chance[target] = self.key_last_chance[source]
+                    tracked = self.key_last_chance.get(source)
+                    if tracked is not None:
+                        self.key_last_chance[target] = tracked
                     else:
                         self.key_last_chance.pop(target, None)
 
@@ -287,10 +297,11 @@ class NoSLSearch(RoomSearch):
             active = [(s, a) for s, a in zip(slots, choices) if s not in self.failed]
             if self.key_last_chance is not None:
                 for slot, action in active:
-                    if slot in self.key_last_chance:
+                    tracked = self.key_last_chance.get(slot)
+                    if tracked is not None:
                         node = self.frame_cache.get(slot, {}).get("key_map_actions", {}).get(action)
                         if node is not None:
-                            self.key_last_chance[slot] = (self.key_last_chance[slot][0], node)
+                            self.key_last_chance[slot] = (tracked[0], node)
             self.last_step_progress = {}
             result = super().step([s for s, _ in active], [a for _, a in active], combat_context) if active else set()
             self.mainline_progress.clear()

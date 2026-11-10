@@ -266,8 +266,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         roots = args.late_pool_roots or Path(previous_late.get("roots", "artifacts/e2-roots/collection-train.jsonl.gz"))
         late_settings = dict(fraction=fraction, roots=str(roots.resolve()))
     saved_key_mask = saved_state.get("standalone_key_last_chance", False)
-    if standalone and saved and args.key_last_chance and not saved_key_mask:
-        parser.error("start with --key-last-chance and --init in a new output directory")
+    enable_key_mask_on_resume = standalone and saved is not None and args.key_last_chance and not saved_key_mask
     key_last_chance = args.key_last_chance or saved_key_mask
     saved_critic = saved.get("critic") if saved else None
     create_critic_on_resume = saved is not None and args.separate_critic and saved_critic is None
@@ -582,6 +581,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             print(json.dumps(row, allow_nan=True), flush=True)
             with (output / "training.jsonl").open("a") as stream:
                 stream.write(json.dumps(row, allow_nan=True) + "\n")
+
+    if enable_key_mask_on_resume:
+        live_slots = [slot for slot, seed in enumerate(collector.seeds) if seed is not None]
+        search.defer_key_last_chance_on_resume(live_slots)
+        state["standalone_key_last_chance"] = True
+        log(dict(event="key_last_chance_enabled_on_resume", update=state["update"],
+                 message=f"key mask enabled on resume at update {state['update']}",
+                 deferred_existing_act3_until_next_start=True))
 
     if late_pools:
         state["standalone_late_pools"] = late_settings
