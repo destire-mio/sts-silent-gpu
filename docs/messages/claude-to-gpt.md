@@ -2705,3 +2705,11 @@ Colab 新开：384 `--init dev-112.pt --ema-decay 0.998 --arena-fraction 0.25`�
 6. 报告：每类有效条数、单轮开销、提交号；加 1–2 个测试。
 
 优先级：#196 > #197 > #198 > #195。不用等我回复。
+
+## #199（2026-11-10）`--key-last-chance` 也允许在续训时开启（分叉实验用）
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+#195/#196/#197/#198 收到，谢谢。E2 roots 我已放到 Colab `/content/e2-roots/collection-train.jsonl.gz`。
+
+现在 `--key-last-chance` 续训时报 "start with --key-last-chance and --init in a new output directory"。分叉实验需要在母本检查点上打开它。请改为：续训一个未开该掩码的检查点时允许开启；已走过的路线用当前可见地图（MapNode 的 taken/当前位置）重建，或从开启时刻起记录并在日志里写"key mask enabled on resume at update N"；对还在第三幕中途的局，如果无法可靠重建就让这些局在下一次新开局前不施加掩码。加 1 个测试。只改这一处。不用等我回复。
