@@ -2795,3 +2795,34 @@ Colab 新开：384 `--init dev-112.pt --ema-decay 0.998 --arena-fraction 0.25`�
 不重新续玩：对金标准集每个根，回放前缀到根（同 `replay`），用待评模型（支持普通检查点和 `map-distill-*.pt` 快照）做一次前向取 argmax 选项，在该根已存的 128 条回报上算：后悔值 = 后 64 条上"前 64 条挑出的最优"均值 − 该模型所选选项均值（配对，同种子）。输出均值±SE（按根），按幕和楼层段分组；给了 `--baseline` 时再算两模型后悔值的配对差±SE、两者选择一致的比例。这是蒸馏分叉的主指标。
 
 只改这些，加最少的测试。不用等我回复。
+
+## #203（2026-11-11）服务器主线现在换配方（热续练）；分关卡考试工具；Boss/精英战斗推演蒸馏
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+你 32–40h 的报告我都看过：EMA 相对 dev-112 依次 +1.38/+1.42/+0.66/+0.87/+0.61，**已平**。纯对照不再跑。关卡链（Colab 对照 1024 局）：第一幕 Boss 85% → 第二幕 Boss 31% → 第三幕首 Boss 20% → 次 Boss 26% → 三钥匙 36% → 盾矛 60% → 心脏 0/3。后几关几乎没练过，小改动不够。下面 3 件，优先级 1 > 2 > 3，1 请尽快。
+
+### 1 服务器主线换配方，**从当前 job 的最新检查点热续练**（保留 Adam、EMA、更新号，不回 dev-112）
+- 新开关 `--strategic-share q`（默认关）：把下面这段 Colab 已验证的逻辑移进仓库（在 `new_cursor` 后对 advantages 乘权重，非强制决策里 card_reward/map/shop/campfire（decision_types 1–4）的总权重占比设成 q，其余非强制按比例缩，强制步不变），每次更新记 `share_before` 和权重。Colab 2h 配对：raw +0.24±.40、EMA +0.31±.39（6h 另一次 +0.38），方向一致。主线用 q=0.35。
+```python
+nonforced = action_valid & (policy_mask.sum(1) > 1); strategic = nonforced & (types >= 1) & (types <= 4)
+p = strategic.sum()/nonforced.sum(); w = ones; w[strategic] = q/p; w[nonforced & ~strategic] = (1-q)/(1-p); advantages *= w
+```
+- 熵系数 **0.005**（dev-112 一脉用的是 .005，`tools/e4_large_prepare.py:29`；请在报告里写明对照 job 之前实际用的是多少）。
+- `--late-pools --late-pool-fraction 0.2`（E2 训练根），`--key-last-chance`。
+- 健康检查：前 3 次更新报 dec/s、峰值显存（不得超过现分配）、熵、KL、clip frac、价值损失、晚期池实际开局占比；任何一项异常就停回原配置并告诉我。保留 `dev-40-ema.pt` 作回退点。
+- 之后照旧每 2 训练小时考 1024 局 raw+EMA（种子不变），表里加关卡链列：第一幕 Boss / 第二幕 Boss / 第三幕首 / 次 Boss / 三钥匙 / 第四幕 / 盾矛 / 心脏 的次数。注明考试是否开了 key-last-chance。
+- 选路蒸馏（`--map-distill`）暂不加，Colab 结果中午出；它现在和晚期池不兼容，后面若有效我再请你打通。
+
+### 2 分关卡考试工具 `tools/e4_stage_exam.py CHECKPOINT --roots FILE --output DIR`
+- 固定根集：从 E2 根里取**不进训练**的那部分（若没有留出集，就从 `collection-train` 之外的文件或按根哈希留出 20% 并让晚期池排除它们），按关卡分组：第二幕 Boss 前、第三幕首 Boss 前、次 Boss 前、第四幕盾矛前、心脏前；每组最多 256 个根。
+- 每根 argmax 打完**当前这场 Boss 战**为止（含心脏），每根用 4 个确定化随机种子（隐藏信息重抽），记：胜负、掉血、用掉的药水。
+- 输出每组胜率±SE、平均掉血；给 `--baseline` 时报两模型配对差±SE。支持普通检查点和 EMA 快照。
+- 跑 dev-112 和服务器 `dev-40-ema.pt` 各一次，把数和墙钟发我。
+
+### 3 Boss/精英战斗推演蒸馏（只在 Colab 分叉用，默认关）
+- 标签工具 `tools/e4_combat_labels.py`（结构照 `e4_map_labels`）：dev-112 argmax 自玩**训练种子**，收集 Boss 和精英战里合法动作 ≥2 的决策点（每场最多 4 个，按幕分层）。每点对 top-k（k=4，按策略概率）动作各跑 K 条**确定化**续玩（`determinize_slots(...,True)`，各动作共用同一组种子），argmax 续玩到**本场战斗结束**，回报 = 战斗结束后状态的 V（死亡记 0），上限 300 步。顺序减半：先 K=8，前一半再加 16。存每动作均值、相对 argmax 的配对差和 SE、p_ref logits、可回放前缀。分片＋断点续跑。summary 报配对相关和墙钟。
+- 训练开关 `--combat-distill DIR --combat-distill-weight λ`：目标 π′ ∝ p_ref·exp(z)，z 的算法与选路相同（配对方差收缩、截断 ±3）；**直接对策略 logits 做 KL(π′‖π_θ)**（不加零初始化头、不 stop-grad，主干要学会），每次 PPO 更新取 256 点；λ=0 时与原路径逐位相同（测试）。日志记蒸馏损失、战斗步上的 PPO KL。
+- 先跑 30 分钟测速，按"总墙钟 ≤3 小时"定点数，报告实际用的数。
+
+全部加最少的测试，只改这些。完成后告诉我命令行。不用等我回复。
