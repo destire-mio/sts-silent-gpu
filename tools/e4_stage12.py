@@ -169,6 +169,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--init", type=Path)
     parser.add_argument("--teacher", type=Path)
     parser.add_argument("--value-coefficient", type=float, help="Persist a fixed standalone value loss coefficient")
+    parser.add_argument("--key-last-chance", action="store_true", help="Preserve last Act 3 key opportunities in standalone PPO and exams")
     parser.add_argument("--separate-critic", action="store_true", help="Train a separate 384x6 critic for standalone PPO")
     parser.add_argument("--critic-learning-rate", type=float, help="Fixed critic Adam LR (default follows policy LR)")
     parser.add_argument("--combat-aux-weight", type=float, help="Combat prediction loss weight (default 0)")
@@ -190,6 +191,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
+    if args.key_last_chance and not standalone:
+        parser.error("--key-last-chance is standalone only")
     if not standalone and (args.separate_critic or args.critic_learning_rate is not None):
         parser.error("separate critic settings are standalone only")
     if args.critic_learning_rate is not None and (
@@ -243,6 +246,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if standalone and saved else {}
+    saved_key_mask = saved_state.get("standalone_key_last_chance", False)
+    if standalone and saved and args.key_last_chance and not saved_key_mask:
+        parser.error("start with --key-last-chance and --init in a new output directory")
+    key_last_chance = args.key_last_chance or saved_key_mask
     saved_critic = saved.get("critic") if saved else None
     separate_critic = args.separate_critic or saved_critic is not None
     critic_rate_override = args.critic_learning_rate
@@ -361,10 +368,12 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     seed_rng = torch.Generator().manual_seed(20261131 + rank)
     if arena_fraction:
         from train.e4_stage12_arena import ArenaCollector, POOL_SLOTS
-        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024 + POOL_SLOTS)
+        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024 + POOL_SLOTS,
+                            key_last_chance=key_last_chance)
         collector = ArenaCollector(search, seed_rng, rank=rank, fraction=arena_fraction, **collector_options)
     else:
-        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024)
+        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024,
+                            key_last_chance=key_last_chance)
         collector = MidstartCollector(search, seed_rng, rank=rank, **collector_options)
     search.deadline = deadline
     search.evidence_directory = output
@@ -376,6 +385,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if standalone and saved is None:
         state.update(model_config=asdict(config), standalone_settings=settings,
                      precision=f"encoder_{args.dtype}_heads_fp32", microbatch=args.microbatch)
+        if key_last_chance:
+            state["standalone_key_last_chance"] = True
         if args.teacher is not None:
             state.update(teacher_path=str(args.teacher.resolve()), teacher_model_config=asdict(ModelConfig(384, 6, 6, 1536)),
                          teacher_evaluated_model="dev-112.pt", teacher_label="teacher-dev112-argmax",
@@ -584,7 +595,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         primary = not label and not ema_run
         gc.collect()
         torch.cuda.empty_cache()
-        evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank, greedy=True)
+        evaluator_search = NoSLSearch((1024 + world - 1) // world, device, 101 + rank, greedy=True,
+                                      key_last_chance=key_last_chance)
         evaluator_search.deadline = deadline
         evaluator_search.evidence_directory = output
         evaluator = EvaluationLedgerCollector(evaluator_search, torch.Generator().manual_seed(101 + rank),
@@ -678,6 +690,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             row.update(value_spearman=value_correlations(ledger),act2_ledger_file=ledger_name)
             if standalone:
                 row["exam_breakdown"] = exam_breakdown(ledger)
+                if key_last_chance:
+                    row["key_last_chance"] = True
             row.update(state.get("decision_entropy_metrics", {}))
             write_json(output / f"{prefix}-{state['update']}.json", row)
             log(row)
@@ -797,7 +811,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             arena = dict(fraction=arena_fraction, lanes=collector.arena_lanes,
                          active_lanes=collector.arena_lanes if any(pools.values()) else 0,
                          pool_sizes=pools)
-        critic_config = {}
+        critic_config = {"key_last_chance": True} if key_last_chance else {}
         if critic is not None:
             critic_config["critic"] = dict(learning_rate=critic_rate_override or state["learning_rate"],
                                            adam="restored" if saved_critic else "fresh")

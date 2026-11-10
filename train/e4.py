@@ -364,6 +364,14 @@ class RoomSearch:
                              for a in range(nc)],
                     gold=next(values[2][i] for i in entities if tags[0][i] == 2),
                     deck_size=sum(tags[0][i] == 3 and tags[1][i] == 1 for i in entities))
+                if getattr(self, "key_last_chance", None) is not None and progress[s][ACT] == 3 and progress[s][SCREEN] == MAP:
+                    map_nodes = {i + 1: (values[0][i], values[1][i], ids[0][i] - 1,
+                                        values[2][i], bool(tags[2][i] & 1))
+                                 for i in entities if tags[0][i] == 10}
+                    self.frame_cache[s]["key_map_nodes"] = list(map_nodes.values())
+                    self.frame_cache[s]["key_map_actions"] = {
+                        action: map_nodes[ref][:2] for action, ref in enumerate(refs[:nc])
+                        if ref in map_nodes}
         return {s: self.frame_cache[s] for s in slots}
 
     @torch.no_grad()

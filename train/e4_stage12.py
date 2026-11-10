@@ -17,11 +17,12 @@ from torch.utils.checkpoint import checkpoint
 import torch.distributed as dist
 
 from train.e4 import (RoomSearch, SegmentCollector, PHASE, COMBAT_PHASE, FLOOR, SCREEN, SCREENS,
-    ACT, ROOM, BOSS_ROOM, DEATH, VICTORY, ACTION_KINDS)
+    ACT, ROOM, MAP, ROOM_SCREEN, KEYS, BOSS_ROOM, DEATH, VICTORY, ACTION_KINDS)
 from train.model import Policy, ModelConfig, network_inputs, distribution, packed_inputs, record_lengths
 from train.e4_stage6.training_worker import move_tensors
 from train.e4_checkpoint import write_rank_checkpoint
 from train.e4_value_diagnostics import gradient_measurement, value_coefficient
+from train.e4_key_last_chance import RUBY, EMERALD, SAPPHIRE, REST, TREASURE, key_paths, blocked_map_actions, last_key_opportunity
 
 
 DECISION_TYPES = ('combat', 'card_reward', 'map', 'shop', 'campfire', 'other')
@@ -151,7 +152,8 @@ class StageTimes:
 
 
 class NoSLSearch(RoomSearch):
-    def __init__(self, lanes, device, seed, *, storage_slots=0, greedy=False, probe_slots=4096):
+    def __init__(self, lanes, device, seed, *, storage_slots=0, greedy=False, probe_slots=4096,
+                 key_last_chance=False):
         super().__init__(lanes, 1, device, torch.Generator(device=device).manual_seed(seed),
                          scratch_slots=storage_slots, inference_chunk=lanes, bosses_seen=511, probe_slots=probe_slots)
         self.greedy = greedy
@@ -163,6 +165,7 @@ class NoSLSearch(RoomSearch):
         self.mainline_progress = {}
         self.last_policy_mask = None
         self.training_critic = None
+        self.key_last_chance = {} if key_last_chance else None
         self.failed = {}
         self.fault_counts = Counter()
         self.midstart_collector = None
@@ -221,11 +224,73 @@ class NoSLSearch(RoomSearch):
             positions = [i for i, s in enumerate(slots) if s not in self.failed and self.mainline_progress[s][PHASE] != COMBAT_PHASE]
             if positions:
                 result[positions] = super().policy_masks([slots[i] for i in positions])
+                if self.key_last_chance is not None:
+                    self.mask_last_chance_keys(slots, positions, result)
             return result
+
+    def mask_last_chance_keys(self, slots, positions, mask):
+        eligible = []
+        for i in positions:
+            slot = slots[i]
+            progress = self.mainline_progress[slot]
+            if progress[ACT] == 3 and (progress[SCREEN] == MAP
+                    or (progress[SCREEN] == ROOM_SCREEN and progress[ROOM] == REST and not progress[KEYS] & RUBY)
+                    or (progress[SCREEN] == 7 and progress[ROOM] == TREASURE and not progress[KEYS] & SAPPHIRE)):
+                eligible.append(i)
+        if not eligible:
+            return
+        for i, row in zip(eligible, mask[eligible].cpu().tolist()):
+            slot = slots[i]
+            progress = self.mainline_progress[slot]
+            screen, room = progress[SCREEN], progress[ROOM]
+            missing = (RUBY | EMERALD | SAPPHIRE) & ~progress[KEYS]
+            frame = self.frame_cache.get(slot)
+            if screen == MAP and frame is not None:
+                previous = self.key_last_chance.get(slot)
+                paths = key_paths(frame["key_map_nodes"]) if previous is None else previous[0]
+                self.key_last_chance[slot] = (paths, previous[1] if previous is not None else None)
+                actions = [(action, node) for action, node in frame["key_map_actions"].items() if row[action]]
+                blocked = blocked_map_actions(paths, actions, missing) if missing else []
+                if blocked:
+                    mask[i, blocked] = False
+                continue
+            if frame is None or slot not in self.key_last_chance:
+                continue
+            paths, node = self.key_last_chance[slot]
+            if node is None:
+                continue
+            if screen == ROOM_SCREEN and room == REST and missing & RUBY:
+                wanted = [i for i, option in enumerate(frame["rest_options"]) if option == 6 and row[i]]
+                key = RUBY
+            elif screen == 7 and room == TREASURE and missing & SAPPHIRE:
+                wanted = [i for i, (kind, reward) in enumerate(frame["actions"])
+                          if row[i] and kind == 3 and reward is not None and frame["rewards"][reward][0] == 6]
+                key = SAPPHIRE
+            else:
+                continue
+            if wanted and last_key_opportunity(paths, node, key):
+                mask[i].fill_(False)
+                mask[i, wanted] = True
+
+    def clone(self, sources, targets):
+        super().clone(sources, targets)
+        if self.key_last_chance is not None:
+            for source, target in zip(sources, targets):
+                if target < self.size - len(self.probe_slots):
+                    if source in self.key_last_chance:
+                        self.key_last_chance[target] = self.key_last_chance[source]
+                    else:
+                        self.key_last_chance.pop(target, None)
 
     def step(self, slots, choices, combat_context=None):
         with self.times.measure('engine_step'):
             active = [(s, a) for s, a in zip(slots, choices) if s not in self.failed]
+            if self.key_last_chance is not None:
+                for slot, action in active:
+                    if slot in self.key_last_chance:
+                        node = self.frame_cache.get(slot, {}).get("key_map_actions", {}).get(action)
+                        if node is not None:
+                            self.key_last_chance[slot] = (self.key_last_chance[slot][0], node)
             self.last_step_progress = {}
             result = super().step([s for s, _ in active], [a for _, a in active], combat_context) if active else set()
             self.mainline_progress.clear()
@@ -285,6 +350,8 @@ class NoSLCollector(SegmentCollector):
     def reset(self, slots, seeds):
         for slot in slots:
             self.search.failed.pop(slot, None)
+            if self.search.key_last_chance is not None:
+                self.search.key_last_chance.pop(slot, None)
         self.round_games += len(slots)
         return super().reset(slots, seeds)
 
@@ -868,6 +935,8 @@ def collector_snapshot(collector):
     state["timings"] = dict(collector.search.times.seconds)
     state['round_games'] = collector.round_games
     state['episode_faults'] = (dict(collector.search.failed), dict(collector.search.fault_counts))
+    if collector.search.key_last_chance is not None:
+        state["key_last_chance"] = dict(collector.search.key_last_chance)
     if hasattr(collector, "auxiliary_fresh"):
         state["auxiliary_fresh"] = collector.auxiliary_fresh
     if state["partial"] is not None:
@@ -900,7 +969,10 @@ def restore_collector(collector, state):
         collector.auxiliary_fresh = fresh
     if state["partial"] is not None and "auxiliary" in state["partial"]:
         state["partial"]["auxiliary"] = move_tensors(state["partial"]["auxiliary"], collector.search.device)
+    key_map = state.pop("key_last_chance", None)
     collector.restore(state)
+    if key_map is not None:
+        collector.search.key_last_chance = key_map
     collector.search.reward_ledgers = collector.rewards
     collector.search.entropy_sum = entropy_sum.to(collector.search.device)
     collector.search.entropy_count = entropy_count
