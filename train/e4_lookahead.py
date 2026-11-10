@@ -4,7 +4,7 @@ import json
 import math
 import statistics
 import torch
-from train.e4 import COMBAT_PHASE, PHASE, SCREEN, DEATH, VICTORY, HP, ACT, ROOM, BOSS_ROOM, BATTLE_OVER
+from train.e4 import COMBAT_PHASE, PHASE, SCREEN, DEATH, VICTORY, HP, ACT, ROOM, BOSS_ROOM, BATTLE_OVER, MAP
 from train.model import SCREENS
 from train.e4_stage12 import NoSLSearch
 from train.e4_evaluation_ledger import RUNIC_DOME
@@ -308,4 +308,134 @@ class CardLookaheadSearch(LookaheadSearch):
             self.preview_steps += sum(report['preview_steps'] for report in reports)
             self.preview_decisions += sum(report['preview_steps'] > 0 for report in reports)
             self.overrides += sum(report['selected'] != report['candidates'][0] for report in reports)
+        return actions, values, logs
+
+
+class MapLookahead:
+    """Compare map actions on common determinized futures."""
+    boss_reach = {1: 'act1_boss', 2: 'act2_boss', 3: 'act3_second_boss', 4: 'heart'}
+
+    def __init__(self, search, k, seed, limit=600):
+        self.search, self.k, self.limit = search, k, limit
+        self.rng = torch.Generator().manual_seed(seed)
+
+    def rollout(self, policy, plan, progress):
+        search = self.search
+        slots = search.take(len(plan))
+        parents, actions, seeds = zip(*plan)
+        ledgers = {s: deepcopy(search.reward_ledgers[p]) for s, p in zip(slots, parents)}
+        acts = {s: progress[p][ACT] for s, p in zip(slots, parents)}
+        scores = dict.fromkeys(slots, 0.)
+        decisions = 0
+        try:
+            search.clone(list(parents), slots)
+            search.batch.determinize_slots(slots, list(seeds), True)
+            search.check(slots)
+            live = [s for s in slots if s not in search.failed]
+            for slot, key in zip(live, search.loop_keys(live) if live else []):
+                search.seen[slot].add(key)
+                search.mask_cache.pop(slot, None)
+                search.repeat_blocked.pop(slot, None)
+            first = dict(zip(slots, actions))
+            for tick in range(self.limit):
+                if not live:
+                    break
+                search.clock()
+                before = search.progress_for(live)
+                if tick == 0:
+                    choices = [first[s] for s in live]
+                else:
+                    mask = search.policy_masks(live)
+                    inputs = network_inputs(search.arrays, search.device, torch.tensor(live, device=search.device))
+                    inputs['candidate_mask'] &= mask[:, :inputs['candidate_mask'].shape[1]]
+                    logits = policy(inputs)[0].masked_fill(~inputs['candidate_mask'], -torch.inf)
+                    choices = logits.argmax(-1).tolist()
+                search.step(live, choices)
+                decisions += len(live)
+                after = search.last_step_progress
+                remaining = []
+                for s in live:
+                    if s in search.failed:
+                        continue
+                    p, ledger = after[s], ledgers[s]
+                    scores[s] += ledger.advance(before[s], p)
+                    if (p[SCREEN] not in (DEATH, VICTORY) and p[HP] > 0
+                            and p[ACT] == acts[s] and not ledger.reach[self.boss_reach[acts[s]]]):
+                        remaining.append(s)
+                live = remaining
+            if live:
+                inputs = network_inputs(search.arrays, search.device, torch.tensor(live, device=search.device))
+                for slot, value in zip(live, policy(inputs)[1].tolist()):
+                    scores[slot] += value
+            return [None if s in search.failed else scores[s] for s in slots], decisions
+        finally:
+            for slot in slots:
+                search.failed.pop(slot, None)
+                search.mainline_progress.pop(slot, None)
+            search.available.extend(slots)
+
+    @torch.no_grad()
+    def select(self, policy, parents, candidates, progress):
+        plan, ranges = [], []
+        for parent, actions in zip(parents, candidates):
+            paired = torch.randint(2**63 - 1, (self.k,), generator=self.rng).tolist()
+            start = len(plan)
+            plan.extend((parent, action, seed) for action in actions for seed in paired)
+            ranges.append((start, len(plan)))
+        scores, preview_steps = [], 0
+        capacity = len(self.search.available)
+        for start in range(0, len(plan), capacity):
+            result, decisions = self.rollout(policy, plan[start:start + capacity], progress)
+            scores.extend(result)
+            preview_steps += decisions
+        selected, failed = [], 0
+        for actions, (start, end) in zip(candidates, ranges):
+            trials = scores[start:end]
+            if None in trials:
+                selected.append(actions[0])
+                failed += 1
+                continue
+            samples = [trials[i:i + self.k] for i in range(0, len(trials), self.k)]
+            best = max(range(len(samples)), key=lambda i: statistics.mean(samples[i]))
+            differences = [a - b for a, b in zip(samples[best], samples[0])]
+            margin = statistics.stdev(differences) / math.sqrt(self.k)
+            selected.append(actions[best] if statistics.mean(differences) > margin else actions[0])
+        return selected, preview_steps, failed
+
+
+class MapLookaheadSearch(LookaheadSearch):
+    def __init__(self, lanes, device, seed, k=16, limit=600):
+        NoSLSearch.__init__(self, lanes, device, seed, storage_slots=max(lanes, k), greedy=True)
+        self.lookahead = MapLookahead(self, k, seed, limit)
+        self.preview_decisions = self.preview_steps = self.overrides = self.failed_previews = 0
+
+    def record_fault(self, slot, reason, extra_action=None):
+        provenance = self.provenance[slot]
+        source = provenance[1] if len(provenance) == 3 else slot
+        if source >= self.lanes:
+            self.failed[source] = reason
+        else:
+            super().record_fault(slot, reason, extra_action)
+
+    def predict(self, model, slots):
+        actions, values, logs = NoSLSearch.predict(self, model, slots)
+        progress = self.mainline_progress.copy()
+        positions = [i for i, slot in enumerate(slots)
+                     if slot not in self.failed and progress[slot][SCREEN] == MAP
+                     and progress[slot][ACT] in self.lookahead.boss_reach]
+        groups = []
+        for i, row in zip(positions, self.last_policy_mask[positions].tolist()):
+            legal = [j for j, valid in enumerate(row) if valid]
+            if len(legal) > 1:
+                groups.append((i, [actions[i]] + [j for j in legal if j != actions[i]]))
+        if groups:
+            positions, candidates = zip(*groups)
+            selected, steps, failed = self.lookahead.select(model, [slots[i] for i in positions],
+                                                            candidates, progress)
+            self.preview_decisions += len(positions)
+            self.preview_steps += steps
+            self.failed_previews += failed
+            for i, choice in zip(positions, selected):
+                self.overrides += int(actions[i] != choice)
+                actions[i] = choice
         return actions, values, logs
