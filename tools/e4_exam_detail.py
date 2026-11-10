@@ -17,9 +17,20 @@ from train.e4_stage12 import NoSLCollector
 
 ROOMS = ("monster", "elite", "boss", "shop", "rest", "treasure",
          "event", "empty", "neow", "boss_treasure", "victory", "heart_event")
-CHOOSE, POTION_USE, SKIP = 3, 4, 7
+CHOOSE, POTION_USE, PROCEED, SKIP = 3, 4, 6, 7
 SHOP, REST = 3, 4
 OFFER_NAMES = {3: CARDS, 6: RELICS, 7: POTIONS}
+GRID_OPERATIONS = {1: "upgrade", 2: "remove", 3: "transform"}
+
+
+def deck_delta(before, after):
+    def counts(state):
+        return Counter((c["card_id"], c["upgraded"]) for c in state["deck"])
+
+    old, new = counts(before), counts(after)
+    removed = [dict(card=card, upgraded=upgraded) for card, upgraded in (old - new).elements()]
+    added = [dict(card=card, upgraded=upgraded) for card, upgraded in (new - old).elements()]
+    return removed, added
 
 
 class DetailCollector(NoSLCollector):
@@ -32,7 +43,8 @@ class DetailCollector(NoSLCollector):
     def reset(self, slots, seeds):
         super().reset(slots, seeds)
         for slot, seed in zip(slots, seeds):
-            self.details[slot] = dict(seed=seed, fights=[], card_rewards=[], shop=[], campfire=[], map=[])
+            self.details[slot] = dict(seed=seed, fights=[], card_rewards=[], temporary_card_choices=[],
+                                      deck_changes=[], shop=[], campfire=[], map=[])
             self.open_fights[slot] = None
 
     def action_tokens(self, slot, actions):
@@ -60,8 +72,14 @@ class DetailCollector(NoSLCollector):
             self.details[slot]["fights"].append(row)
             self.open_fights[slot] = row
 
+        fighting = [slot for slot in good if progress[slot][PHASE] == COMBAT_PHASE]
+        if fighting:
+            search.batch.combat_turns_tensors(self.turns)
+            for slot, turn in zip(fighting, self.turns[fighting].tolist()):
+                self.open_fights[slot]["turns"] = turn
+
         chosen_kinds = search.arrays["candidate_kinds"][slots, actions].tolist()
-        potions, shop = {}, {}
+        shop, grid = {}, {}
         for slot, action, kind in zip(slots, actions, chosen_kinds):
             if slot in search.failed:
                 continue
@@ -70,8 +88,9 @@ class DetailCollector(NoSLCollector):
             position = dict(act=p[ACT], floor=p[FLOOR], decision=len(self.paths[slot]))
             if self.open_fights[slot] is not None and kind == POTION_USE:
                 _, (item, target, _) = self.action_tokens(slot, [action])[0]
-                potions[slot] = dict(potion=POTIONS[item[1]], target=target[1] if target else None,
-                                     decision=position["decision"])
+                fight = self.open_fights[slot]
+                fight["potions"].append(dict(potion=POTIONS[item[1]], target=target[1] if target else None,
+                                             decision=position["decision"], turn=fight["turns"]))
             if screen == "card_reward":
                 count = int(search.arrays["candidate_counts"][slot])
                 options = self.action_tokens(slot, list(range(count)))
@@ -79,8 +98,12 @@ class DetailCollector(NoSLCollector):
                            for _, (_, _, t) in options if t and t[0] == 3]
                 _, (_, _, choice) = options[action]
                 picked = dict(card=CARDS[choice[1]], upgrades=choice[2]) if choice and choice[0] == 3 else None
-                detail["card_rewards"].append(dict(**position, offered=offered, picked=picked,
-                    action="skip" if kind == SKIP else "take" if picked else "singing_bowl"))
+                if p[PHASE] == COMBAT_PHASE:
+                    detail["temporary_card_choices"].append(dict(**position, offered=offered, picked=picked,
+                        turn=self.open_fights[slot]["turns"], action="skip" if kind == SKIP else "choose"))
+                else:
+                    detail["card_rewards"].append(dict(**position, offered=offered, picked=picked,
+                        action="skip" if kind == SKIP else "take" if picked else "singing_bowl"))
             elif screen == "map" and kind in (CHOOSE, SKIP):
                 _, (_, _, destination) = self.action_tokens(slot, [action])[0]
                 node = [destination[2], destination[3]] if destination and destination[0] == 10 else None
@@ -90,48 +113,57 @@ class DetailCollector(NoSLCollector):
                 rest = search.frames([slot], progress)[slot]["rest_options"][action]
                 if rest is not None:
                     detail["campfire"].append(dict(**position, choice=REST_OPTIONS[rest - 1]))
-            elif p[ROOM] == SHOP and screen in ("shop", "grid") and kind == CHOOSE:
+            elif p[ROOM] == SHOP and screen == "shop" and kind == CHOOSE:
                 _, (_, _, offer) = self.action_tokens(slot, [action])[0]
                 names = OFFER_NAMES.get(offer[0], ()) if offer else ()
-                selected = names[offer[1]] if names else "purge" if screen == "shop" and offer else None
-                shop[slot] = position, screen, selected, visible_state(search, slot)
-        if potions:
-            search.batch.combat_turns_tensors(self.turns)
-            for slot, row in potions.items():
-                row["turn"] = int(self.turns[slot])
-                self.open_fights[slot]["potions"].append(row)
+                selected = names[offer[1]] if names else "purge" if offer and offer[:2] == (11, 2) else None
+                shop[slot] = position, screen, selected, None, visible_state(search, slot)
+            elif screen == "grid" and p[PHASE] != COMBAT_PHASE and kind in (CHOOSE, PROCEED):
+                operation = GRID_OPERATIONS.get(int(search.arrays["tags"][slot, 3, 0]))
+                if operation is not None:
+                    before = visible_state(search, slot)
+                    grid[slot] = position, operation, before
+                    if p[ROOM] == SHOP:
+                        selected = "purge" if operation == "remove" else operation
+                        shop[slot] = position, screen, selected, operation, before
 
         count = len(self.completed)
         rewards, terminal = super().advance(slots, actions, progress)
         ended = {slot for slot, done in zip(slots, terminal) if done}
         after = dict(progress)
         after.update(search.last_step_progress)
-        for slot, (position, screen, selected, before) in shop.items():
-            if slot in search.failed:
+        current = {slot: visible_state(search, slot) for slot in shop.keys() | grid.keys()
+                   if slot not in search.failed}
+        changes = {}
+        for slot, (position, operation, before) in grid.items():
+            if slot not in current:
                 continue
-            current = visible_state(search, slot)
-            old_deck = Counter((c["card_id"], c["upgraded"]) for c in before["deck"])
-            new_deck = Counter((c["card_id"], c["upgraded"]) for c in current["deck"])
-            removed = [dict(card=card, upgraded=upgraded) for card, upgraded in (old_deck-new_deck).elements()]
-            paid = before["gold"] - current["gold"]
-            if paid > 0 or removed:
+            removed, added = deck_delta(before, current[slot])
+            if removed or added:
+                changes[slot] = dict(**position, operation=operation, removed=removed, added=added)
+                self.details[slot]["deck_changes"].append(changes[slot])
+        for slot, (position, screen, selected, operation, before) in shop.items():
+            if slot not in current:
+                continue
+            paid = before["gold"] - current[slot]["gold"]
+            if paid > 0 or slot in changes:
+                removed = changes[slot]["removed"] if operation == "remove" and slot in changes else []
                 self.details[slot]["shop"].append(dict(**position, selected=selected, gold_spent=paid,
-                                                       removed=removed, screen=screen))
+                                                       operation=operation, removed=removed, screen=screen))
 
         closed = [slot for slot in slots if self.open_fights[slot] is not None and
                   (slot in ended or after[slot][PHASE] != COMBAT_PHASE)]
-        if closed:
-            search.batch.combat_turns_tensors(self.turns)
         for slot in closed:
             row = self.open_fights[slot]
             outcome = "death" if after[slot][SCREEN] == DEATH else "stalled" if slot in search.failed or (
                 slot in ended and after[slot][PHASE] == COMBAT_PHASE) else "left_combat"
-            row.update(exit_hp=after[slot][HP], turns=int(self.turns[slot]), outcome=outcome)
+            row.update(exit_hp=after[slot][HP], outcome=outcome)
             self.open_fights[slot] = None
         for slot, episode in zip((s for s in slots if s in ended), self.completed[count:]):
             detail = self.details[slot]
             detail.update(final_floor=episode["floor"], outcome=episode["outcome"], reach=episode["reach"],
-                          bosses_seen=episode["bosses_seen"], candidate_indices=episode["candidates"])
+                          stall_class=episode["stall_class"], bosses_seen=episode["bosses_seen"],
+                          candidate_indices=episode["candidates"])
             if episode["outcome"] == "death":
                 final = visible_state(search, slot)
                 detail["death"] = dict(act=after[slot][ACT], floor=after[slot][FLOOR],
@@ -158,14 +190,12 @@ def load_references(paths):
     return result
 
 
-def verify_floors(rows, reference):
-    for row in rows:
-        seed = row["seed"]
-        if row["floor"] != reference[seed]:
-            raise ValueError(f"Seed {seed}: replay floor {row['floor']} differs from exam floor {reference[seed]}")
+def floor_mismatches(rows, reference):
+    return [dict(seed=r["seed"], original_floor=reference[r["seed"]], replay_floor=r["floor"])
+            for r in rows if r["floor"] != reference[r["seed"]]]
 
 
-def report(rows, checked):
+def report(rows, verification):
     causes, entry_hp, unused = Counter(), Counter(), Counter()
     for row in rows:
         if "death" not in row:
@@ -178,9 +208,16 @@ def report(rows, checked):
             lower = max(last["entry_hp"], 0) // 10 * 10
             entry_hp[lower] += 1
         unused[sum(p != "Potion Slot" for p in death["potions"])] += 1
-    lines = ["# E4 exam replay", "", f"Replays {len(rows)}. Initial floor matches {checked}.",
+    checked = verification["initial_checked"]
+    first = verification["initial_mismatches"]
+    mismatches = verification["mismatches"]
+    lines = ["# E4 exam replay", "", f"Replays {len(rows)}. Initial floor matches {checked - len(first)}/{checked}.",
+             f"Full replay floor mismatches {len(mismatches)}/{len(rows)}.",
              f"Deaths {sum(causes.values())}. Stalled {sum(r['outcome'] == 'stalled' for r in rows)}.", "",
-             "| Act | Floor | Room | Encounter | Deaths |", "| ---: | ---: | --- | --- | ---: |"]
+             "| Replay | Seed | Original floor | Replay floor |", "| --- | ---: | ---: | ---: |"]
+    for phase, records in (("Initial", first), ("Full", mismatches)):
+        lines += [f"| {phase} | {r['seed']} | {r['original_floor']} | {r['replay_floor']} |" for r in records]
+    lines += ["", "| Act | Floor | Room | Encounter | Deaths |", "| ---: | ---: | --- | --- | ---: |"]
     for (act, floor, room, encounter), count in sorted(causes.items(), key=lambda item: (-item[1], item[0])):
         lines.append(f"| {act} | {floor} | {room} | {encounter} | {count} |")
     lines += ["", "| Fight entry HP | Deaths |", "| ---: | ---: |"]
@@ -197,12 +234,15 @@ def replay(model, seeds, reference, device, lanes, deadline, verify_count=8):
         raise ValueError(f"Missing reference for {len(missing)} selected seeds")
     checked = min(verify_count, len(seeds))
     first = collector(lanes, device, 101, deadline, greedy=True)
-    verify_floors(first.evaluate(model, seeds[:checked]), reference)
+    initial = floor_mismatches(first.evaluate(model, seeds[:checked]), reference)
     del first
     detail = collector(lanes, device, 101, deadline, greedy=True, cls=DetailCollector)
     episodes = detail.evaluate(model, seeds)
-    verify_floors(episodes, reference)
-    return sorted((e["detail"] for e in episodes), key=lambda row: row["seed"]), checked
+    for episode in episodes:
+        episode["detail"]["reference_floor"] = reference[episode["seed"]]
+    verification = dict(initial_checked=checked, initial_mismatches=initial,
+                        mismatches=floor_mismatches(episodes, reference))
+    return sorted((e["detail"] for e in episodes), key=lambda row: row["seed"]), verification
 
 
 def main():
@@ -220,13 +260,13 @@ def main():
     torch.set_num_threads(1)
     device = torch.device(args.device)
     model = load_policy(args.checkpoint, device, args.fp32)
-    rows, checked = replay(model, args.seeds, load_references(args.reference), device, args.lanes,
+    rows, verification = replay(model, args.seeds, load_references(args.reference), device, args.lanes,
                            time.monotonic() + 3600)
     args.output.mkdir()
     with gzip.open(args.output / "exam-detail.jsonl.gz", "wt", encoding="utf-8") as stream:
         for row in rows:
             stream.write(json.dumps(row, separators=(",", ":"), allow_nan=False) + "\n")
-    (args.output / "exam-detail.md").write_text(report(rows, checked), encoding="utf-8")
+    (args.output / "exam-detail.md").write_text(report(rows, verification), encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -175,9 +175,8 @@ class EvaluationLedgerCollector(NoSLCollector):
                                for name,bit in [('ruby',1),('emerald',2),('sapphire',4)]}
             record['keys'] = episode['keys'].copy()
             record['reach'] = episode['reach'].copy()
-            if episode['reach']['act3_second_boss'] and not episode['reach']['heart']:
+            if episode['outcome'] == 'victory' and after[slot][ACT] == 3 and episode['reach']['act3_second_boss']:
                 episode['outcome'] = 'act3_win'
-                record.pop('death',None)
             record.update(final_floor=episode['floor'],outcome=episode['outcome'],stalled=episode['outcome']=='stalled')
             for key in ['elite_floors','combat_floors','room_entry_hp','encounter']:record.pop(key)
             episode['act2_ledger'] = record

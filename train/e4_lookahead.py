@@ -424,10 +424,13 @@ class MapLookaheadSearch(LookaheadSearch):
                      if slot not in self.failed and progress[slot][SCREEN] == MAP
                      and progress[slot][ACT] in self.lookahead.boss_reach]
         groups = []
-        for i, row in zip(positions, self.last_policy_mask[positions].tolist()):
-            legal = [j for j, valid in enumerate(row) if valid]
-            if len(legal) > 1:
-                groups.append((i, [actions[i]] + [j for j in legal if j != actions[i]]))
+        if positions:
+            kinds = self.arrays['candidate_kinds'][[slots[i] for i in positions]]
+            routes = self.last_policy_mask[positions, :kinds.shape[1]] & (kinds == 3)
+            for i, row in zip(positions, routes.tolist()):
+                legal = [j for j, valid in enumerate(row) if valid]
+                if len(legal) > 1 and actions[i] in legal:
+                    groups.append((i, [actions[i]] + [j for j in legal if j != actions[i]]))
         if groups:
             positions, candidates = zip(*groups)
             selected, steps, failed = self.lookahead.select(model, [slots[i] for i in positions],
