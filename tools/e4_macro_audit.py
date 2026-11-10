@@ -417,9 +417,46 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--reuse-k128", type=Path, help="Read the original macro-audit.json and replay only its root prefixes")
     mode.add_argument("--k128-only", action="store_true", help="Run the K=128 stage only")
+    mode.add_argument("--horizons", help="Card-reward horizons, for example act,next_act,full")
+    sizing = parser.add_mutually_exclusive_group()
+    sizing.add_argument("--horizon-pilot", action="store_true", help="Measure up to 30 minutes before planning a six-hour audit")
+    sizing.add_argument("--horizon-pilot-report", type=Path, help="Use the matching pilot's recommended root count")
+    sizing.add_argument("--horizon-roots", type=int, help="Explicit number of stratified card reward roots")
+    parser.add_argument("--horizon-k", type=int, default=8, help="Even shared draws per option")
+    parser.add_argument("--horizon-seeds", nargs="+", help="Training seed IDs or half-open start:stop ranges")
     args = parser.parse_args()
     if args.lanes < 1:
         parser.error("--lanes must be positive")
+    if args.horizons:
+        from tools.e4_card_horizons import HORIZONS, run
+        from tools.e4_value_residual import training_seeds
+        horizons = tuple(args.horizons.split(","))
+        if len(set(horizons)) != len(horizons) or not set(horizons) <= set(HORIZONS):
+            parser.error("Use a comma-separated subset of act,next_act,full")
+        if not (args.horizon_pilot or args.horizon_pilot_report or args.horizon_roots is not None):
+            parser.error("Select --horizon-pilot, --horizon-pilot-report or --horizon-roots")
+        try:
+            seeds = training_seeds(args.horizon_seeds or ["1000000000:1000001024"])
+        except ValueError as error:
+            parser.error(str(error))
+        if args.horizon_k < 4 or args.horizon_k % 2:
+            parser.error("--horizon-k must be even and at least 4")
+        if args.horizon_roots is not None and not 1 <= args.horizon_roots <= len(seeds):
+            parser.error("--horizon-roots must be positive and at most the number of source seeds")
+        started = time.monotonic()
+        device = torch.device(args.device)
+        if device.type == "cuda":
+            torch.cuda.set_device(device)
+        torch.set_num_threads(1)
+        model = load_policy(args.checkpoint, device, args.fp32)
+        args.output.mkdir(parents=True, exist_ok=False)
+        result = run(model, device, args, horizons, seeds, started, future_uniforms, continuation_actions)
+        print(json.dumps({key: value for key, value in result.items() if key not in ("configuration", "summary")},
+                         indent=2, allow_nan=False))
+        return
+    if (args.horizon_pilot or args.horizon_pilot_report or args.horizon_roots is not None
+            or args.horizon_seeds is not None or args.horizon_k != 8):
+        parser.error("Card horizon options require --horizons")
     deadline = time.monotonic() + 3*3600
     device = torch.device(args.device)
     if device.type == "cuda":

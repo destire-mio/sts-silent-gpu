@@ -60,7 +60,7 @@ def legal_routes(search, slots, mask):
 
 
 @torch.no_grad()
-def capture_episodes(model, runner, seeds):
+def capture_episodes(model, runner, seeds, *, screen=MAP, options_at=legal_routes):
     search = runner.search
     waiting = iter(seeds)
     pending = [[] for _ in runner.seeds]
@@ -88,16 +88,18 @@ def capture_episodes(model, runner, seeds):
             logits = None
             actions, _, _, _ = runner.choose(model, live, progress)
             healthy = [i for i, slot in enumerate(live) if slot not in search.failed]
-            maps = [(j, i, live[i]) for j, i in enumerate(healthy) if progress[live[i]][SCREEN] == MAP]
-            if maps:
-                mask = search.last_policy_mask[[i for _, i, _ in maps]]
-                options = legal_routes(search, [slot for _, _, slot in maps], mask)
-                for (j, i, slot), legal in zip(maps, options):
-                    if len(legal) > 1 and actions[i] in legal:
+            matching = [(j, i, live[i]) for j, i in enumerate(healthy) if progress[live[i]][SCREEN] == screen]
+            if matching:
+                mask = search.last_policy_mask[[i for _, i, _ in matching]]
+                options = options_at(search, [slot for _, _, slot in matching], mask)
+                for (j, i, slot), legal in zip(matching, options):
+                    if len(legal) > 1 and (screen != MAP or actions[i] in legal):
                         p = progress[slot]
+                        values = logits[j, legal].float().tolist()
+                        argmax = legal[max(range(len(legal)), key=values.__getitem__)]
                         pending[slot].append(dict(act=p[ACT], floor=p[FLOOR], progress=p,
-                            prefix_length=len(runner.paths[slot]), options=legal, argmax=actions[i],
-                            p_ref_logits=logits[j, legal].float().tolist()))
+                            prefix_length=len(runner.paths[slot]), options=legal, argmax=argmax,
+                            p_ref_logits=values))
             _, terminal = runner.advance(live, actions, progress)
             for slot, episode in zip((s for s, done in zip(live, terminal) if done), runner.completed):
                 episodes[episode["seed"]] = dict(seed=episode["seed"], path=episode["candidates"],
@@ -108,7 +110,7 @@ def capture_episodes(model, runner, seeds):
     return [episodes[seed] for seed in seeds]
 
 
-def stratified_roots(episodes, count, seed):
+def stratified_roots(episodes, count, seed, *, max_per_episode=2):
     buckets = defaultdict(list)
     for episode in episodes:
         for root in episode["roots"]:
@@ -127,7 +129,7 @@ def stratified_roots(episodes, count, seed):
             while bucket:
                 episode, root = bucket.pop()
                 source = episode["seed"]
-                if used[source] < 2:
+                if used[source] < max_per_episode:
                     used[source] += 1
                     selected.append(dict(root, seed=source, path=episode["path"][:root["prefix_length"]]))
                     break
@@ -141,7 +143,7 @@ def stratified_roots(episodes, count, seed):
     return selected
 
 
-def replay(runner, records):
+def replay(runner, records, *, options_at=legal_routes):
     search = runner.search
     slots = list(range(len(records)))
     runner.reset(slots, [row["seed"] for row in records])
@@ -153,17 +155,17 @@ def replay(runner, records):
         actions = [records[s]["path"][tick] for s in live]
         mask = search.policy_masks(live)
         if any(s in search.failed for s in live) or not bool(mask[list(range(len(live))), actions].all()):
-            raise ValueError("Recorded map prefix has an invalid action")
+            raise ValueError("Recorded root prefix has an invalid action")
         runner.stalled = set()
         _, terminal = runner.advance(live, actions, progress)
         if any(terminal):
-            raise ValueError("Recorded map prefix ended before its root")
+            raise ValueError("Recorded episode ended before its root")
     progress = search.progress_for(slots)
     search.mainline_progress = dict(progress)
-    options = legal_routes(search, slots, search.policy_masks(slots))
+    options = options_at(search, slots, search.policy_masks(slots))
     for slot, row in enumerate(records):
         if slot in search.failed or progress[slot] != row["progress"] or options[slot] != row["options"]:
-            raise ValueError(f"Map root does not replay: {row['seed']} at prefix {len(row['path'])}")
+            raise ValueError(f"Root does not replay: {row['seed']} at prefix {len(row['path'])}")
     return slots, progress
 
 
@@ -276,9 +278,15 @@ def summary(shards, mode, capture_stats):
             groups[key].append(row)
     result["argmax_regret"] = {}
     for key, group in sorted(groups.items()):
-        valid = [row["result"]["regret"] for row in group if row["result"] is not None]
-        mean, se = mean_se(valid)
-        result["argmax_regret"][key] = dict(roots=len(group), complete=len(valid), mean=mean, se=se)
+        valid = [row for row in group if row["result"] is not None]
+        mean = mean_se([row["result"]["regret"] for row in valid])[0]
+        deviations = defaultdict(float)
+        for row in valid:
+            deviations[row["seed"]] += row["result"]["regret"] - mean
+        sources = len(deviations)
+        se = (math.sqrt(sources / (sources - 1) * sum(delta**2 for delta in deviations.values())) / len(valid)
+              if sources > 1 else None)
+        result["argmax_regret"][key] = dict(roots=len(group), complete=len(valid), sources=sources, mean=mean, se=se)
     return result
 
 
