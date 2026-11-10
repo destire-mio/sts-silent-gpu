@@ -21,7 +21,14 @@ NODES = ("before_act1_boss", "enter_act2", "before_act2_boss", "enter_act3")
 
 def load_policy(path, device, fp32=False):
     weights = torch.load(path, map_location="cpu", weights_only=True)
-    model = CLSPolicy(ModelConfig(width=384, layers=6, heads=6, feedforward=1536))
+    config = ModelConfig(width=384, layers=6, heads=6, feedforward=1536)
+    if weights.get("format") == "e4_map_distill_policy_v1":
+        from train.e4_map_distill import MapDistillPolicy
+        model = MapDistillPolicy(config, weights["map_weight"], device)
+        model.route_head.load_state_dict(weights["map_head"])
+        weights = weights["model"]
+    else:
+        model = CLSPolicy(config)
     model.load_state_dict(weights)
     model.encoder_fp16 = device.type == "cuda" and not fp32
     return model.to(device).eval()

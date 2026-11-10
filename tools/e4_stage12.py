@@ -191,9 +191,16 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                         help="Standalone value-only updates before PPO (default 0)")
     parser.add_argument("--ema-decay", type=float, help="Standalone policy EMA decay (default 0)")
     parser.add_argument("--arena-fraction", type=float, help="Standalone practice lane fraction (default 0)")
+    parser.add_argument("--map-distill", type=Path, help="Label shards for a new standalone map PPO fork")
+    parser.add_argument("--map-distill-weight", type=float, help="Map distillation KL weight, including 0 for the control")
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
+    map_enabled = args.map_distill is not None
+    if map_enabled != (args.map_distill_weight is not None):
+        parser.error("Use --map-distill and --map-distill-weight together")
+    if map_enabled and (not standalone or not math.isfinite(args.map_distill_weight) or args.map_distill_weight < 0):
+        parser.error("Map distillation requires a standalone fork and finite nonnegative weight")
     if not standalone and (args.late_pools or args.late_pool_fraction is not None or args.late_pool_roots is not None):
         parser.error("late pools are standalone only")
     if args.late_pool_fraction is not None and not (0. <= args.late_pool_fraction <= 1.):
@@ -253,6 +260,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if standalone and saved else {}
+    saved_map = saved.get("map_distill") if saved else None
+    if saved is not None and map_enabled != (saved_map is not None):
+        parser.error("Start map distillation in a fresh output directory or resume its existing fork")
     saved_late_pools = saved_state.get("standalone_late_pools")
     late_pools = args.late_pools or saved_late_pools is not None
     if not late_pools and (args.late_pool_fraction is not None or args.late_pool_roots is not None):
@@ -342,11 +352,17 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             auxiliary_weights[name] = weight
     if saved_auxiliary and auxiliary_weights.keys() != saved_auxiliary.keys():
         parser.error("auxiliary resume requires the same enabled heads")
+    if map_enabled and (config.width != 384 or args.teacher is not None or saved_state.get("teacher_path")
+                        or auxiliary_weights or arena_fraction or late_pools):
+        parser.error("Map distillation requires the teacher-free 384 PPO fork without auxiliary heads, arena or late pools")
     if auxiliary_weights:
         if args.teacher is not None or (saved and scored_distillation(saved["state"])):
             parser.error("auxiliary heads require standalone PPO")
         from train.e4_stage12_auxiliary import AuxiliaryPolicy
         policy = AuxiliaryPolicy(config)
+    elif map_enabled:
+        from train.e4_map_distill import MapDistillCollector, MapDistillPolicy, MapDistillation, training_reach
+        policy = MapDistillPolicy(config, args.map_distill_weight, device)
     else:
         policy = CLSPolicy(config)
     if initial_weights is not None:
@@ -362,6 +378,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if create_critic_on_resume and (not auxiliary_weights or saved_auxiliary):
         policy.load_state_dict(saved["model"], strict=True)
     policy.to(device)
+    map_distillation = MapDistillation(policy, args.map_distill, saved_map) if map_enabled else None
     critic = SeparateCritic(policy) if separate_critic else None
     if critic is not None:
         policy.value.requires_grad_(False)
@@ -386,7 +403,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
     seed_rng = torch.Generator().manual_seed(20261131 + rank)
     storage_slots = 1024
-    collector_type = MidstartCollector
+    collector_type = MapDistillCollector if map_enabled else MidstartCollector
     training_collector_options = dict(collector_options)
     if arena_fraction:
         from train.e4_stage12_arena import ArenaCollector, POOL_SLOTS
@@ -555,6 +572,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if "claude165_dev112_rollback" in state:
         training_branch = "claude165_dev112_rollback"
         rollback_checkpoint = "dev-112.pt"
+    if map_enabled:
+        training_branch = "claude201_map_distill"
+        rollback_checkpoint = None
     score_guided = scored_distillation(state)
     distillation_target = None if score_guided else state.get('distillation_target', 80)
     if score_guided:
@@ -618,6 +638,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             contents = dict(model=move_tensors(policy.state_dict(), torch.device("cpu")),
                             optimizer=move_tensors(optimizer.state_dict(), torch.device("cpu")),
                             scaler=scaler.state_dict(), state=deepcopy(state), ppo_rng=ppo_rng.get_state())
+            if map_enabled:
+                contents["map_distill"] = move_tensors(map_distillation.state_dict(), torch.device("cpu"))
             if ema is not None:
                 contents["ema_weights"] = move_tensors(ema.weights, torch.device("cpu"))
             if critic is not None:
@@ -687,6 +709,17 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             if ema is not None and not label:
                 row["weight_source"] = "ema" if ema_run else "raw"
                 row["ema_decay"] = ema_decay
+            if map_enabled and bool(flag):
+                source = "ema" if ema_run else "raw"
+                path = output / f"map-distill-{state['update']}-{source}.pt"
+                if not path.exists():
+                    weights = ema.weights if ema_run else policy.state_dict()
+                    snapshot = dict(format="e4_map_distill_policy_v1", model=weights,
+                                    map_head=policy.route_head.state_dict(), map_weight=policy.map_weight)
+                    temporary = path.with_suffix(".pt.tmp")
+                    torch.save(move_tensors(snapshot, torch.device("cpu")), temporary)
+                    temporary.replace(path)
+                row["map_distill_snapshot"] = path.name
             if track_score:
                 row.update(distillation_learning_rate=DISTILLATION_LEARNING_RATE,
                            distillation_pass_mean_floor=DISTILLATION_PASS_FLOOR)
@@ -1000,6 +1033,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 model.train()
                 state["microbatch"] = choose_microbatch(model, cursor)
                 log(dict(event="microbatch", value=state["microbatch"]))
+        if map_enabled and "map_distill_kl_totals" not in cursor:
+            cursor["map_distill_kl_totals"] = torch.zeros(2, dtype=torch.float64, device=device)
         model.train(not warming)
         if critic is not None:
             critic.train(not warming)
@@ -1042,6 +1077,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
             if standalone:
                 checkpoint_if_due()
+        map_metrics = None
+        if map_enabled and not warming and state["stop_reason"] is None:
+            with search.times.measure("learner"):
+                map_metrics = map_distillation.step(state["update"] + 1, device)
         sync_started = time.perf_counter()
         synchronize(device)
         search.times.seconds["learner"] += time.perf_counter() - sync_started
@@ -1129,6 +1168,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if standalone:
             row["training_milestones"] = record_training_milestones(state, fresh_done, middle_done)
             row["decision_training"] = decision_training_summary(cursor)
+            if map_metrics is not None:
+                kl_sum, kl_rows = cursor["map_distill_kl_totals"].tolist()
+                row["map_distill"] = dict(**map_metrics, weight=policy.map_weight,
+                    map_ppo_kl=kl_sum / kl_rows if kl_rows else None, map_ppo_kl_rows=int(kl_rows),
+                    fresh=training_reach(fresh_done), midstart=training_reach(middle_done))
             if late_pools:
                 by_start = collector.late_round_metrics()
                 if world > 1:

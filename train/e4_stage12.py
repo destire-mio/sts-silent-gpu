@@ -811,6 +811,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                     probe.append((ids, policy.logits.detach()))
                 scalar = loss.sum() * world / max(1, global_count)
                 cursor["finite"] &= torch.isfinite(loss).all()
+                if "map_distill_kl_totals" in cursor:
+                    map_rows = f["decision_types"][ids] == DECISION_TYPES.index("map")
+                    kl = (ratio - 1 - log_ratio).detach().double()
+                    cursor["map_distill_kl_totals"] += torch.stack((kl.masked_fill(~map_rows, 0.).sum(), map_rows.sum()))
                 cursor["totals"] += torch.stack((actor.detach().double().sum(), value_loss.detach().double().sum(),
                     policy.entropy().detach().double().sum(),
                     (ratio - 1 - log_ratio).detach().double().sum(),
