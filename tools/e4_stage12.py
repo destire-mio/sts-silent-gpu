@@ -89,6 +89,26 @@ def metrics(episodes):
         heart_wins=sum(e["reach"]["heart"] for e in episodes))
 
 
+
+TRAINING_MILESTONES = ("act1_boss", "act2_boss", "act3_first_boss", "act3_second_boss",
+                       "act4", "shield_spear", "heart")
+
+
+def record_training_milestones(state, fresh, midstart):
+    totals = state.setdefault("training_milestones", {})
+    report = {}
+    for group, episodes in (("fresh", fresh), ("midstart", midstart)):
+        # The terminal reward ledger includes milestones inherited by midstarts.
+        completed = [episode for episode in episodes if episode["outcome"] != "stalled"]
+        counts = {name: sum(episode["reach"][name] for episode in completed)
+                  for name in TRAINING_MILESTONES}
+        previous = totals.get(group, {})
+        cumulative = {name: previous.get(name, 0) + count for name, count in counts.items()}
+        totals[group] = cumulative
+        report[group] = dict(round=counts, cumulative=cumulative.copy())
+    return report
+
+
 def paired_summary(episodes, baseline):
     previous = {e["seed"]:e["floor"] for e in baseline}
     deltas = [e["floor"] - previous[e["seed"]] for e in episodes if e["seed"] in previous]
@@ -915,6 +935,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             log(dict(event='low_normalized_entropy_warning', update=state['update'], normalized_entropy=row['normalized_entropy']))
         if row['kl'] > .1:
             log(dict(event='high_KL_warning', update=state['update'], kl=row['kl'], streak=state['high_kl_streak']))
+        if standalone:
+            row["training_milestones"] = record_training_milestones(state, fresh_done, middle_done)
         phase = "value_warmup" if warming else "distillation" if distilling else "PPO"
         log(dict(event="update",phase=phase,distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
             mainline_decisions_global=global_decisions,decisions_per_second_per_gpu=per_gpu,
