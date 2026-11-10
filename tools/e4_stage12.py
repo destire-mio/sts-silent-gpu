@@ -20,7 +20,7 @@ from torch.nn.parallel import DistributedDataParallel
 
 from train import OBSERVATION_VERSION
 from train.e4 import AllocationEnded, REACH
-from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
+from train.e4_stage12 import (CLSPolicy, SeparateCritic, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
     save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline,
     restart_rank_observation, restart_rank_engine, pandora_cuda_gates, MAX_LEARNING_RATE,
@@ -169,6 +169,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--init", type=Path)
     parser.add_argument("--teacher", type=Path)
     parser.add_argument("--value-coefficient", type=float, help="Persist a fixed standalone value loss coefficient")
+    parser.add_argument("--separate-critic", action="store_true", help="Train a separate 384x6 critic for standalone PPO")
+    parser.add_argument("--critic-learning-rate", type=float, help="Fixed critic Adam LR (default follows policy LR)")
     parser.add_argument("--combat-aux-weight", type=float, help="Combat prediction loss weight (default 0)")
     parser.add_argument("--global-aux-weight", type=float, help="Global prediction loss weight (default 0)")
     parser.add_argument("--lanes", type=int, default=2048)
@@ -188,6 +190,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
+    if not standalone and (args.separate_critic or args.critic_learning_rate is not None):
+        parser.error("separate critic settings are standalone only")
+    if args.critic_learning_rate is not None and (
+            not math.isfinite(args.critic_learning_rate) or args.critic_learning_rate <= 0):
+        parser.error("--critic-learning-rate must be finite and positive")
     if args.value_coefficient is not None:
         if not standalone:
             parser.error("--value-coefficient is standalone only")
@@ -236,6 +243,17 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if standalone and saved else {}
+    saved_critic = saved.get("critic") if saved else None
+    separate_critic = args.separate_critic or saved_critic is not None
+    critic_rate_override = args.critic_learning_rate
+    if saved_critic is not None:
+        if critic_rate_override is not None and critic_rate_override != saved_critic["learning_rate_override"]:
+            parser.error("resume requires the checkpoint's critic learning rate")
+        critic_rate_override = saved_critic["learning_rate_override"]
+    elif args.separate_critic and saved:
+        parser.error("start a separate critic from --init in a new output directory")
+    if critic_rate_override is not None and not separate_critic:
+        parser.error("--critic-learning-rate requires --separate-critic")
     control = saved["state"].get("claude186_control") if saved and not standalone else None
     if control is not None and (args.lanes, args.rollout_length) != (control["lanes"], control["rollout_length"]):
         parser.error("the Slurm control requires its original lane count and rollout length")
@@ -289,6 +307,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             parser.error("--teacher is for 768-wide distillation")
     else:
         config = ModelConfig(256, 4, 4, 1024)
+    if separate_critic and (not standalone or config.width != 384 or config.layers != 6
+                            or args.teacher is not None or saved_state.get("teacher_path")):
+        parser.error("--separate-critic requires standalone teacher-free 384x6 PPO")
     saved_auxiliary = saved["state"].get("standalone_auxiliary_weights", {}) if standalone and saved else {}
     auxiliary_weights = {}
     for name, weight in requested_auxiliary.items():
@@ -315,9 +336,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             policy.load_state_dict(saved["model"], strict=True)
         policy.install_auxiliary_heads(auxiliary_weights)
     policy.to(device)
+    critic = SeparateCritic(policy) if separate_critic else None
+    if critic is not None:
+        policy.value.requires_grad_(False)
     if standalone and (args.compile or args.fused_sdpa):
         from train.colab_learner import configure_learner
         configure_learner(policy, compile_encoder=args.compile, fused_sdpa=args.fused_sdpa)
+        if critic is not None:
+            configure_learner(critic, compile_encoder=args.compile, fused_sdpa=args.fused_sdpa)
     if auxiliary_weights:
         # A legacy partial learner may still finish without auxiliary targets.
         model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False,
@@ -342,6 +368,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         collector = MidstartCollector(search, seed_rng, rank=rank, **collector_options)
     search.deadline = deadline
     search.evidence_directory = output
+    search.training_critic = critic
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4,
@@ -354,6 +381,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                          teacher_evaluated_model="dev-112.pt", teacher_label="teacher-dev112-argmax",
                          distillation_updates=0, learning_rate=DISTILLATION_LEARNING_RATE,
                          claude168_defer_supplement=True)
+        elif critic is not None:
+            state.update(learning_rate=MAX_LEARNING_RATE, standalone_value_coefficient=.5)
         else:
             state.update(learning_rate=MAX_LEARNING_RATE, claude171_value_calibration_pending=True)
     cursor = None
@@ -463,6 +492,19 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     bootstrap = control is not None and state["checkpoint_serial"] == 0
     if common.exists() and scaler.is_enabled() and not bootstrap:
         scaler.load_state_dict(saved["scaler"])
+    critic_optimizer = critic_scaler = critic_ema = None
+    if critic is not None:
+        critic.encoder_fp16 = policy.encoder_fp16
+        critic_optimizer = torch.optim.Adam(critic.parameters(),
+                                            lr=critic_rate_override or state["learning_rate"], eps=1e-5)
+        critic_scaler = torch.amp.GradScaler(device.type, enabled=cuda and fp16)
+        if saved_critic is not None:
+            critic.load_state_dict(saved_critic["model"])
+            critic_optimizer.load_state_dict(saved_critic["optimizer"])
+            if critic_scaler.is_enabled():
+                critic_scaler.load_state_dict(saved_critic["scaler"])
+        if ema_decay:
+            critic_ema = ExponentialWeights(critic, ema_decay, saved_critic.get("ema_weights") if saved_critic else None)
     state["world"] = world
     if state["stop_reason"] in ('allocation_end_or_yield', 'entropy_below_half_initial', 'KL_above_0.1'):
         state["stop_reason"] = None
@@ -525,6 +567,12 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                             scaler=scaler.state_dict(), state=deepcopy(state), ppo_rng=ppo_rng.get_state())
             if ema is not None:
                 contents["ema_weights"] = move_tensors(ema.weights, torch.device("cpu"))
+            if critic is not None:
+                contents["critic"] = dict(model=move_tensors(critic.state_dict(), torch.device("cpu")),
+                    optimizer=move_tensors(critic_optimizer.state_dict(), torch.device("cpu")),
+                    scaler=critic_scaler.state_dict(), learning_rate_override=critic_rate_override)
+                if critic_ema is not None:
+                    contents["critic"]["ema_weights"] = move_tensors(critic_ema.weights, torch.device("cpu"))
             torch.save(contents, temporary)
             temporary.replace(common)
             log(dict(event="checkpoint", update=state["update"], reason=state["stop_reason"]))
@@ -575,13 +623,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             if control is not None:
                 row.update(reward_scheme=reward_scheme, init_checkpoint=control["init_checkpoint"],
                            cumulative_training_decisions=control["cumulative_decisions"])
-                if ema_run and bool(flag):
-                    path = output / f"dev-{int(state['training_seconds'] // 7200) * 2}-ema.pt"
-                    if not path.exists():
-                        temporary = path.with_suffix(".pt.tmp")
-                        torch.save(move_tensors(ema.weights, torch.device("cpu")), temporary)
-                        temporary.replace(path)
-                    row["model_snapshot"] = path.name
+            if ema_run and bool(flag) and (control is not None or critic is not None):
+                path = output / f"dev-{int(state['training_seconds'] // 7200) * 2}-ema.pt"
+                if not path.exists():
+                    temporary = path.with_suffix(".pt.tmp")
+                    torch.save(move_tensors(ema.weights, torch.device("cpu")), temporary)
+                    temporary.replace(path)
+                row["model_snapshot"] = path.name
             if ema is not None and not label:
                 row["weight_source"] = "ema" if ema_run else "raw"
                 row["ema_decay"] = ema_decay
@@ -612,6 +660,16 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                     row['model_snapshot'] = name
                 else:
                     row["model_snapshot"] = save_dev_weights(policy, output, state["training_seconds"])
+            if bool(flag) and not label and critic is not None:
+                hour = int(state["training_seconds"] // 7200) * 2
+                suffix = "-critic-ema" if ema_run else "-critic"
+                path = output / f"dev-{hour}{suffix}.pt"
+                if not path.exists():
+                    temporary = path.with_suffix(".pt.tmp")
+                    weights = critic_ema.weights if ema_run else critic.state_dict()
+                    torch.save(move_tensors(weights, torch.device("cpu")), temporary)
+                    temporary.replace(path)
+                row["critic_snapshot"] = path.name
             ledger = []
             for owner in range(world):
                 with gzip.open(output/f"{prefix}-{state['update']}-ledger-rank-{owner}.json.gz","rt") as stream:ledger.extend(json.load(stream))
@@ -648,9 +706,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         return bool(flag)
 
     def evaluate_training():
-        if control is None:
+        if control is None and critic is None:
             return evaluate() and (ema is None or evaluate(ema, ema_run=True))
         for weight_source, evaluated in (("raw", policy), ("ema", ema)):
+            if evaluated is None:
+                continue
             is_ema = weight_source == "ema"
             prefix = "evaluation-ema" if is_ema else "evaluation"
             result = output / f"{prefix}-{state['update']}.json"
@@ -671,8 +731,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             state["stop_reason"] = "allocation_end_or_yield"
             return
         state["next_evaluation"] += 7200.
-        if control is not None:
+        if control is not None or critic is not None:
             checkpoint()
+        if control is not None:
             if due_combat_comparison(state["training_seconds"]):
                 hour = int(state["training_seconds"] // 7200) * 2
                 write_json(output / f"expert-pending-{rank}.json", dict(hour=hour))
@@ -736,6 +797,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             arena = dict(fraction=arena_fraction, lanes=collector.arena_lanes,
                          active_lanes=collector.arena_lanes if any(pools.values()) else 0,
                          pool_sizes=pools)
+        critic_config = {}
+        if critic is not None:
+            critic_config["critic"] = dict(learning_rate=critic_rate_override or state["learning_rate"],
+                                           adam="restored" if saved_critic else "fresh")
         log(dict(event="effective_config", update=state["update"], source_commit=source_commit(),
                  lanes=args.lanes, microbatch=state["microbatch"], rollout_length=args.rollout_length,
                  gae_lambda=GAE_LAMBDA, gamma=GAE_GAMMA,
@@ -746,7 +811,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                  value=startup_value_setting(state, warming_at_start), ema_decay=ema_decay,
                  arena=arena, reward_scheme=reward_scheme, compile_encoder=args.compile,
                  recompute=policy.encoder_checkpoint_enabled, precision=state["precision"],
-                 midstart=midstart, adam="restored" if saved else "fresh"))
+                 midstart=midstart, adam="restored" if saved else "fresh", **critic_config))
     last_checkpoint = time.monotonic()
     if bootstrap or not common.exists():
         checkpoint()
@@ -773,9 +838,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if teacher is not None and state.get('distillation_evaluated'):
         del teacher
         teacher = None
-    del saved
+    del saved, saved_critic
     initial_evaluation_due = not (output / "baseline.json.gz").exists()
-    if control is not None:
+    if control is not None or (critic is not None and ema is not None):
         initial_evaluation_due |= not (output / "evaluation-ema-0.json").is_file()
         if not initial_evaluation_due:
             initial_evaluation_due = not json.loads((output / "evaluation-ema-0.json").read_text())["complete"]
@@ -786,7 +851,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         state['stop_reason'] = 'allocation_end_or_yield'
     if state["stop_reason"] is None and not combat_supplements():
         state["stop_reason"] = "allocation_end_or_yield"
-    if ((score_guided or control is not None) and cursor is None and state["stop_reason"] is None
+    if ((score_guided or control is not None or critic is not None) and cursor is None and state["stop_reason"] is None
             and state["training_seconds"] >= state["next_evaluation"]):
         regular_evaluation()
     report_distillation_limit()
@@ -822,6 +887,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             interrupted = False
             if round_state["ready"] is None:
                 policy.eval()
+                if critic is not None:
+                    critic.eval()
                 try:
                     round_state["ready"] = collector.collect(teacher if distilling else policy, length=args.rollout_length,
                         after_step=checkpoint_if_due if standalone else None,
@@ -876,6 +943,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 state["microbatch"] = choose_microbatch(model, cursor)
                 log(dict(event="microbatch", value=state["microbatch"]))
         model.train(not warming)
+        if critic is not None:
+            critic.train(not warming)
+            for group in critic_optimizer.param_groups:
+                group["lr"] = critic_rate_override or state["learning_rate"]
         recompute = None
         if config.width == 768 and not standalone:
             recompute = prepare_round(policy, cursor, state, world, resumed_learner)
@@ -887,18 +958,28 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 state["stop_reason"] = "allocation_end_or_yield"
                 break
             with search.times.measure("learner"):
-                if ema is not None:
-                    previous_steps = cursor["optimizer_steps"]
+                previous_steps = cursor["optimizer_steps"]
+                critic_stepped = False
                 if warming:
-                    advance_value_minibatch(policy, optimizer, scaler, cursor, ppo_rng, state["microbatch"])
+                    if critic is None:
+                        advance_value_minibatch(policy, optimizer, scaler, cursor, ppo_rng, state["microbatch"])
+                    else:
+                        advance_value_minibatch(critic, critic_optimizer, critic_scaler, cursor, ppo_rng,
+                                                state["microbatch"], split=True)
+                        critic_stepped = cursor["optimizer_steps"] > previous_steps
                 else:
-                    advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
-                        teacher=teacher if distilling else None,
+                    critic_stepped = advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world,
+                        state["microbatch"], teacher=teacher if distilling else None,
                         entropy_coefficient=state.get('entropy_coefficient', DEFAULT_ENTROPY_COEFFICIENT),
                         learner_profile=learner_profile,value_state=state,diagnostic_log=log,
-                        auxiliary_weights=auxiliary_weights,decision_diagnostics=standalone)
-                if ema is not None and cursor["optimizer_steps"] > previous_steps:
+                        auxiliary_weights=auxiliary_weights,decision_diagnostics=standalone,
+                        critic=critic,critic_optimizer=critic_optimizer,critic_scaler=critic_scaler)
+                if ema is not None and (not warming or critic is None) and cursor["optimizer_steps"] > previous_steps:
                     ema.update()
+                if critic is not None:
+                    cursor["critic_optimizer_steps"] = cursor.get("critic_optimizer_steps", 0) + int(critic_stepped)
+                    if critic_ema is not None and critic_stepped:
+                        critic_ema.update()
                 if rank == 0 and "value_calibration" in state and not (output/"claude133-gradient-diagnostic.json").exists():
                     write_json(output/"claude133-gradient-diagnostic.json",dict(update=state["update"]+1,**state["value_calibration"]))
             if standalone:
@@ -909,7 +990,12 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         round_state["seconds"] += time.monotonic() - started
         if state["stop_reason"] is not None:
             break
-        row = finish_metrics(cursor, model, scaler)
+        row = finish_metrics(cursor, critic if warming and critic is not None else model,
+                             critic_scaler if warming and critic is not None else scaler)
+        if critic is not None:
+            row["critic_optimizer_steps"] = cursor["critic_optimizer_steps"]
+            row["critic_learning_rate"] = critic_optimizer.param_groups[0]["lr"]
+            row["finite"] &= bool(torch.stack([torch.isfinite(p).all() for p in critic.parameters()]).all())
         if "auxiliary_metrics" in cursor["fragment"]:
             row["auxiliary"] = cursor["fragment"]["auxiliary_metrics"]
         if arena_fraction:
@@ -1012,10 +1098,11 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if warming:
             warmup["completed"] += 1
             if warmup["completed"] == warmup["updates"]:
-                state["claude171_value_calibration_pending"] = True
+                if critic is None:
+                    state["claude171_value_calibration_pending"] = True
                 checkpoint()
                 log(dict(event="value_warmup_complete", update=state["update"],
-                         rounds=warmup["completed"], remeasure_value_coefficient=True))
+                         rounds=warmup["completed"], remeasure_value_coefficient=critic is None))
         distillation_finished = distilling and not score_guided and state['distillation_updates'] == distillation_target
         if distillation_finished and state['stop_reason'] is None:
             checkpoint()

@@ -5,7 +5,7 @@ from train.e4_stage12 import finish_optimizer_step, local_minibatch
 from train.model import packed_inputs
 
 
-def advance_value_minibatch(policy, optimizer, scaler, cursor, rng, microbatch):
+def advance_value_minibatch(policy, optimizer, scaler, cursor, rng, microbatch, *, split=False):
     fragment = cursor["fragment"]
     selected, count = local_minibatch(cursor, rank=0)
     optimizer.zero_grad(set_to_none=True)
@@ -15,7 +15,10 @@ def advance_value_minibatch(policy, optimizer, scaler, cursor, rng, microbatch):
         inputs = packed_inputs(fragment["data"], fragment["offsets"], ids, ids.device)
         with torch.no_grad():
             _, pooled = policy.encode(inputs)
-        predicted = policy.value(pooled).squeeze(-1)
+        if split:
+            predicted = policy.values(pooled, fragment["decision_types"][ids] == 0)
+        else:
+            predicted = policy.value(pooled).squeeze(-1)
         error = predicted - fragment["returns"][ids]
         loss = error.square()
         scaler.scale(loss.sum() / count).backward()

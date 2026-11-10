@@ -102,6 +102,35 @@ class CLSPolicy(Policy):
         return entities[:, 1:].float(), entities[:, 0].float()
 
 
+class SeparateCritic(nn.Module):
+    encode = CLSPolicy.encode
+
+    def __init__(self, policy):
+        super().__init__()
+        self.config = policy.config
+        self.cls = deepcopy(policy.cls)
+        self.tags = deepcopy(policy.tags)
+        self.ids = deepcopy(policy.ids)
+        self.numbers = deepcopy(policy.numbers)
+        self.input_norm = deepcopy(policy.input_norm)
+        self.encoder = deepcopy(policy.encoder)
+        self.encoder_fp16 = policy.encoder_fp16
+        self.encoder_dtype_override = policy.encoder_dtype_override
+        self.encoder_checkpoint_enabled = policy.encoder_checkpoint_enabled
+        self.encoder_checkpoint_all = policy.encoder_checkpoint_all
+        self.combat_value = deepcopy(policy.value)
+        self.noncombat_value = deepcopy(policy.value)
+
+    def values(self, pooled, combat):
+        return torch.where(combat, self.combat_value(pooled).squeeze(-1),
+                           self.noncombat_value(pooled).squeeze(-1))
+
+    def forward(self, observation, combat, *, privileged_tokens=None):
+        assert privileged_tokens is None, 'The current critic takes only public observations.'
+        _, pooled = self.encode(observation)
+        return self.values(pooled, combat)
+
+
 class StageTimes:
     def __init__(self):
         self.seconds = dict.fromkeys(('inference', 'engine_step', 'masks_frames', 'repeat_probes', 'reward', 'learner'), 0.)
@@ -133,6 +162,7 @@ class NoSLSearch(RoomSearch):
         self.times = StageTimes()
         self.mainline_progress = {}
         self.last_policy_mask = None
+        self.training_critic = None
         self.failed = {}
         self.fault_counts = Counter()
         self.midstart_collector = None
@@ -212,13 +242,15 @@ class NoSLSearch(RoomSearch):
                 inputs = network_inputs(self.arrays, self.device, index)
                 inputs['candidate_mask'] &= self.last_policy_mask[positions, :inputs['candidate_mask'].shape[1]]
                 logits, value = model(inputs)
+                kinds = torch.tensor([decision_type(self.mainline_progress[slots[i]]) for i in positions],
+                                     dtype=torch.int64, device=self.device)
+                if self.training_critic is not None:
+                    value = self.training_critic(inputs, kinds == 0)
                 policy, normalized_entropy = distribution(logits.float(), inputs['candidate_mask'])
                 action = policy.probs.argmax(dim=1) if self.greedy else torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
                 rows = torch.stack((action.double(), value.double(), policy.log_prob(action).double()), dim=1).cpu().tolist()
                 self.entropy_sum += policy.entropy().double().sum()
                 self.entropy_count += len(positions)
-                kinds = torch.tensor([decision_type(self.mainline_progress[slots[i]]) for i in positions],
-                                     dtype=torch.int64, device=self.device)
                 self.decision_entropy[0].scatter_add_(0, kinds, normalized_entropy.double())
                 self.decision_entropy[1].scatter_add_(0, kinds, torch.ones_like(normalized_entropy, dtype=torch.float64))
                 nonforced = inputs["candidate_mask"].sum(-1) > 1
@@ -229,6 +261,19 @@ class NoSLSearch(RoomSearch):
                 choices[i], values[i], logs[i] = int(row[0]), row[1], row[2]
         return choices, values, logs
 
+    @torch.no_grad()
+    def scores(self, model, slots, progress):
+        if self.training_critic is None:
+            return super().scores(model, slots, progress)
+        result = dict.fromkeys(slots, 0.)
+        alive = [slot for slot in slots if progress[slot][SCREEN] != DEATH]
+        if alive:
+            index = torch.tensor(alive, dtype=torch.int64, device=self.device)
+            inputs = network_inputs(self.arrays, self.device, index)
+            model(inputs)  # Preserve the auxiliary capture used by the arena and rollout endpoints.
+            combat = torch.tensor([decision_type(progress[slot]) == 0 for slot in alive], device=self.device)
+            result.update(zip(alive, self.training_critic(inputs, combat).cpu().tolist()))
+        return result
 
 
 class NoSLCollector(SegmentCollector):
@@ -561,7 +606,7 @@ def measure_decision_drift(model, fragment, before_step):
 def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
                       teacher=None, entropy_coefficient=DEFAULT_ENTROPY_COEFFICIENT, learner_profile=None,
                       value_state=None, diagnostic_log=None, expert_oom_callback=None, auxiliary_weights=None,
-                      decision_diagnostics=False):
+                      decision_diagnostics=False, critic=None, critic_optimizer=None, critic_scaler=None):
     f = cursor["fragment"]
     auxiliary = f.get("auxiliary") if auxiliary_weights else None
     if auxiliary:
@@ -581,10 +626,14 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
     count = torch.tensor(len(chunks), device=cursor["order"].device)
     dist.all_reduce(count, op=dist.ReduceOp.MAX)
     optimizer.zero_grad(set_to_none=True)
+    if critic is not None:
+        assert teacher is None and world == 1 and value_state is not None
+        critic_optimizer.zero_grad(set_to_none=True)
+        critic_coefficient = value_coefficient(value_state)
     steps = int(count)
     manual = value_state is not None and value_state.get("standalone_value_coefficient") is not None
     recalibrate_ppo = teacher is None and value_state is not None and value_state.get("claude171_value_calibration_pending")
-    if value_state is not None and not manual and ("value_calibration" not in value_state or recalibrate_ppo):
+    if critic is None and value_state is not None and not manual and ("value_calibration" not in value_state or recalibrate_ppo):
         calibration = torch.zeros(4, device=selected.device, dtype=torch.float64)
         owner = 0
         ids = selected[:microbatch]
@@ -663,9 +712,16 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 ratio = log_ratio.exp()
                 actor = -torch.minimum(ratio * f["advantages"][ids],
                                        ratio.clamp(.8, 1.2) * f["advantages"][ids])
-                value_loss = (value - f["returns"][ids]).square()
+                if critic is None:
+                    value_loss = (value - f["returns"][ids]).square()
+                else:
+                    del value
+                    value_loss = torch.zeros_like(actor)
                 if teacher is None:
-                    loss = actor + (value_coefficient(value_state) if value_state is not None else .5) * value_loss - entropy_coefficient * normalized_entropy
+                    if critic is None:
+                        loss = actor + (value_coefficient(value_state) if value_state is not None else .5) * value_loss - entropy_coefficient * normalized_entropy
+                    else:
+                        loss = actor - entropy_coefficient * normalized_entropy
                 else:
                     actor, value_loss = distillation_terms(logits, value, teacher_logits, teacher_value, inputs['candidate_mask'])
                     loss = actor + (value_coefficient(value_state) if value_state is not None else .5) * value_loss
@@ -687,15 +743,32 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 logits, value = model(empty_inputs(cursor["order"].device))
                 scalar = (logits.sum() + value.sum()) * 0.
             scaler.scale(scalar).backward()
+        if critic is not None and len(ids):
+            predicted = critic(inputs, f["decision_types"][ids] == 0)
+            mse = (predicted - f["returns"][ids]).square()
+            weighted = critic_coefficient * mse.sum()
+            critic_scaler.scale(weighted / max(1, global_count)).backward()
+            cursor["finite"] &= torch.isfinite(mse).all()
+            cursor["totals"][1] += mse.detach().double().sum()
+            cursor["totals"][5] += weighted.detach().double()
         if learner_profile is not None:
             learner_profile.after_microbatch()
     if 'expert_total' in cursor:
         from train.e4_expert_iteration import add_capped_expert_gradients
         add_capped_expert_gradients(model, ce_gradients, scaler, cursor, world)
         del ce_gradients
+    critic_stepped = False
+    if critic is not None:
+        critic_scaler.unscale_(critic_optimizer)
+        torch.nn.utils.clip_grad_norm_(critic.parameters(), .5, error_if_nonfinite=False)
+        scale = critic_scaler.get_scale()
+        critic_scaler.step(critic_optimizer)
+        critic_scaler.update()
+        critic_stepped = critic_scaler.get_scale() >= scale
     finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank)
     if probe:
         cursor["decision_diagnostics_drift"] = measure_decision_drift(model.module, f, probe)
+    return critic_stepped
 
 
 def finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank):
