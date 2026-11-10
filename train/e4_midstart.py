@@ -5,6 +5,28 @@ import torch
 from train.e4 import ACT, FLOOR, PHASE, ROOM, BOSS_ROOM, COMBAT_PHASE
 from train.e4_stage12 import NoSLCollector
 
+
+MIDSTART_NAMES = ("act1_boss", "act2", "act2_boss", "act3")
+MIDSTART_CUTOFFS = (45, 55, 75, 90)
+MIDSTART_MINIMUM = 32
+MIDSTART_CAPACITY = 256
+
+
+def midstart_policy(pool_sizes):
+    fresh, act1, act2, act2_boss = MIDSTART_CUTOFFS
+    weights = [fresh, act1 - fresh, act2 - act1, act2_boss - act2, 100 - act2_boss]
+    if min(pool_sizes[:2]) < MIDSTART_MINIMUM:
+        weights = [100, 0, 0, 0, 0]
+    else:
+        for pool in (2, 3):
+            if pool_sizes[pool] < MIDSTART_MINIMUM:
+                weights[2] += weights[pool + 1]
+                weights[pool + 1] = 0
+    return dict(zip(("fresh", *MIDSTART_NAMES), (weight / 100 for weight in weights)),
+                pool_sizes=dict(zip(MIDSTART_NAMES, pool_sizes)),
+                minimum_pool_size=MIDSTART_MINIMUM, capacity_per_pool=MIDSTART_CAPACITY)
+
+
 class MidstartCollector(NoSLCollector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,8 +49,8 @@ class MidstartCollector(NoSLCollector):
 
     def retain(self, pool, slot):
         entries = self.pools[pool]
-        position = len(entries) if len(entries) < 256 else int(torch.randint(256, (), generator=self.seed_rng))
-        target = self.search.lanes + pool * 256 + position
+        position = len(entries) if len(entries) < MIDSTART_CAPACITY else int(torch.randint(MIDSTART_CAPACITY, (), generator=self.seed_rng))
+        target = self.search.lanes + pool * MIDSTART_CAPACITY + position
         self.captured[slot][pool] = True
         self.search.clone([slot], [target])
         entry = self.pool_entry(slot, target)
@@ -51,8 +73,8 @@ class MidstartCollector(NoSLCollector):
     def restart(self, pool, slot):
         position = int(torch.randint(len(self.pools[pool]), (), generator=self.seed_rng))
         entry = self.pools[pool][position]
-        source = self.search.lanes + pool * 256 + position
-        kind = ('act1_boss', 'act2', 'act2_boss', 'act3')[pool]
+        source = self.search.lanes + pool * MIDSTART_CAPACITY + position
+        kind = MIDSTART_NAMES[pool]
         self.start_from_entry(entry, source, slot, kind)
 
     def start_from_entry(self, entry, source, slot, kind):
@@ -74,16 +96,17 @@ class MidstartCollector(NoSLCollector):
         self.round_games += 1
 
     def fresh(self, slots):
-        if min(map(len, self.pools[:2])) < 32:
+        if min(map(len, self.pools[:2])) < MIDSTART_MINIMUM:
             return super().fresh(slots)
+        fresh, act1, act2, act2_boss = MIDSTART_CUTOFFS
         choices = torch.randint(100, (len(slots),), generator=self.seed_rng).tolist()
-        new = [slot for slot, choice in zip(slots, choices) if choice < 45]
+        new = [slot for slot, choice in zip(slots, choices) if choice < fresh]
         if new:
             super().fresh(new)
         for slot, choice in zip(slots, choices):
-            if choice >= 45:
-                pool = 0 if choice < 55 else 1 if choice < 75 else 2 if choice < 90 else 3
-                if len(self.pools[pool]) < 32:
+            if choice >= fresh:
+                pool = 0 if choice < act1 else 1 if choice < act2 else 2 if choice < act2_boss else 3
+                if len(self.pools[pool]) < MIDSTART_MINIMUM:
                     pool = 1
                 self.restart(pool, slot)
 
@@ -197,7 +220,7 @@ class MidstartCollector(NoSLCollector):
         pool_slots, pool_entries = [], []
         for pool, entries in enumerate(self.pools):
             for position, entry in enumerate(entries):
-                slot = self.search.lanes + pool * 256 + position
+                slot = self.search.lanes + pool * MIDSTART_CAPACITY + position
                 pool_slots.append(slot); pool_entries.append(entry)
                 self.restore_pool_metadata(slot, entry)
         self.replay(pool_slots, pool_entries)

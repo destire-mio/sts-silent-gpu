@@ -57,6 +57,8 @@ def next_learning_rate(rate, kl):
 
 
 GAE_LAMBDA = .995
+GAE_GAMMA = 1.  # The unit discount is implicit in the GAE recurrence below.
+DEFAULT_ENTROPY_COEFFICIENT = .01
 
 
 class CLSPolicy(Policy):
@@ -497,15 +499,85 @@ def precision_probe(model, cursor, rank):
                 precision="encoder_fp16_heads_fp32" if model.encoder_fp16 else "fp32")
 
 
+@torch.no_grad()
+def decision_training_summary(cursor):
+    fragment = cursor["fragment"]
+    kinds = fragment.get("decision_types")
+    if kinds is None:
+        kinds = torch.full_like(fragment["actions"], -1)
+    eligible = (fragment["action_valid"] & (kinds >= 0)
+                & (fragment["policy_mask"].sum(-1, dtype=torch.int32) > 1))
+    indices = kinds[eligible]
+    advantage = fragment["advantages"][eligible].double()
+    actor = cursor.get("decision_diagnostics_actor")
+    if actor is None:
+        actor_count = actor_sum = torch.zeros_like(advantage)
+    else:
+        losses = actor[:, eligible]
+        recorded = torch.isfinite(losses)
+        actor_count = recorded.sum(dim=0)
+        actor_sum = losses.masked_fill(~recorded, 0.).double().sum(dim=0)
+    totals = advantage.new_zeros((len(DECISION_TYPES), 5))
+    totals.index_add_(0, indices, torch.stack((torch.ones_like(advantage), advantage,
+                                              advantage.square(), actor_count, actor_sum), dim=1))
+    drift = cursor.get("decision_diagnostics_drift", totals.new_zeros((len(DECISION_TYPES), 3)))
+    result = {}
+    for kind, moments, (compared, kl, flipped) in zip(DECISION_TYPES, totals.tolist(), drift.tolist()):
+        samples, total, squares, actor_samples, loss = moments
+        mean = total / samples if samples else None
+        result[kind] = dict(samples=int(samples), advantage_mean=mean,
+                            advantage_std=math.sqrt(max(0., squares / samples - mean**2)) if samples else None,
+                            policy_loss=loss / actor_samples if actor_samples else None,
+                            policy_loss_samples=int(actor_samples), final_minibatch_samples=int(compared),
+                            post_pre_kl=max(0., kl / compared) if compared else None,
+                            argmax_flip_rate=flipped / compared if compared else None)
+    return result
+
+
+@torch.no_grad()
+def measure_decision_drift(model, fragment, before_step):
+    device = fragment["actions"].device
+    totals = torch.zeros(len(DECISION_TYPES), 3, dtype=torch.float64, device=device)
+    with torch.random.fork_rng(devices=[device.index] if device.type == "cuda" else []):
+        for ids, before in before_step:
+            inputs = packed_inputs(fragment["data"], fragment["offsets"], ids, device)
+            legal = inputs["candidate_mask"]
+            legal &= fragment["policy_mask"][ids, :legal.shape[1]]
+            # Reuse the learner forward backend even when the encoder is compiled.
+            with torch.enable_grad():
+                logits, value = model(inputs)
+            after, _ = distribution(logits.detach().float(), legal)
+            del logits, value
+            kl = (after.probs * (after.logits.masked_fill(~legal, 0.)
+                                 - before.masked_fill(~legal, 0.))).sum(dim=1)
+            flipped = after.logits.argmax(dim=1) != before.argmax(dim=1)
+            kinds = fragment["decision_types"][ids]
+            eligible = (kinds >= 0) & (legal.sum(dim=1) > 1) & torch.isfinite(kl)
+            stats = torch.stack((torch.ones_like(kl), kl, flipped), dim=1)
+            totals.index_add_(0, kinds[eligible], stats[eligible].double())
+    return totals
+
+
 def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
-                      teacher=None, entropy_coefficient=.01, learner_profile=None, value_state=None, diagnostic_log=None,
-                      expert_oom_callback=None, auxiliary_weights=None):
+                      teacher=None, entropy_coefficient=DEFAULT_ENTROPY_COEFFICIENT, learner_profile=None,
+                      value_state=None, diagnostic_log=None, expert_oom_callback=None, auxiliary_weights=None,
+                      decision_diagnostics=False):
     f = cursor["fragment"]
     auxiliary = f.get("auxiliary") if auxiliary_weights else None
     if auxiliary:
         from train.e4_stage12_auxiliary import auxiliary_loss
     selected, global_count = local_minibatch(cursor, rank)
     chunks = list(selected.split(microbatch))
+    actor_record = None
+    probe = None
+    if decision_diagnostics:
+        actor_record = cursor.get("decision_diagnostics_actor")
+        if actor_record is None:
+            actor_record = f["advantages"].new_full((2, len(f["actions"])), float("nan"))
+            cursor["decision_diagnostics_actor"] = actor_record
+        minibatch = cursor.get("global_minibatch", PPO_GLOBAL_MINIBATCH)
+        if "decision_types" in f and cursor["epoch"] == 1 and cursor["start"] + minibatch >= sum(cursor["counts"]):
+            probe = []
     count = torch.tensor(len(chunks), device=cursor["order"].device)
     dist.all_reduce(count, op=dist.ReduceOp.MAX)
     optimizer.zero_grad(set_to_none=True)
@@ -599,6 +671,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                     loss = actor + (value_coefficient(value_state) if value_state is not None else .5) * value_loss
                 if auxiliary:
                     loss = loss + auxiliary_loss(predictions, auxiliary, ids, auxiliary_weights)
+                if actor_record is not None:
+                    actor_record[cursor["epoch"]].index_copy_(0, ids, actor.detach())
+                if probe is not None:
+                    probe.append((ids, policy.logits.detach()))
                 scalar = loss.sum() * world / max(1, global_count)
                 cursor["finite"] &= torch.isfinite(loss).all()
                 cursor["totals"] += torch.stack((actor.detach().double().sum(), value_loss.detach().double().sum(),
@@ -618,6 +694,8 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         add_capped_expert_gradients(model, ce_gradients, scaler, cursor, world)
         del ce_gradients
     finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank)
+    if probe:
+        cursor["decision_diagnostics_drift"] = measure_decision_drift(model.module, f, probe)
 
 
 def finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank):

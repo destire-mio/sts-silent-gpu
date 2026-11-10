@@ -11,6 +11,7 @@ from pathlib import Path
 import signal
 import resource
 import statistics
+import subprocess
 import time
 
 import torch
@@ -23,17 +24,18 @@ from train.e4_stage12 import (CLSPolicy, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
     save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline,
     restart_rank_observation, restart_rank_engine, pandora_cuda_gates, MAX_LEARNING_RATE,
-    DISTILLATION_GLOBAL_MINIBATCH, PPO_GLOBAL_MINIBATCH)
+    DISTILLATION_GLOBAL_MINIBATCH, PPO_GLOBAL_MINIBATCH, GAE_LAMBDA, GAE_GAMMA,
+    DEFAULT_ENTROPY_COEFFICIENT, decision_training_summary)
 from train.model import ModelConfig
 from train.rollout import synchronize
 from train.e4_stage6.training_worker import move_tensors
-from train.e4_midstart import MidstartCollector
+from train.e4_midstart import MidstartCollector, midstart_policy
 from train.e4_learner_profile import TwoMicrobatchProfile
 from train.e4_recompute import TRIAL_ROUNDS, prepare_round, finish_round
 from train.e4_checkpoint import load_matching_rank
 from train.e4_value_diagnostics import (explained_variance, nonforced_entropy, value_coefficient,
                                         record_ppo_calibration_round)
-from train.e4_evaluation_ledger import EvaluationLedgerCollector, value_correlations
+from train.e4_evaluation_ledger import EvaluationLedgerCollector, exam_breakdown, value_correlations
 from train.e4_lookahead_window import lookahead60_window
 from train.e4_expert_window import due_combat_comparison, run_combat_supplements
 
@@ -134,6 +136,30 @@ def rollback_dev78(policy, state, output):
     state["claude150_dev78_rollback"] = dict(
         checkpoint="dev-78.pt", update=state["update"], training_seconds=state["training_seconds"])
     return True
+
+
+def source_commit():
+    root = Path(__file__).resolve().parents[1]
+    if (root / ".git").exists():
+        result = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True)
+        if result.returncode == 0:
+            return result.stdout.strip()
+    return os.environ.get("E4_SOURCE_COMMIT")
+
+
+def startup_value_setting(state, warming):
+    if warming:
+        return dict(coefficient=1., source="value_warmup")
+    calibration = state.get("value_calibration")
+    if state.get("standalone_value_coefficient") is not None:
+        source = "fixed"
+    elif state.get("claude171_value_calibration_pending") or calibration is None:
+        source = "pending_measurement"
+    elif calibration["completed_updates"] < (19 if "start_coefficient" in calibration else 20):
+        source = "ramp"
+    else:
+        source = "measured"
+    return dict(coefficient=value_coefficient(state), source=source)
 
 
 def main(argv=None, *, device_type="cuda", stop_after_update=None):
@@ -514,7 +540,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         evaluator_search.deadline = deadline
         evaluator_search.evidence_directory = output
         evaluator = EvaluationLedgerCollector(evaluator_search, torch.Generator().manual_seed(101 + rank),
-                                              rank=rank, **collector_options)
+                                              rank=rank, extra_details=standalone, **collector_options)
         evaluated.eval()
         complete = True
         try:
@@ -592,6 +618,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             ledger_name=f"{prefix}-{state['update']}-act2-ledger.json"
             write_json(output/ledger_name,dict(episodes=ledger,stalled_games=sum(e["stalled"] for e in ledger)))
             row.update(value_spearman=value_correlations(ledger),act2_ledger_file=ledger_name)
+            if standalone:
+                row["exam_breakdown"] = exam_breakdown(ledger)
             row.update(state.get("decision_entropy_metrics", {}))
             write_json(output / f"{prefix}-{state['update']}.json", row)
             log(row)
@@ -698,8 +726,27 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     profile_path = output / "claude127-learner-profile.json"
     learner_profile = (TwoMicrobatchProfile(profile_path, state["update"] + 1, log)
                        if rank == 0 and cuda and common.exists() and not profile_path.exists() else None)
-    log(dict(event="midstart_policy", fresh=.5, act1_boss=.1, act2=.25, act2_boss=.15,
-             minimum_pool_size=32, capacity_per_pool=256))
+    midstart = midstart_policy([len(pool) for pool in collector.pools])
+    log(dict(event="midstart_policy", **midstart))
+    if standalone:
+        warming_at_start = warmup is not None and warmup["completed"] < warmup["updates"]
+        arena = None
+        if arena_fraction:
+            pools = {kind: len(pool) for kind, pool in collector.arena_pools.items()}
+            arena = dict(fraction=arena_fraction, lanes=collector.arena_lanes,
+                         active_lanes=collector.arena_lanes if any(pools.values()) else 0,
+                         pool_sizes=pools)
+        log(dict(event="effective_config", update=state["update"], source_commit=source_commit(),
+                 lanes=args.lanes, microbatch=state["microbatch"], rollout_length=args.rollout_length,
+                 gae_lambda=GAE_LAMBDA, gamma=GAE_GAMMA,
+                 learning_rate=state["learning_rate"],
+                 learning_rate_cap=DISTILLATION_LEARNING_RATE if score_guided else MAX_LEARNING_RATE,
+                 entropy_coefficient=state.get("entropy_coefficient", DEFAULT_ENTROPY_COEFFICIENT),
+                 entropy_active=not warming_at_start and not score_guided,
+                 value=startup_value_setting(state, warming_at_start), ema_decay=ema_decay,
+                 arena=arena, reward_scheme=reward_scheme, compile_encoder=args.compile,
+                 recompute=policy.encoder_checkpoint_enabled, precision=state["precision"],
+                 midstart=midstart, adam="restored" if saved else "fresh"))
     last_checkpoint = time.monotonic()
     if bootstrap or not common.exists():
         checkpoint()
@@ -847,9 +894,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 else:
                     advance_minibatch(model, optimizer, scaler, cursor, ppo_rng, rank, world, state["microbatch"],
                         teacher=teacher if distilling else None,
-                        entropy_coefficient=state.get('entropy_coefficient', .01),
+                        entropy_coefficient=state.get('entropy_coefficient', DEFAULT_ENTROPY_COEFFICIENT),
                         learner_profile=learner_profile,value_state=state,diagnostic_log=log,
-                        auxiliary_weights=auxiliary_weights)
+                        auxiliary_weights=auxiliary_weights,decision_diagnostics=standalone)
                 if ema is not None and cursor["optimizer_steps"] > previous_steps:
                     ema.update()
                 if rank == 0 and "value_calibration" in state and not (output/"claude133-gradient-diagnostic.json").exists():
@@ -937,6 +984,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             log(dict(event='high_KL_warning', update=state['update'], kl=row['kl'], streak=state['high_kl_streak']))
         if standalone:
             row["training_milestones"] = record_training_milestones(state, fresh_done, middle_done)
+            row["decision_training"] = decision_training_summary(cursor)
         phase = "value_warmup" if warming else "distillation" if distilling else "PPO"
         log(dict(event="update",phase=phase,distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
             mainline_decisions_global=global_decisions,decisions_per_second_per_gpu=per_gpu,

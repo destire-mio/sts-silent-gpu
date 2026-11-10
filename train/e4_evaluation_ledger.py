@@ -1,9 +1,10 @@
 """Visible-state evaluation records; never used as policy inputs."""
+from collections import Counter
 from pathlib import Path
 import math
 import re
 import torch
-from train.e4 import ACT, FLOOR, PHASE, ROOM, SCREEN, HP, KEYS, COMBAT_PHASE, BOSS_ROOM, ELITE_ROOM, DEATH
+from train.e4 import ACT, FLOOR, PHASE, ROOM, SCREEN, HP, KEYS, COMBAT_PHASE, BOSS_ROOM, ELITE_ROOM, DEATH, MAP
 from train.e4_stage12 import NoSLCollector
 
 
@@ -14,6 +15,34 @@ def catalog_names(kind):
 
 CARDS, RELICS, POTIONS, MONSTERS = [catalog_names(kind) for kind in ('cards','relics','potions','monsters')]
 RUNIC_DOME = RELICS.index('Runic Dome')
+ENCOUNTERS = catalog_names('encounters')
+ACTS = ('1', '2', '3', '4')
+EXAM_ACT_COUNTS = ('elites', 'rests', 'upgrades', 'card_removals')
+
+
+def act2_map_boss(search, slot):
+    tags, ids = search.arrays['tags'][slot], search.arrays['ids'][slot]
+    boss = (tags[0] == 11) & (ids[0] == 9)
+    # Kind::Option, Control::Boss, and the encounter id plus one in the variant row.
+    return int(ids[3][boss].item())
+
+
+def exam_breakdown(episodes):
+    by_act = {act: dict.fromkeys(EXAM_ACT_COUNTS, 0) for act in ACTS}
+    entry_hp = {act: [] for act in ACTS}
+    act2_bosses = Counter()
+    for episode in episodes:
+        for act, counts in episode['counts_by_act'].items():
+            for key, value in counts.items():
+                by_act[act][key] += value
+        if episode['act2_boss'] is not None:
+            act2_bosses[episode['act2_boss']] += 1
+        for entry in episode['boss_entries']:
+            entry_hp[str(entry['act'])].append(entry['hp'])
+    for act, values in entry_hp.items():
+        by_act[act]['boss_entry_hp'] = dict(samples=len(values),
+                                            mean=sum(values) / len(values) if values else None)
+    return dict(by_act=by_act, act2_boss_counts=dict(act2_bosses))
 
 
 def visible_state(search, slot):
@@ -60,8 +89,9 @@ def value_correlations(episodes):
 
 
 class EvaluationLedgerCollector(NoSLCollector):
-    def __init__(self,*args,**kwargs):
+    def __init__(self,*args,extra_details=False,**kwargs):
         super().__init__(*args,**kwargs)
+        self.extra_details = extra_details
         self.records = [None] * self.search.lanes
         self.turns = torch.empty(self.search.size,dtype=torch.int64,device=self.search.device)
 
@@ -71,6 +101,9 @@ class EvaluationLedgerCollector(NoSLCollector):
             self.records[slot] = dict(seed=seed,act2_entry=None,counts=dict(card_skips=0,card_removals=0,
                 rests=0,upgrades=0),elites_by_act=dict.fromkeys(['1','2','3','4'],0),
                 elite_floors=[],combat_floors=[],room_entry_hp=None,encounter=[])
+            if self.extra_details:
+                self.records[slot].update(counts_by_act={act: dict.fromkeys(EXAM_ACT_COUNTS, 0) for act in ACTS},
+                                          act2_boss_id=None, act2_boss=None, boss_entries=[])
 
     def choose(self,model,slots,progress):
         actions,values,logs,imitation = super().choose(model,slots,progress)
@@ -82,6 +115,9 @@ class EvaluationLedgerCollector(NoSLCollector):
             if p[ACT] == 2 and record['act2_entry'] is None:
                 record['act2_entry'] = visible_state(self.search,slot)
                 record['act2_entry_value'] = value
+            if self.extra_details and p[ACT] == 2 and p[SCREEN] == MAP and record['act2_boss_id'] is None:
+                boss = act2_map_boss(self.search, slot)
+                record.update(act2_boss_id=boss, act2_boss=ENCOUNTERS[boss])
             if p[PHASE] == COMBAT_PHASE and p[FLOOR] not in record['combat_floors']:
                 record['combat_floors'].append(p[FLOOR])
                 record['encounter'] = visible_state(self.search,slot)['encounter']
@@ -89,6 +125,11 @@ class EvaluationLedgerCollector(NoSLCollector):
                 if p[ROOM] == ELITE_ROOM:
                     record['elites_by_act'][str(p[ACT])] += 1
                     record['elite_floors'].append(p[FLOOR])
+                    if self.extra_details:
+                        record['counts_by_act'][str(p[ACT])]['elites'] += 1
+                if self.extra_details and p[ROOM] == BOSS_ROOM:
+                    record['boss_entries'].append(dict(act=p[ACT], floor=p[FLOOR], hp=p[HP],
+                                                       encounter=record['encounter']))
         return actions,values,logs,imitation
 
     def advance(self,slots,actions,progress):
@@ -101,8 +142,11 @@ class EvaluationLedgerCollector(NoSLCollector):
             if frame['screen'] == 6 and kind == 7:record['counts']['card_skips'] += 1
             if frame['screen'] == 10 and kind == 3:
                 option = frame['rest_options'][action]
-                if option == 1:record['counts']['rests'] += 1
-                if option == 2:record['counts']['upgrades'] += 1
+                if option in (1, 2):
+                    key = 'rests' if option == 1 else 'upgrades'
+                    record['counts'][key] += 1
+                    if self.extra_details:
+                        record['counts_by_act'][str(progress[slot][ACT])][key] += 1
         count = len(self.completed)
         result = super().advance(slots,actions,progress)
         after = dict(progress)
@@ -113,7 +157,10 @@ class EvaluationLedgerCollector(NoSLCollector):
         self.search.batch.combat_turns_tensors(self.turns)
         for slot,deck in zip(valid,current_decks):
             record,p = self.records[slot],after[slot]
-            record['counts']['card_removals'] += max(0,frames[slot]['deck_size']-deck)
+            removed = max(0, frames[slot]['deck_size'] - deck)
+            record['counts']['card_removals'] += removed
+            if self.extra_details and removed:
+                record['counts_by_act'][str(progress[slot][ACT])]['card_removals'] += removed
             if p[FLOOR] != progress[slot][FLOOR]:
                 record['room_entry_hp'] = progress[slot][HP]
                 record['encounter'] = []
