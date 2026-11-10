@@ -251,14 +251,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         parser.error("start with --key-last-chance and --init in a new output directory")
     key_last_chance = args.key_last_chance or saved_key_mask
     saved_critic = saved.get("critic") if saved else None
+    create_critic_on_resume = saved is not None and args.separate_critic and saved_critic is None
     separate_critic = args.separate_critic or saved_critic is not None
     critic_rate_override = args.critic_learning_rate
     if saved_critic is not None:
         if critic_rate_override is not None and critic_rate_override != saved_critic["learning_rate_override"]:
             parser.error("resume requires the checkpoint's critic learning rate")
         critic_rate_override = saved_critic["learning_rate_override"]
-    elif args.separate_critic and saved:
-        parser.error("start a separate critic from --init in a new output directory")
     if critic_rate_override is not None and not separate_critic:
         parser.error("--critic-learning-rate requires --separate-critic")
     control = saved["state"].get("claude186_control") if saved and not standalone else None
@@ -342,6 +341,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if saved and not saved_auxiliary:
             policy.load_state_dict(saved["model"], strict=True)
         policy.install_auxiliary_heads(auxiliary_weights)
+    if create_critic_on_resume and (not auxiliary_weights or saved_auxiliary):
+        policy.load_state_dict(saved["model"], strict=True)
     policy.to(device)
     critic = SeparateCritic(policy) if separate_critic else None
     if critic is not None:
@@ -403,7 +404,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     round_state = dict(ready=None, seconds=0., decisions_start=0)
     if common.exists():
         if not auxiliary_weights or saved_auxiliary:
-            policy.load_state_dict(saved["model"], strict=True)
+            if not create_critic_on_resume:
+                policy.load_state_dict(saved["model"], strict=True)
             optimizer.load_state_dict(saved["optimizer"])
         state.update(saved["state"])
         apply_resume_learning_rate(state)
@@ -815,6 +817,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if critic is not None:
             critic_config["critic"] = dict(learning_rate=critic_rate_override or state["learning_rate"],
                                            adam="restored" if saved_critic else "fresh")
+        if create_critic_on_resume:
+            log(dict(event="critic_created_on_resume", update=state["update"]))
         log(dict(event="effective_config", update=state["update"], source_commit=source_commit(),
                  lanes=args.lanes, microbatch=state["microbatch"], rollout_length=args.rollout_length,
                  gae_lambda=GAE_LAMBDA, gamma=GAE_GAMMA,
@@ -1007,7 +1011,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         row = finish_metrics(cursor, critic if warming and critic is not None else model,
                              critic_scaler if warming and critic is not None else scaler)
         if critic is not None:
-            row["critic_optimizer_steps"] = cursor["critic_optimizer_steps"]
+            row["critic_optimizer_steps"] = cursor.get("critic_optimizer_steps", 0)
             row["critic_learning_rate"] = critic_optimizer.param_groups[0]["lr"]
             row["finite"] &= bool(torch.stack([torch.isfinite(p).all() for p in critic.parameters()]).all())
         if "auxiliary_metrics" in cursor["fragment"]:
