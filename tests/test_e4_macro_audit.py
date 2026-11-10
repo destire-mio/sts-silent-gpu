@@ -30,4 +30,12 @@ def test_macro_audit_native_cpu_runs_paired_determinized_options():
         draws.extend(stage["seeds"])
     assert len(set(draws)) == len(draws)
     assert "k32_vs_k32_independent" in markdown(result)
-    json.dumps(result, allow_nan=False)
+    assert all(row["first"] == .25 and row["room_entry"] == .25
+               for row in root["option_values"].values())
+    assert result["summary"]["map"]["successor_value"]["gain"] == 0.
+    archived = json.loads(json.dumps(result, allow_nan=False))
+    replay = audit(EndTurnPolicy(), torch.device("cpu"), 4, 101, time.monotonic()+45,
+                   quotas={}, reference=archived)
+    restored, = replay["roots"]
+    assert replay["reused_k128"] and restored["trials"] == {"k128": root["trials"]["k128"]}
+    assert restored["timings"] == {} and restored["option_values"] == root["option_values"]

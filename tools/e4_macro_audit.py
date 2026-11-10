@@ -224,6 +224,85 @@ def run_stage(runner, model, roots, name, count, rng, limit):
             timing["allocated_wall_seconds"] += elapsed * (count_steps if total_steps else 1) / denominator
 
 
+def replay_roots(runner, records):
+    search = runner.search
+    roots = []
+    for start in range(0, len(records), search.lanes):
+        chunk = records[start:start + search.lanes]
+        slots = list(range(len(chunk)))
+        runner.reset(slots, [r["seed"] for r in chunk])
+        for tick in range(max(len(r["path"]) for r in chunk)):
+            live = [s for s, r in enumerate(chunk) if tick < len(r["path"])]
+            progress = search.progress_for(live)
+            actions = [chunk[s]["path"][tick] for s in live]
+            mask = search.policy_masks(live)
+            if not bool(mask[list(range(len(live))), actions].all()):
+                raise ValueError("An archived root prefix no longer has the recorded legal action")
+            runner.stalled = set()
+            _, terminal = runner.advance(live, actions, progress)
+            if any(terminal):
+                raise ValueError("An archived root prefix ended before its recorded decision")
+        progress = search.progress_for(slots)
+        inputs = network_inputs(search.arrays, search.device, torch.tensor(slots, device=search.device))
+        for slot, root in enumerate(chunk):
+            kind = root_kind(progress[slot], int(inputs["tags"][slot, 3, 0]))
+            options = option_rows(kind, inputs["candidate_mask"][slot].tolist(),
+                                  inputs["candidate_kinds"][slot].tolist(), inputs["candidate_refs"][slot, 2].tolist(),
+                                  inputs["tags"][slot, 0].tolist(), inputs["ids"][slot, 0].tolist())
+            if kind != root["kind"] or progress[slot] != root["progress"] or options != root["options"]:
+                raise ValueError(f"Archived root {root['seed']} {root['kind']} no longer matches the engine")
+            target, = search.take(1)
+            search.clone([slot], [target])
+            roots.append(dict(root, slot=target, ledger=deepcopy(runner.rewards[slot]),
+                              trials={"k128": root["trials"]["k128"]}, timings={}))
+    return roots
+
+
+@torch.no_grad()
+def record_successor_values(runner, model, roots):
+    search = runner.search
+    plan = [(root, action) for root in roots for action in root["options"]]
+    for root in roots:
+        root["option_values"] = {str(a): dict(first=None, room_entry=None) for a in root["options"]}
+    for start in range(0, len(plan), search.lanes):
+        search.clock()
+        chunk = plan[start:start + search.lanes]
+        slots = list(range(len(chunk)))
+        runner.reset(slots, [root["seed"] for root, _ in chunk])
+        search.clone([root["slot"] for root, _ in chunk], slots)
+        search.step(slots, [action for _, action in chunk])
+        after = search.last_step_progress
+        healthy = [s for s in slots if s not in search.failed]
+        live = [s for s in healthy if after[s][SCREEN] not in (DEATH, VICTORY)]
+        values = dict.fromkeys(healthy, 0.)
+        if live:
+            inputs = network_inputs(search.arrays, search.device, torch.tensor(live, device=search.device))
+            values.update(zip(live, model(inputs)[1].tolist()))
+        for slot, value in values.items():
+            root, action = chunk[slot]
+            old, new = root["progress"], after[slot]
+            entered = (new[ACT], new[FLOOR], new[ROOM]) != (old[ACT], old[FLOOR], old[ROOM])
+            root["option_values"][str(action)] = dict(first=value, room_entry=value if entered else None)
+
+
+def value_summary(roots):
+    correlations, gains = [], []
+    for root in roots:
+        k128 = root["statistics"].get("k128")
+        values = [root["option_values"][str(a)]["first"] for a in root["options"]]
+        if k128 is None or None in values:
+            continue
+        correlation = spearman(list(zip(values, k128["means"])))
+        if correlation is not None:
+            correlations.append(correlation)
+        argmax = root["options"].index(root["argmax"])
+        best = max([argmax] + list(range(len(values))), key=values.__getitem__)
+        gains.append((k128["means"][best] - k128["means"][argmax]) * MAX_REWARD)
+    gain, error = mean_se(gains)
+    return dict(roots=len(gains), spearman=mean_se(correlations)[0], spearman_roots=len(correlations),
+                gain=gain, root_SE=error)
+
+
 def stage_stats(root, name):
     trials = root["trials"].get(name)
     if trials is None:
@@ -260,7 +339,7 @@ def summarize(roots, stages):
                 best_agree=sum(a["best"] == b["best"] for a, b in pairs),
                 spearman=mean_se(valid)[0], spearman_roots=len(valid))
         report[kind] = dict(roots=len(group), roots_by_act={str(a):sum(r["act"] == a for r in group) for a in BOSS_REACH},
-                            stages=by_stage, stability=stability,
+                            stages=by_stage, stability=stability, successor_value=value_summary(group),
                             decisions=sum(t["decisions"] for r in group for t in r["timings"].values()),
                             allocated_wall_seconds=sum(t["allocated_wall_seconds"] for r in group for t in r["timings"].values()))
     return report
@@ -282,29 +361,49 @@ def markdown(result):
         for pair, row in group["stability"].items():
             lines.append(f"| {kind} | {pair} | {row['best_agree']}/{row['roots']} | "
                          f"{fmt(row['spearman'])} | {row['spearman_roots']} |")
+    lines += ["", "Successor V uses the first decision after each option. JSON also records room-entry V when the option enters a room.",
+              "V-choice gains are measured against argmax on the original K=128 returns in original reward units.", "",
+              "| Type | V / K=128 Spearman | Spearman roots | V-choice roots | V-choice gain | Root SE |",
+              "|---|---:|---:|---:|---:|---:|"]
+    for kind, group in result["summary"].items():
+        row = group["successor_value"]
+        lines.append(f"| {kind} | {fmt(row['spearman'])} | {row['spearman_roots']} | "
+                     f"{row['roots']} | {fmt(row['gain'])} | {fmt(row['root_SE'])} |")
+    if result["reused_k128"]:
+        lines += ["", "K=128 returns came from the input audit. This run replayed root prefixes and measured successor values."]
     lines += ["", "| Type | Decisions | Allocated wall seconds |", "|---|---:|---:|"]
     for kind, group in result["summary"].items():
         lines.append(f"| {kind} | {group['decisions']} | {group['allocated_wall_seconds']:.3f} |")
     return "\n".join(lines) + "\n"
 
 
-def audit(model, device, lanes, seed, deadline, *, quotas, stages=STAGES, limit=600, max_seeds=30000):
+def audit(model, device, lanes, seed, deadline, *, quotas, stages=STAGES, limit=600, max_seeds=30000,
+          reference=None):
     started = time.monotonic()
-    runner = collector(lanes, device, seed, deadline, storage_slots=sum(quotas.values()), cls=MacroRoots)
-    roots = runner.capture(model, quotas, max_seeds)
-    rng = random.Random(seed)
+    size = sum(quotas.values()) if reference is None else len(reference["roots"])
+    runner = collector(lanes, device, seed, deadline, storage_slots=size, cls=MacroRoots)
+    roots = runner.capture(model, quotas, max_seeds) if reference is None else replay_roots(runner, reference["roots"])
+    record_successor_values(runner, model, roots)
     complete = True
-    try:
-        for name, count in stages.items():
-            run_stage(runner, model, roots, name, count, rng, limit)
-    except AllocationEnded:
-        complete = False
+    if reference is None:
+        rng = random.Random(seed)
+        if tuple(stages) == ("k128",):
+            for _ in range(len(roots) * (STAGES["k8"] + STAGES["k32"])):
+                rng.randrange(2**63)
+        try:
+            for name, count in stages.items():
+                run_stage(runner, model, roots, name, count, rng, limit)
+        except AllocationEnded:
+            complete = False
+    else:
+        stages = ("k128",)
+        limit = reference["cutoff"]
     for root in roots:
         root["statistics"] = {name:stage_stats(root, name) for name in stages}
     report = summarize(roots, stages)
     output = [{key:value for key, value in root.items() if key not in ("ledger","slot")} for root in roots]
     return dict(complete=complete, seconds=time.monotonic()-started, seed=seed, cutoff=limit,
-                summary=report, roots=output)
+                reused_k128=reference is not None, summary=report, roots=output)
 
 
 def main():
@@ -315,6 +414,9 @@ def main():
     parser.add_argument("--lanes", type=int, default=1024)
     parser.add_argument("--seed", type=int, default=101)
     parser.add_argument("--fp32", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--reuse-k128", type=Path, help="Read the original macro-audit.json and replay only its root prefixes")
+    mode.add_argument("--k128-only", action="store_true", help="Run the K=128 stage only")
     args = parser.parse_args()
     if args.lanes < 1:
         parser.error("--lanes must be positive")
@@ -326,8 +428,13 @@ def main():
     model = load_policy(args.checkpoint, device, args.fp32)
     quotas = {(kind, act):count//3+int(act <= count%3)
               for kind, count in COUNTS.items() for act in BOSS_REACH}
+    reference = json.loads(args.reuse_k128.read_text(encoding="utf-8")) if args.reuse_k128 else None
+    if reference is not None and (not reference["complete"] or reference["seed"] != args.seed
+            or not reference["roots"] or any(len(root["trials"]["k128"]["seeds"]) != 128 for root in reference["roots"])):
+        parser.error("--reuse-k128 requires a complete K=128 audit with the same seed")
     args.output.mkdir(parents=True, exist_ok=False)
-    result = audit(model, device, args.lanes, args.seed, deadline, quotas=quotas)
+    result = audit(model, device, args.lanes, args.seed, deadline, quotas=quotas,
+                   stages={"k128": 128} if args.k128_only else STAGES, reference=reference)
     result["checkpoint"] = str(args.checkpoint)
     (args.output/"macro-audit.json").write_text(json.dumps(result, allow_nan=False)+"\n", encoding="utf-8")
     (args.output/"macro-audit.md").write_text(markdown(result), encoding="utf-8")
