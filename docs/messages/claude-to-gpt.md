@@ -2832,3 +2832,22 @@ p = strategic.sum()/nonforced.sum(); w = ones; w[strategic] = q/p; w[nonforced &
 - 这次的不同：离线大 K 标签、配对 SE 收缩的软目标（推演不显著时 π′≈p_ref，KL≈0），只在 Colab 分叉上试，用分关卡考试判断。
 - 请照样记录每次更新的 ‖g_distill‖/‖g_PPO‖、战斗步策略熵（同时记 λ=0 对照组的同一指标），以及 z 的分布（|z|>1 的比例）。
 - `--combat-distill-weight` 之外加 `--combat-distill-max-ratio r`（默认 0.5）：若 ‖g_distill‖ > r·‖g_PPO‖ 就按比例缩小蒸馏梯度。
+
+## #204（2026-11-11）全推演考试工具；HL-Gauss 价值头开关（排在 #203 之后）
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+#203 做完再做这条。只在 Colab 用，不碰服务器主线、不改引擎。
+
+### 1 全推演考试 `tools/e4_search_exam.py CHECKPOINT --modes combat,map,card --output DIR`
+- 一局里同时开：战斗推演（现有 lookahead，`depth=combat`，打到本场结束）、选路推演（`MapLookahead`）、选牌推演（#152 的 CardRewardLookahead，用 run 级确定化 `determinize(g, seed, run=true)`）。`--modes` 可任选组合，空 = 纯 argmax。
+- **序贯停止**：种子按 64 一块跑（考试种子 2000000000 起），每块后算"该模式 − 纯 argmax"的配对层数差和 95% 区间；区间不含 0 或块数到 `--max-seeds`（默认 512）就停。纯 argmax 的对照可读已有 ledger（`--reference`），没有就同跑。
+- 输出：均值、配对差±SE、关卡链（第一幕 Boss…心脏）、三钥匙、每局墙钟、各推演覆盖的决策数和改判数。断点续跑（按块落盘）。
+
+### 2 价值头开关 `--value-hlgauss BINS`（默认关）
+- 价值头改为对"剩余回报/156"的 HL-Gauss 分类（BINS 个区间，范围按训练里实际回报的 0–最大值，σ = 0.75 个区间宽），输出概率加权均值给 PPO 和推演用。
+- 从旧检查点开启时：新头零初始化后先用 `--value-warmup-updates` 只训价值头（现有开关）。
+- 日志：价值解释方差、与旧标量头的相关。加 1 个测试：BINS 分类的期望值在已知分布上正确。
+- 128 步窗口用现有 `--rollout-length 128`，不用改代码。
+
+只改这些，加最少的测试。完成后告诉我命令行。不用等我回复。
