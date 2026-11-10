@@ -158,12 +158,12 @@ class MidstartCollector(NoSLCollector):
             starting_rewards=self.starting_rewards.copy())
         return state
 
-    def replay(self, slots, entries):
+    def replay(self, slots, entries, *, reset_prefixes=None, check=None):
         if not slots:
             return
         positions = [e['randomizations'][0][0] if e['randomizations'] else len(e['path']) for e in entries]
-        self.search.batch.reset_to_many(slots, [e['seed'] for e in entries],
-            [e['path'][:at] for e, at in zip(entries, positions)])
+        reset_prefixes = reset_prefixes or self.search.batch.reset_to_many
+        reset_prefixes(slots, [e['seed'] for e in entries], [e['path'][:at] for e, at in zip(entries, positions)])
         events = [deque(e['randomizations']) for e in entries]
         while True:
             indices = [j for j, queue in enumerate(events) if queue and queue[0][0] == positions[j]]
@@ -182,7 +182,7 @@ class MidstartCollector(NoSLCollector):
             self.search.batch.step_slots([slots[j] for j in active], [entries[j]['path'][positions[j]] for j in active])
             for j in active:
                 positions[j] += 1
-        self.search.check(slots)
+        (check or self.search.check)(slots)
 
     def restore(self, state):
         # Pre-midstart checkpoints migrate with empty pools and their original live lanes intact.

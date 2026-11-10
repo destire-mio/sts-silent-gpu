@@ -169,6 +169,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--init", type=Path)
     parser.add_argument("--teacher", type=Path)
     parser.add_argument("--value-coefficient", type=float, help="Persist a fixed standalone value loss coefficient")
+    parser.add_argument("--late-pools", action="store_true", help="Use E2 and natural late midstart pools in standalone PPO")
+    parser.add_argument("--late-pool-fraction", type=float, help="Share of regular starts allocated to late pools (default .15)")
+    parser.add_argument("--late-pool-roots", type=Path, help="E2 train-root gzip (default artifacts/e2-roots/collection-train.jsonl.gz)")
     parser.add_argument("--key-last-chance", action="store_true", help="Preserve last Act 3 key opportunities in standalone PPO and exams")
     parser.add_argument("--separate-critic", action="store_true", help="Train a separate 384x6 critic for standalone PPO")
     parser.add_argument("--critic-learning-rate", type=float, help="Fixed critic Adam LR (default follows policy LR)")
@@ -191,6 +194,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
+    if not standalone and (args.late_pools or args.late_pool_fraction is not None or args.late_pool_roots is not None):
+        parser.error("late pools are standalone only")
+    if args.late_pool_fraction is not None and not (0. <= args.late_pool_fraction <= 1.):
+        parser.error("--late-pool-fraction must be in [0, 1]")
     if args.key_last_chance and not standalone:
         parser.error("--key-last-chance is standalone only")
     if not standalone and (args.separate_critic or args.critic_learning_rate is not None):
@@ -246,6 +253,18 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if standalone and saved else {}
+    saved_late_pools = saved_state.get("standalone_late_pools")
+    late_pools = args.late_pools or saved_late_pools is not None
+    if not late_pools and (args.late_pool_fraction is not None or args.late_pool_roots is not None):
+        parser.error("late pool settings require --late-pools")
+    if late_pools and (args.teacher is not None or saved_state.get("teacher_path")):
+        parser.error("--late-pools requires teacher-free standalone PPO")
+    late_settings = None
+    if late_pools:
+        previous_late = saved_late_pools or {}
+        fraction = args.late_pool_fraction if args.late_pool_fraction is not None else previous_late.get("fraction", .15)
+        roots = args.late_pool_roots or Path(previous_late.get("roots", "artifacts/e2-roots/collection-train.jsonl.gz"))
+        late_settings = dict(fraction=fraction, roots=str(roots.resolve()))
     saved_key_mask = saved_state.get("standalone_key_last_chance", False)
     if standalone and saved and args.key_last_chance and not saved_key_mask:
         parser.error("start with --key-last-chance and --init in a new output directory")
@@ -367,15 +386,22 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
     seed_rng = torch.Generator().manual_seed(20261131 + rank)
+    storage_slots = 1024
+    collector_type = MidstartCollector
+    training_collector_options = dict(collector_options)
     if arena_fraction:
         from train.e4_stage12_arena import ArenaCollector, POOL_SLOTS
-        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024 + POOL_SLOTS,
-                            key_last_chance=key_last_chance)
-        collector = ArenaCollector(search, seed_rng, rank=rank, fraction=arena_fraction, **collector_options)
-    else:
-        search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=1024,
-                            key_last_chance=key_last_chance)
-        collector = MidstartCollector(search, seed_rng, rank=rank, **collector_options)
+        storage_slots += POOL_SLOTS
+        collector_type = ArenaCollector
+        training_collector_options["fraction"] = arena_fraction
+    if late_pools:
+        from train.e4_late_pools import LateArenaCollector, LateMidstartCollector, LATE_SLOTS
+        collector_type = LateArenaCollector if arena_fraction else LateMidstartCollector
+        training_collector_options.update(late_fraction=late_settings["fraction"], late_offset=storage_slots)
+        storage_slots += LATE_SLOTS
+    search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=storage_slots,
+                        key_last_chance=key_last_chance)
+    collector = collector_type(search, seed_rng, rank=rank, **training_collector_options)
     search.deadline = deadline
     search.evidence_directory = output
     search.training_critic = critic
@@ -556,6 +582,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             print(json.dumps(row, allow_nan=True), flush=True)
             with (output / "training.jsonl").open("a") as stream:
                 stream.write(json.dumps(row, allow_nan=True) + "\n")
+
+    if late_pools:
+        state["standalone_late_pools"] = late_settings
+        needs_initialization = collector.late_initialization is None
+        replay = collector.seed_external(Path(late_settings["roots"]))
+        log(dict(event="late_pools_ready", update=state["update"], fraction=late_settings["fraction"],
+                 initialized=needs_initialization, **replay))
 
     def stopping():
         batch_stopping = args.batch_stop_file is not None and args.batch_stop_file.exists()
@@ -1089,6 +1122,15 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if standalone:
             row["training_milestones"] = record_training_milestones(state, fresh_done, middle_done)
             row["decision_training"] = decision_training_summary(cursor)
+            if late_pools:
+                by_start = collector.late_round_metrics()
+                if world > 1:
+                    totals = torch.tensor([list(counts.values()) for counts in by_start.values()],
+                                          dtype=torch.int64, device=device)
+                    dist.all_reduce(totals)
+                    by_start = {name: dict(zip(counts, values))
+                                for (name, counts), values in zip(by_start.items(), totals.tolist())}
+                row["training_by_start"] = by_start
         phase = "value_warmup" if warming else "distillation" if distilling else "PPO"
         log(dict(event="update",phase=phase,distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
             mainline_decisions_global=global_decisions,decisions_per_second_per_gpu=per_gpu,
