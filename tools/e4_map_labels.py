@@ -260,33 +260,76 @@ def label_shard(runner, model, records, mode, draw_seed):
                 seconds=time.monotonic() - start, rows=rows)
 
 
-def summary(shards, mode, capture_stats):
-    rows = [row for shard in shards for row in shard["rows"]]
-    seconds = sum(shard["seconds"] for shard in shards)
-    steps = sum(shard["preview_steps"] for shard in shards)
-    result = dict(mode=mode, roots=len(rows), preview_steps=steps, labeling_seconds=seconds,
-                  steps_per_root=steps / len(rows), steps_per_second=steps / seconds,
-                  wall_seconds_per_root=seconds / len(rows), source=capture_stats)
-    if mode == "labels":
-        result["complete_roots"] = sum(row["complete"] for row in rows)
-        return result
+def group_roots(rows):
     groups = defaultdict(list)
     for row in rows:
         act, floor = row["act"], row["floor"]
         low = (floor // 4) * 4
         for key in ("all", f"act{act}", f"act{act}_floor{low}-{low+3}"):
             groups[key].append(row)
+    return groups
+
+
+def root_mean_se(values):
+    """Average over roots, accounting for roots from the same episode in the SE."""
+    mean = mean_se([value for _, value in values])[0]
+    deviations = defaultdict(float)
+    for seed, value in values:
+        deviations[seed] += value - mean
+    sources = len(deviations)
+    se = (math.sqrt(sources / (sources - 1) * sum(delta**2 for delta in deviations.values())) / len(values)
+          if sources > 1 else None)
+    return dict(sources=sources, mean=mean, se=se)
+
+
+def crn_diagnostics(rows, mode):
+    groups = defaultdict(list)
+    for row in rows:
+        estimates = groups[f"act{row['act']}"]
+        complete = row["complete"] if mode == "labels" else row["result"] is not None
+        if not complete:
+            continue
+        scores = {int(action): values for action, values in row["scores"].items()}
+        reference = scores[row["argmax"]]
+        for action, values in scores.items():
+            if action == row["argmax"]:
+                continue
+            pairs = [(a, b) for a, b in zip(values, reference) if a is not None and b is not None]
+            if len(pairs) < 2:
+                continue
+            option, baseline = zip(*pairs)
+            rho = (statistics.correlation(option, baseline)
+                   if len(set(option)) > 1 and len(set(baseline)) > 1 else None)
+            estimates.append((len(pairs) - 1,
+                              statistics.variance(a - b for a, b in pairs),
+                              statistics.variance(option), rho))
+    result = {}
+    for act, estimates in sorted(groups.items()):
+        degrees = sum(dof for dof, _, _, _ in estimates)
+        paired = sum(dof * var for dof, var, _, _ in estimates) / degrees if degrees else None
+        rollout = sum(dof * var for dof, _, var, _ in estimates) / degrees if degrees else None
+        correlations = [rho for _, _, _, rho in estimates if rho is not None]
+        result[act] = dict(options=len(estimates), correlation_options=len(correlations),
+                           paired_correlation=mean_se(correlations)[0], paired_var=paired,
+                           rollout_var=rollout, paired_to_rollout_var=paired / rollout if rollout else None)
+    return result
+
+
+def summary(shards, mode, capture_stats):
+    rows = [row for shard in shards for row in shard["rows"]]
+    seconds = sum(shard["seconds"] for shard in shards)
+    steps = sum(shard["preview_steps"] for shard in shards)
+    result = dict(mode=mode, roots=len(rows), preview_steps=steps, labeling_seconds=seconds,
+                  steps_per_root=steps / len(rows), steps_per_second=steps / seconds,
+                  wall_seconds_per_root=seconds / len(rows), source=capture_stats,
+                  crn_by_act=crn_diagnostics(rows, mode))
+    if mode == "labels":
+        result["complete_roots"] = sum(row["complete"] for row in rows)
+        return result
     result["argmax_regret"] = {}
-    for key, group in sorted(groups.items()):
-        valid = [row for row in group if row["result"] is not None]
-        mean = mean_se([row["result"]["regret"] for row in valid])[0]
-        deviations = defaultdict(float)
-        for row in valid:
-            deviations[row["seed"]] += row["result"]["regret"] - mean
-        sources = len(deviations)
-        se = (math.sqrt(sources / (sources - 1) * sum(delta**2 for delta in deviations.values())) / len(valid)
-              if sources > 1 else None)
-        result["argmax_regret"][key] = dict(roots=len(group), complete=len(valid), sources=sources, mean=mean, se=se)
+    for key, group in sorted(group_roots(rows).items()):
+        valid = [(row["seed"], row["result"]["regret"]) for row in group if row["result"] is not None]
+        result["argmax_regret"][key] = dict(roots=len(group), complete=len(valid), **root_mean_se(valid))
     return result
 
 

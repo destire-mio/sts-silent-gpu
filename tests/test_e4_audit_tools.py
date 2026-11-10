@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from tools.e4_card_horizons import heldout_gain, reached_horizon
+from tools.e4_map_gold_eval import score_root, summarize as summarize_gold
 from tools.e4_map_labels import gold_result, stratified_roots
 from tools.e4_value_residual import summarize, training_seeds
 from train.e4 import RewardLedger
@@ -44,3 +45,16 @@ class AuditToolTests(TestCase):
         self.assertTrue(reached_horizon("next_act", 2, 3, ledger, False))
         self.assertFalse(reached_horizon("full", 2, 3, ledger, False))
         self.assertTrue(reached_horizon("full", 2, 3, ledger, True))
+
+    def test_gold_evaluator_scores_holdout_and_paired_baseline(self):
+        root = dict(seed=1000000000, act=1, floor=5, path=[0], options=[2, 4], draws=list(range(128)),
+                    scores={"2": [.1] * 128, "4": [.4] * 64 + [.0] * 64})
+        first = score_root(root, 2, 4)
+        second = score_root(dict(root, seed=1000000001), 2, 2)
+        self.assertEqual(first["oracle_action"], 4)
+        self.assertAlmostEqual(first["regret"], -.1)
+        report = summarize_gold([first, second], True)["act1_floor4-7"]
+        self.assertEqual(report["complete"], 2)
+        self.assertEqual(report["agreement"], .5)
+        self.assertAlmostEqual(report["regret_minus_baseline"]["mean"], -.05)
+        self.assertAlmostEqual(report["regret_minus_baseline"]["se"], .05)

@@ -76,20 +76,20 @@ def training_reach(episodes):
 
 
 def target_rows(rows):
-    """Pool single-rollout variance within options, then estimate signal variance by act."""
+    """Pool variance of matched option-minus-argmax draws by act."""
     groups = defaultdict(list)
     for row in rows:
         groups[row["act"]].extend(o for o in row["estimates"] if o["action"] != row["argmax"])
     variances = {}
     for act, options in groups.items():
         degrees = sum(o["k"] - 1 for o in options)
-        pooled = sum((o["k"] - 1) * o["rollout_sd"]**2 for o in options) / degrees
+        paired_var = sum((o["k"] - 1) * o["paired_se"]**2 * o["k"] for o in options) / degrees
         total = statistics.variance(o["delta"] for o in options) if len(options) > 1 else 0.
-        noise = statistics.mean(pooled / o["k"] for o in options)
-        variances[act] = (pooled, max(0., total - noise))
+        noise = statistics.mean(paired_var / o["k"] for o in options)
+        variances[act] = (paired_var, max(0., total - noise))
 
-    def adjusted(delta, k, pooled, signal):
-        se_sq = pooled / k
+    def adjusted(delta, k, paired_var, signal):
+        se_sq = paired_var / k
         if signal == 0 or delta == 0:
             return 0.
         if se_sq == 0:
@@ -99,9 +99,9 @@ def target_rows(rows):
 
     targets = []
     for row in rows:
-        pooled, signal = variances[row["act"]]
+        paired_var, signal = variances[row["act"]]
         options = row["estimates"]
-        logits = [ref + adjusted(o["delta"], o["k"], pooled, signal)
+        logits = [ref + adjusted(o["delta"], o["k"], paired_var, signal)
                   for ref, o in zip(row["p_ref_logits"], options)]
         targets.append((base64.b64decode(row["packed_observation"], validate=True), row["options"], logits))
     return targets, variances
@@ -127,7 +127,9 @@ def load_targets(directory):
                 continue
             if (len(row["options"]) < 2 or len(row["p_ref_logits"]) != len(row["options"])
                     or [o["action"] for o in row["estimates"]] != row["options"]
-                    or not all(o["k"] in (4, 12) for o in row["estimates"])):
+                    or not all(o["k"] in (4, 12) and o["paired_se"] is not None
+                               and math.isfinite(o["paired_se"]) and o["paired_se"] >= 0
+                               for o in row["estimates"])):
                 raise ValueError(f"Invalid options in {name}")
             rows.append(row)
     if not rows:

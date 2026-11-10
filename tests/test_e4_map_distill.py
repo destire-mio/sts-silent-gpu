@@ -1,8 +1,11 @@
+import math
+import statistics
 from unittest import TestCase
 
 import torch
 
-from train.e4_map_distill import MapDistillPolicy, train_head_step
+from tools.e4_map_labels import label_options, summary
+from train.e4_map_distill import MapDistillPolicy, target_rows, train_head_step
 from train.e4_stage12 import CLSPolicy
 from train.model import ModelConfig
 
@@ -41,3 +44,27 @@ class MapDistillTests(TestCase):
         active(observation)[0].sum().backward()
         assert all(p.grad is None for p in active.route_head.parameters())
         assert any(p.grad is not None for p in active.parameters())
+
+    def test_crn_paired_variance_increases_target_shift(self):
+        reference = [.25, .4, .55, .7] * 3
+        jitter = [-.02, 0., .02, 0.] * 3
+        samples = {0: reference, 1: [x + .20 + noise for x, noise in zip(reference[:4], jitter)],
+                   2: [x - .20 + noise for x, noise in zip(reference, jitter)]}
+        estimates = label_options(samples, 0, [2])
+        row = dict(act=1, argmax=0, options=[0, 1, 2], p_ref_logits=[0., 0., 0.],
+                   packed_observation="", estimates=estimates, complete=True,
+                   scores={str(action): values for action, values in samples.items()})
+        targets, variances = target_rows([row])
+        options = estimates[1:]
+        degrees = sum(o["k"] - 1 for o in options)
+        old_var = sum((o["k"] - 1) * o["rollout_sd"]**2 for o in options) / degrees
+        old_signal = statistics.variance(o["delta"] for o in options) - statistics.mean(
+            old_var / o["k"] for o in options)
+        old_se_sq = old_var / options[0]["k"]
+        old_z = options[0]["delta"] * old_signal / (old_signal + old_se_sq) / math.sqrt(old_se_sq)
+        expected = sum((o["k"] - 1) * o["paired_se"]**2 * o["k"] for o in options) / degrees
+        self.assertAlmostEqual(variances[1][0], expected)
+        self.assertGreater(targets[0][2][1], old_z)
+        report = summary([dict(rows=[row], seconds=1., preview_steps=10)], "labels", {})["crn_by_act"]["act1"]
+        self.assertGreater(report["paired_correlation"], .99)
+        self.assertAlmostEqual(report["paired_to_rollout_var"], expected / old_var)
