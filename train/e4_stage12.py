@@ -706,7 +706,8 @@ def measure_decision_drift(model, fragment, before_step):
 def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microbatch=1024,
                       teacher=None, entropy_coefficient=DEFAULT_ENTROPY_COEFFICIENT, learner_profile=None,
                       value_state=None, diagnostic_log=None, expert_oom_callback=None, auxiliary_weights=None,
-                      decision_diagnostics=False, critic=None, critic_optimizer=None, critic_scaler=None):
+                      decision_diagnostics=False, critic=None, critic_optimizer=None, critic_scaler=None,
+                      combat_distillation=None):
     f = cursor["fragment"]
     auxiliary = f.get("auxiliary") if auxiliary_weights else None
     if auxiliary:
@@ -786,6 +787,11 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 diagnostic_log(dict(event="value_gradient_calibration", **measured))
             value_state["value_calibration"] = measured
     ce_gradients = None
+    combat_gradients = None
+    if combat_distillation is not None:
+        assert world == 1 and not cursor.get("expert_total")
+        combat_gradients = combat_distillation.backward(model, scaler, cursor,
+                                                        value_state["update"] + 1, min(64, microbatch))
     if cursor.get("expert_total"):
         from train.e4_expert_iteration import expert_backward
         ce_gradients = expert_backward(model, scaler, cursor, rank, world, microbatch, expert_oom_callback)
@@ -810,6 +816,12 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 policy, normalized_entropy = distribution(logits.float(), inputs["candidate_mask"])
                 log_ratio = policy.log_prob(f["actions"][ids]) - f["logs"][ids]
                 ratio = log_ratio.exp()
+                if combat_distillation is not None:
+                    eligible = (f["decision_types"][ids] == 0) & (inputs["candidate_mask"].sum(-1) > 1)
+                    totals = cursor.setdefault("combat_ppo_totals", torch.zeros(4, dtype=torch.float64, device=ids.device))
+                    totals += torch.stack(((ratio.detach() - 1 - log_ratio.detach())[eligible].double().sum(),
+                        policy.entropy().detach()[eligible].double().sum(),
+                        normalized_entropy.detach()[eligible].double().sum(), eligible.double().sum()))
                 actor = -torch.minimum(ratio * f["advantages"][ids],
                                        ratio.clamp(.8, 1.2) * f["advantages"][ids])
                 if critic is None:
@@ -869,7 +881,15 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         critic_scaler.step(critic_optimizer)
         critic_scaler.update()
         critic_stepped = critic_scaler.get_scale() >= scale
+    if combat_gradients is not None:
+        from train.e4_combat_distill import add_capped_combat_gradients
+        cursor["combat_distill_report"].update(add_capped_combat_gradients(
+            model, combat_gradients, scaler, combat_distillation.maximum_ratio))
+        del combat_gradients
+    previous_steps = cursor["optimizer_steps"]
     finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank)
+    if combat_distillation is not None and combat_distillation.weight > 0 and cursor["optimizer_steps"] > previous_steps:
+        cursor["combat_distill_applied"] = True
     if probe:
         cursor["decision_diagnostics_drift"] = measure_decision_drift(model.module, f, probe)
     return critic_stepped

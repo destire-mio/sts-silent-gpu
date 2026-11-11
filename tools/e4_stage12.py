@@ -196,10 +196,21 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--arena-fraction", type=float, help="Standalone practice lane fraction (default 0)")
     parser.add_argument("--map-distill", type=Path, help="Label shards for a new standalone map PPO fork")
     parser.add_argument("--map-distill-weight", type=float, help="Map distillation KL weight, including 0 for the control")
+    parser.add_argument("--combat-distill", type=Path, help="Offline combat labels for a standalone Colab fork")
+    parser.add_argument("--combat-distill-weight", type=float, default=0., help="Direct policy combat KL weight (default off)")
+    parser.add_argument("--combat-distill-max-ratio", type=float, default=.5, help="Cap combat KL gradient norm relative to PPO")
     args = parser.parse_args(argv)
     slurm_job = os.environ.get("SLURM_JOB_ID")
     standalone = slurm_job is None
     map_enabled = args.map_distill is not None
+    combat_enabled = args.combat_distill is not None
+    if (not math.isfinite(args.combat_distill_weight) or args.combat_distill_weight < 0
+            or not math.isfinite(args.combat_distill_max_ratio) or args.combat_distill_max_ratio < 0):
+        parser.error("Combat distillation weight and gradient ratio must be finite and nonnegative")
+    if combat_enabled and not standalone:
+        parser.error("Combat distillation is for the standalone Colab fork only")
+    if not combat_enabled and args.combat_distill_weight:
+        parser.error("--combat-distill-weight requires --combat-distill DIR")
     if map_enabled != (args.map_distill_weight is not None):
         parser.error("Use --map-distill and --map-distill-weight together")
     if map_enabled and (not standalone or not math.isfinite(args.map_distill_weight) or args.map_distill_weight < 0):
@@ -265,6 +276,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if saved else {}
+    saved_combat = saved_state.get("standalone_combat_distill")
+    if saved_combat is not None and not combat_enabled:
+        parser.error("A combat distillation checkpoint requires its original label directory and settings")
     saved_map = saved.get("map_distill") if saved else None
     if saved is not None and map_enabled != (saved_map is not None):
         parser.error("Start map distillation in a fresh output directory or resume its existing fork")
@@ -354,6 +368,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                             or args.teacher is not None or saved_state.get("teacher_path")):
         parser.error("--separate-critic requires standalone teacher-free 384x6 PPO")
     saved_auxiliary = saved["state"].get("standalone_auxiliary_weights", {}) if standalone and saved else {}
+    if combat_enabled and (config.width != 384 or args.teacher is not None or saved_state.get("teacher_path")
+                           or map_enabled or saved_auxiliary or args.combat_aux_weight or args.global_aux_weight
+                           or separate_critic or warmup_updates):
+        parser.error("Combat distillation requires a teacher-free 384 PPO fork without auxiliary heads or value warmup")
     auxiliary_weights = {}
     for name, weight in requested_auxiliary.items():
         weight = saved_auxiliary.get(name, 0.) if weight is None else weight
@@ -540,6 +558,12 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         cursor = None
         collector.partial = None
         round_state = dict(ready=None, seconds=0., decisions_start=collector.decisions)
+    combat_distillation = None
+    if combat_enabled:
+        from train.e4_combat_distill import CombatDistillation
+        combat_distillation = CombatDistillation(args.combat_distill, args.combat_distill_weight,
+                                                args.combat_distill_max_ratio, saved_combat)
+        state["standalone_combat_distill"] = combat_distillation.identity
     if auxiliary_weights:
         state["standalone_auxiliary_weights"] = auxiliary_weights
         if "global" in auxiliary_weights and not hasattr(collector, "auxiliary_fresh"):
@@ -1102,7 +1126,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                         entropy_coefficient=state.get('entropy_coefficient', DEFAULT_ENTROPY_COEFFICIENT),
                         learner_profile=learner_profile,value_state=state,diagnostic_log=log,
                         auxiliary_weights=auxiliary_weights,decision_diagnostics=standalone,
-                        critic=critic,critic_optimizer=critic_optimizer,critic_scaler=critic_scaler)
+                        critic=critic,critic_optimizer=critic_optimizer,critic_scaler=critic_scaler,
+                        combat_distillation=combat_distillation)
                 if ema is not None and (not warming or critic is None) and cursor["optimizer_steps"] > previous_steps:
                     ema.update()
                 if critic is not None:
@@ -1128,6 +1153,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if "strategic_share" in cursor:
             row["strategic_share"] = cursor["strategic_share"]
             row["entropy_coefficient"] = state.get("entropy_coefficient", DEFAULT_ENTROPY_COEFFICIENT)
+        if combat_distillation is not None:
+            row["combat_distill"] = combat_distillation.report(cursor)
         if critic is not None:
             row["critic_optimizer_steps"] = cursor.get("critic_optimizer_steps", 0)
             row["critic_learning_rate"] = critic_optimizer.param_groups[0]["lr"]
