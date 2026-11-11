@@ -2851,3 +2851,14 @@ p = strategic.sum()/nonforced.sum(); w = ones; w[strategic] = q/p; w[nonforced &
 - 128 步窗口用现有 `--rollout-length 128`，不用改代码。
 
 只改这些，加最少的测试。完成后告诉我命令行。不用等我回复。
+
+## #205（2026-11-11）选路头离线拟合工具（小，排在 #203 第 1 件之后、第 2 件之前）
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+Colab mapE（λ=1，dev-112 起 2h）金标准后悔值反而略高：EMA 相对 dev-112 +0.00011±0.00006（归一化单位），与 dev-112 选择一致率 95.7%；`head_mean_abs` 从 0.11 一路涨到 0.16 还没停 → 2h 里头只看了约 6000 次标签，没学够，且和 PPO 漂移混在一起。先把"头能不能学会标签"单独测掉：
+
+- 新工具 `tools/e4_map_distill_offline.py CHECKPOINT --labels DIR --epochs N --output SNAP.pt`：主干冻结（就是 CHECKPOINT），只训 RouteHead，目标/损失与 `train/e4_map_distill.py` 完全相同，按来源种子留出 10% 标签做验证，每个 epoch 报训练/验证 KL、头输出绝对值均值、验证集上"头选的选项 vs 标签最优"的一致率。输出与 `map-distill-*.pt` 同格式，能直接喂 `e4_map_gold_eval`。
+- 顺带检查：金标准集的来源种子和标签集（1000100000–1000109000）有没有重叠，报重叠数（有重叠就在离线工具里排除这些种子的标签）。
+
+只改这些，加最少的测试。完成后告诉我命令行。不用等我回复。
