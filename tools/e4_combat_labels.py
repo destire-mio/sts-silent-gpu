@@ -60,10 +60,11 @@ def capture_combat_episodes(model, runner, seeds):
             runner.search.clock()
             free = [slot for slot, seed in enumerate(runner.seeds) if seed is None]
             fresh = [seed for _, seed in zip(free, waiting)]
-            runner.reset(free[:len(fresh)], fresh)
-            for slot in free[:len(fresh)]:
-                pending[slot].clear()
-                counts[slot].clear()
+            if fresh:
+                runner.reset(free[:len(fresh)], fresh)
+                for slot in free[:len(fresh)]:
+                    pending[slot].clear()
+                    counts[slot].clear()
             live = [slot for slot, seed in enumerate(runner.seeds) if seed is not None]
             if not live:
                 break
