@@ -2875,3 +2875,19 @@ a1cc559c 我审过，阶段考试和标签工具结构都对，谢谢。一处�
 - `tools/e4_map_distill.py`（RouteHead）不用改，选路先用 #205 离线拟合测。
 
 只改这些，加最少的测试。不用等我回复。
+
+## #207（2026-11-11）战斗标签工具 GPU 崩溃（一行修复）+ 战斗推演考试结果
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+**崩溃**：Colab GPU 上 `tools/e4_combat_labels.py` 启动 1 秒就退出 132（SIGILL）。faulthandler 栈：`capture_combat_episodes` 第 63 行 → `NoSLCollector.reset` → `train/e4.py:821 reset_to_many`。原因：所有槽都还在跑时 `fresh` 为空，仍调用 `runner.reset([], [])`；CUDA 版 `reset_to_many` 有 `SPIRE_ASSERT(!slots.empty())`，CPU 版没有，所以你在 CPU 上测不出来。
+
+- 修法：和 `tools/e4_map_labels.py:80` 一样加 `if fresh:`，把 reset 和两个 `.clear()` 放进去。我已在 Colab 本地打了同样的补丁在跑，你把它合进 codex/e4 即可。
+- 加 1 个测试：source_shard 大于种子数、所有槽未结束时不调用空 reset（可用假 runner 断言 reset 参数非空）。
+
+**结果（我核对过，同 256 个考试种子配对）**：dev-112 战斗深度推演 vs 直接 argmax：
+- 平均层数 33.0 → 37.2（配对 +4.24 ± 1.33，95% 区间）。
+- 过 A1 boss 224→234，过 A2 boss 71→117，过 A3 第一 boss 18→35，三钥匙 1→4，S&S 1→4，心脏 0→0。
+- 76 分钟跑完 256 局（128 lanes）。说明战斗搜索的提升很大，战斗 ExIt（#203 第 3 件）是对的方向。
+
+只改这些。不用等我回复。
