@@ -25,7 +25,7 @@ from train.e4_stage12 import (CLSPolicy, SeparateCritic, NoSLSearch, NoSLCollect
     save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline,
     restart_rank_observation, restart_rank_engine, pandora_cuda_gates, MAX_LEARNING_RATE,
     DISTILLATION_GLOBAL_MINIBATCH, PPO_GLOBAL_MINIBATCH, GAE_LAMBDA, GAE_GAMMA,
-    DEFAULT_ENTROPY_COEFFICIENT, decision_training_summary)
+    DEFAULT_ENTROPY_COEFFICIENT, decision_training_summary, apply_strategic_share)
 from train.model import ModelConfig
 from train.rollout import synchronize
 from train.e4_stage6.training_worker import move_tensors
@@ -169,10 +169,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--init", type=Path)
     parser.add_argument("--teacher", type=Path)
     parser.add_argument("--value-coefficient", type=float, help="Persist a fixed standalone value loss coefficient")
-    parser.add_argument("--late-pools", action="store_true", help="Use E2 and natural late midstart pools in standalone PPO")
+    parser.add_argument("--strategic-share", type=float, help="Weight nonforced strategic advantages to this share")
+    parser.add_argument("--entropy-coefficient", type=float, help="Set the PPO normalized entropy coefficient on resume")
+    parser.add_argument("--late-pools", action="store_true", help="Use E2 and natural late midstart pools in teacher-free PPO")
     parser.add_argument("--late-pool-fraction", type=float, help="Share of regular starts allocated to late pools (default .15)")
+    parser.add_argument("--late-pool-holdout-fraction", type=float, help="Exclude this stable root hash fraction from E2 late training pools")
     parser.add_argument("--late-pool-roots", type=Path, help="E2 train-root gzip (default artifacts/e2-roots/collection-train.jsonl.gz)")
-    parser.add_argument("--key-last-chance", action="store_true", help="Preserve last Act 3 key opportunities in standalone PPO and exams")
+    parser.add_argument("--key-last-chance", action="store_true", help="Preserve last Act 3 key opportunities in PPO and exams")
     parser.add_argument("--separate-critic", action="store_true", help="Train a separate 384x6 critic for standalone PPO")
     parser.add_argument("--critic-learning-rate", type=float, help="Fixed critic Adam LR (default follows policy LR)")
     parser.add_argument("--combat-aux-weight", type=float, help="Combat prediction loss weight (default 0)")
@@ -201,12 +204,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         parser.error("Use --map-distill and --map-distill-weight together")
     if map_enabled and (not standalone or not math.isfinite(args.map_distill_weight) or args.map_distill_weight < 0):
         parser.error("Map distillation requires a standalone fork and finite nonnegative weight")
-    if not standalone and (args.late_pools or args.late_pool_fraction is not None or args.late_pool_roots is not None):
-        parser.error("late pools are standalone only")
+    if args.strategic_share is not None and not (0. <= args.strategic_share <= 1.):
+        parser.error("--strategic-share must be in [0, 1]")
+    if args.entropy_coefficient is not None and (not math.isfinite(args.entropy_coefficient) or args.entropy_coefficient < 0):
+        parser.error("--entropy-coefficient must be finite and nonnegative")
+    if args.late_pool_holdout_fraction is not None and not (0. <= args.late_pool_holdout_fraction < 1.):
+        parser.error("--late-pool-holdout-fraction must be in [0, 1)")
     if args.late_pool_fraction is not None and not (0. <= args.late_pool_fraction <= 1.):
         parser.error("--late-pool-fraction must be in [0, 1]")
-    if args.key_last_chance and not standalone:
-        parser.error("--key-last-chance is standalone only")
     if not standalone and (args.separate_critic or args.critic_learning_rate is not None):
         parser.error("separate critic settings are standalone only")
     if args.critic_learning_rate is not None and (
@@ -259,13 +264,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     torch.manual_seed(20261031)
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
-    saved_state = saved["state"] if standalone and saved else {}
+    saved_state = saved["state"] if saved else {}
     saved_map = saved.get("map_distill") if saved else None
     if saved is not None and map_enabled != (saved_map is not None):
         parser.error("Start map distillation in a fresh output directory or resume its existing fork")
     saved_late_pools = saved_state.get("standalone_late_pools")
     late_pools = args.late_pools or saved_late_pools is not None
-    if not late_pools and (args.late_pool_fraction is not None or args.late_pool_roots is not None):
+    if not late_pools and (args.late_pool_fraction is not None or args.late_pool_roots is not None or args.late_pool_holdout_fraction is not None):
         parser.error("late pool settings require --late-pools")
     if late_pools and (args.teacher is not None or saved_state.get("teacher_path")):
         parser.error("--late-pools requires teacher-free standalone PPO")
@@ -274,9 +279,13 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         previous_late = saved_late_pools or {}
         fraction = args.late_pool_fraction if args.late_pool_fraction is not None else previous_late.get("fraction", .15)
         roots = args.late_pool_roots or Path(previous_late.get("roots", "artifacts/e2-roots/collection-train.jsonl.gz"))
-        late_settings = dict(fraction=fraction, roots=str(roots.resolve()))
+        holdout = (args.late_pool_holdout_fraction if args.late_pool_holdout_fraction is not None
+                   else previous_late.get("holdout_fraction", 0.))
+        late_settings = dict(fraction=fraction, roots=str(roots.resolve()), holdout_fraction=holdout)
+        if saved_late_pools and holdout != previous_late.get("holdout_fraction", 0.):
+            parser.error("resume requires the checkpoint's late pool holdout split")
     saved_key_mask = saved_state.get("standalone_key_last_chance", False)
-    enable_key_mask_on_resume = standalone and saved is not None and args.key_last_chance and not saved_key_mask
+    enable_key_mask_on_resume = saved is not None and args.key_last_chance and not saved_key_mask
     key_last_chance = args.key_last_chance or saved_key_mask
     saved_critic = saved.get("critic") if saved else None
     create_critic_on_resume = saved is not None and args.separate_critic and saved_critic is None
@@ -413,7 +422,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if late_pools:
         from train.e4_late_pools import LateArenaCollector, LateMidstartCollector, LATE_SLOTS
         collector_type = LateArenaCollector if arena_fraction else LateMidstartCollector
-        training_collector_options.update(late_fraction=late_settings["fraction"], late_offset=storage_slots)
+        training_collector_options.update(late_fraction=late_settings["fraction"], late_offset=storage_slots,
+                                         late_holdout_fraction=late_settings["holdout_fraction"])
         storage_slots += LATE_SLOTS
     search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=storage_slots,
                         key_last_chance=key_last_chance)
@@ -515,6 +525,21 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         expert_saved["round"] = None
     if standalone and args.value_coefficient is not None:
         state["standalone_value_coefficient"] = args.value_coefficient
+    strategic_share = args.strategic_share if args.strategic_share is not None else state.get("strategic_share")
+    recipe_changed = strategic_share is not None and (
+        strategic_share != saved_state.get("strategic_share")
+        or late_settings != saved_late_pools or key_last_chance != saved_key_mask
+        or (args.entropy_coefficient is not None
+            and args.entropy_coefficient != saved_state.get("entropy_coefficient", DEFAULT_ENTROPY_COEFFICIENT)))
+    previous_entropy_coefficient = state.get("entropy_coefficient", DEFAULT_ENTROPY_COEFFICIENT)
+    if strategic_share is not None:
+        state["strategic_share"] = strategic_share
+    if args.entropy_coefficient is not None:
+        state["entropy_coefficient"] = args.entropy_coefficient
+    if recipe_changed:
+        cursor = None
+        collector.partial = None
+        round_state = dict(ready=None, seconds=0., decisions_start=collector.decisions)
     if auxiliary_weights:
         state["standalone_auxiliary_weights"] = auxiliary_weights
         if "global" in auxiliary_weights and not hasattr(collector, "auxiliary_fresh"):
@@ -572,6 +597,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if "claude165_dev112_rollback" in state:
         training_branch = "claude165_dev112_rollback"
         rollback_checkpoint = "dev-112.pt"
+    if strategic_share is not None:
+        training_branch = "claude203_strategic_late_ppo"
     if map_enabled:
         training_branch = "claude201_map_distill"
         rollback_checkpoint = None
@@ -615,7 +642,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         needs_initialization = collector.late_initialization is None
         replay = collector.seed_external(Path(late_settings["roots"]))
         log(dict(event="late_pools_ready", update=state["update"], fraction=late_settings["fraction"],
-                 initialized=needs_initialization, **replay))
+                 initialized=needs_initialization, holdout_fraction=late_settings["holdout_fraction"], **replay))
+    if recipe_changed:
+        state["claude203_recipe"] = dict(update=state["update"], training_seconds=state["training_seconds"],
+            strategic_share=strategic_share, previous_entropy_coefficient=previous_entropy_coefficient,
+            entropy_coefficient=state.get("entropy_coefficient", DEFAULT_ENTROPY_COEFFICIENT),
+            late_pools=late_settings, key_last_chance=key_last_chance)
+        log(dict(event="claude203_recipe_enabled", source_commit=source_commit(),
+                 optimizer_ema_and_update_preserved=True, **state["claude203_recipe"]))
 
     def stopping():
         batch_stopping = args.batch_stop_file is not None and args.batch_stop_file.exists()
@@ -763,7 +797,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             ledger_name=f"{prefix}-{state['update']}-act2-ledger.json"
             write_json(output/ledger_name,dict(episodes=ledger,stalled_games=sum(e["stalled"] for e in ledger)))
             row.update(value_spearman=value_correlations(ledger),act2_ledger_file=ledger_name)
-            if standalone:
+            if standalone or strategic_share is not None:
                 row["exam_breakdown"] = exam_breakdown(ledger)
                 if key_last_chance:
                     row["key_last_chance"] = True
@@ -1009,6 +1043,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                     state["value_rollout_diagnostic_complete"] = True
             cursor = new_cursor(round_state["ready"], ppo_rng, world,
                                 global_minibatch=new_round_minibatch(state))
+            if strategic_share is not None and not distilling and not warming:
+                apply_strategic_share(cursor, strategic_share)
             round_state["ready"] = None
             if not sum(cursor["counts"]):
                 failed = torch.tensor([sum(search.fault_counts.values()), collector.round_games], device=device, dtype=torch.int64)
@@ -1089,6 +1125,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             break
         row = finish_metrics(cursor, critic if warming and critic is not None else model,
                              critic_scaler if warming and critic is not None else scaler)
+        if "strategic_share" in cursor:
+            row["strategic_share"] = cursor["strategic_share"]
+            row["entropy_coefficient"] = state.get("entropy_coefficient", DEFAULT_ENTROPY_COEFFICIENT)
         if critic is not None:
             row["critic_optimizer_steps"] = cursor.get("critic_optimizer_steps", 0)
             row["critic_learning_rate"] = critic_optimizer.param_groups[0]["lr"]
@@ -1116,6 +1155,12 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         per_gpu = [float(n) / max(.001,float(elapsed)) for n in by_rank]
         global_decisions = int(sum(float(n) for n in by_rank))
         peaks = [torch.cuda.max_memory_allocated(device), torch.cuda.max_memory_reserved(device)] if cuda else [0, 0]
+        if strategic_share is not None:
+            rank_peaks = torch.tensor(peaks, dtype=torch.int64, device=device)
+            peak_rows = [torch.empty_like(rank_peaks) for _ in range(world)]
+            dist.all_gather(peak_rows, rank_peaks)
+            row["cuda_peak_allocated_bytes_per_rank"] = [int(p[0]) for p in peak_rows]
+            row["cuda_peak_reserved_bytes_per_rank"] = [int(p[1]) for p in peak_rows]
         if control is not None:
             control["cumulative_decisions"] += global_decisions
             row["cumulative_training_decisions"] = control["cumulative_decisions"]
@@ -1173,15 +1218,18 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 row["map_distill"] = dict(**map_metrics, weight=policy.map_weight,
                     map_ppo_kl=kl_sum / kl_rows if kl_rows else None, map_ppo_kl_rows=int(kl_rows),
                     fresh=training_reach(fresh_done), midstart=training_reach(middle_done))
-            if late_pools:
-                by_start = collector.late_round_metrics()
-                if world > 1:
-                    totals = torch.tensor([list(counts.values()) for counts in by_start.values()],
-                                          dtype=torch.int64, device=device)
-                    dist.all_reduce(totals)
-                    by_start = {name: dict(zip(counts, values))
-                                for (name, counts), values in zip(by_start.items(), totals.tolist())}
-                row["training_by_start"] = by_start
+        if late_pools:
+            by_start = collector.late_round_metrics()
+            if world > 1:
+                totals = torch.tensor([list(counts.values()) for counts in by_start.values()],
+                                      dtype=torch.int64, device=device)
+                dist.all_reduce(totals)
+                by_start = {name: dict(zip(counts, values))
+                            for (name, counts), values in zip(by_start.items(), totals.tolist())}
+            row["training_by_start"] = by_start
+            started_total = sum(counts["started"] for counts in by_start.values())
+            late_total = sum(counts["started"] for name, counts in by_start.items() if name.startswith("late_"))
+            row["late_pool_start_fraction"] = late_total / started_total if started_total else None
         phase = "value_warmup" if warming else "distillation" if distilling else "PPO"
         log(dict(event="update",phase=phase,distillation_updates=state.get("distillation_updates"),update=state["update"],seconds=float(elapsed),training_seconds=state["training_seconds"],
             mainline_decisions_global=global_decisions,decisions_per_second_per_gpu=per_gpu,

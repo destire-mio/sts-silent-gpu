@@ -153,9 +153,9 @@ class StageTimes:
 
 class NoSLSearch(RoomSearch):
     def __init__(self, lanes, device, seed, *, storage_slots=0, greedy=False, probe_slots=4096,
-                 key_last_chance=False):
+                 key_last_chance=False, bosses_seen=511):
         super().__init__(lanes, 1, device, torch.Generator(device=device).manual_seed(seed),
-                         scratch_slots=storage_slots, inference_chunk=lanes, bosses_seen=511, probe_slots=probe_slots)
+                         scratch_slots=storage_slots, inference_chunk=lanes, bosses_seen=bosses_seen, probe_slots=probe_slots)
         self.greedy = greedy
         self.entropy_sum = torch.zeros((), dtype=torch.float64, device=device)
         self.entropy_count = 0
@@ -573,6 +573,28 @@ def new_cursor(fragment, rng, world, *, global_minibatch=PPO_GLOBAL_MINIBATCH):
                 totals=torch.zeros(8, dtype=torch.float64, device=device),
                 finite=torch.ones((), dtype=torch.bool, device=device), optimizer_steps=0,
                 optimizer_attempts=0, amp_skipped_steps=0)
+
+
+def apply_strategic_share(cursor, share):
+    fragment = cursor["fragment"]
+    nonforced = fragment["action_valid"] & (fragment["policy_mask"].sum(1) > 1)
+    types = fragment["decision_types"]
+    strategic = nonforced & (types >= 1) & (types <= 4)
+    counts = torch.stack((strategic.sum(), nonforced.sum())).to(torch.float64)
+    dist.all_reduce(counts)
+    strategic_count, nonforced_count = counts.tolist()
+    before = strategic_count / nonforced_count if nonforced_count else 0.
+    strategic_weight = other_weight = 1.
+    if 0. < before < 1.:
+        strategic_weight = share / before
+        other_weight = (1. - share) / (1. - before)
+        weights = torch.ones_like(fragment["advantages"])
+        weights[strategic] = strategic_weight
+        weights[nonforced & ~strategic] = other_weight
+        fragment["advantages"] *= weights
+    cursor["strategic_share"] = dict(target=share, share_before=before,
+        strategic_weight=strategic_weight, other_weight=other_weight,
+        strategic_decisions=int(strategic_count), nonforced_decisions=int(nonforced_count))
 
 
 def local_minibatch(cursor, rank):

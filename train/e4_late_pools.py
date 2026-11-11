@@ -22,13 +22,20 @@ LATE_SLOTS = len(LATE_KINDS) * sum(ORIGIN_CAPACITY.values())
 HEART_TURNS = {"heart_turn2": 2, "heart_turn3": 3, "heart_turn5": 5}
 
 
-def read_e2_late_roots(path):
+def stage_root_is_heldout(row, fraction=.2):
+    root = row["root"]
+    identity = json.dumps([root["seed"], root["candidates"]], separators=(",", ":")).encode()
+    value = int.from_bytes(hashlib.sha256(identity).digest()[:8], "big")
+    return value / 2**64 < fraction
+
+
+def read_e2_late_roots(path, holdout_fraction=0.):
     groups = {kind: [] for kind in LATE_KINDS}
     seen = set()
     with gzip.open(path, "rt", encoding="utf-8") as source:
         for line in source:
             row = json.loads(line)
-            if row["partition"] != "train":
+            if row["partition"] != "train" or stage_root_is_heldout(row, holdout_fraction):
                 continue
             stage, root = row["stage"], row["root"]
             kind = "heart_mid" if stage in HEART_TURNS else stage
@@ -72,9 +79,10 @@ def replay_matches(row, progress, turn):
 
 
 class LateMidstartCollector(MidstartCollector):
-    def __init__(self, search, seed_rng, *, late_fraction, late_offset, **kwargs):
+    def __init__(self, search, seed_rng, *, late_fraction, late_offset, late_holdout_fraction=0., **kwargs):
         super().__init__(search, seed_rng, **kwargs)
         self.late_fraction = late_fraction
+        self.late_holdout_fraction = late_holdout_fraction
         self.late_bases = {}
         slot = search.lanes + late_offset
         for kind in LATE_KINDS:
@@ -124,7 +132,7 @@ class LateMidstartCollector(MidstartCollector):
         if self.late_initialization is not None:
             return self.late_initialization
         started = time.monotonic()
-        source = read_e2_late_roots(path)
+        source = read_e2_late_roots(path, self.late_holdout_fraction)
         order = random.Random(198)
         results = {}
         for kind, rows in source.items():
