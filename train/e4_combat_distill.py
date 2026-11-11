@@ -11,7 +11,7 @@ import torch
 from train.e4_map_distill import target_rows
 from train.model import packed_inputs
 
-LABELS_PER_UPDATE = 256
+LABELS_PER_STEP = 256
 
 
 def load_combat_targets(directory):
@@ -119,15 +119,15 @@ class CombatDistillation:
         if saved is not None and saved != self.identity:
             raise ValueError("Combat resume requires the same labels, weight and gradient cap")
 
-    def backward(self, model, scaler, cursor, update, microbatch):
+    def backward(self, model, scaler, update, optimizer_step, microbatch):
         # This branch precedes sampling, packing, forward/backward and RNG calls.
-        if self.weight == 0 or cursor.get("combat_distill_applied"):
+        if self.weight == 0:
             return None
-        rng = random.Random(f"combat-distill:{update}")
-        if len(self.targets) >= LABELS_PER_UPDATE:
-            selected = rng.sample(self.targets, LABELS_PER_UPDATE)
+        rng = random.Random(f"combat-distill:{update}:{optimizer_step}")
+        if len(self.targets) >= LABELS_PER_STEP:
+            selected = rng.sample(self.targets, LABELS_PER_STEP)
         else:
-            selected = [self.targets[rng.randrange(len(self.targets))] for _ in range(LABELS_PER_UPDATE)]
+            selected = [self.targets[rng.randrange(len(self.targets))] for _ in range(LABELS_PER_STEP)]
         parameters = list(model.parameters())
         gradients = [torch.zeros_like(parameter) for parameter in parameters]
         total = 0.
@@ -139,23 +139,34 @@ class CombatDistillation:
                 loss = direct_policy_kl(logits, teacher, inputs["candidate_mask"])
                 if not bool(torch.isfinite(loss)):
                     raise FloatingPointError("Nonfinite combat KL")
-                values = torch.autograd.grad(scaler.scale(loss * self.weight * len(rows) / LABELS_PER_UPDATE),
+                values = torch.autograd.grad(scaler.scale(loss * self.weight * len(rows) / LABELS_PER_STEP),
                                              parameters, allow_unused=True)
             for accumulated, value in zip(gradients, values):
                 if value is not None:
                     accumulated.add_(value.detach())
-            total += float(loss.detach()) * len(rows) / LABELS_PER_UPDATE
-        cursor["combat_distill_report"] = dict(loss=total, label_points=LABELS_PER_UPDATE,
-                                               sampling_with_replacement=len(self.targets) < LABELS_PER_UPDATE,
-                                               weight=self.weight, maximum_ratio=self.maximum_ratio, **self.summary)
-        return torch.cat([gradient.reshape(-1) for gradient in gradients])
+            total += float(loss.detach()) * len(rows) / LABELS_PER_STEP
+        return torch.cat([gradient.reshape(-1) for gradient in gradients]), total
 
     def report(self, cursor):
-        result = dict(cursor.get("combat_distill_report", {}))
-        result.update(weight=self.weight, maximum_ratio=self.maximum_ratio, **self.summary)
-        result.setdefault("label_points", 0)
-        result.setdefault("distill_gradient_norm", 0.)
-        result.setdefault("gradient_ratio_after_cap", 0.)
+        steps = cursor.get("combat_distill_steps", ())
+        if cursor.get("combat_distill_applied"):
+            steps = [cursor["combat_distill_report"], *steps]
+        result = dict(weight=self.weight, maximum_ratio=self.maximum_ratio, **self.summary,
+                      distilled_optimizer_steps=len(steps), label_points=LABELS_PER_STEP * len(steps),
+                      distill_gradient_norm=0., gradient_ratio_after_cap=0., gradient_cap_fraction=None)
+        if steps:
+            result.update(sampling_with_replacement=len(self.targets) < LABELS_PER_STEP,
+                          gradient_cap_fraction=sum(step["gradient_scale"] < 1
+                              and step["distill_gradient_norm"] > 0 for step in steps) / len(steps))
+            for key in ("loss", "ppo_gradient_norm", "distill_gradient_norm", "gradient_scale"):
+                result[key] = sum(step[key] for step in steps) / len(steps)
+        for key in ("gradient_ratio_before_cap", "gradient_ratio_after_cap"):
+            ratios = [step[key] for step in steps if step[key] is not None]
+            mean = sum(ratios) / len(ratios) if ratios else None
+            result[f"{key}_mean"] = mean
+            result[f"{key}_max"] = max(ratios, default=None)
+            if mean is not None:
+                result[key] = mean
         totals = cursor.get("combat_ppo_totals")
         if totals is not None:
             kl, entropy, normalized, count = totals.tolist()

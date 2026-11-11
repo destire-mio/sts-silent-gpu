@@ -787,11 +787,11 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 diagnostic_log(dict(event="value_gradient_calibration", **measured))
             value_state["value_calibration"] = measured
     ce_gradients = None
-    combat_gradients = None
+    combat_backward = None
     if combat_distillation is not None:
         assert world == 1 and not cursor.get("expert_total")
-        combat_gradients = combat_distillation.backward(model, scaler, cursor,
-                                                        value_state["update"] + 1, min(64, microbatch))
+        combat_backward = combat_distillation.backward(model, scaler, value_state["update"] + 1,
+                                                        cursor["optimizer_steps"], min(64, microbatch))
     if cursor.get("expert_total"):
         from train.e4_expert_iteration import expert_backward
         ce_gradients = expert_backward(model, scaler, cursor, rank, world, microbatch, expert_oom_callback)
@@ -881,15 +881,18 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
         critic_scaler.step(critic_optimizer)
         critic_scaler.update()
         critic_stepped = critic_scaler.get_scale() >= scale
-    if combat_gradients is not None:
+    combat_metrics = None
+    if combat_backward is not None:
         from train.e4_combat_distill import add_capped_combat_gradients
-        cursor["combat_distill_report"].update(add_capped_combat_gradients(
-            model, combat_gradients, scaler, combat_distillation.maximum_ratio))
-        del combat_gradients
+        combat_gradients, combat_loss = combat_backward
+        combat_metrics = add_capped_combat_gradients(model, combat_gradients, scaler,
+                                                      combat_distillation.maximum_ratio)
+        combat_metrics["loss"] = combat_loss
+        del combat_backward, combat_gradients
     previous_steps = cursor["optimizer_steps"]
     finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank)
-    if combat_distillation is not None and combat_distillation.weight > 0 and cursor["optimizer_steps"] > previous_steps:
-        cursor["combat_distill_applied"] = True
+    if combat_metrics is not None and cursor["optimizer_steps"] > previous_steps:
+        cursor.setdefault("combat_distill_steps", []).append(combat_metrics)
     if probe:
         cursor["decision_diagnostics_drift"] = measure_decision_drift(model.module, f, probe)
     return critic_stepped
