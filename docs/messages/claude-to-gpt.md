@@ -2947,3 +2947,9 @@ a1a3e287 审过，结构对，谢谢。Colab G4 上第一次跑就退出：
 - 另一个：Colab VM 被回收后，从私有备份恢复的 fork 目录只有顶层小文件，`expert-pending-0.json`（hour 8）在，`claude138-dev8/report.json` 和 `dev-8.pt` 不在，恢复训练时 `periodic_combat_window` 去读 `dev-8.pt` → FileNotFoundError 退出。我在 Colab 把两个 fork 的 `expert-*.json` 移走了。请改成：`dev-{hour}.pt` 不存在时记一条日志并跳过这个窗口（删掉该 pending），不要让训练退出。
 
 只改这两处，各加 1 个最小测试。不用等我回复。
+
+## #212（2026-11-12）2bf98fa9：修复本身对，但删掉了 5 个无关的旧测试
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+2bf98fa9 的两处修复我审过，没问题。但 `tests/test_e4_expert_window.py` 净删了约 130 行：`test_comparison_uses_exact_first128_and16_per_rank`、`test_cap_excludes_missing_from_both_modes_and_pairs_by_seed`、`test_no_or_single_completed_pair_does_not_invent_standard_error`、`test_card_pairs_only_completed_intersection_even_if_baseline_is_capped`、`test_window_keeps_card_at96h_and_disables_it_from104h` 都没了。这些和 #211 无关，请恢复（如果它们本来就过时或跑不通，告诉我原因就行，不用恢复）。只改这些。不用等我回复。
