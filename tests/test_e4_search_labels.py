@@ -67,3 +67,28 @@ def test_search_label_deadline_flushes_unfinished_game(tmp_path):
     report = labels.report_metrics(writer, collector, 1., torch.device("cpu"), 1)
     assert report["episodes_completed"] == 0 and report["labels_from_unfinished_episodes"] == 1
     assert report["preview_steps"] == 32
+
+
+def test_search_label_initializes_cuda_before_peak_reset(tmp_path):
+    class PeakResetReached(Exception):
+        pass
+
+    calls = []
+
+    def initialize(size, *, device):
+        calls.append((size, device))
+
+    def reset(device):
+        assert calls == [(1, device)]
+        raise PeakResetReached
+
+    with (patch.object(labels.torch, "set_num_threads"),
+          patch.object(labels.torch, "zeros", side_effect=initialize),
+          patch.object(labels.torch.cuda, "reset_peak_memory_stats", side_effect=reset)):
+        try:
+            labels.main(["teacher.pt", "--output", str(tmp_path / "labels"), "--device", "cuda:0",
+                         "--seeds", "1000200000:1000200001"])
+        except PeakResetReached:
+            pass
+        else:
+            raise AssertionError("The CUDA peak reset was not reached")

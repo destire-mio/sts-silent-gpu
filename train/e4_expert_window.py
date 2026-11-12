@@ -79,19 +79,27 @@ def periodic_combat_window(output, config, device, rank, world, deadline, *, pen
     if pending_path is None:
         pending_path = output/'expert-pending-0.json'
     hour = -1
+    missing_checkpoint = 0
     if rank == 0 and pending_path.exists():
         hour = json.loads(pending_path.read_text())['hour']
-    selection = torch.tensor(hour, dtype=torch.int64, device=device)
+        missing_checkpoint = int(not (output / f'dev-{hour}.pt').is_file())
+    selection = torch.tensor([hour, missing_checkpoint], dtype=torch.int64, device=device)
     dist.broadcast(selection, src=0)
-    hour = int(selection)
+    hour, missing_checkpoint = selection.tolist()
     if hour < 0:
         return True
     assert 1 <= world <= 8 and hour % 8 == 0
     checkpoint = output/f'dev-{hour}.pt'
     directory = output/f'claude138-dev{hour}'
-    directory.mkdir(exist_ok=True)
     if (directory/'report.json').exists():
         return True
+    if missing_checkpoint:
+        if rank == 0:
+            print(json.dumps(dict(event='expert_window_skipped', hour=hour,
+                                  reason='missing_dev_checkpoint', checkpoint=str(checkpoint))), flush=True)
+            pending_path.unlink(missing_ok=True)
+        return True
+    directory.mkdir(exist_ok=True)
     if window_stop_requested(output, deadline):
         return False
     checkpoint_config = json.loads(pending_path.read_text()).get('model_config')

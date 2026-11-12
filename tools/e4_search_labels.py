@@ -195,6 +195,7 @@ def main(argv=None):
     torch.set_num_threads(1)
     device = torch.device(args.device)
     if device.type == "cuda":
+        torch.zeros(1, device=device)
         torch.cuda.reset_peak_memory_stats(device)
     started = time.monotonic()
     with args.teacher.open("rb") as stream:
