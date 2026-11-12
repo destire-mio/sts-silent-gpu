@@ -238,7 +238,8 @@ def validate_label_arguments(parser, args):
         parser.error("Require positive sizes and 0 < pilot <= total <= 10800 seconds")
 
 
-def run_label_job(args, *, label_format, capture, label, manifest_settings, value_target, pilot_metrics=None):
+def run_label_job(args, *, label_format, capture, label, manifest_settings, value_target,
+                  pilot_metrics=None, search_type=NoSLSearch):
     args.output.mkdir(parents=True, exist_ok=True)
     torch.set_num_threads(1)
     seeds = training_seeds(args.seeds)
@@ -262,8 +263,8 @@ def run_label_job(args, *, label_format, capture, label, manifest_settings, valu
     deadline = started + max(0., args.max_seconds - budget["elapsed"])
     device = torch.device(args.device)
     model = load_policy(args.checkpoint, device)
-    search = NoSLSearch(max(args.source_shard, args.shard_size), device, args.seed,
-                        greedy=True, storage_slots=args.preview_lanes, probe_slots=128)
+    search = search_type(max(args.source_shard, args.shard_size), device, args.seed,
+                         greedy=True, storage_slots=args.preview_lanes, probe_slots=128)
     search.deadline, search.evidence_directory = deadline, args.output
     runner = NoSLCollector(search, torch.Generator().manual_seed(args.seed))
     shards = [read_json(file) for file in sorted(args.output.glob("labels-*.json.gz"))]

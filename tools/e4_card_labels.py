@@ -11,12 +11,23 @@ from tools.e4_card_horizons import CARD_REWARD, card_options
 from tools.e4_combat_labels import (INITIAL_DRAWS, capture_label_episodes, label_parser,
                                     label_shard, run_label_job, validate_label_arguments)
 from train.e4 import BATTLE_OVER, BOSS_ROOM, COMBAT_PHASE, DEATH, HP, PHASE, ROOM, SCREEN, VICTORY
+from train.e4_stage12 import NoSLSearch
 from train.model import network_inputs
 
 
 FORMAT = "e4_card_labels_v1"
 MAX_STEPS = 3000
 MAX_POINTS_PER_EPISODE = 6
+
+
+class CardLabelSearch(NoSLSearch):
+    def record_fault(self, slot, reason, extra_action=None):
+        provenance = self.provenance[slot]
+        source = provenance[1] if len(provenance) == 3 else slot
+        if source >= self.lanes:
+            self.failed[source] = reason
+        else:
+            super().record_fault(slot, reason, extra_action)
 
 
 def card_root(progress):
@@ -50,7 +61,12 @@ def card_rollout(search, model, plan, horizon_combats):
     try:
         search.clone(list(parents), slots)
         search.batch.determinize_slots(slots, list(seeds), True)
-        live = slots.copy()
+        search.check(slots)
+        live = [slot for slot in slots if slot not in search.failed]
+        for slot, key in zip(live, search.loop_keys(live) if live else []):
+            search.seen[slot].add(key)
+            search.mask_cache.pop(slot, None)
+            search.repeat_blocked.pop(slot, None)
         before = search.progress_for(live)
         for tick in range(MAX_STEPS):
             if not live:
@@ -59,17 +75,17 @@ def card_rollout(search, model, plan, horizon_combats):
             if tick == 0:
                 choices = [first_action[slot] for slot in live]
             else:
+                mask = search.policy_masks(live)
                 inputs = network_inputs(search.arrays, search.device, torch.tensor(live, device=search.device))
+                inputs["candidate_mask"] &= mask[:, :inputs["candidate_mask"].shape[1]]
                 logits = model(inputs)[0].masked_fill(~inputs["candidate_mask"], -torch.inf)
                 choices = logits.argmax(-1).tolist()
-            search.batch.step_slots(live, choices)
+            failed = search.step(live, choices)
             decisions += len(live)
-            after = search.progress_for(live)
-            faults = search.arrays["faults"].long()[live].tolist()
-            truncated = search.arrays["truncated"][live].tolist()
+            after = search.last_step_progress
             remaining, alive_end = [], []
-            for slot, fault, cut in zip(live, faults, truncated):
-                if fault or cut:
+            for slot in live:
+                if slot in failed or slot in search.failed:
                     continue
                 p = after[slot]
                 if p[HP] <= 0 or p[SCREEN] == DEATH:
@@ -90,6 +106,7 @@ def card_rollout(search, model, plan, horizon_combats):
         return [result[slot] for slot in slots], decisions
     finally:
         for slot in slots:
+            search.failed.pop(slot, None)
             search.mainline_progress.pop(slot, None)
         search.available.extend(slots)
 
@@ -128,9 +145,9 @@ def main(argv=None):
     run_label_job(args, label_format=FORMAT, capture=capture_card_episodes,
                   label=partial(label_card_shard, horizon_combats=args.horizon_combats),
                   manifest_settings=dict(max_steps=MAX_STEPS, maximum_points_per_episode=MAX_POINTS_PER_EPISODE,
-                                         horizon_combats=args.horizon_combats),
+                                         horizon_combats=args.horizon_combats, continuation_policy="masked_argmax"),
                   value_target="V after the requested subsequent combat count or the next boss; death=0; capped futures excluded",
-                  pilot_metrics=pilot_diagnostics)
+                  pilot_metrics=pilot_diagnostics, search_type=CardLabelSearch)
 
 
 if __name__ == "__main__":
