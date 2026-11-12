@@ -18,9 +18,11 @@ def preview_faults_present(flags, slots):
 
 
 class CombatLookahead:
-    def __init__(self, search, seed=130, depth='turn'):
+    def __init__(self, search, seed=130, depth='turn', *, on_preview=None):
         assert depth in ('turn', 'combat')
         self.search, self.depth = search, depth
+        self.on_preview = on_preview
+        self.simulated_steps = 0
         self.rng = torch.Generator().manual_seed(seed)
         self.turns = torch.empty(search.size, dtype=torch.int64, device=search.device)
 
@@ -35,6 +37,12 @@ class CombatLookahead:
         inputs = self.inputs(slots)
         inputs['candidate_mask'] &= mask[:, :inputs['candidate_mask'].shape[1]]
         return inputs
+
+    def record_samples(self, report, samples, inputs, logits, index):
+        if self.on_preview is not None:
+            legal = torch.where(inputs["candidate_mask"][index])[0]
+            report.update(crn_scores=samples, reference_actions=legal.tolist(),
+                          reference_logits=logits[index, legal].float().tolist())
 
     def record_preview_fault(self, parent, slot, seed, actions, fault, entities):
         search = self.search
@@ -120,6 +128,8 @@ class CombatLookahead:
             for slot, action in zip(active, choices):
                 history[slot].append(action)
             search.batch.step_slots(active, choices)
+            if self.on_preview is not None:
+                self.simulated_steps += len(active)
             valid = healthy(active)
             search.clock()
             after = search.progress_for(valid)
@@ -142,7 +152,12 @@ class CombatLookahead:
                 preview_logits = policy(preview)[0].masked_fill(~preview['candidate_mask'], -torch.inf)
                 live = step(live, preview_logits.argmax(-1).tolist(), progress)
         valid = [s for s in slots if s not in failed]
-        assert not bool(search.arrays['truncated'][valid].any())
+        truncated = search.arrays['truncated'][valid]
+        if self.on_preview is None:
+            assert not bool(truncated.any())
+        else:
+            failed.update(s for s, cut in zip(valid, truncated.tolist()) if cut)
+            valid = [s for s in valid if s not in failed]
         progress = search.progress_for(valid)
         alive = [s for s in valid if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
         values = dict(zip(alive, policy(self.inputs(alive))[1].tolist())) if alive else {}
@@ -163,7 +178,10 @@ class CombatLookahead:
             reports[i].update(selected=actions[i], seeds=paired, mean_scores=means,
                 paired_mean=statistics.mean(differences), paired_SE=margin,
                 preview_steps=preview_steps, depth=self.depth)
+            self.record_samples(reports[i], samples, inputs, logits, i)
         search.available.extend(slots)
+        if self.on_preview is not None:
+            self.on_preview(parents, reports)
         return actions, reports
 
 
@@ -202,6 +220,11 @@ class LookaheadSearch(NoSLSearch):
 
 
 class CardRewardLookahead(CombatLookahead):
+    def __init__(self, search, seed=130, depth="turn", *, max_options=5, require_skip=False, on_preview=None):
+        super().__init__(search, seed, depth, on_preview=on_preview)
+        self.max_options = max_options
+        self.require_skip = require_skip
+
     @torch.no_grad()
     def select(self, policy, parents):
         search = self.search
@@ -212,7 +235,7 @@ class CardRewardLookahead(CombatLookahead):
         for i, source in enumerate(parents):
             legal = torch.where(inputs['candidate_mask'][i])[0]
             ordered = legal[torch.argsort(logits[i, legal], descending=True, stable=True)].tolist()
-            selected = ordered[:5]
+            selected = ordered[:self.max_options]
             skips = [a for a in ordered if int(inputs['candidate_kinds'][i, a]) == 7]
             if skips and skips[0] not in selected:
                 selected[-1] = skips[0]
@@ -220,6 +243,7 @@ class CardRewardLookahead(CombatLookahead):
             actions.append(argmax)
             reports.append(dict(preview_steps=0, candidates=selected, selected=argmax))
             if (SCREENS[progress[source][SCREEN]] != 'card_reward' or len(legal) <= 1
+                    or (self.require_skip and not skips)
                     or float(logits[i].softmax(-1)[argmax]) >= .9):
                 continue
             paired = torch.randint(2**63 - 1, (8,), generator=self.rng).tolist()
@@ -240,13 +264,23 @@ class CardRewardLookahead(CombatLookahead):
         initial_acts = {s:progress[source][ACT] for s,source in zip(slots,sources)}
         rewards, steps, combats = (dict.fromkeys(slots, value) for value in (0., 0, 0))
         boss_ended = dict.fromkeys(slots, False)
-        live, choices = slots.copy(), first
+        failed = {s for s in slots if s in search.failed} if self.on_preview is not None else set()
+        live = [s for s in slots if s not in failed]
+        choices = [a for s, a in zip(slots, first) if s not in failed]
         while live:
             search.clock()
             before = search.progress_for(live)
-            search.step(live, choices)
-            assert not preview_faults_present(search.arrays['faults'], live)
-            assert not bool(search.arrays['truncated'][live].any())
+            rejected = search.step(live, choices)
+            if self.on_preview is None:
+                assert not preview_faults_present(search.arrays['faults'], live)
+                assert not bool(search.arrays['truncated'][live].any())
+            else:
+                self.simulated_steps += len(live)
+                flags = search.arrays['faults'].view(torch.int32)[live].tolist()
+                truncated = search.arrays['truncated'][live].tolist()
+                failed.update(s for s, fault, cut in zip(live, flags, truncated)
+                              if fault or cut or s in rejected or s in search.failed)
+                live = [s for s in live if s not in failed]
             after = search.progress_for(live)
             for s in live:
                 rewards[s] += ledgers[s].advance(before[s], after[s])
@@ -261,11 +295,16 @@ class CardRewardLookahead(CombatLookahead):
             if live:
                 preview = self.masked_inputs(live)
                 choices = policy(preview)[0].masked_fill(~preview['candidate_mask'], -torch.inf).argmax(-1).tolist()
-        progress = search.progress_for(slots)
-        alive = [s for s in slots if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
+        valid = [s for s in slots if s not in failed]
+        progress = search.progress_for(valid)
+        alive = [s for s in valid if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
         values = dict(zip(alive, policy(self.inputs(alive))[1].tolist())) if alive else {}
         for i, begin, end, paired in groups:
             trials = slots[begin:end]
+            preview_steps = sum(steps[s] for s in trials)
+            if failed.intersection(trials):
+                reports[i].update(preview_steps=preview_steps, skipped="card preview fault")
+                continue
             scores = [rewards[s] + values.get(s, 0.) for s in trials]
             samples = [scores[j:j + 8] for j in range(0, len(scores), 8)]
             means = [statistics.mean(group) for group in samples]
@@ -276,8 +315,14 @@ class CardRewardLookahead(CombatLookahead):
             actions[i] = ordered[best] if statistics.mean(differences) > margin else ordered[0]
             reports[i].update(selected=actions[i], seeds=paired, mean_scores=means,
                 paired_mean=statistics.mean(differences), paired_SE=margin,
-                preview_steps=sum(steps[s] for s in trials), depth='card')
+                preview_steps=preview_steps, depth='card')
+            self.record_samples(reports[i], samples, inputs, logits, i)
         search.available.extend(slots)
+        if self.on_preview is not None:
+            for slot in slots:
+                search.failed.pop(slot, None)
+                search.mainline_progress.pop(slot, None)
+            self.on_preview(parents, reports)
         return actions, reports
 
 
