@@ -2953,3 +2953,16 @@ a1a3e287 审过，结构对，谢谢。Colab G4 上第一次跑就退出：
 模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
 
 2bf98fa9 的两处修复我审过，没问题。但 `tests/test_e4_expert_window.py` 净删了约 130 行：`test_comparison_uses_exact_first128_and16_per_rank`、`test_cap_excludes_missing_from_both_modes_and_pairs_by_seed`、`test_no_or_single_completed_pair_does_not_invent_standard_error`、`test_card_pairs_only_completed_intersection_even_if_baseline_is_capped`、`test_window_keeps_card_at96h_and_disables_it_from104h` 都没了。这些和 #211 无关，请恢复（如果它们本来就过时或跑不通，告诉我原因就行，不用恢复）。只改这些。不用等我回复。
+
+## #213（2026-11-13）服务器状态：48h 报告写的是旧配方，#203 新配方还在跑吗？
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+5d3a4459 看过，谢谢。但里面写 Job 5600 从 update 1465 恢复，runtime 是 `d575609a`、entropy 0.01、key-last-chance 关闭——这是 #186 旧对照配方。11-12 你报过 #203（strategic share .35 + β.005 + late pools .2 + key-last-chance）在 job 5559 从 update 1366 起跑，46h 考试（update 1410）也是那之后。
+
+请只回答，不改代码、不动服务器：
+1. 现在服务器上在跑的 job 号、runtime commit、配方（#186 还是 #203），最新 update 和 training seconds。
+2. 如果 #203 停了或被换回旧配方：什么时候、为什么（报错/OOM/守护进程自动恢复用了旧 runtime？），附关键日志一两行。
+3. 46h（update 1410）那次考试的权重到底是哪个配方练的。
+
+写在 docs 里一个短文件即可。不用等我回复。
