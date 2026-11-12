@@ -70,3 +70,9 @@ def test_stage12_diagnostics_report_effective_nonforced_and_per_act_data(monkeyp
     assert exam["act2_boss_counts"] == {"Champ": 1}
     assert exam["by_act"]["2"]["boss_entry_hp"] == {"samples": 1, "mean": 41}
     assert [exam["by_act"]["3"][k] for k in ("rests", "upgrades", "card_removals")] == [1, 1, 1]
+
+
+def test_exam_breakdown_accepts_episode_without_details():
+    detailed = dict(seed=8, counts_by_act={"2": {"rests": 1}}, act2_boss="Champ",
+                    boss_entries=[dict(act=2, hp=41)])
+    assert ledger.exam_breakdown([{"seed": 7}, detailed]) == ledger.exam_breakdown([detailed])

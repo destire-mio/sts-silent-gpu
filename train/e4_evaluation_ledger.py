@@ -32,12 +32,13 @@ def exam_breakdown(episodes):
     entry_hp = {act: [] for act in ACTS}
     act2_bosses = Counter()
     for episode in episodes:
-        for act, counts in episode['counts_by_act'].items():
+        for act, counts in episode.get('counts_by_act', {}).items():
             for key, value in counts.items():
                 by_act[act][key] += value
-        if episode['act2_boss'] is not None:
-            act2_bosses[episode['act2_boss']] += 1
-        for entry in episode['boss_entries']:
+        boss = episode.get('act2_boss')
+        if boss is not None:
+            act2_bosses[boss] += 1
+        for entry in episode.get('boss_entries', ()):
             entry_hp[str(entry['act'])].append(entry['hp'])
     for act, values in entry_hp.items():
         by_act[act]['boss_entry_hp'] = dict(samples=len(values),
