@@ -722,8 +722,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                                       key_last_chance=key_last_chance)
         evaluator_search.deadline = deadline
         evaluator_search.evidence_directory = output
+        exam_details = standalone or strategic_share is not None
         evaluator = EvaluationLedgerCollector(evaluator_search, torch.Generator().manual_seed(101 + rank),
-                                              rank=rank, extra_details=standalone, **collector_options)
+                                              rank=rank, extra_details=exam_details, **collector_options)
         evaluated.eval()
         complete = True
         try:
@@ -822,7 +823,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             ledger_name=f"{prefix}-{state['update']}-act2-ledger.json"
             write_json(output/ledger_name,dict(episodes=ledger,stalled_games=sum(e["stalled"] for e in ledger)))
             row.update(value_spearman=value_correlations(ledger),act2_ledger_file=ledger_name)
-            if standalone or strategic_share is not None:
+            if exam_details:
                 row["exam_breakdown"] = exam_breakdown(ledger)
                 if key_last_chance:
                     row["key_last_chance"] = True
