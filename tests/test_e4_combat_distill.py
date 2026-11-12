@@ -1,9 +1,11 @@
+import base64
 from contextlib import nullcontext
 from copy import deepcopy
 import gzip
 import importlib.util
 import io
 import json
+import math
 import os
 import struct
 from unittest.mock import patch
@@ -77,6 +79,7 @@ def test_actual_ppo_zero_weight_is_bitwise_and_positive_kl_updates_trunk():
     active = deepcopy(zero)
     active.weight = 100.
     active.targets = [(raw, [0, 1], [4., -4.])]
+    active.sources = ["combat"]
     initial_rng = torch.get_rng_state()
     outcomes = []
     reference = None
@@ -136,6 +139,7 @@ def test_amp_skip_and_partial_resume_preserve_successful_combat_draws():
     combat = CombatDistillation.__new__(CombatDistillation)
     combat.weight, combat.maximum_ratio = 10., .5
     combat.targets = [(raw, [0, 1], [4. + index / 512, -4.]) for index in range(512)]
+    combat.sources = ["combat"] * len(combat.targets)
     combat.summary = dict(roots=len(combat.targets))
     model = SingleRankModel(policy)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
@@ -207,3 +211,51 @@ def test_no_significant_evidence_preserves_full_reference_policy(tmp_path):
     assert float(loss.detach()) == 0
     loss.backward()
     assert torch.allclose(logits.grad, torch.zeros_like(logits.grad), atol=1e-7)
+
+
+def write_labels(directory, label_format, logits):
+    directory.mkdir()
+    (directory / 'manifest.json').write_text(json.dumps(dict(format=label_format)))
+    row = dict(complete=True, act=2, seed=1_000_000_000, argmax=0 if logits[0] >= logits[1] else 1, options=[0, 1],
+               p_ref_logits=logits, p_ref_all_options=[0, 1], p_ref_all_logits=logits,
+               packed_observation=base64.b64encode(observation_bytes()).decode(),
+               estimates=[dict(action=action, k=8, delta=0., paired_se=.1) for action in (0, 1)])
+    (directory / 'labels-0000000.json.gz').write_bytes(gzip.compress(
+        json.dumps(dict(format=label_format, rows=[row])).encode()))
+
+
+def test_card_label_format_loads_the_same_target_schema(tmp_path):
+    combat_dir, card_dir = tmp_path / 'combat', tmp_path / 'card'
+    write_labels(combat_dir, 'e4_combat_labels_v1', [3., -3.])
+    write_labels(card_dir, 'e4_card_labels_v1', [3., -3.])
+    combat, _, combat_stats = load_combat_targets(combat_dir)
+    card, _, card_stats = load_combat_targets(card_dir)
+    assert combat == card == [(observation_bytes(), [0, 1], [3., -3.])]
+    assert (combat_stats['source'], card_stats['source']) == ('combat', 'card')
+
+
+def test_distillation_merges_directories_and_reports_sampled_source_losses(tmp_path):
+    combat_dir, card_dir = tmp_path / 'combat', tmp_path / 'card'
+    write_labels(combat_dir, 'e4_combat_labels_v1', [4., -4.])
+    write_labels(card_dir, 'e4_card_labels_v1', [-2., 2.])
+    distillation = CombatDistillation([combat_dir, card_dir], 1., .5)
+    assert [target[2] for target in distillation.targets] == [[4., -4.], [-2., 2.]]
+    assert distillation.summary['label_roots_by_source'] == {'combat': 1, 'card': 1}
+    assert CombatDistillation([combat_dir], 1., .5, CombatDistillation(combat_dir, 1., .5).identity)
+    policy, _, fragment = ppo_case()
+    model = SingleRankModel(policy)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    rng = torch.Generator().manual_seed(203)
+    with patch('train.e4_stage12.dist.all_reduce'), patch(
+            'train.e4_stage12.dist.all_gather', side_effect=lambda output, count: output[0].copy_(count)):
+        cursor = new_cursor(fragment, rng, 1)
+        advance_minibatch(model, optimizer, torch.amp.GradScaler('cpu', enabled=False), cursor, rng, 0, 1,
+                          microbatch=64, value_state=dict(update=0, standalone_value_coefficient=.5),
+                          combat_distillation=distillation)
+    report = distillation.report(cursor)
+    sampled = report['by_source']
+    assert 0 < sampled['combat']['rows'] < 256 and 0 < sampled['card']['rows'] < 256
+    assert sum(source['rows'] for source in sampled.values()) == report['label_points'] == 256
+    assert math.isclose(sum(source['rows'] * source['loss'] for source in sampled.values()) / 256,
+                        report['loss'], rel_tol=1e-6)
+    assert report['gradient_ratio_after_cap_max'] <= .500001

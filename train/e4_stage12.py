@@ -884,10 +884,10 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
     combat_metrics = None
     if combat_backward is not None:
         from train.e4_combat_distill import add_capped_combat_gradients
-        combat_gradients, combat_loss = combat_backward
+        combat_gradients, combat_losses = combat_backward
         combat_metrics = add_capped_combat_gradients(model, combat_gradients, scaler,
                                                       combat_distillation.maximum_ratio)
-        combat_metrics["loss"] = combat_loss
+        combat_metrics.update(combat_losses)
         del combat_backward, combat_gradients
     previous_steps = cursor["optimizer_steps"]
     finish_optimizer_step(model, optimizer, scaler, cursor, rng, rank)

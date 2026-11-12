@@ -196,7 +196,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--arena-fraction", type=float, help="Standalone practice lane fraction (default 0)")
     parser.add_argument("--map-distill", type=Path, help="Label shards for a new standalone map PPO fork")
     parser.add_argument("--map-distill-weight", type=float, help="Map distillation KL weight, including 0 for the control")
-    parser.add_argument("--combat-distill", type=Path, help="Offline combat labels for a standalone Colab fork")
+    parser.add_argument("--combat-distill", type=Path, nargs="+", action="extend",
+                        help="Offline combat and card label directories for a standalone Colab fork")
     parser.add_argument("--combat-distill-weight", type=float, default=0., help="Direct policy combat KL weight (default off)")
     parser.add_argument("--combat-distill-max-ratio", type=float, default=.5, help="Cap combat KL gradient norm relative to PPO")
     args = parser.parse_args(argv)

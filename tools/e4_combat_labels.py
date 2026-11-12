@@ -40,8 +40,22 @@ def balanced_roots(episodes, seed):
     return result
 
 
-@torch.no_grad()
+def combat_root(progress):
+    return (progress[SCREEN] == COMBAT and progress[PHASE] == COMBAT_PHASE
+            and progress[ROOM] in (BOSS_ROOM, ELITE_ROOM))
+
+
+def policy_actions(_search, _slot, mask):
+    return torch.where(mask)[0]
+
+
 def capture_combat_episodes(model, runner, seeds):
+    return capture_label_episodes(model, runner, seeds, is_root=combat_root, options_at=policy_actions,
+                                  point_limit=4, allow_partial=True)
+
+
+@torch.no_grad()
+def capture_label_episodes(model, runner, seeds, *, is_root, options_at, point_limit=None, allow_partial=False):
     # Label replay may have left fixed roots live in the reusable runner.
     runner.seeds[:] = [None] * len(runner.seeds)
     waiting = iter(seeds)
@@ -74,11 +88,11 @@ def capture_combat_episodes(model, runner, seeds):
             healthy = [i for i, slot in enumerate(live) if slot not in runner.search.failed]
             for position, i in enumerate(healthy):
                 slot, p = live[i], before[live[i]]
-                if p[SCREEN] != COMBAT or p[PHASE] != COMBAT_PHASE or p[ROOM] not in (BOSS_ROOM, ELITE_ROOM):
+                if not is_root(p):
                     continue
                 fight = (p[ACT], p[FLOOR], p[ROOM], bool(runner.rewards[slot].reach["act3_first_boss"]))
-                legal = torch.where(runner.search.last_policy_mask[i])[0]
-                if len(legal) < 2 or counts[slot][fight] >= 4:
+                legal = options_at(runner.search, slot, runner.search.last_policy_mask[i])
+                if len(legal) < 2 or (point_limit is not None and counts[slot][fight] >= point_limit):
                     continue
                 logits = captured_logits[position, legal].float()
                 order = torch.argsort(logits, descending=True, stable=True)[:4]
@@ -97,7 +111,8 @@ def capture_combat_episodes(model, runner, seeds):
                                      outcome=episode["outcome"], roots=pending[slot].copy()))
             runner.completed.clear()
     except AllocationEnded:
-        pass
+        if not allow_partial:
+            raise
     finally:
         hook.remove()
     return episodes
@@ -152,52 +167,57 @@ def combat_rollout(search, model, plan):
         search.available.extend(slots)
 
 
-def evaluate_draws(runner, model, samples, targets):
+def evaluate_draws(runner, model, samples, targets, rollout=combat_rollout):
     plan = [(slot, action, seed) for slot, actions, seeds in targets for action in actions for seed in seeds]
     capacity = len(runner.search.available)
     decisions = 0
     for start in range(0, len(plan), capacity):
         chunk = plan[start:start + capacity]
-        scores, steps = combat_rollout(runner.search, model, chunk)
+        scores, steps = rollout(runner.search, model, chunk)
         decisions += steps
         for (slot, action, _), score in zip(chunk, scores):
             samples[slot][action].append(score)
     return decisions
 
 
-@torch.no_grad()
 def label_combat_shard(runner, model, records, seed):
+    return label_shard(runner, model, records, seed, label_format=FORMAT, draw_namespace="combat",
+                       rollout=combat_rollout)
+
+
+@torch.no_grad()
+def label_shard(runner, model, records, seed, *, label_format, draw_namespace, rollout):
     started = time.monotonic()
     slots = replay_prefixes(runner, records)
     progress = runner.search.progress_for(slots)
     if any(progress[slot] != row["progress"] for slot, row in enumerate(records)):
-        raise ValueError("Combat root changed on replay")
+        raise ValueError("Label root changed on replay")
     observations = pack_observations(runner.search, slots)
     samples = [{action: [] for action in row["options"]} for row in records]
     draws = []
     for row in records:
-        rng = random.Random(f"combat:{seed}:{row['id']}")
+        rng = random.Random(f"{draw_namespace}:{seed}:{row['id']}")
         draws.append([rng.randrange(2**63) for _ in range(INITIAL_DRAWS + EXTRA_DRAWS)])
     steps = evaluate_draws(runner, model, samples, [
-        (slot, row["options"], draws[slot][:INITIAL_DRAWS]) for slot, row in enumerate(records)])
+        (slot, row["options"], draws[slot][:INITIAL_DRAWS]) for slot, row in enumerate(records)], rollout)
     retained = {}
     for slot, values in enumerate(samples):
         if all(None not in scores for scores in values.values()):
             retained[slot] = sorted(values, key=lambda action: statistics.mean(values[action]), reverse=True)[:math.ceil(len(values) / 2)]
     steps += evaluate_draws(runner, model, samples, [
         (slot, list(dict.fromkeys(kept + [records[slot]["argmax"]])), draws[slot][INITIAL_DRAWS:])
-        for slot, kept in retained.items()])
+        for slot, kept in retained.items()], rollout)
     rows = []
     for slot, root in enumerate(records):
         values = samples[slot]
         complete = slot in retained and all(None not in scores for scores in values.values())
         rows.append(dict(root, complete=complete, packed_observation=observations[slot], scores=values,
             draws=draws[slot], estimates=label_options(values, root["argmax"], retained.get(slot, []))))
-    return dict(format=FORMAT, rows=rows, seconds=time.monotonic() - started, preview_steps=steps)
+    return dict(format=label_format, rows=rows, seconds=time.monotonic() - started, preview_steps=steps)
 
 
-def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
+def label_parser(description):
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("checkpoint", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seeds", nargs="+", default=["1000000000:1000004096"])
@@ -209,19 +229,25 @@ def main(argv=None):
     parser.add_argument("--shard-size", type=int, default=8)
     parser.add_argument("--preview-lanes", type=int, default=256)
     parser.add_argument("--seed", type=int, default=203)
-    args = parser.parse_args(argv)
+    return parser
+
+
+def validate_label_arguments(parser, args):
     if (not 0 < args.pilot_seconds <= args.max_seconds <= 10800 or args.preview_lanes < 1
             or min(args.source_shard, args.shard_size) < 1 or (args.labels is not None and args.labels < 1)):
         parser.error("Require positive sizes and 0 < pilot <= total <= 10800 seconds")
+
+
+def run_label_job(args, *, label_format, capture, label, manifest_settings, value_target, pilot_metrics=None):
     args.output.mkdir(parents=True, exist_ok=True)
     torch.set_num_threads(1)
     seeds = training_seeds(args.seeds)
     with args.checkpoint.open("rb") as stream:
         digest = hashlib.file_digest(stream, "sha256").hexdigest()
-    manifest = dict(format=FORMAT, checkpoint_sha256=digest, seeds=seeds, seed=args.seed,
+    manifest = dict(format=label_format, checkpoint_sha256=digest, seeds=seeds, seed=args.seed,
                     source_shard=args.source_shard, shard_size=args.shard_size, preview_lanes=args.preview_lanes,
                     pilot_seconds=args.pilot_seconds, max_seconds=args.max_seconds, labels_limit=args.labels,
-                    device=args.device, initial_draws=8, extra_draws=16, max_steps=300, maximum_points_per_fight=4)
+                    device=args.device, initial_draws=INITIAL_DRAWS, extra_draws=EXTRA_DRAWS, **manifest_settings)
     file = args.output / "manifest.json"
     if file.exists() and read_json(file) != manifest:
         raise ValueError("Resume requires the same checkpoint, seeds, layout and budget")
@@ -247,6 +273,15 @@ def main(argv=None):
     pilot = read_json(pilot_file) if pilot_file.exists() else None
     if pilot is not None:
         target = min(target, pilot["planned_points"]) if target else pilot["planned_points"]
+    def record_pilot(elapsed, completed):
+        planned = math.floor(completed / elapsed * args.max_seconds)
+        report = dict(seconds=elapsed, completed_points=completed, points_per_second=completed / elapsed,
+                      planned_points=planned, total_budget_seconds=args.max_seconds, device=args.device)
+        if pilot_metrics is not None:
+            report.update(pilot_metrics([row for shard in shards for row in shard["rows"]]))
+        atomic_json(pilot_file, report)
+        return report
+
     source_seconds = 0.
     try:
         for offset in range(0, len(seeds), args.source_shard):
@@ -256,7 +291,7 @@ def main(argv=None):
                 saved = read_json(source)
             else:
                 capture_started = time.monotonic()
-                episodes = capture_combat_episodes(model, runner, seeds[offset:offset + args.source_shard])
+                episodes = capture(model, runner, seeds[offset:offset + args.source_shard])
                 saved = dict(episodes=episodes, seconds=time.monotonic() - capture_started)
                 atomic_json(source, saved)
             source_seconds += saved["seconds"]
@@ -266,10 +301,8 @@ def main(argv=None):
                 completed = sum(row["complete"] for shard in shards for row in shard["rows"])
                 elapsed = budget["elapsed"] + time.monotonic() - started
                 if pilot is None and completed > 0 and elapsed >= args.pilot_seconds:
-                    planned = math.floor(completed / elapsed * args.max_seconds)
-                    pilot = dict(seconds=elapsed, completed_points=completed, points_per_second=completed / elapsed,
-                                 planned_points=planned, total_budget_seconds=args.max_seconds, device=args.device)
-                    atomic_json(pilot_file, pilot)
+                    pilot = record_pilot(elapsed, completed)
+                    planned = pilot["planned_points"]
                     target = min(target, planned) if target else planned
                 if target is not None and completed >= target:
                     break
@@ -278,7 +311,7 @@ def main(argv=None):
                     selected = selected[:max(0, target - completed)]
                 if not selected:
                     break
-                shard = label_combat_shard(runner, model, selected, args.seed)
+                shard = label(runner, model, selected, args.seed)
                 atomic_json(args.output / f"labels-{len(shards):07d}.json.gz", shard)
                 shards.append(shard)
                 seen.update(row["id"] for row in shard["rows"])
@@ -291,14 +324,28 @@ def main(argv=None):
         budget["active_since"] = None
         atomic_json(budget_file, budget)
     rows = [row for shard in shards for row in shard["rows"]]
-    summary = dict(format=FORMAT, attempted_points=len(rows), actual_complete_points=sum(row["complete"] for row in rows),
+    complete = sum(row["complete"] for row in rows)
+    if pilot_metrics is not None and pilot is None and complete and budget["elapsed"] >= args.pilot_seconds:
+        pilot = record_pilot(budget["elapsed"], complete)
+    summary = dict(format=label_format, attempted_points=len(rows), actual_complete_points=complete,
         actual_wall_seconds=budget["elapsed"], pilot=pilot, source_seconds=source_seconds,
         labeling_seconds=sum(shard["seconds"] for shard in shards), preview_steps=sum(shard["preview_steps"] for shard in shards),
         complete_by_act=dict(Counter(row["act"] for row in rows if row["complete"])),
-        crn_by_act=crn_diagnostics(rows, "labels"), max_steps=300,
-        value_target="V after this combat; death=0; capped futures excluded", determinize_run=True)
+        crn_by_act=crn_diagnostics(rows, "labels"), max_steps=manifest_settings["max_steps"],
+        value_target=value_target, determinize_run=True)
+    if pilot_metrics is not None:
+        summary.update(pilot_metrics(rows))
     atomic_json(args.output / "summary.json", summary)
     print(json.dumps(summary, indent=2))
+
+
+def main(argv=None):
+    parser = label_parser(__doc__)
+    args = parser.parse_args(argv)
+    validate_label_arguments(parser, args)
+    run_label_job(args, label_format=FORMAT, capture=capture_combat_episodes, label=label_combat_shard,
+                  manifest_settings=dict(max_steps=MAX_STEPS, maximum_points_per_fight=4),
+                  value_target="V after this combat; death=0; capped futures excluded")
 
 
 if __name__ == "__main__":
