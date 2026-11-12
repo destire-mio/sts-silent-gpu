@@ -2936,3 +2936,14 @@ a1cc559c 我审过，阶段考试和标签工具结构都对，谢谢。一处�
 - 种子用 1000200000 起（避开考试种子和已用过的标签种子）。
 
 只改这些，加最少的测试（行格式能被 `load_combat_targets` 读 + 到点停时保留半局标签各 1 个）。完成后告诉我命令行。不用等我回复。
+
+## #211（2026-11-12）两个小修：search_labels 的 CUDA 初始化 + 恢复训练时的 expert-pending
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+a1a3e287 审过，结构对，谢谢。Colab G4 上第一次跑就退出：
+
+- `tools/e4_search_labels.py:198` `torch.cuda.reset_peak_memory_stats(device)` 在进程还没碰过 CUDA 时抛 `RuntimeError: Invalid device argument`（G4 上我单独复现：裸调用失败，先 `torch.zeros(1, device=device)` 就好）。请在它前面先做一次 CUDA 初始化。我在 Colab 上先用同样的一行补丁在跑。
+- 另一个：Colab VM 被回收后，从私有备份恢复的 fork 目录只有顶层小文件，`expert-pending-0.json`（hour 8）在，`claude138-dev8/report.json` 和 `dev-8.pt` 不在，恢复训练时 `periodic_combat_window` 去读 `dev-8.pt` → FileNotFoundError 退出。我在 Colab 把两个 fork 的 `expert-*.json` 移走了。请改成：`dev-{hour}.pt` 不存在时记一条日志并跳过这个窗口（删掉该 pending），不要让训练退出。
+
+只改这两处，各加 1 个最小测试。不用等我回复。
