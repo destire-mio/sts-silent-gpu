@@ -4,6 +4,7 @@ from unittest import TestCase
 
 import torch
 
+from tools.e4_map_distill_offline import split_by_seed
 from tools.e4_map_labels import label_options, summary
 from train.e4_map_distill import MapDistillPolicy, target_rows, train_head_step
 from train.e4_stage12 import CLSPolicy
@@ -68,3 +69,15 @@ class MapDistillTests(TestCase):
         report = summary([dict(rows=[row], seconds=1., preview_steps=10)], "labels", {})["crn_by_act"]["act1"]
         self.assertGreater(report["paired_correlation"], .99)
         self.assertAlmostEqual(report["paired_to_rollout_var"], expected / old_var)
+
+
+    def test_offline_holdout_groups_seeds_after_excluding_gold(self):
+        rows = [dict(seed=seed, act=act) for seed in range(11) for act in (1, 2)]
+        train, validation = split_by_seed(rows, {0})
+        train_seeds = {row["seed"] for row in train}
+        validation_seeds = {row["seed"] for row in validation}
+        self.assertEqual(len(train_seeds), 9)
+        self.assertEqual(len(validation_seeds), 1)
+        self.assertEqual(len(validation), 2)
+        self.assertFalse(train_seeds & validation_seeds)
+        self.assertEqual(train_seeds | validation_seeds, set(range(1, 11)))

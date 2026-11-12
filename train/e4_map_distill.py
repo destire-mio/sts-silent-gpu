@@ -18,6 +18,7 @@ from train.e4_stage12 import CLSPolicy
 from train.model import packed_inputs
 
 LABELS_PER_UPDATE = 256
+HEAD_LEARNING_RATE = 3e-4
 
 
 class RouteHead(nn.Module):
@@ -75,18 +76,19 @@ def training_reach(episodes):
                 emerald=emerald, emerald_rate=emerald / n if n else None)
 
 
-def target_rows(rows):
+def target_rows(rows, *, variances=None):
     """Pool variance of matched option-minus-argmax draws by act."""
-    groups = defaultdict(list)
-    for row in rows:
-        groups[row["act"]].extend(o for o in row["estimates"] if o["action"] != row["argmax"])
-    variances = {}
-    for act, options in groups.items():
-        degrees = sum(o["k"] - 1 for o in options)
-        paired_var = sum((o["k"] - 1) * o["paired_se"]**2 * o["k"] for o in options) / degrees
-        total = statistics.variance(o["delta"] for o in options) if len(options) > 1 else 0.
-        noise = statistics.mean(paired_var / o["k"] for o in options)
-        variances[act] = (paired_var, max(0., total - noise))
+    if variances is None:
+        groups = defaultdict(list)
+        for row in rows:
+            groups[row["act"]].extend(o for o in row["estimates"] if o["action"] != row["argmax"])
+        variances = {}
+        for act, options in groups.items():
+            degrees = sum(o["k"] - 1 for o in options)
+            paired_var = sum((o["k"] - 1) * o["paired_se"]**2 * o["k"] for o in options) / degrees
+            total = statistics.variance(o["delta"] for o in options) if len(options) > 1 else 0.
+            noise = statistics.mean(paired_var / o["k"] for o in options)
+            variances[act] = (paired_var, max(0., total - noise))
 
     def adjusted(delta, k, paired_var, signal):
         se_sq = paired_var / k
@@ -107,13 +109,14 @@ def target_rows(rows):
     return targets, variances
 
 
-def load_targets(directory):
+def read_label_rows(directory):
     manifest_bytes = (directory / "manifest.json").read_bytes()
     manifest = json.loads(manifest_bytes)
     if manifest.get("format") != 1 or manifest.get("mode") != "labels":
         raise ValueError("Expected E4 map label format 1")
     fingerprint = hashlib.sha256(manifest_bytes)
     rows = []
+    source_seeds = set()
     for start in range(0, manifest["roots"], manifest["shard_size"]):
         name = directory / f"labels-{start:07d}.json.gz"
         raw = name.read_bytes()
@@ -123,6 +126,7 @@ def load_targets(directory):
             raise ValueError(f"Unexpected label shard {name}")
         fingerprint.update(raw)
         for row in shard["rows"]:
+            source_seeds.add(row.get("seed"))
             if not row["complete"]:
                 continue
             if (len(row["options"]) < 2 or len(row["p_ref_logits"]) != len(row["options"])
@@ -134,8 +138,13 @@ def load_targets(directory):
             rows.append(row)
     if not rows:
         raise ValueError("The map label set contains no complete roots")
+    return rows, fingerprint.hexdigest(), source_seeds
+
+
+def load_targets(directory):
+    rows, fingerprint, _ = read_label_rows(directory)
     targets, variances = target_rows(rows)
-    return targets, variances, fingerprint.hexdigest()
+    return targets, variances, fingerprint
 
 
 def batch_targets(rows, device):
@@ -160,7 +169,7 @@ def batch_targets(rows, device):
     return inputs, teacher
 
 
-def train_head_step(policy, optimizer, inputs, teacher_logits):
+def route_head_objective(policy, inputs, teacher_logits):
     with torch.no_grad():
         entities, pooled = policy.encode(inputs)
         base = CLSPolicy.action_logits(policy, inputs, entities, pooled).float()
@@ -172,12 +181,18 @@ def train_head_step(policy, optimizer, inputs, teacher_logits):
                               - log_student.masked_fill(~legal, 0.))).sum(-1).mean()
     if not bool(kl.isfinite()):
         raise FloatingPointError("Nonfinite map distillation loss")
+    return kl, log_student, residual, entities
+
+
+def train_head_step(policy, optimizer, inputs, teacher_logits):
+    kl, _, _, entities = route_head_objective(policy, inputs, teacher_logits)
+    legal = inputs["candidate_mask"]
     optimizer.zero_grad(set_to_none=True)
     (policy.map_weight * kl).backward()
     optimizer.step()
     with torch.no_grad():
         magnitude = policy.route_head(entities, inputs["candidate_refs"][:, 2])[legal].abs().mean()
-    return dict(loss=float(kl.detach()), head_mean_abs=float(magnitude), label_roots=len(base))
+    return dict(loss=float(kl.detach()), head_mean_abs=float(magnitude), label_roots=len(entities))
 
 
 class MapDistillation:
@@ -185,7 +200,7 @@ class MapDistillation:
         self.policy = policy
         self.targets, self.variances, fingerprint = load_targets(directory)
         self.identity = dict(labels_sha256=fingerprint, weight=policy.map_weight)
-        self.optimizer = torch.optim.Adam(policy.route_head.parameters(), lr=3e-4)
+        self.optimizer = torch.optim.Adam(policy.route_head.parameters(), lr=HEAD_LEARNING_RATE)
         if saved is not None:
             if saved["identity"] != self.identity:
                 raise ValueError("Map distillation resume requires the same labels and weight")
