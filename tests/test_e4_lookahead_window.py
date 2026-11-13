@@ -1,3 +1,4 @@
+import json
 from types import SimpleNamespace
 import pytest
 from train.e4 import REACH, PHASE, COMBAT_PHASE
@@ -53,7 +54,15 @@ def test_supplement_obeys_existing_yield_receipt_and_allocation_deadline(tmp_pat
 
 
 @pytest.mark.parametrize("world", [1, 2])
-def test_legacy_lookahead_is_skipped_on_small_allocations(tmp_path, world):
-    (tmp_path / "dev-60.pt").touch()
+def test_legacy_lookahead_is_skipped_on_small_allocations(tmp_path, world, capsys):
     assert lookahead60_window(tmp_path, None, None, 0, world, None)
+    assert capsys.readouterr().out == ""
+    (tmp_path / "dev-60.pt").touch()
+
+    for rank in range(world):
+        assert lookahead60_window(tmp_path, None, None, rank, world, None)
+
+    assert json.loads(capsys.readouterr().out) == {
+        "event": "lookahead60_skipped", "world": world, "reason": "requires_eight_ranks",
+    }
     assert not (tmp_path / "claude137-dev60").exists()
