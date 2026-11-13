@@ -3003,3 +3003,20 @@ e6656b74 看过，谢谢说清楚。旧对照已经平了三周（10-23 起一�
 4. 以后故障恢复的默认动作是"修好后用当前配方接续"，不是回退旧配方；确实需要回退时先提交说明再做。
 
 只做这些。不用等我回复。
+
+## #217（2026-11-14）战斗推演"换招"太容易被运气骗：加更严的换招规则 + 独立复核
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+背景（Colab 实测）：
+- 当前最好模型（EMA u197）256 个考试种子、不开钥匙强制：直接打 35.23，`--depth combat` 推演 38.81，+3.57±1.33。推演的上限还在。
+- 但用推演答案训练学生 5 轮没涨；把"推演改选的那步"当硬目标训练反而 −0.77±0.73。
+- search-7 的 25242 次改选：delta/SE 中位数 1.5，73% < 2；14% 的改选 8 次抽样里只有 ≤1 次结果不同。`CombatLookahead.select` 里只有 1 次不同时 mean = d/8 恰好等于 margin = d/8，靠浮点误差决定换不换。规则是 4 选 1 + 1 SE，赢家诅咒很重。
+
+请在 `train/e4_lookahead.py` 的 `CombatLookahead` 加两个可选参数（默认值保持现在行为，不影响服务器训练）：
+1. `override_se`（默认 1.0）：换招需要 `mean(differences) > override_se * margin`，并且至少 2 次抽样的差不为 0。
+2. `validate`（默认 0）：>0 时，对通过第 1 步的候选，再用 `validate` 个新的、独立的确定化种子（不复用 `paired`），只比较"候选 vs argmax"两招（同样 CRN 配对）。只有复核的平均差 > 0 才真换。report 里记 `validated_delta`、`validated_se`、`validated_k`、`validated`（bool）。复核和第一次推演可以合并成一批 clone，也可以分两批，你选简单的。
+3. `tools/e4_lookahead_eval.py` 和 `tools/e4_search_labels.py` 加 `--override-se` 和 `--validate` 透传；search labels 的每行写上述复核字段（没复核就写 null）。
+4. 1 个最小测试：构造只有 1 次抽样不同的 scores，`override_se=2` 时不换；`validate>0` 时复核为负则不换。
+
+只做这些，推到 codex/e4，提交一句话说明 commit。不用等我回复。我会在 Colab 上测 `--override-se 2 --validate 16` 的推演考试和新标签。
