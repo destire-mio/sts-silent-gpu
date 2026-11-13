@@ -18,10 +18,15 @@ def preview_faults_present(flags, slots):
 
 
 class CombatLookahead:
-    def __init__(self, search, seed=130, depth='turn', *, on_preview=None):
+    def __init__(self, search, seed=130, depth='turn', *, on_preview=None,
+                 override_se=1.0, validate=0):
         assert depth in ('turn', 'combat')
+        assert math.isfinite(override_se) and override_se >= 0
+        assert validate >= 0
         self.search, self.depth = search, depth
         self.on_preview = on_preview
+        self.override_se = override_se
+        self.validate = validate
         self.simulated_steps = 0
         self.rng = torch.Generator().manual_seed(seed)
         self.turns = torch.empty(search.size, dtype=torch.int64, device=search.device)
@@ -94,101 +99,154 @@ class CombatLookahead:
             groups.append((i, begin, len(sources), paired))
         if not sources:
             return actions, reports
-        slots = search.take(len(sources))
         assert all(source < search.lanes for source in parents)
-        assert all(slot >= search.lanes for slot in slots)
-        search.batch.clone_many(sources, slots)
-        search.batch.determinize_slots(slots, seeds)
-        search.batch.combat_turns_tensors(self.turns)
-        initial_turns = dict(zip(slots, [int(self.turns[source]) for source in sources]))
-        ledgers = {s:deepcopy(search.reward_ledgers[source]) for s,source in zip(slots,sources)}
-        rewards = dict.fromkeys(slots,0.)
-        history = {slot: [] for slot in slots}
-        origin = dict(zip(slots, zip(sources, seeds)))
-        failed = set()
-
-        def healthy(active):
-            if not active:
-                return []
-            flags = search.arrays['faults'].view(torch.int32)[active]
-            counts = search.arrays['entity_counts'][active]
-            rows = torch.stack((flags, counts), dim=1).cpu().tolist()
-            valid = []
-            for slot, (fault, entities) in zip(active, rows):
-                if not fault and entities:
-                    valid.append(slot)
-                    continue
-                parent, seed = origin[slot]
-                self.record_preview_fault(parent, slot, seed, history[slot],
-                                          fault & 0xFFFFFFFF, entities)
-                failed.add(slot)
-            return valid
-
-        def step(active, choices, before):
-            for slot, action in zip(active, choices):
-                history[slot].append(action)
-            search.batch.step_slots(active, choices)
-            if self.on_preview is not None:
-                self.simulated_steps += len(active)
-            valid = healthy(active)
-            search.clock()
-            after = search.progress_for(valid)
-            for slot in valid:
-                rewards[slot] += ledgers[slot].advance(before[slot], after[slot])
-            return valid
-
-        # Cloning and determinizing do not populate the preview observation buffers.
-        live = step(slots, first, search.progress_for(slots))
-        limit = 64 if self.depth == 'turn' else 256
-        while live:
-            search.clock()
-            progress = search.progress_for(live)
-            search.batch.combat_turns_tensors(self.turns)
-            live = [s for s in live if progress[s][PHASE] == COMBAT_PHASE
-                    and progress[s][SCREEN] not in (DEATH, VICTORY) and len(history[s]) < limit
-                    and (self.depth == 'combat' or int(self.turns[s]) == initial_turns[s])]
-            if live:
-                preview = self.masked_inputs(live)
-                preview_logits = policy(preview)[0].masked_fill(~preview['candidate_mask'], -torch.inf)
-                live = step(live, preview_logits.argmax(-1).tolist(), progress)
-        valid = [s for s in slots if s not in failed]
-        truncated = search.arrays['truncated'][valid]
-        if self.on_preview is None:
-            assert not bool(truncated.any())
-        else:
-            failed.update(s for s, cut in zip(valid, truncated.tolist()) if cut)
-            valid = [s for s in valid if s not in failed]
-        progress = search.progress_for(valid)
-        alive = [s for s in valid if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
-        values = dict(zip(alive, policy(self.inputs(alive))[1].tolist())) if alive else {}
+        scores, steps = self.rollout(policy, sources, first, seeds)
+        validation_plan, validation_groups = [], []
+        strict = self.override_se != 1.0 or self.validate > 0
         for i, begin, end, paired in groups:
-            trials = slots[begin:end]
-            preview_steps = sum(len(history[s]) for s in trials)
-            if failed.intersection(trials):
+            trials = scores[begin:end]
+            preview_steps = sum(steps[begin:end])
+            if None in trials:
                 reports[i].update(preview_steps=preview_steps, skipped='combat preview fault')
                 continue
-            scores = [rewards[s] + values.get(s, 0.) for s in trials]
-            samples = [scores[j:j + 8] for j in range(0, len(scores), 8)]
+            samples = [trials[j:j + 8] for j in range(0, len(trials), 8)]
             means = [statistics.mean(group) for group in samples]
             best = max(range(len(samples)), key=means.__getitem__)
             differences = [a - b for a, b in zip(samples[best], samples[0])]
+            delta = statistics.mean(differences)
             margin = statistics.stdev(differences) / math.sqrt(8)
             ordered = reports[i]['candidates']
-            actions[i] = ordered[best] if statistics.mean(differences) > margin else ordered[0]
+            if delta > self.override_se * margin and (not strict or sum(d != 0 for d in differences) >= 2):
+                candidate = ordered[best]
+                if self.validate:
+                    validation_seeds = self.draw_validation_seeds(paired)
+                    begin = len(validation_plan)
+                    validation_plan.extend((parents[i], action, seed)
+                                           for action in (ordered[0], candidate) for seed in validation_seeds)
+                    validation_groups.append((i, candidate, begin, len(validation_plan)))
+                else:
+                    actions[i] = candidate
             reports[i].update(selected=actions[i], seeds=paired, mean_scores=means,
-                paired_mean=statistics.mean(differences), paired_SE=margin,
-                preview_steps=preview_steps, depth=self.depth)
+                              paired_mean=delta, paired_SE=margin, preview_steps=preview_steps, depth=self.depth)
             self.record_samples(reports[i], samples, inputs, logits, i)
-        search.available.extend(slots)
+        if validation_plan:
+            self.validate_overrides(policy, validation_plan, validation_groups, actions, reports)
         if self.on_preview is not None:
             self.on_preview(parents, reports)
         return actions, reports
 
+    def draw_validation_seeds(self, paired):
+        seeds = []
+        used = set(paired)
+        while len(seeds) < self.validate:
+            draws = torch.randint(2**63 - 1, (self.validate - len(seeds),), generator=self.rng).tolist()
+            for seed in draws:
+                if seed not in used:
+                    seeds.append(seed)
+                    used.add(seed)
+        return seeds
+
+    def validate_overrides(self, policy, plan, groups, actions, reports):
+        scores, steps = [], []
+        capacity = len(self.search.available)
+        for start in range(0, len(plan), capacity):
+            sources, first, seeds = zip(*plan[start:start + capacity])
+            batch_scores, batch_steps = self.rollout(policy, list(sources), list(first), list(seeds))
+            scores.extend(batch_scores)
+            steps.extend(batch_steps)
+        for i, candidate, begin, end in groups:
+            split = begin + self.validate
+            differences = [a - b for a, b in zip(scores[split:end], scores[begin:split])
+                           if a is not None and b is not None]
+            k = len(differences)
+            complete = k == self.validate
+            delta = statistics.mean(differences) if complete else None
+            se = statistics.stdev(differences) / math.sqrt(k) if complete and k > 1 else None
+            validated = delta is not None and delta > 0
+            if validated:
+                actions[i] = candidate
+            reports[i].update(selected=actions[i], validated_delta=delta, validated_se=se, validated_k=k,
+                              validated=validated, preview_steps=reports[i]['preview_steps'] + sum(steps[begin:end]))
+
+    def rollout(self, policy, sources, first, seeds):
+        search = self.search
+        slots = search.take(len(sources))
+        assert all(slot >= search.lanes for slot in slots)
+        try:
+            search.batch.clone_many(sources, slots)
+            search.batch.determinize_slots(slots, seeds)
+            search.batch.combat_turns_tensors(self.turns)
+            initial_turns = dict(zip(slots, [int(self.turns[source]) for source in sources]))
+            ledgers = {s:deepcopy(search.reward_ledgers[source]) for s,source in zip(slots,sources)}
+            rewards = dict.fromkeys(slots,0.)
+            history = {slot: [] for slot in slots}
+            origin = dict(zip(slots, zip(sources, seeds)))
+            failed = set()
+
+            def healthy(active):
+                if not active:
+                    return []
+                flags = search.arrays['faults'].view(torch.int32)[active]
+                counts = search.arrays['entity_counts'][active]
+                rows = torch.stack((flags, counts), dim=1).cpu().tolist()
+                valid = []
+                for slot, (fault, entities) in zip(active, rows):
+                    if not fault and entities:
+                        valid.append(slot)
+                        continue
+                    parent, seed = origin[slot]
+                    self.record_preview_fault(parent, slot, seed, history[slot],
+                                              fault & 0xFFFFFFFF, entities)
+                    failed.add(slot)
+                return valid
+
+            def step(active, choices, before):
+                for slot, action in zip(active, choices):
+                    history[slot].append(action)
+                search.batch.step_slots(active, choices)
+                if self.on_preview is not None:
+                    self.simulated_steps += len(active)
+                valid = healthy(active)
+                search.clock()
+                after = search.progress_for(valid)
+                for slot in valid:
+                    rewards[slot] += ledgers[slot].advance(before[slot], after[slot])
+                return valid
+
+            # Cloning and determinizing do not populate the preview observation buffers.
+            live = step(slots, first, search.progress_for(slots))
+            limit = 64 if self.depth == 'turn' else 256
+            while live:
+                search.clock()
+                progress = search.progress_for(live)
+                search.batch.combat_turns_tensors(self.turns)
+                live = [s for s in live if progress[s][PHASE] == COMBAT_PHASE
+                        and progress[s][SCREEN] not in (DEATH, VICTORY) and len(history[s]) < limit
+                        and (self.depth == 'combat' or int(self.turns[s]) == initial_turns[s])]
+                if live:
+                    preview = self.masked_inputs(live)
+                    preview_logits = policy(preview)[0].masked_fill(~preview['candidate_mask'], -torch.inf)
+                    live = step(live, preview_logits.argmax(-1).tolist(), progress)
+            valid = [s for s in slots if s not in failed]
+            truncated = search.arrays['truncated'][valid]
+            if self.on_preview is None:
+                assert not bool(truncated.any())
+            else:
+                failed.update(s for s, cut in zip(valid, truncated.tolist()) if cut)
+                valid = [s for s in valid if s not in failed]
+            progress = search.progress_for(valid)
+            alive = [s for s in valid if progress[s][SCREEN] not in (DEATH, VICTORY) and progress[s][HP] > 0]
+            values = dict(zip(alive, policy(self.inputs(alive))[1].tolist())) if alive else {}
+            return ([None if s in failed else rewards[s] + values.get(s, 0.) for s in slots],
+                    [len(history[s]) for s in slots])
+        finally:
+            search.available.extend(slots)
+
 
 class LookaheadSearch(NoSLSearch):
-    def __init__(self, lanes, device, seed, depth='turn'):
+    def __init__(self, lanes, device, seed, depth='turn', *, override_se=1.0, validate=0):
         super().__init__(lanes, device, seed, storage_slots=lanes * 32, greedy=True)
-        self.lookahead = CombatLookahead(self, seed, depth)
+        self.lookahead = CombatLookahead(self, seed, depth, override_se=override_se, validate=validate)
         self.preview_steps = 0
         self.mainline_decisions = 0
         self.preview_decisions = 0

@@ -67,6 +67,8 @@ class LabelWriter:
                 p_ref_logits=[reference[action] for action in options],
                 p_ref_all_options=report["reference_actions"], p_ref_all_logits=report["reference_logits"],
                 complete=True, packed_observation=packed, scores=samples, draws=report["seeds"],
+                validated_delta=report.get("validated_delta"), validated_se=report.get("validated_se"),
+                validated_k=report.get("validated_k"), validated=report.get("validated"),
                 estimates=label_options(samples, argmax, options)))
             self.labels[kind] += 1
             self.labels_by_seed[seed] += 1
@@ -88,8 +90,8 @@ class LabelWriter:
 
 
 class SearchLabelTeacher(LookaheadSearch):
-    def __init__(self, lanes, device, seed, writer, *, cards):
-        super().__init__(lanes, device, seed, depth="combat")
+    def __init__(self, lanes, device, seed, writer, *, cards, override_se=1.0, validate=0):
+        super().__init__(lanes, device, seed, depth="combat", override_se=override_se, validate=validate)
         self.lookahead.on_preview = partial(writer.observe, self, "combat")
         self.card_lookahead = (CardRewardLookahead(self, seed, max_options=4, require_skip=True,
             on_preview=partial(writer.observe, self, "card")) if cards else None)
@@ -186,6 +188,9 @@ def main(argv=None):
     parser.add_argument("--pilot-seconds", type=float, default=300.)
     parser.add_argument("--max-seconds", type=float, default=10800.)
     parser.add_argument("--cards", action="store_true")
+    parser.add_argument("--override-se", type=float, default=1.0,
+                        help="Paired SE multiplier. A non-default multiplier or validation requires two nonzero differences.")
+    parser.add_argument("--validate", type=int, default=0, help="Independent paired draws to confirm each proposed override.")
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--seed", type=int, default=210)
     args = parser.parse_args(argv)
@@ -203,10 +208,11 @@ def main(argv=None):
     writer = LabelWriter(args.output, dict(mode="search_teacher", teacher=str(args.teacher),
         teacher_sha256=teacher_sha, seed_start=args.seeds.start, seed_stop=args.seeds.stop,
         lanes=args.lanes, pilot_seconds=args.pilot_seconds, max_seconds=args.max_seconds,
-        draw_seed=args.seed, combat_depth="combat", options=4, crn_draws=8, card_skip_included=args.cards),
-        cards=args.cards)
+        draw_seed=args.seed, combat_depth="combat", options=4, crn_draws=8, card_skip_included=args.cards,
+        override_se=args.override_se, validate=args.validate), cards=args.cards)
     model = load_policy(args.teacher, device)
-    search = SearchLabelTeacher(args.lanes, device, args.seed, writer, cards=args.cards)
+    search = SearchLabelTeacher(args.lanes, device, args.seed, writer, cards=args.cards,
+                                override_se=args.override_se, validate=args.validate)
     search.deadline = started + args.max_seconds
     search.evidence_directory = args.output
     collector = NoSLCollector(search, torch.Generator().manual_seed(args.seed))
