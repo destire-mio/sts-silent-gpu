@@ -3,7 +3,7 @@ import pytest
 from train.e4 import REACH, PHASE, COMBAT_PHASE
 from train.e4_stage12 import NoSLSearch
 from train.e4_lookahead import LookaheadSearch
-from train.e4_lookahead_window import summary, combat_estimate, window_stop_requested
+from train.e4_lookahead_window import summary, combat_estimate, lookahead60_window, window_stop_requested
 
 
 def test_same_seed_paired_summary_and_combat_window_limit():
@@ -50,3 +50,10 @@ def test_supplement_obeys_existing_yield_receipt_and_allocation_deadline(tmp_pat
     assert window_stop_requested(tmp_path,10.)
     (tmp_path/'stop-requested').touch()
     assert window_stop_requested(tmp_path,11.)
+
+
+@pytest.mark.parametrize("world", [1, 2])
+def test_legacy_lookahead_is_skipped_on_small_allocations(tmp_path, world):
+    (tmp_path / "dev-60.pt").touch()
+    assert lookahead60_window(tmp_path, None, None, 0, world, None)
+    assert not (tmp_path / "claude137-dev60").exists()

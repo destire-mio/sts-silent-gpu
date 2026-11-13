@@ -63,11 +63,12 @@ class WindowCollector(EvaluationLedgerCollector):
 
 
 def lookahead60_window(output, config, device, rank, world, deadline):
+    if world != 8:
+        return True
     output = Path(output)
     checkpoint = output/'dev-60.pt'
     directory = output/'claude137-dev60'
     if not checkpoint.exists() or (directory/'report.json').exists():return True
-    assert world == 8
     directory.mkdir(exist_ok=True)
     torch.cuda.synchronize(device)
     with torch.random.fork_rng(devices=[device]):
