@@ -73,17 +73,26 @@ def exam_comparison(sample, argmax):
 
 class RootCollector(NoSLCollector):
     def capture(self, model, per_node, max_seeds):
-        roots = {node: [] for node in NODES}
-        seen = {node: set() for node in NODES}
-        waiting = iter(range(2_100_000_000, 2_100_000_000 + max_seeds))
-        while any(len(group) < per_node for group in roots.values()):
+        roots = self.capture_roots(model, dict.fromkeys(NODES, per_node),
+                                  range(2_100_000_000, 2_100_000_000 + max_seeds))
+        assert all(len(group) == per_node for group in roots.values()), (
+            f"Root seed limit reached: { {node: len(group) for node, group in roots.items()} }"
+        )
+        return roots
+
+    def capture_roots(self, model, counts, seeds):
+        roots = {node: [] for node in counts}
+        seen = {node: set() for node in counts}
+        waiting = iter(seeds)
+        while any(len(group) < counts[node] for node, group in roots.items()):
             self.search.clock()
             free = [slot for slot, seed in enumerate(self.seeds) if seed is None]
             seeds = [seed for _, seed in zip(free, waiting)]
             if seeds:
                 self.reset(free[:len(seeds)], seeds)
             slots = [slot for slot, seed in enumerate(self.seeds) if seed is not None]
-            assert slots, f"Root seed limit reached: { {node: len(group) for node, group in roots.items()} }"
+            if not slots:
+                break
             progress = self.search.progress_for(slots)
             actions, _, _, _ = self.choose(model, slots, progress)
             maps = [slot for slot in slots if slot not in self.search.failed and
@@ -100,7 +109,7 @@ class RootCollector(NoSLCollector):
                     nodes.append(f"enter_act{act}")
                 for node in nodes:
                     seed = self.seeds[slot]
-                    if len(roots[node]) == per_node or seed in seen[node]:
+                    if node not in roots or len(roots[node]) == counts[node] or seed in seen[node]:
                         continue
                     target, = self.search.take(1)
                     self.search.clone([slot], [target])
@@ -124,7 +133,7 @@ class RootCollector(NoSLCollector):
 
 
 @torch.no_grad()
-def remaining_returns(runner, model, roots, futures, seed):
+def remaining_returns(runner, model, roots, futures, seed, *, draw_seeds=None, sample_decisions=True):
     search = runner.search
     device = search.device
     ordered = [(node, root) for node, group in roots.items() for root in group]
@@ -136,7 +145,9 @@ def remaining_returns(runner, model, roots, futures, seed):
     by_root = {r["slot"]: [] for _, r in ordered}
     samples = {name: [] for name in DECISION_TYPES}
     randomize = random.Random(seed)
-    planned = [(r, randomize.randrange(2**63)) for _, r in ordered for _ in range(futures)]
+    if draw_seeds is None:
+        draw_seeds = {r["slot"]: [randomize.randrange(2**63) for _ in range(futures)] for _, r in ordered}
+    planned = [(r, key) for _, r in ordered for key in draw_seeds[r["slot"]]]
     for offset in range(0, len(planned), search.lanes):
         chunk = planned[offset:offset + search.lanes]
         slots = list(range(len(chunk)))
@@ -157,12 +168,13 @@ def remaining_returns(runner, model, roots, futures, seed):
             search.clock()
             before = search.progress_for(live)
             actions, values, _, _ = runner.choose(model, live, before)
-            for slot, value in zip(live, values):
-                if slot not in search.failed:
-                    kind = DECISION_TYPES[decision_type(before[slot])]
-                    counts[slot][kind] += 1
-                    if randomize.randrange(counts[slot][kind]) == 0:
-                        picks[slot][kind] = (value, runner.rewards[slot].total)
+            if sample_decisions:
+                for slot, value in zip(live, values):
+                    if slot not in search.failed:
+                        kind = DECISION_TYPES[decision_type(before[slot])]
+                        counts[slot][kind] += 1
+                        if randomize.randrange(counts[slot][kind]) == 0:
+                            picks[slot][kind] = (value, runner.rewards[slot].total)
             count = len(runner.completed)
             _, terminal = runner.advance(live, actions, before)
             for slot, episode in zip((s for s, done in zip(live, terminal) if done),

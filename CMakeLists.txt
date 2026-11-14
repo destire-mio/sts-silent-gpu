@@ -81,6 +81,11 @@ target_link_libraries(spire PRIVATE spire_core)
 add_dependencies(spire check_device_core)
 add_dependencies(spire generate_snapshot)
 
+pybind11_add_module(spire_finediff NO_EXTRAS tools/value_finediff_cpu.cpp)
+target_link_libraries(spire_finediff PRIVATE spire_core)
+set_target_properties(spire_finediff PROPERTIES EXCLUDE_FROM_ALL TRUE)
+add_dependencies(spire_finediff spire)
+
 add_executable(spire_benchmark host/benchmark.cpp)
 target_link_libraries(spire_benchmark PRIVATE spire_core)
 add_dependencies(spire_benchmark check_device_core)
@@ -114,6 +119,12 @@ if(CMAKE_CUDA_COMPILER)
     pybind11_add_module(spire_gpu NO_EXTRAS cuda/bindings.cpp)
     target_link_libraries(spire_gpu PRIVATE spire_cuda)
     set_target_properties(spire_gpu PROPERTIES CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON LINKER_LANGUAGE CUDA)
+
+    pybind11_add_module(spire_gpu_finediff NO_EXTRAS tools/value_finediff_gpu.cu)
+    target_link_libraries(spire_gpu_finediff PRIVATE spire_cuda)
+    set_target_properties(spire_gpu_finediff PROPERTIES EXCLUDE_FROM_ALL TRUE CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON
+        CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON LINKER_LANGUAGE CUDA)
+    add_dependencies(spire_gpu_finediff spire_gpu)
 endif()
 
 include(CTest)
