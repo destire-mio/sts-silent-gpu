@@ -19,11 +19,13 @@ def preview_faults_present(flags, slots):
 
 class CombatLookahead:
     def __init__(self, search, seed=130, depth='turn', *, on_preview=None,
-                 override_se=1.0, validate=0):
+                 override_se=1.0, validate=0, draws=8, max_options=4):
         assert depth in ('turn', 'combat')
         assert math.isfinite(override_se) and override_se >= 0
         assert validate >= 0
+        assert draws >= 2 and max_options >= 2
         self.search, self.depth = search, depth
+        self.draws, self.max_options = draws, max_options
         self.on_preview = on_preview
         self.override_se = override_se
         self.validate = validate
@@ -81,7 +83,7 @@ class CombatLookahead:
         actions, reports, sources, first, seeds, groups = [], [], [], [], [], []
         for i, source in enumerate(parents):
             legal = torch.where(inputs['candidate_mask'][i])[0]
-            ordered = legal[torch.argsort(logits[i, legal], descending=True, stable=True)[:4]].tolist()
+            ordered = legal[torch.argsort(logits[i, legal], descending=True, stable=True)[:self.max_options]].tolist()
             argmax = ordered[0]
             actions.append(argmax)
             reports.append(dict(preview_steps=0, candidates=ordered, selected=argmax))
@@ -90,11 +92,11 @@ class CombatLookahead:
                 reports[-1]['skipped'] = 'Runic Dome'
             if bool(owned_dome) or len(legal) == 1 or float(logits[i].softmax(-1)[argmax]) >= .9:
                 continue
-            paired = torch.randint(2**63 - 1, (8,), generator=self.rng).tolist()
+            paired = torch.randint(2**63 - 1, (self.draws,), generator=self.rng).tolist()
             begin = len(sources)
             for action in ordered:
-                sources.extend([source] * 8)
-                first.extend([action] * 8)
+                sources.extend([source] * self.draws)
+                first.extend([action] * self.draws)
                 seeds.extend(paired)
             groups.append((i, begin, len(sources), paired))
         if not sources:
@@ -109,12 +111,12 @@ class CombatLookahead:
             if None in trials:
                 reports[i].update(preview_steps=preview_steps, skipped='combat preview fault')
                 continue
-            samples = [trials[j:j + 8] for j in range(0, len(trials), 8)]
+            samples = [trials[j:j + self.draws] for j in range(0, len(trials), self.draws)]
             means = [statistics.mean(group) for group in samples]
             best = max(range(len(samples)), key=means.__getitem__)
             differences = [a - b for a, b in zip(samples[best], samples[0])]
             delta = statistics.mean(differences)
-            margin = statistics.stdev(differences) / math.sqrt(8)
+            margin = statistics.stdev(differences) / math.sqrt(self.draws)
             ordered = reports[i]['candidates']
             if delta > self.override_se * margin and (not strict or sum(d != 0 for d in differences) >= 2):
                 candidate = ordered[best]
