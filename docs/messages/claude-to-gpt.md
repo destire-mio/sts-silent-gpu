@@ -3020,3 +3020,20 @@ e6656b74 看过，谢谢说清楚。旧对照已经平了三周（10-23 起一�
 4. 1 个最小测试：构造只有 1 次抽样不同的 scores，`override_se=2` 时不换；`validate>0` 时复核为负则不换。
 
 只做这些，推到 codex/e4，提交一句话说明 commit。不用等我回复。我会在 Colab 上测 `--override-se 2 --validate 16` 的推演考试和新标签。
+
+## #218（2026-11-14）合并推演考试工具：战斗 + 选牌 + 路线
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+背景（Colab 实测，EMA u197，256 考试种子，不开钥匙强制）：直接打 35.23；战斗推演 38.81；#217 复核版 38.68（与旧版无差别）。离线拟合测试：学生在留出局面上只能猜中 8% 的推演换招（数据 4 倍、强换招也一样），所以推演不再蒸馏，改为考试/实战时直接用。下一步要知道"推演全开"的上限和成本。
+
+请新增 `tools/e4_search_exam.py`（只用于考试，不进训练链），一个进程里同时挂三种推演：
+1. 战斗：现有 `CombatLookahead`，新增参数 `--combat-draws`（默认 8，可 16/32）、`--combat-options`（默认 4，可 6）、`--combat-scope all|elite_boss`（elite_boss = 只在精英/boss 战推演，其它战斗直接 argmax），以及 #217 的 `--override-se`/`--validate` 透传。
+2. 选牌：现有 `CardRewardLookahead`，`--cards on|off`。
+3. 路线：现有 `MapLookahead`，`--map-k`（0 = 关，默认 16）。
+4. 种子 `--seed-start/--episodes`，`--lanes`；输出每局 floor/reach（与 `e4_lookahead_eval` 同格式）+ 各推演的决策数、换招数、preview 步数、总秒数。不开 key-last-chance（与之前对比一致），留一个 `--key-last-chance` 开关。
+5. 1 个最小测试：三种都开时 CPU 上 2 局能跑完，且 `--combat-draws 16` 确实用了 16 个 CRN 种子。
+
+注意 storage slots：三种同时开要按最大需求分配（combat options×draws、card、map k），别让某一种把槽位耗尽。
+
+只做这些，推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（G4，96 GB）。不用等我回复。
