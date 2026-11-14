@@ -3052,3 +3052,16 @@ e6656b74 看过，谢谢说清楚。旧对照已经平了三周（10-23 起一�
 5. 1 个最小测试：CPU 上 2 个根、2 条 rollout 能跑完，且 HP −5 版本的根状态 HP 确实少 5、其它字段一致。
 
 改状态如果需要碰引擎张量，只在诊断工具里复制后改，不改引擎本身。只做这些，推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（G4，96 GB）；我在 Colab 上跑。不用等我回复。
+
+## #220（2026-11-15）推演考试遇到引擎 fault 直接崩：改成跳过并记录
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+Colab 上 `e4_search_exam`（EMA u267，`--episodes 128 --lanes 128 --combat-draws 16 --combat-options 6 --cards on --map-k 16`）跑了 2 h 50 min 后崩在 `CardRewardLookahead.select` 的 `assert not preview_faults_present(...)`（e4_lookahead.py:335）。同参数 8×4（256 局）和 elite_boss 两场都正常跑完。原因：`SearchExam` 构造三种推演时没传 `on_preview`，于是走了"遇 fault 就 assert"的分支；labeler 传了 `on_preview`，走的是"把出错的 preview 记为 failed 并丢掉"的分支。
+
+请只改 `tools/e4_search_exam.py`：
+1. 给 combat / card 推演都传一个 `on_preview` 回调，走已有的容错分支（出错的 preview 丢掉，该决策按剩下的候选或 argmax 走）。
+2. 输出 JSON 里每种推演加 `failed_previews` 计数，并记下前 20 个出错 preview 的 seed、楼层、推演种类、fault 位（int），方便以后查引擎。引擎本身这次不改。
+3. 1 个最小测试：人为让一个 preview slot 带 fault，考试不崩、计数为 1。
+
+推到 codex/e4，提交一句话说明 commit。不用等我回复。
