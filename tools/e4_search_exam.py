@@ -1,15 +1,28 @@
 """Evaluate one policy with combat, card reward and map previews."""
 import argparse
+from contextlib import contextmanager
+from functools import partial
 import json
 from pathlib import Path
 import time
 
 import torch
 
-from train.e4 import BOSS_ROOM, COMBAT_PHASE, ELITE_ROOM, PHASE, ROOM, SCREEN
+from train.e4 import BOSS_ROOM, COMBAT_PHASE, ELITE_ROOM, FLOOR, PHASE, ROOM, SCREEN
 from train.e4_lookahead import CardRewardLookahead, CombatLookahead, MapLookahead, MapLookaheadSearch
 from train.e4_stage12 import CLSPolicy, NoSLCollector, NoSLSearch
 from train.model import ModelConfig, SCREENS
+
+
+class ExamCombatLookahead(CombatLookahead):
+    def rollout(self, policy, sources, first, seeds):
+        scores, steps = super().rollout(policy, sources, first, seeds)
+        self.search.stats['combat']['failed_previews'] += scores.count(None)
+        return scores, steps
+
+    def record_preview_fault(self, parent, slot, seed, actions, fault, entities):
+        super().record_preview_fault(parent, slot, seed, actions, fault, entities)
+        self.search.log_preview_fault('combat', parent, slot, fault)
 
 
 class SearchExam(MapLookaheadSearch):
@@ -22,21 +35,55 @@ class SearchExam(MapLookaheadSearch):
         NoSLSearch.__init__(self, lanes, device, seed, storage_slots=storage_slots,
                             greedy=True, key_last_chance=key_last_chance)
         self.combat_scope = combat_scope
-        self.combat_preview = CombatLookahead(self, seed, 'combat', override_se=override_se,
-                                               validate=validate, draws=combat_draws, max_options=combat_options)
-        self.card_preview = CardRewardLookahead(self, seed, max_options=card_options) if cards else None
+        self.combat_preview = ExamCombatLookahead(
+            self, seed, 'combat', on_preview=partial(self.record_previews, 'combat'),
+            override_se=override_se, validate=validate, draws=combat_draws, max_options=combat_options)
+        self.card_preview = CardRewardLookahead(
+            self, seed, max_options=card_options, on_preview=partial(self.record_previews, 'card')) if cards else None
         self.lookahead = MapLookahead(self, map_k, seed) if map_k else None
         self.preview_decisions = self.preview_steps = self.overrides = self.failed_previews = 0
-        self.stats = {mode: dict(preview_decisions=0, overrides=0, preview_steps=0)
+        self.stats = {mode: dict(preview_decisions=0, overrides=0, preview_steps=0, failed_previews=0)
                       for mode in ('combat', 'card', 'map')}
+        self.preview_kind = None
+        self.preview_faults = []
+
+    def record_previews(self, mode, _parents, reports):
+        stats = self.stats[mode]
+        stats['preview_decisions'] += sum(report['preview_steps'] > 0 for report in reports)
+        stats['preview_steps'] += sum(report['preview_steps'] for report in reports)
+
+    @contextmanager
+    def track_previews(self, mode):
+        previous = self.preview_kind
+        self.preview_kind = mode
+        try:
+            yield
+        finally:
+            self.preview_kind = previous
+
+    def log_preview_fault(self, kind, source, slot, fault):
+        if len(self.preview_faults) < 20:
+            self.preview_faults.append(dict(seed=self.provenance[source][0],
+                                            floor=self.progress_for([slot])[slot][FLOOR],
+                                            kind=kind, fault=fault))
+
+    def record_fault(self, slot, reason, extra_action=None):
+        if slot >= self.lanes and self.preview_kind in ('card', 'map'):
+            provenance = self.provenance[slot]
+            source = provenance[1] if len(provenance) == 3 else slot
+            if source >= self.lanes and source not in self.failed:
+                self.stats[self.preview_kind]['failed_previews'] += 1
+                code, _, detail = reason.partition(':')
+                fault = int(detail) & 0xFFFFFFFF if code == 'engine_fault' else 0
+                self.log_preview_fault(self.preview_kind, source, slot, fault)
+        super().record_fault(slot, reason, extra_action)
 
     def apply_previews(self, mode, preview, model, slots, positions, actions):
         if not positions:
             return
-        selected, reports = preview.select(model, [slots[i] for i in positions])
+        with self.track_previews(mode):
+            selected, _ = preview.select(model, [slots[i] for i in positions])
         stats = self.stats[mode]
-        stats['preview_decisions'] += sum(report['preview_steps'] > 0 for report in reports)
-        stats['preview_steps'] += sum(report['preview_steps'] for report in reports)
         for position, action in zip(positions, selected):
             stats['overrides'] += int(actions[position] != action)
             actions[position] = action
@@ -45,7 +92,8 @@ class SearchExam(MapLookaheadSearch):
         if self.lookahead is None:
             actions, values, logs = NoSLSearch.predict(self, model, slots)
         else:
-            actions, values, logs = super().predict(model, slots)
+            with self.track_previews('map'):
+                actions, values, logs = super().predict(model, slots)
             self.stats['map'].update(preview_decisions=self.preview_decisions,
                                      overrides=self.overrides, preview_steps=self.preview_steps)
         progress = self.progress_for(slots)
@@ -99,6 +147,7 @@ def evaluate(policy, args, device):
     episodes = collector.evaluate(policy, seeds)
     return dict(episodes=episodes, seconds=time.monotonic() - started,
                 mainline_decisions=collector.decisions, search=search.stats,
+                preview_faults=search.preview_faults,
                 combat_draws=args.combat_draws, combat_options=args.combat_options,
                 combat_scope=args.combat_scope, override_se=args.override_se, validate=args.validate,
                 cards=args.cards, map_k=args.map_k, key_last_chance=args.key_last_chance)
