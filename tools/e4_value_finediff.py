@@ -9,6 +9,7 @@ import time
 
 import torch
 
+from tools.e4_critic_fit import load_critic
 from tools.e4_value_truth import EXAM_SEEDS, RootCollector, collector, load_policy, mean_se, remaining_returns
 
 
@@ -50,7 +51,7 @@ def paired_statistics(baseline, changed, rollouts):
 
 
 @torch.no_grad()
-def audit_roots(runner, model, roots, rollouts, seed):
+def audit_roots(runner, model, roots, rollouts, seed, *, critic=None):
     search = runner.search
     backend = "spire_gpu_finediff" if search.device.type == "cuda" else "spire_finediff"
     perturb_slots = importlib.import_module(backend).perturb_slots
@@ -89,7 +90,7 @@ def audit_roots(runner, model, roots, rollouts, seed):
                 root["progress"] = progress[root["slot"]]
 
     observed, _ = remaining_returns(runner, model, versions, rollouts, seed,
-                                    draw_seeds=draw_seeds, sample_decisions=False)
+                                    draw_seeds=draw_seeds, sample_decisions=False, root_critic=critic)
     results = {}
     all_controls = []
     for node in roots:
@@ -134,6 +135,7 @@ def report(result):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", required=True, type=Path)
+    parser.add_argument("--critic", type=Path, help="Use a separate critic to value the audit roots")
     parser.add_argument("--output", required=True, type=Path, help="New directory for JSON and Markdown")
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--roots", type=int, default=256, help="Total root target across three milestones")
@@ -149,6 +151,7 @@ def main():
     if device.type == "cuda":
         torch.cuda.set_device(device if device.index is not None else 0)
     model = load_policy(args.model, device, args.fp32)
+    critic = load_critic(args.critic, device) if args.critic is not None else None
     per_node, extra = divmod(args.roots, len(NODES))
     counts = {node: per_node + (i < extra) for i, node in enumerate(NODES)}
     runner = collector(args.lanes, device, args.seed, float("inf"), greedy=True,
@@ -156,7 +159,9 @@ def main():
     args.output.mkdir()
     started = time.monotonic()
     roots = runner.capture_roots(model, counts, EXAM_SEEDS)
-    result = audit_roots(runner, model, roots, args.rollouts, args.seed)
+    result = audit_roots(runner, model, roots, args.rollouts, args.seed, critic=critic)
+    if args.critic is not None:
+        result['critic'] = str(args.critic)
     result.update(model=str(args.model), device=str(device), lanes=args.lanes, seed=args.seed,
                   requested_roots=counts, exam_seed_start=EXAM_SEEDS.start,
                   exam_seed_stop_exclusive=EXAM_SEEDS.stop,

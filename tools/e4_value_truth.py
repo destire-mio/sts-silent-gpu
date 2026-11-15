@@ -133,7 +133,8 @@ class RootCollector(NoSLCollector):
 
 
 @torch.no_grad()
-def remaining_returns(runner, model, roots, futures, seed, *, draw_seeds=None, sample_decisions=True):
+def remaining_returns(runner, model, roots, futures, seed, *, draw_seeds=None, sample_decisions=True,
+                      root_critic=None):
     search = runner.search
     device = search.device
     ordered = [(node, root) for node, group in roots.items() for root in group]
@@ -141,7 +142,8 @@ def remaining_returns(runner, model, roots, futures, seed, *, draw_seeds=None, s
     for offset in range(0, len(ordered), search.lanes):
         slots = [r["slot"] for _, r in ordered[offset:offset + search.lanes]]
         inputs = network_inputs(search.arrays, device, torch.tensor(slots, device=device))
-        initial.update(zip(slots, model(inputs)[1].tolist()))
+        values = model(inputs)[1] if root_critic is None else root_critic(inputs)
+        initial.update(zip(slots, values.tolist()))
     by_root = {r["slot"]: [] for _, r in ordered}
     samples = {name: [] for name in DECISION_TYPES}
     randomize = random.Random(seed)
