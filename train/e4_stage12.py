@@ -356,6 +356,7 @@ class NoSLCollector(SegmentCollector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.round_games = 0
+        self.boss_training = None
         self.search.reward_ledgers = self.rewards
 
     def reset(self, slots, seeds):
@@ -451,10 +452,15 @@ class NoSLCollector(SegmentCollector):
         if auxiliary:
             from train.e4_stage12_auxiliary import record_decision, record_outcome, finish_rollout
         result = self.partial["result"]
+        boss_training = self.boss_training
+        if boss_training is not None and "boss_bootstrap" not in result:
+            result["boss_bootstrap"] = torch.zeros_like(result["values"])
         after_transition = getattr(self, "after_transition", None)
         for tick in range(self.partial["next_step"], length):
             self.search.clock()
             fresh = [s for s in slots if self.seeds[s] is None]
+            if fresh and boss_training is not None:
+                fresh = boss_training.restart(fresh)
             if fresh:
                 self.fresh(fresh)
             progress = self.search.progress_for(slots)
@@ -474,11 +480,16 @@ class NoSLCollector(SegmentCollector):
                        + 7 * self.search.arrays["candidate_counts"][index].long())
             result["offsets"][row + 1:row + lanes + 1] = result["offsets"][row] + lengths.cumsum(0)
             self.search.batch.store_tensors(index, result["data"], result["offsets"][row:row + lanes + 1])
+            completed_before = len(self.completed) if boss_training is not None else 0
             reward, terminal = self.advance(slots, actions, progress)
             if after_transition is not None:
                 after_transition(model, slots, progress, reward, terminal, auxiliary)
+            boss_end_targets = None
+            if boss_training is not None:
+                boss_end_targets = boss_training.after_step(model, slots, progress, terminal,
+                    result["boss_bootstrap"][tick], completed_before, auxiliary)
             if auxiliary:
-                record_outcome(auxiliary, self, slots, progress, terminal, tick)
+                record_outcome(auxiliary, self, slots, progress, terminal, tick, boss_end_targets)
             for name, value in (("actions", actions), ("values", values), ("logs", logs), ("rewards", reward),
                                 ("terminal", terminal), ("imitation", imitation),
                                 ("action_valid", [s not in self.stalled for s in slots]),
@@ -499,9 +510,12 @@ class NoSLCollector(SegmentCollector):
             bootstrap[live] = torch.tensor([scores[s] for s in live], device=device)
         advantages = torch.zeros_like(result["values"])
         carry = torch.zeros(lanes, device=device)
+        boss_bootstrap = result.pop("boss_bootstrap", None)
         for tick in reversed(range(length)):
             continuing = ~result["terminal"][tick]
             delta = result["rewards"][tick] + bootstrap * continuing - result["values"][tick]
+            if boss_bootstrap is not None:
+                delta = delta + boss_bootstrap[tick]
             carry = delta + GAE_LAMBDA * continuing * carry
             advantages[tick] = carry
             bootstrap = result["values"][tick]
@@ -989,6 +1003,8 @@ def finish_metrics(cursor, model, scaler):
 
 def collector_snapshot(collector):
     state = dict(collector.state())
+    if collector.boss_training is not None:
+        state["boss_training"] = collector.boss_training.state()
     state["sampling_entropy"] = (collector.search.entropy_sum, collector.search.entropy_count)
     state["decision_entropy"] = collector.search.decision_entropy
     state["decision_nonforced"] = collector.search.decision_nonforced
@@ -1031,6 +1047,8 @@ def restore_collector(collector, state):
         state["partial"]["auxiliary"] = move_tensors(state["partial"]["auxiliary"], collector.search.device)
     key_map = state.pop("key_last_chance", None)
     collector.restore(state)
+    if collector.boss_training is not None and "boss_training" in state:
+        collector.boss_training.restore(state["boss_training"])
     if key_map is not None:
         collector.search.key_last_chance = key_map
     collector.search.reward_ledgers = collector.rewards

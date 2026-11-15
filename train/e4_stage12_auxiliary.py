@@ -89,7 +89,7 @@ def record_decision(storage, collector, model, slots, progress, tick):
     return decision
 
 
-def record_outcome(storage, collector, slots, progress, terminal, tick):
+def record_outcome(storage, collector, slots, progress, terminal, tick, boss_end_targets=None):
     search = collector.search
     valid = [slot for slot in slots if slot not in collector.stalled]
     ends = {slot for slot, end in zip(slots, terminal) if end}
@@ -128,6 +128,8 @@ def record_outcome(storage, collector, slots, progress, terminal, tick):
             global_rows["outcome"][tick, valid] = torch.tensor(
                 [hits + [after[slot][FLOOR] / 55.] for slot, hits in zip(valid, reached)], device=search.device)
         open_ends = getattr(collector, "arena_end_targets", {})
+        if boss_end_targets:
+            open_ends = {**open_ends, **boss_end_targets}
         if open_ends:
             soft = global_rows.setdefault("soft", torch.zeros_like(global_rows["resolved"]))
             for slot, prediction in open_ends.items():

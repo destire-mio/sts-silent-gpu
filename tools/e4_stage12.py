@@ -194,6 +194,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                         help="Standalone value-only updates before PPO (default 0)")
     parser.add_argument("--ema-decay", type=float, help="Standalone policy EMA decay (default 0)")
     parser.add_argument("--arena-fraction", type=float, help="Standalone practice lane fraction (default 0)")
+    parser.add_argument("--boss-reset-frac", type=float, help="Chance of a Boss practice reset (default 0)")
+    parser.add_argument("--boss-pool", type=int, help="Capacity of the Boss root ring (default 4096)")
     parser.add_argument("--map-distill", type=Path, help="Label shards for a new standalone map PPO fork")
     parser.add_argument("--map-distill-weight", type=float, help="Map distillation KL weight, including 0 for the control")
     parser.add_argument("--combat-distill", type=Path, nargs="+", action="extend",
@@ -277,6 +279,17 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     common = output / "model.pt"
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if saved else {}
+    saved_boss = saved_state.get("standalone_boss_training")
+    boss_fraction = args.boss_reset_frac
+    if boss_fraction is None:
+        boss_fraction = saved_boss["fraction"] if saved_boss else 0.
+    boss_capacity = args.boss_pool if args.boss_pool is not None else saved_boss["capacity"] if saved_boss else 4096
+    if not 0. <= boss_fraction <= 1. or boss_capacity < 1:
+        parser.error("--boss-reset-frac must be in [0, 1] and --boss-pool must be positive")
+    if (boss_fraction or saved_boss) and (args.teacher or saved_state.get("teacher_path")):
+        parser.error("Boss practice requires teacher-free PPO")
+    if saved_boss and boss_capacity != saved_boss["capacity"]:
+        parser.error("Resume with the checkpoint's Boss pool capacity")
     saved_combat = saved_state.get("standalone_combat_distill")
     if saved_combat is not None and not combat_enabled:
         parser.error("A combat distillation checkpoint requires its original label directory and settings")
@@ -444,9 +457,15 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         training_collector_options.update(late_fraction=late_settings["fraction"], late_offset=storage_slots,
                                          late_holdout_fraction=late_settings["holdout_fraction"])
         storage_slots += LATE_SLOTS
+    boss_offset = storage_slots
+    if boss_fraction or saved_boss:
+        storage_slots += boss_capacity
     search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=storage_slots,
                         key_last_chance=key_last_chance)
     collector = collector_type(search, seed_rng, rank=rank, **training_collector_options)
+    if boss_fraction or saved_boss:
+        from train.e4_boss_training import BossTraining
+        collector.boss_training = BossTraining(collector, boss_fraction, boss_capacity, boss_offset)
     search.deadline = deadline
     search.evidence_directory = output
     search.training_critic = critic
@@ -577,6 +596,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             state["standalone_ema_decay"] = ema_decay
     else:
         state.pop("standalone_ema_decay", None)
+    if collector.boss_training is not None:
+        state["standalone_boss_training"] = dict(fraction=boss_fraction, capacity=boss_capacity)
     if arena_fraction:
         state["standalone_arena_fraction"] = arena_fraction
     if reward_scheme != "current":
@@ -1247,6 +1268,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 row["map_distill"] = dict(**map_metrics, weight=policy.map_weight,
                     map_ppo_kl=kl_sum / kl_rows if kl_rows else None, map_ppo_kl_rows=int(kl_rows),
                     fresh=training_reach(fresh_done), midstart=training_reach(middle_done))
+        if collector.boss_training is not None:
+            row["boss_training"] = collector.boss_training.take_metrics()
         if late_pools:
             by_start = collector.late_round_metrics()
             if world > 1:
