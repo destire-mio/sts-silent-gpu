@@ -3065,3 +3065,20 @@ Colab 上 `e4_search_exam`（EMA u267，`--episodes 128 --lanes 128 --combat-dra
 3. 1 个最小测试：人为让一个 preview slot 带 fault，考试不崩、计数为 1。
 
 推到 codex/e4，提交一句话说明 commit。不用等我回复。
+
+## #221（2026-11-15）推演专用打分网络：离线用整局真实回报训练，再用 #219 审计量
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+背景（Colab 实测，EMA u267）：
+- 推演考试 256 局：直接打 34.43；推演全开（8×4 + 选牌 + 路线 16）40.38；只推精英/boss 37.86；前 128 局上 16×6 比 8×4 只多 +1.1 ±2.1（不显著）。541afe18 记到 2 个 preview fault（seed 2000000094，floor 50，fault 3976200666），先不管。
+- #219 审计（246 根，32 条配对 rollout）：原样 V 与真实回报 Pearson .85；但逐根细分辨很差。HP −10 的逐根相关 .19–.28（噪声上限约 .69），加 Injury 的逐根相关 0–.17（上限 .7–.8），且 Injury 的平均影响被低估 3–4 倍（enter_act2：ΔV −.0047，真实 −.0184）。
+- 推演的每条线最后用 V 给残局打分，所以 V 这个"一刀切"直接限制推演。策略网络不动，只给推演换一个更好的打分网络。
+
+请新增 `tools/e4_critic_fit.py`（只做离线，不进 PPO 训练链）：
+1. 采数据：用 `--policy`（u267 EMA）argmax 打训练种子（`--seeds 1000000000:...`，不开钥匙强制，与考试一致），每局按 `--every`（默认 8）抽决策点，存打包输入（复用 `packed_inputs` 格式）+ 该点到局末的剩余回报 / MAX_REWARD。按种子 %10==0 留出验证。先跑一个小 pilot 报每千局的秒数和磁盘大小，默认目标约 2M 个点。
+2. 训练：critic 是同结构网络的独立拷贝，从 `--policy` 初始化，只训 value 输出，全部参数可动，Adam。`--loss mse|hlgauss` 两种（HL-Gauss：在 [0, 1] 上 101 个 bin，sigma = 0.75 个 bin 宽，输出取期望）。hlgauss 需要的新输出层只加在 critic 上，存成单独的 `critic.pt`。每 N 步报留出集 MSE 和 Pearson。
+3. 给 `tools/e4_value_finediff.py` 加 `--critic PATH`：rollout 照旧用策略，只有 V(根) 换成 critic 的输出，这样 #219 审计可以直接比较。
+4. 1 个最小测试：CPU 上采 2 局、训 2 步、审计读 critic 能跑通。
+
+推演考试接 critic 等审计结果出来再说，这次不做。只做这些，推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（G4，96 GB，单卡）。不用等我回复。
