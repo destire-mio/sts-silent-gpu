@@ -10,7 +10,7 @@ import time
 
 import torch
 
-from train.e4 import ACT, MAP, MAX_REWARD, SCREEN
+from train.e4 import ACT, BOSS_ROOM, COMPLETE_PHASE, MAP, MAX_REWARD, PHASE, ROOM, ROOM_SCREEN, SCREEN
 from train.e4_stage12 import CLSPolicy, DECISION_TYPES, NoSLCollector, NoSLSearch, decision_type
 from train.model import ModelConfig, network_inputs
 
@@ -85,6 +85,7 @@ class RootCollector(NoSLCollector):
         seen = {node: set() for node in counts}
         waiting = iter(seeds)
         boss_acts = {act for act in (1, 2, 3) if f"before_act{act}_boss" in counts}
+        second_boss = "before_act3_second_boss"
         while any(len(group) < counts[node] for node, group in roots.items()):
             self.search.clock()
             free = [slot for slot, seed in enumerate(self.seeds) if seed is None]
@@ -106,6 +107,12 @@ class RootCollector(NoSLCollector):
                 nodes = []
                 if slot in boss_ready:
                     nodes.append(f"before_act{act}_boss")
+                row = progress[slot]
+                ready_for_second = (second_boss in counts and act == 3 and row[ROOM] == BOSS_ROOM
+                    and row[PHASE] == COMPLETE_PHASE and row[SCREEN] == ROOM_SCREEN
+                    and self.rewards[slot].reach["act3_first_boss"] and not self.rewards[slot].reach["act3_second_boss"])
+                if ready_for_second:
+                    nodes.append(second_boss)
                 if act in (2, 3):
                     nodes.append(f"enter_act{act}")
                 for node in nodes:
@@ -114,8 +121,13 @@ class RootCollector(NoSLCollector):
                         continue
                     target, = self.search.take(1)
                     self.search.clone([slot], [target])
-                    roots[node].append(dict(slot=target, seed=seed, progress=progress[slot],
-                                            ledger=deepcopy(self.rewards[slot])))
+                    root = dict(slot=target, seed=seed, progress=progress[slot], ledger=deepcopy(self.rewards[slot]))
+                    if node == second_boss:
+                        kinds = self.search.arrays["candidate_kinds"][slot]
+                        root["entry_action"] = int(torch.nonzero(kinds == 6)[0])
+                    elif node.startswith("before_"):
+                        root["entry_action"] = boss_ready[slot]
+                    roots[node].append(root)
                     seen[node].add(seed)
             self.advance(slots, actions, progress)
             self.completed.clear()
@@ -123,14 +135,14 @@ class RootCollector(NoSLCollector):
 
     def boss_choices(self, slots):
         if not slots:
-            return set()
+            return {}
         arrays = self.search.arrays
         refs = arrays["candidate_refs"][slots, 2].long()
         targets = (refs - 1).clamp_min(0)
         # The observation uses a Control::Boss option as the map's boss destination.
         boss = ((refs > 0) & (arrays["tags"][slots, 0].long().gather(1, targets) == 11)
-                & (arrays["ids"][slots, 0].long().gather(1, targets) == 9)).any(1)
-        return {slot for slot, present in zip(slots, boss.tolist()) if present}
+                & (arrays["ids"][slots, 0].long().gather(1, targets) == 9))
+        return {slots[i]: action for i, action in torch.nonzero(boss).tolist()}
 
 
 @torch.no_grad()

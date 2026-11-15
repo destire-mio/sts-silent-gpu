@@ -62,7 +62,7 @@ def root_features(search, root, power_ids):
 
 
 @torch.no_grad()
-def run_trials(runner, model, plan):
+def run_trials(runner, model, plan, *, enter_boss=False):
     search = runner.search
     outcomes = {root["slot"]: [] for root, _ in plan}
     turns = torch.empty(search.size, dtype=torch.int64, device=search.device)
@@ -80,9 +80,14 @@ def run_trials(runner, model, plan):
             runner.rewards[slot] = deepcopy(chunk[slot][0]["ledger"])
 
         before = search.progress_for(live)
+        entering = enter_boss
         while live:
             search.clock()
-            actions, _, _, _ = runner.choose(model, live, before)
+            if entering:
+                actions = [chunk[slot][0]["entry_action"] for slot in live]
+                entering = False
+            else:
+                actions, _, _, _ = runner.choose(model, live, before)
             search.batch.combat_turns_tensors(turns)
             turn = turns[live].tolist()
             search.last_step_progress = {}
@@ -101,11 +106,13 @@ def run_trials(runner, model, plan):
                 died = boss and end[SCREEN] == DEATH and fault is None
                 outcome = "win" if won else "death" if died else "incomplete"
                 root, seed = chunk[slot]
-                outcomes[root["slot"]].append(dict(
-                    seed=seed, outcome=outcome, end_screen=SCREENS[end[SCREEN]], end_floor=end[FLOOR],
-                    remaining_hp=end[HP] if won else 0 if died else None,
-                    turns=last_turn if won or died else None,
-                    incomplete_reason=None if won or died else fault or "left_boss_or_stalled"))
+                result = dict(seed=seed, outcome=outcome, end_screen=SCREENS[end[SCREEN]], end_floor=end[FLOOR],
+                    remaining_hp=end[HP] if won else 0 if died else None, turns=last_turn if won or died else None,
+                    incomplete_reason=None if won or died else fault or "left_boss_or_stalled")
+                if enter_boss:
+                    max_hp = int(search.arrays["values"][slot, 1, 1]) if won else None
+                    result["remaining_hp_ratio"] = end[HP] / max_hp if won else 0. if died else None
+                outcomes[root["slot"]].append(result)
             runner.completed.clear()
             live, before = next_live, {slot: after[slot] for slot in next_live}
     return outcomes

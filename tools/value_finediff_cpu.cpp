@@ -1,5 +1,6 @@
 #include "host/training_batch.hpp"
 #include "value_finediff.hpp"
+#include "deck_eval.hpp"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -8,6 +9,25 @@ using spire::host::TrainingBatch;
 
 PYBIND11_MODULE(spire_finediff, module) {
     py::module_::import("spire");
+    spire::deck_eval::register_features(module);
+    module.def("deck_features", [](const TrainingBatch& batch, const std::vector<int>& slots) {
+        py::list rows;
+        for (int slot : slots) {
+            SPIRE_ASSERT(slot >= 0 && slot < batch.size);
+            rows.append(spire::deck_eval::describe_python(spire::deck_eval::describe(batch.games[slot])));
+        }
+        return rows;
+    });
+    module.def("edit_decks", [](TrainingBatch& batch, const std::vector<int>& slots,
+                                 const std::vector<std::array<int, 4>>& edits) {
+        SPIRE_ASSERT(slots.size() == edits.size());
+        for (size_t i = 0; i < slots.size(); ++i) {
+            const int slot = slots[i];
+            SPIRE_ASSERT(slot >= 0 && slot < batch.size && !batch.faults[slot]);
+            spire::deck_eval::apply(batch.games[slot], spire::deck_eval::decode(edits[i]));
+            batch.publish(slot);
+        }
+    });
     module.def("perturb_slots", [](TrainingBatch& batch, const std::vector<int>& slots, int change) {
         std::vector<bool> applied;
         for (int slot : slots) {
