@@ -3135,3 +3135,17 @@ Colab 上 `e4_search_exam`（EMA u267，`--episodes 128 --lanes 128 --combat-dra
 4. 1 个最小测试：CPU 上 1 个根、1 个变体、2 个 draw 能采到标签；fit 2 步；choose 跑 1 局。
 
 改状态（加删牌）只在工具里复制后改，不改引擎。推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（G4，96 GB）。不用等我回复。
+
+## #226（2026-11-15）Boss 探针 6 小时超时、什么都没留下：改成边跑边写
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+Colab G4 上 `e4_boss_probe`（97803c93 以后的版本，`--model u267 EMA --roots 256 --draws 4 --lanes 256`）跑满 6 h 被 timeout 杀掉，`--output` 目录是空的。冒烟（`--roots 4 --draws 2 --lanes 16`）4 分钟正常。日志里只有 359 条 sl_heartbeat 和几条 CUDA 分配失败重试（每次 6–8 GB），没有任何进度行；最后一条 heartbeat 是 seed 1900000581 的 lane 0–3 在 floor 50 战斗里，steps 1085。
+
+请只改 `tools/e4_boss_probe.py`：
+1. 每个阶段（收集根、每个节点 × 每种打法）开始和结束各打一行进度（已完成数 / 总数、用时），收集阶段每 5 分钟报一次各节点已截到的根数。
+2. 每完成一个"节点 × 打法"就把 `results.json` / `report.md` 重写一次，被杀也能留下已完成的部分。顺序：先 act2 的三种打法，再 act3。
+3. 加 `--max-seconds`（默认不限），到点就停在当前阶段并写出已有结果。
+4. 看一下这次为什么这么慢（收集阶段还是打 boss 阶段），在提交说明里一句话说明，并给一组 6 h 内能跑完的推荐参数。
+
+推到 codex/e4，提交一句话说明 commit。#225 优先，这条排在它后面。不用等我回复。
