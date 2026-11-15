@@ -84,6 +84,7 @@ class RootCollector(NoSLCollector):
         roots = {node: [] for node in counts}
         seen = {node: set() for node in counts}
         waiting = iter(seeds)
+        boss_acts = {act for act in (1, 2, 3) if f"before_act{act}_boss" in counts}
         while any(len(group) < counts[node] for node, group in roots.items()):
             self.search.clock()
             free = [slot for slot, seed in enumerate(self.seeds) if seed is None]
@@ -96,7 +97,7 @@ class RootCollector(NoSLCollector):
             progress = self.search.progress_for(slots)
             actions, _, _, _ = self.choose(model, slots, progress)
             maps = [slot for slot in slots if slot not in self.search.failed and
-                    progress[slot][SCREEN] == MAP and progress[slot][ACT] in (1, 2)]
+                    progress[slot][SCREEN] == MAP and progress[slot][ACT] in boss_acts]
             boss_ready = self.boss_choices(maps)
             for slot in slots:
                 if slot in self.search.failed:

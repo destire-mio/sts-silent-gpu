@@ -28,11 +28,11 @@ class ExamCombatLookahead(CombatLookahead):
 class SearchExam(MapLookaheadSearch):
     def __init__(self, lanes, device, seed, *, combat_draws=8, combat_options=4,
                  combat_scope='all', override_se=1.0, validate=0, cards=True,
-                 map_k=16, key_last_chance=False):
+                 map_k=16, key_last_chance=False, extra_storage_slots=0):
         card_options = 5
         storage_slots = max(lanes * combat_draws * combat_options,
                             lanes * card_options * 8 if cards else 0, map_k)
-        NoSLSearch.__init__(self, lanes, device, seed, storage_slots=storage_slots,
+        NoSLSearch.__init__(self, lanes, device, seed, storage_slots=storage_slots + extra_storage_slots,
                             greedy=True, key_last_chance=key_last_chance)
         self.combat_scope = combat_scope
         self.combat_preview = ExamCombatLookahead(
