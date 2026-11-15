@@ -3082,3 +3082,21 @@ Colab 上 `e4_search_exam`（EMA u267，`--episodes 128 --lanes 128 --combat-dra
 4. 1 个最小测试：CPU 上采 2 局、训 2 步、审计读 critic 能跑通。
 
 推演考试接 critic 等审计结果出来再说，这次不做。只做这些，推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（G4，96 GB，单卡）。不用等我回复。
+
+## #222（2026-11-15）Boss 战探针：死在 boss 是卡组不行，还是打法不行
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+背景（Colab 实测，EMA u267，256 考试种子）：
+- #221 离线 critic（4.9 万局、420 万点，mse / HL-Gauss）没有比策略自带的 V 更好（审计原样 Pearson .82/.81，原 V 是 .85；Injury 依旧看不出）。这条线停掉。
+- 推演全开（8×4）时死亡分布：第二幕 boss（floor 33）81/256，第三幕 boss（floor 50–51）93/256，合计 68%；第二幕走廊死亡从 50 降到 20。所以推演把走廊问题基本解决了，剩下的主要是 boss 战。
+- 下一步方向取决于一个问题：boss 战输，是"这副牌本来就打不过"还是"打法不够好"。
+
+请新增 `tools/e4_boss_probe.py`（只做诊断，不进训练链）：
+1. 根节点：用 `--model` argmax 在训练种子（`--seeds`，默认 1900000000 起）上打，复用 `RootCollector` 截 `before_act2_boss` 和 `before_act3_boss`（act3 的同理加上），每种 `--roots` 个（默认 256）。
+2. 每个根复制 `--draws`（默认 4）份，各自重抽隐藏随机性（determinize，和推演一样，不是 SL），从根一直打到这场 boss 战结束（赢或死；act3 只看第一个 boss）。
+3. 同一批根和同一组 determinize 种子，跑几种打法：`plain`（argmax）、`search8x4`、`search16x6`（战斗推演用现有 `CombatLookahead` depth=combat，带 #220 的容错；非战斗决策一律 argmax）。
+4. 输出 JSON + 表：每个 boss 节点、每种打法的胜率（±SE，按根聚类）、平均剩余 HP、回合数；再按根统计"4 份里赢了几份"的分布，特别是"最强打法下也 0/4"的根占比，以及这些根的卡组大小、能力牌数量（Power 张数）、进 boss 前 HP 比例。
+5. 1 个最小测试：CPU 上 1 个根、1 份、plain 能跑通，且打完时屏幕不在战斗里。
+
+只做这些，推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（G4，96 GB）。不用等我回复。
