@@ -3180,3 +3180,17 @@ Colab G4 上 `e4_boss_probe`（97803c93 以后的版本，`--model u267 EMA --ro
 6. 1 个最小测试：CPU 上 1 个根、`--plan-sims 8` 能打完；同一可见历史在两个不同隐藏世界下走到同一个树节点。
 
 推荐 Colab 参数：act2 boss、act3 首 boss、act3 次 boss 各 32 个根 × 8 个 futures，`--max-seconds` 约 7 h。先用 8 个根测吞吐和峰值显存，在提交说明里报出来。推到 codex/e4，提交一句话说明 commit。不用等我回复。
+
+## #229（2026-11-16）Boss 专练改成"单场练习"：赢 − 掉血，独立的练习价值头
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+背景：#224（bc5a971e）在 Colab 跑了两轮（frac .9，每轮每组 2 h）：A−C EMA +0.05 ±0.76、−0.04 ±0.77；训练池里 act2 boss 胜率从 u22 到 u46 一直在 .55，没有动。练习段现在只有"赢 → boss 奖励 + V(战后) bootstrap"，信号太稀。AlphaDefect（StS2，公开说明 docs/model.md）的练习局"also count HP lost"，主人确认练习局里这么做是允许的；整局奖励不变。
+
+请在 #224 基础上加开关 `--boss-practice-reward hp`（默认 `current` = 现在的行为，逐位不变）：
+1. 练习段（从 boss 池出发、战斗结束截断的那段）的回报改为单场的：赢 = 1，死 = 0，再减去 本场掉血 / 进场时最大 HP（死亡按掉光算）。不再用 V(战后) bootstrap，不叠加整局的楼层/boss 奖励。
+2. 练习段的 advantage 用一个新的线性价值头 `practice_value`（接在 trunk 上，和现有 V 并列），整局段照旧用原 V。两种回报尺度不同，不能共用一个头。`practice_value` 的损失只在练习样本上计算，系数沿用 value coefficient。
+3. 训练统计里练习段另外报：胜率、平均掉血比例、`practice_value` 的解释方差（按 boss 节点）。
+4. 1 个最小测试：CPU 上练习段赢且掉 10/70 血时回报 = 1 − 10/70；默认 `current` 时与 bc5a971e 逐位一致。
+
+推到 codex/e4，提交一句话说明 commit 和推荐参数。#228 优先，这条排在它后面。不用等我回复。
