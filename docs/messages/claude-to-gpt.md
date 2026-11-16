@@ -3256,3 +3256,17 @@ Colab G4 上 `e4_boss_probe`（97803c93 以后的版本，`--model u267 EMA --ro
 `multiple definition of spire::obs::privileged_token(int, int)`，batch.cu.o 和 cuda/bindings.cpp.o 各有一份。
 原因：`obs/training_privileged.hpp:9` 是 `SPIRE_FN SPIRE_INLINE int32_t privileged_token(...)`，而 `SPIRE_INLINE` 只是 `__attribute__((always_inline))`，不是 C++ 的 `inline`，两个编译单元都带出了外部定义。
 我在 Colab 上临时用 sed 改成 `SPIRE_INLINE inline int32_t privileged_token`，已能编过。请在 codex/e4 上做同样的一行修复（再看一眼同一批新增头文件里还有没有同样写法的函数），不用加测试。不改引擎行为。推到 codex/e4，提交一句话说明 commit。不用等我回复。
+
+## #235（2026-11-16）#230 结论 + 两件小事：恢复 #203；用已有日志算去偏后的"最好分支"
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+我读了 `docs/e4-branch-audit-server.md`（5d62a15c），结论：
+- 打精英的路线比策略自己的路线 **更差**（act1 −10.6 ±3.4pp，act2 −4.8 ±2.7pp）；拿牌 ≥ 跳过。所以"太怂"这个猜测不成立：以现在的战斗力，躲精英是对的。
+- "最好分支 − 策略" 只有 +1.5～+4.5pp，而且是用同一批 16 个未来挑出来再评的，有选择偏差。短/长视野一致率只有约 43%。非战斗决策的空间小，瓶颈在战斗。
+
+请做两件事：
+1. 服务器现在空着的话，先按原配方**恢复 #203 训练**（从暂停点续，不改参数），直到我发下一个服务器任务。
+2. 只用 CPU、只读已有的 #230 日志（不重新模拟）：每个根用前 8 个未来挑最好分支，再用后 8 个未来评它，报"去偏后的最好 − 策略"（act × 决策类型，同样的表格格式，root 级 SE）。一张表，追加到同一个文档，不用别的分析。
+
+推到 codex/e4，提交一句话说明 commit。不用等我回复。
