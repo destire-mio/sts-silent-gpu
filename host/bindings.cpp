@@ -316,7 +316,17 @@ PYBIND11_MODULE(spire, module) {
         })
         .def("__len__", [](const EnvironmentBatch& batch) { return batch.games.size(); });
     module.attr("encounters") = py::cast(std::vector<std::string>(std::begin(encounter_names), std::end(encounter_names)));
+    module.attr("PRIVILEGED_DRAW_SLOTS") = obs::privileged_draw_slots;
+    module.attr("PRIVILEGED_TOKEN_SLOTS") = obs::privileged_token_slots;
     auto training = py::class_<TrainingBatch>(module, "TrainingBatch");
+    training.def("privileged_tokens_tensors", [](TrainingBatch& b, py::object slots, py::object output) {
+        const int count = slots.attr("numel")().cast<int>();
+        SPIRE_ASSERT(output.attr("numel")().cast<int>() == count * obs::privileged_token_slots);
+        auto* indices = tensor_pointer<int64_t>(slots, "int64", -1);
+        auto* out = tensor_pointer<int32_t>(output, "int32", -1);
+        py::gil_scoped_release release;
+        b.privileged_tokens_tensors(indices, count, out);
+    });
     training.def("loop_keys_tensors", [](TrainingBatch& b, py::object slots, py::object output) {
         const int count = slots.attr("numel")().cast<int>();
         SPIRE_ASSERT(output.attr("numel")().cast<int>() == count);

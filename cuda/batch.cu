@@ -1,4 +1,5 @@
 #include "batch.cuh"
+#include "obs/training_privileged.hpp"
 #include "obs/storage.hpp"
 
 extern "C" __global__ void spire_step_batch(spire::Game* games, const spire::Action* actions,
@@ -158,6 +159,11 @@ extern "C" __global__ void spire_training_loop_keys(spire::cuda::TrainingState b
 extern "C" __global__ void spire_training_progress(spire::cuda::TrainingState b, int64_t* output) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < b.size) spire::host::training_progress(b.games[i], output + i * spire::host::progress_columns);
+}
+extern "C" __global__ void spire_training_privileged_tokens(spire::cuda::TrainingState b,
+        const int64_t* slots, int count, int32_t* output) {
+    const int row = blockIdx.x * blockDim.x + threadIdx.x;
+    if (row < count) spire::obs::training_privileged_tokens(b.games[slots[row]], output + row * spire::obs::privileged_token_slots);
 }
 extern "C" __global__ void spire_training_combat_turns(spire::cuda::TrainingState b, int64_t* output) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;

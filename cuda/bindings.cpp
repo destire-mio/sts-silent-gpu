@@ -1,5 +1,6 @@
 #include "training_batch.hpp"
 #include "host/tensor_binding.hpp"
+#include "obs/training_privileged.hpp"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -26,7 +27,18 @@ PYBIND11_MODULE(spire_gpu, module) {
             return py::dict("shape"_a=py::tuple(py::cast(a.shape)), "typestr"_a=a.typestr,
                             "data"_a=py::make_tuple(a.pointer, false), "version"_a=3);
         });
+    module.attr("PRIVILEGED_DRAW_SLOTS") = obs::privileged_draw_slots;
+    module.attr("PRIVILEGED_TOKEN_SLOTS") = obs::privileged_token_slots;
     auto cls = py::class_<TrainingBatch>(module, "TrainingBatch");
+    cls.def("privileged_tokens_tensors", [](TrainingBatch& b, py::object slots, py::object output) {
+        const int count = slots.attr("numel")().cast<int>();
+        SPIRE_ASSERT(output.attr("numel")().cast<int>() == count * obs::privileged_token_slots);
+        auto* indices = spire::host::tensor_pointer<int64_t>(slots, "int64", b.device);
+        auto* out = spire::host::tensor_pointer<int32_t>(output, "int32", b.device);
+        auto stream = py::module_::import("torch").attr("cuda").attr("current_stream")(b.device).attr("cuda_stream").cast<uintptr_t>();
+        py::gil_scoped_release release;
+        b.privileged_tokens_tensors(indices, count, out, reinterpret_cast<cudaStream_t>(stream));
+    });
     cls.def("clone_many", &TrainingBatch::clone_many, py::call_guard<py::gil_scoped_release>());
     cls.def("state_bytes", [](TrainingBatch& b, int slot) { return py::bytes(b.state_bytes(slot)); });
     cls.def("combat_turns_tensors", [](TrainingBatch& b, py::object output) {

@@ -194,6 +194,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--late-pool-roots", type=Path, help="E2 train-root gzip (default artifacts/e2-roots/collection-train.jsonl.gz)")
     parser.add_argument("--key-last-chance", action="store_true", help="Preserve last Act 3 key opportunities in PPO and exams")
     parser.add_argument("--separate-critic", action="store_true", help="Train a separate 384x6 critic for standalone PPO")
+    parser.add_argument("--privileged-critic", action="store_true",
+                        help="Give the standalone training critic the actual draw order and hidden committed moves")
     parser.add_argument("--critic-learning-rate", type=float, help="Fixed critic Adam LR (default follows policy LR)")
     parser.add_argument("--combat-aux-weight", type=float, help="Combat prediction loss weight (default 0)")
     parser.add_argument("--global-aux-weight", type=float, help="Global prediction loss weight (default 0)")
@@ -247,7 +249,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         parser.error("--late-pool-holdout-fraction must be in [0, 1)")
     if args.late_pool_fraction is not None and not (0. <= args.late_pool_fraction <= 1.):
         parser.error("--late-pool-fraction must be in [0, 1]")
-    if not standalone and (args.separate_critic or args.critic_learning_rate is not None):
+    if not standalone and (args.separate_critic or args.privileged_critic or args.critic_learning_rate is not None):
         parser.error("separate critic settings are standalone only")
     if args.critic_learning_rate is not None and (
             not math.isfinite(args.critic_learning_rate) or args.critic_learning_rate <= 0):
@@ -343,8 +345,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     enable_key_mask_on_resume = saved is not None and args.key_last_chance and not saved_key_mask
     key_last_chance = args.key_last_chance or saved_key_mask
     saved_critic = saved.get("critic") if saved else None
-    create_critic_on_resume = saved is not None and args.separate_critic and saved_critic is None
-    separate_critic = args.separate_critic or saved_critic is not None
+    privileged_critic = args.privileged_critic or saved_state.get("standalone_privileged_critic", False)
+    separate_critic = args.separate_critic or privileged_critic or saved_critic is not None
+    create_critic_on_resume = saved is not None and separate_critic and saved_critic is None
     critic_rate_override = args.critic_learning_rate
     if saved_critic is not None:
         if critic_rate_override is not None and critic_rate_override != saved_critic["learning_rate_override"]:
@@ -461,7 +464,17 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         policy.load_state_dict(saved["model"], strict=True)
     policy.to(device)
     map_distillation = MapDistillation(policy, args.map_distill, saved_map) if map_enabled else None
-    critic = SeparateCritic(policy) if separate_critic else None
+    draw_slots, private_slots = None, 0
+    if privileged_critic:
+        if cuda:
+            import spire_gpu as backend
+        else:
+            import spire as backend
+        if not hasattr(backend.TrainingBatch, "privileged_tokens_tensors"):
+            parser.error("Rebuild the native spire backend from the privileged critic source")
+        draw_slots = backend.PRIVILEGED_DRAW_SLOTS
+        private_slots = backend.PRIVILEGED_TOKEN_SLOTS
+    critic = SeparateCritic(policy, privileged_draw_slots=draw_slots) if separate_critic else None
     if critic is not None:
         policy.value.requires_grad_(False)
     if standalone and (args.compile or args.fused_sdpa):
@@ -516,6 +529,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     search.deadline = deadline
     search.evidence_directory = output
     search.training_critic = critic
+    search.privileged_token_slots = private_slots
     state = dict(update=0, training_seconds=0., initial_entropy=None, next_evaluation=7200.,
                  precision=None, microbatch=None, checkpoint_serial=0, world=world,
                  stop_reason=None, high_kl_streak=0, learning_rate=1e-4,
@@ -644,6 +658,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
             state["standalone_ema_decay"] = ema_decay
     else:
         state.pop("standalone_ema_decay", None)
+    if privileged_critic:
+        state["standalone_privileged_critic"] = True
     if collector.boss_training is not None:
         state["standalone_boss_training"] = dict(fraction=boss_fraction, capacity=boss_capacity)
         if boss_practice_hp:
@@ -1024,6 +1040,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if critic is not None:
             critic_config["critic"] = dict(learning_rate=critic_rate_override or state["learning_rate"],
                                            adam="restored" if saved_critic else "fresh")
+        if privileged_critic:
+            critic_config["critic"]["privileged"] = True
         if create_critic_on_resume:
             log(dict(event="critic_created_on_resume", update=state["update"]))
         log(dict(event="effective_config", update=state["update"], source_commit=source_commit(),
@@ -1321,6 +1339,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 row["map_distill"] = dict(**map_metrics, weight=policy.map_weight,
                     map_ppo_kl=kl_sum / kl_rows if kl_rows else None, map_ppo_kl_rows=int(kl_rows),
                     fresh=training_reach(fresh_done), midstart=training_reach(middle_done))
+        if privileged_critic and "public_rollout_values" in cursor["fragment"]:
+            from train.e4_privileged import private_value_diagnostics
+            row["privileged_critic"] = private_value_diagnostics(cursor["fragment"])
         if collector.boss_training is not None:
             row["boss_training"] = collector.boss_training.take_metrics(cursor["fragment"])
         if late_pools:

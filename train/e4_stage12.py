@@ -78,6 +78,7 @@ class CLSPolicy(Policy):
             self.encoder_norm = nn.LayerNorm(config.width)
 
     def encode(self, observation):
+        assert "privileged_tokens" not in observation
         mask = observation["entity_mask"]
         device = mask.device
         dtype = self.encoder_dtype_override or torch.float16
@@ -118,9 +119,10 @@ class CLSPolicy(Policy):
 class SeparateCritic(nn.Module):
     encode = CLSPolicy.encode
 
-    def __init__(self, policy):
+    def __init__(self, policy, *, privileged_draw_slots=None):
         super().__init__()
         self.config = policy.config
+        self.privileged_draw_slots = privileged_draw_slots
         self.cls = deepcopy(policy.cls)
         self.tags = deepcopy(policy.tags)
         self.ids = deepcopy(policy.ids)
@@ -139,7 +141,10 @@ class SeparateCritic(nn.Module):
                            self.noncombat_value(pooled).squeeze(-1))
 
     def forward(self, observation, combat, *, privileged_tokens=None):
-        assert privileged_tokens is None, 'The current critic takes only public observations.'
+        if privileged_tokens is not None:
+            assert self.privileged_draw_slots is not None
+            from train.e4_privileged import critic_observation
+            observation = critic_observation(observation, privileged_tokens, self.privileged_draw_slots)
         _, pooled = self.encode(observation)
         return self.values(pooled, combat)
 
@@ -178,6 +183,8 @@ class NoSLSearch(RoomSearch):
         self.last_policy_mask = None
         self.training_critic = None
         self.boss_practice_values = None
+        self.privileged_token_slots = 0
+        self.privileged_rollout = None
         self.key_last_chance = {} if key_last_chance else None
         self.failed = {}
         self.fault_counts = Counter()
@@ -334,7 +341,12 @@ class NoSLSearch(RoomSearch):
                 kinds = torch.tensor([decision_type(self.mainline_progress[slots[i]]) for i in positions],
                                      dtype=torch.int64, device=self.device)
                 if self.training_critic is not None:
-                    value = self.training_critic(inputs, kinds == 0)
+                    if self.privileged_rollout is None:
+                        value = self.training_critic(inputs, kinds == 0)
+                    else:
+                        tokens, public_values = self.privileged_rollout
+                        public_values[index] = value
+                        value = self.training_critic(inputs, kinds == 0, privileged_tokens=tokens[index])
                 policy, normalized_entropy = distribution(logits.float(), inputs['candidate_mask'])
                 action = policy.probs.argmax(dim=1) if self.greedy else torch.multinomial(policy.probs, 1, generator=self.rng).flatten()
                 rows = torch.stack((action.double(), value.double(), policy.log_prob(action).double()), dim=1).cpu().tolist()
@@ -357,8 +369,16 @@ class NoSLSearch(RoomSearch):
                 return model(inputs, practice_mask=torch.tensor(mask, device=self.device))
         return model(inputs)
 
+    def read_privileged_tokens(self, slots, output=None):
+        assert self.training_critic is not None and self.privileged_token_slots
+        index = torch.as_tensor(slots, device=self.device, dtype=torch.int64)
+        if output is None:
+            output = torch.empty((len(index), self.privileged_token_slots), device=self.device, dtype=torch.int32)
+        self.batch.privileged_tokens_tensors(index, output.view(-1))
+        return output
+
     @torch.no_grad()
-    def scores(self, model, slots, progress):
+    def scores(self, model, slots, progress, *, privileged_training=False):
         if self.training_critic is None and not self.boss_practice_values:
             return super().scores(model, slots, progress)
         result = dict.fromkeys(slots, 0.)
@@ -371,7 +391,10 @@ class NoSLSearch(RoomSearch):
             else:
                 model(inputs)  # Preserve the auxiliary capture used by the arena and rollout endpoints.
                 combat = torch.tensor([decision_type(progress[slot]) == 0 for slot in alive], device=self.device)
-                values = self.training_critic(inputs, combat)
+                if privileged_training:
+                    values = self.training_critic(inputs, combat, privileged_tokens=self.read_privileged_tokens(alive))
+                else:
+                    values = self.training_critic(inputs, combat)
             result.update(zip(alive, values.cpu().tolist()))
         return result
 
@@ -479,6 +502,11 @@ class NoSLCollector(SegmentCollector):
         boss_training = self.boss_training
         if boss_training is not None and "boss_bootstrap" not in result:
             result["boss_bootstrap"] = torch.zeros_like(result["values"])
+        privileged = bool(self.search.privileged_token_slots)
+        if privileged and "privileged_tokens" not in result:
+            result["privileged_tokens"] = torch.zeros((length, lanes, self.search.privileged_token_slots),
+                                                       dtype=torch.int32, device=device)
+            result["public_rollout_values"] = torch.full_like(result["values"], float("nan"))
         hp_practice = boss_training is not None and boss_training.reward_mode == "hp"
         if hp_practice and "practice_node" not in result:
             result["practice_node"] = torch.full((length, lanes), -1, dtype=torch.int8, device=device)
@@ -493,10 +521,16 @@ class NoSLCollector(SegmentCollector):
             progress = self.search.progress_for(slots)
             if hp_practice:
                 result["practice_node"][tick] = torch.tensor(boss_training.practice_nodes(slots), device=device)
-            if auxiliary:
-                actions, values, logs, imitation = record_decision(auxiliary, self, model, slots, progress, tick)
-            else:
-                actions, values, logs, imitation = self.choose(model, slots, progress)
+            if privileged:
+                tokens = self.search.read_privileged_tokens(slots, result["privileged_tokens"][tick])
+                self.search.privileged_rollout = (tokens, result["public_rollout_values"][tick])
+            try:
+                if auxiliary:
+                    actions, values, logs, imitation = record_decision(auxiliary, self, model, slots, progress, tick)
+                else:
+                    actions, values, logs, imitation = self.choose(model, slots, progress)
+            finally:
+                self.search.privileged_rollout = None
             if "value_acts" in result:
                 result["value_acts"][tick] = torch.tensor([progress[slot][ACT] for slot in slots], device=device)
             result["policy_mask"][tick] = self.search.last_policy_mask
@@ -533,9 +567,10 @@ class NoSLCollector(SegmentCollector):
         if auxiliary:
             progress = self.search.progress_for(live) if live else {}
             result["auxiliary"], result["auxiliary_metrics"] = finish_rollout(
-                auxiliary, self, model, live, progress, bootstrap)
+                auxiliary, self, model, live, progress, bootstrap, privileged_training=privileged)
         elif live:
-            scores = self.search.scores(model, live, self.search.progress_for(live))
+            progress = self.search.progress_for(live)
+            scores = self.search.scores(model, live, progress, privileged_training=True) if privileged else self.search.scores(model, live, progress)
             bootstrap[live] = torch.tensor([scores[s] for s in live], device=device)
         advantages = torch.zeros_like(result["values"])
         carry = torch.zeros(lanes, device=device)
@@ -553,6 +588,9 @@ class NoSLCollector(SegmentCollector):
         result["policy_mask"] = result["policy_mask"].flatten(0, 1)
         for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat", "advantages", "returns"):
             result[name] = result[name].flatten()
+        if privileged:
+            result["privileged_tokens"] = result["privileged_tokens"].flatten(0, 1)
+            result["public_rollout_values"] = result["public_rollout_values"].flatten()
         for name in ("value_acts", "practice_node"):
             if name in result:
                 result[name] = result[name].flatten()
@@ -905,7 +943,11 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 scalar = (logits.sum() + value.sum()) * 0.
             scaler.scale(scalar).backward()
         if critic is not None and len(ids):
-            predicted = critic(inputs, f["decision_types"][ids] == 0)
+            combat = f["decision_types"][ids] == 0
+            if "privileged_tokens" in f:
+                predicted = critic(inputs, combat, privileged_tokens=f["privileged_tokens"][ids])
+            else:
+                predicted = critic(inputs, combat)
             mse = (predicted - f["returns"][ids]).square()
             weighted = critic_coefficient * mse.sum()
             critic_scaler.scale(weighted / max(1, global_count)).backward()

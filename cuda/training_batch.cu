@@ -162,6 +162,11 @@ void TrainingBatch::progress_tensors(int64_t* output, cudaStream_t stream) {
     spire_training_progress<<<(size + 31) / 32, 32, 0, stream>>>(state(), output);
     check(cudaGetLastError());
 }
+void TrainingBatch::privileged_tokens_tensors(const int64_t* slots, int count, int32_t* output, cudaStream_t stream) {
+    if (!count) return;
+    spire_training_privileged_tokens<<<(count + 31) / 32, 32, 0, stream>>>(state(), slots, count, output);
+    check(cudaGetLastError());
+}
 void TrainingBatch::combat_turns_tensors(int64_t* output, cudaStream_t stream) {
     spire_training_combat_turns<<<(size + 31) / 32, 32, 0, stream>>>(state(), output);
     check(cudaGetLastError());

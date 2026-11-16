@@ -192,10 +192,11 @@ def binary_metrics(logits, targets, valid, observed):
                 labels=int(valid.sum()), observed=int(observed.sum()))
 
 
-def finish_rollout(storage, collector, model, live, progress, bootstrap):
+def finish_rollout(storage, collector, model, live, progress, bootstrap, *, privileged_training=False):
     capture = Capture(model)
     if live:
-        scores = collector.search.scores(capture, live, progress)
+        options = {"privileged_training": True} if privileged_training else {}
+        scores = collector.search.scores(capture, live, progress, **options)
         bootstrap[live] = torch.tensor([scores[slot] for slot in live], device=bootstrap.device)
     fragment = {}
     metrics = {}

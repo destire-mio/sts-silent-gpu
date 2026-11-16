@@ -1,5 +1,6 @@
 #pragma once
 #include "obs/encode.hpp"
+#include "obs/training_privileged.hpp"
 #include "observation_batch.hpp"
 #include <chrono>
 #include <condition_variable>
@@ -75,6 +76,13 @@ struct TrainingBatch : ObservationBatch {
     void store_tensors(const int64_t* slots, int count, uint8_t* data, const int64_t* offsets) {
         std::lock_guard<std::mutex> operation(operation_mutex_);
         for (int i = 0; i < count; ++i) obs::store(view(slots[i]), data + offsets[i]);
+    }
+    void privileged_tokens_tensors(const int64_t* slots, int count, int32_t* output) {
+        std::lock_guard<std::mutex> operation(operation_mutex_);
+        for (int i = 0; i < count; ++i) {
+            SPIRE_ASSERT(slots[i] >= 0 && slots[i] < size);
+            obs::training_privileged_tokens(games[slots[i]], output + i * obs::privileged_token_slots);
+        }
     }
     void step_tensors(const int32_t* selected, const uint8_t* active) {
         std::lock_guard<std::mutex> operation(operation_mutex_);
