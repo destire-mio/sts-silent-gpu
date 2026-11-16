@@ -6,7 +6,7 @@ constexpr int privileged_draw_slots = card_capacity;
 constexpr int privileged_token_slots = privileged_draw_slots + monster_capacity;
 constexpr int privileged_id_bits = 9;
 
-SPIRE_FN SPIRE_INLINE int32_t privileged_token(int id, int detail) {
+SPIRE_FN SPIRE_INLINE inline int32_t privileged_token(int id, int detail) {
     return (id + 1) | (detail << privileged_id_bits);
 }
 
