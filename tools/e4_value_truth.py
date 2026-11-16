@@ -80,14 +80,19 @@ class RootCollector(NoSLCollector):
         )
         return roots
 
-    def capture_roots(self, model, counts, seeds):
-        roots = {node: [] for node in counts}
+    def capture_roots(self, model, counts, seeds, *, roots=None, on_progress=None):
+        if roots is None:
+            roots = {node: [] for node in counts}
         seen = {node: set() for node in counts}
         waiting = iter(seeds)
         boss_acts = {act for act in (1, 2, 3) if f"before_act{act}_boss" in counts}
         second_boss = "before_act3_second_boss"
+        next_report = time.monotonic() + 300
         while any(len(group) < counts[node] for node, group in roots.items()):
             self.search.clock()
+            if on_progress is not None and time.monotonic() >= next_report:
+                on_progress()
+                next_report = time.monotonic() + 300
             free = [slot for slot, seed in enumerate(self.seeds) if seed is None]
             seeds = [seed for _, seed in zip(free, waiting)]
             if seeds:

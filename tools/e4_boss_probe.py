@@ -11,38 +11,68 @@ import torch
 
 from tools.e4_search_exam import SearchExam
 from tools.e4_value_truth import RootCollector, load_policy, mean_se
-from train.e4 import ACT, BOSS_ROOM, COMBAT_PHASE, DEATH, FLOOR, HP, MAP, PHASE, ROOM, SCREEN, AllocationEnded
+from train.e4 import ACT, BOSS_ROOM, COMBAT_PHASE, DEATH, FLOOR, HP, PHASE, ROOM, SCREEN, AllocationEnded
+from train.e4_combat_plan import CombatPlanner
 from train.e4_evaluation_ledger import CARDS
 from train.e4_stage12 import NoSLSearch
 from train.model import SCREENS
 
 
-NODES = ("before_act2_boss", "before_act3_boss")
-MODES = {"plain": None, "search8x4": (8, 4), "search16x6": (16, 6)}
+NODES = ("before_act2_boss", "before_act3_boss", "before_act3_second_boss")
+MODES = {"plain": None, "search8x4": (8, 4), "search16x6": (16, 6), "plan64": 64, "plan256": 256}
+DEFAULT_MODES = ("plain", "search8x4", "plan64", "plan256")
 DEFAULT_SEEDS = range(1_900_000_000, 1_900_100_000)
 
 
 class BossSearch(SearchExam):
-    def __init__(self, lanes, device, seed, roots):
-        draws, options = MODES["search16x6"]
-        super().__init__(lanes, device, seed, combat_draws=draws, combat_options=options,
-                         combat_scope="elite_boss", cards=False, map_k=0,
-                         extra_storage_slots=roots)
-        self.mode = "plain"
+    def __init__(self, lanes, device, seed, roots, *, preview_slots=32, plan_depth=256, plan_sims=None):
+        super().__init__(lanes, device, seed, combat_scope="elite_boss", cards=False, map_k=0,
+                         extra_storage_slots=roots, combat_preview_slots=preview_slots, room_probe_slots=128)
+        self.preview_slots = preview_slots
+        self.plan_depth = plan_depth
+        self.plan_sims = plan_sims
+        self.set_mode("plain", seed)
 
     def set_mode(self, mode, seed):
-        self.mode = mode
         config = MODES[mode]
-        if config is not None:
+        self.mode = mode
+        self.planner = None
+        if isinstance(config, int):
+            self.planner = CombatPlanner(self, seed, sims=self.plan_sims or config, depth=self.plan_depth,
+                                         batch_slots=self.preview_slots, on_fault=self.record_plan_fault)
+        elif config is not None:
             self.combat_preview.draws, self.combat_preview.max_options = config
             self.combat_preview.rng.manual_seed(seed)
         self.stats["combat"] = dict.fromkeys(self.stats["combat"], 0)
+        self.stats["combat"].update(decisions=0, decision_seconds=0., simulations=0)
         self.preview_faults.clear()
 
+    def record_plan_fault(self, source, slot, fault):
+        self.log_preview_fault("combat_plan", source, slot, fault)
+
     def predict(self, model, slots):
-        if self.mode == "plain":
-            return NoSLSearch.predict(self, model, slots)
-        return super().predict(model, slots)
+        started = time.perf_counter()
+        decisions = sum(slot not in self.failed for slot in slots)
+        if self.mode == "plain" or self.planner is not None:
+            actions, values, logs = NoSLSearch.predict(self, model, slots)
+        else:
+            actions, values, logs = super().predict(model, slots)
+        stats = self.stats["combat"]
+        if self.planner is not None:
+            progress = self.progress_for(slots)
+            positions = [i for i, slot in enumerate(slots) if slot not in self.failed
+                         and progress[slot][PHASE] == COMBAT_PHASE and progress[slot][ROOM] == BOSS_ROOM]
+            parents = [slots[i] for i in positions]
+            selected, reports = self.planner.select(model, parents)
+            self.record_previews("combat", parents, reports)
+            stats["failed_previews"] += sum(report["failed"] for report in reports)
+            stats["simulations"] += sum(report["attempted"] for report in reports)
+            for i, action in zip(positions, selected):
+                stats["overrides"] += int(actions[i] != action)
+                actions[i] = action
+        stats["decisions"] += decisions
+        stats["decision_seconds"] += time.perf_counter() - started
+        return actions, values, logs
 
 
 def power_card_ids():
@@ -60,43 +90,6 @@ def root_features(search, root, power_ids):
     max_hp = int(search.arrays["values"][slot, 1, 1])  # Player token follows the screen token.
     return dict(seed=root["seed"], pre_boss_floor=root["progress"][FLOOR], deck_size=len(deck),
                 power_cards=sum(card in power_ids for card in deck), hp_ratio=root["progress"][HP] / max_hp)
-
-
-def collect_boss_roots(runner, model, counts, seeds, roots, on_progress):
-    search = runner.search
-    waiting = iter(seeds)
-    nodes = {act: f"before_act{act}_boss" for act in (1, 2, 3) if f"before_act{act}_boss" in counts}
-    seen = {node: set() for node in counts}
-    next_progress = time.monotonic() + 300
-    while any(len(roots[node]) < count for node, count in counts.items()):
-        search.clock()
-        now = time.monotonic()
-        if now >= next_progress:
-            on_progress()
-            next_progress = now + 300
-        free = [slot for slot, seed in enumerate(runner.seeds) if seed is None]
-        new_seeds = [seed for _, seed in zip(free, waiting)]
-        if new_seeds:
-            runner.reset(free[:len(new_seeds)], new_seeds)
-        slots = [slot for slot, seed in enumerate(runner.seeds) if seed is not None]
-        if not slots:
-            break
-        progress = search.progress_for(slots)
-        actions, _, _, _ = runner.choose(model, slots, progress)
-        maps = [slot for slot in slots if slot not in search.failed and
-                progress[slot][SCREEN] == MAP and progress[slot][ACT] in nodes]
-        for slot, entry_action in runner.boss_choices(maps).items():
-            node = nodes[progress[slot][ACT]]
-            seed = runner.seeds[slot]
-            if len(roots[node]) == counts[node] or seed in seen[node]:
-                continue
-            target, = search.take(1)
-            search.clone([slot], [target])
-            roots[node].append(dict(slot=target, seed=seed, progress=progress[slot],
-                                    ledger=deepcopy(runner.rewards[slot]), entry_action=entry_action))
-            seen[node].add(seed)
-        runner.advance(slots, actions, progress)
-        runner.completed.clear()
 
 
 @torch.no_grad()
@@ -162,6 +155,7 @@ def run_trials(runner, model, plan, *, enter_boss=False, outcomes=None):
 def summarize_node(states, count, draws, modes):
     paired = [root for root in states if modes and all(
         len(root["trials"][mode]) == draws and
+        {trial["seed"] for trial in root["trials"][mode]} == set(root["draw_seeds"]) and
         all(trial["outcome"] != "incomplete" for trial in root["trials"][mode]) for mode in modes)]
     by_mode = {}
     win_counts = {}
@@ -175,6 +169,14 @@ def summarize_node(states, count, draws, modes):
                              wins_per_root=[win_counts[mode].count(n) for n in range(draws + 1)],
                              incomplete_trials=sum(t["outcome"] == "incomplete"
                                                    for row in states for t in row["trials"][mode]))
+    paired_changes = {}
+    for mode in modes:
+        for baseline in ("plain", "search8x4"):
+            if baseline not in win_counts or mode in ("plain", baseline):
+                continue
+            changes = [(a - b) / draws for a, b in zip(win_counts[mode], win_counts[baseline])]
+            mean, se = mean_se(changes)
+            paired_changes[f"{mode}_vs_{baseline}"] = dict(mean=mean, se=se, roots=len(changes))
     zero_wins = None
     if modes:
         highest_budget = modes[-1]
@@ -184,7 +186,8 @@ def summarize_node(states, count, draws, modes):
                          means={field: mean_se([root[field] for root in zero])[0] for field in fields},
                          seeds=[root["seed"] for root in zero])
     return dict(requested_roots=count, captured_roots=len(states), paired_roots=len(paired),
-                modes=by_mode, zero_wins=zero_wins, states=states)
+                modes=by_mode, paired_changes=paired_changes, zero_wins=zero_wins, states=states,
+                availability="available" if states else "unavailable")
 
 
 def write_results(output, result):
@@ -202,17 +205,24 @@ def log_progress(phase, event, done, total, seconds, **details):
 
 
 @torch.no_grad()
-def evaluate(model, device, seeds, counts, *, lanes, draws, seed=130, modes=tuple(MODES),
-             max_seconds=None, output=None, metadata=None, started=None):
+def evaluate(model, device, seeds, counts, *, lanes, draws, seed=130, modes=DEFAULT_MODES,
+             max_seconds=None, output=None, metadata=None, started=None, preview_slots=32,
+             plan_depth=256, plan_sims=None):
     started = time.monotonic() if started is None else started
     deadline = float("inf") if max_seconds is None else started + max_seconds
     roots = {node: [] for node in counts}
-    result = dict(metadata or {}, draws=draws, seed=seed, lanes=lanes, status="running",
-                  seconds=0., root_collection_seconds=0., max_seconds=max_seconds,
-                  requested_modes=list(modes), stages=[], previews={}, nodes={})
+    preview_seed = random.Random(f"boss-probe-preview:{seed}").getrandbits(63)
+    result = dict(metadata or {}, draws=draws, seed=seed, preview_seed=preview_seed, lanes=lanes, status="running",
+                  seconds=0., root_collection_seconds=0., max_seconds=max_seconds, preview_slots=preview_slots,
+                  plan_depth=plan_depth, plan_sims=plan_sims, requested_modes=list(modes), stages=[], previews={}, nodes={})
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
 
     def save():
         result["seconds"] = time.monotonic() - started
+        if device.type == "cuda":
+            result["torch_peak_allocated_bytes"] = torch.cuda.max_memory_allocated(device)
+            result["torch_peak_reserved_bytes"] = torch.cuda.max_memory_reserved(device)
         if output is not None:
             write_results(output, result)
 
@@ -231,10 +241,13 @@ def evaluate(model, device, seeds, counts, *, lanes, draws, seed=130, modes=tupl
     try:
         if time.monotonic() >= deadline:
             raise AllocationEnded()
-        search = BossSearch(lanes, device, seed, sum(counts.values()))
+        search = BossSearch(lanes, device, seed, sum(counts.values()), preview_slots=preview_slots,
+                            plan_depth=plan_depth, plan_sims=plan_sims)
+        result["native_slots"] = search.size
         search.deadline = deadline
         runner = RootCollector(search, torch.Generator().manual_seed(seed))
-        collect_boss_roots(runner, model, counts, seeds, roots, lambda: collection_progress("progress", "running"))
+        runner.capture_roots(model, counts, seeds, roots=roots,
+                             on_progress=lambda: collection_progress("progress", "running"))
     except AllocationEnded:
         result["status"] = "time_limit"
         collection_progress("end", "time_limit")
@@ -251,14 +264,14 @@ def evaluate(model, device, seeds, counts, *, lanes, draws, seed=130, modes=tupl
             states.append(dict(root_features(search, root, power_ids), draw_seeds=keys, trials={}))
         completed_modes = []
         for mode in modes:
-            search.set_mode(mode, seed)
+            search.set_mode(mode, preview_seed)
             mode_start = time.monotonic()
             trials = {}
             status = "complete"
             log_progress("boss_fights", "start", 0, len(plan), 0., node=node, mode=mode)
             try:
                 search.clock()
-                run_trials(runner, model, plan, outcomes=trials)
+                run_trials(runner, model, plan, enter_boss=True, outcomes=trials)
             except AllocationEnded:
                 status = result["status"] = "time_limit"
             for root, state in zip(group, states):
@@ -267,14 +280,17 @@ def evaluate(model, device, seeds, counts, *, lanes, draws, seed=130, modes=tupl
                 completed_modes.append(mode)
             elapsed = time.monotonic() - mode_start
             finished = sum(len(rows) for rows in trials.values())
-            result["stages"].append(dict(node=node, mode=mode, status=status,
-                                          completed=finished, total=len(plan), seconds=elapsed))
             counters = search.stats["combat"]
+            decisions = counters["decisions"]
+            decision_ms = 1000 * counters["decision_seconds"] / decisions if decisions else None
+            result["stages"].append(dict(node=node, mode=mode, status=status, completed=finished, total=len(plan),
+                                          seconds=elapsed, decisions=decisions, mean_decision_ms=decision_ms))
             preview = result["previews"].setdefault(mode, dict.fromkeys(counters, 0))
             for key, count in counters.items():
                 preview[key] += count
             preview["faults"] = (preview.get("faults", []) + search.preview_faults)[:20]
             preview["seconds"] = preview.get("seconds", 0.) + elapsed
+            preview["mean_decision_ms"] = 1000 * preview["decision_seconds"] / preview["decisions"] if preview["decisions"] else None
             result["nodes"][node] = summarize_node(states, counts[node], draws, completed_modes)
             save()
             log_progress("boss_fights", "end", finished, len(plan), elapsed, node=node, mode=mode, status=status)
@@ -298,7 +314,8 @@ def report(result):
         lines.append("")
         for stage in result["stages"]:
             lines.append(f'- {stage["node"]} / {stage["mode"]} **{stage["status"]}**, '
-                         f'{stage["completed"]} / {stage["total"]} trials recorded in {stage["seconds"]:.1f} s.')
+                         f'{stage["completed"]} / {stage["total"]} trials recorded in {stage["seconds"]:.1f} s. '
+                         f'Mean decision latency {fmt(stage.get("mean_decision_ms"))} ms.')
         lines.append("")
     lines.extend(["Statistics use roots with every draw complete across the finished policies for each node. SE clusters by root.",
              "Death contributes zero remaining HP. Turns count through the final decision turn.", "",
@@ -311,6 +328,13 @@ def report(result):
             lines.append(f'| {node} | {mode} | {roots} | {stats["wins"]} / {stats["trials"]} | '
                          f'{fmt(stats["win_rate"])} ± {fmt(stats["win_se"])} | {fmt(stats["mean_remaining_hp"])} | '
                          f'{fmt(stats["mean_turns"])} | {dist} |')
+    lines.extend(["", "| Node | Comparison | Paired roots | Win rate change ± SE |",
+                  "| --- | --- | --- | --- |"])
+    for node, group in result["nodes"].items():
+        if group["availability"] == "unavailable":
+            lines.append(f"| {node} | unavailable | 0 | NA |")
+        for comparison, change in group["paired_changes"].items():
+            lines.append(f'| {node} | {comparison} | {change["roots"]} | {fmt(change["mean"])} ± {fmt(change["se"])} |')
     lines.extend(["", f'| Node | Policy | Roots with 0 / {result["draws"]} wins | Share | Mean cards | Mean Powers | Mean starting HP ratio |',
                   "| --- | --- | --- | --- | --- | --- | --- |"])
     for node, group in result["nodes"].items():
@@ -339,14 +363,23 @@ def main():
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--seeds", type=seed_range, default=DEFAULT_SEEDS, metavar="START:STOP")
-    parser.add_argument("--roots", type=int, default=256, help="Roots per Boss node")
+    parser.add_argument("--roots", type=int, default=32, help="Roots per Boss node")
+    parser.add_argument("--nodes", nargs="+", choices=("before_act1_boss", *NODES), default=NODES)
+    parser.add_argument("--modes", nargs="+", choices=tuple(MODES), default=DEFAULT_MODES)
+    parser.add_argument("--plan-sims", type=int, help="Override the planner's simulation budget for a smoke test")
+    parser.add_argument("--plan-depth", type=int, default=256, help="Maximum decisions per combat simulation")
+    parser.add_argument("--preview-slots", type=int, default=32, help="Bound on concurrent preview simulations")
     parser.add_argument("--draws", type=int, default=4, help="Paired hidden-state draws per root")
     parser.add_argument("--lanes", type=int, default=8)
     parser.add_argument("--max-seconds", type=float, help="Write partial results at the time limit (default: unlimited)")
     parser.add_argument("--output", type=Path, required=True, help="Directory for JSON results and Markdown table")
     args = parser.parse_args()
-    if min(args.roots, args.draws, args.lanes) < 1:
-        parser.error("--roots, --draws and --lanes must be positive")
+    if min(args.roots, args.draws, args.lanes, args.plan_depth, args.preview_slots) < 1:
+        parser.error("Root, draw, lane, plan depth and preview slot counts must be positive.")
+    if args.plan_sims is not None and args.plan_sims < 1:
+        parser.error("--plan-sims must be positive.")
+    if len(set(args.modes)) != len(args.modes) or len(set(args.nodes)) != len(args.nodes):
+        parser.error("Specify each mode and Boss node at most once.")
     if args.max_seconds is not None and (not math.isfinite(args.max_seconds) or args.max_seconds <= 0):
         parser.error("--max-seconds must be finite and positive")
     args.output.mkdir(parents=True, exist_ok=True)
@@ -356,9 +389,10 @@ def main():
     model = load_policy(args.model, device)
     metadata = dict(model=str(args.model), device=str(device), seed_start=args.seeds.start,
                     seed_stop_exclusive=args.seeds.stop)
-    result = evaluate(model, device, args.seeds, dict.fromkeys(NODES, args.roots),
-                      lanes=args.lanes, draws=args.draws, max_seconds=args.max_seconds,
-                      output=args.output, metadata=metadata, started=started)
+    result = evaluate(model, device, args.seeds, dict.fromkeys(args.nodes, args.roots),
+                      lanes=args.lanes, draws=args.draws, modes=args.modes, max_seconds=args.max_seconds,
+                      output=args.output, metadata=metadata, started=started, preview_slots=args.preview_slots,
+                      plan_depth=args.plan_depth, plan_sims=args.plan_sims)
     print(report(result), end="")
 
 

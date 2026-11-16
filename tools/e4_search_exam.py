@@ -15,8 +15,18 @@ from train.model import ModelConfig, SCREENS
 
 
 class ExamCombatLookahead(CombatLookahead):
+    def __init__(self, *args, batch_slots=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.batch_slots = batch_slots
+
     def rollout(self, policy, sources, first, seeds):
-        scores, steps = super().rollout(policy, sources, first, seeds)
+        capacity = self.batch_slots or len(sources)
+        scores, steps = [], []
+        for start in range(0, len(sources), capacity):
+            chunk = slice(start, start + capacity)
+            results, counts = super().rollout(policy, sources[chunk], first[chunk], seeds[chunk])
+            scores.extend(results)
+            steps.extend(counts)
         self.search.stats['combat']['failed_previews'] += scores.count(None)
         return scores, steps
 
@@ -28,16 +38,19 @@ class ExamCombatLookahead(CombatLookahead):
 class SearchExam(MapLookaheadSearch):
     def __init__(self, lanes, device, seed, *, combat_draws=8, combat_options=4,
                  combat_scope='all', override_se=1.0, validate=0, cards=True,
-                 map_k=16, key_last_chance=False, extra_storage_slots=0):
+                 map_k=16, key_last_chance=False, extra_storage_slots=0,
+                 combat_preview_slots=None, room_probe_slots=4096):
         card_options = 5
-        storage_slots = max(lanes * combat_draws * combat_options,
+        combat_storage = combat_preview_slots if combat_preview_slots is not None else lanes * combat_draws * combat_options
+        storage_slots = max(combat_storage,
                             lanes * card_options * 8 if cards else 0, map_k)
         NoSLSearch.__init__(self, lanes, device, seed, storage_slots=storage_slots + extra_storage_slots,
-                            greedy=True, key_last_chance=key_last_chance)
+                            greedy=True, key_last_chance=key_last_chance, probe_slots=room_probe_slots)
         self.combat_scope = combat_scope
         self.combat_preview = ExamCombatLookahead(
             self, seed, 'combat', on_preview=partial(self.record_previews, 'combat'),
-            override_se=override_se, validate=validate, draws=combat_draws, max_options=combat_options)
+            override_se=override_se, validate=validate, draws=combat_draws, max_options=combat_options,
+            batch_slots=combat_preview_slots)
         self.card_preview = CardRewardLookahead(
             self, seed, max_options=card_options, on_preview=partial(self.record_previews, 'card')) if cards else None
         self.lookahead = MapLookahead(self, map_k, seed) if map_k else None
