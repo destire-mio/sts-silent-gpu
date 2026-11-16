@@ -3232,3 +3232,18 @@ Colab G4 上 `e4_boss_probe`（97803c93 以后的版本，`--model u267 EMA --ro
 2. 在短视野结束时，如果 #227 的 deck_eval.pt 已有，记下它对下一幕 boss 的预测胜率；再报"短视野通过率 × 预测胜率"这个组合分数，和长视野真实结果的排序一致率。
 
 用来决定以后训练标签用多长的视野。不用等我回复。
+
+## #233（2026-11-16）训练用的特权 critic：真实抽牌顺序等隐藏信息只进 critic
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+主人确认允许：训练时 critic 可以看隐藏信息，actor 和考试/实战永远看不到（AlphaDefect 也这么做：combat/out-of-combat 两个价值头，只在训练用，带真实抽牌顺序）。11-11 试过只看公开信息的 `--separate-critic`（EMA +0.16 ±0.36，没赢，且更慢），这次把隐藏信息加进去，目标是降低 advantage 噪声。
+
+请在现有 `SeparateCritic`（train/e4_stage12.py:106–132，已有 combat/noncombat 两个头）上实现 `privileged_tokens`，开关 `--privileged-critic`（默认关，逐位不变）：
+1. 特权 token（只从引擎状态读，复制即可，不改引擎）：抽牌堆按真实顺序（每张牌 + 位置编码）；怪物已经定下但还没显示的下一步行动（引擎里若已经抽好）；其它不加。
+2. critic 照旧单独一份权重，从当前 policy 复制初始化；actor 的输入、logits 与现在逐位相同。advantage 用 critic 算。
+3. 考试、推演、搜索、实战路径里一律不构造特权 token；加一个断言：actor 的前向拿不到这些张量。
+4. 训练统计报 critic 的解释方差（combat / noncombat 分开），和公开 V 并排，便于看噪声有没有降。
+5. 1 个最小测试：CPU 上开关打开时同一状态换一个抽牌顺序，actor logits 不变、critic 输出变；关掉时与现在逐位一致。
+
+推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（从 u267 EMA 开新 fork，对照组照旧）。排在 #228、#229 之后。不用等我回复。
