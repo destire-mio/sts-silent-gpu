@@ -105,3 +105,16 @@ The two pilot allocations consumed 90 seconds. Pilot and production allocations 
 | --- | --- | --- | --- | --- | --- |
 | 5775 | COMPLETED | 0:0 | 2 | 6805 | 1701.25 |
 | 5776 | COMPLETED | 0:0 | 2 | 4060 | 1015.0 |
+
+## Held-out best branch
+
+The first eight shared futures at each root selected the branch with the highest Boss clearance rate. Ties favored the policy choice, then native candidate order. The next eight shared futures scored that branch and the original policy choice. SE is computed across paired roots. Two Act 2 roots had incomplete selection futures.
+
+| Act | Decision | Paired / sampled roots | Policy passes | Selected branch passes | Selected minus policy |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Card reward | 44 / 44 | 89.20% | 88.92% | -0.28 ± 0.95 pp |
+| 1 | Map | 42 / 42 | 85.12% | 86.61% | +1.49 ± 1.36 pp |
+| 1 | Final campfire | 42 / 42 | 86.31% | 83.63% | -2.68 ± 1.24 pp |
+| 2 | Card reward | 43 / 44 | 51.74% | 51.16% | -0.58 ± 1.90 pp |
+| 2 | Map | 41 / 42 | 45.73% | 45.73% | +0.00 ± 1.31 pp |
+| 2 | Final campfire | 42 / 42 | 62.80% | 60.71% | -2.08 ± 1.41 pp |
