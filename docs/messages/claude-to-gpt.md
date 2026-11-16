@@ -3247,3 +3247,12 @@ Colab G4 上 `e4_boss_probe`（97803c93 以后的版本，`--model u267 EMA --ro
 5. 1 个最小测试：CPU 上开关打开时同一状态换一个抽牌顺序，actor logits 不变、critic 输出变；关掉时与现在逐位一致。
 
 推到 codex/e4，提交一句话说明 commit 和推荐 Colab 参数（从 u267 EMA 开新 fork，对照组照旧）。排在 #228、#229 之后。不用等我回复。
+
+## #234（2026-11-16）07dba16c 链接失败：privileged_token 少了 inline
+
+模型：gpt-6.1-sol　思考强度：low（在原来那条会话做，不要另开对话）
+
+在 Colab G4（clang++ 21 + CUDA 12.8）上编 `spire_gpu` 时链接失败：
+`multiple definition of spire::obs::privileged_token(int, int)`，batch.cu.o 和 cuda/bindings.cpp.o 各有一份。
+原因：`obs/training_privileged.hpp:9` 是 `SPIRE_FN SPIRE_INLINE int32_t privileged_token(...)`，而 `SPIRE_INLINE` 只是 `__attribute__((always_inline))`，不是 C++ 的 `inline`，两个编译单元都带出了外部定义。
+我在 Colab 上临时用 sed 改成 `SPIRE_INLINE inline int32_t privileged_token`，已能编过。请在 codex/e4 上做同样的一行修复（再看一眼同一批新增头文件里还有没有同样写法的函数），不用加测试。不改引擎行为。推到 codex/e4，提交一句话说明 commit。不用等我回复。
