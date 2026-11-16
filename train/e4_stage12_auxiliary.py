@@ -18,11 +18,11 @@ class AuxiliaryPolicy(CLSPolicy):
             for name in weights
         })
 
-    def forward(self, observation, *, auxiliary=False):
+    def forward(self, observation, *, auxiliary=False, practice_mask=None):
         if not auxiliary:
-            return super().forward(observation)
+            return super().forward(observation, practice_mask=practice_mask)
         entities, pooled = self.encode(observation)
-        return (self.action_logits(observation, entities, pooled), self.value(pooled).squeeze(-1),
+        return (self.action_logits(observation, entities, pooled), self.training_values(pooled, practice_mask),
                 {name: head(pooled) for name, head in self.auxiliary_heads.items()})
 
 
@@ -49,8 +49,8 @@ class Capture:
         self.model = model
         self.outputs = {}
 
-    def __call__(self, inputs):
-        logits, values, auxiliary = self.model(inputs, auxiliary=True)
+    def __call__(self, inputs, **value_inputs):
+        logits, values, auxiliary = self.model(inputs, auxiliary=True, **value_inputs)
         for name, prediction in auxiliary.items():
             self.outputs.setdefault(name, []).append(prediction.detach())
         return logits, values

@@ -102,6 +102,18 @@ class CLSPolicy(Policy):
                 entities = self.encoder_norm(entities)
         return entities[:, 1:].float(), entities[:, 0].float()
 
+    def training_values(self, pooled, practice_mask=None):
+        values = self.value(pooled).squeeze(-1)
+        if practice_mask is not None:
+            values = torch.where(practice_mask, self.practice_value(pooled).squeeze(-1), values)
+        return values
+
+    def forward(self, observation, *, practice_mask=None):
+        if practice_mask is None:
+            return super().forward(observation)
+        entities, pooled = self.encode(observation)
+        return self.action_logits(observation, entities, pooled), self.training_values(pooled, practice_mask)
+
 
 class SeparateCritic(nn.Module):
     encode = CLSPolicy.encode
@@ -165,6 +177,7 @@ class NoSLSearch(RoomSearch):
         self.mainline_progress = {}
         self.last_policy_mask = None
         self.training_critic = None
+        self.boss_practice_values = None
         self.key_last_chance = {} if key_last_chance else None
         self.failed = {}
         self.fault_counts = Counter()
@@ -317,7 +330,7 @@ class NoSLSearch(RoomSearch):
                 index = torch.tensor([slots[i] for i in positions], dtype=torch.int64, device=self.device)
                 inputs = network_inputs(self.arrays, self.device, index)
                 inputs['candidate_mask'] &= self.last_policy_mask[positions, :inputs['candidate_mask'].shape[1]]
-                logits, value = model(inputs)
+                logits, value = self.rollout_forward(model, inputs, [slots[i] for i in positions])
                 kinds = torch.tensor([decision_type(self.mainline_progress[slots[i]]) for i in positions],
                                      dtype=torch.int64, device=self.device)
                 if self.training_critic is not None:
@@ -337,18 +350,29 @@ class NoSLSearch(RoomSearch):
                 choices[i], values[i], logs[i] = int(row[0]), row[1], row[2]
         return choices, values, logs
 
+    def rollout_forward(self, model, inputs, slots):
+        if self.boss_practice_values:
+            mask = [slot in self.boss_practice_values for slot in slots]
+            if any(mask):
+                return model(inputs, practice_mask=torch.tensor(mask, device=self.device))
+        return model(inputs)
+
     @torch.no_grad()
     def scores(self, model, slots, progress):
-        if self.training_critic is None:
+        if self.training_critic is None and not self.boss_practice_values:
             return super().scores(model, slots, progress)
         result = dict.fromkeys(slots, 0.)
         alive = [slot for slot in slots if progress[slot][SCREEN] != DEATH]
         if alive:
             index = torch.tensor(alive, dtype=torch.int64, device=self.device)
             inputs = network_inputs(self.arrays, self.device, index)
-            model(inputs)  # Preserve the auxiliary capture used by the arena and rollout endpoints.
-            combat = torch.tensor([decision_type(progress[slot]) == 0 for slot in alive], device=self.device)
-            result.update(zip(alive, self.training_critic(inputs, combat).cpu().tolist()))
+            if self.training_critic is None:
+                _, values = self.rollout_forward(model, inputs, alive)
+            else:
+                model(inputs)  # Preserve the auxiliary capture used by the arena and rollout endpoints.
+                combat = torch.tensor([decision_type(progress[slot]) == 0 for slot in alive], device=self.device)
+                values = self.training_critic(inputs, combat)
+            result.update(zip(alive, values.cpu().tolist()))
         return result
 
 
@@ -455,6 +479,9 @@ class NoSLCollector(SegmentCollector):
         boss_training = self.boss_training
         if boss_training is not None and "boss_bootstrap" not in result:
             result["boss_bootstrap"] = torch.zeros_like(result["values"])
+        hp_practice = boss_training is not None and boss_training.reward_mode == "hp"
+        if hp_practice and "practice_node" not in result:
+            result["practice_node"] = torch.full((length, lanes), -1, dtype=torch.int8, device=device)
         after_transition = getattr(self, "after_transition", None)
         for tick in range(self.partial["next_step"], length):
             self.search.clock()
@@ -464,6 +491,8 @@ class NoSLCollector(SegmentCollector):
             if fresh:
                 self.fresh(fresh)
             progress = self.search.progress_for(slots)
+            if hp_practice:
+                result["practice_node"][tick] = torch.tensor(boss_training.practice_nodes(slots), device=device)
             if auxiliary:
                 actions, values, logs, imitation = record_decision(auxiliary, self, model, slots, progress, tick)
             else:
@@ -487,7 +516,7 @@ class NoSLCollector(SegmentCollector):
             boss_end_targets = None
             if boss_training is not None:
                 boss_end_targets = boss_training.after_step(model, slots, progress, terminal,
-                    result["boss_bootstrap"][tick], completed_before, auxiliary)
+                    result["boss_bootstrap"][tick], completed_before, auxiliary, rewards=reward)
             if auxiliary:
                 record_outcome(auxiliary, self, slots, progress, terminal, tick, boss_end_targets)
             for name, value in (("actions", actions), ("values", values), ("logs", logs), ("rewards", reward),
@@ -524,8 +553,9 @@ class NoSLCollector(SegmentCollector):
         result["policy_mask"] = result["policy_mask"].flatten(0, 1)
         for name in ("actions", "values", "logs", "rewards", "terminal", "imitation", "action_valid", "combat", "advantages", "returns"):
             result[name] = result[name].flatten()
-        if "value_acts" in result:
-            result["value_acts"] = result["value_acts"].flatten()
+        for name in ("value_acts", "practice_node"):
+            if name in result:
+                result[name] = result[name].flatten()
         result["data"] = result["data"][:int(result["offsets"][-1])].clone()
         self.partial = None
         return result
@@ -823,10 +853,11 @@ def advance_minibatch(model, optimizer, scaler, cursor, rng, rank, world, microb
                 if teacher is not None:
                     with torch.no_grad():
                         teacher_logits, teacher_value = teacher(inputs)
+                value_inputs = ({"practice_mask": f["practice_node"][ids] >= 0} if "practice_node" in f else {})
                 if auxiliary:
-                    logits, value, predictions = model(inputs, auxiliary=True)
+                    logits, value, predictions = model(inputs, auxiliary=True, **value_inputs)
                 else:
-                    logits, value = model(inputs)
+                    logits, value = model(inputs, **value_inputs)
                 policy, normalized_entropy = distribution(logits.float(), inputs["candidate_mask"])
                 log_ratio = policy.log_prob(f["actions"][ids]) - f["logs"][ids]
                 ratio = log_ratio.exp()

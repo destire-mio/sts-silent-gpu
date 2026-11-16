@@ -20,6 +20,7 @@ from torch.nn.parallel import DistributedDataParallel
 
 from train import OBSERVATION_VERSION
 from train.e4 import AllocationEnded, REACH
+from train.e4_boss_training import BossTraining, PRACTICE_HP_WEIGHTS
 from train.e4_stage12 import (CLSPolicy, SeparateCritic, NoSLSearch, NoSLCollector, StageTimes,
     new_cursor, precision_probe, choose_microbatch, advance_minibatch, finish_metrics,
     save_rank, restore_rank, health_stop, next_learning_rate, decision_entropy_summary, student_log_baseline,
@@ -119,10 +120,26 @@ def paired_summary(episodes, baseline):
                 paired_cases=len(deltas))
 
 
+def policy_exam_weights(weights):
+    return {key: value for key, value in weights.items() if not key.startswith("practice_value.")}
+
+
+def parse_practice_weights(text):
+    try:
+        weights = tuple(float(value) for value in text.split(","))
+    except ValueError as error:
+        raise argparse.ArgumentTypeError("Expected four comma-separated Boss HP weights") from error
+    if len(weights) != 4 or any(not math.isfinite(weight) or weight < 0 for weight in weights):
+        raise argparse.ArgumentTypeError("Boss HP weights must be four finite nonnegative numbers")
+    return weights
+
+
 def save_dev_weights(policy, output, training_seconds):
     path = output / f"dev-{int(training_seconds // 7200) * 2}.pt"
     if not path.exists():
         weights = policy.state_dict()
+        if hasattr(policy, "practice_value"):
+            weights = policy_exam_weights(weights)
         if hasattr(policy, "auxiliary_heads"):
             weights = {key: value for key, value in weights.items() if not key.startswith("auxiliary_heads.")}
         torch.save(move_tensors(weights, torch.device("cpu")), path)
@@ -196,6 +213,10 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     parser.add_argument("--arena-fraction", type=float, help="Standalone practice lane fraction (default 0)")
     parser.add_argument("--boss-reset-frac", type=float, help="Chance of a Boss practice reset (default 0)")
     parser.add_argument("--boss-pool", type=int, help="Capacity of the Boss root ring (default 4096)")
+    parser.add_argument("--boss-practice-reward", choices=("current", "hp"),
+                        help="Reward for a completed practice fight (default current)")
+    parser.add_argument("--practice-hp-weights", type=parse_practice_weights, metavar="A1,A2,A3_FIRST,A3_SECOND",
+                        help="HP penalty weights for each Boss node (default .25,.25,1,.25)")
     parser.add_argument("--map-distill", type=Path, help="Label shards for a new standalone map PPO fork")
     parser.add_argument("--map-distill-weight", type=float, help="Map distillation KL weight, including 0 for the control")
     parser.add_argument("--combat-distill", type=Path, nargs="+", action="extend",
@@ -280,13 +301,19 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     saved = torch.load(common, map_location="cpu", weights_only=False) if common.exists() else None
     saved_state = saved["state"] if saved else {}
     saved_boss = saved_state.get("standalone_boss_training")
+    saved_boss_reward = (saved_boss or {}).get("reward_mode", "current")
+    boss_reward_mode = args.boss_practice_reward or saved_boss_reward
+    boss_practice_hp = boss_reward_mode == "hp"
+    practice_weights = args.practice_hp_weights or tuple((saved_boss or {}).get("hp_weights", PRACTICE_HP_WEIGHTS))
+    if saved_boss_reward == "hp" and not boss_practice_hp:
+        parser.error("An HP-practice checkpoint needs its practice value head on resume")
     boss_fraction = args.boss_reset_frac
     if boss_fraction is None:
         boss_fraction = saved_boss["fraction"] if saved_boss else 0.
     boss_capacity = args.boss_pool if args.boss_pool is not None else saved_boss["capacity"] if saved_boss else 4096
     if not 0. <= boss_fraction <= 1. or boss_capacity < 1:
         parser.error("--boss-reset-frac must be in [0, 1] and --boss-pool must be positive")
-    if (boss_fraction or saved_boss) and (args.teacher or saved_state.get("teacher_path")):
+    if (boss_fraction or saved_boss or boss_practice_hp) and (args.teacher or saved_state.get("teacher_path")):
         parser.error("Boss practice requires teacher-free PPO")
     if saved_boss and boss_capacity != saved_boss["capacity"]:
         parser.error("Resume with the checkpoint's Boss pool capacity")
@@ -334,6 +361,9 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     warmup_updates = args.value_warmup_updates if args.value_warmup_updates is not None else saved_warmup
     if standalone and saved and (reward_scheme != saved_reward or warmup_updates != saved_warmup):
         parser.error("resume requires the checkpoint reward scheme and warmup length")
+    warmup_pending = warmup_updates > saved_state.get("standalone_value_warmup", {}).get("completed", 0)
+    if boss_practice_hp and (not standalone or separate_critic or warmup_pending):
+        parser.error("HP practice uses the shared-policy PPO learner and is for standalone runs")
     if warmup_updates and args.value_coefficient is not None:
         parser.error("value warmup remeasures the PPO coefficient; omit --value-coefficient")
     if (reward_scheme == "milestone" or warmup_updates) and (args.teacher is not None or scored_distillation(saved_state)):
@@ -409,6 +439,17 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
     if initial_weights is not None:
         policy.load_state_dict(initial_weights, strict=True)
         del initial_weights
+    adding_practice_head = boss_practice_hp and saved is not None and saved_boss_reward != "hp"
+    if boss_practice_hp:
+        policy.practice_value = torch.nn.Linear(config.width, 1)
+        torch.nn.init.zeros_(policy.practice_value.weight)
+        torch.nn.init.zeros_(policy.practice_value.bias)
+        if adding_practice_head:
+            start = {key: value.detach().clone() for key, value in policy.state_dict().items()
+                     if key.startswith("practice_value.")}
+            saved["model"].update(start)
+            if "ema_weights" in saved:
+                saved["ema_weights"].update(start)
     if standalone:
         policy.encoder_dtype_override = torch.float16 if args.dtype == "fp16" else torch.bfloat16
         policy.encoder_checkpoint_enabled = args.recompute == "on"
@@ -433,14 +474,20 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False,
                                         find_unused_parameters=True)
         trunk_parameters = [parameter for name, parameter in policy.named_parameters()
-                            if not name.startswith("auxiliary_heads.")]
+                            if not name.startswith(("auxiliary_heads.", "practice_value."))]
         optimizer = torch.optim.Adam(trunk_parameters, lr=1e-4, eps=1e-5)
         if saved and not saved_auxiliary:
             optimizer.load_state_dict(saved["optimizer"])
         optimizer.add_param_group({"params": policy.auxiliary_heads.parameters()})
     else:
-        model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False)
-        optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, eps=1e-5)
+        model = DistributedDataParallel(policy, device_ids=[local] if cuda else None, broadcast_buffers=False,
+                                        find_unused_parameters=boss_practice_hp)
+        base_parameters = [p for name, p in policy.named_parameters() if not name.startswith("practice_value.")]
+        optimizer = torch.optim.Adam(base_parameters, lr=1e-4, eps=1e-5)
+    if boss_practice_hp:
+        if adding_practice_head and (not auxiliary_weights or saved_auxiliary):
+            optimizer.load_state_dict(saved["optimizer"])
+        optimizer.add_param_group({"params": policy.practice_value.parameters()})
     ppo_rng = torch.Generator(device=device).manual_seed(20261031)
     seed_rng = torch.Generator().manual_seed(20261131 + rank)
     storage_slots = 1024
@@ -458,14 +505,14 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                                          late_holdout_fraction=late_settings["holdout_fraction"])
         storage_slots += LATE_SLOTS
     boss_offset = storage_slots
-    if boss_fraction or saved_boss:
+    if boss_fraction or saved_boss or boss_practice_hp:
         storage_slots += boss_capacity
     search = NoSLSearch(args.lanes, device, 20261031 + rank, storage_slots=storage_slots,
                         key_last_chance=key_last_chance)
     collector = collector_type(search, seed_rng, rank=rank, **training_collector_options)
-    if boss_fraction or saved_boss:
-        from train.e4_boss_training import BossTraining
-        collector.boss_training = BossTraining(collector, boss_fraction, boss_capacity, boss_offset)
+    if boss_fraction or saved_boss or boss_practice_hp:
+        collector.boss_training = BossTraining(collector, boss_fraction, boss_capacity, boss_offset,
+                                                reward_mode=boss_reward_mode, hp_weights=practice_weights)
     search.deadline = deadline
     search.evidence_directory = output
     search.training_critic = critic
@@ -496,7 +543,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         if not auxiliary_weights or saved_auxiliary:
             if not create_critic_on_resume:
                 policy.load_state_dict(saved["model"], strict=True)
-            optimizer.load_state_dict(saved["optimizer"])
+            if not adding_practice_head:
+                optimizer.load_state_dict(saved["optimizer"])
         state.update(saved["state"])
         apply_resume_learning_rate(state)
         previous_observation = saved['state'].get('observation_version', 13)
@@ -598,6 +646,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
         state.pop("standalone_ema_decay", None)
     if collector.boss_training is not None:
         state["standalone_boss_training"] = dict(fraction=boss_fraction, capacity=boss_capacity)
+        if boss_practice_hp:
+            state["standalone_boss_training"].update(reward_mode=boss_reward_mode, hp_weights=practice_weights)
     if arena_fraction:
         state["standalone_arena_fraction"] = arena_fraction
     if reward_scheme != "current":
@@ -784,7 +834,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 path = output / f"dev-{int(state['training_seconds'] // 7200) * 2}-ema.pt"
                 if not path.exists():
                     temporary = path.with_suffix(".pt.tmp")
-                    torch.save(move_tensors(ema.weights, torch.device("cpu")), temporary)
+                    weights = policy_exam_weights(ema.weights) if boss_practice_hp else ema.weights
+                    torch.save(move_tensors(weights, torch.device("cpu")), temporary)
                     temporary.replace(path)
                 row["model_snapshot"] = path.name
             if ema is not None and not label:
@@ -795,6 +846,8 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                 path = output / f"map-distill-{state['update']}-{source}.pt"
                 if not path.exists():
                     weights = ema.weights if ema_run else policy.state_dict()
+                    if boss_practice_hp:
+                        weights = policy_exam_weights(weights)
                     snapshot = dict(format="e4_map_distill_policy_v1", model=weights,
                                     map_head=policy.route_head.state_dict(), map_weight=policy.map_weight)
                     temporary = path.with_suffix(".pt.tmp")
@@ -1269,7 +1322,7 @@ def main(argv=None, *, device_type="cuda", stop_after_update=None):
                     map_ppo_kl=kl_sum / kl_rows if kl_rows else None, map_ppo_kl_rows=int(kl_rows),
                     fresh=training_reach(fresh_done), midstart=training_reach(middle_done))
         if collector.boss_training is not None:
-            row["boss_training"] = collector.boss_training.take_metrics()
+            row["boss_training"] = collector.boss_training.take_metrics(cursor["fragment"])
         if late_pools:
             by_start = collector.late_round_metrics()
             if world > 1:
