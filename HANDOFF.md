@@ -72,12 +72,12 @@
 
 **接真游戏的插件**（`watch/`）
 - 模拟器和真游戏同步走，每一步都对照，一有差异就停。
-- 有画面，可以看网络在真游戏里打。用法见 `README.md` 的 "Watch a checkpoint in the original game"。
+- 有画面，可以看网络在真游戏里打。用法见 `docs/engineering.md` 的 "Watch a checkpoint in the original game"。
 - 用的是单独的一份游戏副本，不碰 Steam 的游戏和存档。
 
 **显卡准备**
 - 显卡版代码、CPU/GPU 逐字节对照测试（`tests/test_cuda_parity.cu`）、上机检查脚本（`tools/gpu_check.sh`）都写好了。
-- 服务器需要装什么、怎么同步代码和数据，写在 `README.md` 的 "V100 day-one check"。
+- 服务器需要装什么、怎么同步代码和数据，写在 `docs/engineering.md` 的 "V100 day-one check"。
 - **2026-10-18 已在 V100 上跑通**：编译约 6 分钟，CPU/GPU 逐字节一致，8 卡完整对局训练约 5 万新决策/秒，可续训。详见 `docs/cpu-gpu-parity-2026-10-18.md`。
 
 ## 4. 已知但不修的差异
