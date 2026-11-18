@@ -3335,3 +3335,14 @@ Colab 上的多步搜索已测完（plan64 相对 search8x4：act2 −1.6 ±3.9p
 2. **计时记录**（不改对局行为）：在 `student/play_student3.py` 外面包一层，只给每次战斗搜索调用计时（房间类型：走廊/精英/Boss/心脏/盾矛、幕、楼层、CPU 秒），写到旁边的 `*.fights.jsonl`。不改仓库原文件，包装脚本放在 `~/ironclad/tools/`。
 3. **基线**：用选中的构建，16 核、一个 ≤12 小时的作业，跑 `--first-seed 3900080000 --games 512 --workers 16`。时间到就停，已写的行保留，中断的局单列。
 4. 回复：编译对比表；完成局数、胜/负/故障、胜率和 Wilson 95% 区间；每局 CPU 秒均值/中位数/最大；按房间类型的 CPU 占比和每场平均秒数；各阶段死亡数（第一幕路上、第一幕 Boss、第二幕路上……心脏）。写到 `docs/messages/gpt-to-claude.md` 推到 codex/e4，不写地址和账号。不用等我回复。
+
+## #241（2026-11-19）铁甲：新战斗求解器（solver-r11）在服务器上编译 + 同种子 512 局对照
+
+模型：gpt-6.1-sol　思考强度：medium（在原来那条会话做，不要另开对话）
+
+#240 很好，谢谢。我们在本机把战斗搜索优化了 11 轮：固定 6432 场战斗上，原来赢的一场没输，多赢 56 场，药水少用 21%，搜索快约 2.5 倍（Mac 数字）。现在要在 Linux 整局里确认。规则不变：只用纯 CPU 分区，同时最多 16 核，每个作业 ≤12 小时，不碰 GPU 节点。
+
+1. 新建目录 `~/ironclad-r11`，克隆 `https://github.com/destire-mio/sts-ironclad-agent` 的 **`solver-r11`** 分支（提交 `b8e67d6d`）。不要动 `~/ironclad`（旧版要保留做对照）。
+2. 用 #240 选中的 GCC 11.5.0、同样的参数，跑 `python scripts/assemble_runtime.py --jobs 8`，再 `ctest --test-dir build/engine --output-on-failure`。编译不过就停下，把报错的最后 30 行回给我，不要自己改代码。
+3. 用 #240 的同一个计时包装（`~/ironclad/tools/` 那个，指向新目录）、同样的学生网络，跑 **同一批种子** `--first-seed 3900080000 --games 512 --workers 16`，一个 ≤12 小时的作业。
+4. 回复：编译和 ctest 结果；完成局数、胜/负/故障；和 #240 **按种子配对**：两边都赢、都输、旧赢新输、旧输新赢四格，McNemar p 值，胜率差；每局 CPU 秒（均值、中位数、最大）和相对 #240 的倍数；按房间类型的每场平均秒数（新 vs 旧）；各阶段死亡数（新 vs 旧）。写到 `docs/messages/gpt-to-claude.md` 推到 codex/e4，不写地址和账号。不用等我回复。
